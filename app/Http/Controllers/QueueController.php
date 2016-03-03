@@ -26,7 +26,12 @@ class QueueController extends Controller
 	public function index()
 	{
 			$queues = DB::table('queues')
-					->orderBy('location_code')
+					->join('encounters', 'encounters.encounter_id','=', 'queues.encounter_id')
+					->join('patients', 'patients.patient_id','=', 'encounters.patient_id')
+					->join('queue_locations', 'queue_locations.location_code','=', 'queues.location_code')
+					->leftJoin('consultations', 'consultations.encounter_id','=', 'queues.encounter_id')
+					->select('queue_id', 'patient_name', 'location_name', 'queues.created_at', 'queues.encounter_id', 'consultation_id')
+					->orderBy('queues.created_at')
 					->paginate($this->paginateValue);
 			return view('queues.index', [
 					'queues'=>$queues
@@ -119,9 +124,12 @@ class QueueController extends Controller
 	public function search(Request $request)
 	{
 			$queues = DB::table('queues')
-					->where('location_code','like','%'.$request->search.'%')
-					->orWhere('queue_id', 'like','%'.$request->search.'%')
-					->orderBy('location_code')
+					->join('encounters', 'encounters.encounter_id','=', 'queues.encounter_id')
+					->join('patients', 'patients.patient_id','=', 'encounters.patient_id')
+					->join('queue_locations', 'queue_locations.location_code','=', 'queues.location_code')
+					->where('location_name','like','%'.$request->search.'%')
+					->orWhere('patient_name', 'like','%'.$request->search.'%')
+					->orderBy('queues.created_at')
 					->paginate($this->paginateValue);
 
 			return view('queues.index', [

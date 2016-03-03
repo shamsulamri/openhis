@@ -1,17 +1,17 @@
 
+    <div class='form-group  @if ($errors->has('order_id')) has-error @endif'>
+        <label for='order_id' class='col-sm-2 control-label'>order_id<span style='color:red;'> *</span></label>
+        <div class='col-sm-10'>
+            {{ Form::text('order_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_id')) <p class="help-block">{{ $errors->first('order_id') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('consultation_id')) has-error @endif'>
         <label for='consultation_id' class='col-sm-2 control-label'>consultation_id<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::text('consultation_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('consultation_id')) <p class="help-block">{{ $errors->first('consultation_id') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
-        <label for='product_code' class='col-sm-2 control-label'>product_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-            {{ Form::text('product_code', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('product_code')) <p class="help-block">{{ $errors->first('product_code') }}</p> @endif
         </div>
     </div>
 
@@ -39,6 +39,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
+        {{ Form::label('order_quantity_supply', 'order_quantity_supply',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::text('order_quantity_supply', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_quantity_supply')) <p class="help-block">{{ $errors->first('order_quantity_supply') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
         {{ Form::label('location_code', 'location_code',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
@@ -52,14 +60,6 @@
         <div class='col-sm-10'>
             {{ Form::text('order_sale_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('order_sale_price')) <p class="help-block">{{ $errors->first('order_sale_price') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
-        {{ Form::label('order_quantity_supply', 'order_quantity_supply',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::text('order_quantity_supply', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('order_quantity_supply')) <p class="help-block">{{ $errors->first('order_quantity_supply') }}</p> @endif
         </div>
     </div>
 
@@ -81,7 +81,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/consultations/{{ $order->consultation_id }}/edit" role="button">Cancel</a>
+            <a class="btn btn-default" href="/consultation_orders" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

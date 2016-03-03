@@ -32,7 +32,21 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/options', function() {
 				return view('options.option');
 		});
-	
+
+		Route::resource('consultation_orders', 'ConsultationOrderController',['except'=>['index','show']]);
+		Route::get('/consultation_orders/{id}', 'ConsultationOrderController@index');
+		Route::get('/consultation_orders/id/{id}', 'ConsultationOrderController@searchById');
+		Route::post('/consultation_order/search', 'ConsultationOrderController@search');
+		Route::get('/consultation_order/search', 'ConsultationOrderController@search');
+		Route::get('/consultation_orders/delete/{id}', 'ConsultationOrderController@delete');
+		
+		Route::resource('order_products', 'OrderProductController', ['except'=>['index','show']]);
+		Route::get('/order_products/{id}', 'OrderProductController@index');
+		Route::get('/order_products/id/{id}', 'OrderProductController@searchById');
+		Route::post('/order_product/search', 'OrderProductController@search');
+		Route::get('/order_product/search', 'OrderProductController@search');
+		Route::get('/order_products/delete/{id}', 'OrderProductController@delete');
+		
 		Route::resource('encounter_types', 'EncounterTypeController');
 		Route::get('/encounter_types/id/{id}', 'EncounterTypeController@searchById');
 		Route::post('/encounter_type/search', 'EncounterTypeController@search');

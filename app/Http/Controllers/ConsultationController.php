@@ -37,11 +37,15 @@ class ConsultationController extends Controller
 			$consultation->user_id = Auth::user()->id;
 			if (empty($request->encounter_id)==false) {
 					$consultation->encounter_id = $request->encounter_id;
-			}
-			return view('consultations.create', [
-					'consultation' => $consultation,
-				
+					$consultation->save();
+					return view('consultations.edit', [
+						'consultation'=>$consultation,
 					]);
+			} else {
+					return view('consultations.create', [
+						'consultation' => $consultation,
+					]);
+			};
 	}
 
 	public function store(Request $request) 
@@ -65,6 +69,7 @@ class ConsultationController extends Controller
 	public function edit($id) 
 	{
 			$consultation = Consultation::findOrFail($id);
+			Log::info($consultation->consultation_id);
 			return view('consultations.edit', [
 					'consultation'=>$consultation,
 				
@@ -131,4 +136,5 @@ class ConsultationController extends Controller
 					'consultations'=>$consultations
 			]);
 	}
+	
 }

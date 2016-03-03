@@ -33,19 +33,28 @@ class OrderController extends Controller
 			]);
 	}
 
+	
+
 	public function create(Request $request)
 	{
 			$order = new Order();
-
-			if (empty($request->consult_id)==false) {
-					$order->consult_id = $request->consult_id;
+			$product = Product::findOrFail($request->product_code);
+			
+			if (empty($request->consultation_id)==false) {
+					$order->consultation_id = $request->consultation_id;
+					$order->product_code = $request->product_code;
 			}
-
-			return view('orders.create', [
+			
+		 	if ($product->order_form == '2') {
+				Log::info($product->order_form);
+				return redirect('/order_drugs/create?consultation_id='.$request->consultation_id.'&product_code='.$request->product_code);
+			} else {
+				return view('orders.create', [
 					'order' => $order,
 					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
-					]);
+				]);
+			}
 	}
 
 	public function store(Request $request) 
@@ -58,7 +67,7 @@ class OrderController extends Controller
 					$order->order_id = $request->order_id;
 					$order->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/orders/id/'.$order->order_id);
+					return redirect('/consultation_orders/'.$order->consultation_id);
 			} else {
 					return redirect('/orders/create')
 							->withErrors($valid)

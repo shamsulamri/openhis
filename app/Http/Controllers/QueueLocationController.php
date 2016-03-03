@@ -10,8 +10,10 @@ use App\QueueLocation;
 use Log;
 use DB;
 use Session;
-use App\EncounterType;
-		
+use App\Department;
+use App\EncounterType as Encounter;
+
+
 class QueueLocationController extends Controller
 {
 	public $paginateValue=10;
@@ -27,8 +29,7 @@ class QueueLocationController extends Controller
 					->orderBy('location_name')
 					->paginate($this->paginateValue);
 			return view('queue_locations.index', [
-					'queue_locations'=>$queue_locations,
-					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'queue_locations'=>$queue_locations
 			]);
 	}
 
@@ -38,6 +39,7 @@ class QueueLocationController extends Controller
 			return view('queue_locations.create', [
 					'queue_location' => $queue_location,
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					]);
 	}
 
@@ -64,7 +66,8 @@ class QueueLocationController extends Controller
 			$queue_location = QueueLocation::findOrFail($id);
 			return view('queue_locations.edit', [
 					'queue_location'=>$queue_location,
-					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					]);
 	}
 
@@ -73,6 +76,7 @@ class QueueLocationController extends Controller
 			$queue_location = QueueLocation::findOrFail($id);
 			$queue_location->fill($request->input());
 
+			$queue_location->location_is_pool = $request->location_is_pool ?: 0;
 
 			$valid = $queue_location->validate($request->all(), $request->_method);	
 
@@ -83,7 +87,8 @@ class QueueLocationController extends Controller
 			} else {
 					return view('queue_locations.edit', [
 							'queue_location'=>$queue_location,
-				
+					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

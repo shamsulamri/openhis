@@ -15,7 +15,7 @@ use App\DrugDosage as Dosage;
 use App\DrugRoute as Route;
 use App\DrugFrequency as Frequency;
 use App\Period;
-
+use App\Order;
 
 class OrderDrugController extends Controller
 {
@@ -36,7 +36,7 @@ class OrderDrugController extends Controller
 			]);
 	}
 
-	public function create()
+	public function create(Request $request)
 	{
 			$order_drug = new OrderDrug();
 			return view('order_drugs.create', [
@@ -46,6 +46,8 @@ class OrderDrugController extends Controller
 					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
 					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					'consultation_id' => $request->consultation_id,
+					'product_code' => $request->product_code,
 					]);
 	}
 
@@ -55,11 +57,18 @@ class OrderDrugController extends Controller
 			$valid = $order_drug->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
+					$order = new Order();
+					$order->consultation_id = $request->consultation_id;
+					$order->product_code = $request->product_code;
+					$order->order_is_discharge = $request->order_is_discharge;
+					$order->save();
+					Log::info($order);
+
 					$order_drug = new OrderDrug($request->all());
-					$order_drug->order_id = $request->order_id;
+					$order_drug->order_id = $order->order_id;
 					$order_drug->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/order_drugs/id/'.$order_drug->order_id);
+					return redirect('/consultation_orders/'.$order->consultation_id);
 			} else {
 					return redirect('/order_drugs/create')
 							->withErrors($valid)
@@ -77,6 +86,8 @@ class OrderDrugController extends Controller
 					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
 					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					'consultation_id' => $order_drug->order->consultation_id,
+					'product_code' => $order_drug->order->product_code, 
 					]);
 	}
 
@@ -96,13 +107,12 @@ class OrderDrugController extends Controller
 			} else {
 					return view('order_drugs.edit', [
 							'order_drug'=>$order_drug,
-					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-					'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
-					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
-					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
-					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
-							])
-							->withErrors($valid);			
+							'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
+							'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
+							'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
+							'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
+							'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					])->withErrors($valid);			
 			}
 	}
 	

@@ -1,9 +1,17 @@
 
-    <div class='form-group  @if ($errors->has('order_id')) has-error @endif'>
-        <label for='order_id' class='col-sm-2 control-label'>order_id<span style='color:red;'> *</span></label>
+    <div class='form-group  @if ($errors->has('consultation_id')) has-error @endif'>
+        <label for='consultation_id' class='col-sm-2 control-label'>consultation_id<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-            {{ Form::text('order_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('order_id')) <p class="help-block">{{ $errors->first('order_id') }}</p> @endif
+            {{ Form::text('consultation_id', $consultation_id, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('consultation_id')) <p class="help-block">{{ $errors->first('consultation_id') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
+        <label for='product_code' class='col-sm-2 control-label'>product_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-10'>
+            {{ Form::text('product_code', $product_code, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('product_code')) <p class="help-block">{{ $errors->first('product_code') }}</p> @endif
         </div>
     </div>
 
@@ -92,6 +100,14 @@
         <div class='col-sm-10'>
             {{ Form::checkbox('drug_after_meal', '1') }}
             @if ($errors->has('drug_after_meal')) <p class="help-block">{{ $errors->first('drug_after_meal') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('order_is_discharge')) has-error @endif'>
+        {{ Form::label('order_is_discharge', 'order_is_discharge',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::checkbox('order_is_discharge', '1') }}
+            @if ($errors->has('order_is_discharge')) <p class="help-block">{{ $errors->first('order_is_discharge') }}</p> @endif
         </div>
     </div>
 

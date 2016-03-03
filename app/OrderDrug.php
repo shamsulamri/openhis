@@ -23,11 +23,9 @@ class OrderDrug extends Model
 				'drug_total_unit',
 				'drug_prn',
 				'drug_after_meal'];
-	
 
 	public function validate($input, $method) {
 			$rules = [
-				'order_id'=>'required',
 			];
 
 			
@@ -39,5 +37,8 @@ class OrderDrug extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function order() {
+		return $this->belongsTo('App\Order','order_id');
+	}	
 	
 }

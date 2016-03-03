@@ -13,6 +13,8 @@ class QueueLocation extends Model
 	protected $fillable = [
 				'location_name',
 				'location_code',
+				'location_is_pool',
+				'department_code',
 				'encounter_code',
 				'user_id'];
 	
@@ -24,7 +26,6 @@ class QueueLocation extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'location_name'=>'required',
-				'encounter_code'=>'required',
 			];
 
 			

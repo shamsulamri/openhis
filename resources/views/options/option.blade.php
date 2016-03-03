@@ -17,9 +17,10 @@
 		<a href="{{ url('/appointment_services') }}">Appointment Services</a><br>
 		<a href="{{ url('/block_dates') }}">Block Dates</a><br>
 <h3>Electronic Medical Record</h3>
-		<a href="{{ url('/consultations') }}">Consulations</a><br>
-		<a href="{{ url('/consultation_diagnoses') }}">Consulation Diagnoses</a><br>
-		<a href="{{ url('/consultation_procedures') }}">Consulation Procedures</a><br>
+		<a href="{{ url('/consultations') }}">Consultation</a><br>
+		<a href="{{ url('/consultation_diagnoses') }}">Consultation Diagnoses</a><br>
+		<a href="{{ url('/consultation_procedures') }}">Consultation Procedures</a><br>
+		<a href="{{ url('/consultation_orders') }}">Consultation Orders</a><br>
 		<a href="{{ url('/diagnosis_types') }}">Diagnosis Types</a><br>
 		<a href="{{ url('/newborns') }}">Newborns</a><br>
 		<a href="{{ url('/birth_types') }}">Birth Types</a><br>
@@ -49,6 +50,7 @@
 		<a href="{{ url('/bill_materials') }}">Bill of Materials</a><br>
 <h3>Order Management</h3>
 		<a href="{{ url('/orders') }}">Orders</a><br>
+		<a href="{{ url('/order_products') }}">Order Products</a><br>
 		<a href="{{ url('/order_drugs') }}">Order Drugs</a><br>
 		<a href="{{ url('/order_investigations') }}">Order Investigations</a><br>
 		<a href="{{ url('/order_cancellations') }}">Order Cancellations</a><br>

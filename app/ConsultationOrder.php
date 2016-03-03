@@ -7,7 +7,7 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class Order extends Model
+class ConsultationOrder extends Model
 {
 	protected $table = 'orders';
 	protected $fillable = [
@@ -19,10 +19,10 @@ class Order extends Model
 				'order_quantity_supply',
 				'location_code',
 				'order_sale_price',
-				'order_total',
 				'order_discount',
-				'order_discharge'];
+				'order_is_discharge'];
 	
+    
     protected $guarded = ['order_id'];
     protected $primaryKey = 'order_id';
     public $incrementing = true;
@@ -42,6 +42,5 @@ class Order extends Model
 			
 			return validator::make($input, $rules ,$messages);
 	}
-
 	
 }

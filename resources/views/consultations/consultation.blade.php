@@ -37,3 +37,4 @@
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+    <a class="btn btn-default" href="/order_products?consultation_id={{ $consultation->consultation_id }}" role="button">Order</a>

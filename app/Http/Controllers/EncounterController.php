@@ -30,8 +30,12 @@ class EncounterController extends Controller
 	public function index()
 	{
 			$encounters = DB::table('encounters')
-					->orderBy('encounter_code')
+					->join('patients','patients.patient_id','=','encounters.patient_id')
+					->join('ref_encounter_types', 'ref_encounter_types.encounter_code','=','encounters.encounter_code')
+					->select('encounter_id','encounters.encounter_code', 'patient_name', 'encounters.patient_id', 'encounter_name','encounters.created_at')
+					->orderBy('created_at')
 					->paginate($this->paginateValue);
+
 			return view('encounters.index', [
 					'encounters'=>$encounters
 			]);
@@ -42,7 +46,8 @@ class EncounterController extends Controller
 			$patient = new Patient();
 			if (empty($request->patient_id)==false) {
 				$patient = Patient::findOrFail($request->patient_id);
-		
+			}
+
 			$encounter = new Encounter();
 			return view('encounters.create', [
 					'encounter' => $encounter,
