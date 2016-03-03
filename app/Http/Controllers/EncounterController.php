@@ -42,7 +42,7 @@ class EncounterController extends Controller
 			$patient = new Patient();
 			if (empty($request->patient_id)==false) {
 				$patient = Patient::findOrFail($request->patient_id);
-			}
+		
 			$encounter = new Encounter();
 			return view('encounters.create', [
 					'encounter' => $encounter,
@@ -92,11 +92,10 @@ class EncounterController extends Controller
 	public function edit($id) 
 	{
 			$encounter = Encounter::findOrFail($id);
-			$patient = Patient::findOrFail($encounter->patient_id);
 			return view('encounters.edit', [
 					'encounter'	=> $encounter,
 					'employer' 	=> Employer::all()->sortBy('employer_name')->lists('employer_name', 'employer_code')->prepend('',''),
-					'patient'	=> $patient,
+					'patient'	=> $encounter->patient,
 					'patient_type' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'employer' => Employer::all()->sortBy('employer_name')->lists('employer_name', 'employer_code')->prepend('',''),
 					'organisation' => CareOrganisation::all()->sortBy('organisation_name')->lists('organisation_name', 'organisation_code')->prepend('',''),

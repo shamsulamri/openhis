@@ -41,5 +41,9 @@ class Encounter extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function patient()
+	{
+			return $this->belongsTo('App\Patient', 'patient_id');
+	}
 	
 }

@@ -140,4 +140,13 @@ class Patient extends Model
 	}
 
 
+	public function encounters()
+	{
+			return $this->hasMany('App\Encounter', 'patient_id');
+	}
+
+	public function race()
+	{
+			return $this->belongsTo('App\Race', 'race_code');
+	}
 }
