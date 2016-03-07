@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use App\Patient;
 
 class Consultation extends Model
 {
@@ -37,4 +38,8 @@ class Consultation extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function encounter()
+	{
+			return $this->belongsTo('App\Encounter');
+	}
 }

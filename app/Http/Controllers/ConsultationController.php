@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use Auth;
+use App\Patient;
 
 class ConsultationController extends Controller
 {
@@ -66,13 +67,21 @@ class ConsultationController extends Controller
 			}
 	}
 
+	public function close($id)
+	{
+			$consultation = Consultation::findOrFail($id);
+			$consultation->consultation_status = 1;
+			$consultation->save();
+
+			return redirect('/queues');
+	}
+
 	public function edit($id) 
 	{
 			$consultation = Consultation::findOrFail($id);
-			Log::info($consultation->consultation_id);
 			return view('consultations.edit', [
 					'consultation'=>$consultation,
-				
+					'tab'=>'clinical',
 					]);
 	}
 
@@ -87,7 +96,7 @@ class ConsultationController extends Controller
 			if ($valid->passes()) {
 					$consultation->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/consultations/id/'.$id);
+					return redirect('/consultations/'.$id.'/edit');
 			} else {
 					return view('consultations.edit', [
 							'consultation'=>$consultation,

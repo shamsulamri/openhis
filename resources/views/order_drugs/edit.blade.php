@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
-Edit Order Drug
-</h1>
+@include('patients.label')
+@include('consultations.panel')
+<h3>
+{{ $product->product_name }}
+</h3>
 @include('common.errors')
 <br>
 {{ Form::model($order_drug, ['route'=>['order_drugs.update',$order_drug->id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 

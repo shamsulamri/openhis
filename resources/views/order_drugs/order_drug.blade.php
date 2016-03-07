@@ -1,20 +1,4 @@
 
-    <div class='form-group  @if ($errors->has('consultation_id')) has-error @endif'>
-        <label for='consultation_id' class='col-sm-2 control-label'>consultation_id<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-            {{ Form::text('consultation_id', $consultation_id, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('consultation_id')) <p class="help-block">{{ $errors->first('consultation_id') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
-        <label for='product_code' class='col-sm-2 control-label'>product_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-            {{ Form::text('product_code', $product_code, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('product_code')) <p class="help-block">{{ $errors->first('product_code') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group  @if ($errors->has('drug_strength')) has-error @endif'>
         {{ Form::label('drug_strength', 'drug_strength',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
@@ -113,7 +97,10 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/order_drugs" role="button">Cancel</a>
+            <a class="btn btn-default" href="/orders/{{ $consultation->consultation_id }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+
+    {{ Form::hidden('consultation_id', $consultation->consultation_id, ['class'=>'form-control','placeholder'=>'',]) }}
+    {{ Form::hidden('product_code', $product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}

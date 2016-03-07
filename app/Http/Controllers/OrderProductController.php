@@ -14,7 +14,7 @@ use App\Category;
 use App\Unit;
 use App\Location;
 use App\Form;
-
+use App\Consultation;
 
 class OrderProductController extends Controller
 {
@@ -30,9 +30,13 @@ class OrderProductController extends Controller
 			$order_products = DB::table('products')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
+			
+			$consultation = Consultation::findOrFail($id);
+
 			return view('order_products.index', [
 					'order_products'=>$order_products,
-					'consultation_id'=>$id,
+					'consultation'=>$consultation,
+					'tab'=>'order',
 			]);
 	}
 
@@ -133,10 +137,14 @@ class OrderProductController extends Controller
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
 
+			$consultation_id = $request->consultation_id;
+			$consultation = Consultation::findOrFail($consultation_id);
+
 			return view('order_products.index', [
 					'order_products'=>$order_products,
 					'search'=>$request->search,
-					'consultation_id'=>$request->consultation_id,
+					'consultation'=>$consultation,
+					'tab'=>'order',
 					]);
 	}
 

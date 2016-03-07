@@ -32,6 +32,7 @@ class Order extends Model
 			$rules = [
 				'consultation_id'=>'required',
 				'product_code'=>'required',
+				'order_quantity_request'=>'required|min:1',
 			];
 
 			
@@ -43,5 +44,7 @@ class Order extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	
+	public function orderDrug() {
+			return $this->hasOne('App\OrderDrug','order_id');
+	}
 }

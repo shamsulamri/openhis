@@ -31,9 +31,11 @@ class OrderCancellationController extends Controller
 			]);
 	}
 
-	public function create()
+	public function create($id)
 	{
 			$order_cancellation = new OrderCancellation();
+			$order_cancellation->order_id = $id;
+
 			return view('order_cancellations.create', [
 					'order_cancellation' => $order_cancellation,
 				

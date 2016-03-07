@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+@section('content'
 <h1>
 Edit Department
 </h1>

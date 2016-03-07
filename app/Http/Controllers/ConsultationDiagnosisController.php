@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\DiagnosisType;
+use App\Consultation;
 
 class ConsultationDiagnosisController extends Controller
 {
@@ -21,26 +22,36 @@ class ConsultationDiagnosisController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index($consultation_id)
 	{
 			$consultation_diagnoses = DB::table('consultation_diagnoses')
+					->where('consultation_id','=',$consultation_id)
 					->orderBy('diagnosis_clinical')
 					->paginate($this->paginateValue);
+
+			$consultation = Consultation::findOrFail($consultation_id);
+			
 			return view('consultation_diagnoses.index', [
-					'consultation_diagnoses'=>$consultation_diagnoses
+					'consultation_diagnoses'=>$consultation_diagnoses,
+					'consultation'=>$consultation,
+					'tab'=>'diagnosis',
 			]);
 	}
 
-	public function create(Request $request)
+	public function create($consultation_id)
 	{
 			$consultation_diagnosis = new ConsultationDiagnosis();
-			if (empty($request->consultation_id)==false) {
-					$consultation_diagnosis->consultation_id = $request->consultation_id;
+			if (empty($consultation_id)==false) {
+					$consultation_diagnosis->consultation_id = $consultation_id;
 			}
 
+			$consultation = Consultation::findOrFail($consultation_id);
+			
 			return view('consultation_diagnoses.create', [
 					'consultation_diagnosis' => $consultation_diagnosis,
 					'diagnosis_type' => DiagnosisType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'consultation'=>$consultation,
+					'tab'=>'diagnosis',
 					]);
 	}
 
@@ -54,7 +65,7 @@ class ConsultationDiagnosisController extends Controller
 					$consultation_diagnosis->id = $request->id;
 					$consultation_diagnosis->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/consultation_diagnoses/id/'.$consultation_diagnosis->id);
+					return redirect('/consultation_diagnoses/'.$consultation_diagnosis->consultation_id);
 			} else {
 					return redirect('/consultation_diagnoses/create')
 							->withErrors($valid)
@@ -65,9 +76,13 @@ class ConsultationDiagnosisController extends Controller
 	public function edit($id) 
 	{
 			$consultation_diagnosis = ConsultationDiagnosis::findOrFail($id);
+			$consultation = Consultation::findOrFail($consultation_diagnosis->consultation_id);
+
 			return view('consultation_diagnoses.edit', [
 					'consultation_diagnosis'=>$consultation_diagnosis,
 					'diagnosis_type' => DiagnosisType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'consultation'=>$consultation,
+					'tab'=>'diagnosis',
 					]);
 	}
 
@@ -76,18 +91,17 @@ class ConsultationDiagnosisController extends Controller
 			$consultation_diagnosis = ConsultationDiagnosis::findOrFail($id);
 			$consultation_diagnosis->fill($request->input());
 
-			$consultation_diagnosis->diagnosis_is_principal = $request->diagnosis_is_principal ?: 0;
-
 			$valid = $consultation_diagnosis->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
 					$consultation_diagnosis->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/consultation_diagnoses/id/'.$id);
+					return redirect('/consultation_diagnoses/'.$consultation_diagnosis->consultation_id);
 			} else {
 					return view('consultation_diagnoses.edit', [
 							'consultation_diagnosis'=>$consultation_diagnosis,
-				
+							'consultation'=>$consultation,
+							'tab'=>'diagnosis',
 							])
 							->withErrors($valid);			
 			}
@@ -103,9 +117,10 @@ class ConsultationDiagnosisController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$consultation_diagnosis = ConsultationDiagnosis::findOrFail($id);
 			ConsultationDiagnosis::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/consultation_diagnoses');
+			return redirect('/consultation_diagnoses/'.$consultation_diagnosis->consultation_id);
 	}
 	
 	public function search(Request $request)

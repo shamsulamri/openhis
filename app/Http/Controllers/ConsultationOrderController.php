@@ -10,8 +10,8 @@ use App\ConsultationOrder;
 use Log;
 use DB;
 use Session;
-use App\Location;
-
+use App\QueueLocation as Location;
+use App\Product;
 
 class ConsultationOrderController extends Controller
 {
@@ -34,13 +34,24 @@ class ConsultationOrderController extends Controller
 			]);
 	}
 
-	public function create()
+	public function create(Request $request, $consultation_id, $product_code)
 	{
-			$consultation_order = new ConsultationOrder();
-			return view('consultation_orders.create', [
-					'consultation_order' => $consultation_order,
+			$order = new ConsultationOrder();
+			$product = Product::findOrFail($product_code);
+
+			$order->consultation_id = $consultation_id;
+			$order->product_code = $product_code;
+			
+		 	if ($product->order_form == '2') {
+				return redirect('/order_drugs/create/'.$consultation_id.'/'.$product_code);
+			} else {
+				return view('consultation_orders.create', [
+					'consultation_order' => $order,
+					'consultation_id' => $consultation_id,
+					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
-					]);
+				]);
+			}
 	}
 
 	public function store(Request $request) 
@@ -53,7 +64,7 @@ class ConsultationOrderController extends Controller
 					$consultation_order->product_code = $request->product_code;
 					$consultation_order->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/consultation_orders/id/'.$consultation_order->product_code);
+					return redirect('/consultation_orders/'.$consultation_order->consultation_id);
 			} else {
 					return redirect('/consultation_orders/create')
 							->withErrors($valid)
@@ -64,30 +75,37 @@ class ConsultationOrderController extends Controller
 	public function edit($id) 
 	{
 			$consultation_order = ConsultationOrder::findOrFail($id);
-			return view('consultation_orders.edit', [
-					'consultation_order'=>$consultation_order,
-					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
-					]);
+			$product = Product::find($consultation_order->product_code);
+
+		 	if ($product->order_form == '2') {
+					return redirect('/order_drugs/'.$consultation_order->orderDrug->id.'/edit');
+			} else {
+					return view('consultation_orders.edit', [
+							'consultation_order'=>$consultation_order,
+							'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+							]);
+			}
 	}
 
 	public function update(Request $request, $id) 
 	{
 			$consultation_order = ConsultationOrder::findOrFail($id);
 			$consultation_order->fill($request->input());
-
 			$consultation_order->order_completed = $request->order_completed ?: 0;
 			$consultation_order->order_is_discharge = $request->order_is_discharge ?: 0;
 
 			$valid = $consultation_order->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					Log::info("XXXXX");
 					$consultation_order->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/consultation_orders/id/'.$id);
+					return redirect('/consultation_orders/'.$consultation_order->consultation_id);
 			} else {
+					Log::info("XXXXX");
 					return view('consultation_orders.edit', [
 							'consultation_order'=>$consultation_order,
-					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+							'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

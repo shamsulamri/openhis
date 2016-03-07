@@ -14,7 +14,6 @@ class ConsultationDiagnosis extends Model
 				'consultation_id',
 				'diagnosis_type',
 				'diagnosis_clinical'];
-	
 
 	public function validate($input, $method) {
 			$rules = [
@@ -30,5 +29,4 @@ class ConsultationDiagnosis extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	
 }

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@include('patients.label')
+@include('consultations.panel')
 @section('content')
 <h1>
 New Order Cancellation

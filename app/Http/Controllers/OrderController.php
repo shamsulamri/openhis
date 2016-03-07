@@ -12,7 +12,7 @@ use DB;
 use Session;
 use App\Product;
 use App\QueueLocation as Location;
-
+use App\Consultation;
 
 class OrderController extends Controller
 {
@@ -23,37 +23,43 @@ class OrderController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index($consultation_id)
 	{
-			$orders = DB::table('orders')
-					->orderBy('product_code')
+			$orders = DB::table('orders as a')
+					->join('products as b','a.product_code','=','b.product_code')
+					->where('consultation_id','=',$consultation_id)
+					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
+
+			$consultation = Consultation::findOrFail($consultation_id);
 			return view('orders.index', [
-					'orders'=>$orders
+					'orders'=>$orders,
+					'consultation'=>$consultation,
+					'tab'=>'order',
 			]);
 	}
 
 	
-
-	public function create(Request $request)
+	public function create($consultation_id, $product_code)
 	{
 			$order = new Order();
-			$product = Product::findOrFail($request->product_code);
-			
-			if (empty($request->consultation_id)==false) {
-					$order->consultation_id = $request->consultation_id;
-					$order->product_code = $request->product_code;
-			}
-			
+			$order->consultation_id = $consultation_id;
+			$order->product_code = $product_code;
+
+			$product=Product::find($product_code);
+
+			$consultation = Consultation::findOrFail($consultation_id);
+
 		 	if ($product->order_form == '2') {
-				Log::info($product->order_form);
-				return redirect('/order_drugs/create?consultation_id='.$request->consultation_id.'&product_code='.$request->product_code);
+				return redirect('/order_drugs/create/'.$consultation_id.'/'.$product_code);
 			} else {
 				return view('orders.create', [
 					'order' => $order,
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
+					'consultation'=>$consultation,
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
-				]);
+					'tab'=>'order',
+					'product'=>$product,
+					]);
 			}
 	}
 
@@ -67,7 +73,7 @@ class OrderController extends Controller
 					$order->order_id = $request->order_id;
 					$order->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/consultation_orders/'.$order->consultation_id);
+					return redirect('/orders/'.$order->consultation_id);
 			} else {
 					return redirect('/orders/create')
 							->withErrors($valid)
@@ -78,11 +84,25 @@ class OrderController extends Controller
 	public function edit($id) 
 	{
 			$order = Order::findOrFail($id);
-			return view('orders.edit', [
+
+			$product = Product::find($order->product_code);
+			$consultation = Consultation::findOrFail($order->consultation_id);
+
+		 	if ($product->order_form == '2') {
+					return redirect('/order_drugs/'.$order->orderDrug->id.'/edit');
+			} else {
+				return view('orders.edit', [
 					'order'=>$order,
 					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'consultation' => $consultation,
+					'patient'=>$consultation->encounter->patient,
+					'tabNote'=>'',
+					'tabOrder'=>'active',
+					'tabDiagnosis'=>'',
+					'product'=>$product,
 					]);
+			}
 	}
 
 	public function update(Request $request, $id) 
@@ -98,12 +118,11 @@ class OrderController extends Controller
 			if ($valid->passes()) {
 					$order->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/orders/id/'.$id);
+					return redirect('/orders/'.$order->consultation_id);
 			} else {
 					return view('orders.edit', [
 							'order'=>$order,
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
-					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+							'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}
@@ -119,9 +138,10 @@ class OrderController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$order = Order::find($id);
 			Order::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/orders');
+			return redirect('/orders/'.$order->consultation_id);
 	}
 	
 	public function search(Request $request)
