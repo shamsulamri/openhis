@@ -6,8 +6,6 @@
 @if (Session::has('message'))
 	<br>
     <div class="alert alert-info">{{ Session::get('message') }}</div>
-@else 
-	<br>
 @endif
 <a href='/consultation_diagnoses/create/{{ $consultation->consultation_id }}' class='btn btn-primary'>Create</a>
 <br>
@@ -17,6 +15,9 @@
 	<tbody>
 @foreach ($consultation_diagnoses as $consultation_diagnosis)
 	<tr>
+			<td class='col-xs-2'>
+					{{ date('d F Y', strtotime($consultation_diagnosis->created_at)) }}
+			</td>
 			<td>
 					<a href='{{ URL::to('consultation_diagnoses/'. $consultation_diagnosis->id . '/edit') }}'>
 						{{$consultation_diagnosis->diagnosis_clinical}}

@@ -34,5 +34,9 @@ class OrderCancellation extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function order()
+	{
+			return $this->belongsTo('App\Order');
+	}
 	
 }

@@ -1,11 +1,11 @@
-    <div class='form-group  @if ($errors->has('order_quantity_request')) has-error @endif'>
+    <div class='form-group'>
         {{ Form::label('product', 'Product',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::label('product_name', $product->product_name, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('order_quantity_request')) has-error @endif'>
+    <div class='form-group'>
         {{ Form::label('product_code', 'Code',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::label('product_code', $product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}
@@ -13,7 +13,7 @@
     </div>
 
    <div class='form-group  @if ($errors->has('order_quantity_request')) has-error @endif'>
-        {{ Form::label('Quantity', 'Quantity',['class'=>'col-sm-2 control-label']) }}
+        <label for='order_quantity_request' class='col-sm-2 control-label'>Quantity<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::text('order_quantity_request', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('order_quantity_request')) <p class="help-block">{{ $errors->first('order_quantity_request') }}</p> @endif

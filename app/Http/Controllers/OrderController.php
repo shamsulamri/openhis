@@ -25,13 +25,18 @@ class OrderController extends Controller
 
 	public function index($consultation_id)
 	{
+			$consultation = Consultation::findOrFail($consultation_id);
+
 			$orders = DB::table('orders as a')
+					->select('product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'order_posted', 'a.created_at')
 					->join('products as b','a.product_code','=','b.product_code')
-					->where('consultation_id','=',$consultation_id)
-					->orderBy('a.created_at')
+					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
+					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
+					->where('encounter_id','=',$consultation->encounter_id)
+					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
-			$consultation = Consultation::findOrFail($consultation_id);
+
 			return view('orders.index', [
 					'orders'=>$orders,
 					'consultation'=>$consultation,
@@ -45,6 +50,7 @@ class OrderController extends Controller
 			$order = new Order();
 			$order->consultation_id = $consultation_id;
 			$order->product_code = $product_code;
+			$order->order_quantity_request=1;
 
 			$product=Product::find($product_code);
 
@@ -75,7 +81,7 @@ class OrderController extends Controller
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/orders/'.$order->consultation_id);
 			} else {
-					return redirect('/orders/create')
+					return redirect('/orders/create/'.$request->consultation_id.'/'.$request->product_code)
 							->withErrors($valid)
 							->withInput();
 			}
@@ -96,10 +102,7 @@ class OrderController extends Controller
 					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'consultation' => $consultation,
-					'patient'=>$consultation->encounter->patient,
-					'tabNote'=>'',
-					'tabOrder'=>'active',
-					'tabDiagnosis'=>'',
+					'tab'=>'order',
 					'product'=>$product,
 					]);
 			}

@@ -47,4 +47,20 @@ class Order extends Model
 	public function orderDrug() {
 			return $this->hasOne('App\OrderDrug','order_id');
 	}
+
+	public function consultation()
+	{
+			return $this->belongsTo('App\Consultation','consultation_id');
+	}
+
+	public function product()
+	{
+			return $this->belongsTo('App\Product', 'product_code');
+	}
+
+	public function orderCancel()
+	{
+			return $this->hasOne('App\OrderCancellation','order_id');
+	}
+
 }

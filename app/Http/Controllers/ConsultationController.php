@@ -12,6 +12,7 @@ use DB;
 use Session;
 use Auth;
 use App\Patient;
+use App\Order;
 
 class ConsultationController extends Controller
 {
@@ -72,6 +73,9 @@ class ConsultationController extends Controller
 			$consultation = Consultation::findOrFail($id);
 			$consultation->consultation_status = 1;
 			$consultation->save();
+
+			Order::where('consultation_id','=',$id)
+					->update(['order_posted'=>1]);
 
 			return redirect('/queues');
 	}

@@ -28,3 +28,4 @@ Consultation
 @endif
 "><a href="/orders/{{ $consultation->consultation_id }}" role="button">Discharge</a></li>
 </ul>
+<br>

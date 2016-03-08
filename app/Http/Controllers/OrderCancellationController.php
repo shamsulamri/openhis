@@ -10,7 +10,7 @@ use App\OrderCancellation;
 use Log;
 use DB;
 use Session;
-
+use App\Consultation;
 
 class OrderCancellationController extends Controller
 {
@@ -38,7 +38,8 @@ class OrderCancellationController extends Controller
 
 			return view('order_cancellations.create', [
 					'order_cancellation' => $order_cancellation,
-				
+					'consultation' => $order_cancellation->order->consultation,
+					'tab' => 'order',			
 					]);
 	}
 
@@ -52,9 +53,9 @@ class OrderCancellationController extends Controller
 					$order_cancellation->cancel_id = $request->cancel_id;
 					$order_cancellation->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/order_cancellations/id/'.$order_cancellation->cancel_id);
+					return redirect('/orders/'.$order_cancellation->order->consultation_id);
 			} else {
-					return redirect('/order_cancellations/create')
+					return redirect('/order_cancellations/create/'.$request->order_id)
 							->withErrors($valid)
 							->withInput();
 			}
@@ -65,7 +66,18 @@ class OrderCancellationController extends Controller
 			$order_cancellation = OrderCancellation::findOrFail($id);
 			return view('order_cancellations.edit', [
 					'order_cancellation'=>$order_cancellation,
-				
+					'consultation' => $order_cancellation->order->consultation,
+					'tab' => 'order',			
+					]);
+	}
+
+	public function show($id) 
+	{
+			$order_cancellation = OrderCancellation::findOrFail($id);
+			return view('order_cancellations.show', [
+					'order_cancellation'=>$order_cancellation,
+					'consultation' => $order_cancellation->order->consultation,
+					'tab' => 'order',			
 					]);
 	}
 

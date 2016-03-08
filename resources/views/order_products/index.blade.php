@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.label')
 @include('consultations.panel')
-<br>
+
 {{ Form::label('Product Search', 'Product Search',['class'=>'control-label']) }}
 <form action='/order_product/search' method='post'>
 	<input type='text' class='form-control' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -20,9 +20,7 @@
 @foreach ($order_products as $order_product)
 	<tr>
 			<td>
-					<a href='{{ URL::to('order_products/'. $order_product->product_code . '/edit') }}'>
-						{{ ucfirst(strtoupper($order_product->product_name)) }}
-					</a>
+				{{ ucfirst(strtoupper($order_product->product_name)) }}
 			</td>
 			<td>
 					{{$order_product->product_code}}

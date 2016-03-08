@@ -24,12 +24,15 @@ class ConsultationDiagnosisController extends Controller
 
 	public function index($consultation_id)
 	{
-			$consultation_diagnoses = DB::table('consultation_diagnoses')
-					->where('consultation_id','=',$consultation_id)
-					->orderBy('diagnosis_clinical')
+			$consultation = Consultation::findOrFail($consultation_id);
+
+			$consultation_diagnoses = DB::table('consultation_diagnoses as a')
+					->select('id', 'a.created_at', 'diagnosis_clinical')
+					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
+					->where('encounter_id','=',$consultation->encounter_id)
+					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 
-			$consultation = Consultation::findOrFail($consultation_id);
 			
 			return view('consultation_diagnoses.index', [
 					'consultation_diagnoses'=>$consultation_diagnoses,
