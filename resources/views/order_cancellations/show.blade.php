@@ -1,0 +1,32 @@
+@extends('layouts.app')
+
+@section('content')
+@include('patients.label')
+@include('consultations.panel')
+@include('common.errors')
+
+{{ Form::model($order_cancellation, ['route'=>['order_cancellations.update',$order_cancellation->cancel_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
+
+    <div class='form-group'>
+        <label for='order' class='col-sm-2 control-label'>Order</span></label>
+        <div class='col-sm-10'>
+            {{ Form::text('order', $order_cancellation->order->product->product_name, ['class'=>'form-control','placeholder'=>'','maxlength'=>'65535']) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('cancel_reason')) has-error @endif'>
+        <label for='cancel_reason' class='col-sm-2 control-label'>Reason</label>
+        <div class='col-sm-10'>
+            {{ Form::textarea('cancel_reason', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'65535']) }}
+            @if ($errors->has('cancel_reason')) <p class="help-block">{{ $errors->first('cancel_reason') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group'>
+        <div class="col-sm-offset-2 col-sm-10">
+            <a class="btn btn-default" href="/orders/{{ $order_cancellation->order->consultation->consultation_id }}" role="button">Close</a>
+        </div>
+    </div>
+{{ Form::close() }}
+
+@endsection
