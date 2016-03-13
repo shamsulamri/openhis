@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-Delete ProductCategory
+Delete Product Category
 </h1>
 @include('common.errors')
 <br>

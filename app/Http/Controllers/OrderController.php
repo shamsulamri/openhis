@@ -28,11 +28,13 @@ class OrderController extends Controller
 			$consultation = Consultation::findOrFail($consultation_id);
 
 			$orders = DB::table('orders as a')
-					->select('product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'order_posted', 'a.created_at')
+					->select('product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'post_id', 'a.created_at','order_is_discharge')
 					->join('products as b','a.product_code','=','b.product_code')
 					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
 					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
 					->where('encounter_id','=',$consultation->encounter_id)
+					->orderBy('cancel_id')
+					->orderBy('order_is_discharge','desc')
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
@@ -44,20 +46,21 @@ class OrderController extends Controller
 			]);
 	}
 
-	
 	public function create($consultation_id, $product_code)
 	{
+			$product=Product::find($product_code);
 			$order = new Order();
 			$order->consultation_id = $consultation_id;
 			$order->product_code = $product_code;
 			$order->order_quantity_request=1;
-
-			$product=Product::find($product_code);
+			$order->location_code = $product->location_code;
 
 			$consultation = Consultation::findOrFail($consultation_id);
 
 		 	if ($product->order_form == '2') {
 				return redirect('/order_drugs/create/'.$consultation_id.'/'.$product_code);
+			} elseif ($product->order_form == '3') {
+				return redirect('/order_investigations/create/'.$consultation_id.'/'.$product_code);
 			} else {
 				return view('orders.create', [
 					'order' => $order,
@@ -75,8 +78,10 @@ class OrderController extends Controller
 			$valid = $order->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
+					$product = Product::find($request->product_code);
 					$order = new Order($request->all());
 					$order->order_id = $request->order_id;
+					$order->order_sale_price = $product->product_sale_price;
 					$order->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/orders/'.$order->consultation_id);
@@ -96,6 +101,8 @@ class OrderController extends Controller
 
 		 	if ($product->order_form == '2') {
 					return redirect('/order_drugs/'.$order->orderDrug->id.'/edit');
+			} elseif ($product->order_form == '3') {
+					return redirect('/order_investigations/'.$order->orderInvestigation->id.'/edit');
 			} else {
 				return view('orders.edit', [
 					'order'=>$order,
@@ -170,5 +177,18 @@ class OrderController extends Controller
 			return view('orders.index', [
 					'orders'=>$orders
 			]);
+	}
+
+	public function save(array $options = array())
+	{
+			$changed = $this->isDirty() ? $this->getDirty() : false;
+
+
+			parent::save();
+
+			if ($changed) 
+			{
+				Log::info("save !!!!!");
+			}	
 	}
 }

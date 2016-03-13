@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\Consultation;
+use Auth;
 
 class OrderCancellationController extends Controller
 {
@@ -51,6 +52,7 @@ class OrderCancellationController extends Controller
 			if ($valid->passes()) {
 					$order_cancellation = new OrderCancellation($request->all());
 					$order_cancellation->cancel_id = $request->cancel_id;
+					$order_cancellation->user_id = Auth::user()->id;
 					$order_cancellation->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/orders/'.$order_cancellation->order->consultation_id);

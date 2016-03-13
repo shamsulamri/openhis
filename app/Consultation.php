@@ -42,4 +42,11 @@ class Consultation extends Model
 	{
 			return $this->belongsTo('App\Encounter');
 	}
+
+ 	public function user()
+	{
+			return $this->hasOne('App\User','id','user_id');
+	}
+
+
 }

@@ -2,9 +2,17 @@
 Consultation
 </h2>
 	<br>
-    <div class='form-group'>
-            <a class="btn btn-primary btn-lg" href="/consultations/close/{{ $consultation->consultation_id }}" role="button">Close Consultation</a>
-    </div>
+	<div class="row">
+			<div class="col-xs-6">
+            	<a class="btn btn-primary btn-lg" href="/consultations/close/{{ $consultation->consultation_id }}" role="button">Progress Notes</a>
+			</div>
+			<div align="right" class="col-xs-6">
+            	<a class="btn btn-warning btn-lg" href="/consultations/close/{{ $consultation->consultation_id }}" role="button">Close Consultation</a>
+            	<a class="btn btn-success btn-lg" href="/discharges/create/{{ $consultation->consultation_id }}" role="button">Discharge Patient</a>
+			</div>
+	</div>
+
+<br>
 <br>
 <ul class="nav nav-tabs nav-justified">
   <li role="presentation" class="
@@ -22,10 +30,4 @@ Consultation
 	active
 @endif
 "><a href="/orders/{{ $consultation->consultation_id }}" role="button">Order</a></li>
-  <li role="presentation" class="
-@if ($tab=='discharge')
-	active
-@endif
-"><a href="/orders/{{ $consultation->consultation_id }}" role="button">Discharge</a></li>
-</ul>
 <br>

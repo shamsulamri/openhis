@@ -12,7 +12,7 @@ class ProductCategory extends Model
 	protected $table = 'product_categories';
 	protected $fillable = [
 				'category_name',
-				'category_color'];
+				'location_code'];
 	
     protected $guarded = ['category_code'];
     protected $primaryKey = 'category_code';
@@ -22,6 +22,7 @@ class ProductCategory extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'category_name'=>'required',
+				'location_code'=>'required',
 			];
 
 			

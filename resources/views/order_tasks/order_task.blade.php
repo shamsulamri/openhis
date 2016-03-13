@@ -1,0 +1,79 @@
+
+<h3>Order Details</h3>
+<br>
+    <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
+        <label for='product_name' class='col-sm-2 control-label'>Product</label>
+        <div class='col-sm-10'>
+            {{ Form::label('product_name', $product->product_name, ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
+        <label for='product_code' class='col-sm-2 control-label'>Code</label>
+        <div class='col-sm-10'>
+            {{ Form::label('product_code', $product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('order_quantity_request')) has-error @endif'>
+        <label for='order_quantity_request' class='col-sm-2 control-label'>Quantity Request</label>
+        <div class='col-sm-10'>
+            {{ Form::label('order_quantity_request', $order_task->order_quantity_request, ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
+        {{ Form::label('order_description', 'Desscription',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::textarea('order_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+        </div>
+    </div>
+<br>
+<h3>Order Outcome</h3>
+<br>
+    <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
+        {{ Form::label('order_quantity_supply', 'Quantity Supply',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::text('order_quantity_supply', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_quantity_supply')) <p class="help-block">{{ $errors->first('order_quantity_supply') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
+        {{ Form::label('order_report', 'Report',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::textarea('order_report', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('order_sale_price')) has-error @endif'>
+        {{ Form::label('order_sale_price', 'Sale Price',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::text('order_sale_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_sale_price')) <p class="help-block">{{ $errors->first('order_sale_price') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('order_discount')) has-error @endif'>
+        {{ Form::label('order_discount', 'Discount',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::text('order_discount', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_discount')) <p class="help-block">{{ $errors->first('order_discount') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('order_completed')) has-error @endif'>
+        {{ Form::label('order_completed', 'Completed',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::checkbox('order_completed', '1') }}
+            @if ($errors->has('order_completed')) <p class="help-block">{{ $errors->first('order_completed') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group'>
+        <div class="col-sm-offset-2 col-sm-10">
+            <a class="btn btn-default" href="/order_tasks/task/{{ $order_task->consultation->consultation_id }}/{{ $order_task->product->category->location_code }}" role="button">Cancel</a>
+            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+        </div>
+    </div>
+            {{ Form::hidden('consultation_id', null) }}

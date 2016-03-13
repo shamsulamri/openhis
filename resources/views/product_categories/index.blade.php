@@ -19,8 +19,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Name</th>
-    <th>Code</th> 
+    <th>category_name</th>
+    <th>category_code</th> 
 	<th></th>
 	</tr>
   </thead>

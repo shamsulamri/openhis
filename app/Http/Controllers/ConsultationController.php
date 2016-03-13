@@ -13,6 +13,7 @@ use Session;
 use Auth;
 use App\Patient;
 use App\Order;
+use App\OrderPost;
 
 class ConsultationController extends Controller
 {
@@ -74,8 +75,13 @@ class ConsultationController extends Controller
 			$consultation->consultation_status = 1;
 			$consultation->save();
 
+			$post = new OrderPost();
+			$post->consultation_id = $id;
+			$post->save();
+
 			Order::where('consultation_id','=',$id)
-					->update(['order_posted'=>1]);
+					->where('post_id','=',0)
+					->update(['post_id'=>$post->post_id]);
 
 			return redirect('/queues');
 	}

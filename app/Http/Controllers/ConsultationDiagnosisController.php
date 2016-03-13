@@ -30,7 +30,7 @@ class ConsultationDiagnosisController extends Controller
 					->select('id', 'a.created_at', 'diagnosis_clinical')
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
 					->where('encounter_id','=',$consultation->encounter_id)
-					->orderBy('a.created_at')
+					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
 			

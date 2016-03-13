@@ -10,6 +10,7 @@ use App\ProductCategory;
 use Log;
 use DB;
 use Session;
+use App\QueueLocation as Location;
 
 
 class ProductCategoryController extends Controller
@@ -36,7 +37,7 @@ class ProductCategoryController extends Controller
 			$product_category = new ProductCategory();
 			return view('product_categories.create', [
 					'product_category' => $product_category,
-				
+					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					]);
 	}
 
@@ -63,7 +64,7 @@ class ProductCategoryController extends Controller
 			$product_category = ProductCategory::findOrFail($id);
 			return view('product_categories.edit', [
 					'product_category'=>$product_category,
-				
+					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					]);
 	}
 
@@ -82,7 +83,7 @@ class ProductCategoryController extends Controller
 			} else {
 					return view('product_categories.edit', [
 							'product_category'=>$product_category,
-				
+					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

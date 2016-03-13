@@ -13,7 +13,14 @@
 <table class="table table-hover">
 	<tbody>
 @foreach ($orders as $order)
-	<tr class='{{ isset($order->cancel_id) ? "warning":"yyy" }}'>
+	<?php $status='' ?>
+	@if (isset($order->cancel_id)) 
+			<?php $status='danger' ?>
+	@endif
+	@if ($order->order_is_discharge==1) 
+			<?php $status='success' ?>
+	@endif
+	<tr class='{{ $status }}'>
 			<td>
 					{{ date('d F, H:i', strtotime($order->created_at)) }}
 			</td>
@@ -31,7 +38,7 @@
 					{{$order->product_code}}
 			</td>
 			<td align='right'>
-					@if ($order->order_posted==1)
+					@if ($order->post_id>0 && $order->order_is_discharge==0)
 						@if (!isset($order->cancel_id))
 							<a class='btn btn-warning btn-xs' href='{{ URL::to('/order_cancellations/create/'. $order->order_id) }}'>Cancel</a>
 						@endif

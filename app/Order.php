@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
 class Order extends Model
 {
@@ -15,6 +16,7 @@ class Order extends Model
 				'product_code',
 				'order_quantity_request',
 				'order_description',
+				'order_report',
 				'order_completed',
 				'order_quantity_supply',
 				'location_code',
@@ -27,21 +29,40 @@ class Order extends Model
     protected $primaryKey = 'order_id';
     public $incrementing = true;
     
+	protected $defaults = [
+			'order_quantity_request'=>'1',
+			'order_quantity_supply'=>'1',
+	];
+
+	public function __construct(array $attributes = array())
+	{
+			    $this->setRawAttributes($this->defaults, true);
+				    parent::__construct($attributes);
+	}
 
 	public function validate($input, $method) {
-			$rules = [
-				'consultation_id'=>'required',
-				'product_code'=>'required',
-				'order_quantity_request'=>'required|min:1',
-			];
+			$rules = [];
+			switch ($method) {
+					case "PUT":
+							
+							break;
+					default:
+							$rules = [
+								'consultation_id'=>'required',
+								'product_code'=>'required',
+								'order_quantity_request'=>'required|min:1',
+							];
+			}
 
 			
 			
 			$messages = [
 				'required' => 'This field is required'
 			];
-			
-			return validator::make($input, $rules ,$messages);
+
+			$validator =  validator::make($input, $rules ,$messages);
+
+			return $validator;
 	}
 
 	public function orderDrug() {
@@ -63,4 +84,31 @@ class Order extends Model
 			return $this->hasOne('App\OrderCancellation','order_id');
 	}
 
+	public function orderInvestigation() 
+	{
+			return $this->hasOne('App\OrderInvestigation','order_id');
+	}
+
+	public static function boot()
+	{
+			parent::boot();
+
+			static::deleted(function($order)
+			{
+				$order->orderInvestigation()->delete();
+				$order->orderDrug()->delete();
+			});
+	}
+
+	public function save(array $options = array())
+	{
+			$changed = $this->isDirty() ? $this->getDirty() : false;
+
+			parent::save();
+
+			if ($changed) 
+			{
+				Log::info($this->product_code);
+			}	
+	}
 }

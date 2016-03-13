@@ -36,6 +36,7 @@
 					{{$queue_location->location_code}}
 			</td>
 			<td align='right'>
+					<a class='btn btn-warning btn-xs' href='{{ URL::to('queue_locations/set/'. $queue_location->location_code) }}'>Set Location</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('queue_locations/delete/'. $queue_location->location_code) }}'>Delete</a>
 			</td>
 	</tr>

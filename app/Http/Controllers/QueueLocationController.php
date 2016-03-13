@@ -23,11 +23,12 @@ class QueueLocationController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 			$queue_locations = DB::table('queue_locations')
 					->orderBy('location_name')
 					->paginate($this->paginateValue);
+			Log::info($this->getLocation($request));
 			return view('queue_locations.index', [
 					'queue_locations'=>$queue_locations
 			]);
@@ -132,5 +133,15 @@ class QueueLocationController extends Controller
 			return view('queue_locations.index', [
 					'queue_locations'=>$queue_locations
 			]);
+	}
+
+	public function setLocation($id) 
+	{
+			return response('Cookie set!')->withCookie(cookie('queue_location',$id));
+	}
+
+	public function getLocation(Request $request)
+	{
+			return $request->cookie('queue_location');
 	}
 }

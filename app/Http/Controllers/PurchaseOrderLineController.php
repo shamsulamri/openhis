@@ -12,7 +12,6 @@ use DB;
 use Session;
 use App\Product;
 
-
 class PurchaseOrderLineController extends Controller
 {
 	public $paginateValue=10;

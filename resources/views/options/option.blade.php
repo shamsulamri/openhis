@@ -21,6 +21,8 @@
 		<a href="{{ url('/consultation_diagnoses') }}">Consultation Diagnoses</a><br>
 		<a href="{{ url('/consultation_procedures') }}">Consultation Procedures</a><br>
 		<a href="{{ url('/consultation_orders') }}">Consultation Orders</a><br>
+		<a href="{{ url('/discharges') }}">Discharges</a><br>
+		<a href="{{ url('/discharge_types') }}">Discharge Types</a><br>
 		<a href="{{ url('/diagnosis_types') }}">Diagnosis Types</a><br>
 		<a href="{{ url('/newborns') }}">Newborns</a><br>
 		<a href="{{ url('/birth_types') }}">Birth Types</a><br>
@@ -50,10 +52,13 @@
 		<a href="{{ url('/bill_materials') }}">Bill of Materials</a><br>
 <h3>Order Management</h3>
 		<a href="{{ url('/orders') }}">Orders</a><br>
+		<a href="{{ url('/order_queues') }}">Order Queues</a><br>
+		<a href="{{ url('/order_tasks') }}">Order Tasks</a><br>
 		<a href="{{ url('/order_products') }}">Order Products</a><br>
 		<a href="{{ url('/order_drugs') }}">Order Drugs</a><br>
 		<a href="{{ url('/order_investigations') }}">Order Investigations</a><br>
 		<a href="{{ url('/order_cancellations') }}">Order Cancellations</a><br>
+		<a href="{{ url('/task_cancellations') }}">Task Cancellations</a><br>
 		<a href="{{ url('/order_forms') }}">Order Forms</a><br>
 		<a href="{{ url('/drugs') }}">Drugs</a><br>
 		<a href="{{ url('/drug_prescriptions') }}">Drug Prescriptions</a><br>

@@ -60,5 +60,9 @@ class Product extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function category()
+	{
+			return $this->belongsTo('App\ProductCategory','category_code');
+	}
 	
 }

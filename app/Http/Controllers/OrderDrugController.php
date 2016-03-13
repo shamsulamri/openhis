@@ -17,6 +17,7 @@ use App\DrugFrequency as Frequency;
 use App\Period;
 use App\Order;
 use App\Consultation;
+use App\Product;
 
 class OrderDrugController extends Controller
 {
@@ -55,6 +56,7 @@ class OrderDrugController extends Controller
 					'consultation' => $consultation,
 					'product' => $product[0],
 					'tab'=>'order',
+					'order'=> new Order(),
 					]);
 	}
 
@@ -64,10 +66,15 @@ class OrderDrugController extends Controller
 			$valid = $order_drug->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
+					$product = Product::find($request->product_code);
 					$order = new Order();
 					$order->consultation_id = $request->consultation_id;
 					$order->product_code = $request->product_code;
 					$order->order_is_discharge = $request->order_is_discharge;
+					$order->order_quantity_request = $request->order_quantity_request;
+					$order->order_description = $request->order_description;
+					$order->order_sale_price = $product->product_sale_price;
+
 					$order->save();
 
 					$order_drug = new OrderDrug($request->all());
@@ -101,6 +108,7 @@ class OrderDrugController extends Controller
 					'consultation' => $consultation,
 					'product' => $product[0],
 					'tab'=>'order',
+					'order'=>$order_drug->order,
 					]);
 	}
 
@@ -108,9 +116,14 @@ class OrderDrugController extends Controller
 	{
 			$order_drug = OrderDrug::findOrFail($id);
 			$order_drug->fill($request->input());
-
 			$order_drug->drug_prn = $request->drug_prn ?: 0;
+			$order_drug->drug_after_meal = $request->drug_after_meal ?: 0;
 
+			$order = Order::find($order_drug->order_id);
+			$order->fill($request->input());
+			$order->order_is_discharge = $request->order_is_discharge ?: 0;
+			$order->save();
+			
 			$valid = $order_drug->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {

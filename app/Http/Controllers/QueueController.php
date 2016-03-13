@@ -23,18 +23,23 @@ class QueueController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
-			$queues = DB::table('queues')
-					->join('encounters', 'encounters.encounter_id','=', 'queues.encounter_id')
-					->join('patients', 'patients.patient_id','=', 'encounters.patient_id')
-					->join('queue_locations', 'queue_locations.location_code','=', 'queues.location_code')
-					->leftJoin('consultations', 'consultations.encounter_id','=', 'queues.encounter_id')
-					->select('queue_id', 'patient_name', 'location_name', 'queues.created_at', 'queues.encounter_id', 'consultation_id')
-					->orderBy('queues.created_at')
+			$queues = DB::table('queues as a')
+					->select('queue_id', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
+					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->join('queue_locations as d', 'd.location_code','=', 'a.location_code')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
+					->whereNull('discharge_id')
+					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
+			
+			Log::info($request->cookie('queue_location'));
 			return view('queues.index', [
-					'queues'=>$queues
+					'queues'=>$queues,
+
 			]);
 	}
 
@@ -81,7 +86,7 @@ class QueueController extends Controller
 
 			return view('queues.edit', [
 					'queue'=>$queue,
-					'location' => Location::where('encounter_code',$encounter->encounter_code)->lists('location_name','location_code')->prepend('',''),
+					'location'=>Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					]);
 	}
 
@@ -96,7 +101,7 @@ class QueueController extends Controller
 			if ($valid->passes()) {
 					$queue->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/queues/id/'.$id);
+					return redirect('/queues');
 			} else {
 					return view('queues.edit', [
 							'queue'=>$queue,
@@ -148,4 +153,5 @@ class QueueController extends Controller
 					'queues'=>$queues
 			]);
 	}
+
 }

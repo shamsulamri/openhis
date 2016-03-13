@@ -7,11 +7,11 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('category_color')) has-error @endif'>
-        {{ Form::label('category_color', 'category_color',['class'=>'col-sm-2 control-label']) }}
+    <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
+        <label for='location_code' class='col-sm-2 control-label'>location_code<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-            {{ Form::text('category_color', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'10']) }}
-            @if ($errors->has('category_color')) <p class="help-block">{{ $errors->first('category_color') }}</p> @endif
+            {{ Form::select('location_code', $location,null, ['class'=>'form-control','maxlength'=>'20']) }}
+            @if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
         </div>
     </div>
 

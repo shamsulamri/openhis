@@ -12,21 +12,18 @@ class OrderInvestigation extends Model
 	protected $table = 'order_investigations';
 	protected $fillable = [
 				'order_id',
-				'investigation_start',
+				'investigation_date',
 				'urgency_code',
 				'investigation_recur',
-				'investigation_period',
+				'investigation_duration',
 				'period_code',
 				'frequency_code'];
 	
 
 	public function validate($input, $method) {
 			$rules = [
-				'order_id'=>'required',
-				'investigation_start'=>'size:10|date_format:d/m/Y',
+				'investigation_date'=>'required|size:10|date_format:d/m/Y',
 			];
-
-			
 			
 			$messages = [
 				'required' => 'This field is required'
@@ -36,17 +33,20 @@ class OrderInvestigation extends Model
 	}
 
 	
-	public function setInvestigationStartAttribute($value)
+	public function setInvestigationDateAttribute($value)
 	{
 		if (DojoUtility::validateDate($value)==true) {
-			$this->attributes['investigation_start'] = DojoUtility::dateWriteFormat($value);
+			$this->attributes['investigation_date'] = DojoUtility::dateWriteFormat($value);
 		}
 	}
 
 
-	public function getInvestigationStartAttribute($value)
+	public function getInvestigationDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
 
+	public function order() {
+		return $this->belongsTo('App\Order','order_id');
+	}	
 }
