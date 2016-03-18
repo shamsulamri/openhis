@@ -33,7 +33,7 @@
 					</a>
 			</td>
 			<td>
-					{{$patient->patient_id}}
+					{{$patient->patient_mrn}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('patients/delete/'. $patient->patient_id) }}'>Delete</a>

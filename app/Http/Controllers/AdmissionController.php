@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Admission;
+use App\Encounter;
 use Log;
 use DB;
 use Session;
@@ -16,7 +17,7 @@ use App\DietTexture;
 use App\DietClass;
 use App\Referral;
 use App\AdmissionType;
-use App\Encounter;
+use Auth;
 
 class AdmissionController extends Controller
 {
@@ -29,8 +30,27 @@ class AdmissionController extends Controller
 
 	public function index()
 	{
-			$admissions = DB::table('admissions')
-					->orderBy('bed_code')
+			$selectFields = ['bed_name', 'a.admission_id','patient_name','d.consultation_id','a.encounter_id','a.user_id','e.discharge_id', 
+					'f.discharge_id as ward_discharge',
+					'arrival_id',	
+					'patient_mrn',
+					'ward_name',
+					'room_name',
+			];
+			$admissions = DB::table('admissions as a')
+					->select($selectFields)
+					->leftJoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftJoin('consultations as d', 'd.encounter_id','=', 'a.encounter_id')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'a.encounter_id')
+					->leftJoin('ward_discharges as f', 'f.encounter_id','=', 'a.encounter_id')
+					->leftJoin('ward_arrivals as g', 'g.encounter_id', '=', 'a.encounter_id')
+					->leftJoin('beds as h', 'h.bed_code', '=', 'a.bed_code')
+					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
+					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
+					->whereNull('f.encounter_id')
+					->groupBy('b.encounter_id')
+					->orderBy('a.bed_code')
 					->paginate($this->paginateValue);
 			return view('admissions.index', [
 					'admissions'=>$admissions
@@ -64,7 +84,7 @@ class AdmissionController extends Controller
 					$admission->admission_id = $request->admission_id;
 					$admission->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/admissions/id/'.$admission->admission_id);
+					return redirect('/admissions');
 			} else {
 					return redirect('/admissions/create')
 							->withErrors($valid)

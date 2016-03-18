@@ -12,7 +12,7 @@ use DB;
 use Session;
 use App\QueueLocation as Location;
 use App\Encounter;
-
+use Auth;
 
 class QueueController extends Controller
 {
@@ -32,14 +32,15 @@ class QueueController extends Controller
 					->join('queue_locations as d', 'd.location_code','=', 'a.location_code')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
 					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
+					->where('a.location_code','=',$request->cookie('queue_location'))
 					->whereNull('discharge_id')
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
+			$location = Location::find($request->cookie('queue_location'));
 			
-			Log::info($request->cookie('queue_location'));
 			return view('queues.index', [
 					'queues'=>$queues,
-
+					'location' => $location,
 			]);
 	}
 

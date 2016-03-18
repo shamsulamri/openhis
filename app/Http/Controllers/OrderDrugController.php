@@ -18,6 +18,7 @@ use App\Period;
 use App\Order;
 use App\Consultation;
 use App\Product;
+use Auth;
 
 class OrderDrugController extends Controller
 {
@@ -97,7 +98,7 @@ class OrderDrugController extends Controller
 			$product = DB::table('products')
 						->select('product_name','product_code')
 						->where('product_code','=',$product_code)->get();
-			
+
 			return view('order_drugs.edit', [
 					'order_drug'=>$order_drug,
 					'unit' => Unit::where('unit_drug',1)->orderBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),

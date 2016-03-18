@@ -38,6 +38,13 @@ class Consultation extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function getConsultationNote()
+	{
+			$note = $this->consultation_note;
+			$note = str_replace(chr(13), "<br>", $note);
+			return $note;
+	}
+
 	public function encounter()
 	{
 			return $this->belongsTo('App\Encounter');
@@ -48,5 +55,31 @@ class Consultation extends Model
 			return $this->hasOne('App\User','id','user_id');
 	}
 
+	public function orders() 
+	{
+			return $this->hasMany('App\Order', 'consultation_id');
+	}
+
+	public function diagnoses()
+	{
+			return $this->hasMany('App\ConsultationDiagnosis', 'consultation_id');
+	}
+
+	public function procedures()
+	{
+			return $this->hasMany('App\ConsultationProcedure', 'consultation_id');
+	}
+
+	public static function boot()
+	{
+			parent::boot();
+
+			static::deleted(function($consultation)
+			{
+				$consultation->orders()->delete();
+				$consultation->diagnoses()->delete();
+				$consultation->procedures()->delete();
+			});
+	}
 
 }

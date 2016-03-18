@@ -67,6 +67,9 @@ class PatientController extends Controller
 			$valid = $patient->validate($request->all(), "demography");
 			if ($valid->passes()) {
 					$patient->save();
+					$mrn = "MRN".str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
+					$patient->patient_mrn = $mrn;
+					$patient->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/patients/'.$patient->patient_id.'/edit?tab=demography');
 			} else {

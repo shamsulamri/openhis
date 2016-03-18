@@ -13,6 +13,7 @@ use Session;
 use App\Product;
 use App\QueueLocation as Location;
 use App\Consultation;
+use Auth;
 
 class OrderController extends Controller
 {
@@ -23,12 +24,51 @@ class OrderController extends Controller
 			$this->middleware('auth');
 	}
 
+	public function getCurrentConsultationId($encounter_id)
+	{
+			$consultation = Consultation::select('consultation_id')
+					->where('encounter_id',$encounter_id)
+					->where('user_id', Auth::user()->id)
+					->orderBy('created_at','desc')
+					->limit(1)
+					->get()[0];
+
+			return $consultation->consultation_id;		
+	}
+
+	public function show($id)
+	{
+			$order = Order::findOrFail($id);
+			$product = Product::find($order->product_code);
+			$consultation = Consultation::findOrFail($order->consultation_id);
+			$current_id = Consultation::orderBy('created_at','desc')->limit(1)->get()[0]->consultation_id;
+			return view('orders.show', [
+				'order'=>$order,
+				'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
+				'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+				'consultation' => $consultation,
+				'tab'=>'order',
+				'product'=>$product,
+				'current_id'=>$current_id,
+			]);
+	}
+
 	public function index($consultation_id)
 	{
 			$consultation = Consultation::findOrFail($consultation_id);
 
+			$fields = ['product_name', 
+					'a.product_code', 
+					'cancel_id', 
+					'a.order_id', 
+					'post_id', 
+					'a.created_at',
+					'order_is_discharge',
+					'order_completed',
+					'order_report',
+					];
 			$orders = DB::table('orders as a')
-					->select('product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'post_id', 'a.created_at','order_is_discharge')
+					->select($fields)
 					->join('products as b','a.product_code','=','b.product_code')
 					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
 					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
@@ -98,7 +138,7 @@ class OrderController extends Controller
 
 			$product = Product::find($order->product_code);
 			$consultation = Consultation::findOrFail($order->consultation_id);
-
+			$current_id = Consultation::orderBy('created_at','desc')->limit(1)->get()[0]->consultation_id;
 		 	if ($product->order_form == '2') {
 					return redirect('/order_drugs/'.$order->orderDrug->id.'/edit');
 			} elseif ($product->order_form == '3') {
@@ -111,6 +151,7 @@ class OrderController extends Controller
 					'consultation' => $consultation,
 					'tab'=>'order',
 					'product'=>$product,
+					'current_id'=>$current_id,
 					]);
 			}
 	}

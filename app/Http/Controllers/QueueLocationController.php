@@ -137,7 +137,10 @@ class QueueLocationController extends Controller
 
 	public function setLocation($id) 
 	{
-			return response('Cookie set!')->withCookie(cookie('queue_location',$id));
+			$location = QueueLocation::find($id);
+			Session::flash('message', 'This terminal has been set to '.$location->location_name);
+			return redirect('/queue_locations')
+				->withCookie(cookie('queue_location',$id));
 	}
 
 	public function getLocation(Request $request)

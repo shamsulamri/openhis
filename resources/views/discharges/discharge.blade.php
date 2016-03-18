@@ -31,11 +31,29 @@
     </div>
 
     <div class='form-group'>
+        {{ Form::label('discharge_orders', 'Discharge Orders',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+		@if (count($discharge_orders)>0)
+			@foreach ($discharge_orders as $order)
+        		{{ Form::label('product', $order->product_name,['class'=>'control-label']) }}
+				<br>
+			@endforeach
+			<br>
+		@else
+			<div class='alert alert-warning'>
+			<strong>Warning !</strong> No discharge order.
+			</div>
+		@endif
+        </div>
+    </div>
+
+    <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
             <a class="btn btn-default" href="/consultations/{{ $consultation->consultation_id }}/edit" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+
 
 	{{ Form::hidden('user_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
 	{{ Form::hidden('consultation_id', null, ['class'=>'form-control','placeholder'=>'',]) }}

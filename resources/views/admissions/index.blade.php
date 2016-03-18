@@ -12,30 +12,54 @@
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <br>
-<a href='/admissions/create' class='btn btn-primary'>Create</a>
-<br>
-<br>
 @if ($admissions->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>bed_code</th>
-    <th>admission_id</th> 
+    <th>MRN</th>
+    <th>Patient</th>
+    <th>Bed</th>
+    <th>Room</th> 
+    <th>Ward</th> 
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($admissions as $admission)
-	<tr>
+	<?php $status='' ?>
+	@if (!is_null($admission->discharge_id)) 
+			<?php $status='success' ?>
+	@endif
+	@if (is_null($admission->arrival_id)) 
+			<?php $status='warning' ?>
+	@endif
+	<tr class='{{ $status }}'>
+			<td>
+					{{$admission->patient_mrn}}
+			</td>
+			<td>
+{{ $admission->ward_discharge }}
+					{{$admission->patient_name}}
+			</td>
 			<td>
 					<a href='{{ URL::to('admissions/'. $admission->admission_id . '/edit') }}'>
-						{{$admission->bed_code}}
+						{{$admission->bed_name}}
 					</a>
 			</td>
 			<td>
-					{{$admission->admission_id}}
+					{{$admission->room_name}}
+			</td>
+			<td>
+					{{$admission->ward_name}}
 			</td>
 			<td align='right'>
+			@if (is_null($admission->arrival_id)) 
+					<a class='btn btn-warning btn-xs' href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}'>Arrive</a>
+			@elseif (!is_null($admission->arrival_id))
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $admission->encounter_id) }}'>Consultation</a>
+			@elseif (!is_null($admission->arriaval_id))
+					<a class='btn btn-warning btn-xs' href='{{ URL::to('ward_discharges/create/'. $admission->encounter_id) }}'>Discharge</a>
+			@endif
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 			</td>
 	</tr>

@@ -149,4 +149,5 @@ class Patient extends Model
 	{
 			return $this->belongsTo('App\Race', 'race_code');
 	}
+
 }

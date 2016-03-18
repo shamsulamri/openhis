@@ -25,6 +25,7 @@ class OrderQueueController extends Controller
 					'a.consultation_id',
 					'c.patient_id',
 					'order_completed',
+					'bed_name',
 					];
 	public function __construct()
 	{
@@ -33,7 +34,7 @@ class OrderQueueController extends Controller
 
 	public function index(Request $request)
 	{
-			$location = $request->locations;
+			$location = $request->cookie('queue_location');
 			$order_queues = DB::table('orders as a')
 					->distinct()
 					->select($this->fields)
@@ -47,6 +48,8 @@ class OrderQueueController extends Controller
 					->leftjoin('queue_locations as i', 'i.location_code', '=', 'h.location_code')
 					->leftjoin('order_posts as j', 'j.post_id', '=', 'a.post_id')
 					->leftjoin('users as k','k.id','=', 'b.user_id')
+					->leftjoin('admissions as l', 'l.encounter_id', '=', 'c.encounter_id')
+					->leftjoin('beds as m', 'm.bed_code', '=', 'l.bed_code')
 					->where('a.post_id','>',0)
 					->whereNull('cancel_id')
 					->where('g.location_code','=',$location)
@@ -154,6 +157,8 @@ class OrderQueueController extends Controller
 					->leftjoin('queue_locations as i', 'i.location_code', '=', 'h.location_code')
 					->leftjoin('order_posts as j', 'j.post_id', '=', 'a.post_id')
 					->leftjoin('users as k','k.id','=', 'b.user_id')
+					->leftjoin('admissions as l', 'l.encounter_id', '=', 'c.encounter_id')
+					->leftjoin('beds as m', 'm.bed_code', '=', 'l.bed_code')
 					->where('a.post_id','>',0)
 					->whereNull('cancel_id')
 					->where('g.location_code','=',$location)

@@ -12,5 +12,28 @@
         </div>
     </div>
 
+	<br>
+@if (count($notes)>0)
+<table class="table table-hover">
+ <thead>
+	<tr> 
+    <th>Seen at</th>
+    <th>Note</th>
+	</tr>
+  </thead>
+	<tbody>
+	@foreach ($notes as $note)
+	<tr>
+			<td class='col-xs-2'>
+					{{ date('d F Y, H:i', strtotime($note->created_at)) }}
+			</td>
+			<td>
+						{!! str_replace(chr(13), "<br>", $note->consultation_notes) !!}
+			</td>
+	</tr>
+@endforeach
+</tbody>
+</table>
+@endif
     {{ Form::hidden('encounter_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
     {{ Form::hidden('user_id', null, ['class'=>'form-control','placeholder'=>'',]) }}

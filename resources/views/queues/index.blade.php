@@ -2,6 +2,7 @@
 
 @section('content')
 <h1>Queue Index</h1>
+<h3>{{ $location->location_name }}</h3>
 <br>
 <form action='/queue/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -19,15 +20,18 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Time</th> 
     <th>Patient</th>
     <th>Location</th>
-    <th>Time</th> 
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($queues as $queue)
 	<tr>
+			<td>
+					{{ date('d F Y, H:i', strtotime($queue->created_at)) }}
+			</td>
 			<td>
 
 					<a href='{{ URL::to('queues/'. $queue->queue_id . '/edit') }}'>
@@ -37,15 +41,8 @@
 			<td>
 					{{$queue->location_name}}
 			</td>
-			<td>
-					{{ date('d F Y, H:i', strtotime($queue->created_at)) }}
-			</td>
 			<td align='right'>
-					@if ($queue->consultation_id>0)
-						<a class='btn btn-primary btn-xs' href='{{ URL::to('consultations/'. $queue->consultation_id .'/edit') }}'>Consult</a>
-					@else
-						<a class='btn btn-primary btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $queue->encounter_id) }}'>Consult</a>
-					@endif
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $queue->encounter_id) }}'>Consult</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
 			</td>
 	</tr>

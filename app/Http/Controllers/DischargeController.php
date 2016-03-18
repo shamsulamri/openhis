@@ -44,10 +44,20 @@ class DischargeController extends Controller
 			$discharge->discharge_date = date("d/m/Y");
 			$discharge->user_id = Auth::user()->id;
 
+			$discharge_orders = DB::table('orders as a')
+					->select(['a.product_code', 'product_name'])
+					->leftJoin('products as b', 'b.product_code','=','a.product_code')
+					->leftJoin('consultations as c', 'c.consultation_id','=','a.consultation_id')
+					->leftJoin('encounters as d', 'd.encounter_id','=','c.encounter_id')
+					->where('order_is_discharge',1)
+					->where('d.encounter_id', $consultation->encounter_id)
+					->get();
+
 			return view('discharges.create', [
 					'discharge' => $discharge,
 					'type' => Type::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'consultation' => $consultation,
+					'discharge_orders' => $discharge_orders
 					]);
 	}
 
@@ -150,5 +160,10 @@ class DischargeController extends Controller
 			return view('discharges.index', [
 					'discharges'=>$discharges
 			]);
+	}
+
+	public function ward($id)
+	{
+			return "ward";
 	}
 }

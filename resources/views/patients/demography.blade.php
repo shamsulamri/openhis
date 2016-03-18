@@ -4,6 +4,8 @@
 <h1>
 {{ $patient->patient_name }}
 </h1>
+<h4>{{ $patient->patient_mrn }}</h4>
+<br>
 @include('common.errors')
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>

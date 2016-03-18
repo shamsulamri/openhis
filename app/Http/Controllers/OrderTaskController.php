@@ -84,6 +84,7 @@ class OrderTaskController extends Controller
 					->where('a.post_id','>',0)
 					->where('g.location_code','=',$location_code)
 					->where('a.consultation_id','=', $consultation_id)
+					->orderBy('cancel_id')
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
 					->orderBy('order_is_discharge','desc')

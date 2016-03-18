@@ -46,4 +46,24 @@ class Encounter extends Model
 			return $this->belongsTo('App\Patient', 'patient_id');
 	}
 	
+	public function admission()
+	{
+			return $this->hasOne('App\Admission', 'encounter_id');
+	}
+
+	public function consultation()
+	{
+			return $this->hasOne('App\Consultation', 'encounter_id');
+	}
+
+	public static function boot()
+	{
+			parent::boot();
+
+			static::deleted(function($encounter)
+			{
+				$encounter->admission()->delete();
+				$encounter->consultation()->delete();
+			});
+	}
 }

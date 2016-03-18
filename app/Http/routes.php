@@ -26,13 +26,27 @@ Route::group(['middleware' => 'web'], function () {
 		Route::auth();
 
 		Route::get('/', function() {
-				return 'Hospital Information System';
+				return view('welcome');
 		});
 
 		Route::get('/options', function() {
 				return view('options.option');
 		});
 
+		Route::get('/ward_arrivals/create/{id}', 'WardArrivalController@create');
+		Route::resource('ward_arrivals', 'WardArrivalController', ['except'=>['create']]);
+		Route::get('/ward_arrivals/id/{id}', 'WardArrivalController@searchById');
+		Route::post('/ward_arrival/search', 'WardArrivalController@search');
+		Route::get('/ward_arrival/search', 'WardArrivalController@search');
+		Route::get('/ward_arrivals/delete/{id}', 'WardArrivalController@delete');
+		
+		Route::get('/ward_discharges/create/{id}', 'WardDischargeController@create');
+		Route::resource('ward_discharges', 'WardDischargeController',['except'=>['create']]);
+		Route::get('/ward_discharges/id/{id}', 'WardDischargeController@searchById');
+		Route::post('/ward_discharge/search', 'WardDischargeController@search');
+		Route::get('/ward_discharge/search', 'WardDischargeController@search');
+		Route::get('/ward_discharges/delete/{id}', 'WardDischargeController@delete');
+		
 		Route::resource('task_cancellations', 'TaskCancellationController',['except'=>['create']]);
 		Route::get('/task_cancellations/create/{id}', 'TaskCancellationController@create');
 		Route::get('/task_cancellations/id/{id}', 'TaskCancellationController@searchById');
@@ -60,6 +74,7 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/discharge_type/search', 'DischargeTypeController@search');
 		Route::get('/discharge_types/delete/{id}', 'DischargeTypeController@delete');
 		
+		Route::get('/discharges/ward/{id}', 'DischargeController@ward');
 		Route::resource('discharges', 'DischargeController', ['except'=>['index','show']]);
 		Route::get('/discharges/id/{id}', 'DischargeController@searchById');
 		Route::get('/discharges/create/{id}', 'DischargeController@create');
@@ -588,15 +603,18 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/consultation_diagnosis/search', 'ConsultationDiagnosisController@search');
 		Route::get('/consultation_diagnoses/delete/{id}', 'ConsultationDiagnosisController@delete');
 
-		Route::resource('consultation_procedures', 'ConsultationProcedureController');
+		Route::resource('consultation_procedures', 'ConsultationProcedureController',['except'=>['index', 'create','show']] );
+		Route::get('/consultation_procedures/{consultation_id}', 'ConsultationProcedureController@index');
 		Route::get('/consultation_procedures/id/{id}', 'ConsultationProcedureController@searchById');
+		Route::get('/consultation_procedures/create/{id}', 'ConsultationProcedureController@create');
 		Route::post('/consultation_procedure/search', 'ConsultationProcedureController@search');
 		Route::get('/consultation_procedure/search', 'ConsultationProcedureController@search');
 		Route::get('/consultation_procedures/delete/{id}', 'ConsultationProcedureController@delete');
 
 		Route::get('/orders/task', 'OrderController@task');
-		Route::resource('orders', 'OrderController', ['except'=>['index', 'create','show']]);
+		Route::resource('orders', 'OrderController', ['except'=>['index', 'create', 'show']]);
 		Route::get('/orders/{consultation_id}', 'OrderController@index');
+		Route::get('/orders/{id}/show', 'OrderController@show');
 		Route::get('/orders/create/{consultation_id}/{product_code}', 'OrderController@create');
 		Route::get('/orders/id/{id}', 'OrderController@searchById');
 		Route::post('/order/search', 'OrderController@search');
@@ -608,4 +626,7 @@ Route::group(['middleware' => 'web'], function () {
 		Route::post('/drug/search', 'DrugController@search');
 		Route::get('/drug/search', 'DrugController@search');
 		Route::get('/drugs/delete/{id}', 'DrugController@delete');
+
+		Route::get('auth/logout', 'Auth\AuthCOntroller@getLogout');
+		
 });

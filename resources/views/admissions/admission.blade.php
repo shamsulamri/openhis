@@ -7,6 +7,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('user_id')) has-error @endif'>
+        <label for='user_id' class='col-sm-2 control-label'>user_id<span style='color:red;'> *</span></label>
+        <div class='col-sm-10'>
+            {{ Form::text('user_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('user_id')) <p class="help-block">{{ $errors->first('user_id') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('bed_code')) has-error @endif'>
         <label for='bed_code' class='col-sm-2 control-label'>bed_code<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>

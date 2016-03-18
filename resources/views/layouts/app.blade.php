@@ -34,8 +34,18 @@
             <div class="collapse navbar-collapse" id="spark-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url('/patients') }}">Patients</a></li>
-                    <li><a href="{{ url('/options') }}">Options</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Options<span class="caret"></span>
+                            </a>
+
+                            <ul class="dropdown-menu" role="menu">
+									<li><a href="{{ url('/patients') }}">Patients</a></li>
+									<li><a href="{{ url('/queues') }}">Queues</a></li>
+									<li><a href="{{ url('/admissions') }}">Admissions</a></li>
+									<li><a href="{{ url('/options') }}">Options</a></li>
+                            </ul>
+                        </li>
 				</ul>
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">

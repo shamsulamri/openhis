@@ -12,6 +12,8 @@
 		<a href="{{ url('/referrals') }}">Referral Types</a><br>
 		<a href="{{ url('/patient_types') }}">Patient Types</a><br>
 		<a href="{{ url('/encounter_types') }}">Encounter Types</a><br>
+		<a href="{{ url('/ward_discharges') }}">Ward Discharges</a><br>
+		<a href="{{ url('/ward_arrivals') }}">Ward Arrivals</a><br>
 <h3>Appointment & Scheduling</h3>
 		<a href="{{ url('/appointments') }}">Appointments</a><br>
 		<a href="{{ url('/appointment_services') }}">Appointment Services</a><br>

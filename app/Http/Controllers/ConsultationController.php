@@ -14,6 +14,7 @@ use Auth;
 use App\Patient;
 use App\Order;
 use App\OrderPost;
+use App\Encounter;
 
 class ConsultationController extends Controller
 {
@@ -36,17 +37,40 @@ class ConsultationController extends Controller
 
 	public function create(Request $request)
 	{
-			$consultation = new Consultation();
-			$consultation->user_id = Auth::user()->id;
-			if (empty($request->encounter_id)==false) {
+			$consultation = DB::select("select consultation_id, encounter_id from consultations 
+					where user_id = ".Auth::user()->id."
+					and consultation_status=0
+					and encounter_id = ".$request->encounter_id);
+
+			$consultation_id=0;
+			if (!empty($consultation)) {
+					$consultation_id = $consultation[0]->consultation_id;
+			}
+
+			$notes = Consultation::where('encounter_id',$request->encounter_id)
+					->where('consultation_id','!=', $consultation_id)
+					->orderBy('created_at','desc')
+					->get();
+			
+			
+			if (empty($consultation)==true) {
+					Log::info("New consultation");
+					$consultation = new Consultation();
+					$consultation->user_id = Auth::user()->id;
 					$consultation->encounter_id = $request->encounter_id;
 					$consultation->save();
 					return view('consultations.edit', [
 						'consultation'=>$consultation,
+						'tab'=>'clinical',
+						'notes'=>$notes,
 					]);
 			} else {
-					return view('consultations.create', [
-						'consultation' => $consultation,
+					Log::info("Edit consultation");
+					$consultation = Consultation::find($consultation[0]->consultation_id);
+					return view('consultations.edit', [
+						'consultation'=>$consultation,
+						'tab'=>'clinical',
+						'notes'=>$notes,
 					]);
 			};
 	}
@@ -89,9 +113,14 @@ class ConsultationController extends Controller
 	public function edit($id) 
 	{
 			$consultation = Consultation::findOrFail($id);
+			$notes = Consultation::where('encounter_id',$consultation->encounter_id)
+					->where('consultation_id','<>', $id)
+					->orderBy('created_at','desc')
+					->get();
 			return view('consultations.edit', [
 					'consultation'=>$consultation,
 					'tab'=>'clinical',
+					'notes'=>$notes,
 					]);
 	}
 

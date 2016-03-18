@@ -12,6 +12,7 @@ class Admission extends Model
 	protected $table = 'admissions';
 	protected $fillable = [
 				'encounter_id',
+				'user_id',
 				'bed_code',
 				'admission_code',
 				'referral_code',
@@ -32,6 +33,7 @@ class Admission extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
+				'user_id'=>'required',
 				'bed_code'=>'required',
 			];
 

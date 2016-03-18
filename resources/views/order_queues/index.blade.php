@@ -38,7 +38,7 @@
 					</a>
 			</td>
 			<td>
-					{{$order->location_name}} 			
+					{{$order->location_name}}{{ $order->bed_name }} 			
 			</td>
 			<td>
 					{{ $order->name }}

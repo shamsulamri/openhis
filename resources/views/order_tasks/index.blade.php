@@ -6,6 +6,7 @@
 @include('orders.panel')
 <form action='/order_task/status' method='post'>
 	<button class="btn btn-primary" type="submit" value="Submit">Update</button>
+	<button class="btn btn-primary">Print All</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 <br>
 <br>
@@ -17,7 +18,9 @@
  <thead>
 	<tr> 
     <th></th>
-    <th>Patient</th>
+    <th></th>
+    <th></th>
+    <th>Product</th>
     <th>Source</th> 
 	<th></th>
 	</tr>
@@ -33,7 +36,17 @@
 			<?php $status='danger' ?>
 	@endif
 	<tr class='{{ $status }}'>
+			<td width='70'>
+					@if (!isset($order->cancel_id))
+					{{ Form::select('prints', array(''=>'','1'=>'1','2'=>'2','3'=>'3'),'1',['class'=>'form-control']) }}
+					@endif
+			</td>
 			<td>
+					@if (!isset($order->cancel_id))
+					<a class='btn btn-primary' href='#'>Print</a>
+					@endif
+			</td>
+			<td width='30'>
 					@if (!isset($order->cancel_id))
 					{{ Form::checkbox($order->order_id, 1, $order->order_completed) }}
 					@endif
@@ -52,7 +65,7 @@
 			</td>
 			<td align='right'>
 					@if ($order->order_completed==0 && !isset($order->cancel_id))
-					<a class='btn btn-warning btn-xs' href='{{ URL::to('/task_cancellations/create/'. $order->order_id) }}'>Cancel</a>
+					<a class='btn btn-warning' href='{{ URL::to('/task_cancellations/create/'. $order->order_id) }}'>Cancel</a>
 					@endif
 			</td>
 	</tr>
