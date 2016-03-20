@@ -33,6 +33,12 @@ Route::group(['middleware' => 'web'], function () {
 				return view('options.option');
 		});
 
+		Route::resource('patient_lists', 'PatientListController');
+		Route::get('/patient_lists/id/{id}', 'PatientListController@searchById');
+		Route::post('/patient_list/search', 'PatientListController@search');
+		Route::get('/patient_list/search', 'PatientListController@search');
+		Route::get('/patient_lists/delete/{id}', 'PatientListController@delete');
+		
 		Route::get('/ward_arrivals/create/{id}', 'WardArrivalController@create');
 		Route::resource('ward_arrivals', 'WardArrivalController', ['except'=>['create']]);
 		Route::get('/ward_arrivals/id/{id}', 'WardArrivalController@searchById');
@@ -582,6 +588,7 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/triage/search', 'TriageController@search');
 		Route::get('/triages/delete/{id}', 'TriageController@delete');
 
+		Route::get('/consultations/progress/{consultation_id}', 'ConsultationController@progress');
 		Route::resource('consultations', 'ConsultationController');
 		Route::get('/consultations/id/{id}', 'ConsultationController@searchById');
 		Route::post('/consultation/search', 'ConsultationController@search');

@@ -25,6 +25,8 @@ class QueueController extends Controller
 
 	public function index(Request $request)
 	{
+			$selectedLocation = $request->cookie('queue_location');
+
 			$queues = DB::table('queues as a')
 					->select('queue_id', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
 					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
@@ -32,15 +34,17 @@ class QueueController extends Controller
 					->join('queue_locations as d', 'd.location_code','=', 'a.location_code')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
 					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
-					->where('a.location_code','=',$request->cookie('queue_location'))
 					->whereNull('discharge_id')
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
-			$location = Location::find($request->cookie('queue_location'));
+
+			$location = Location::find($selectedLocation);
 			
 			return view('queues.index', [
 					'queues'=>$queues,
+					'locations' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location' => $location,
+					'selectedLocation' => "",
 			]);
 	}
 
@@ -72,7 +76,7 @@ class QueueController extends Controller
 					$queue->queue_id = $request->queue_id;
 					$queue->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/queues/id/'.$queue->queue_id);
+					return redirect('/queues');
 			} else {
 					return redirect('/queues/create?encounter_id='.$request->encounter_id)
 							->withErrors($valid)
@@ -129,29 +133,56 @@ class QueueController extends Controller
 	
 	public function search(Request $request)
 	{
-			$queues = DB::table('queues')
-					->join('encounters', 'encounters.encounter_id','=', 'queues.encounter_id')
-					->join('patients', 'patients.patient_id','=', 'encounters.patient_id')
-					->join('queue_locations', 'queue_locations.location_code','=', 'queues.location_code')
-					->where('location_name','like','%'.$request->search.'%')
-					->orWhere('patient_name', 'like','%'.$request->search.'%')
-					->orderBy('queues.created_at')
+			$selectedLocation = $request->locations;
+
+			$queues = DB::table('queues as a')
+					->select('queue_id', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
+					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->join('queue_locations as d', 'd.location_code','=', 'a.location_code')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
+					->where('a.location_code','like','%'.$request->locations.'%')
+					->where('patient_name', 'like','%'.$request->search.'%')
+					->whereNull('discharge_id')
+					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 
+			$location = Location::find($request->cookie('queue_location'));
+			
 			return view('queues.index', [
 					'queues'=>$queues,
-					'search'=>$request->search
-					]);
+					'locations' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'location' => $location,
+					'search' => $request->search,
+					'selectedLocation' => $selectedLocation,
+				]);
 	}
 
-	public function searchById($id)
+	public function searchById(Request $request, $id)
 	{
 			$queues = DB::table('queues')
 					->where('queue_id','=',$id)
 					->paginate($this->paginateValue);
 
+			$queues = DB::table('queues as a')
+					->select('queue_id', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
+					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->join('queue_locations as d', 'd.location_code','=', 'a.location_code')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
+					->where('a.location_code','=',$request->cookie('queue_location'))
+					->whereNull('discharge_id')
+					->where('queue_id','=',$id)
+					->orderBy('a.created_at')
+					->paginate($this->paginateValue);
+
+			$location = Location::find($request->cookie('queue_location'));
+
 			return view('queues.index', [
-					'queues'=>$queues
+					'queues'=>$queues,
+					'location' => $location,
 			]);
 	}
 

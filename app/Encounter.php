@@ -53,7 +53,12 @@ class Encounter extends Model
 
 	public function consultation()
 	{
-			return $this->hasOne('App\Consultation', 'encounter_id');
+			return $this->hasMany('App\Consultation', 'encounter_id');
+	}
+
+	public function discharge()
+	{
+			return $this->hasOne('App\Discharge','encounter_id');
 	}
 
 	public static function boot()

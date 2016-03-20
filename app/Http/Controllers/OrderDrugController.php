@@ -46,6 +46,7 @@ class OrderDrugController extends Controller
 			$product = DB::table('products')
 						->select('product_name','product_code')
 						->where('product_code','=',$product_code)->get();
+			$order = new Order();
 
 			return view('order_drugs.create', [
 					'order_drug' => $order_drug,
@@ -57,7 +58,7 @@ class OrderDrugController extends Controller
 					'consultation' => $consultation,
 					'product' => $product[0],
 					'tab'=>'order',
-					'order'=> new Order(),
+					'order'=> $order, 
 					]);
 	}
 

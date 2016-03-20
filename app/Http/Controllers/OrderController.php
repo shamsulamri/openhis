@@ -73,8 +73,6 @@ class OrderController extends Controller
 					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
 					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
 					->where('encounter_id','=',$consultation->encounter_id)
-					->orderBy('cancel_id')
-					->orderBy('order_is_discharge','desc')
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 

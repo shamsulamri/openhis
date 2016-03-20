@@ -43,6 +43,13 @@ class DischargeController extends Controller
 			$discharge->consultation_id = $id;
 			$discharge->discharge_date = date("d/m/Y");
 			$discharge->user_id = Auth::user()->id;
+			$discharge->type_code = 'home';
+
+			if ($consultation->encounter->encounter_code != 'inpatient') {
+					$orders = Order::where('consultation_id',$consultation->consultation_id)
+							->where('post_id',0)
+							->update(['order_is_discharge'=>1]);
+			}
 
 			$discharge_orders = DB::table('orders as a')
 					->select(['a.product_code', 'product_name'])
@@ -83,7 +90,7 @@ class DischargeController extends Controller
 							->where('post_id','=',0)
 							->update(['post_id'=>$post->post_id, 'order_is_discharge'=>1]);
 
-					Session::flash('message', 'Record successfully created.');
+					Session::flash('message', 'Patient has been discharged.');
 					return redirect('/queues');
 			} else {
 					return redirect('/discharges/create/'.$request->consultation_id)

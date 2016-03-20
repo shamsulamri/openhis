@@ -20,7 +20,7 @@
  <thead>
 	<tr> 
     <th>Name</th>
-    <th>Code</th> 
+    <th>MRN</th> 
 	<th></th>
 	</tr>
   </thead>

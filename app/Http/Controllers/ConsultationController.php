@@ -35,24 +35,39 @@ class ConsultationController extends Controller
 			]);
 	}
 
+	public function progress($consultation_id) {
+			$consultation = Consultation::find($consultation_id);
+			$notes = Consultation::where('encounter_id',$consultation->encounter_id)
+					->orderBy('created_at','desc')
+					->get();
+			return view('consultations.progress', [
+					'notes'=>$notes,
+					'consultation'=>$consultation,
+			]);
+	}
+
 	public function create(Request $request)
 	{
+			$encounter = Encounter::find($request->encounter_id);
+
 			$consultation = DB::select("select consultation_id, encounter_id from consultations 
 					where user_id = ".Auth::user()->id."
 					and consultation_status=0
 					and encounter_id = ".$request->encounter_id);
+
+			if ($encounter->encounter_code!='inpatient') {
+					$consultation = DB::select("select consultation_id, encounter_id from consultations 
+							where user_id = ".Auth::user()->id."
+							and consultation_status=1
+							and encounter_id = ".$request->encounter_id);
+			}
 
 			$consultation_id=0;
 			if (!empty($consultation)) {
 					$consultation_id = $consultation[0]->consultation_id;
 			}
 
-			$notes = Consultation::where('encounter_id',$request->encounter_id)
-					->where('consultation_id','!=', $consultation_id)
-					->orderBy('created_at','desc')
-					->get();
-			
-			
+
 			if (empty($consultation)==true) {
 					Log::info("New consultation");
 					$consultation = new Consultation();
@@ -62,7 +77,6 @@ class ConsultationController extends Controller
 					return view('consultations.edit', [
 						'consultation'=>$consultation,
 						'tab'=>'clinical',
-						'notes'=>$notes,
 					]);
 			} else {
 					Log::info("Edit consultation");
@@ -70,7 +84,6 @@ class ConsultationController extends Controller
 					return view('consultations.edit', [
 						'consultation'=>$consultation,
 						'tab'=>'clinical',
-						'notes'=>$notes,
 					]);
 			};
 	}
@@ -107,20 +120,15 @@ class ConsultationController extends Controller
 					->where('post_id','=',0)
 					->update(['post_id'=>$post->post_id]);
 
-			return redirect('/queues');
+			return redirect('/patient_lists');
 	}
 
 	public function edit($id) 
 	{
 			$consultation = Consultation::findOrFail($id);
-			$notes = Consultation::where('encounter_id',$consultation->encounter_id)
-					->where('consultation_id','<>', $id)
-					->orderBy('created_at','desc')
-					->get();
 			return view('consultations.edit', [
 					'consultation'=>$consultation,
 					'tab'=>'clinical',
-					'notes'=>$notes,
 					]);
 	}
 

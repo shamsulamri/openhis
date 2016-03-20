@@ -41,7 +41,7 @@
 
                             <ul class="dropdown-menu" role="menu">
 									<li><a href="{{ url('/patients') }}">Patients</a></li>
-									<li><a href="{{ url('/queues') }}">Queues</a></li>
+									<li><a href="{{ url('/patient_lists') }}">Patient Lists</a></li>
 									<li><a href="{{ url('/admissions') }}">Admissions</a></li>
 									<li><a href="{{ url('/options') }}">Options</a></li>
                             </ul>
