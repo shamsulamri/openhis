@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use App\Consultation;
 
 class Encounter extends Model
 {
@@ -61,6 +62,11 @@ class Encounter extends Model
 			return $this->hasOne('App\Discharge','encounter_id');
 	}
 
+	public function queue()
+	{
+			return $this->hasOne('App\Queue', 'encounter_id');
+	}
+
 	public static function boot()
 	{
 			parent::boot();
@@ -71,4 +77,8 @@ class Encounter extends Model
 				$encounter->consultation()->delete();
 			});
 	}
+
+	
+
+
 }

@@ -19,23 +19,39 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Name</th>
-    <th>Code</th> 
-	<th></th>
+    <th>Date</th>
+    <th>Name</th> 
+    <th>Room/Bed</th> 
+	<th>Complain</th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($consultations as $consultation)
-	<tr>
+	<tr height='80'>
+			<td>
+					{{ date('d F, H:i', strtotime($consultation->created_at)) }}
+			</td>
+			<td>
+					{{$consultation->encounter->patient->patient_name}}<br>
+					<small>{{$consultation->encounter->patient->patient_mrn}}</small>
+			</td>
+			<td>
+					@if ($consultation->encounter->encounter_code=='inpatient')
+						{{ $consultation->encounter->admission->bed->bed_name }} <br>
+						<small>{{ $consultation->encounter->admission->bed->ward->ward_name }}</small> 
+					@else
+						{{ $consultation->encounter->queue->location->location_name }}
+					@endif
+			</td>
 			<td>
 					<a href='{{ URL::to('consultations/'. $consultation->consultation_id . '/edit') }}'>
-						{{$consultation->consultation_notes}}
+						<small>
+						{!! str_replace(chr(13), "<br>", $consultation->consultation_notes) !!}
+						</small>
 					</a>
 			</td>
-			<td>
-					{{$consultation->consultation_id}}
-			</td>
 			<td align='right'>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Edit Consultation</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('consultations/delete/'. $consultation->consultation_id) }}'>Delete</a>
 			</td>
 	</tr>

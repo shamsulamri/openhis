@@ -12,6 +12,7 @@ use DB;
 use Session;
 use App\QueueLocation as Location;
 use Auth;
+use App\Admission;
 
 class PatientListController extends Controller
 {
@@ -26,14 +27,15 @@ class PatientListController extends Controller
 	{
 			$selectedLocation = $request->cookie('queue_location');
 
-			$outpatient_lists = DB::table('queues as a')
+			$outpatients = DB::table('queues as a')
 					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
-					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
-					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
-					->join('queue_locations as d', 'd.location_code','=', 'a.location_code')
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
 					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
 					->where('a.location_code',$request->cookie('queue_location'))
+					->whereNull('discharge_id')
 					->orWhere('a.location_code','pool')
 					->orderBy('discharge_id')
 					->orderBy('a.created_at')
@@ -41,10 +43,17 @@ class PatientListController extends Controller
 
 			$location = Location::find($selectedLocation);
 
+			$inpatients = Admission::where('admissions.user_id', Auth::user()->id)
+							->leftJoin('encounters as b', 'b.encounter_id','=','admissions.encounter_id')
+							->leftJoin('discharges as c', 'c.encounter_id', '=', 'b.encounter_id')
+							->whereNull('discharge_id')
+							->paginate($this->paginateValue);
+
 			return view('patient_lists.index', [
-					'outpatient_lists'=>$outpatient_lists,
+					'outpatient_lists'=>$outpatients,
 					'user_id' => Auth::user()->id,
 					'location' => $location,
+					'inpatients' => $inpatients,
 			]);
 	}
 

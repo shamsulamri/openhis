@@ -28,16 +28,21 @@ Progress Notes
 					{!! str_replace(chr(13), "<br>", $note->consultation_notes) !!}
 					<br>
 					@if (count($note->diagnoses)>0)
-							@foreach ($note->diagnoses as $diagnosis)
 							<h4>
+							@foreach ($note->diagnoses as $diagnosis)
 							<span class="label label-primary">
-							{{ $diagnosis->diagnosis_clinical }}&nbsp;
-							</span></h4> 
+							{{ $diagnosis->diagnosis_clinical }}
+							</span> &nbsp;
 							@endforeach
+							</h4>
 					@endif
 					@if (count($note->orders)>0)
 							@foreach ($note->orders as $order)
-							<span class="label label-success">
+								@if (!empty($order->orderCancel->cancel_id))
+									<span class="label label-danger">
+								@else
+									<span class="label label-success">
+								@endif
 							{{ $order->product->product_name }}
 							</span>&nbsp; 
 							@endforeach
@@ -48,5 +53,6 @@ Progress Notes
 </tbody>
 </table>
 @endif
-
+<br>
+{{ $notes->render() }}
 @endsection

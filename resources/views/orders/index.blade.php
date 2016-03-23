@@ -14,9 +14,6 @@
 	<tbody>
 @foreach ($orders as $order)
 	<?php $status='' ?>
-	@if (isset($order->cancel_id)) 
-			<?php $status='danger' ?>
-	@endif
 	@if ($order->order_is_discharge==1) 
 			<?php $status='warning' ?>
 	@endif
@@ -28,14 +25,15 @@
 					{{ date('d F, H:i', strtotime($order->created_at)) }}
 			</td>
 			<td>
-			@if ($order->order_completed==0) 
-					@if ($order->post_id>0)
-					<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>
-					@elseif ($order->post_id==0)
-					<a href='{{ URL::to('orders/'. $order->order_id . '/edit') }}'>
-					@else
+			@if (isset($order->cancel_id)) 
 					<a href='{{ URL::to('order_cancellations/'. $order->cancel_id) }}'>
-					CANCEL: 
+					<strike>	{{ ucfirst(strtoupper($order->product_name)) }}</strike>
+					</a>
+			@elseif ($order->order_completed==0) 
+					@if ($order->post_id>0)
+						<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>
+					@elseif ($order->post_id==0)
+						<a href='{{ URL::to('orders/'. $order->order_id . '/edit') }}'>
 					@endif
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>

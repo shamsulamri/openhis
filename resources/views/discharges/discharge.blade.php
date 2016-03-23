@@ -1,5 +1,6 @@
-
-    <div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
+<h2>Discharge</h2>
+<br>
+	<div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
         {{ Form::label('discharge_date', 'Date',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::text('discharge_date', null, ['class'=>'form-control','placeholder'=>'',]) }}

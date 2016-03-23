@@ -36,6 +36,7 @@ class AdmissionController extends Controller
 					'patient_mrn',
 					'ward_name',
 					'room_name',
+					'a.user_id',
 			];
 			$admissions = DB::table('admissions as a')
 					->select($selectFields)
@@ -53,7 +54,8 @@ class AdmissionController extends Controller
 					->orderBy('a.bed_code')
 					->paginate($this->paginateValue);
 			return view('admissions.index', [
-					'admissions'=>$admissions
+					'admissions'=>$admissions,
+					'user'=>Auth::user(),
 			]);
 	}
 

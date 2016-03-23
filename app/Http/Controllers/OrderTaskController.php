@@ -61,9 +61,10 @@ class OrderTaskController extends Controller
 	public function task($consultation_id, $location_code)
 	{
 			$consultation = Consultation::find($consultation_id);
+			Log::info($location_code);
 					
 			$fields = ['patient_name', 'product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'a.post_id', 'a.created_at','order_is_discharge',
-					'location_name',	
+					'i.location_name',	
 					'cancel_id',
 					'j.created_at',
 					'k.name',
@@ -82,7 +83,7 @@ class OrderTaskController extends Controller
 					->leftjoin('order_posts as j', 'j.post_id', '=', 'a.post_id')
 					->leftjoin('users as k','k.id','=', 'b.user_id')
 					->where('a.post_id','>',0)
-					->where('g.location_code','=',$location_code)
+					->where('a.location_code','=',$location_code)
 					->where('a.consultation_id','=', $consultation_id)
 					->orderBy('cancel_id')
 					->orderBy('a.post_id')

@@ -27,9 +27,10 @@ class ConsultationController extends Controller
 
 	public function index()
 	{
-			$consultations = DB::table('consultations')
-					->orderBy('consultation_status')
+			$consultations = Consultation::where('user_id', Auth::user()->id)
+					->orderBy('created_at','desc')
 					->paginate($this->paginateValue);
+
 			return view('consultations.index', [
 					'consultations'=>$consultations
 			]);
@@ -37,9 +38,10 @@ class ConsultationController extends Controller
 
 	public function progress($consultation_id) {
 			$consultation = Consultation::find($consultation_id);
-			$notes = Consultation::where('encounter_id',$consultation->encounter_id)
+			$notes = Consultation::where('patient_id', $consultation->patient_id)
 					->orderBy('created_at','desc')
-					->get();
+					->paginate(3);
+			
 			return view('consultations.progress', [
 					'notes'=>$notes,
 					'consultation'=>$consultation,
@@ -73,6 +75,8 @@ class ConsultationController extends Controller
 					$consultation = new Consultation();
 					$consultation->user_id = Auth::user()->id;
 					$consultation->encounter_id = $request->encounter_id;
+					$consultation->patient_id = $encounter->patient_id;
+					$consultation->consultation_status=2;
 					$consultation->save();
 					return view('consultations.edit', [
 						'consultation'=>$consultation,
@@ -192,5 +196,4 @@ class ConsultationController extends Controller
 					'consultations'=>$consultations
 			]);
 	}
-	
 }

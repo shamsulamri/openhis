@@ -42,7 +42,6 @@
 					{{$queue->location_name}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $queue->encounter_id) }}'>Consult</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
 			</td>
 	</tr>

@@ -55,4 +55,8 @@ class Discharge extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
+	public function consultation()
+	{
+			return $this->belongsTo('App\Consultation','consultation_id', 'consultation_id');
+	}
 }

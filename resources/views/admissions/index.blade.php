@@ -55,10 +55,8 @@
 			<td align='right'>
 			@if (is_null($admission->arrival_id)) 
 					<a class='btn btn-warning btn-xs' href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}'>Arrive</a>
-			@elseif (!is_null($admission->arrival_id))
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $admission->encounter_id) }}'>Consultation</a>
-			@elseif (!is_null($admission->arriaval_id))
-					<a class='btn btn-warning btn-xs' href='{{ URL::to('ward_discharges/create/'. $admission->encounter_id) }}'>Discharge</a>
+			@elseif (!is_null($admission->discharge_id))
+					<a class='btn btn-success btn-xs' href='{{ URL::to('ward_discharges/create/'. $admission->encounter_id) }}'>Discharge</a>
 			@endif
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 			</td>

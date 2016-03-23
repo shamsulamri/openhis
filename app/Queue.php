@@ -32,5 +32,9 @@ class Queue extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function location()
+	{
+			return $this->hasOne('App\QueueLocation', 'location_code', 'location_code');
+	}
 	
 }

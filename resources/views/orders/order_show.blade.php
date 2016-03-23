@@ -22,6 +22,6 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/orders/{{ $current_id }}" role="button">Back</a>
+            <a class="btn btn-default" href="/orders/{{ $consultation->consultation_id }}" role="button">Back</a>
         </div>
     </div>

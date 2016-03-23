@@ -1,6 +1,6 @@
 	<div class='form-group  @if ($errors->has('consultation_notes')) has-error @endif'>
         <div class='col-sm-12'>
-        {{ Form::label('Notes', 'Notes',['class'=>'control-label']) }}
+			<br>
             {{ Form::textarea('consultation_notes', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'65535']) }}
             @if ($errors->has('consultation_notes')) <p class="help-block">{{ $errors->first('consultation_notes') }}</p> @endif
         </div>
@@ -14,4 +14,5 @@
 
 	<br>
     {{ Form::hidden('encounter_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
+    {{ Form::hidden('patient_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
     {{ Form::hidden('user_id', null, ['class'=>'form-control','placeholder'=>'',]) }}

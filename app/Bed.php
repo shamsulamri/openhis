@@ -48,5 +48,9 @@ class Bed extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	
+	public function ward()
+	{
+			return $this->belongsTo('App\Ward','ward_code', 'ward_code');
+	}
+
 }

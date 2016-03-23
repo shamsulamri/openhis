@@ -13,6 +13,7 @@ class Consultation extends Model
 	protected $table = 'consultations';
 	protected $fillable = [
 				'encounter_id',
+				'patient_id',
 				'user_id',
 				'consultation_status',
 				'consultation_notes',
@@ -26,6 +27,7 @@ class Consultation extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
+				'patient_id'=>'required',
 				'user_id'=>'required',
 			];
 

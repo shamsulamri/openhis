@@ -91,7 +91,7 @@ class DischargeController extends Controller
 							->update(['post_id'=>$post->post_id, 'order_is_discharge'=>1]);
 
 					Session::flash('message', 'Patient has been discharged.');
-					return redirect('/queues');
+					return redirect('/patient_lists');
 			} else {
 					return redirect('/discharges/create/'.$request->consultation_id)
 							->withErrors($valid)
@@ -102,9 +102,21 @@ class DischargeController extends Controller
 	public function edit($id) 
 	{
 			$discharge = Discharge::findOrFail($id);
+			$consultation = $discharge->consultation;
+
+			$discharge_orders = DB::table('orders as a')
+					->select(['a.product_code', 'product_name'])
+					->leftJoin('products as b', 'b.product_code','=','a.product_code')
+					->leftJoin('consultations as c', 'c.consultation_id','=','a.consultation_id')
+					->leftJoin('encounters as d', 'd.encounter_id','=','c.encounter_id')
+					->where('order_is_discharge',1)
+					->where('d.encounter_id', $consultation->encounter_id)
+					->get();
 			return view('discharges.edit', [
 					'discharge'=>$discharge,
 					'type' => Type::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'discharge_orders' => $discharge_orders,
+					'consultation' => $consultation,
 					]);
 	}
 
@@ -119,7 +131,7 @@ class DischargeController extends Controller
 			if ($valid->passes()) {
 					$discharge->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/discharges/id/'.$id);
+					return redirect('/consultations');
 			} else {
 					return view('discharges.edit', [
 							'discharge'=>$discharge,

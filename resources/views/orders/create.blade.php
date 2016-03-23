@@ -6,7 +6,7 @@
 @include('common.errors')
 
 {{ Form::model($order, ['url'=>'orders', 'class'=>'form-horizontal']) }} 
-	@include('orders.order_show')
+	@include('orders.order')
 {{ Form::close() }}
 
 @endsection
