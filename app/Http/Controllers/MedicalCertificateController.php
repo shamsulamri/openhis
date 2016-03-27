@@ -10,7 +10,7 @@ use App\MedicalCertificate;
 use Log;
 use DB;
 use Session;
-
+use App\Consultation;
 
 class MedicalCertificateController extends Controller
 {
@@ -31,17 +31,27 @@ class MedicalCertificateController extends Controller
 			]);
 	}
 
-	public function create()
+	public function create(Request $request)
 	{
+			$consultation = Consultation::find($request->consultation_id);
+			$medical_certificate = MedicalCertificate::where('encounter_id','=',$consultation->encounter->encounter_id)->get();
+			if (count($medical_certificate)>0) {
+					return redirect('/medical_certificates/'.$medical_certificate[0]->mc_id.'/edit');
+			}
+
 			$medical_certificate = new MedicalCertificate();
+			$medical_certificate->encounter_id = $consultation->encounter->encounter_id;
 			return view('medical_certificates.create', [
 					'medical_certificate' => $medical_certificate,
-				
+					'consultation' => $consultation,
+					'patient' => $consultation->encounter->patient,
+					'consultOption' => 'medical_certificate',
 					]);
 	}
 
 	public function store(Request $request) 
 	{
+			$consultation = Consultation::find($request->consultation_id);
 			$medical_certificate = new MedicalCertificate();
 			$valid = $medical_certificate->validate($request->all(), $request->_method);
 
@@ -50,9 +60,9 @@ class MedicalCertificateController extends Controller
 					$medical_certificate->mc_id = $request->mc_id;
 					$medical_certificate->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/medical_certificates/id/'.$medical_certificate->mc_id);
+					return redirect('/medical_certificates/'.$medical_certificate->mc_id.'/edit');
 			} else {
-					return redirect('/medical_certificates/create')
+					return redirect('/medical_certificates/create?consultation_id='.$consultation->consultation_id)
 							->withErrors($valid)
 							->withInput();
 			}
@@ -61,9 +71,12 @@ class MedicalCertificateController extends Controller
 	public function edit($id) 
 	{
 			$medical_certificate = MedicalCertificate::findOrFail($id);
+			$consultation = Consultation::find($medical_certificate->consultation_id);
 			return view('medical_certificates.edit', [
 					'medical_certificate'=>$medical_certificate,
-				
+					'consultation' => $consultation,
+					'patient' => $consultation->encounter->patient,
+					'consultOption' => 'medical_certificate',
 					]);
 	}
 
@@ -78,11 +91,14 @@ class MedicalCertificateController extends Controller
 			if ($valid->passes()) {
 					$medical_certificate->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/medical_certificates/id/'.$id);
+					return redirect('/medical_certificates/'.$id.'/edit');
 			} else {
+					$consultation = $medical_certificate->consultation;
 					return view('medical_certificates.edit', [
 							'medical_certificate'=>$medical_certificate,
-				
+							'consultation' => $consultation,
+							'patient' => $consultation->encounter->patient,
+							'consultOption' => 'medical_certificate',
 							])
 							->withErrors($valid);			
 			}

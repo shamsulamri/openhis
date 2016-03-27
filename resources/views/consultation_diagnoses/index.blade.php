@@ -4,7 +4,6 @@
 @include('patients.label')
 @include('consultations.panel')
 @if (Session::has('message'))
-	<br>
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <a href='/consultation_diagnoses/create/{{ $consultation->consultation_id }}' class='btn btn-primary'>Create</a>

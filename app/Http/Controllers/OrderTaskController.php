@@ -91,6 +91,7 @@ class OrderTaskController extends Controller
 					->orderBy('order_is_discharge','desc')
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
+			
 			$ids='';
 			foreach ($order_tasks as $task) {
 					$ids .= (string)$task->order_id.",";
@@ -99,6 +100,7 @@ class OrderTaskController extends Controller
 			return view('order_tasks.index', [
 					'order_tasks'=>$order_tasks,
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
 					'ids'=>$ids,
 			]);
 	}

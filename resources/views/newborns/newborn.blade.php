@@ -1,14 +1,8 @@
 
-    <div class='form-group  @if ($errors->has('encounter_id')) has-error @endif'>
-        <label for='encounter_id' class='col-sm-2 control-label'>encounter_id<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-            {{ Form::text('encounter_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('encounter_id')) <p class="help-block">{{ $errors->first('encounter_id') }}</p> @endif
-        </div>
-    </div>
-
+<h2>Newborn Registration</h2>
+<br>
  	<div class='form-group  @if ($errors->has('user_id')) has-error @endif'>
-        <label for='user_id' class='col-sm-2 control-label'>user_id<span style='color:red;'> *</span></label>
+        <label for='user_id' class='col-sm-2 control-label'>user_id</label>
         <div class='col-sm-10'>
             {{ Form::text('user_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('user_id')) <p class="help-block">{{ $errors->first('user_id') }}</p> @endif
@@ -181,3 +175,5 @@
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+    {{ Form::hidden('encounter_id', null) }}
+    {{ Form::hidden('consultation_id', $consultation->consultation_id) }}

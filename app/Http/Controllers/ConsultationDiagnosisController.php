@@ -37,7 +37,9 @@ class ConsultationDiagnosisController extends Controller
 			return view('consultation_diagnoses.index', [
 					'consultation_diagnoses'=>$consultation_diagnoses,
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'diagnosis',
+					'consultOption' => 'consultation',
 			]);
 	}
 
@@ -54,7 +56,9 @@ class ConsultationDiagnosisController extends Controller
 					'consultation_diagnosis' => $consultation_diagnosis,
 					'diagnosis_type' => DiagnosisType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'diagnosis',
+					'consultOption' => 'consultation',
 					]);
 	}
 
@@ -85,7 +89,9 @@ class ConsultationDiagnosisController extends Controller
 					'consultation_diagnosis'=>$consultation_diagnosis,
 					'diagnosis_type' => DiagnosisType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'diagnosis',
+					'consultOption' => 'consultation',
 					]);
 	}
 

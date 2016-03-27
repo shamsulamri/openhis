@@ -1,26 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Newborn Index</h1>
-<br>
-<form action='/newborn/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-</form>
+@include('patients.label')
+<h2>Newborn Registration</h2>
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
-<a href='/newborns/create' class='btn btn-primary'>Create</a>
-<br>
+<a href='/newborns/create?id={{ $consultation->consultation_id }}' class='btn btn-primary'>Create</a>
 <br>
 @if ($newborns->total()>0)
+<br>
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>encounter_id</th>
-    <th>newborn_id</th> 
+    <th>Date</th>
+    <th>Delivery Mode</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -28,12 +23,12 @@
 @foreach ($newborns as $newborn)
 	<tr>
 			<td>
-					<a href='{{ URL::to('newborns/'. $newborn->newborn_id . '/edit') }}'>
-						{{$newborn->encounter_id}}
+					<a href='{{ URL::to('newborns/'. $newborn->newborn_id . '/edit?consultation_id='.$consultation->consultation_id) }}'>
+						{{ date('d F, H:i', strtotime($newborn->created_at)) }}
 					</a>
 			</td>
 			<td>
-					{{$newborn->newborn_id}}
+					{{$newborn->deliveryMode->delivery_name }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('newborns/delete/'. $newborn->newborn_id) }}'>Delete</a>

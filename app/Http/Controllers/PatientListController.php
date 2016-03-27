@@ -43,17 +43,24 @@ class PatientListController extends Controller
 
 			$location = Location::find($selectedLocation);
 
-			$inpatients = Admission::where('admissions.user_id', Auth::user()->id)
-							->leftJoin('encounters as b', 'b.encounter_id','=','admissions.encounter_id')
-							->leftJoin('discharges as c', 'c.encounter_id', '=', 'b.encounter_id')
+			$inpatients = DB::table('admissions as a')
+							->select(['patient_mrn', 'patient_name', 'a.created_at', 'a.encounter_id', 'b.patient_id', 'bed_name', 'ward_name', 'room_name'])
+							->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
+							->leftJoin('discharges as c', 'c.encounter_id', '=', 'a.encounter_id')
+							->leftJoin('patients as d', 'd.patient_id', '=', 'b.patient_id')
+							->leftJoin('beds as e', 'e.bed_code', '=', 'a.bed_code')
+							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
+							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
+							->where('a.user_id', Auth::user()->id)
 							->whereNull('discharge_id')
-							->paginate($this->paginateValue);
+							->get();
 
 			return view('patient_lists.index', [
 					'outpatient_lists'=>$outpatients,
 					'user_id' => Auth::user()->id,
 					'location' => $location,
 					'inpatients' => $inpatients,
+					'admission' => new Admission(),
 			]);
 	}
 

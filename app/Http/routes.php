@@ -516,6 +516,8 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/queue/search', 'QueueController@search');
 		Route::get('/queues/delete/{id}', 'QueueController@delete');
 
+		Route::get('/diet/{id}/edit', 'AdmissionController@diet');
+		Route::get('/admission/dietUpdate', 'AdmissionController@dietUpdate');
 		Route::resource('admissions', 'AdmissionController');
 		Route::get('/admissions/id/{id}', 'AdmissionController@searchById');
 		Route::post('/admission/search', 'AdmissionController@search');

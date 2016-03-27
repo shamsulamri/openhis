@@ -42,7 +42,6 @@ class Newborn extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
-				'user_id'=>'required',
 			];
 
 			
@@ -54,5 +53,9 @@ class Newborn extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function deliveryMode()
+	{
+			return $this->belongsTo('App\DeliveryMode','delivery_code');
+	}
 	
 }

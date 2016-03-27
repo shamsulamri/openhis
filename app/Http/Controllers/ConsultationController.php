@@ -45,6 +45,8 @@ class ConsultationController extends Controller
 			return view('consultations.progress', [
 					'notes'=>$notes,
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
+					'consultOption' => 'consultation',
 			]);
 	}
 
@@ -80,6 +82,7 @@ class ConsultationController extends Controller
 					$consultation->save();
 					return view('consultations.edit', [
 						'consultation'=>$consultation,
+						'patient'=>$consultation->encounter->patient,
 						'tab'=>'clinical',
 					]);
 			} else {
@@ -132,7 +135,9 @@ class ConsultationController extends Controller
 			$consultation = Consultation::findOrFail($id);
 			return view('consultations.edit', [
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'clinical',
+					'consultOption'=>'consultation',
 					]);
 	}
 
@@ -146,8 +151,9 @@ class ConsultationController extends Controller
 
 			if ($valid->passes()) {
 					$consultation->save();
-					Session::flash('message', 'Record successfully updated.');
-					return redirect('/consultations/'.$id.'/edit');
+					//Session::flash('message', 'Record successfully updated.');
+					//return redirect('/consultations/'.$id.'/edit');
+					return redirect('/consultation_diagnoses/'.$id);
 			} else {
 					return view('consultations.edit', [
 							'consultation'=>$consultation,

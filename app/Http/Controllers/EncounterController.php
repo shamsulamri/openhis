@@ -33,7 +33,7 @@ class EncounterController extends Controller
 					->join('patients','patients.patient_id','=','encounters.patient_id')
 					->join('ref_encounter_types', 'ref_encounter_types.encounter_code','=','encounters.encounter_code')
 					->select('encounter_id','encounters.encounter_code', 'patient_name', 'encounters.patient_id', 'encounter_name','encounters.created_at')
-					->orderBy('created_at')
+					->orderBy('created_at','desc')
 					->paginate($this->paginateValue);
 
 			return view('encounters.index', [

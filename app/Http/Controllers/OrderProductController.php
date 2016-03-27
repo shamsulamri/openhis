@@ -36,6 +36,7 @@ class OrderProductController extends Controller
 			return view('order_products.index', [
 					'order_products'=>$order_products,
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 			]);
 	}
@@ -144,6 +145,7 @@ class OrderProductController extends Controller
 					'order_products'=>$order_products,
 					'search'=>$request->search,
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					]);
 	}

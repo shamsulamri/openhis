@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
-{{ $patient->patient_name }}
-</h1>
-<br>
+@include('patients.id')
+<div class='page-header'>
+		<h2>Patient View</h2>
+</div>
 <h4>
 <a href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id ) }}'>Start Encounter</a>
 <br>

@@ -16,11 +16,10 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>MRN</th>
+    <th>Date</th>
     <th>Patient</th>
+    <th>Consultant</th>
     <th>Bed</th>
-    <th>Room</th> 
-    <th>Ward</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -35,21 +34,21 @@
 	@endif
 	<tr class='{{ $status }}'>
 			<td>
-					{{$admission->patient_mrn}}
-			</td>
-			<td>
-{{ $admission->ward_discharge }}
-					{{$admission->patient_name}}
+					{{ date('d F, H:i', strtotime($admission->created_at)) }}
 			</td>
 			<td>
 					<a href='{{ URL::to('admissions/'. $admission->admission_id . '/edit') }}'>
-						{{$admission->bed_name}}
+					{{$admission->patient_name}}
 					</a>
+					<br>
+					<small>{{$admission->patient_mrn}}</small>
 			</td>
 			<td>
-					{{$admission->room_name}}
+					{{$admission->name}}
 			</td>
 			<td>
+					{{$admission->bed_name}} / {{$admission->room_name}} 
+					<br>
 					{{$admission->ward_name}}
 			</td>
 			<td align='right'>

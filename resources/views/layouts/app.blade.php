@@ -34,15 +34,34 @@
             <div class="collapse navbar-collapse" id="spark-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
-						<li><a href="{{ url('/patients') }}">Patients</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                Physician<span class="caret"></span>
+                                Patient<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+									<li><a href="{{ url('/patients') }}">Patients</a></li>
+									<li><a href="{{ url('/encounters') }}">Encounters</a></li>
+									<li><a href="{{ url('/queues') }}">Queues</a></li>
+									<li><a href="{{ url('/admissions') }}">Admissions</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Consultation<span class="caret"></span>
                             </a>
 
                             <ul class="dropdown-menu" role="menu">
-									<li><a href="{{ url('/patient_lists') }}">Patient Lists</a></li>
+									<li><a href="{{ url('/patient_lists') }}">Patient List</a></li>
 									<li><a href="{{ url('/consultations') }}">Consultations</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Order<span class="caret"></span>
+                            </a>
+
+                            <ul class="dropdown-menu" role="menu">
+									<li><a href="{{ url('/order_queues') }}">Queues</a></li>
                             </ul>
                         </li>
 				</ul>

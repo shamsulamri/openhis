@@ -1,23 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Patient List Index</h1>
+<h1>Patient List</h1>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <br>
 <div class='panel panel-default'>
 <div class='panel-heading'>
-<h4 class='panel-title'>Outpatient</h4>
+<h4 class='panel-title'><strong>Outpatient</strong></h4>
 </div>
 <div class='panel-body'>
 @if ($outpatient_lists->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Date</th> 
     <th>MRN</th>
     <th>Patient</th>
-    <th>Time</th> 
 	<th>Room</th>
 	</tr>
   </thead>
@@ -33,21 +33,21 @@
 				@endif
 			@endif
 			<tr class='{{ $status }}'>
+					<td width='15%'>
+							{{ date('d F, H:i', strtotime($list->created_at)) }}
+					</td>
 					<td width='10%'>
 							{{ $list->patient_mrn }}
 					</td>
 					<td>
 						{{$list->patient_name}}
 					</td>
-					<td width='20%'>
-							{{ date('d F, H:i', strtotime($list->created_at)) }}
-					</td>
 					<td>
 						{{$list->location_name}}
 					</td>
 					<td align='right'>
 							@if (empty($list->discharge_id))
-								@if ($list->consultation_status==2)
+								@if ($list->consultation_status==1)
 									@if ($user_id == $list->user_id)
 											<a class='btn btn-warning btn-xs' href='{{ URL::to('consultations/'.$list->consultation_id.'/edit') }}'>Resume Consultation</a>
 									@endif

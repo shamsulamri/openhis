@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
-New Medical Certificate
-</h1>
+@include('patients.label')
 @include('common.errors')
 <br>
 {{ Form::model($medical_certificate, ['url'=>'medical_certificates', 'class'=>'form-horizontal']) }} 

@@ -33,12 +33,18 @@ class Admission extends Model
 	public $openConsultationId=0;    
 
 	public function validate($input, $method) {
-			$rules = [
-				'encounter_id'=>'required',
-				'user_id'=>'required',
-				'bed_code'=>'required',
-			];
-
+			$rules=[];
+			switch ($method) {
+			case "PUT":
+					$rules = [
+						'encounter_id'=>'required',
+						'user_id'=>'required',
+						'bed_code'=>'required',
+					];
+					break;
+			default:
+					$rules=[];
+			}
 			
 			
 			$messages = [
@@ -66,6 +72,7 @@ class Admission extends Model
 			
 		    if (count($consultation)>0) {	
 					$this->openConsultationId=$consultation[0]->consultation_id;
+					Log::info($consultation[0]->consultation_id);
 					return $consultation[0]->consultation_id;
 			} else {
 					return 0;

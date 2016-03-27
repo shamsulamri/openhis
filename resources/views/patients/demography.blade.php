@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
-{{ $patient->patient_name }}
-</h1>
+<h1>{{ $patient->patient_name }}</h1>
 <h4>{{ $patient->patient_mrn }}</h4>
 <br>
 @include('common.errors')

@@ -72,6 +72,11 @@ class Consultation extends Model
 			return $this->hasMany('App\ConsultationProcedure', 'consultation_id');
 	}
 
+	public function queue()
+	{
+			return $this->hasOne('App\Queue', 'encounter_id','encounter_id');
+	}
+
 	public static function boot()
 	{
 			parent::boot();

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@include('patients.id')
 <h1>
 Edit Admission
 </h1>

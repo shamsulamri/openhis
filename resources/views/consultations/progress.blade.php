@@ -9,7 +9,7 @@ Progress Notes
 	<br>
 	<div class="row">
 			<div class="col-xs-6">
-            	<a class="btn btn-default btn-lg" href="/consultations/{{ $consultation->consultation_id }}/edit" role="button">Back to Consultation</a>
+            	<a class="btn btn-default" href="/consultations/{{ $consultation->consultation_id }}/edit" role="button">Back to Consultation</a>
 			</div>
 	</div>
 @if (count($notes)>0)

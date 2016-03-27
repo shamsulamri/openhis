@@ -47,9 +47,11 @@ class OrderController extends Controller
 				'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
 				'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 				'consultation' => $consultation,
+				'patient'=>$consultation->encounter->patient,
 				'tab'=>'order',
 				'product'=>$product,
 				'current_id'=>$current_id,
+				'consultOption' => 'consultation',
 			]);
 	}
 
@@ -80,7 +82,9 @@ class OrderController extends Controller
 			return view('orders.index', [
 					'orders'=>$orders,
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
+					'consultOption' => 'consultation',
 			]);
 	}
 
@@ -103,8 +107,11 @@ class OrderController extends Controller
 				return view('orders.create', [
 					'order' => $order,
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
+					'patient'=>$consultation->encounter->patient,
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'tab'=>'order',
+					'consultOption' => 'consultation',
 					'product'=>$product,
 					]);
 			}
@@ -147,6 +154,7 @@ class OrderController extends Controller
 					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'consultation' => $consultation,
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'product'=>$product,
 					'current_id'=>$current_id,

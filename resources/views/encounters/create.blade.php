@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
-New Encounter
-</h1>
+@include('patients.id')
+<div class='page-header'>
+		<h2>New Encounter</h2>
+</div>
 @include('common.errors')
-<br>
+
 {{ Form::model($encounter, ['url'=>'encounters', 'class'=>'form-horizontal']) }} 
 	@include('encounters.encounter')
 {{ Form::close() }}

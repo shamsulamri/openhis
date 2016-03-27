@@ -12,6 +12,7 @@ class MedicalCertificate extends Model
 	protected $table = 'medical_certificates';
 	protected $fillable = [
 				'encounter_id',
+				'consultation_id',
 				'mc_start',
 				'mc_end',
 				'mc_identification',
@@ -25,6 +26,7 @@ class MedicalCertificate extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
+				'consultation_id'=>'required',
 				'mc_start'=>'required|size:10|date_format:d/m/Y',
 				'mc_end'=>'size:10|date_format:d/m/Y|after:mc_start',
 				'mc_identification'=>'required',
@@ -64,6 +66,11 @@ class MedicalCertificate extends Model
 	public function getMcEndAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
+	}
+
+	public function consultation()
+	{
+		return $this->hasOne('App\Consultation', 'consultation_id', 'consultation_id');
 	}
 
 }

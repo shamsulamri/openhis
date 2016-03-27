@@ -139,7 +139,25 @@ class Patient extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
+	public function getPatientMrnAttribute($value)
+	{
+			if (is_null($value)) {
+					return "-";
+			} else {
+					return $value;
+			}
+	}
 
+	public function patientIdentification()
+	{
+			if (!empty($this->attributes['patient_new_ic'])) {
+					return $this->patient_new_ic;
+			} else {
+					return "-";
+			}
+			return "-";
+	}
+					
 	public function encounters()
 	{
 			return $this->hasMany('App\Encounter', 'patient_id');
@@ -149,5 +167,11 @@ class Patient extends Model
 	{
 			return $this->belongsTo('App\Race', 'race_code');
 	}
+
+	public function gender()
+	{
+			return $this->belongsTo('App\Gender', 'gender_code');
+	}
+
 
 }

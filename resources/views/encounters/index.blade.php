@@ -12,9 +12,6 @@
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <br>
-<a href='/encounters/create' class='btn btn-primary'>Create</a>
-<br>
-<br>
 @if ($encounters->total()>0)
 <table class="table table-hover">
  <thead>

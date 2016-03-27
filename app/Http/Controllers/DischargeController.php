@@ -64,6 +64,8 @@ class DischargeController extends Controller
 					'discharge' => $discharge,
 					'type' => Type::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'consultation' => $consultation,
+					'patient' => $consultation->encounter->patient,
+					'consultOption' => 'consultation',
 					'discharge_orders' => $discharge_orders
 					]);
 	}

@@ -56,8 +56,10 @@ class OrderDrugController extends Controller
 					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'consultation' => $consultation,
+					'patient'=>$consultation->encounter->patient,
 					'product' => $product[0],
 					'tab'=>'order',
+					'consultOption' => 'consultation',
 					'order'=> $order, 
 					]);
 	}
@@ -76,7 +78,7 @@ class OrderDrugController extends Controller
 					$order->order_quantity_request = $request->order_quantity_request;
 					$order->order_description = $request->order_description;
 					$order->order_sale_price = $product->product_sale_price;
-
+					$order->location_code = $product->location_code;
 					$order->save();
 
 					$order_drug = new OrderDrug($request->all());
@@ -108,8 +110,10 @@ class OrderDrugController extends Controller
 					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'consultation' => $consultation,
+					'patient'=>$consultation->encounter->patient,
 					'product' => $product[0],
 					'tab'=>'order',
+					'consultOption' => 'consultation',
 					'order'=>$order_drug->order,
 					]);
 	}

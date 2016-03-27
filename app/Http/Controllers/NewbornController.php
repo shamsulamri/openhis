@@ -13,7 +13,7 @@ use Session;
 use App\DeliveryMode as Delivery;
 use App\BirthComplication as Complication;
 use App\BirthType as Birth;
-
+use App\Consultation;
 
 class NewbornController extends Controller
 {
@@ -24,24 +24,33 @@ class NewbornController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
-			$newborns = DB::table('enc_newborns')
+			$consultation = Consultation::find($request->id);
+			$newborns = Newborn::where('encounter_id', $consultation->encounter->encounter_id)
 					->orderBy('encounter_id')
 					->paginate($this->paginateValue);
 			return view('newborns.index', [
-					'newborns'=>$newborns
+					'newborns'=>$newborns,
+					'consultation' => $consultation,
+					'patient' => $consultation->encounter->patient,
+					'consultOption' => 'newborn',
 			]);
 	}
 
-	public function create()
+	public function create(Request $request)
 	{
+			$consultation = Consultation::find($request->id);
 			$newborn = new Newborn();
+			$newborn->encounter_id = $consultation->encounter->encounter_id;
 			return view('newborns.create', [
 					'newborn' => $newborn,
 					'delivery' => Delivery::all()->sortBy('delivery_name')->lists('delivery_name', 'delivery_code')->prepend('',''),
 					'complication' => Complication::all()->sortBy('complication_name')->lists('complication_name', 'complication_code')->prepend('',''),
 					'birth' => Birth::all()->sortBy('birth_name')->lists('birth_name', 'birth_code')->prepend('',''),
+					'consultation' => $consultation,
+					'patient' => $consultation->encounter->patient,
+					'consultOption' => 'newborn',
 					]);
 	}
 
@@ -55,7 +64,7 @@ class NewbornController extends Controller
 					$newborn->newborn_id = $request->newborn_id;
 					$newborn->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/newborns/id/'.$newborn->newborn_id);
+					return redirect('/newborns?id='.$request->consultation_id);
 			} else {
 					return redirect('/newborns/create')
 							->withErrors($valid)
@@ -63,14 +72,18 @@ class NewbornController extends Controller
 			}
 	}
 
-	public function edit($id) 
+	public function edit(Request $request, $id) 
 	{
+			$consultation = Consultation::find($request->consultation_id);
 			$newborn = Newborn::findOrFail($id);
 			return view('newborns.edit', [
 					'newborn'=>$newborn,
 					'delivery' => Delivery::all()->sortBy('delivery_name')->lists('delivery_name', 'delivery_code')->prepend('',''),
 					'complication' => Complication::all()->sortBy('complication_name')->lists('complication_name', 'complication_code')->prepend('',''),
 					'birth' => Birth::all()->sortBy('birth_name')->lists('birth_name', 'birth_code')->prepend('',''),
+					'consultation' => $consultation,
+					'patient' => $consultation->encounter->patient,
+					'consultOption' => 'newborn',
 					]);
 	}
 
@@ -91,7 +104,7 @@ class NewbornController extends Controller
 			if ($valid->passes()) {
 					$newborn->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/newborns/id/'.$id);
+					return redirect('/newborns?id='.$request->consultation_id);
 			} else {
 					return view('newborns.edit', [
 							'newborn'=>$newborn,
