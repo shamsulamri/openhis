@@ -16,6 +16,7 @@ use App\Frequency;
 use App\Consultation;
 use App\Order;
 use App\Product;
+use Auth;
 
 class OrderInvestigationController extends Controller
 {
@@ -36,15 +37,15 @@ class OrderInvestigationController extends Controller
 			]);
 	}
 
-	public function create($id, $code)
+	public function create($product_code)
 	{
-			$consultation = Consultation::find($id);
+			$consultation = Consultation::find(Session::get('consultation_id'));
 			$order_investigation = new OrderInvestigation();
 			$order_investigation->investigation_date = date('d/m/Y');
 					
 			$product = DB::table('products')
 						->select('product_name','product_code')
-						->where('product_code','=',$code)->get();
+						->where('product_code','=',$product_code)->get();
 		 
 			return view('order_investigations.create', [
 					'order_investigation' => $order_investigation,
@@ -55,6 +56,7 @@ class OrderInvestigationController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'product' => $product,
 					'tab' => 'order',
+					'consultOption' => 'consultation',
 					'order' => new Order(), 
 					]);
 	}
@@ -68,11 +70,14 @@ class OrderInvestigationController extends Controller
 					$product = Product::find($request->product_code);
 					$order = new Order();
 					$order->fill($request->input());
-					$order->consultation_id = $request->consultation_id;
+					$order->consultation_id = Session::get('consultation_id');
+					$order->encounter_id = Session::get('encounter_id');
+					$order->user_id = Auth::user()->id;
 					$order->product_code = $request->product_code;
 					$order->order_is_discharge = $request->order_is_discharge;
 					$order->order_description = $request->order_description;
 					$order->order_sale_price = $product->product_sale_price;
+					$order->location_code = $product->location_code;
 					$order->save();
 					
 					$order_investigation = new OrderInvestigation($request->all());
@@ -81,7 +86,7 @@ class OrderInvestigationController extends Controller
 					Log::info($order_investigation->investigation_date);
 
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/orders/'.$request->consultation_id);
+					return redirect('/orders');
 			} else {
 					return redirect('/order_investigations/create/'.$request->consultation_id.'/'.$request->product_code)
 							->withErrors($valid)
@@ -91,8 +96,8 @@ class OrderInvestigationController extends Controller
 
 	public function edit($id) 
 	{
+			$consultation = Consultation::find(Session::get('consultation_id'));
 			$order_investigation = OrderInvestigation::findOrFail($id);
-			$consultation = Consultation::find($order_investigation->order->consultation_id);
 
 			$product = DB::table('products')
 						->select('product_name','product_code')
@@ -107,6 +112,7 @@ class OrderInvestigationController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'product' => $product,
 					'tab' => 'order',
+					'consultOption' => 'consultation',
 					'order' => $order_investigation->order,
 					]);
 	}
@@ -125,13 +131,12 @@ class OrderInvestigationController extends Controller
 			$valid = $order_investigation->validate($request->all(), $request->_method);	
 			$valid2 = $order->validate($request->all(), $request->_method);	
 
-			Log::info($valid2->errors()->all());
 			if ($valid->passes() && $valid2->passes()) {
 					$order_investigation->save();
 					
 
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/orders/'.$request->consultation_id);
+					return redirect('/orders');
 			} else {
 					$consultation = Consultation::find($order_investigation->order->consultation_id);
 					

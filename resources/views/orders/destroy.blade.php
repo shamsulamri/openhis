@@ -1,12 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
+@if (Auth::user()->authorization->author_consultation==1)
+		@include('patients.label')
+		@include('consultations.panel')		
+@else
+		@include('patients.id')
+@endif
+<h2>
 Delete Order
-</h1>
+</h2>
 @include('common.errors')
 <br>
-<h3>
+<h4>
 Are you sure you want to delete the selected record ?
 {{ $order->product_code }}
 {{ Form::open(['url'=>'orders/'.$order->order_id, 'class'=>'pull-right']) }}
@@ -15,5 +21,5 @@ Are you sure you want to delete the selected record ?
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 
-</h3>
+</h4>
 @endsection

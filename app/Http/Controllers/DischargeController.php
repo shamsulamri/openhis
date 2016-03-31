@@ -35,8 +35,9 @@ class DischargeController extends Controller
 			]);
 	}
 
-	public function create($id)
+	public function create()
 	{
+			$id = Session::get('consultation_id');
 			$consultation = Consultation::find($id);
 			$discharge = new Discharge();
 			$discharge->encounter_id = $consultation->encounter_id;
@@ -119,6 +120,8 @@ class DischargeController extends Controller
 					'type' => Type::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'discharge_orders' => $discharge_orders,
 					'consultation' => $consultation,
+					'patient' => $consultation->encounter->patient,
+					'consultOption' => 'consultation',
 					]);
 	}
 

@@ -1,3 +1,13 @@
+@if (count($patient->alert)>0)
+	<div class='alert alert-danger'>
+	@foreach ($patient->alert as $alert)
+		- {{ $alert->alert_description }}
+		@if ($alert != end($patient->alert))
+			<br>
+		@endif
+	@endforeach
+	</div>
+@endif
 <div class='panel panel-primary'>
 	<div class='panel-heading'>
 	<div class="row">
@@ -55,10 +65,15 @@
 				@endif
 			><a href="/consultations/{{ $consultation->consultation_id }}/edit"><span class='glyphicon glyphicon-comment' aria-hidden='true'></span><br>Consultation</a></li>
 			<li role='presentation' class=
+				@if ($consultOption=='medical_alerts')
+					'active'
+				@endif
+			><a href="/medical_alerts"><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span><br>Alerts</a></li>
+			<li role='presentation' class=
 				@if ($consultOption=='medical_certificate')
 					'active'
 				@endif
-			><a href="/medical_certificates/create?consultation_id={{ $consultation->consultation_id }}"><span class='glyphicon glyphicon-certificate' aria-hidden='true'></span><br>Medical Certificate</a></li>
+			><a href="/medical_certificates/create"><span class='glyphicon glyphicon-certificate' aria-hidden='true'></span><br>Certificate</a></li>
             <li role='presentation'><a href="#"><span class='glyphicon glyphicon-calendar' aria-hidden='true'></span><br>Appointment</a></li>
 			<li role='presentation' class=
 				@if ($consultOption=='newborn')
@@ -69,7 +84,7 @@
 				@if ($consultOption=='dietary')
 					'active'
 				@endif
-			><a href="/diet/{{ $consultation->consultation_id }}/edit"><span class='glyphicon glyphicon-cutlery' aria-hidden='true'></span><br>Dietary</a></li>
+			><a href="/diet"><span class='glyphicon glyphicon-cutlery' aria-hidden='true'></span><br>Dietary</a></li>
 			<li role="presentation" class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class='glyphicon glyphicon-bed' aria-hidden='true'></span><br>
 					  Bed<span class="caret"></span>
@@ -82,3 +97,9 @@
 </ul>
 	</div>
 </div>
+
+@if (!empty($consultation->encounter->discharge->discharge_id))
+<div class='alert alert-warning' role='warning'>
+<strong>Warning ! </strong>Editting discharged case.
+</div>
+@endif

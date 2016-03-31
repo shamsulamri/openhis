@@ -1,8 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
-@include('consultations.panel')
+@if (Auth::user()->authorization->author_consultation==1)
+		@include('patients.label')
+		@include('consultations.panel')		
+@else
+		@include('patients.id')
+@endif
 @include('common.errors')
 
 {{ Form::model($order_cancellation, ['route'=>['order_cancellations.update',$order_cancellation->cancel_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
@@ -24,7 +28,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/orders/{{ $order_cancellation->order->consultation->consultation_id }}" role="button">Close</a>
+            <a class="btn btn-default" href="/orders" role="button">Close</a>
         </div>
     </div>
 {{ Form::close() }}

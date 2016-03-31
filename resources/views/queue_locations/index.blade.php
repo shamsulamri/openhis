@@ -11,7 +11,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/queue_locations/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -19,6 +18,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th></th>
     <th>location_name</th>
     <th>location_code</th> 
 	<th></th>
@@ -27,6 +27,9 @@
 	<tbody>
 @foreach ($queue_locations as $queue_location)
 	<tr>
+			<td width='10%'>
+					<a class='btn btn-warning btn-xs' href='{{ URL::to('queue_locations/set/'. $queue_location->location_code) }}'>Set Location</a>
+			</td>
 			<td>
 					<a href='{{ URL::to('queue_locations/'. $queue_location->location_code . '/edit') }}'>
 						{{$queue_location->location_name}}
@@ -36,7 +39,6 @@
 					{{$queue_location->location_code}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-warning btn-xs' href='{{ URL::to('queue_locations/set/'. $queue_location->location_code) }}'>Set Location</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('queue_locations/delete/'. $queue_location->location_code) }}'>Delete</a>
 			</td>
 	</tr>

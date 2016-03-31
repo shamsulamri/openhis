@@ -2,9 +2,9 @@
 
 @section('content')
 @include('patients.id')
-<h1>
+<h2>
 Edit Admission
-</h1>
+</h2>
 @include('common.errors')
 <br>
 {{ Form::model($admission, ['route'=>['admissions.update',$admission->admission_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 

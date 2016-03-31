@@ -1,12 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
+@include('patients.label')
+<h2>
 Delete Medical Alert
-</h1>
+</h2>
 @include('common.errors')
 <br>
-<h3>
+<h4>
 Are you sure you want to delete the selected record ?
 {{ $medical_alert->patient_id }}
 {{ Form::open(['url'=>'medical_alerts/'.$medical_alert->alert_id, 'class'=>'pull-right']) }}
@@ -15,5 +16,5 @@ Are you sure you want to delete the selected record ?
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 
-</h3>
+</h4>
 @endsection

@@ -19,21 +19,25 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Name</th>
     <th>MRN</th> 
+    <th>Name</th>
+    <th>Identification</th>
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($patients as $patient)
 	<tr>
+			<td width='10%'>
+					{{$patient->patient_mrn}}
+			</td>
 			<td>
 					<a href='{{ URL::to('patients/'. $patient->patient_id) }}'>
 						{{$patient->patient_name}}
 					</a>
 			</td>
-			<td>
-					{{$patient->patient_mrn}}
+			<td width='10%'>
+					{{ $patient->patient_new_ic }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('patients/delete/'. $patient->patient_id) }}'>Delete</a>

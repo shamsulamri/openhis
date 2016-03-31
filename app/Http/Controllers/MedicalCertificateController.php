@@ -31,9 +31,9 @@ class MedicalCertificateController extends Controller
 			]);
 	}
 
-	public function create(Request $request)
+	public function create()
 	{
-			$consultation = Consultation::find($request->consultation_id);
+			$consultation = Consultation::find(Session::get('consultation_id'));
 			$medical_certificate = MedicalCertificate::where('encounter_id','=',$consultation->encounter->encounter_id)->get();
 			if (count($medical_certificate)>0) {
 					return redirect('/medical_certificates/'.$medical_certificate[0]->mc_id.'/edit');

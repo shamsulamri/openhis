@@ -36,6 +36,7 @@
 					{{$ward->ward_code}}
 			</td>
 			<td align='right'>
+					<a class='btn btn-warning btn-xs' href='{{ URL::to('wards/set/'. $ward->ward_code) }}'>Set Ward</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('wards/delete/'. $ward->ward_code) }}'>Delete</a>
 			</td>
 	</tr>

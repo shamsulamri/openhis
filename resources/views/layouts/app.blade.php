@@ -8,12 +8,13 @@
     <title>Hospital Information System</title>
 	<link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700" rel="stylesheet" type="text/css">
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1,4/jquery.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-	    </head>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1,4/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link href="/assets/bootstrap/css/starter-template.css" rel="stylesheet">
+</head>
 <body id="app-layout">
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
 
@@ -33,6 +34,7 @@
 
             <div class="collapse navbar-collapse" id="spark-navbar-collapse">
                 <!-- Left Side Of Navbar -->
+            	@if (!Auth::guest())
                 <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -45,6 +47,7 @@
 									<li><a href="{{ url('/admissions') }}">Admissions</a></li>
                             </ul>
                         </li>
+						@if (Auth::user()->authorization->author_consultation==1)
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 Consultation<span class="caret"></span>
@@ -55,6 +58,7 @@
 									<li><a href="{{ url('/consultations') }}">Consultations</a></li>
                             </ul>
                         </li>
+						@endif
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 Order<span class="caret"></span>
@@ -64,7 +68,9 @@
 									<li><a href="{{ url('/order_queues') }}">Queues</a></li>
                             </ul>
                         </li>
+						<li><a href="{{ url('/options') }}">Options</a></li>
 				</ul>
+				@endif
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
@@ -79,7 +85,6 @@
 
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
-									<li><a href="{{ url('/options') }}">Options</a></li>
                             </ul>
                         </li>
                     @endif

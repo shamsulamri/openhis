@@ -10,7 +10,7 @@ use App\WardArrival;
 use Log;
 use DB;
 use Session;
-
+use App\Encounter;
 
 class WardArrivalController extends Controller
 {
@@ -33,11 +33,13 @@ class WardArrivalController extends Controller
 
 	public function create($encounter_id)
 	{
+			$encounter = Encounter::find($encounter_id);
 			$ward_arrival = new WardArrival();
 			$ward_arrival->encounter_id = $encounter_id;
 			return view('ward_arrivals.create', [
 					'ward_arrival' => $ward_arrival,
-				
+					'patient' => $encounter->patient,	
+					'encounter' => $encounter,
 					]);
 	}
 

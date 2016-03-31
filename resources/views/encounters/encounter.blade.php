@@ -16,7 +16,6 @@
         </div>
     </div>
 
-
 	<div class='page-header'>
 		<h4>Patient</h4>
 	</div>
@@ -80,7 +79,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/encounters" role="button">Cancel</a>
+            <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

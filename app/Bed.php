@@ -53,4 +53,9 @@ class Bed extends Model
 			return $this->belongsTo('App\Ward','ward_code', 'ward_code');
 	}
 
+	public function room()
+	{
+			return $this->belongsTo('App\Room', 'room_code', 'room_code');
+	}
+
 }

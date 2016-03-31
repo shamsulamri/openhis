@@ -30,9 +30,9 @@ class EncounterController extends Controller
 	public function index()
 	{
 			$encounters = DB::table('encounters')
+					->select('encounter_id','patient_mrn','encounters.encounter_code', 'patient_name', 'encounters.patient_id', 'encounter_name','encounters.created_at')
 					->join('patients','patients.patient_id','=','encounters.patient_id')
 					->join('ref_encounter_types', 'ref_encounter_types.encounter_code','=','encounters.encounter_code')
-					->select('encounter_id','encounters.encounter_code', 'patient_name', 'encounters.patient_id', 'encounter_name','encounters.created_at')
 					->orderBy('created_at','desc')
 					->paginate($this->paginateValue);
 
@@ -59,6 +59,7 @@ class EncounterController extends Controller
 					'triage' => Triage::all()->sortBy('triage_name')->lists('triage_name', 'triage_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'patientOption' => 'encounter',
 				]);
 	}
 
@@ -66,7 +67,6 @@ class EncounterController extends Controller
 	{
 			$encounter = new Encounter();
 			$valid = $encounter->validate($request->all(), $request->_method);
-
 			if ($valid->passes()) {
 					$encounter = new Encounter($request->all());
 					$encounter->encounter_id = $request->encounter_id;
@@ -77,7 +77,7 @@ class EncounterController extends Controller
 					} elseif ($encounter->encounter_code=='inpatient') {
 							return redirect('/admissions/create?encounter_id='.$encounter->encounter_id);
 					} elseif ($encounter->encounter_code=='emergency') {
-							if ($encounter->encounter_code=='green') {
+							if ($encounter->triage_code=='green') {
 								return redirect('/queues/create?encounter_id='.$encounter->encounter_id);
 							} else {
 								return redirect('/admissions/create?encounter_id='.$encounter->encounter_id);

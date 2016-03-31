@@ -19,9 +19,9 @@
  <thead>
 	<tr> 
     <th>Date</th>
+    <th>MRN</th>
     <th>Patient</th>
-    <th>Source</th> 
-    <th>User</th> 
+    <th>Encounter</th>
 	<th></th>
 	</tr>
   </thead>
@@ -30,18 +30,19 @@
 
 	<tr>
 			<td>
+					{{ $order->cancel_id }}
 					{{ date('d F, H:i', strtotime($order->created_at)) }}
 			</td>
 			<td>
-					<a href='{{ URL::to('order_tasks/task/'. $order->consultation_id) .'/'. $order->location_code }}'>
+					{{ $order->patient_mrn }}
+			</td>
+			<td>
+					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}'>
 						{{$order->patient_name}}
 					</a>
 			</td>
 			<td>
-					{{$order->location_name}}{{ $order->bed_name }} 			
-			</td>
-			<td>
-					{{ $order->name }}
+					{{ $order->encounter_name }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a>

@@ -20,6 +20,7 @@ use App\AdmissionType;
 use App\Consultation;
 use App\User;
 use Auth;
+use App\Ward;
 
 class AdmissionController extends Controller
 {
@@ -30,8 +31,10 @@ class AdmissionController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
+			$ward = $request->cookie('ward');
+
 			$selectFields = ['bed_name', 'a.admission_id','patient_name','d.consultation_id','a.encounter_id','a.user_id','e.discharge_id', 
 					'f.discharge_id as ward_discharge',
 					'a.created_at',
@@ -54,6 +57,7 @@ class AdmissionController extends Controller
 					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
 					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
 					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
+					->where('h.ward_code','=', $ward)
 					->whereNull('f.encounter_id')
 					->groupBy('b.encounter_id')
 					->orderBy('g.encounter_id')
@@ -62,6 +66,8 @@ class AdmissionController extends Controller
 			return view('admissions.index', [
 					'admissions'=>$admissions,
 					'user'=>Auth::user(),
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => $ward, 
 			]);
 	}
 
@@ -132,7 +138,7 @@ class AdmissionController extends Controller
 					$admission->class_code = $request->class_code;
 					$admission->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/diet/'.$request->consultation_id.'/edit');
+					return redirect('/diet');
 			} else {
 
 					$method = $request->_method;
@@ -156,9 +162,9 @@ class AdmissionController extends Controller
 			}
 	}
 	
-	public function diet($id) 
+	public function diet() 
 	{
-			$consultation=Consultation::find($id);
+			$consultation=Consultation::find(Session::get('consultation_id'));
 			$encounter = $consultation->encounter;
 			$admission = $consultation->encounter->admission;
 			return view('admissions.diet', [
@@ -172,32 +178,6 @@ class AdmissionController extends Controller
 					]);
 	}
 
-	public function dietUpdate(Request $request) 
-	{
-			return "X";
-			$admission = Admission::findOrFail($id);
-			$admission->fill($request->input());
-
-			$admission->admission_nbm = $request->admission_nbm ?: 0;
-
-			$valid = $admission->validate($request->all(), $request->_method);	
-
-			if ($valid->passes()) {
-					$admission->save();
-					Session::flash('message', 'Record successfully updated.');
-					return redirect('/diet/'.$request->consultation_id.'/edit');
-			} else {
-					return view('admissions.edit', [
-							'admission'=>$admission,
-							'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
-							'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
-							'texture' => DietTexture::all()->sortBy('texture_name')->lists('texture_name', 'texture_code')->prepend('',''),
-							'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
-							'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
-							])
-							->withErrors($valid);			
-			}
-	}
 	public function delete($id)
 	{
 		$admission = Admission::findOrFail($id);
@@ -215,16 +195,44 @@ class AdmissionController extends Controller
 	
 	public function search(Request $request)
 	{
-			$admissions = DB::table('admissions')
-					->where('bed_code','like','%'.$request->search.'%')
-					->orWhere('admission_id', 'like','%'.$request->search.'%')
-					->orderBy('bed_code')
-					->paginate($this->paginateValue);
+			$ward = $request->ward;
 
+			$selectFields = ['bed_name', 'a.admission_id','patient_name','d.consultation_id','a.encounter_id','a.user_id','e.discharge_id', 
+					'f.discharge_id as ward_discharge',
+					'a.created_at',
+					'arrival_id',	
+					'patient_mrn',
+					'ward_name',
+					'room_name',
+					'a.user_id',
+					'k.name',
+			];
+			$admissions = DB::table('admissions as a')
+					->select($selectFields)
+					->leftJoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftJoin('consultations as d', 'd.encounter_id','=', 'a.encounter_id')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'a.encounter_id')
+					->leftJoin('ward_discharges as f', 'f.encounter_id','=', 'a.encounter_id')
+					->leftJoin('ward_arrivals as g', 'g.encounter_id', '=', 'a.encounter_id')
+					->leftJoin('beds as h', 'h.bed_code', '=', 'a.bed_code')
+					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
+					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
+					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
+					->where('h.ward_code','=', $ward)
+					->whereNull('f.encounter_id')
+					->groupBy('b.encounter_id')
+					->orderBy('g.encounter_id')
+					->orderBy('a.bed_code')
+					->paginate($this->paginateValue);
+			
 			return view('admissions.index', [
 					'admissions'=>$admissions,
+					'user'=>Auth::user(),
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => $request->ward,
 					'search'=>$request->search
-					]);
+			]);
 	}
 
 	public function searchById($id)

@@ -5,7 +5,7 @@
 Task Cancellation
 </h1>
 <br>
-@include('orders.panel')
+@include('patients.id')
 @include('common.errors')
 
 {{ Form::model($task_cancellation, ['url'=>'task_cancellations', 'class'=>'form-horizontal']) }} 

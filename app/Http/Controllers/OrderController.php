@@ -13,6 +13,7 @@ use Session;
 use App\Product;
 use App\QueueLocation as Location;
 use App\Consultation;
+use App\Encounter;
 use Auth;
 
 class OrderController extends Controller
@@ -55,10 +56,10 @@ class OrderController extends Controller
 			]);
 	}
 
-	public function index($consultation_id)
+	public function index(Request $request)
 	{
-			$consultation = Consultation::findOrFail($consultation_id);
-
+			$encounter= Encounter::find(Session::get('encounter_id'));
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 			$fields = ['product_name', 
 					'a.product_code', 
 					'cancel_id', 
@@ -74,22 +75,22 @@ class OrderController extends Controller
 					->join('products as b','a.product_code','=','b.product_code')
 					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
 					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
-					->where('encounter_id','=',$consultation->encounter_id)
+					->where('a.encounter_id','=',Session::get('encounter_id'))
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
-
 
 			return view('orders.index', [
 					'orders'=>$orders,
 					'consultation'=>$consultation,
-					'patient'=>$consultation->encounter->patient,
+					'patient'=>$encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
 			]);
 	}
 
-	public function create($consultation_id, $product_code)
+	public function create($product_code)
 	{
+			$consultation_id = Session::get('consultation_id');
 			$product=Product::find($product_code);
 			$order = new Order();
 			$order->consultation_id = $consultation_id;
@@ -100,14 +101,13 @@ class OrderController extends Controller
 			$consultation = Consultation::findOrFail($consultation_id);
 
 		 	if ($product->order_form == '2') {
-				return redirect('/order_drugs/create/'.$consultation_id.'/'.$product_code);
+				return redirect('/order_drugs/create/'.$product_code);
 			} elseif ($product->order_form == '3') {
-				return redirect('/order_investigations/create/'.$consultation_id.'/'.$product_code);
+				return redirect('/order_investigations/create/'.$product_code);
 			} else {
 				return view('orders.create', [
 					'order' => $order,
 					'consultation'=>$consultation,
-					'patient'=>$consultation->encounter->patient,
 					'patient'=>$consultation->encounter->patient,
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'tab'=>'order',
@@ -125,11 +125,13 @@ class OrderController extends Controller
 			if ($valid->passes()) {
 					$product = Product::find($request->product_code);
 					$order = new Order($request->all());
+					$order->encounter_id = Session::get('encounter_id');
 					$order->order_id = $request->order_id;
 					$order->order_sale_price = $product->product_sale_price;
+					$order->user_id = Auth::user()->id;
 					$order->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/orders/'.$order->consultation_id);
+					return redirect('/orders');
 			} else {
 					return redirect('/orders/create/'.$request->consultation_id.'/'.$request->product_code)
 							->withErrors($valid)
@@ -139,10 +141,14 @@ class OrderController extends Controller
 
 	public function edit($id) 
 	{
+			$encounter= Encounter::find(Session::get('encounter_id'));
+			$consultation = new Consultation();
+			if (!empty(Session::get('consultation_id'))) {
+					$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+			}
 			$order = Order::findOrFail($id);
 
 			$product = Product::find($order->product_code);
-			$consultation = Consultation::findOrFail($order->consultation_id);
 			$current_id = Consultation::orderBy('created_at','desc')->limit(1)->get()[0]->consultation_id;
 		 	if ($product->order_form == '2') {
 					return redirect('/order_drugs/'.$order->orderDrug->id.'/edit');
@@ -175,7 +181,7 @@ class OrderController extends Controller
 			if ($valid->passes()) {
 					$order->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/orders/'.$order->consultation_id);
+					return redirect('/orders/');
 			} else {
 					return view('orders.edit', [
 							'order'=>$order,
@@ -187,9 +193,14 @@ class OrderController extends Controller
 	
 	public function delete($id)
 	{
+		$consultation = Consultation::find(Session::get('consultation_id'));
 		$order = Order::findOrFail($id);
 		return view('orders.destroy', [
-			'order'=>$order
+					'order'=>$order,
+					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
+					'tab'=>'order',
+					'consultOption' => 'consultation',
 			]);
 
 	}
@@ -198,7 +209,7 @@ class OrderController extends Controller
 			$order = Order::find($id);
 			Order::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/orders/'.$order->consultation_id);
+			return redirect('/orders/');
 	}
 	
 	public function search(Request $request)

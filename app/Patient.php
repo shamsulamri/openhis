@@ -173,5 +173,22 @@ class Patient extends Model
 			return $this->belongsTo('App\Gender', 'gender_code');
 	}
 
+	public function title()
+	{
+			return $this->belongsTo('App\Title', 'title_code');
+	}
 
+	public function getTitle()
+	{
+			if (!empty($this->title->title_name)) {
+					return $this->title();
+			} else {
+					return "";
+			}
+	}
+
+	public function alert()
+	{
+			return $this->hasMany('App\MedicalAlert', 'patient_id', 'patient_id');
+	}
 }

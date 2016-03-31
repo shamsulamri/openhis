@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
+@include('patients.id')
 <div class='page-header'>
 		<h1>New Admission</h1>
 </div>

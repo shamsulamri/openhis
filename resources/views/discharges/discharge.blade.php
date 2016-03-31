@@ -15,6 +15,7 @@
             @if ($errors->has('type_code')) <p class="help-block">{{ $errors->first('type_code') }}</p> @endif
         </div>
     </div>
+	@if ($consultation->encounter->encounter_code=='inpatient')
     <div class='form-group  @if ($errors->has('discharge_diagnosis')) has-error @endif'>
         {{ Form::label('discharge_diagnosis', 'Diagnosis',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
@@ -30,7 +31,7 @@
             @if ($errors->has('discharge_summary')) <p class="help-block">{{ $errors->first('discharge_summary') }}</p> @endif
         </div>
     </div>
-
+	@endif
     <div class='form-group'>
         {{ Form::label('discharge_orders', 'Discharge Orders',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>

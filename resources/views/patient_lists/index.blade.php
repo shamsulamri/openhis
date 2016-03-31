@@ -19,6 +19,7 @@
     <th>MRN</th>
     <th>Patient</th>
 	<th>Room</th>
+	<th></th>
 	</tr>
   </thead>
 	<tbody>

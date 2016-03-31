@@ -22,12 +22,12 @@ class ConsultationDiagnosisController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index($consultation_id)
+	public function index()
 	{
-			$consultation = Consultation::findOrFail($consultation_id);
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 
 			$consultation_diagnoses = DB::table('consultation_diagnoses as a')
-					->select('id', 'a.created_at', 'diagnosis_clinical')
+					->select('id', 'a.created_at', 'diagnosis_clinical','diagnosis_type')
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
 					->where('encounter_id','=',$consultation->encounter_id)
 					->orderBy('a.created_at', 'desc')
@@ -43,14 +43,11 @@ class ConsultationDiagnosisController extends Controller
 			]);
 	}
 
-	public function create($consultation_id)
+	public function create()
 	{
 			$consultation_diagnosis = new ConsultationDiagnosis();
-			if (empty($consultation_id)==false) {
-					$consultation_diagnosis->consultation_id = $consultation_id;
-			}
-
-			$consultation = Consultation::findOrFail($consultation_id);
+			$consultation_diagnosis->consultation_id = Session::get('consultation_id');
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 			
 			return view('consultation_diagnoses.create', [
 					'consultation_diagnosis' => $consultation_diagnosis,
@@ -72,7 +69,7 @@ class ConsultationDiagnosisController extends Controller
 					$consultation_diagnosis->id = $request->id;
 					$consultation_diagnosis->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/consultation_diagnoses/'.$consultation_diagnosis->consultation_id);
+					return redirect('/consultation_diagnoses/');
 			} else {
 					return redirect('/consultation_diagnoses/create')
 							->withErrors($valid)
@@ -83,7 +80,7 @@ class ConsultationDiagnosisController extends Controller
 	public function edit($id) 
 	{
 			$consultation_diagnosis = ConsultationDiagnosis::findOrFail($id);
-			$consultation = Consultation::findOrFail($consultation_diagnosis->consultation_id);
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 
 			return view('consultation_diagnoses.edit', [
 					'consultation_diagnosis'=>$consultation_diagnosis,
@@ -105,7 +102,7 @@ class ConsultationDiagnosisController extends Controller
 			if ($valid->passes()) {
 					$consultation_diagnosis->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/consultation_diagnoses/'.$consultation_diagnosis->consultation_id);
+					return redirect('/consultation_diagnoses');
 			} else {
 					return view('consultation_diagnoses.edit', [
 							'consultation_diagnosis'=>$consultation_diagnosis,
@@ -118,42 +115,21 @@ class ConsultationDiagnosisController extends Controller
 	
 	public function delete($id)
 	{
+		$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 		$consultation_diagnosis = ConsultationDiagnosis::findOrFail($id);
 		return view('consultation_diagnoses.destroy', [
-			'consultation_diagnosis'=>$consultation_diagnosis
+				'consultation_diagnosis'=>$consultation_diagnosis,
+				'consultation'=>$consultation,
+				'patient'=>$consultation->encounter->patient,
+				'tab'=>'diagnosis',
+				'consultOption' => 'consultation',
 			]);
 
 	}
 	public function destroy($id)
 	{	
-			$consultation_diagnosis = ConsultationDiagnosis::findOrFail($id);
 			ConsultationDiagnosis::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/consultation_diagnoses/'.$consultation_diagnosis->consultation_id);
-	}
-	
-	public function search(Request $request)
-	{
-			$consultation_diagnoses = DB::table('consultation_diagnoses')
-					->where('diagnosis_clinical','like','%'.$request->search.'%')
-					->orWhere('id', 'like','%'.$request->search.'%')
-					->orderBy('diagnosis_clinical')
-					->paginate($this->paginateValue);
-
-			return view('consultation_diagnoses.index', [
-					'consultation_diagnoses'=>$consultation_diagnoses,
-					'search'=>$request->search
-					]);
-	}
-
-	public function searchById($id)
-	{
-			$consultation_diagnoses = DB::table('consultation_diagnoses')
-					->where('id','=',$id)
-					->paginate($this->paginateValue);
-
-			return view('consultation_diagnoses.index', [
-					'consultation_diagnoses'=>$consultation_diagnoses
-			]);
+			return redirect('/consultation_diagnoses');
 	}
 }

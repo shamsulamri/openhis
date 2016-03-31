@@ -6,6 +6,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('title_code')) has-error @endif'>
+        {{ Form::label('Title', 'Title',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::select('title_code', $title,null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('title_code')) <p class="help-block">{{ $errors->first('title_code') }}</p> @endif
+        </div>
+    </div>
+
 	<div class='form-group  @if ($errors->has('patient_name')) has-error @endif'>
         <label for='patient_name' class='col-sm-2 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
@@ -150,14 +158,6 @@
         <div class='col-sm-10'>
             {{ Form::select('religion_code', $religion,null, ['class'=>'form-control','maxlength'=>'10']) }}
             @if ($errors->has('religion_code')) <p class="help-block">{{ $errors->first('religion_code') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('title_code')) has-error @endif'>
-        {{ Form::label('Title', 'Title',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::select('title_code', $title,null, ['class'=>'form-control','maxlength'=>'10']) }}
-            @if ($errors->has('title_code')) <p class="help-block">{{ $errors->first('title_code') }}</p> @endif
         </div>
     </div>
 

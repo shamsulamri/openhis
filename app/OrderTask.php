@@ -13,6 +13,7 @@ class OrderTask extends Model
 	protected $table = 'orders';
 	protected $fillable = [
 				'consultation_id',
+				'user_id',
 				'product_code',
 				'order_quantity_request',
 				'order_description',
@@ -47,6 +48,11 @@ class OrderTask extends Model
 	public function product()
 	{
 			return $this->belongsTo('App\Product', 'product_code');
+	}
+
+	public function user()
+	{
+			return $this->belongsTo('App\User', 'user_id','id');
 	}
 
 	public function save(array $options = array())

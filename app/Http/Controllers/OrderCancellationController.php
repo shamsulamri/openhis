@@ -28,7 +28,7 @@ class OrderCancellationController extends Controller
 					->orderBy('cancel_reason')
 					->paginate($this->paginateValue);
 			return view('order_cancellations.index', [
-					'order_cancellations'=>$order_cancellations
+					'order_cancellations'=>$order_cancellations,
 			]);
 	}
 
@@ -40,7 +40,9 @@ class OrderCancellationController extends Controller
 			return view('order_cancellations.create', [
 					'order_cancellation' => $order_cancellation,
 					'consultation' => $order_cancellation->order->consultation,
+					'patient' => $order_cancellation->order->consultation->encounter->patient,
 					'tab' => 'order',			
+					'consultOption' => 'consultation',			
 					]);
 	}
 
@@ -70,6 +72,7 @@ class OrderCancellationController extends Controller
 					'order_cancellation'=>$order_cancellation,
 					'consultation' => $order_cancellation->order->consultation,
 					'tab' => 'order',			
+					'consultOption' => 'consultation',			
 					]);
 	}
 
@@ -79,7 +82,9 @@ class OrderCancellationController extends Controller
 			return view('order_cancellations.show', [
 					'order_cancellation'=>$order_cancellation,
 					'consultation' => $order_cancellation->order->consultation,
+					'patient' => $order_cancellation->order->consultation->encounter->patient,
 					'tab' => 'order',			
+					'consultOption' => 'consultation',			
 					]);
 	}
 

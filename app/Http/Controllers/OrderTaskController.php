@@ -12,8 +12,8 @@ use DB;
 use Session;
 use App\Product;
 use App\QueueLocation as Location;
+use App\Encounter;
 use App\Consultation;
-
 
 class OrderTaskController extends Controller
 {
@@ -44,8 +44,9 @@ class OrderTaskController extends Controller
 					->leftjoin('queues as h', 'h.encounter_id', '=', 'c.encounter_id')
 					->leftjoin('queue_locations as i', 'i.location_code', '=', 'h.location_code')
 					->leftjoin('order_posts as j', 'j.post_id', '=', 'a.post_id')
-					->leftjoin('users as k','k.id','=', 'b.user_id')
+					->leftjoin('users as k','k.id','=', 'a.user_id')
 					->where('a.post_id','>',0)
+					->where('c.encounter_id','=', $encounter_id)
 					->whereNull('cancel_id')
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
@@ -58,17 +59,22 @@ class OrderTaskController extends Controller
 			]);
 	}
 
-	public function task($consultation_id, $location_code)
+	public function task($encounter_id, $location_code)
 	{
-			$consultation = Consultation::find($consultation_id);
-			Log::info($location_code);
-					
+			Session::set('encounter_id', $encounter_id);
+			$encounter = Encounter::find($encounter_id);
+			$consultation = Consultation::where('patient_id','=',$encounter->patient_id)
+					->orderBy('created_at','desc')
+					->first();
+			Session::set('consultation_id', $consultation->consultation_id);
+
 			$fields = ['patient_name', 'product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'a.post_id', 'a.created_at','order_is_discharge',
 					'i.location_name',	
 					'cancel_id',
-					'j.created_at',
+					'a.created_at',
 					'k.name',
 					'order_completed',
+					'name',
 					];
 			$order_tasks = DB::table('orders as a')
 					->select($fields)
@@ -81,10 +87,9 @@ class OrderTaskController extends Controller
 					->leftjoin('queues as h', 'h.encounter_id', '=', 'c.encounter_id')
 					->leftjoin('queue_locations as i', 'i.location_code', '=', 'h.location_code')
 					->leftjoin('order_posts as j', 'j.post_id', '=', 'a.post_id')
-					->leftjoin('users as k','k.id','=', 'b.user_id')
-					->where('a.post_id','>',0)
+					->leftjoin('users as k','k.id','=', 'a.user_id')
+					->where('c.encounter_id','=', $encounter_id)
 					->where('a.location_code','=',$location_code)
-					->where('a.consultation_id','=', $consultation_id)
 					->orderBy('cancel_id')
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
@@ -99,8 +104,8 @@ class OrderTaskController extends Controller
 			
 			return view('order_tasks.index', [
 					'order_tasks'=>$order_tasks,
-					'consultation'=>$consultation,
-					'patient'=>$consultation->encounter->patient,
+					'patient'=>$encounter->patient,
+					'encounter_id' => $encounter_id,
 					'ids'=>$ids,
 			]);
 	}
@@ -110,7 +115,8 @@ class OrderTaskController extends Controller
 			return view('order_tasks.edit', [
 					'order_task'=>$order_task,
 					'product' => $order_task->product,
-					'consultation'=>$order_task->consultation,
+					'patient'=>$order_task->consultation->encounter->patient,
+					'encounter_id' => $order_task->consultation->encounter_id,
 					]);
 	}
 
@@ -125,7 +131,7 @@ class OrderTaskController extends Controller
 			if ($valid->passes()) {
 					$order_task->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/order_tasks/task/'.$order_task->consultation->consultation_id.'/'.$order_task->product->category->location_code);
+					return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->category->location_code);
 			} else {
 					return view('order_tasks.edit', [
 							'order_task'=>$order_task,
@@ -176,6 +182,7 @@ class OrderTaskController extends Controller
 			}
 			$order_task = OrderTask::find($values[0]);
 			Session::flash('message', 'Record successfully updated.');
-			return redirect('/order_tasks/task/'.$order_task->consultation->consultation_id.'/'.$order_task->product->category->location_code);
+			return redirect('order_queues');
+			//return redirect('/order_tasks/task/'.$order_task->consultation->consultation_id.'/'.$order_task->product->category->location_code);
 	}
 }

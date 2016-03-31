@@ -78,12 +78,15 @@ class ConsultationController extends Controller
 					$consultation->user_id = Auth::user()->id;
 					$consultation->encounter_id = $request->encounter_id;
 					$consultation->patient_id = $encounter->patient_id;
-					$consultation->consultation_status=2;
+					$consultation->consultation_status=1;
 					$consultation->save();
+					Session::set('consultation_id', $consultation->consultation_id);
+					Session::set('encounter_id', $encounter->encounter_id);
 					return view('consultations.edit', [
 						'consultation'=>$consultation,
 						'patient'=>$consultation->encounter->patient,
 						'tab'=>'clinical',
+						'consultOption'=>'consultation',
 					]);
 			} else {
 					Log::info("Edit consultation");
@@ -113,8 +116,9 @@ class ConsultationController extends Controller
 			}
 	}
 
-	public function close($id)
+	public function close()
 	{
+			$id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail($id);
 			$consultation->consultation_status = 1;
 			$consultation->save();
@@ -127,12 +131,18 @@ class ConsultationController extends Controller
 					->where('post_id','=',0)
 					->update(['post_id'=>$post->post_id]);
 
-			return redirect('/patient_lists');
+			if (Auth::user()->authorization->author_consultation==1) {
+					return redirect('/patient_lists');
+			} else {
+					return redirect('/order_queues');
+			}
 	}
 
 	public function edit($id) 
 	{
 			$consultation = Consultation::findOrFail($id);
+			Session::set('consultation_id', $consultation->consultation_id);
+			Session::set('encounter_id', $consultation->encounter->encounter_id);
 			return view('consultations.edit', [
 					'consultation'=>$consultation,
 					'patient'=>$consultation->encounter->patient,
@@ -153,7 +163,7 @@ class ConsultationController extends Controller
 					$consultation->save();
 					//Session::flash('message', 'Record successfully updated.');
 					//return redirect('/consultations/'.$id.'/edit');
-					return redirect('/consultation_diagnoses/'.$id);
+					return redirect('/consultation_diagnoses');
 			} else {
 					return view('consultations.edit', [
 							'consultation'=>$consultation,

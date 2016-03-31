@@ -1,7 +1,7 @@
     <div class='form-group  @if ($errors->has('diagnosis_clinical')) has-error @endif'>
         {{ Form::label('diagnosis_clinical', 'Diagnosis',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::textarea('diagnosis_clinical', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'200']) }}
+            {{ Form::textarea('diagnosis_clinical', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
             @if ($errors->has('diagnosis_clinical')) <p class="help-block">{{ $errors->first('diagnosis_clinical') }}</p> @endif
         </div>
     </div>
@@ -16,8 +16,8 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/consultation_diagnoses/{{ $consultation->consultation_id }}" role="button">Cancel</a>
+            <a class="btn btn-default" href="/consultation_diagnoses" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
-            {{ Form::hidden('consultation_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::hidden('consultation_id', $consultation->consultation_id, ['class'=>'form-control','placeholder'=>'',]) }}

@@ -1,4 +1,12 @@
-<h4>Seen by {{ $consultation->user->name }}</h4>
-<h5>{{ date('d F, H:i', strtotime($consultation->created_at)) }}</h5>
-<h5>{{ $consultation->queue->location->location_name }}</h5>
-<br>
+
+
+@if (Auth::user()->authorization->author_consultation==1)
+		@include('patients.label')
+		@include('consultations.panel')		
+@else
+		@include('patients.id')
+		<h2>Edit Orders</h2>
+		<br>
+@endif
+
+

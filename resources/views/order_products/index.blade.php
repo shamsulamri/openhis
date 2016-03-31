@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
-@include('consultations.panel')
-
+@include('orders.panel')
 {{ Form::label('Product Search', 'Product Search',['class'=>'control-label']) }}
 <form action='/order_product/search' method='post'>
 	<input type='text' class='form-control' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -26,7 +24,7 @@
 					{{$order_product->product_code}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('orders/create/'.$consultation->consultation_id.'/'. $order_product->product_code) }}'>Select</a>
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('orders/create/'. $order_product->product_code) }}'>Select</a>
 			</td>
 	</tr>
 @endforeach

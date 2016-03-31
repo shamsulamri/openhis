@@ -16,15 +16,14 @@ class OrderQueueController extends Controller
 {
 	public $paginateValue=10;
 
-	public $fields = ['patient_name', 'product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'a.post_id', 'a.created_at','order_is_discharge',
+	public $fields = ['a.order_id',
+					'patient_name', 
+					'patient_mrn',	
 					'location_name',	
+					'c.encounter_id',	
 					'g.location_code',
 					'cancel_id',
 					'j.created_at',
-					'k.name',
-					'a.consultation_id',
-					'c.patient_id',
-					'order_completed',
 					'bed_name',
 					];
 	public function __construct()
@@ -58,9 +57,31 @@ class OrderQueueController extends Controller
 					->orderBy('a.created_at')
 					->orderBy('order_is_discharge','desc')
 					->orderBy('a.created_at', 'desc')
-					->groupBy('a.consultation_id')
+					->groupBy('c.encounter_id')
 					->paginate($this->paginateValue);
 
+			$fields = ['a.order_id',
+					'patient_name', 
+					'patient_mrn',	
+					'encounter_name', 
+					'c.encounter_id',	
+					'g.location_code',
+					'cancel_id',
+					'a.created_at',
+					];
+			$order_queues = DB::table('orders as a')
+					->select($fields)
+					->join('consultations as b', 'b.consultation_id', '=', 'a.consultation_id')
+					->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->join('patients as d', 'd.patient_id','=', 'c.patient_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'a.order_id')
+					->leftjoin('queue_locations as g', 'g.location_code', '=', 'a.location_code')
+					->leftjoin('ref_encounter_types as h', 'h.encounter_code', '=', 'c.encounter_code')
+					->where('a.location_code','=',$location)
+					->whereNull('cancel_id')
+					->where('order_completed', '=', 0)
+					->groupBy('a.encounter_id')
+					->paginate($this->paginateValue);
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,
@@ -156,26 +177,49 @@ class OrderQueueController extends Controller
 					->leftjoin('queues as h', 'h.encounter_id', '=', 'c.encounter_id')
 					->leftjoin('queue_locations as i', 'i.location_code', '=', 'h.location_code')
 					->leftjoin('order_posts as j', 'j.post_id', '=', 'a.post_id')
-					->leftjoin('users as k','k.id','=', 'b.user_id')
 					->leftjoin('admissions as l', 'l.encounter_id', '=', 'c.encounter_id')
 					->leftjoin('beds as m', 'm.bed_code', '=', 'l.bed_code')
 					->where('a.post_id','>',0)
-					->whereNull('cancel_id')
 					->where('g.location_code','=',$location)
 					->where('order_completed', '=', 0)
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
 					->orderBy('order_is_discharge','desc')
 					->orderBy('a.created_at', 'desc')
-					->groupBy('a.consultation_id')
+					->groupBy('c.encounter_id')
 					->paginate($this->paginateValue);
+
+			$fields = ['a.order_id',
+					'patient_name', 
+					'patient_mrn',	
+					'encounter_name', 
+					'c.encounter_id',	
+					'g.location_code',
+					'cancel_id',
+					'a.created_at',
+					];
+			$order_queues = DB::table('orders as a')
+					->select($fields)
+					->join('consultations as b', 'b.consultation_id', '=', 'a.consultation_id')
+					->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->join('patients as d', 'd.patient_id','=', 'c.patient_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'a.order_id')
+					->leftjoin('queue_locations as g', 'g.location_code', '=', 'a.location_code')
+					->leftjoin('ref_encounter_types as h', 'h.encounter_code', '=', 'c.encounter_code')
+					->where('a.location_code','=',$location)
+					->whereNull('cancel_id')
+					->where('order_completed', '=', 0)
+					->groupBy('a.encounter_id')
+					->paginate($this->paginateValue);
+
 
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,
 					'locations' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location'=>$location,
-					]);
+					])
+				->withCookie(cookie('queue_location',$location));
 	}
 
 }

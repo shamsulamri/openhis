@@ -6,7 +6,7 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<a href='/consultation_diagnoses/create/{{ $consultation->consultation_id }}' class='btn btn-primary'>Create</a>
+<a href='/consultation_diagnoses/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
 @if ($consultation_diagnoses->total()>0)

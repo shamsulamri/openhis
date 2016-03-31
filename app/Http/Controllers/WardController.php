@@ -132,4 +132,18 @@ class WardController extends Controller
 					'wards'=>$wards
 			]);
 	}
+
+	public function setWard($id) 
+	{
+			$ward = Ward::find($id);
+			Session::flash('message', 'This terminal has been set to '.$ward->ward_name);
+
+			return redirect('/wards')
+				->withCookie(cookie('ward',$id));
+	}
+
+	public function getWard(Request $request)
+	{
+			return $request->cookie('ward');
+	}
 }

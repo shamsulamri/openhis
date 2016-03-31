@@ -39,8 +39,9 @@ class OrderDrugController extends Controller
 			]);
 	}
 
-	public function create($consultation_id, $product_code)
+	public function create($product_code)
 	{
+			$consultation_id = Session::get('consultation_id');
 			$order_drug = new OrderDrug();
 			$consultation = Consultation::findOrFail($consultation_id);
 			$product = DB::table('products')
@@ -68,11 +69,12 @@ class OrderDrugController extends Controller
 	{
 			$order_drug = new OrderDrug();
 			$valid = $order_drug->validate($request->all(), $request->_method);
-
 			if ($valid->passes()) {
 					$product = Product::find($request->product_code);
 					$order = new Order();
-					$order->consultation_id = $request->consultation_id;
+					$order->consultation_id = Session::get('consultation_id');
+					$order->encounter_id = Session::get('encounter_id');
+					$order->user_id = Auth::user()->id;
 					$order->product_code = $request->product_code;
 					$order->order_is_discharge = $request->order_is_discharge;
 					$order->order_quantity_request = $request->order_quantity_request;
@@ -85,7 +87,7 @@ class OrderDrugController extends Controller
 					$order_drug->order_id = $order->order_id;
 					$order_drug->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/orders/'.$order->consultation_id);
+					return redirect('/orders');
 			} else {
 					return redirect('/order_drugs/create')
 							->withErrors($valid)
@@ -95,8 +97,8 @@ class OrderDrugController extends Controller
 
 	public function edit($id) 
 	{
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 			$order_drug = OrderDrug::findOrFail($id);
-			$consultation = Consultation::findOrFail($order_drug->order->consultation_id);
 			$product_code = $order_drug->order->product_code;
 			$product = DB::table('products')
 						->select('product_name','product_code')
@@ -135,7 +137,7 @@ class OrderDrugController extends Controller
 			if ($valid->passes()) {
 					$order_drug->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/orders/'.$order_drug->order->consultation_id);
+					return redirect('/orders');
 			} else {
 					return view('order_drugs.edit', [
 							'order_drug'=>$order_drug,

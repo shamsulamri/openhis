@@ -16,9 +16,10 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Patient</th>
-    <th>Type</th>
     <th>Date</th> 
+    <th>Type</th>
+    <th>MRN</th>
+    <th>Patient</th>
 	<th></th>
 	</tr>
   </thead>
@@ -26,17 +27,19 @@
 @foreach ($encounters as $encounter)
 	<tr>
 			<td>
-
-					<a href='{{ URL::to('encounters/'. $encounter->encounter_id . '/edit') }}'>
-						{{$encounter->patient_name}}
-					</a>
+					{{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 			</td>
-
 			<td>
 					{{$encounter->encounter_name}}
 			</td>
 			<td>
-					{{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
+					{{ $encounter->patient_mrn }}
+			</td>
+			<td>
+
+					<a href='{{ URL::to('encounters/'. $encounter->encounter_id . '/edit') }}'>
+						{{$encounter->patient_name}}
+					</a>
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('encounters/delete/'. $encounter->encounter_id) }}'>Delete</a>

@@ -25,19 +25,20 @@ class OrderProductController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index($id)
+	public function index()
 	{
 			$order_products = DB::table('products')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
 			
-			$consultation = Consultation::findOrFail($id);
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 
 			return view('order_products.index', [
 					'order_products'=>$order_products,
 					'consultation'=>$consultation,
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
+					'consultOption' => 'consultation',
 			]);
 	}
 
@@ -147,6 +148,7 @@ class OrderProductController extends Controller
 					'consultation'=>$consultation,
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
+					'consultOption' => 'consultation',
 					]);
 	}
 

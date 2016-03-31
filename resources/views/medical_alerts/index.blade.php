@@ -1,17 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Medical Alert Index</h1>
-<br>
-<form action='/medical_alert/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-</form>
+@include('patients.label')
+<h2>Medical Alerts</h2>
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/medical_alerts/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -19,8 +14,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>patient_id</th>
-    <th>alert_id</th> 
+    <th>Date</th> 
+    <th>Description</th>
 	<th></th>
 	</tr>
   </thead>
@@ -28,12 +23,12 @@
 @foreach ($medical_alerts as $medical_alert)
 	<tr>
 			<td>
-					<a href='{{ URL::to('medical_alerts/'. $medical_alert->alert_id . '/edit') }}'>
-						{{$medical_alert->patient_id}}
-					</a>
+						{{ date('d F, H:i', strtotime($medical_alert->created_at)) }}
 			</td>
 			<td>
-					{{$medical_alert->alert_id}}
+					<a href='{{ URL::to('medical_alerts/'. $medical_alert->alert_id . '/edit') }}'>
+						{{$medical_alert->alert_description}}
+					</a>
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('medical_alerts/delete/'. $medical_alert->alert_id) }}'>Delete</a>

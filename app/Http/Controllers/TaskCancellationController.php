@@ -39,6 +39,7 @@ class TaskCancellationController extends Controller
 			return view('task_cancellations.create', [
 					'task_cancellation' => $task_cancellation,
 					'consultation' => $task_cancellation->order->consultation,	
+					'patient' => $task_cancellation->order->consultation->encounter->patient,	
 					]);
 	}
 
@@ -54,7 +55,7 @@ class TaskCancellationController extends Controller
 					$task_cancellation->user_id = Auth::user()->id;
 					$task_cancellation->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/order_tasks/task/'.$task_cancellation->order->consultation->consultation_id.'/'.$task_cancellation->order->product->category->location_code);
+					return redirect('/order_tasks/task/'.Session::get('encounter_id').'/'.$task_cancellation->order->product->category->location_code);
 			} else {
 					return redirect('/task_cancellations/create/'.$request->order_id)
 							->withErrors($valid)

@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
-@include('consultations.panel')
+@include('orders.panel')
 @include('common.errors')
 
 {{ Form::model($order_investigation, ['route'=>['order_investigations.update',$order_investigation->id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 

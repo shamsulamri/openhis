@@ -1,8 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
-@include('consultations.panel')
+@if (Auth::user()->authorization->author_consultation==1)
+		@include('patients.label')
+		@include('consultations.panel')		
+@else
+		@include('patients.id')
+@endif
 @include('common.errors')
 
 {{ Form::model($order, ['url'=>'orders', 'class'=>'form-horizontal']) }} 

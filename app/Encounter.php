@@ -21,7 +21,8 @@ class Encounter extends Model
 				'employer_code',
 				'employee_id',
 				'organisation_code',
-				'organisation_id'
+				'organisation_id',
+				'triage_code',
 		];
 	
     protected $guarded = ['encounter_id'];

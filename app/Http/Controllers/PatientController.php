@@ -35,7 +35,7 @@ class PatientController extends Controller
 	public function index()
 	{
 			$patients = DB::table('patients')
-					->orderBy('patient_name')
+					->orderBy('created_at')
 					->paginate($this->paginateValue);
 			return view('patients.index', [
 					'patients'=>$patients
@@ -84,6 +84,7 @@ class PatientController extends Controller
 			$patient = Patient::findOrFail($id);
 			return view('patients.view', [
 					'patient'=>$patient,
+					'patientOption'=>'',
 					]);
 	}
 
@@ -105,6 +106,7 @@ class PatientController extends Controller
 					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
+					'patientOption' => 'demography',
 					]);
 	}
 

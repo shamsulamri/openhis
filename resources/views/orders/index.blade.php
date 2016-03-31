@@ -1,16 +1,28 @@
 @extends('layouts.app')
 
 @section('content')	
-@include('patients.label')
-@include('consultations.panel')
+@include('orders.panel')
+
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<a href='/order_products/{{ $consultation->consultation_id }}' class='btn btn-primary'>Create</a>
+
+@if (Auth::user()->authorization->author_consultation<>1)
+        <a class="btn btn-default" href="/order_tasks/task/{{ Session::get('encounter_id') }}/{{Cookie::get('queue_location')}}" role="button">Back to Task</a>
+@endif
+
+<a href='/order_products' class='btn btn-primary'>Create</a>
 <br>
 <br>
 @if ($orders->total()>0)
 <table class="table table-hover">
+ <thead>
+	<tr> 
+    <th>Date</th>
+    <th>Product</th>
+	<th></th>
+	</tr>
+  </thead>
 	<tbody>
 @foreach ($orders as $order)
 	<?php $status='' ?>
@@ -50,7 +62,9 @@
 							<a class='btn btn-warning btn-xs' href='{{ URL::to('/order_cancellations/create/'. $order->order_id) }}'>Cancel</a>
 						@endif
 					@else
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>Delete</a>
+						@if (!isset($order->cancel_id))
+							<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>Delete</a>
+						@endif
 					@endif
 				@else
 					@if ($order->order_report != '')

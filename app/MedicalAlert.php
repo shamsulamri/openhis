@@ -12,6 +12,7 @@ class MedicalAlert extends Model
 	protected $table = 'medical_alerts';
 	protected $fillable = [
 				'patient_id',
+				'consultation_id',
 				'alert_description'];
 	
     protected $guarded = ['alert_id'];
@@ -22,6 +23,7 @@ class MedicalAlert extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'patient_id'=>'required',
+				'consultation_id'=>'required',
 				'alert_description'=>'required',
 			];
 

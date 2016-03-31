@@ -13,6 +13,7 @@ class Order extends Model
 	protected $table = 'orders';
 	protected $fillable = [
 				'consultation_id',
+				'user_id',
 				'product_code',
 				'order_quantity_request',
 				'order_description',
@@ -49,6 +50,7 @@ class Order extends Model
 					default:
 							$rules = [
 								'consultation_id'=>'required',
+								'user_id'=>'required',
 								'product_code'=>'required',
 								'order_quantity_request'=>'required|min:1',
 							];
@@ -87,6 +89,11 @@ class Order extends Model
 	public function orderInvestigation() 
 	{
 			return $this->hasOne('App\OrderInvestigation','order_id');
+	}
+
+	public function user()
+	{
+			return $this->belongsTo('App\User', 'user_id','id');
 	}
 
 	public static function boot()
