@@ -1,9 +1,5 @@
 <h2>Consultation</h2>
 <br>
-	<h4>
-	Seen by {{ Auth::user()->name }} on {{ date('d F Y, H:i', strtotime($consultation->created_at)) }}
-	</h4>
-<br>
 	<div class="row">
 			<div class="col-xs-6">
             	<a class="btn btn-default" href="/consultations/progress/{{ $consultation->consultation_id }}" role="button">Progress Notes</a>
@@ -32,13 +28,11 @@
 	active
 @endif
 "><a href="/consultation_diagnoses">Diagnosis</a></li>
-<!--
   <li role="presentation" class="
 @if ($tab=='procedure')
 	active
 @endif
-"><a href="/consultation_procedures/{{ $consultation->consultation_id }}">Procedure</a></li>
--->
+"><a href="/consultation_procedures">Procedure</a></li>
   <li role="presentation" class="
 @if ($tab=='order')
 	active

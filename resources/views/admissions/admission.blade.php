@@ -15,14 +15,6 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('bed_code')) has-error @endif'>
-        <label for='bed_code' class='col-sm-2 control-label'>Bed<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-            {{ Form::select('bed_code', $bed,null, ['class'=>'form-control','maxlength'=>'10']) }}
-            @if ($errors->has('bed_code')) <p class="help-block">{{ $errors->first('bed_code') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group  @if ($errors->has('user_id')) has-error @endif'>
         <label for='user_id' class='col-sm-2 control-label'>Consultant<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>

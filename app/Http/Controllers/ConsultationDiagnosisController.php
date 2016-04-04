@@ -25,7 +25,7 @@ class ConsultationDiagnosisController extends Controller
 	public function index()
 	{
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
-
+			
 			$consultation_diagnoses = DB::table('consultation_diagnoses as a')
 					->select('id', 'a.created_at', 'diagnosis_clinical','diagnosis_type')
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
@@ -33,14 +33,17 @@ class ConsultationDiagnosisController extends Controller
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
-			
-			return view('consultation_diagnoses.index', [
-					'consultation_diagnoses'=>$consultation_diagnoses,
-					'consultation'=>$consultation,
-					'patient'=>$consultation->encounter->patient,
-					'tab'=>'diagnosis',
-					'consultOption' => 'consultation',
-			]);
+			if ($consultation_diagnoses->count()==0) {
+					return $this->create();
+			} else {
+					return view('consultation_diagnoses.index', [
+							'consultation_diagnoses'=>$consultation_diagnoses,
+							'consultation'=>$consultation,
+							'patient'=>$consultation->encounter->patient,
+							'tab'=>'diagnosis',
+							'consultOption' => 'consultation',
+					]);
+			}
 	}
 
 	public function create()

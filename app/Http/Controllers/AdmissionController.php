@@ -100,7 +100,7 @@ class AdmissionController extends Controller
 					$admission->admission_id = $request->admission_id;
 					$admission->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/admissions');
+					return redirect('/admission_beds?admission_id='.$admission->admission_id);
 			} else {
 					return redirect('/admissions/create')
 							->withErrors($valid)
@@ -147,7 +147,7 @@ class AdmissionController extends Controller
 					if ($valid->passes()) {
 							$admission->save();
 							Session::flash('message', 'Record successfully updated.');
-							return redirect('/admissions');
+							return redirect('/admission_beds?admission_id='.$admission->admission_id);
 					} else {
 							return view('admissions.edit', [
 									'admission'=>$admission,
@@ -175,6 +175,7 @@ class AdmissionController extends Controller
 					'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
 					'texture' => DietTexture::all()->sortBy('texture_name')->lists('texture_name', 'texture_code')->prepend('',''),
 					'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'consultOption' => 'diet',
 					]);
 	}
 

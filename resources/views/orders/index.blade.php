@@ -16,13 +16,6 @@
 <br>
 @if ($orders->total()>0)
 <table class="table table-hover">
- <thead>
-	<tr> 
-    <th>Date</th>
-    <th>Product</th>
-	<th></th>
-	</tr>
-  </thead>
 	<tbody>
 @foreach ($orders as $order)
 	<?php $status='' ?>

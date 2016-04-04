@@ -130,7 +130,11 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
+			@if (empty($order->product_code))
+            <a class="btn btn-default" href="/order_products" role="button">Cancel</a>
+			@else
             <a class="btn btn-default" href="/orders" role="button">Cancel</a>
+			@endif
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

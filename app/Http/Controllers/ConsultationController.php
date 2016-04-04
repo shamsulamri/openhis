@@ -41,7 +41,6 @@ class ConsultationController extends Controller
 			$notes = Consultation::where('patient_id', $consultation->patient_id)
 					->orderBy('created_at','desc')
 					->paginate(3);
-			
 			return view('consultations.progress', [
 					'notes'=>$notes,
 					'consultation'=>$consultation,

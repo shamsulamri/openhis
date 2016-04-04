@@ -45,6 +45,7 @@
 									<li><a href="{{ url('/encounters') }}">Encounters</a></li>
 									<li><a href="{{ url('/queues') }}">Queues</a></li>
 									<li><a href="{{ url('/admissions') }}">Admissions</a></li>
+									<li><a href="{{ url('/admission_tasks') }}">Admission Tasks</a></li>
                             </ul>
                         </li>
 						@if (Auth::user()->authorization->author_consultation==1)

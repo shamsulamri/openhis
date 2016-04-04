@@ -15,6 +15,8 @@ use App\QueueLocation as Location;
 use App\Consultation;
 use App\Encounter;
 use Auth;
+use App\OrderInvestigation;
+use App\OrderDrug;
 
 class OrderController extends Controller
 {
@@ -249,4 +251,52 @@ class OrderController extends Controller
 				Log::info("save !!!!!");
 			}	
 	}
+
+	public function multiple(Request $request) 
+	{
+
+			foreach ($request->all() as $product_code=>$value) {
+					switch ($product_code) {
+							case '_token':
+									break;
+							case '_set_value':
+									break;
+							case '_search':
+									break;
+							case '_page':
+									break;
+							default:
+									$product = Product::find($product_code);
+									$order = $this->orderItem($product);
+					}
+			}
+
+			Session::flash('message', 'Product added to order list.');
+			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
+			//return redirect('/orders');
+	}
+
+	public function orderItem($product) 
+	{
+			$order = new Order();
+			$order->consultation_id = Session::get('consultation_id');
+			$order->encounter_id = Session::get('encounter_id');
+			$order->user_id = Auth::user()->id;
+			$order->product_code = $product->product_code;
+			$order->order_quantity_request = 1;
+			$order->order_sale_price = $product->product_sale_price;
+			$order->location_code = $product->location_code;
+			$order->save();
+			if ($product->order_form==2) {
+					$order_drug = new OrderDrug();
+					$order_drug->order_id = $order->order_id;
+					$order_drug->save();
+			}
+
+			if ($product->order_form=3) {
+					$order_investigation = new OrderInvestigation();
+					$order_investigation->order_id = $order->order_id;
+					$order_investigation->save();
+			}
+	}	
 }

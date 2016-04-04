@@ -2,7 +2,7 @@
     <div class='form-group  @if ($errors->has('procedure_description')) has-error @endif'>
         {{ Form::label('procedure_description', 'Description',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::textarea('procedure_description', null, ['class'=>'form-control']) }}
+            {{ Form::textarea('procedure_description', null, ['class'=>'form-control', 'rows'=>'4']) }}
             @if ($errors->has('procedure_description')) <p class="help-block">{{ $errors->first('procedure_description') }}</p> @endif
         </div>
     </div>

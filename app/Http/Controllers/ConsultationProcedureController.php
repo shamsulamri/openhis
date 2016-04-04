@@ -21,9 +21,9 @@ class ConsultationProcedureController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index($consultation_id)
+	public function index()
 	{
-			$consultation = Consultation::find($consultation_id);
+			$consultation = Consultation::find(Session::get('consultation_id'));
 
 			$consultation_procedures = DB::table('consultation_procedures as a')
 					->select('id', 'a.created_at', 'procedure_description')
@@ -34,12 +34,15 @@ class ConsultationProcedureController extends Controller
 			return view('consultation_procedures.index', [
 					'consultation_procedures'=>$consultation_procedures,
 					'consultation' => $consultation,
-					'tab' => 'procedure',
+					'patient'=>$consultation->encounter->patient,
+					'tab'=>'procedure',
+					'consultOption' => 'consultation',
 			]);
 	}
 
-	public function create($consultation_id)
+	public function create()
 	{
+			$consultation_id = Session::get('consultation_id');
 			$consultation_procedure = new ConsultationProcedure();
 			if (empty($consultation_id)==false) {
 					$consultation_procedure->consultation_id = $consultation_id;
@@ -50,7 +53,9 @@ class ConsultationProcedureController extends Controller
 			return view('consultation_procedures.create', [
 					'consultation_procedure' => $consultation_procedure,
 					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'procedure',
+					'consultOption' => 'consultation',
 					]);
 	}
 
@@ -64,7 +69,7 @@ class ConsultationProcedureController extends Controller
 					$consultation_procedure->id = $request->id;
 					$consultation_procedure->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/consultation_procedures/'.$consultation_procedure->consultation_id);
+					return redirect('/consultation_procedures/');
 			} else {
 					return redirect('/consultation_procedures/create')
 							->withErrors($valid)
@@ -80,7 +85,9 @@ class ConsultationProcedureController extends Controller
 			return view('consultation_procedures.edit', [
 					'consultation_procedure'=>$consultation_procedure,
 					'consultation'=>$consultation,	
+					'patient'=>$consultation->encounter->patient,
 					'tab'=>'procedure',
+					'consultOption' => 'consultation',
 					]);
 	}
 
@@ -96,7 +103,7 @@ class ConsultationProcedureController extends Controller
 			if ($valid->passes()) {
 					$consultation_procedure->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/consultation_procedures/'.$consultation_procedure->consultation_id);
+					return redirect('/consultation_procedures');
 			} else {
 					return view('consultation_procedures.edit', [
 							'consultation_procedure'=>$consultation_procedure,
@@ -109,9 +116,14 @@ class ConsultationProcedureController extends Controller
 	
 	public function delete($id)
 	{
+		$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 		$consultation_procedure = ConsultationProcedure::findOrFail($id);
 		return view('consultation_procedures.destroy', [
-			'consultation_procedure'=>$consultation_procedure
+					'consultation_procedure'=>$consultation_procedure,
+					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
+					'tab'=>'procedure',
+					'consultOption' => 'consultation',
 			]);
 
 	}

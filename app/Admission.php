@@ -39,7 +39,6 @@ class Admission extends Model
 					$rules = [
 						'encounter_id'=>'required',
 						'user_id'=>'required',
-						'bed_code'=>'required',
 					];
 					break;
 			default:

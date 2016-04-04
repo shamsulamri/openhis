@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id')
 <div class='page-header'>
-		<h1>New Admission</h1>
+		<h2>New Admission</h2>
 </div>
 @include('common.errors')
 <br>

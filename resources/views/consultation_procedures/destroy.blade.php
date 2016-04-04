@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
-Delete Consultation Procedure
-</h1>
+@include('patients.label')
+@include('consultations.panel')
+<h2>
+Delete Procedure
+</h2>
 @include('common.errors')
 <br>
-<h3>
+<h4>
 Are you sure you want to delete the selected record ?
 {{ $consultation_procedure->procedure_description }}
 {{ Form::open(['url'=>'consultation_procedures/'.$consultation_procedure->id, 'class'=>'pull-right']) }}
@@ -15,5 +17,5 @@ Are you sure you want to delete the selected record ?
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 
-</h3>
+</h4>
 @endsection

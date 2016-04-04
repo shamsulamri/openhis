@@ -42,7 +42,7 @@
 					</a>
 			</td>
 			<td>
-					{{ $order->encounter_name }}
+					{{ $order->encounter_name }} ({{ $order->location_name }}{{ $order->bed_name }})
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a>

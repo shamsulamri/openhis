@@ -15,6 +15,8 @@ use App\Unit;
 use App\Location;
 use App\Form;
 use App\Consultation;
+use App\Set;
+use App\OrderSet;
 
 class OrderProductController extends Controller
 {
@@ -30,7 +32,7 @@ class OrderProductController extends Controller
 			$order_products = DB::table('products')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
-			
+		 	$order_products = NULL; 	
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 
 			return view('order_products.index', [
@@ -39,6 +41,9 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
+					'sets' => Set::all()->sortBy('set_name'),
+					'set_value' => '',
+					'search' => '',
 			]);
 	}
 
@@ -133,13 +138,25 @@ class OrderProductController extends Controller
 	
 	public function search(Request $request)
 	{
-			$order_products = DB::table('products')
+			if (!empty($request->set_code)) {
+				
+				$orderSets = DB::table('order_sets')
+							->select('product_code')
+							->where('set_code','=',$request->set_code)
+							->pluck('product_code');
+
+				$order_products = DB::table('products')
+					->whereIn('product_code', $orderSets)
+					->orderBy('product_name')
+					->paginate($this->paginateValue);
+			} else {
+				$order_products = DB::table('products')
 					->where('product_name','like','%'.$request->search.'%')
 					->orWhere('product_code', 'like','%'.$request->search.'%')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
-
-			$consultation_id = $request->consultation_id;
+			}
+			$consultation_id = Session::get('consultation_id'); //$request->consultation_id;
 			$consultation = Consultation::findOrFail($consultation_id);
 
 			return view('order_products.index', [
@@ -149,6 +166,9 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
+					'sets' => Set::all()->sortBy('set_name'),
+					'set_value' => $request->set_code,
+					'page' => $request->page,
 					]);
 	}
 

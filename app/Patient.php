@@ -180,8 +180,8 @@ class Patient extends Model
 
 	public function getTitle()
 	{
-			if (!empty($this->title->title_name)) {
-					return $this->title();
+			if (!empty($this->title_code)) {
+					return $this->title->title_name;
 			} else {
 					return "";
 			}

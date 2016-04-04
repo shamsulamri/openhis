@@ -7,21 +7,27 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class ConsultationProcedure extends Model
+class OrderSet extends Model
 {
-	protected $table = 'consultation_procedures';
+	protected $table = 'order_sets';
 	protected $fillable = [
-				'procedure_description',
-				'procedure_is_principal',
-				'consultation_id'];
+				'set_code',
+				'product_code'];
 	
+    protected $primaryKey = 'set_code';
+    public $incrementing = false;
+    
 
 	public function validate($input, $method) {
 			$rules = [
-				'consultation_id'=>'required',
+				'product_code'=>'required',
 			];
 
 			
+        	if ($method=='') {
+        	    $rules['set_code'] = 'required|max:20';
+        	}
+        
 			
 			$messages = [
 				'required' => 'This field is required'
@@ -29,9 +35,6 @@ class ConsultationProcedure extends Model
 			
 			return validator::make($input, $rules ,$messages);
 	}
+
 	
-	public function consultation()
-	{
-		return $this->belongsTo('App\Consulation', 'consultation_id', 'consultation_id');	
-	}
 }

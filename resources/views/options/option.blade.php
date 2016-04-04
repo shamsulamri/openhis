@@ -9,6 +9,8 @@
 		<a href="{{ url('/queues') }}">Queues</a><br>
 		<a href="{{ url('/queue_locations') }}">Queue Locations</a><br>
 		<a href="{{ url('/admissions') }}">Admissions</a><br>
+		<a href="{{ url('/admission_beds') }}">Admission Beds</a><br>
+		<a href="{{ url('/admission_tasks') }}">Admission Task</a><br>
 		<a href="{{ url('/admission_types') }}">Admission Types</a><br>
 		<a href="{{ url('/referrals') }}">Referral Types</a><br>
 		<a href="{{ url('/patient_types') }}">Patient Types</a><br>
@@ -55,6 +57,8 @@
 		<a href="{{ url('/bill_materials') }}">Bill of Materials</a><br>
 <h3>Order Management</h3>
 		<a href="{{ url('/orders') }}">Orders</a><br>
+		<a href="{{ url('/order_sets') }}">Order Sets</a><br>
+		<a href="{{ url('/sets') }}">Sets</a><br>
 		<a href="{{ url('/order_queues') }}">Order Queues</a><br>
 		<a href="{{ url('/order_tasks') }}">Order Tasks</a><br>
 		<a href="{{ url('/order_products') }}">Order Products</a><br>

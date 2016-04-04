@@ -33,6 +33,31 @@ Route::group(['middleware' => 'web'], function () {
 				return view('options.option');
 		});
 
+		Route::resource('admission_beds', 'AdmissionBedController');
+		Route::get('/admission_beds/id/{id}', 'AdmissionBedController@searchById');
+		Route::post('/admission_bed/search', 'AdmissionBedController@search');
+		Route::get('/admission_bed/search', 'AdmissionBedController@search');
+		Route::get('/admission_beds/delete/{id}', 'AdmissionBedController@delete');
+		Route::get('/admission_beds/admit/{admission_id}/{bed_code}', 'AdmissionBedController@admit');
+		
+		Route::resource('admission_tasks', 'AdmissionTaskController');
+		Route::get('/admission_tasks/id/{id}', 'AdmissionTaskController@searchById');
+		Route::post('/admission_task/search', 'AdmissionTaskController@search');
+		Route::get('/admission_task/search', 'AdmissionTaskController@search');
+		Route::get('/admission_tasks/delete/{id}', 'AdmissionTaskController@delete');
+		
+		Route::resource('order_sets', 'OrderSetController');
+		Route::get('/order_sets/id/{id}', 'OrderSetController@searchById');
+		Route::post('/order_set/search', 'OrderSetController@search');
+		Route::get('/order_set/search', 'OrderSetController@search');
+		Route::get('/order_sets/delete/{id}', 'OrderSetController@delete');
+		
+		Route::resource('sets', 'SetController');
+		Route::get('/sets/id/{id}', 'SetController@searchById');
+		Route::post('/set/search', 'SetController@search');
+		Route::get('/set/search', 'SetController@search');
+		Route::get('/sets/delete/{id}', 'SetController@delete');
+		
 		Route::resource('user_authorizations', 'UserAuthorizationController');
 		Route::get('/user_authorizations/id/{id}', 'UserAuthorizationController@searchById');
 		Route::post('/user_authorization/search', 'UserAuthorizationController@search');
@@ -619,15 +644,15 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/consultation_diagnosis/search', 'ConsultationDiagnosisController@search');
 		Route::get('/consultation_diagnoses/delete/{id}', 'ConsultationDiagnosisController@delete');
 
-		Route::resource('consultation_procedures', 'ConsultationProcedureController',['except'=>['index', 'create','show']] );
+		Route::resource('consultation_procedures', 'ConsultationProcedureController');
 		Route::get('/consultation_procedures/{consultation_id}', 'ConsultationProcedureController@index');
 		Route::get('/consultation_procedures/id/{id}', 'ConsultationProcedureController@searchById');
-		Route::get('/consultation_procedures/create/{id}', 'ConsultationProcedureController@create');
 		Route::post('/consultation_procedure/search', 'ConsultationProcedureController@search');
 		Route::get('/consultation_procedure/search', 'ConsultationProcedureController@search');
 		Route::get('/consultation_procedures/delete/{id}', 'ConsultationProcedureController@delete');
 
 		Route::get('/orders/task', 'OrderController@task');
+		Route::post('/orders/multiple', 'OrderController@multiple');
 		Route::resource('orders', 'OrderController', ['except'=>[ 'create', 'show']]);
 		Route::get('/orders/{id}/show', 'OrderController@show');
 		Route::get('/orders/create/{product_code}', 'OrderController@create');

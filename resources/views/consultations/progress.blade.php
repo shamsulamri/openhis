@@ -43,8 +43,8 @@ Progress Notes
 								@else
 									<span class="label label-success">
 								@endif
-							{{ $order->product->product_name }}
-							</span>&nbsp; 
+								{{ $order->product->product_name }}
+								</span>&nbsp; 
 							@endforeach
 					@endif
 			</td>
