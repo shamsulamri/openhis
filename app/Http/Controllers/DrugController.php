@@ -10,7 +10,7 @@ use App\Drug;
 use Log;
 use DB;
 use Session;
-use App\Category;
+use App\DrugCategory as Category;
 
 
 class DrugController extends Controller

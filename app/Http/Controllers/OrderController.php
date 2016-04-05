@@ -272,8 +272,8 @@ class OrderController extends Controller
 			}
 
 			Session::flash('message', 'Product added to order list.');
-			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
-			//return redirect('/orders');
+			//return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
+			return redirect('/orders');
 	}
 
 	public function orderItem($product) 

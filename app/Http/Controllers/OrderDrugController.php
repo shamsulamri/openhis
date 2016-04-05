@@ -19,6 +19,7 @@ use App\Order;
 use App\Consultation;
 use App\Product;
 use Auth;
+use App\DrugPrescription;
 
 class OrderDrugController extends Controller
 {
@@ -47,8 +48,23 @@ class OrderDrugController extends Controller
 			$product = DB::table('products')
 						->select('product_name','product_code')
 						->where('product_code','=',$product_code)->get();
-			$order = new Order();
 
+			$order = new Order();
+			$drug_prescription = DrugPrescription::where('drug_code','=',$product_code)->first();
+			if (!empty($drug_prescription)) {
+					$order_drug->drug_strength = $drug_prescription->drug_strength;
+					$order_drug->unit_code = $drug_prescription->unit_code;
+					$order_drug->drug_dosage = $drug_prescription->drug_dosage;
+					$order_drug->dosage_code = $drug_prescription->dosage_code;
+					$order_drug->route_code = $drug_prescription->route_code;
+					$order_drug->frequency_code = $drug_prescription->frequency_code;
+					$order_drug->drug_period = $drug_prescription->drug_period;
+					$order_drug->period_code = $drug_prescription->period_code;
+					$order_drug->drug_prn = $drug_prescription->drug_prn;
+					$order_drug->drug_meal = $drug_prescription->drug_meal;
+					$order->order_quantity_request = $drug_prescription->drug_total_unit;
+					$order->order_description = $drug_prescription->drug_description;
+			}
 			return view('order_drugs.create', [
 					'order_drug' => $order_drug,
 					'unit' => Unit::where('unit_drug',1)->orderBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),

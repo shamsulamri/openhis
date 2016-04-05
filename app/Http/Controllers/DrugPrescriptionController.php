@@ -89,6 +89,7 @@ class DrugPrescriptionController extends Controller
 			$drug_prescription->fill($request->input());
 
 			$drug_prescription->drug_prn = $request->drug_prn ?: 0;
+			$drug_prescription->drug_meal = $request->drug_meal ?: 0;
 
 			$valid = $drug_prescription->validate($request->all(), $request->_method);	
 

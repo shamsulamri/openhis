@@ -95,18 +95,10 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('drug_description')) has-error @endif'>
-        {{ Form::label('drug_description', 'drug_description',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::text('drug_description', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'65535']) }}
-            @if ($errors->has('drug_description')) <p class="help-block">{{ $errors->first('drug_description') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group  @if ($errors->has('drug_meal')) has-error @endif'>
         {{ Form::label('drug_meal', 'drug_meal',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('drug_meal', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'1']) }}
+            {{ Form::checkbox('drug_meal', '1') }}
             @if ($errors->has('drug_meal')) <p class="help-block">{{ $errors->first('drug_meal') }}</p> @endif
         </div>
     </div>

@@ -23,7 +23,6 @@ class DrugPrescription extends Model
 				'drug_total_unit',
 				'drug_prn',
 				'drug_instruction',
-				'drug_description',
 				'drug_meal'];
 	
     protected $guarded = ['prescription_id'];
