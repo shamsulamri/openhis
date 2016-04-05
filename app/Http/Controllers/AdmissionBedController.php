@@ -18,6 +18,7 @@ use App\Status;
 use App\Gender;
 use App\Department;
 use App\Admission;
+use App\BedMovement;
 
 class AdmissionBedController extends Controller
 {
@@ -37,7 +38,7 @@ class AdmissionBedController extends Controller
 					$patient = $admission->encounter->patient;
 			}
 			$admission_beds = DB::table('beds as a')
-					->select(['a.bed_code','bed_name','patient_name'])
+					->select(['b.admission_id','a.bed_code','bed_name','patient_name','ward_code', 'a.class_code','c.patient_id'])
 					->leftJoin('admissions as b', 'b.bed_code', '=', 'a.bed_code')
 					->leftJoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftJoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
@@ -184,12 +185,20 @@ class AdmissionBedController extends Controller
 			]);
 	}
 
-	public function admit($admission_id, $bed_code)
+	public function move($admission_id, $bed_code)
 	{
 			$admission = Admission::find($admission_id);
+			
+			$bed_movement = new BedMovement();
+			$bed_movement->admission_id = $admission_id;
+			$bed_movement->move_from = $admission->bed_code;
+			$bed_movement->move_to = $bed_code;
+			$bed_movement->move_date = date('d/m/Y');
+			$bed_movement->save();
+
 			$admission->bed_code = $bed_code;
 			$admission->save();
-			
+
 			return redirect('/admissions');
 	}
 	

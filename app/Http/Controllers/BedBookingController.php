@@ -11,7 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\Bed;
-
+use App\Admission;
 
 class BedBookingController extends Controller
 {
@@ -24,17 +24,41 @@ class BedBookingController extends Controller
 
 	public function index()
 	{
-			$bed_bookings = DB::table('bed_bookings')
-					->orderBy('patient_id')
+			$sql = '
+			select a.class_code, (count(*)-occupied) as available from beds a
+					cross join (
+							    select count(*) occupied, b.class_code 
+								    from admissions as a
+									    left join beds as b on (a.bed_code = b.bed_code)
+										    where b.class_code is not null
+											    group by class_code
+										) as b on (a.class_code = b.class_code)
+										group by a.class_code
+			';
+			$beds = DB::select($sql);
+			$class_availability = [];
+			foreach ($beds as $bed) {
+					$class_availability[$bed->class_code]=$bed->available;
+			}
+
+			$bed_bookings = DB::table('bed_bookings as a')
+					->leftJoin('beds as b', 'b.bed_code','=', 'a.bed_code')
+					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
+		
 			return view('bed_bookings.index', [
-					'bed_bookings'=>$bed_bookings
+					'bed_bookings'=>$bed_bookings,
+					'class_availability' => $class_availability,
 			]);
 	}
 
-	public function create()
+	public function create($patient_id, $admission_id)
 	{
+			$admission = Admission::find($admission_id);
 			$bed_booking = new BedBooking();
+			$bed_booking->patient_id = $patient_id;
+			$bed_booking->bed_code = $admission->bed_code;
+			$bed_booking->book_date = date('d/m/Y');
 			return view('bed_bookings.create', [
 					'bed_booking' => $bed_booking,
 					'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
@@ -128,4 +152,5 @@ class BedBookingController extends Controller
 					'bed_bookings'=>$bed_bookings
 			]);
 	}
+
 }

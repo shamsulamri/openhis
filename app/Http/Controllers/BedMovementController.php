@@ -11,7 +11,6 @@ use Log;
 use DB;
 use Session;
 
-
 class BedMovementController extends Controller
 {
 	public $paginateValue=10;

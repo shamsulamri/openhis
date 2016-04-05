@@ -33,16 +33,20 @@ class Admission extends Model
 	public $openConsultationId=0;    
 
 	public function validate($input, $method) {
-			$rules=[];
+			$rules = [];
+
 			switch ($method) {
-			case "PUT":
+			case "POST":
 					$rules = [
 						'encounter_id'=>'required',
 						'user_id'=>'required',
 					];
 					break;
 			default:
-					$rules=[];
+					$rules = [
+						'encounter_id'=>'required',
+						'user_id'=>'required',
+					];
 			}
 			
 			
@@ -63,6 +67,11 @@ class Admission extends Model
 			return $this->hasOne('App\Bed', 'bed_code', 'bed_code');
 	}
 
+	public function bedMovement()
+	{
+			return $this->hasMany('App\BedMovement', 'admission_id'); 
+	}
+
 	public function hasOpenConsultation($patientId)
 	{
 			$consultation = Consultation::where('patient_id','=',$patientId)
@@ -77,4 +86,5 @@ class Admission extends Model
 					return 0;
 			}
 	}
+
 }

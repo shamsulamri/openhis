@@ -35,6 +35,9 @@
 			<td>
 					{{$bed_booking->book_id}}
 			</td>
+			<td>
+					{{ $class_availability[$bed_booking->class_code] }}
+			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('bed_bookings/delete/'. $bed_booking->book_id) }}'>Delete</a>
 			</td>

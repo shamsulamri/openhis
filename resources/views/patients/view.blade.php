@@ -40,6 +40,16 @@
 				</a>
 			</li>
 			<li role='presentation'
+				@if ($patientOption=='bed')
+					class='active'
+				@endif
+			>
+				<a href='{{ URL::to('bed_bookings/create/'. $patient->patient_id) }}'>
+					<span class='glyphicon glyphicon-bed' aria-hidden='true'></span><br>
+						Bed<br>Booking
+				</a>
+			</li>
+			<li role='presentation'
 				@if ($patientOption=='dependants')
 					class='active'
 				@endif

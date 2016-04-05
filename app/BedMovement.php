@@ -12,6 +12,7 @@ class BedMovement extends Model
 	protected $table = 'bed_movements';
 	protected $fillable = [
 				'admission_id',
+				'encounter_id',
 				'move_from',
 				'move_to',
 				'move_date'];

@@ -56,6 +56,7 @@
 					{{$admission->ward_name}}
 			</td>
 			<td align='right'>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?admission_id='. $admission->admission_id) }}'>Bed Movement</a>
 			@if (is_null($admission->arrival_id)) 
 					<a class='btn btn-warning btn-xs' href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}'>Arrive</a>
 			@elseif (!is_null($admission->discharge_id))

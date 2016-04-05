@@ -57,7 +57,7 @@ class AdmissionController extends Controller
 					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
 					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
 					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
-					->where('h.ward_code','=', $ward)
+					->where('h.ward_code','like', '%'.$ward.'%')
 					->whereNull('f.encounter_id')
 					->groupBy('b.encounter_id')
 					->orderBy('g.encounter_id')
@@ -102,7 +102,7 @@ class AdmissionController extends Controller
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/admission_beds?admission_id='.$admission->admission_id);
 			} else {
-					return redirect('/admissions/create')
+					return redirect('/admissions/create?encounter_id='.$request->encounter_id)
 							->withErrors($valid)
 							->withInput();
 			}
@@ -220,7 +220,7 @@ class AdmissionController extends Controller
 					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
 					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
 					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
-					->where('h.ward_code','=', $ward)
+					->where('h.ward_code','like', '%'.$ward.'%')
 					->whereNull('f.encounter_id')
 					->groupBy('b.encounter_id')
 					->orderBy('g.encounter_id')

@@ -50,4 +50,8 @@ class BedBooking extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
+	public function bed()
+	{
+			return $this->belongsTo('App\Bed', 'bed_code');
+	}
 }

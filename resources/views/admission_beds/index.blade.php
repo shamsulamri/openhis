@@ -4,9 +4,6 @@
 @if ($admission != NULL)
 	@include('patients.id')
 @endif 	
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
 <h2>Admission Bed Index</h2>
 <br>
 <form action='/admission_bed/search' method='post'>
@@ -22,6 +19,7 @@
  <thead>
 	<tr> 
     <th>Bed</th>
+    <th>Class</th>
 	<th>Vacancy</th>
 	</tr>
   </thead>
@@ -34,11 +32,34 @@
 					</a>
 			</td>
 			<td>
+					{{$admission_bed->class_code}}
+			</td>
+			<td>
 					{{$admission_bed->patient_name}}
 			</td>
 			<td align='right'>
 					@if (empty($admission_bed->patient_name))
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/admit/'.$admission->admission_id.'/'. $admission_bed->bed_code) }}'>Select</a>
+<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/move/'.$admission->admission_id.'/'. $admission_bed->bed_code) }}'>
+							@if (empty($admission->bed->bed_code))
+									Admit
+							@else
+								@if ($admission->bed->ward_code != $admission_bed->ward_code)
+									Transfer
+								@else
+									@if ($admission->bed->class_code == $admission_bed->class_code)
+										&nbsp;&nbsp;Swap&nbsp;&nbsp;
+									@else
+										Change
+									@endif
+								@endif
+							@endif
+							</a>
+					@else
+						@if ($admission->encounter->patient_id<>$admission_bed->patient_id)
+						<a class='btn btn-default btn-xs' href='{{ URL::to('bed_bookings/create/'.$admission->encounter->patient_id.'/'.$admission_bed->admission_id) }}'>
+						Booking
+						</a>
+						@endif
 					@endif
 			</td>
 	</tr>

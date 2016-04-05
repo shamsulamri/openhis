@@ -38,7 +38,7 @@ Route::group(['middleware' => 'web'], function () {
 		Route::post('/admission_bed/search', 'AdmissionBedController@search');
 		Route::get('/admission_bed/search', 'AdmissionBedController@search');
 		Route::get('/admission_beds/delete/{id}', 'AdmissionBedController@delete');
-		Route::get('/admission_beds/admit/{admission_id}/{bed_code}', 'AdmissionBedController@admit');
+		Route::get('/admission_beds/move/{admission_id}/{bed_code}', 'AdmissionBedController@move');
 		
 		Route::resource('admission_tasks', 'AdmissionTaskController');
 		Route::get('/admission_tasks/id/{id}', 'AdmissionTaskController@searchById');
@@ -164,7 +164,8 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/diet_quality/search', 'DietQualityController@search');
 		Route::get('/diet_qualities/delete/{id}', 'DietQualityController@delete');
 		
-		Route::resource('bed_bookings', 'BedBookingController');
+		Route::resource('bed_bookings', 'BedBookingController',['except'=>['create']]);
+		Route::get('/bed_bookings/create/{patient_id}/{admission_id}', 'BedBookingController@create');
 		Route::get('/bed_bookings/id/{id}', 'BedBookingController@searchById');
 		Route::post('/bed_booking/search', 'BedBookingController@search');
 		Route::get('/bed_booking/search', 'BedBookingController@search');
