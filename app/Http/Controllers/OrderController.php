@@ -296,6 +296,7 @@ class OrderController extends Controller
 			if ($product->order_form=3) {
 					$order_investigation = new OrderInvestigation();
 					$order_investigation->order_id = $order->order_id;
+					$order_investigation->investigation_date = date('d/m/Y');
 					$order_investigation->save();
 			}
 	}	

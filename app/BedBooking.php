@@ -12,7 +12,7 @@ class BedBooking extends Model
 	protected $table = 'bed_bookings';
 	protected $fillable = [
 				'patient_id',
-				'bed_code',
+				'class_code',
 				'book_date',
 				'book_description'];
 	
@@ -24,6 +24,7 @@ class BedBooking extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'patient_id'=>'required',
+				'class_code'=>'required',
 				'book_date'=>'size:10|date_format:d/m/Y',
 			];
 

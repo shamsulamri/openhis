@@ -11,7 +11,8 @@ use Log;
 use DB;
 use Session;
 use App\AppointmentService as Service;
-
+use Carbon\Carbon;
+use App\Patient;
 
 class AppointmentController extends Controller
 {
@@ -24,20 +25,40 @@ class AppointmentController extends Controller
 
 	public function index()
 	{
-			$appointments = DB::table('appointments')
-					->orderBy('patient_id')
+			$appointments = DB::table('appointments as a')
+					->leftJoin('patients as b', 'a.patient_id', '=', 'b.patient_id')
+					->leftJoin('appointment_services as c', 'c.service_id', '=', 'a.service_id')
+					->where('appointment_datetime', '>=', Carbon::today())
+					->orderBy('appointment_id')
 					->paginate($this->paginateValue);
 			return view('appointments.index', [
-					'appointments'=>$appointments
+					'appointments'=>$appointments,
+					'services' => Service::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'service' => '',
 			]);
 	}
 
-	public function create()
+	public function create($patient_id, $service_id, $slot)
 	{
 			$appointment = new Appointment();
+			$appointment->patient_id = $patient_id;
+			$appointment->service_id = $service_id;
+			$appointment->appointment_slot = $slot;
+
+			$year = substr($appointment->appointment_slot,0,4);
+			$month = substr($appointment->appointment_slot,4,2);
+			$day = substr($appointment->appointment_slot,6,2);
+			$hour = substr($appointment->appointment_slot,8,2);
+			$minute = substr($appointment->appointment_slot,10,2);
+			$appointment_datetime = Carbon::create($year, $month, $day, $hour, $minute);
+
+			$service_name = Service::find($service_id)->service_name;
 			return view('appointments.create', [
 					'appointment' => $appointment,
 					'service' => Service::all()->sortBy('service_name')->lists('service_name', 'service_code')->prepend('',''),
+					'patient' => Patient::find($patient_id),
+					'appointment_datetime' => $appointment_datetime,
+					'service_name' => $service_name,
 					]);
 	}
 
@@ -49,22 +70,46 @@ class AppointmentController extends Controller
 			if ($valid->passes()) {
 					$appointment = new Appointment($request->all());
 					$appointment->appointment_id = $request->appointment_id;
+					
+					$year = substr($appointment->appointment_slot,0,4);
+					$month = substr($appointment->appointment_slot,4,2);
+					$day = substr($appointment->appointment_slot,6,2);
+					$hour = substr($appointment->appointment_slot,8,2);
+					$minute = substr($appointment->appointment_slot,10,2);
+					
+					$appointment_datetime = Carbon::create($year, $month, $day, $hour, $minute);
+
+					$appointment->appointment_datetime = $appointment_datetime;
 					$appointment->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/appointments/id/'.$appointment->appointment_id);
 			} else {
-					return redirect('/appointments/create')
+					return redirect('/appointments/create/'.$request->patient_id.'/'.$request->service_id.'/'.$request->appointment_slot)
 							->withErrors($valid)
 							->withInput();
 			}
 	}
 
-	public function edit($id) 
+	public function edit($id, $appointment_slot) 
 	{
 			$appointment = Appointment::findOrFail($id);
+			$appointment->appointment_slot = $appointment_slot;
+			$service_name = Service::find($appointment->service_id)->service_name;
+
+			$year = substr($appointment->appointment_slot,0,4);
+			$month = substr($appointment->appointment_slot,4,2);
+			$day = substr($appointment->appointment_slot,6,2);
+			$hour = substr($appointment->appointment_slot,8,2);
+			$minute = substr($appointment->appointment_slot,10,2);
+			$appointment_datetime = Carbon::create($year, $month, $day, $hour, $minute);
+			$appointment->appointment_datetime = $appointment_datetime;
+
 			return view('appointments.edit', [
 					'appointment'=>$appointment,
+					'service_name'=>$service_name,
 					'service' => Service::all()->sortBy('service_name')->lists('service_name', 'service_code')->prepend('',''),
+					'patient' => Patient::find($appointment->patient_id),
+					'appointment_datetime' => $appointment->appointment_datetime
 					]);
 	}
 
@@ -77,6 +122,13 @@ class AppointmentController extends Controller
 			$valid = $appointment->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					$year = substr($appointment->appointment_slot,0,4);
+					$month = substr($appointment->appointment_slot,4,2);
+					$day = substr($appointment->appointment_slot,6,2);
+					$hour = substr($appointment->appointment_slot,8,2);
+					$minute = substr($appointment->appointment_slot,10,2);
+					$appointment_datetime = Carbon::create($year, $month, $day, $hour, $minute);
+					$appointment->appointment_datetime = $appointment_datetime;
 					$appointment->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/appointments/id/'.$id);
@@ -106,26 +158,34 @@ class AppointmentController extends Controller
 	
 	public function search(Request $request)
 	{
-			$appointments = DB::table('appointments')
-					->where('patient_id','like','%'.$request->search.'%')
-					->orWhere('appointment_id', 'like','%'.$request->search.'%')
-					->orderBy('patient_id')
+			$appointments = DB::table('appointments as a')
+					->leftJoin('patients as b', 'a.patient_id', '=', 'b.patient_id')
+					->leftJoin('appointment_services as c', 'c.service_id', '=', 'a.service_id')
+					->where('appointment_datetime', '>=', Carbon::today())
+					->where('a.service_id', '=', $request->services)
+					->orderBy('appointment_id')
 					->paginate($this->paginateValue);
 
 			return view('appointments.index', [
 					'appointments'=>$appointments,
-					'search'=>$request->search
+					'services' => Service::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'service' => $request->services,
 					]);
 	}
 
 	public function searchById($id)
 	{
-			$appointments = DB::table('appointments')
+			$appointments = DB::table('appointments as a')
+					->leftJoin('patients as b', 'a.patient_id', '=', 'b.patient_id')
+					->leftJoin('appointment_services as c', 'c.service_id', '=', 'a.service_id')
 					->where('appointment_id','=',$id)
+					->orderBy('appointment_id')
 					->paginate($this->paginateValue);
 
 			return view('appointments.index', [
-					'appointments'=>$appointments
+					'appointments'=>$appointments,
+					'services' => Service::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'service' => '',
 			]);
 	}
 }

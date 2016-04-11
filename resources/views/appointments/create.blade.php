@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
+@include('patients.id')
+<h2>
 New Appointment
-</h1>
+</h2>
 @include('common.errors')
 <br>
 {{ Form::model($appointment, ['url'=>'appointments', 'class'=>'form-horizontal']) }} 

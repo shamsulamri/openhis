@@ -17,6 +17,7 @@ use App\CareOrganisation;
 use App\Triage;
 use App\Relationship;
 use App\EncounterType;
+use App\Admission;
 		
 class EncounterController extends Controller
 {
@@ -123,7 +124,12 @@ class EncounterController extends Controller
 					if ($encounter->encounter_code=='outpatient') {
 							return redirect('/queues/create?encounter_id='.$encounter->encounter_id);
 					} elseif ($encounter->encounter_code=='inpatient') {
-							return redirect('/admissions/create?encounter_id='.$encounter->encounter_id);
+							$admission = Admission::where('encounter_id',$id)->get()[0];
+							if (!empty($admission)) {
+								return redirect('/admissions/'.$admission->admission_id.'/edit');
+							} else { 
+								return redirect('/admissions/create?encounter_id='.$encounter->encounter_id);
+							}
 					} elseif ($encounter->encounter_code=='emergency') {
 							if ($encounter->triage_code=='green') {
 								return redirect('/queues/create?encounter_id='.$encounter->encounter_id);

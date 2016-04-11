@@ -140,7 +140,9 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/encounter_type/search', 'EncounterTypeController@search');
 		Route::get('/encounter_types/delete/{id}', 'EncounterTypeController@delete');
 		
-		Route::resource('appointments', 'AppointmentController');
+		Route::resource('appointments', 'AppointmentController',['except'=>['create','edit']]);
+		Route::get('/appointments/create/{patient_id}/{service_id}/{slot}', 'AppointmentController@create');
+		Route::get('/appointments/{id}/edit/{appointment_slot}', 'AppointmentController@edit');
 		Route::get('/appointments/id/{id}', 'AppointmentController@searchById');
 		Route::post('/appointment/search', 'AppointmentController@search');
 		Route::get('/appointment/search', 'AppointmentController@search');
@@ -152,8 +154,10 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/block_date/search', 'BlockDateController@search');
 		Route::get('/block_dates/delete/{id}', 'BlockDateController@delete');
 		
-		Route::resource('appointment_services', 'AppointmentServiceController');
+		Route::resource('appointment_services', 'AppointmentServiceController', ['except'=>['show']]);
 		Route::get('/appointment_services/id/{id}', 'AppointmentServiceController@searchById');
+		Route::get('/appointment_services/{id}/{selected_week}/{service_id?}/{appointment_id?}', 'AppointmentServiceController@show');
+		Route::post('/appointment_services/{id}/{selected_week}/{service_id?}/{appointment_id?}', 'AppointmentServiceController@show');
 		Route::post('/appointment_service/search', 'AppointmentServiceController@search');
 		Route::get('/appointment_service/search', 'AppointmentServiceController@search');
 		Route::get('/appointment_services/delete/{id}', 'AppointmentServiceController@delete');
@@ -165,7 +169,7 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/diet_qualities/delete/{id}', 'DietQualityController@delete');
 		
 		Route::resource('bed_bookings', 'BedBookingController',['except'=>['create']]);
-		Route::get('/bed_bookings/create/{patient_id}/{admission_id}', 'BedBookingController@create');
+		Route::get('/bed_bookings/create/{patient_id}/{admission_id?}', 'BedBookingController@create');
 		Route::get('/bed_bookings/id/{id}', 'BedBookingController@searchById');
 		Route::post('/bed_booking/search', 'BedBookingController@search');
 		Route::get('/bed_booking/search', 'BedBookingController@search');

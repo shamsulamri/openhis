@@ -1,22 +1,13 @@
-
-    <div class='form-group  @if ($errors->has('patient_id')) has-error @endif'>
-        <label for='patient_id' class='col-sm-2 control-label'>patient_id<span style='color:red;'> *</span></label>
+    <div class='form-group  @if ($errors->has('class_code')) has-error @endif'>
+        <label for='class_code' class='col-sm-2 control-label'>Ward Class<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-            {{ Form::text('patient_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('patient_id')) <p class="help-block">{{ $errors->first('patient_id') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('bed_code')) has-error @endif'>
-        {{ Form::label('bed_code', 'bed_code',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::select('bed_code', $bed,null, ['class'=>'form-control','maxlength'=>'10']) }}
-            @if ($errors->has('bed_code')) <p class="help-block">{{ $errors->first('bed_code') }}</p> @endif
+            {{ Form::select('class_code', $class,null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('class_code')) <p class="help-block">{{ $errors->first('class_code') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('book_date')) has-error @endif'>
-        <label for='book_date' class='col-sm-2 control-label'>book_date<span style='color:red;'> *</span></label>
+        <label for='book_date' class='col-sm-2 control-label'>Date<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::text('book_date', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('book_date')) <p class="help-block">{{ $errors->first('book_date') }}</p> @endif
@@ -24,9 +15,9 @@
     </div>
 
     <div class='form-group  @if ($errors->has('book_description')) has-error @endif'>
-        {{ Form::label('book_description', 'book_description',['class'=>'col-sm-2 control-label']) }}
+        {{ Form::label('book_description', 'Description',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('book_description', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'65535']) }}
+            {{ Form::textarea('book_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
             @if ($errors->has('book_description')) <p class="help-block">{{ $errors->first('book_description') }}</p> @endif
         </div>
     </div>
@@ -37,3 +28,5 @@
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+
+	{{ Form::hidden('patient_id', $patient->patient_id) }}

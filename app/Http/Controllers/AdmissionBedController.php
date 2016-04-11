@@ -155,7 +155,7 @@ class AdmissionBedController extends Controller
 					$patient = $admission->encounter->patient;
 			}
 			$admission_beds = DB::table('beds as a')
-					->select(['a.bed_code','bed_name','patient_name'])
+					->select(['b.admission_id','a.bed_code','bed_name','patient_name','ward_code', 'a.class_code','c.patient_id'])
 					->leftJoin('admissions as b', 'b.bed_code', '=', 'a.bed_code')
 					->leftJoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftJoin('patients as d', 'd.patient_id', '=', 'c.patient_id')

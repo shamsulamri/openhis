@@ -49,5 +49,13 @@ class AppointmentService extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	
+	public function getAppointments($service_id) 
+	{
+			$appointments = Appointment::where('service_id', $service_id)
+					->select(['appointment_id','appointment_slot'])
+					->get()
+					->toArray();
+
+			return $appointments;
+	}
 }

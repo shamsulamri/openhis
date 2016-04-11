@@ -12,7 +12,9 @@ class Appointment extends Model
 	protected $table = 'appointments';
 	protected $fillable = [
 				'patient_id',
-				'service_code',
+				'service_id',
+				'appointment_description',
+				'appointment_datetime',
 				'appointment_slot'];
 	
     protected $guarded = ['appointment_id'];
@@ -23,7 +25,7 @@ class Appointment extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'patient_id'=>'required',
-				'service_code'=>'required',
+				'service_id'=>'required',
 				'appointment_slot'=>'required',
 			];
 
@@ -36,5 +38,8 @@ class Appointment extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	
+	public function patient() 
+	{
+			return $this->belongsTo('App\Patient','patient_id');
+	}	
 }

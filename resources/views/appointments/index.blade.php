@@ -4,7 +4,9 @@
 <h1>Appointment Index</h1>
 <br>
 <form action='/appointment/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	{{ Form::select('services', $services, $service, ['class'=>'form-control']) }}
+	<br>
+	<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -12,15 +14,15 @@
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <br>
-<a href='/appointments/create' class='btn btn-primary'>Create</a>
-<br>
-<br>
 @if ($appointments->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>patient_id</th>
-    <th>appointment_id</th> 
+    <th>Slot</th>
+    <th>Service</th>
+    <th>Patient</th>
+    <th>Home Phone</th> 
+    <th>Mobile Phone</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -28,12 +30,23 @@
 @foreach ($appointments as $appointment)
 	<tr>
 			<td>
-					<a href='{{ URL::to('appointments/'. $appointment->appointment_id . '/edit') }}'>
-						{{$appointment->patient_id}}
-					</a>
+					{{ date('D, d F Y, H:i', strtotime($appointment->appointment_datetime)) }}
 			</td>
 			<td>
-					{{$appointment->appointment_id}}
+					{{$appointment->service_name}}
+			</td>
+			<td>
+					<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/0/'.$appointment->service_id. '/'.$appointment->appointment_id) }}'>
+						{{$appointment->patient_name}}
+					</a>
+					<br>
+					<small>{{$appointment->patient_mrn}}</small>
+			</td>
+			<td>
+				{{ $appointment->patient_phone_home }}
+			</td>
+			<td>
+				{{ $appointment->patient_phone_mobile }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('appointments/delete/'. $appointment->appointment_id) }}'>Delete</a>

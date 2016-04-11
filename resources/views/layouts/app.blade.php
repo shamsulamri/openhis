@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Hospital Information System</title>
+    <title>{{ Config::get('host.application_name') }}</title>
 	<link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700" rel="stylesheet" type="text/css">
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1,4/jquery.min.js"></script>
@@ -28,7 +28,7 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                   Hospital Information System 
+					{{ Config::get('host.application_name') }}
                 </a>
             </div>
 
@@ -44,8 +44,16 @@
 									<li><a href="{{ url('/patients') }}">Patients</a></li>
 									<li><a href="{{ url('/encounters') }}">Encounters</a></li>
 									<li><a href="{{ url('/queues') }}">Queues</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Admission<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
 									<li><a href="{{ url('/admissions') }}">Admissions</a></li>
 									<li><a href="{{ url('/admission_tasks') }}">Admission Tasks</a></li>
+									<li><a href="{{ url('/bed_bookings') }}">Bed Booking</a></li>
                             </ul>
                         </li>
 						@if (Auth::user()->authorization->author_consultation==1)
@@ -57,6 +65,7 @@
                             <ul class="dropdown-menu" role="menu">
 									<li><a href="{{ url('/patient_lists') }}">Patient List</a></li>
 									<li><a href="{{ url('/consultations') }}">Consultations</a></li>
+									<li><a href="{{ url('/appointments') }}">Appointments</a></li>
                             </ul>
                         </li>
 						@endif
@@ -100,5 +109,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
+	<script type="text/javascript">
+		$(document).ready(function () {
+		 
+		window.setTimeout(function() {
+			$(".alert-info").fadeTo(1500, 0).slideUp(500, function(){
+				$(this).remove(); 
+			});
+		}, 2000);
+		 
+		});
+	</script>
 </body>
 </html>

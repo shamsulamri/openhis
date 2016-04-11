@@ -10,8 +10,9 @@ use App\BedBooking;
 use Log;
 use DB;
 use Session;
-use App\Bed;
 use App\Admission;
+use App\WardClass;
+use App\Patient;
 
 class BedBookingController extends Controller
 {
@@ -25,15 +26,15 @@ class BedBookingController extends Controller
 	public function index()
 	{
 			$sql = '
-			select a.class_code, (count(*)-occupied) as available from beds a
-					cross join (
-							    select count(*) occupied, b.class_code 
-								    from admissions as a
-									    left join beds as b on (a.bed_code = b.bed_code)
-										    where b.class_code is not null
-											    group by class_code
-										) as b on (a.class_code = b.class_code)
-										group by a.class_code
+			select a.class_code, (count(*)-IFNULL(occupied,0)) as available from beds a
+			left join (
+						select count(*) occupied, b.class_code 
+						from admissions as a
+						left join beds as b on (a.bed_code = b.bed_code)
+						where b.class_code is not null
+						group by class_code
+			) as b on (a.class_code = b.class_code)
+			group by a.class_code
 			';
 			$beds = DB::select($sql);
 			$class_availability = [];
@@ -41,8 +42,11 @@ class BedBookingController extends Controller
 					$class_availability[$bed->class_code]=$bed->available;
 			}
 
+			//return $class_availability;
 			$bed_bookings = DB::table('bed_bookings as a')
-					->leftJoin('beds as b', 'b.bed_code','=', 'a.bed_code')
+					->select(['book_id', 'a.created_at', 'patient_name', 'b.class_name', 'a.class_code'])
+					->leftJoin('ward_classes as b', 'b.class_code','=', 'a.class_code')
+					->leftJoin('patients as c', 'c.patient_id','=', 'a.patient_id')
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 		
@@ -52,16 +56,20 @@ class BedBookingController extends Controller
 			]);
 	}
 
-	public function create($patient_id, $admission_id)
+	public function create($patient_id, $admission_id = null)
 	{
-			$admission = Admission::find($admission_id);
 			$bed_booking = new BedBooking();
 			$bed_booking->patient_id = $patient_id;
-			$bed_booking->bed_code = $admission->bed_code;
 			$bed_booking->book_date = date('d/m/Y');
+
+			if ($admission_id != null) {
+					$admission = Admission::find($admission_id);
+					$bed_booking->bed_code = $admission->bed_code;
+			}
 			return view('bed_bookings.create', [
 					'bed_booking' => $bed_booking,
 					'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
+					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					]);
 	}
 
@@ -75,7 +83,7 @@ class BedBookingController extends Controller
 					$bed_booking->book_id = $request->book_id;
 					$bed_booking->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/bed_bookings/id/'.$bed_booking->book_id);
+					return redirect('/bed_bookings');
 			} else {
 					return redirect('/bed_bookings/create')
 							->withErrors($valid)
@@ -88,7 +96,8 @@ class BedBookingController extends Controller
 			$bed_booking = BedBooking::findOrFail($id);
 			return view('bed_bookings.edit', [
 					'bed_booking'=>$bed_booking,
-					'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
+					'patient' => Patient::find($bed_booking->patient_id),
+					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					]);
 	}
 
@@ -103,11 +112,12 @@ class BedBookingController extends Controller
 			if ($valid->passes()) {
 					$bed_booking->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/bed_bookings/id/'.$id);
+					return redirect('/bed_bookings');
 			} else {
 					return view('bed_bookings.edit', [
 							'bed_booking'=>$bed_booking,
-					'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
+							'patient' => Patient::find($bed_booking->patient_id),
+							'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

@@ -67,6 +67,13 @@ class Order extends Model
 			return $validator;
 	}
 
+	public function setOrderQuantityRequestAttribute()
+	{
+			if ($this->attributes['order_quantity_request']==0) {
+					$this->attributes['order_quantity_request']=1;
+			}
+	}
+
 	public function orderDrug() {
 			return $this->hasOne('App\OrderDrug','order_id');
 	}

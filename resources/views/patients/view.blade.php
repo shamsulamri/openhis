@@ -34,9 +34,9 @@
 					class='active'
 				@endif
 			>
-				<a href='{{ URL::to('patients/'. $patient->patient_id . '/edit?tab=demography') }}'>
+				<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
 					<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span><br>
-						Give<br>Appointment
+						Book<br>Appointment
 				</a>
 			</li>
 			<li role='presentation'
@@ -46,7 +46,7 @@
 			>
 				<a href='{{ URL::to('bed_bookings/create/'. $patient->patient_id) }}'>
 					<span class='glyphicon glyphicon-bed' aria-hidden='true'></span><br>
-						Bed<br>Booking
+						Book<br>Bed
 				</a>
 			</li>
 			<li role='presentation'

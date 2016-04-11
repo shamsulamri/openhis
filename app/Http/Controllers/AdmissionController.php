@@ -151,11 +151,14 @@ class AdmissionController extends Controller
 					} else {
 							return view('admissions.edit', [
 									'admission'=>$admission,
+									'patient' => $admission->encounter->patient,
 									'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
 									'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
 									'texture' => DietTexture::all()->sortBy('texture_name')->lists('texture_name', 'texture_code')->prepend('',''),
 									'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 									'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
+									'admission_type' => AdmissionType::all()->sortBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
+									'consultant' => User::orderBy('name')->lists('name', 'id')->prepend('',''),
 									])
 									->withErrors($valid);			
 					}

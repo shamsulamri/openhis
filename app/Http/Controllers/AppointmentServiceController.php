@@ -11,7 +11,9 @@ use Log;
 use DB;
 use Session;
 use App\Department;
-
+use Carbon\Carbon;
+use App\Patient;
+use App\Appointment;
 
 class AppointmentServiceController extends Controller
 {
@@ -135,4 +137,69 @@ class AppointmentServiceController extends Controller
 					'appointment_services'=>$appointment_services
 			]);
 	}
+
+	public function show(Request $request, $id, $selected_week, $service_id=null, $appointment_id=null)
+	{
+			$services = null;
+			$service_path = "";
+
+			if (empty($request->services)) {
+					$services = AppointmentService::all();
+					$services = null;
+			} else {
+					$services = AppointmentService::where('service_id', $request->services)->get();
+					$service_id = $request->services;		
+			}
+
+			if ($service_id != null) { 
+					$service_path="/".$service_id;
+					$services = AppointmentService::where('service_id', $service_id)->get();
+			}
+			//$d = strtotime('today');
+			//$start_week = strtotime('last monday midnight', $d);
+			//$end_week = strtotime('next sunday', $d);
+			//$start = date('d/m/Y', $start_week);
+			//$end = date('d/m/Y', $end_week);
+
+			$d = Carbon::now();
+			$start_week = new Carbon('monday this week');
+			$start_week = $start_week->addWeeks($selected_week);
+			$end_week = new Carbon('next sunday'); 
+
+			$week=array(Carbon::create($start_week->year, $start_week->month, $start_week->day));
+
+			for ($i=0;$i<6;$i++) {
+					$start_week = $start_week->addDays(1);
+					array_push($week, Carbon::create($start_week->year, $start_week->month, $start_week->day));
+			}
+
+			//$appointments = Appointment::all(['appointment_id','appointment_slot'])->toArray();
+			//$services = AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('','');
+			//return $services;
+
+			$appointment=null;
+
+			if ($appointment_id != null) {
+					$appointment = Appointment::find($appointment_id);
+					$service_path = $service_path.'/'.$appointment_id;
+			}
+
+			return view('appointment_services.render', [
+					'services'=>$services,
+					'start'=>$start_week,
+					'end'=>$end_week,
+					'week'=> $week,
+					'patient'=>Patient::find($id),
+					'appointment_model'=>new AppointmentService(),
+					'today'=>Carbon::now(),
+					'selected_week'=>$selected_week,
+					'menu_services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'service'=>$service_id,
+					'service_path'=>$service_path,
+					'appointment_id'=>$appointment_id, 
+					'appointment'=>$appointment, 
+					]);
+
+	}
+
 }

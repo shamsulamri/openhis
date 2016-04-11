@@ -149,9 +149,11 @@ class OrderInvestigationController extends Controller
 							'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 							'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 							'consultation' => $consultation,
+							'patient'=>$consultation->encounter->patient,
 							'product' => $product,
 							'tab' => 'order',
-							'order' => $order,
+							'consultOption' => 'consultation',
+							'order' => $order_investigation->order,
 							])
 							->withErrors($valid);			
 			}
