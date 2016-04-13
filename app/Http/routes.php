@@ -33,6 +33,12 @@ Route::group(['middleware' => 'web'], function () {
 				return view('options.option');
 		});
 
+		Route::resource('product_statuses', 'ProductStatusController');
+		Route::get('/product_statuses/id/{id}', 'ProductStatusController@searchById');
+		Route::post('/product_status/search', 'ProductStatusController@search');
+		Route::get('/product_status/search', 'ProductStatusController@search');
+		Route::get('/product_statuses/delete/{id}', 'ProductStatusController@delete');
+		
 		Route::resource('admission_beds', 'AdmissionBedController');
 		Route::get('/admission_beds/id/{id}', 'AdmissionBedController@searchById');
 		Route::post('/admission_bed/search', 'AdmissionBedController@search');
@@ -241,7 +247,8 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/bill_material/search', 'BillMaterialController@search');
 		Route::get('/bill_materials/delete/{id}', 'BillMaterialController@delete');
 		
-		Route::resource('stocks', 'StockController');
+		Route::resource('stocks', 'StockController', ['except'=>['create']]);
+		Route::get('/stocks/create/{product_code}', 'StockController@create');
 		Route::get('/stocks/id/{id}', 'StockController@searchById');
 		Route::post('/stock/search', 'StockController@search');
 		Route::get('/stock/search', 'StockController@search');

@@ -74,7 +74,6 @@
 					'active'
 				@endif
 			><a href="/medical_certificates/create"><span class='glyphicon glyphicon-certificate' aria-hidden='true'></span><br>Certificate</a></li>
-            <li role='presentation'><a href="#"><span class='glyphicon glyphicon-calendar' aria-hidden='true'></span><br>Appointment</a></li>
 			<li role='presentation' class=
 				@if ($consultOption=='newborn')
 					'active'

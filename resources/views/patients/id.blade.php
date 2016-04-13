@@ -1,7 +1,9 @@
-<div class='alert alert-danger' role='alert'>
-<strong>Warning !</strong> Outstanding bill
-</div>
 <div class='well'>
-	<h2>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h2>
-	<h4>{{ $patient->patient_mrn }}</h4>
+		<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
+		<h5>{{ $patient->patient_mrn }}</h5>
+		<h4>
+		<p class='text-danger'>
+		<strong>Warning !</strong> Outstanding bill
+		</p>
+		</h4>
 </div>

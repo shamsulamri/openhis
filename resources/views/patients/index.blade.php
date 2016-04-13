@@ -1,10 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Patient Index</h1>
+<h1>Patient List</h1>
 <br>
 <form action='/patient/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control input-lg' placeholder="Enter name, identificaiton or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<br>
+	<button class="btn btn-default" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -12,7 +14,7 @@
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <br>
-<a href='/patients/create' class='btn btn-primary'>Create</a>
+<a href='/patients/create' class='btn btn-primary'>New Patient</a>
 <br>
 <br>
 @if ($patients->total()>0)

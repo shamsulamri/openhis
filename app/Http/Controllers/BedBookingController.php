@@ -13,6 +13,7 @@ use Session;
 use App\Admission;
 use App\WardClass;
 use App\Patient;
+use App\Bed;
 
 class BedBookingController extends Controller
 {
@@ -70,6 +71,7 @@ class BedBookingController extends Controller
 					'bed_booking' => $bed_booking,
 					'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'patient' => Patient::find($bed_booking->patient_id),
 					]);
 	}
 

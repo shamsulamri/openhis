@@ -29,4 +29,9 @@ class User extends Authenticatable
 	{
 		return $this->hasOne('App\UserAuthorization', 'id','id');
 	}
+
+	public function appointment()
+	{
+			return $this->hasOne('App\AppointmentService', 'user_id', 'id');
+	}
 }

@@ -154,7 +154,8 @@ class PatientController extends Controller
 	{
 			$patients = DB::table('patients')
 					->where('patient_name','like','%'.$request->search.'%')
-					->orWhere('patient_id', 'like','%'.$request->search.'%')
+					->orWhere('patient_mrn', 'like','%'.$request->search.'%')
+					->orWhere('patient_new_ic', 'like','%'.$request->search.'%')
 					->orderBy('patient_name')
 					->paginate($this->paginateValue);
 

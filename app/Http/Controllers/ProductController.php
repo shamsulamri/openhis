@@ -15,6 +15,7 @@ use App\UnitMeasure as Unit;
 use App\QueueLocation as Location;
 use App\Form;
 use App\OrderForm;
+use App\ProductStatus;
 
 class ProductController extends Controller
 {
@@ -38,13 +39,17 @@ class ProductController extends Controller
 	public function create()
 	{
 			$product = new Product();
+			$product->order_form=1;
+			$product->status_code='active';
+			$product->form_code='generic';
 			return view('products.create', [
 					'product' => $product,
 					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
 					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
-					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
+					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
 					]);
 	}
 
@@ -76,6 +81,7 @@ class ProductController extends Controller
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 					]);
 	}
 
@@ -84,12 +90,8 @@ class ProductController extends Controller
 			$product = Product::findOrFail($id);
 			$product->fill($request->input());
 
-			$product->product_active = $request->product_active ?: 0;
-			$product->product_drop_shipment = $request->product_drop_shipment ?: 0;
-			$product->product_stocked = $request->product_stocked ?: 0;
 			$product->product_purchased = $request->product_purchased ?: 0;
 			$product->product_sold = $request->product_sold ?: 0;
-			$product->product_discontinued = $request->product_discontinued ?: 0;
 			$product->product_bom = $request->product_bom ?: 0;
 			$product->product_gst = $request->product_gst ?: 0;
 
@@ -102,10 +104,12 @@ class ProductController extends Controller
 			} else {
 					return view('products.edit', [
 							'product'=>$product,
-					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
-					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+							'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+							'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
+							'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+							'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+							'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+							'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

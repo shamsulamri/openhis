@@ -48,6 +48,7 @@
 <h3>Inventory Management</h3>
 		<a href="{{ url('/products') }}">Products</a><br>
 		<a href="{{ url('/product_categories') }}">Product Categories</a><br>
+		<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
 		<a href="{{ url('/suppliers') }}">Suppliers</a><br>
 		<a href="{{ url('/stores') }}">Stores</a><br>
 		<a href="{{ url('/purchase_orders') }}">Purchase Orders</a><br>

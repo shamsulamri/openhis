@@ -9,7 +9,7 @@
 <form action='/appointment_services/{{ $patient->patient_id }}/0' method='post'>
 	{{ Form::select('services', $menu_services, $service, ['class'=>'form-control']) }}
 	<br>
-	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+	<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -85,6 +85,7 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 				</td>
 				@foreach ($week as $day)
 					<?php 
+						$btn_class="";
 						$showDay=false;
 						$dayWeek = $day->format('D');
 						if ($service->service_monday==1 && $dayWeek=='Mon') $showDay=true;
@@ -114,7 +115,18 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 						{{ Log::info( $appointments[$index]['appointment_id'] ) }}
 						@endif
 					@else
-						-	
+							@if ($day<$today && $showDay==true)
+								<?php
+								if ($index===FALSE) {
+									$btn_class = 'btn btn-default btn-sm disabled';
+								} else {
+									$btn_class='btn btn-success btn-sm disabled';
+								}
+								?>
+								<a href='#' class='{{ $btn_class }}'>{{ $slot_time->format('h:i a') }}</a>
+							@else
+								-	
+							@endif
 					@endif
 					</td>
 				@endforeach

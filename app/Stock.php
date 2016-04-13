@@ -18,7 +18,7 @@ class Stock extends Model
 				'stock_date',
 				'stock_quantity',
 				'stock_description',
-				'stock_batch_number'];
+				];
 	
     protected $guarded = ['stock_id'];
     protected $primaryKey = 'stock_id';
@@ -28,6 +28,7 @@ class Stock extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'move_code'=>'required',
+				'store_code'=>'required',
 				'product_code'=>'required',
 				'stock_quantity'=>'required',
 				'stock_date'=>'required|size:10|date_format:d/m/Y',
@@ -56,4 +57,8 @@ class Stock extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
+	public function product()
+	{
+		return $this->belongsTo('App\Product', 'product_code');
+	}
 }

@@ -13,7 +13,7 @@ use Session;
 use App\StockMovement as Move;
 use App\Store;
 use App\Product;
-
+use Carbon\Carbon;
 
 class StockController extends Controller
 {
@@ -34,14 +34,16 @@ class StockController extends Controller
 			]);
 	}
 
-	public function create()
+	public function create($product_code)
 	{
 			$stock = new Stock();
+			$stock->product_code = $product_code;
+			$stock->stock_date = Carbon::now()->format('d/m/Y');
 			return view('stocks.create', [
 					'stock' => $stock,
 					'move' => Move::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
+					'product' => Product::find($product_code),
 					]);
 	}
 
@@ -57,7 +59,7 @@ class StockController extends Controller
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/stocks/id/'.$stock->stock_id);
 			} else {
-					return redirect('/stocks/create')
+					return redirect('/stocks/create/'.$request->product_code)
 							->withErrors($valid)
 							->withInput();
 			}
@@ -70,7 +72,7 @@ class StockController extends Controller
 					'stock'=>$stock,
 					'move' => Move::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
+					'product' => $stock->product, 
 					]);
 	}
 
@@ -89,9 +91,9 @@ class StockController extends Controller
 			} else {
 					return view('stocks.edit', [
 							'stock'=>$stock,
-					'move' => Move::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
+							'move' => Move::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
+							'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+							'product' => $stock->product, 
 							])
 							->withErrors($valid);			
 			}
