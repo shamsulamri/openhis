@@ -22,6 +22,7 @@ use App\Registration;
 use App\Employer;
 use App\Relationship;
 use App\State;
+use App\PatientFlag;
 
 class PatientController extends Controller
 {
@@ -58,6 +59,7 @@ class PatientController extends Controller
 					'registration' => Registration::all()->sortBy('registration_name')->lists('registration_name', 'registration_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
+					'flag' => PatientFlag::all()->sortBy('flag_name')->lists('flag_name', 'flag_code')->prepend('',''),
 					]);
 	}
 
@@ -92,7 +94,7 @@ class PatientController extends Controller
 	{
 			$patient = Patient::findOrFail($id);
 		
-			return view('patients.'.$request->tab, [
+			return view('patients.demography', [
 					'patient'=>$patient,
 					'tourist' => Tourist::all()->sortBy('tourist_name')->lists('tourist_name', 'tourist_code')->prepend('',''),
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
@@ -106,32 +108,26 @@ class PatientController extends Controller
 					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
+					'flag' => PatientFlag::all()->sortBy('flag_name')->lists('flag_name', 'flag_code')->prepend('',''),
 					'patientOption' => 'demography',
 					]);
 	}
 
 	public function update(Request $request, $id) 
 	{
-			$tab = $request->tab;
 			$patient = Patient::findOrFail($id);
 			$patient->fill($request->input());
-			if ($tab=='demography') {
-					$patient->patient_is_pati = $request->patient_is_pati ?: 0;
-					$patient->patient_is_royal = $request->patient_is_royal ?: 0;
-					$patient->patient_is_vip = $request->patient_is_vip ?: 0;
-					$patient->patient_is_unknown = $request->patient_is_unknown ?: 0;
-			}
+			$patient->patient_is_unknown = $request->patient_is_unknown ?: 0;
 			
-			$valid = $patient->validate($request->all(), $tab);	
+			$valid = $patient->validate($request->all());	
 			if ($valid->passes()) {
-
 					$patient->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/patients/'.$id);
 			} else {
-					Log::info($request->tab);
-					return redirect('/patients/'.$id.'/edit?tab='.$tab)
-						->withErrors($valid);			
+					return redirect('/patients/'.$id.'/edit')
+						->withErrors($valid)
+						->withInput();
 			}
 	}
 	

@@ -47,6 +47,7 @@
 		<a href="{{ url('/bed_statuses') }}">Bed Statuses</a><br>
 <h3>Inventory Management</h3>
 		<a href="{{ url('/products') }}">Products</a><br>
+		<a href="{{ url('/product_searches') }}">Product Searches</a><br>
 		<a href="{{ url('/product_categories') }}">Product Categories</a><br>
 		<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
 		<a href="{{ url('/suppliers') }}">Suppliers</a><br>
@@ -110,4 +111,5 @@
 		<a href="{{ url('/frequencies') }}">Frequencies</a><br>
 		<a href="{{ url('/urgencies') }}">Urgencies</a><br>
 		<a href="{{ url('/relationships') }}">Relationships</a><br>
+		<a href="{{ url('/patient_flags') }}">Patient Flags</a><br>
 @endsection

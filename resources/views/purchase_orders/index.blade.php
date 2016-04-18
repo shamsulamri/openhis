@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Purchase Order Index</h1>
+<h1>Purchase Orders</h1>
 <br>
 <form action='/purchase_order/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -19,8 +19,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Name</th>
-    <th>Code</th> 
+    <th>Date</th>
+    <th>Supplier</th> 
+    <th>Status</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -29,13 +30,31 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('purchase_orders/'. $purchase_order->purchase_id . '/edit') }}'>
-						{{$purchase_order->purchase_date}}
+						{{ date('d F Y', strtotime($purchase_order->purchase_date)) }}
 					</a>
 			</td>
 			<td>
-					{{$purchase_order->purchase_id}}
+					{{$purchase_order->supplier_name}}
+			</td>
+			<td>
+					@if ($purchase_order->purchase_posted==1)
+							@if ($purchase_order->purchase_received==1)
+							<div class='label label-success'>
+								Stock Receive
+							</div>
+							@else
+							<div class='label label-warning'>
+								Posted
+							</div>
+							@endif
+					@else
+					<div class='label label-default'>
+						&nbsp;Open&nbsp;
+					</div>
+					@endif
 			</td>
 			<td align='right'>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('purchase_order_lines/'. $purchase_order->purchase_id) }}'>Line Items</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('purchase_orders/delete/'. $purchase_order->purchase_id) }}'>Delete</a>
 			</td>
 	</tr>

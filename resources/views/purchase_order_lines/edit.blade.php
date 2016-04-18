@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
 <h1>
-Edit Purchase Order Line
+Edit Line 
 </h1>
 @include('common.errors')
 <br>

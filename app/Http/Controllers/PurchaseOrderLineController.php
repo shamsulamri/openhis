@@ -11,29 +11,47 @@ use Log;
 use DB;
 use Session;
 use App\Product;
+use App\PurchaseOrder;
 
 class PurchaseOrderLineController extends Controller
 {
-	public $paginateValue=10;
+	public $paginateValue=100;
 
 	public function __construct()
 	{
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index($purchase_id)
 	{
-			$purchase_order_lines = DB::table('purchase_order_lines')
+			$purchase_order_lines = DB::table('purchase_order_lines as a')
+					->leftJoin('products as b', 'b.product_code','=','a.product_code')
+					->where('purchase_id','=',$purchase_id)
 					->orderBy('purchase_id')
 					->paginate($this->paginateValue);
+
+			$purchase_order = PurchaseOrder::find($purchase_id);
+
 			return view('purchase_order_lines.index', [
-					'purchase_order_lines'=>$purchase_order_lines
+					'purchase_order_lines'=>$purchase_order_lines,
+					'purchase_order'=>$purchase_order,
+					'purchase_id' => $purchase_id,
 			]);
 	}
 
-	public function create()
+	public function show($purchase_id)
+	{
+			$purchase_order = PurchaseOrder::find($purchase_id);
+			return view('purchase_order_lines.show', [
+					'purchase_id' => $purchase_id,
+					'purchase_order' => $purchase_order,
+			]);
+	}
+	
+	public function create($purchase_id)
 	{
 			$purchase_order_line = new PurchaseOrderLine();
+			$purchase_order_line->purchase_id = $purchase_id;
 			return view('purchase_order_lines.create', [
 					'purchase_order_line' => $purchase_order_line,
 					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
@@ -63,7 +81,7 @@ class PurchaseOrderLineController extends Controller
 			$purchase_order_line = PurchaseOrderLine::findOrFail($id);
 			return view('purchase_order_lines.edit', [
 					'purchase_order_line'=>$purchase_order_line,
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
+					'product' => Product::find($purchase_order_line->product_code),
 					]);
 	}
 
@@ -76,13 +94,20 @@ class PurchaseOrderLineController extends Controller
 			$valid = $purchase_order_line->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					if ($purchase_order_line->purchaseOrder->purchase_posted==0) {
+							$purchase_order_line->line_quantity_received=$purchase_order_line->line_quantity_ordered;
+					}
+					$purchase_order_line->line_total=$purchase_order_line->line_quantity_ordered*$purchase_order_line->line_price;
+					if ($purchase_order_line->purchaseOrder->purchase_posted==1) {
+							$purchase_order_line->line_total=($purchase_order_line->line_quantity_received+$purchase_order_line->line_quantity_received_2)*$purchase_order_line->line_price;
+					}
 					$purchase_order_line->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/purchase_order_lines/id/'.$id);
+					return redirect('/purchase_order_lines/index/'.$request->purchase_id);
 			} else {
 					return view('purchase_order_lines.edit', [
 							'purchase_order_line'=>$purchase_order_line,
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
+							'product' => Product::find($purchase_order_line->product_code),
 							])
 							->withErrors($valid);			
 			}
@@ -91,16 +116,19 @@ class PurchaseOrderLineController extends Controller
 	public function delete($id)
 	{
 		$purchase_order_line = PurchaseOrderLine::findOrFail($id);
+		$product = Product::find($purchase_order_line->product_code);
 		return view('purchase_order_lines.destroy', [
-			'purchase_order_line'=>$purchase_order_line
+				'purchase_order_line'=>$purchase_order_line,
+				'product'=>$product,
 			]);
 
 	}
 	public function destroy($id)
 	{	
+			$purchase_order_line = PurchaseOrderLine::findOrFail($id);
 			PurchaseOrderLine::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/purchase_order_lines');
+			return redirect('/purchase_order_lines/index/'.$purchase_order_line->purchase_id);
 	}
 	
 	public function search(Request $request)

@@ -1,19 +1,24 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
 <h1>
-Delete Purchase Order Line
+Delete Line Item
 </h1>
-@include('common.errors')
 <br>
-<h3>
+@include('common.errors')
+<h4>
 Are you sure you want to delete the selected record ?
-{{ $purchase_order_line->purchase_id }}
+<br>
+<br>
+<strong>{{ $product->product_name }}</strong>
 {{ Form::open(['url'=>'purchase_order_lines/'.$purchase_order_line->line_id, 'class'=>'pull-right']) }}
 	{{ method_field('DELETE') }}
-	<a class="btn btn-default" href="/purchase_order_lines" role="button">Cancel</a>
+	<br>
+	<br>
+	<br>
+	<a class="btn btn-default" href="/purchase_order_lines/index/{{ $purchase_order_line->purchase_id }}" role="button">Cancel</a>
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 
-</h3>
+</h4>
 @endsection

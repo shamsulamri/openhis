@@ -6,3 +6,12 @@ body {
   text-align: center;
 }
 
+.select {
+		cursor: pointer;
+		display: inline-block;
+		position: relative;
+		font-size: 14px;
+		color: $select-color;
+		width: $select-width;
+		height: 30px;
+}

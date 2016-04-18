@@ -1,46 +1,47 @@
 
-    <div class='form-group  @if ($errors->has('purchase_id')) has-error @endif'>
-        <label for='purchase_id' class='col-sm-2 control-label'>purchase_id<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-            {{ Form::text('purchase_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('purchase_id')) <p class="help-block">{{ $errors->first('purchase_id') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
-        <label for='product_code' class='col-sm-2 control-label'>product_code<span style='color:red;'> *</span></label>
+        <label for='product_code' class='col-sm-2 control-label'>Product</label>
         <div class='col-sm-10'>
-            {{ Form::select('product_code', $product,null, ['class'=>'form-control','maxlength'=>'20']) }}
+            {{ Form::label('product_name', $product->product_name, ['class'=>'form-control']) }}
             @if ($errors->has('product_code')) <p class="help-block">{{ $errors->first('product_code') }}</p> @endif
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('line_price')) has-error @endif'>
+        {{ Form::label('line_price', 'Price',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::label('line_price', $purchase_order_line->line_price, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('line_price')) <p class="help-block">{{ $errors->first('line_price') }}</p> @endif
+        </div>
+    </div>
+
+	@if ($purchase_order_line->purchaseOrder->purchase_posted==0)
+
     <div class='form-group  @if ($errors->has('line_quantity_ordered')) has-error @endif'>
-        {{ Form::label('line_quantity_ordered', 'line_quantity_ordered',['class'=>'col-sm-2 control-label']) }}
+        {{ Form::label('line_quantity_ordered', 'Quantity',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::text('line_quantity_ordered', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('line_quantity_ordered')) <p class="help-block">{{ $errors->first('line_quantity_ordered') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('line_quantity_received')) has-error @endif'>
-        {{ Form::label('line_quantity_received', 'line_quantity_received',['class'=>'col-sm-2 control-label']) }}
+
+	@else
+
+    <div class='form-group  @if ($errors->has('line_quantity_ordered')) has-error @endif'>
+        {{ Form::label('line_quantity_ordered', 'Quantity',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('line_quantity_received', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('line_quantity_received')) <p class="help-block">{{ $errors->first('line_quantity_received') }}</p> @endif
+            {{ Form::label('line_quantity_ordered', $purchase_order_line->line_quantity_ordered, ['class'=>'form-control']) }}
+            @if ($errors->has('line_quantity_ordered')) <p class="help-block">{{ $errors->first('line_quantity_ordered') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('line_price')) has-error @endif'>
-        {{ Form::label('line_price', 'line_price',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::text('line_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('line_price')) <p class="help-block">{{ $errors->first('line_price') }}</p> @endif
-        </div>
-    </div>
+	<div class='page-header'>
+		<h4>Receiving Details</h4>
+	</div>
 
     <div class='form-group  @if ($errors->has('line_batch_number')) has-error @endif'>
-        {{ Form::label('line_batch_number', 'line_batch_number',['class'=>'col-sm-2 control-label']) }}
+        {{ Form::label('line_batch_number', 'Batch Number',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::text('line_batch_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'20']) }}
             @if ($errors->has('line_batch_number')) <p class="help-block">{{ $errors->first('line_batch_number') }}</p> @endif
@@ -48,32 +49,48 @@
     </div>
 
     <div class='form-group  @if ($errors->has('line_expiry_date')) has-error @endif'>
-        <label for='line_expiry_date' class='col-sm-2 control-label'>line_expiry_date</label>
+        <label for='line_expiry_date' class='col-sm-2 control-label'>Expiry Date</label>
         <div class='col-sm-10'>
-            {{ Form::text('line_expiry_date', null, ['class'=>'form-control','placeholder'=>'',]) }}
+			<input id="line_expiry_date" name="line_expiry_date" type="text">
             @if ($errors->has('line_expiry_date')) <p class="help-block">{{ $errors->first('line_expiry_date') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('line_total')) has-error @endif'>
-        {{ Form::label('line_total', 'line_total',['class'=>'col-sm-2 control-label']) }}
+    <div class='form-group  @if ($errors->has('line_quantity_received')) has-error @endif'>
+        {{ Form::label('line_quantity_received', 'Quantity Received #1',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('line_total', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('line_total')) <p class="help-block">{{ $errors->first('line_total') }}</p> @endif
+            {{ Form::text('line_quantity_received', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('line_quantity_received')) <p class="help-block">{{ $errors->first('line_quantity_received') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('line_quantity_received_2')) has-error @endif'>
-        {{ Form::label('line_quantity_received_2', 'line_quantity_received_2',['class'=>'col-sm-2 control-label']) }}
+        {{ Form::label('line_quantity_received_2', 'Quantity Received #2',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::text('line_quantity_received_2', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('line_quantity_received_2')) <p class="help-block">{{ $errors->first('line_quantity_received_2') }}</p> @endif
         </div>
     </div>
 
+	@endif
+	<br>
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/purchase_order_lines" role="button">Cancel</a>
+            <a class="btn btn-default" href="/purchase_order_lines/index/{{ $purchase_order_line->purchase_id }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+
+	{{ Form::hidden('purchase_id',null) }}
+	<script>
+		$(function(){
+				$('#line_expiry_date').combodate({
+						format: "DD/MM/YYYY",
+						template: "DD MMMM YYYY",
+						value: '{{ $purchase_order_line->line_expiry_date }}',
+						maxYear: 2020,
+						minYear: 2016,
+						customClass: 'select'
+				});    
+		});
+	</script>

@@ -21,12 +21,12 @@ class Patient extends Model
 				'race_code',
 				'occupation_code',
 				'registration_code',
+				'flag_code',
 				'patient_name',
 				'patient_birthdate',
 				'patient_new_ic',
 				'patient_old_ic',
 				'patient_passport',
-				'patient_splp',
 				'patient_birth_certificate',
 				'patient_cur_street_1',
 				'patient_cur_street_2',
@@ -49,10 +49,7 @@ class Patient extends Model
 				'patient_per_country',
 				'patient_police_id',
 				'patient_military_id',
-				'patient_is_pati',
 				'patient_birthtime',
-				'patient_is_royal',
-				'patient_is_vip',
 				'patient_is_unknown',
 				'patient_related_mrn',
 				'relation_code',
@@ -76,25 +73,20 @@ class Patient extends Model
 				    parent::__construct($attributes);
 	}
 
-	public function validate($input, $tab) {
+	public function validate($input) {
 			$rules = [];
 			
-			switch ($tab) {
-				case "demography":
-					$rules = [
-						'gender_code'=>'required',
-						'patient_name'=>'required',
-						'patient_birthdate'=>'date_format:d/m/Y',
-					];
-					if (empty($this->attributes['patient_is_unknown']) == false) {
-							if ($this->attributes['patient_is_unknown'] == 1) {
-									$rules['patient_age']='required';
-							}
+			$rules = [
+				'gender_code'=>'required',
+				'patient_name'=>'required',
+				'patient_birthdate'=>'date_format:d/m/Y',
+				'patient_email'=>'email',
+			];
+			if (empty($this->attributes['patient_is_unknown']) == false) {
+					if ($this->attributes['patient_is_unknown'] == 1) {
+							$rules['patient_age']='required';
 					}
-					break;
-				default:
-						$rules = ['patient_email'=>'email'];
-			}						
+			}
 
 			$messages = [
 				'required' => 'This field is required'
@@ -148,6 +140,10 @@ class Patient extends Model
 			}
 	}
 
+	public function getPatientBirthtimeAttribute($value)
+	{
+			return DojoUtility::timeReadFormat($value);
+	}
 	public function patientIdentification()
 	{
 			if (!empty($this->attributes['patient_new_ic'])) {

@@ -33,6 +33,19 @@ Route::group(['middleware' => 'web'], function () {
 				return view('options.option');
 		});
 
+		Route::resource('product_searches', 'ProductSearchController');
+		Route::get('/product_searches/id/{id}', 'ProductSearchController@searchById');
+		Route::get('/product_searches/add/{purchase_id}/{id}', 'ProductSearchController@add');
+		Route::post('/product_search/search', 'ProductSearchController@search');
+		Route::get('/product_search/search', 'ProductSearchController@search');
+		Route::get('/product_searches/delete/{id}', 'ProductSearchController@delete');
+		
+		Route::resource('patient_flags', 'PatientFlagController');
+		Route::get('/patient_flags/id/{id}', 'PatientFlagController@searchById');
+		Route::post('/patient_flag/search', 'PatientFlagController@search');
+		Route::get('/patient_flag/search', 'PatientFlagController@search');
+		Route::get('/patient_flags/delete/{id}', 'PatientFlagController@delete');
+		
 		Route::resource('product_statuses', 'ProductStatusController');
 		Route::get('/product_statuses/id/{id}', 'ProductStatusController@searchById');
 		Route::post('/product_status/search', 'ProductStatusController@search');
@@ -247,12 +260,14 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/bill_material/search', 'BillMaterialController@search');
 		Route::get('/bill_materials/delete/{id}', 'BillMaterialController@delete');
 		
-		Route::resource('stocks', 'StockController', ['except'=>['create']]);
-		Route::get('/stocks/create/{product_code}', 'StockController@create');
+		Route::get('/stocks/delete/{id}', 'StockController@delete');
+		Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);
+		Route::get('/stocks/{product_code}/{store_code?}', 'StockController@show');
+		Route::get('/stocks/onhand/{product_code}/{store_code}', 'StockController@onHand');
+		Route::get('/stocks/create/{product_code}/{store_code}', 'StockController@create');
 		Route::get('/stocks/id/{id}', 'StockController@searchById');
 		Route::post('/stock/search', 'StockController@search');
 		Route::get('/stock/search', 'StockController@search');
-		Route::get('/stocks/delete/{id}', 'StockController@delete');
 		
 		Route::resource('stock_movements', 'StockMovementController');
 		Route::get('/stock_movements/id/{id}', 'StockMovementController@searchById');
@@ -260,7 +275,9 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/stock_movement/search', 'StockMovementController@search');
 		Route::get('/stock_movements/delete/{id}', 'StockMovementController@delete');
 		
-		Route::resource('purchase_order_lines', 'PurchaseOrderLineController');
+		Route::resource('purchase_order_lines', 'PurchaseOrderLineController', ['except'=>['index','create']]);
+		Route::get('/purchase_order_lines/index/{purchase_id}', 'PurchaseOrderLineController@index');
+		Route::get('/purchase_order_lines/create/{purchase_id}', 'PurchaseOrderLineController@create');
 		Route::get('/purchase_order_lines/id/{id}', 'PurchaseOrderLineController@searchById');
 		Route::post('/purchase_order_line/search', 'PurchaseOrderLineController@search');
 		Route::get('/purchase_order_line/search', 'PurchaseOrderLineController@search');
@@ -426,12 +443,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/occupation/search', 'OccupationController@search');
 		Route::get('/occupations/delete/{id}', 'OccupationController@delete');
 
-		Route::resource('persons', 'PersonController');
-		Route::get('/persons/id/{id}', 'PersonController@searchById');
-		Route::post('/person/search', 'PersonController@search');
-		Route::get('/person/search', 'PersonController@search');
-		Route::get('/persons/delete/{id}', 'PersonController@delete');
-
 		Route::resource('tourists', 'TouristController');
 		Route::get('/tourists/id/{id}', 'TouristController@searchById');
 		Route::post('/tourist/search', 'TouristController@search');
@@ -547,6 +558,8 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/purchase_orders/id/{id}', 'PurchaseOrderController@searchById');
 		Route::post('/purchase_order/search', 'PurchaseOrderController@search');
 		Route::get('/purchase_order/search', 'PurchaseOrderController@search');
+		Route::get('/purchase_order/post', 'PurchaseOrderController@post');
+		Route::post('/purchase_order/verify', 'PurchaseOrderController@postVerify');
 		Route::get('/purchase_orders/delete/{id}', 'PurchaseOrderController@delete');
 
 		Route::resource('encounters', 'EncounterController');

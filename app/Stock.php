@@ -31,7 +31,7 @@ class Stock extends Model
 				'store_code'=>'required',
 				'product_code'=>'required',
 				'stock_quantity'=>'required',
-				'stock_date'=>'required|size:10|date_format:d/m/Y',
+				'stock_date'=>'required|size:16|date_format:d/m/Y H:i',
 			];
 
 			
@@ -46,15 +46,15 @@ class Stock extends Model
 	
 	public function setStockDateAttribute($value)
 	{
-		if (DojoUtility::validateDate($value)==true) {
-			$this->attributes['stock_date'] = DojoUtility::dateWriteFormat($value);
+		if (DojoUtility::validateDateTime($value)==true) {
+			$this->attributes['stock_date'] = DojoUtility::dateTimeWriteFormat($value);
 		}
 	}
 
 
 	public function getStockDateAttribute($value)
 	{
-		return DojoUtility::dateReadFormat($value);
+		return DojoUtility::dateTimeReadFormat($value);
 	}
 
 	public function product()

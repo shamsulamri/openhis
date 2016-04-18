@@ -15,26 +15,25 @@ class PurchaseOrder extends Model
 				'user_id',
 				'supplier_code',
 				'purchase_date',
-				'purchase_reference',
 				'purchase_posted',
 				'purchase_received',
 				'store_code',
 				'purchase_description',
 				'receive_datetime',
-				'purchase_number',
 				'invoice_number',
 				'invoice_date'];
 	
     protected $guarded = ['purchase_id'];
     protected $primaryKey = 'purchase_id';
     public $incrementing = true;
-    
 
+	
 	public function validate($input, $method) {
 			$rules = [
 				'supplier_code'=>'required',
 				'purchase_date'=>'required|date_format:d/m/Y|size:10',
 				'invoice_date'=>'date|date_format:d/m/Y|size:10',
+				'receive_datetime'=>'size:16|date_format:d/m/Y H:i',
 			];
 
 			$messages = [
@@ -71,4 +70,25 @@ class PurchaseOrder extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
+	public function setReceiveDatetimeAttribute($value)
+	{
+		if (DojoUtility::validateDateTime($value)==true) {
+			$this->attributes['receive_datetime'] = DojoUtility::dateTimeWriteFormat($value);
+		}
+	}
+
+	public function getReceiveDatetimeAttribute($value)
+	{
+		return DojoUtility::dateTimeReadFormat($value);
+	}
+	
+	public function supplier()
+	{
+		return $this->belongsTo('App\Supplier', 'supplier_code');
+	}
+
+	public function store()
+	{
+			return $this->belongsTo('App\Store', 'store_code');
+	}
 }

@@ -31,6 +31,39 @@ class DojoUtility
 				return $d && $d->format('d/m/Y') == $date;
 		}
 
+		public static function validateDateTime($date)
+		{
+				$d = DateTime::createFromFormat('d/m/Y H:i', $date);
+				return $d && $d->format('d/m/Y H:i') == $date;
+		}
+		
+		public static function dateTimeWriteFormat($value)
+		{
+				if (!empty($value)) { 
+					return Carbon::createFromFormat('d/m/Y H:i', $value);
+				} else {
+					return null;
+				}	
+		}
+		
+		public static function dateTimeReadFormat($value)
+		{
+				if (!empty($value)) {
+					return Carbon::parse($value)->format('d/m/Y H:i');
+				} else {
+					return null;
+				}
+		}
+		
+		public static function timeReadFormat($value)
+		{
+				if (!empty($value)) {
+					return Carbon::parse($value)->format('H:i');
+				} else {
+					return null;
+				}
+		}
+		
 		public static function logout($log)
 		{
 				Log::info($log);

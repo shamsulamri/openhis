@@ -29,7 +29,6 @@ class PurchaseOrderLine extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'purchase_id'=>'required',
-				'product_code'=>'required',
 				'line_expiry_date'=>'size:10|date_format:d/m/Y',
 			];
 
@@ -54,6 +53,11 @@ class PurchaseOrderLine extends Model
 	public function getLineExpiryDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
+	}
+
+	public function purchaseOrder()
+	{
+		return $this->belongsTo('App\PurchaseOrder','purchase_id');
 	}
 
 }

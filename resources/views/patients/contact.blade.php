@@ -13,6 +13,7 @@
 <strong>Current Address</strong>
 <br>
 <br>
+
     <div class='form-group  @if ($errors->has('patient_cur_street_1')) has-error @endif'>
         {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
@@ -144,7 +145,6 @@
             @if ($errors->has('patient_email')) <p class="help-block">{{ $errors->first('patient_email') }}</p> @endif
         </div>
     </div>
-
 <strong>Permanent Address</strong>
 <br>
 <br>
