@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-Delete Product
+Delete Dependant
 </h1>
 @include('common.errors')
 <br>
@@ -10,12 +10,13 @@ Delete Product
 Are you sure you want to delete the selected record ?
 <br>
 <br>
-{{ $bill_material->product->product_name }}
+{{ $dependant->patient_name }}
 <br>
-{{ Form::open(['url'=>'bill_materials/'.$bill_material->id, 'class'=>'pull-right']) }}
+{{ Form::open(['url'=>'dependants/'.$dependant->patient_id, 'class'=>'pull-right']) }}
 	{{ method_field('DELETE') }}
 	<br>
-	<a class="btn btn-default" href="/bill_materials/index/{{ $bill_material->product_code }}" role="button">Cancel</a>
+	<br>
+	<a class="btn btn-default" href="/dependants?patient_id={{$dependant->patient_id}}" role="button">Cancel</a>
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 

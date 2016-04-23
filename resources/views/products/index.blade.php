@@ -19,24 +19,36 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Name</th>
     <th>Code</th> 
+    <th>Name</th>
+    <th>On Hand</th> 
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($products as $product)
 	<tr>
+			<td width='100'>
+					{{$product->product_code}}
+			</td>
 			<td>
 					<a href='{{ URL::to('products/'. $product->product_code . '/edit') }}'>
 						{{$product->product_name}}
 					</a>
 			</td>
 			<td>
-					{{$product->product_code}}
+				@if ($product->product_on_hand>0)
+					{{$product->product_on_hand}}
+				@endif
 			</td>
 			<td align='right'>
-					<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $product->product_code) }}'>Stock</a>
+					@if ($product->product_bom==1)
+					<a class='btn btn-default btn-xs' href='{{ URL::to('bill_materials/'. $product->product_code) }}'><span class='glyphicon glyphicon-link' aria-hidden='true'></span></a>
+					@endif
+					@if ($product->category_code=='drugs')
+					<a class='btn btn-default btn-xs' href='{{ URL::to('drug_prescriptions/'. $product->product_code.'/edit') }}'><span class='glyphicon glyphicon-list' aria-hidden='true'></span></a>
+					@endif
+					<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $product->product_code) }}'><span class='glyphicon glyphicon-shopping-cart' aria-hidden='true'></span></a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('products/delete/'. $product->product_code) }}'>Delete</a>
 			</td>
 	</tr>

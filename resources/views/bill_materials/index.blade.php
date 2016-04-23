@@ -1,26 +1,17 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
-<h1>Bill Material Index</h1>
-<br>
-<form action='/bill_material/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-</form>
+<h1>{{ $product->product_name }}</h1>
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
-<a href='/bill_materials/create' class='btn btn-primary'>Create</a>
-<br>
-<br>
 @if ($bill_materials->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>product_code</th>
-    <th>id</th> 
+    <th>Product</th>
+    <th>Quantity</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -29,11 +20,11 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('bill_materials/'. $bill_material->id . '/edit') }}'>
-						{{$bill_material->product_code}}
+						{{$bill_material->product_name}}
 					</a>
 			</td>
 			<td>
-					{{$bill_material->id}}
+					{{$bill_material->bom_quantity}} {{ $bill_material->unit_shortname }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('bill_materials/delete/'. $bill_material->id) }}'>Delete</a>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ProductController;
 use App\Stock;
 use Log;
 use DB;
@@ -14,6 +15,7 @@ use App\StockMovement as Move;
 use App\Store;
 use App\Product;
 use Carbon\Carbon;
+use App\DojoUtility;
 
 class StockController extends Controller
 {
@@ -39,7 +41,7 @@ class StockController extends Controller
 	{
 			$stock = new Stock();
 			$stock->product_code = $product_code;
-			$stock->stock_date = Carbon::now()->format('d/m/Y');
+			$stock->stock_date = DojoUtility::now();
 			$store = Store::find($store_code);
 			return view('stocks.create', [
 					'stock' => $stock,
@@ -60,8 +62,11 @@ class StockController extends Controller
 					$stock = new Stock($request->all());
 					$stock->stock_id = $request->stock_id;
 					$stock->save();
+					
+					$product = new ProductController();
+					$product->totalOnHand($stock->product_code);
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/stocks/'.$stock->product_code);
+					return redirect('/stocks/'.$stock->product_code.'/'.$stock->store_code);
 			} else {
 					return redirect('/stocks/create/'.$request->product_code.'/'.$request->store_code)
 							->withErrors($valid)
@@ -69,39 +74,12 @@ class StockController extends Controller
 			}
 	}
 
-	public function onHand($product_code, $store_code) 
+	public function totalOnHand($product_code)
 	{
-			$stock_take = Stock::select('stock_date', 'stock_quantity')
-							->where('move_code','=','take')
-							->where('product_code','=',$product_code)
-							->where('store_code','=',$store_code)
-							->orderBy('stock_date', 'desc')
-							->first();
-
-			$stock_on_hand=0;
-			if (!empty($stock_take)) {
-					$stock_value = $stock_take->stock_quantity; 
-
-					$take_date = Carbon::createFromFormat('d/m/Y H:i',$stock_take->stock_date);
-					//$take_date->hour=0;
-					//$take_date->minute=0;
-					//$take_date->second=0;
-
-					$stocks = Stock::where('stock_date','>=',$take_date)
-									->where('product_code','=',$product_code)
-									->where('store_code','=',$store_code)
-									->where('move_code','<>', 'take')
-									->sum('stock_quantity');
-					$stock_on_hand = $stock_value + $stocks;
-			} else {
-					$stocks = Stock::where('product_code','=',$product_code)
-									->where('store_code','=',$store_code)
-									->sum('stock_quantity');
-					$stock_on_hand=$stocks;
-			}
-
-			return $stock_on_hand;
+			$product = new ProductController();
+			return $product->totalOnHand($product_code);
 	}
+
 
 	public function edit($id) 
 	{
@@ -125,6 +103,8 @@ class StockController extends Controller
 
 			if ($valid->passes()) {
 					$stock->save();
+					$product = new ProductController();
+					$product->totalOnHand($stock->product_code);
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/stocks/'.$stock->product_code.'/'.$stock->store_code);
 			} else {
@@ -152,6 +132,8 @@ class StockController extends Controller
 	{	
 			$stock = Stock::find($id);
 			Stock::find($id)->delete();
+			$product = new ProductController();
+			$product->totalOnHand($stock->product_code);
 			Session::flash('message', 'Record deleted.');
 			return redirect('/stocks/'.$stock->product_code);
 	}

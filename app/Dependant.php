@@ -6,13 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
-use Log;
 
-class Patient extends Model
+class Dependant extends Model
 {
 	protected $table = 'patients';
 	protected $fillable = [
-				'tourist_code',
+				'patient_mrn',
 				'gender_code',
 				'religion_code',
 				'title_code',
@@ -51,41 +50,25 @@ class Patient extends Model
 				'patient_military_id',
 				'patient_birthtime',
 				'patient_is_unknown',
+				'patient_age',
 				'patient_gravida',
 				'patient_parity',
 				'patient_parity_plus',
-				'patient_lnmp',
-				'patient_age'];
+				'patient_lnmp'];
 	
-	protected $defaults = [
-			'patient_cur_country'=>'MYS',
-	];
-   
-	protected $guarded = ['patient_id'];
+    protected $guarded = ['patient_id'];
     protected $primaryKey = 'patient_id';
     public $incrementing = true;
     
-	public function __construct(array $attributes = array())
-	{
-			    $this->setRawAttributes($this->defaults, true);
-				    parent::__construct($attributes);
-	}
 
-	public function validate($input) {
-			$rules = [];
-			
+	public function validate($input, $method) {
 			$rules = [
 				'gender_code'=>'required',
 				'patient_name'=>'required',
-				'patient_birthdate'=>'date_format:d/m/Y',
-				'patient_email'=>'email',
 			];
-			if (empty($this->attributes['patient_is_unknown']) == false) {
-					if ($this->attributes['patient_is_unknown'] == 1) {
-							$rules['patient_age']='required';
-					}
-			}
 
+			
+			
 			$messages = [
 				'required' => 'This field is required'
 			];
@@ -107,15 +90,6 @@ class Patient extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
-	public function getPatientAgeAttribute($value)
-	{
-		if ($value==0) {
-				return "";
-		} else {
-				return $value;
-		}
-	}
-
 	public function setPatientLnmpAttribute($value)
 	{
 		if (DojoUtility::validateDate($value)==true) {
@@ -129,60 +103,4 @@ class Patient extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
-	public function getPatientMrnAttribute($value)
-	{
-			if (is_null($value)) {
-					return "-";
-			} else {
-					return $value;
-			}
-	}
-
-	public function getPatientBirthtimeAttribute($value)
-	{
-			return DojoUtility::timeReadFormat($value);
-	}
-	public function patientIdentification()
-	{
-			if (!empty($this->attributes['patient_new_ic'])) {
-					return $this->patient_new_ic;
-			} else {
-					return "-";
-			}
-			return "-";
-	}
-					
-	public function encounters()
-	{
-			return $this->hasMany('App\Encounter', 'patient_id');
-	}
-
-	public function race()
-	{
-			return $this->belongsTo('App\Race', 'race_code');
-	}
-
-	public function gender()
-	{
-			return $this->belongsTo('App\Gender', 'gender_code');
-	}
-
-	public function title()
-	{
-			return $this->belongsTo('App\Title', 'title_code');
-	}
-
-	public function getTitle()
-	{
-			if (!empty($this->title_code)) {
-					return $this->title->title_name;
-			} else {
-					return "";
-			}
-	}
-
-	public function alert()
-	{
-			return $this->hasMany('App\MedicalAlert', 'patient_id', 'patient_id');
-	}
 }

@@ -12,9 +12,13 @@ use Session;
 use App\Supplier;
 use App\Store;
 use Auth;
-use App\DojoUtility as dj;
+use App\DojoUtility; 
 use Carbon\Carbon;
 use Log;
+use App\PurchaseOrderLine;
+use App\Stock;
+use App\Http\Controllers\ProductController;
+use App\Product;
 
 class PurchaseOrderController extends Controller
 {
@@ -85,6 +89,7 @@ class PurchaseOrderController extends Controller
 
 	public function update(Request $request, $id) 
 	{
+			
 			$purchase_order = PurchaseOrder::findOrFail($id);
 			$purchase_order->fill($request->input());
 
@@ -92,6 +97,7 @@ class PurchaseOrderController extends Controller
 
 			if ($valid->passes()) {
 					$purchase_order->save();
+					$this->stockReceive($id);
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/purchase_order_lines/index/'.$id);
 			} else {
@@ -105,6 +111,29 @@ class PurchaseOrderController extends Controller
 			}
 	}
 	
+	public function stockReceive($id)
+	{
+			$purchase_order = PurchaseOrder::find($id);
+			$line_items = PurchaseOrderLine::where('purchase_id','=',$id)
+					->get();
+
+			foreach ($line_items as $item) {
+					$product = Product::find($item->product_code);
+					$stock = new Stock();
+					$stock->line_id = $item->line_id;
+					$stock->store_code = $purchase_order->store_code;
+					$stock->move_code = 'receive';
+					$stock->product_code = $item->product_code;
+					$stock->stock_date = DojoUtility::now();
+					$stock->stock_quantity = ($item->line_quantity_received + $item->line_quantity_received_2)*$product->product_conversion_unit;
+					$stock->save();
+
+					$product = new ProductController();
+					$product->totalOnHand($item->product_code);
+			}
+			return $line_items;
+	}
+
 	public function delete($id)
 	{
 		$purchase_order = PurchaseOrder::findOrFail($id);

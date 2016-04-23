@@ -1,10 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
-New Product
-</h1>
+<h1><a href='/products'>Product Index</a> / New Product</h1>
 @include('common.errors')
+<br>
 <br>
 {{ Form::model($product, ['url'=>'products', 'class'=>'form-horizontal']) }} 
     

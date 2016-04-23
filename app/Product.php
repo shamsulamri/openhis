@@ -59,5 +59,9 @@ class Product extends Model
 	{
 			return $this->belongsTo('App\ProductCategory','category_code');
 	}
-	
+
+	public function unitMeasure()
+	{
+			return $this->belongsTo('App\UnitMeasure', 'unit_code');
+	}
 }

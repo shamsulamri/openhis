@@ -68,5 +68,11 @@ class DojoUtility
 		{
 				Log::info($log);
 		}
+
+		public static function now()
+		{
+				return date('d/m/Y H:i', strtotime(Carbon::now())); 
+		}
+
 }
 

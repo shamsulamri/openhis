@@ -23,6 +23,7 @@ use App\Employer;
 use App\Relationship;
 use App\State;
 use App\PatientFlag;
+use App\PatientDependant;
 
 class PatientController extends Controller
 {
@@ -36,10 +37,10 @@ class PatientController extends Controller
 	public function index()
 	{
 			$patients = DB::table('patients')
-					->orderBy('created_at')
+					->orderBy('patient_id','desc')
 					->paginate($this->paginateValue);
 			return view('patients.index', [
-					'patients'=>$patients
+					'patients'=>$patients,
 			]);
 	}
 
@@ -81,12 +82,37 @@ class PatientController extends Controller
 			}
 	}
 
+	public function getDependants($id) 
+	{
+			$patients = PatientDependant::select('dependant_id as id')
+					->where('patient_id','=', $id)->get();
+			$patients = $patients->merge(PatientDependant::select('patient_id as id')
+					->where('dependant_id','=', $id)->get());
+			return $patients;
+	}
+
 	public function show($id)
 	{
 			$patient = Patient::findOrFail($id);
+			
+			$patients = $this->getDependants($id);
+
+			for ($i=0;$i<3;$i++) {
+					foreach ($patients as $x) {
+							$patients = $patients->merge($this->getDependants($x->id));
+							Log::info($patients);
+					}
+			}
+			$patients=$patients->except([$id]);
+			$patients = Patient::select('patient_name', 'patient_id', 'patient_mrn','patient_phone_home', 'patient_phone_mobile')
+					->whereIn('patient_id', $patients->unique())
+					->orderBy('patient_name')
+					->get();
+
 			return view('patients.view', [
 					'patient'=>$patient,
 					'patientOption'=>'',
+					'patients'=>$patients,
 					]);
 	}
 
@@ -170,5 +196,14 @@ class PatientController extends Controller
 			return view('patients.index', [
 					'patients'=>$patients
 			]);
+	}
+
+	public function dependants($patient_id)
+	{
+			$patient = Patient::find($patient_id);
+			return view('patients.dependant', [
+					'patient' => $patient,
+			]);
+
 	}
 }

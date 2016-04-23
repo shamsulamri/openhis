@@ -33,9 +33,24 @@ Route::group(['middleware' => 'web'], function () {
 				return view('options.option');
 		});
 
+		Route::resource('patient_dependants', 'PatientDependantController');
+		Route::get('/patient_dependants/id/{id}', 'PatientDependantController@searchById');
+		Route::post('/patient_dependant/search', 'PatientDependantController@search');
+		Route::get('/patient_dependant/search', 'PatientDependantController@search');
+		Route::get('/patient_dependants/delete/{id}', 'PatientDependantController@delete');
+		
+		Route::resource('dependants', 'DependantController', ['except'=>['create','show']]);
+		Route::get('/dependants/create/{id}', 'DependantController@create');
+		Route::get('/dependants/id/{id}', 'DependantController@searchById');
+		Route::post('/dependant/search', 'DependantController@search');
+		Route::get('/dependant/search', 'DependantController@search');
+		Route::get('/dependants/delete/{id}', 'DependantController@delete');
+		Route::get('/dependants/add/{dependant_id}/{patient_id}', 'DependantController@add');
+		
 		Route::resource('product_searches', 'ProductSearchController');
 		Route::get('/product_searches/id/{id}', 'ProductSearchController@searchById');
 		Route::get('/product_searches/add/{purchase_id}/{id}', 'ProductSearchController@add');
+		Route::get('/product_searches/bom/{product_code}/{bom_product_code}', 'ProductSearchController@bom');
 		Route::post('/product_search/search', 'ProductSearchController@search');
 		Route::get('/product_search/search', 'ProductSearchController@search');
 		Route::get('/product_searches/delete/{id}', 'ProductSearchController@delete');
@@ -254,12 +269,15 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/diet_wastage/search', 'DietWastageController@search');
 		Route::get('/diet_wastages/delete/{id}', 'DietWastageController@delete');
 		
-		Route::resource('bill_materials', 'BillMaterialController');
+		Route::resource('bill_materials', 'BillMaterialController',['except'=>['index', 'show']]);
+		Route::get('/bill_materials/{product_code}', 'BillMaterialController@show');
+		Route::get('/bill_materials/index/{product_code}', 'BillMaterialController@index');
 		Route::get('/bill_materials/id/{id}', 'BillMaterialController@searchById');
 		Route::post('/bill_material/search', 'BillMaterialController@search');
 		Route::get('/bill_material/search', 'BillMaterialController@search');
 		Route::get('/bill_materials/delete/{id}', 'BillMaterialController@delete');
 		
+		Route::get('/stocks/total/{product_code}', 'StockController@totalOnHand');
 		Route::get('/stocks/delete/{id}', 'StockController@delete');
 		Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);
 		Route::get('/stocks/{product_code}/{store_code?}', 'StockController@show');
@@ -397,6 +415,8 @@ Route::group(['middleware' => 'web'], function () {
 		
 		Route::resource('patients', 'PatientController');
 		Route::get('/patients/id/{id}', 'PatientController@searchById');
+		Route::get('/patients/dependants/{id}', 'PatientController@dependants');
+		Route::get('/patient/dependants', 'PatientController@find');
 		Route::post('/patient/search', 'PatientController@search');
 		Route::get('/patient/search', 'PatientController@search');
 		Route::get('/patients/delete/{id}', 'PatientController@delete');

@@ -17,6 +17,7 @@ use App\Form;
 use App\Status;
 use App\PurchaseOrderLine;
 use App\Product;
+use App\BillMaterial;
 
 class ProductSearchController extends Controller
 {
@@ -35,6 +36,8 @@ class ProductSearchController extends Controller
 			return view('product_searches.index', [
 					'product_searches'=>$product_searches,
 					'purchase_id'=>$request->purchase_id,
+					'product_code'=>$request->product_code,
+					'reason'=>$request->reason,
 			]);
 	}
 
@@ -80,6 +83,19 @@ class ProductSearchController extends Controller
 			Session::flash('message', 'Record successfully created.');
 			return redirect('/product_searches?purchase_id='.$purchase_id);
 	}
+
+	public function bom($product_code, $bom_product_code) 
+	{
+			$bom = new BillMaterial();
+			$bom->product_code = $product_code;
+			$bom->bom_product_code = $bom_product_code;
+			$bom->save();
+
+			Session::flash('message', 'Record successfully created.');
+			return redirect('/product_searches?reason=bom&product_code='.$product_code);
+			
+	}
+			
 
 	public function edit($id) 
 	{
@@ -150,6 +166,8 @@ class ProductSearchController extends Controller
 					'product_searches'=>$product_searches,
 					'search'=>$request->search,
 					'purchase_id'=>$request->purchase_id,
+					'reason'=>$request->reason,
+					'product_code'=>$request->product_code,
 					]);
 	}
 

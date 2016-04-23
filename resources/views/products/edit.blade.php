@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>
-Edit Product
-</h1>
-@include('common.errors')
+<h1><a href='/products'>Product Index</a> / Edit Product</h1>
 <br>
+@include('products.id')
+@include('common.errors')
 {{ Form::model($product, ['route'=>['products.update',$product->product_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>

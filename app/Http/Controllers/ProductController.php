@@ -16,6 +16,9 @@ use App\QueueLocation as Location;
 use App\Form;
 use App\OrderForm;
 use App\ProductStatus;
+use App\Store;
+use App\Stock;
+use Carbon\Carbon;
 
 class ProductController extends Controller
 {
@@ -153,5 +156,52 @@ class ProductController extends Controller
 			return view('products.index', [
 					'products'=>$products
 			]);
+	}
+
+	public function totalOnHand($product_code)
+	{
+			$stores = Store::all();
+			$total=0;
+			foreach ($stores as $store) {
+					$total += $this->storeOnHand($product_code, $store->store_code);
+			}
+					
+			$product = Product::find($product_code);
+			$product->product_on_hand = $total;
+			$product->save();		
+
+			Log::info($total);
+			return $total;
+	}
+
+	public function storeOnHand($product_code, $store_code) 
+	{
+			$stock_take = Stock::select('stock_date', 'stock_quantity')
+							->where('move_code','=','take')
+							->where('product_code','=',$product_code)
+							->where('store_code','=',$store_code)
+							->orderBy('stock_date', 'desc')
+							->first();
+
+			$stock_on_hand=0;
+			if (!empty($stock_take)) {
+					$stock_value = $stock_take->stock_quantity; 
+
+					$take_date = Carbon::createFromFormat('d/m/Y H:i',$stock_take->stock_date);
+
+					$stocks = Stock::where('stock_date','>=',$take_date)
+									->where('product_code','=',$product_code)
+									->where('store_code','=',$store_code)
+									->where('move_code','<>', 'take')
+									->sum('stock_quantity');
+					$stock_on_hand = $stock_value + $stocks;
+			} else {
+					$stocks = Stock::where('product_code','=',$product_code)
+									->where('store_code','=',$store_code)
+									->sum('stock_quantity');
+					$stock_on_hand=$stocks;
+			}
+
+			return $stock_on_hand;
 	}
 }

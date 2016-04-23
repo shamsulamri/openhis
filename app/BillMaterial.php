@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
-
+use Log;
 class BillMaterial extends Model
 {
 	protected $table = 'bill_materials';
@@ -17,12 +17,20 @@ class BillMaterial extends Model
 	
 
 	public function validate($input, $method) {
-			$rules = [
-				'product_code'=>'required',
-				'bom_product_code'=>'required',
-				'bom_quantity'=>'required',
-			];
-
+			Log::info($method);
+			$rules = null;
+			
+			if ($method=='PUT') {
+					$rules = [
+						'bom_quantity'=>'required',
+					];
+			} else {
+					$rules = [
+						'product_code'=>'required',
+						'bom_product_code'=>'required',
+						'bom_quantity'=>'required',
+					];
+			}
 			
 			
 			$messages = [
@@ -32,5 +40,9 @@ class BillMaterial extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function product()
+	{
+			return $this->belongsTo('App\Product', 'bom_product_code','product_code');
+	}
 	
 }

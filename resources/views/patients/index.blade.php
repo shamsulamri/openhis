@@ -11,9 +11,10 @@
 </form>
 <br>
 @if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
+		<div class="alert alert-info">{{ Session::get('message') }}</div>
+@else
+		<br>
 @endif
-<br>
 <a href='/patients/create' class='btn btn-primary'>New Patient</a>
 <br>
 <br>

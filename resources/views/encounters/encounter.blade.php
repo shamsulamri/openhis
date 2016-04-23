@@ -1,6 +1,6 @@
 
 	<div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
-        <label for='encounter_code' class='col-sm-2 control-label'>Type<span style='color:red;'> *</span></label>
+        <label for='encounter_code' class='col-sm-2 control-label'>Encounter<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
 			{{ Form::select('encounter_code', $encounter_type, null, ['class'=>'form-control']) }}
             @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
@@ -17,34 +17,15 @@
     </div>
 
 	<div class='page-header'>
-		<h4>Patient</h4>
+		<h4>Employment & Financial Assistance</h4>
 	</div>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
-        {{ Form::label('Patient Type', 'Type',['class'=>'col-sm-2 control-label']) }}
+        {{ Form::label('Patient Type', 'Patient Type',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::select('type_code', $patient_type, null, ['class'=>'form-control','maxlength'=>'20']) }}
         </div>
     </div>
-
-    <div class='form-group  @if ($errors->has('related_mrn')) has-error @endif'>
-        <label for='encounter_id' class='col-sm-2 control-label'>Related MRN</label>
-        <div class='col-sm-10'>
-            {{ Form::text('related_mrn', null, ['class'=>'form-control','placeholder'=>'',]) }}
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('relation_code')) has-error @endif'>
-        {{ Form::label('relation_code', 'Relationship',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::select('relation_code', $relationship, null, ['class'=>'form-control','maxlength'=>'10']) }}
-        </div>
-    </div>
-
-	<div class='page-header'>
-		<h4>Other Information</h4>
-	</div>
-
     <div class='form-group  @if ($errors->has('employer_code')) has-error @endif'>
         {{ Form::label('employer_code', 'Employer',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>

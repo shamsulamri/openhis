@@ -16,7 +16,7 @@ use App\DrugDosage as Dosage;
 use App\DrugRoute as Route;
 use App\DrugFrequency as Frequency;
 use App\Period;
-
+use App\Product;
 
 class DrugPrescriptionController extends Controller
 {
@@ -71,7 +71,16 @@ class DrugPrescriptionController extends Controller
 
 	public function edit($id) 
 	{
-			$drug_prescription = DrugPrescription::findOrFail($id);
+			$product = Product::find($id);
+			$drug_prescription = DrugPrescription::where('drug_code','=', $id)->get();
+			if (count($drug_prescription)>0) {
+					$drug_prescription=$drug_prescription[0];
+			} else {
+					$drug_prescription = new DrugPrescription();
+					$drug_prescription->drug_code = $id;
+					$drug_prescription->save();
+			}
+					
 			return view('drug_prescriptions.edit', [
 					'drug_prescription'=>$drug_prescription,
 					'drug' => Drug::all()->sortBy('drug_name')->lists('drug_name', 'drug_code')->prepend('',''),
@@ -80,6 +89,7 @@ class DrugPrescriptionController extends Controller
 					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
 					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					'product' => $product,
 					]);
 	}
 
@@ -96,7 +106,7 @@ class DrugPrescriptionController extends Controller
 			if ($valid->passes()) {
 					$drug_prescription->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/drug_prescriptions/id/'.$id);
+					return redirect('/products');
 			} else {
 					return view('drug_prescriptions.edit', [
 							'drug_prescription'=>$drug_prescription,

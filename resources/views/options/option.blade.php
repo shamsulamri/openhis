@@ -4,6 +4,7 @@
 <h1>Options</h1>
 <h3>Patient Management</h3>
 		<a href="{{ url('/patients') }}">Patients</a><br>
+		<a href="{{ url('/patient_dependants') }}">Patient Dependants</a><br>
 		<a href="{{ url('/patient_lists') }}">Patient Lists</a><br>
 		<a href="{{ url('/encounters') }}">Encounters</a><br>
 		<a href="{{ url('/queues') }}">Queues</a><br>

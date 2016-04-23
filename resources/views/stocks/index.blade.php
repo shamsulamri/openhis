@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-@include('products.id')
-<h1><a href='/products'>Products</a> / Stock Movements</h1>
+<h1><a href='/products'>Product Index</a> / Stock Movements</h1>
 <br>
+@include('products.id')
 <form action='/stock/search' method='post'>
     {{ Form::select('store_code', $store,$store_code, ['class'=>'form-control']) }}
 	<br>{{ Form::submit('Refresh', ['class'=>'btn btn-default']) }}
