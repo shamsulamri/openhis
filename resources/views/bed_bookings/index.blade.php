@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Bed Booking Index</h1>
+<h1>Bed Booking List</h1>
 <br>
 <form action='/bed_booking/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

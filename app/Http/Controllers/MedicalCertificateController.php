@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\Consultation;
+use Carbon\Carbon;
 
 class MedicalCertificateController extends Controller
 {
@@ -77,6 +78,7 @@ class MedicalCertificateController extends Controller
 					'consultation' => $consultation,
 					'patient' => $consultation->encounter->patient,
 					'consultOption' => 'medical_certificate',
+					'minYear' => Carbon::now()->year,
 					]);
 	}
 

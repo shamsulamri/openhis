@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Care Level Index</h1>
+<h1>Care Level List</h1>
 <br>
 <form action='/care_level/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

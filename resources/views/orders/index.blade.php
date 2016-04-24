@@ -1,8 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')	
-@include('orders.panel')
-
+<h2>Order List</h2>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
@@ -11,11 +10,9 @@
         <a class="btn btn-default" href="/order_tasks/task/{{ Session::get('encounter_id') }}/{{Cookie::get('queue_location')}}" role="button">Back to Task</a>
 @endif
 
-<a href='/order_products' class='btn btn-primary'>Create</a>
-<br>
 <br>
 @if ($orders->total()>0)
-<table class="table table-hover">
+<table class="table table-condensed">
 	<tbody>
 @foreach ($orders as $order)
 	<?php $status='' ?>
@@ -26,9 +23,6 @@
 			<?php $status='success' ?>
 	@endif
 	<tr class='{{ $status }}'>
-			<td class='col-xs-2'>
-					{{ date('d F, H:i', strtotime($order->created_at)) }}
-			</td>
 			<td>
 			@if (isset($order->cancel_id)) 
 					<a href='{{ URL::to('order_cancellations/'. $order->cancel_id) }}'>
@@ -56,7 +50,7 @@
 						@endif
 					@else
 						@if (!isset($order->cancel_id))
-							<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>Delete</a>
+							<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>-</a>
 						@endif
 					@endif
 				@else

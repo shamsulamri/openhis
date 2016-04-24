@@ -4,7 +4,7 @@
     <div class='form-group  @if ($errors->has('mc_start')) has-error @endif'>
         <label for='mc_start' class='col-sm-2 control-label'>Date Start<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-            {{ Form::text('mc_start', null, ['class'=>'form-control','placeholder'=>'',]) }}
+			<input id="mc_start" name="mc_start" type="text">
             @if ($errors->has('mc_start')) <p class="help-block">{{ $errors->first('mc_start') }}</p> @endif
         </div>
     </div>
@@ -12,7 +12,7 @@
     <div class='form-group  @if ($errors->has('mc_end')) has-error @endif'>
         <label for='mc_end' class='col-sm-2 control-label'>Date End<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-            {{ Form::text('mc_end', null, ['class'=>'form-control','placeholder'=>'',]) }}
+			<input id="mc_end" name="mc_end" type="text">
             @if ($errors->has('mc_end')) <p class="help-block">{{ $errors->first('mc_end') }}</p> @endif
         </div>
     </div>
@@ -40,3 +40,28 @@
     </div>
             {{ Form::hidden('encounter_id', null) }}
             {{ Form::hidden('consultation_id', $consultation->consultation_id) }}
+
+
+	<script>
+		$(function(){
+				$('#mc_start').combodate({
+						format: "DD/MM/YYYY",
+						template: "DD MMMM YYYY",
+						value: '{{ $medical_certificate->mc_start }}',
+						maxYear: '{{ $minYear+5 }}',
+						minYear: '{{ $minYear }}',
+						customClass: 'select'
+				});    
+		});
+
+		$(function(){
+				$('#mc_end').combodate({
+						format: "DD/MM/YYYY",
+						template: "DD MMMM YYYY",
+						value: '{{ $medical_certificate->mc_end }}',
+						maxYear: '{{ $minYear+5 }}',
+						minYear: '{{ $minYear }}',
+						customClass: 'select'
+				});    
+		});
+	</script>

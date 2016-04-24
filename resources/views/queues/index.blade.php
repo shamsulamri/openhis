@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Queue Index</h1>
+<h1>Queue List</h1>
 <br>
 <form action='/queue/search' method='post'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

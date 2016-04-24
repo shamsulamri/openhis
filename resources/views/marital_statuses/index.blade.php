@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Marital Status Index</h1>
+<h1>Marital Status List</h1>
 <br>
 <form action='/marital_status/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

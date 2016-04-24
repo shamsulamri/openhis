@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Encounter Type Index</h1>
+<h1>Encounter Type List</h1>
 <br>
 <form action='/encounter_type/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

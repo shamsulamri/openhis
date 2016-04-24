@@ -18,7 +18,7 @@ class DrugPrescription extends Model
 				'dosage_code',
 				'route_code',
 				'frequency_code',
-				'drug_period',
+				'drug_duration',
 				'period_code',
 				'drug_total_unit',
 				'drug_prn',

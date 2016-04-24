@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Religion Index</h1>
+<h1>Religion List</h1>
 <br>
 <form action='/religion/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

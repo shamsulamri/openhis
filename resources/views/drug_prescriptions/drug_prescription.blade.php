@@ -64,11 +64,11 @@
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('drug_period')) has-error @endif'>
-						{{ Form::label('drug_period', 'Period',['class'=>'col-md-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('drug_duration')) has-error @endif'>
+						{{ Form::label('drug_duration', 'Period',['class'=>'col-md-4 control-label']) }}
 						<div class='col-md-8'>
-							{{ Form::text('drug_period', null, ['class'=>'form-control','placeholder'=>'',]) }}
-							@if ($errors->has('drug_period')) <p class="help-block">{{ $errors->first('drug_period') }}</p> @endif
+							{{ Form::text('drug_duration', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('drug_duration')) <p class="help-block">{{ $errors->first('drug_duration') }}</p> @endif
 						</div>
 					</div>
 			</div>

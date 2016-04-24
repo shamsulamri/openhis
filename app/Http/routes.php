@@ -51,6 +51,7 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/product_searches/id/{id}', 'ProductSearchController@searchById');
 		Route::get('/product_searches/add/{purchase_id}/{id}', 'ProductSearchController@add');
 		Route::get('/product_searches/bom/{product_code}/{bom_product_code}', 'ProductSearchController@bom');
+		Route::get('/product_searches/asset/{set_code}/{product_code}', 'ProductSearchController@asset');
 		Route::post('/product_search/search', 'ProductSearchController@search');
 		Route::get('/product_search/search', 'ProductSearchController@search');
 		Route::get('/product_searches/delete/{id}', 'ProductSearchController@delete');
@@ -80,13 +81,15 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/admission_task/search', 'AdmissionTaskController@search');
 		Route::get('/admission_tasks/delete/{id}', 'AdmissionTaskController@delete');
 		
-		Route::resource('order_sets', 'OrderSetController');
+		Route::resource('order_sets', 'OrderSetController', ['except'=>['index']]);
+		Route::get('/order_sets/index/{set_code}', 'OrderSetController@index');
 		Route::get('/order_sets/id/{id}', 'OrderSetController@searchById');
 		Route::post('/order_set/search', 'OrderSetController@search');
 		Route::get('/order_set/search', 'OrderSetController@search');
 		Route::get('/order_sets/delete/{id}', 'OrderSetController@delete');
 		
-		Route::resource('sets', 'SetController');
+		Route::resource('sets', 'SetController', ['except'=>['show']]);
+		Route::get('/sets/{set_code}', 'SetController@show');
 		Route::get('/sets/id/{id}', 'SetController@searchById');
 		Route::post('/set/search', 'SetController@search');
 		Route::get('/set/search', 'SetController@search');
@@ -696,7 +699,9 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/consultation_procedure/search', 'ConsultationProcedureController@search');
 		Route::get('/consultation_procedures/delete/{id}', 'ConsultationProcedureController@delete');
 
+		Route::get('/orders/single/{product_code}', 'OrderController@single');
 		Route::get('/orders/task', 'OrderController@task');
+		Route::get('/orders/make', 'OrderController@make');
 		Route::post('/orders/multiple', 'OrderController@multiple');
 		Route::resource('orders', 'OrderController', ['except'=>[ 'create', 'show']]);
 		Route::get('/orders/{id}/show', 'OrderController@show');

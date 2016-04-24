@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Set Index</h1>
+<h1>Order Asset List</h1>
 <br>
 <form action='/set/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -19,8 +19,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>set_name</th>
-    <th>set_code</th> 
+    <th>Name</th>
+    <th>Code</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -36,6 +36,7 @@
 					{{$set->set_code}}
 			</td>
 			<td align='right'>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('sets/'. $set->set_code) }}'>Asset</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('sets/delete/'. $set->set_code) }}'>Delete</a>
 			</td>
 	</tr>

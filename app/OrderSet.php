@@ -14,7 +14,7 @@ class OrderSet extends Model
 				'set_code',
 				'product_code'];
 	
-    protected $primaryKey = 'set_code';
+    protected $primaryKey = 'id';
     public $incrementing = false;
     
 
@@ -36,5 +36,8 @@ class OrderSet extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	
+	public function product()
+	{
+			return $this->belongsTo('App\Product','product_code');
+	}	
 }

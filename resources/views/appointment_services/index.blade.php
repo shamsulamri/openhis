@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Appointment Service Index</h1>
+<h1>Appointment Service List</h1>
 <br>
 <form action='/appointment_service/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

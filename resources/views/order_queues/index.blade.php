@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Order Queue Index</h1>
+<h1>Order Queue List</h1>
 <br>
 <form action='/order_queue/search' method='post'>
 	{{ Form::select('locations', $locations, $location, ['class'=>'form-control','maxlength'=>'10']) }}

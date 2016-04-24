@@ -18,11 +18,11 @@ class OrderDrug extends Model
 				'dosage_code',
 				'route_code',
 				'frequency_code',
-				'drug_period',
+				'drug_duration',
 				'period_code',
 				'drug_total_unit',
 				'drug_prn',
-				'drug_after_meal'];
+				'drug_meal'];
 
 	public function validate($input, $method) {
 			$rules = [

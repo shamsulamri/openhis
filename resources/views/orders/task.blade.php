@@ -3,7 +3,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Order Task Index</h1>
+<h1>Order Task List</h1>
 <br>
 <form action='/order/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

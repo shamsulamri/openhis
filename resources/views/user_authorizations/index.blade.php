@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>User Authorization Index</h1>
+<h1>User Authorization List</h1>
 <br>
 <form action='/user_authorization/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

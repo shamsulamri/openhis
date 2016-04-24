@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Drug Index</h1>
+<h1>Drug List</h1>
 <br>
 <form action='/drug/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Order Cancellation Index</h1>
+<h1>Order Cancellation List</h1>
 <br>
 <form action='/order_cancellation/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

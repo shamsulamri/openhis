@@ -22,10 +22,12 @@ class OrderSetController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index($set_code)
 	{
-			$order_sets = DB::table('order_sets')
-					->orderBy('product_code')
+			$order_sets = DB::table('order_sets as a')
+					->leftJoin('products as b','b.product_code', '=','a.product_code')
+					->where('a.set_code','=',$set_code)
+					->orderBy('product_name')
 					->paginate($this->paginateValue);
 			return view('order_sets.index', [
 					'order_sets'=>$order_sets
@@ -100,9 +102,10 @@ class OrderSetController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$order_set = OrderSet::findOrFail($id);
 			OrderSet::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/order_sets');
+			return redirect('/order_sets/index/'.$order_set->set_code);
 	}
 	
 	public function search(Request $request)

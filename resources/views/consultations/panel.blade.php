@@ -37,6 +37,6 @@
 @if ($tab=='order')
 	active
 @endif
-"><a href="/orders" role="button">Order</a></li>
+"><a href="/orders/make" role="button">Order</a></li>
 
 <br>

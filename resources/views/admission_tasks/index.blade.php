@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Admission Task Index</h1>
+<h1>Admission Task List</h1>
 <br>
 <form action='/admission_task/search' method='post'>
 	{{ Form::select('wards', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}

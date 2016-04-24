@@ -13,6 +13,7 @@
 	<input type='hidden' name="purchase_id" value="{{ $purchase_id }}">
 	<input type='hidden' name="reason" value="{{ $reason }}">
 	<input type='hidden' name="product_code" value="{{ $product_code }}">
+	<input type='hidden' name="set_code" value="{{ $set_code }}">
 
 </form>
 @if (Session::has('message'))
@@ -38,6 +39,9 @@
 				@if ($reason=='bom')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/bom/'. $product_code . '/' . $product_search->product_code) }}'>+</a>
 				@endif
+				@if ($reason=='asset')
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/asset/'. $set_code . '/' . $product_search->product_code) }}'>+</a>
+				@endif
 			</td>
 	</tr>
 @endforeach
@@ -45,9 +49,9 @@
 </table>
 @endif
 @if (isset($search)) 
-	{{ $product_searches->appends(['product_code'=>$product_code, 'search'=>$search,'reason'=>$reason,  'purchase_id'=>$purchase_id])->render() }}
+	{{ $product_searches->appends(['set_code'=>$set_code, 'product_code'=>$product_code, 'search'=>$search,'reason'=>$reason,  'purchase_id'=>$purchase_id])->render() }}
 	@else
-	{{ $product_searches->appends(['product_code'=>$product_code, 'reason'=>$reason, 'purchase_id'=>$purchase_id])->render() }}
+	{{ $product_searches->appends(['set_code'=>$set_code, 'product_code'=>$product_code, 'reason'=>$reason, 'purchase_id'=>$purchase_id])->render() }}
 @endif
 <br>
 @if ($product_searches->total()>0)

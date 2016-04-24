@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Appointment Index</h1>
+<h1>Appointment List</h1>
 <br>
 <form action='/appointment/search' method='post'>
 	{{ Form::select('services', $services, $service, ['class'=>'form-control']) }}

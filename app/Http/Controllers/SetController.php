@@ -40,6 +40,15 @@ class SetController extends Controller
 					]);
 	}
 
+	public function show($set_code)
+	{
+			$set = Set::find($set_code);
+			return view('sets.show',[
+				'set'=>$set,
+				'set_code'=>$set_code,
+			]);
+	}
+
 	public function store(Request $request) 
 	{
 			$set = new Set();

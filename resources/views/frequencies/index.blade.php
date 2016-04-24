@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Frequency Index</h1>
+<h1>Frequency List</h1>
 <br>
 <form action='/frequency/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

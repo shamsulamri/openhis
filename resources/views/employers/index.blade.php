@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Employer Index</h1>
+<h1>Employer List</h1>
 <br>
 <form action='/employer/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

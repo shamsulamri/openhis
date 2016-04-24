@@ -1,26 +1,16 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
-<h1>Order Set Index</h1>
-<br>
-<form action='/order_set/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-</form>
+<h1>Assets</h1>
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
-<a href='/order_sets/create' class='btn btn-primary'>Create</a>
-<br>
-<br>
 @if ($order_sets->total()>0)
-<table class="table table-hover">
+<table class="table table-condensed">
  <thead>
 	<tr> 
-    <th>product_code</th>
-    <th>set_code</th> 
+    <th>Product</th>
 	<th></th>
 	</tr>
   </thead>
@@ -28,15 +18,12 @@
 @foreach ($order_sets as $order_set)
 	<tr>
 			<td>
-					<a href='{{ URL::to('order_sets/'. $order_set->set_code . '/edit') }}'>
-						{{$order_set->product_code}}
+					<a href='{{ URL::to('products/'. $order_set->product_code ) }}'>
+						{{$order_set->product_name}}
 					</a>
 			</td>
-			<td>
-					{{$order_set->set_code}}
-			</td>
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_sets/delete/'. $order_set->set_code) }}'>Delete</a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_sets/delete/'. $order_set->id) }}'>-</a>
 			</td>
 	</tr>
 @endforeach

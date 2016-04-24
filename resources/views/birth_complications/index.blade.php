@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Birth Complication Index</h1>
+<h1>Birth Complication List</h1>
 <br>
 <form action='/birth_complication/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

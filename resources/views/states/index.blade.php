@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>State Index</h1>
+<h1>State List</h1>
 <br>
 <form action='/state/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

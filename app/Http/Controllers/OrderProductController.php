@@ -41,7 +41,7 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
-					'sets' => Set::all()->sortBy('set_name'),
+					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('',''),
 					'set_value' => '',
 					'search' => '',
 			]);
@@ -166,7 +166,7 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
-					'sets' => Set::all()->sortBy('set_name'),
+					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('',''),
 					'set_value' => $request->set_code,
 					'page' => $request->page,
 					]);

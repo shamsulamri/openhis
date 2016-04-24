@@ -9,7 +9,7 @@ New Set
 {{ Form::model($set, ['url'=>'sets', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('set_code')) has-error @endif'>
-        <label for='set_code' class='col-sm-2 control-label'>set_code<span style='color:red;'> *</span></label>
+        <label for='set_code' class='col-sm-2 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::text('set_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('set_code')) <p class="help-block">{{ $errors->first('set_code') }}</p> @endif

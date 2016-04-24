@@ -18,6 +18,7 @@ use App\Status;
 use App\PurchaseOrderLine;
 use App\Product;
 use App\BillMaterial;
+use App\OrderSet;
 
 class ProductSearchController extends Controller
 {
@@ -37,6 +38,7 @@ class ProductSearchController extends Controller
 					'product_searches'=>$product_searches,
 					'purchase_id'=>$request->purchase_id,
 					'product_code'=>$request->product_code,
+					'set_code'=>$request->set_code,
 					'reason'=>$request->reason,
 			]);
 	}
@@ -94,6 +96,17 @@ class ProductSearchController extends Controller
 			Session::flash('message', 'Record successfully created.');
 			return redirect('/product_searches?reason=bom&product_code='.$product_code);
 			
+	}
+
+	public function asset($set_code, $product_code)
+	{
+			$order_set = new OrderSet();
+			$order_set->set_code = $set_code;
+			$order_set->product_code = $product_code;
+			$order_set->save();
+
+			Session::flash('message', 'Record successfully created.');
+			return redirect('/product_searches?reason=asset&set_code='.$set_code);
 	}
 			
 
@@ -168,6 +181,7 @@ class ProductSearchController extends Controller
 					'purchase_id'=>$request->purchase_id,
 					'reason'=>$request->reason,
 					'product_code'=>$request->product_code,
+					'set_code'=>$request->set_code,
 					]);
 	}
 

@@ -17,6 +17,7 @@ use App\Encounter;
 use Auth;
 use App\OrderInvestigation;
 use App\OrderDrug;
+use App\DrugPrescription;
 
 class OrderController extends Controller
 {
@@ -272,8 +273,16 @@ class OrderController extends Controller
 			}
 
 			Session::flash('message', 'Product added to order list.');
-			//return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
-			return redirect('/orders');
+			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
+			//return redirect('/orders');
+	}
+
+	public function single(Request $request, $product_code)
+	{
+			$product = Product::find($product_code);
+			$this->orderItem($product);
+			Session::flash('message', 'Product added to order list.');
+			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
 	}
 
 	public function orderItem($product) 
@@ -287,9 +296,27 @@ class OrderController extends Controller
 			$order->order_sale_price = $product->product_sale_price;
 			$order->location_code = $product->location_code;
 			$order->save();
+			
 			if ($product->order_form==2) {
 					$order_drug = new OrderDrug();
 					$order_drug->order_id = $order->order_id;
+					$drug_prescription = DrugPrescription::where('drug_code','=',$product->product_code)->first();
+					if (!empty($drug_prescription)) {
+							$order_drug->drug_strength = $drug_prescription->drug_strength;
+							$order_drug->unit_code = $drug_prescription->unit_code;
+							$order_drug->drug_dosage = $drug_prescription->drug_dosage;
+							$order_drug->dosage_code = $drug_prescription->dosage_code;
+							$order_drug->route_code = $drug_prescription->route_code;
+							$order_drug->frequency_code = $drug_prescription->frequency_code;
+							$order_drug->drug_duration = $drug_prescription->drug_duration;
+							$order_drug->period_code = $drug_prescription->period_code;
+							$order_drug->drug_prn = $drug_prescription->drug_prn;
+							$order_drug->drug_meal = $drug_prescription->drug_meal;
+
+							$order->order_quantity_request = $drug_prescription->drug_total_unit;
+							$order->order_description = $drug_prescription->drug_description;
+							$order->save();
+					}
 					$order_drug->save();
 			}
 
@@ -300,4 +327,36 @@ class OrderController extends Controller
 					$order_investigation->save();
 			}
 	}	
+
+	public function make()
+	{
+			$encounter= Encounter::find(Session::get('encounter_id'));
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+			$fields = ['product_name', 
+					'a.product_code', 
+					'cancel_id', 
+					'a.order_id', 
+					'post_id', 
+					'a.created_at',
+					'order_is_discharge',
+					'order_completed',
+					'order_report',
+					];
+			$orders = DB::table('orders as a')
+					->select($fields)
+					->join('products as b','a.product_code','=','b.product_code')
+					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
+					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
+					->where('a.encounter_id','=',Session::get('encounter_id'))
+					->orderBy('a.created_at', 'desc')
+					->paginate($this->paginateValue);
+
+			return view('orders.make', [
+					'orders'=>$orders,
+					'consultation'=>$consultation,
+					'patient'=>$encounter->patient,
+					'tab'=>'order',
+					'consultOption' => 'consultation',
+			]);
+	}
 }
