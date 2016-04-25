@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1><a href='/products'>Product Index</a> / Edit Product</h1>
+<h1><a href='/products'>Product List</a> / Edit Product</h1>
 <br>
 @include('products.id')
 @include('common.errors')

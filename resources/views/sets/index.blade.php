@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Order Asset List</h1>
+<h1>Order Set List</h1>
 <br>
 <form action='/set/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
