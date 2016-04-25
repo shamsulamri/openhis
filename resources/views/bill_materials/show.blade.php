@@ -4,7 +4,7 @@
 <style>
 iframe { border: 1px #C0C0C0 solid; }
 </style>
-<h1><a href='/products'>Product Index</a> / Bill of Materials</h1>
+<h1><a href='/products'>Product List</a> / Bill of Materials</h1>
 <br>
 <div class="row">
 	<div class="col-xs-5">

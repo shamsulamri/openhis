@@ -1,4 +1,4 @@
-
+	<h1>Order Cancellation</h1>
     <div class='form-group'>
         <label for='order' class='col-sm-2 control-label'>Order</span></label>
         <div class='col-sm-10'>

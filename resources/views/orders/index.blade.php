@@ -50,7 +50,7 @@
 						@endif
 					@else
 						@if (!isset($order->cancel_id))
-							<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>-</a>
+							<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>Delete</a>
 						@endif
 					@endif
 				@else

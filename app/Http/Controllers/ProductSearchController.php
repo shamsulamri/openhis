@@ -83,7 +83,7 @@ class ProductSearchController extends Controller
 			$purchase_order_line->line_price = $product->product_purchase_price;
 			$purchase_order_line->save();
 			Session::flash('message', 'Record successfully created.');
-			return redirect('/product_searches?purchase_id='.$purchase_id);
+			return redirect('/product_searches?reason=purchase_order&purchase_id='.$purchase_id);
 	}
 
 	public function bom($product_code, $bom_product_code) 

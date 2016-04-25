@@ -74,7 +74,8 @@ class PatientController extends Controller
 					$patient->patient_mrn = $mrn;
 					$patient->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/patients/'.$patient->patient_id.'/edit?tab=demography');
+					//return redirect('/patients/'.$patient->patient_id.'/edit?tab=demography');
+					return redirect('/patients/'.$patient->patient_id);
 			} else {
 					return redirect('/patients/create')
 							->withErrors($valid)

@@ -1,4 +1,6 @@
-    <div class='form-group'>
+	<h1>Order Report</h1>
+	<br>
+	<div class='form-group'>
         {{ Form::label('product', 'Product',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::label('product_name', $product->product_name, ['class'=>'form-control','placeholder'=>'',]) }}

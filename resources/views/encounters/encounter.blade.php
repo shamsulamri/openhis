@@ -17,7 +17,7 @@
     </div>
 
 	<div class='page-header'>
-		<h4>Employment & Financial Assistance</h4>
+		<h4>Billing & Insurance Detail</h4>
 	</div>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>

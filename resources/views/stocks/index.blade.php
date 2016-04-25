@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1><a href='/products'>Product Index</a> / Stock Movements</h1>
+<h1><a href='/products'>Product List</a> / Stock Movements</h1>
 <br>
 @include('products.id')
 <form action='/stock/search' method='post'>

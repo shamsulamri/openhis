@@ -118,11 +118,11 @@
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('drug_after_meal')) has-error @endif'>
-						{{ Form::label('drug_after_meal', 'After Meal',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('drug_meal')) has-error @endif'>
+						{{ Form::label('drug_meal', 'After Meal',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::checkbox('drug_after_meal', '1') }}
-							@if ($errors->has('drug_after_meal')) <p class="help-block">{{ $errors->first('drug_after_meal') }}</p> @endif
+							{{ Form::checkbox('drug_meal', '1') }}
+							@if ($errors->has('drug_meal')) <p class="help-block">{{ $errors->first('drug_meal') }}</p> @endif
 						</div>
 					</div>
 			</div>

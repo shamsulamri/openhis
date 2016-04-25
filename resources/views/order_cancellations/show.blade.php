@@ -1,9 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
 @if (Auth::user()->authorization->author_consultation==1)
-		@include('patients.label')
-		@include('consultations.panel')		
 @else
 		@include('patients.id')
 @endif
@@ -11,6 +9,8 @@
 
 {{ Form::model($order_cancellation, ['route'=>['order_cancellations.update',$order_cancellation->cancel_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 
+	<h1>Order Cancellation</h1>
+	<br>
     <div class='form-group'>
         <label for='order' class='col-sm-2 control-label'>Order</span></label>
         <div class='col-sm-10'>

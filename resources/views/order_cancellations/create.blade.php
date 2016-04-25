@@ -1,8 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
-@include('patients.label')
-@include('consultations.panel')
 @include('common.errors')
 
 {{ Form::model($order_cancellation, ['url'=>'order_cancellations', 'class'=>'form-horizontal']) }} 

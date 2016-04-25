@@ -50,7 +50,7 @@
 						{{ $admission_task->dosage_code }},
 						{{ $admission_task->route_code }},
 						{{ $admission_task->frequency_code }}, 
-						{{ $admission_task->drug_period }} 
+						{{ $admission_task->drug_duration }} 
 						{{ $admission_task->period_code }}
 					@endif
 			</td>

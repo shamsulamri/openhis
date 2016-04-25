@@ -141,7 +141,7 @@ class OrderDrugController extends Controller
 			$order_drug = OrderDrug::findOrFail($id);
 			$order_drug->fill($request->input());
 			$order_drug->drug_prn = $request->drug_prn ?: 0;
-			$order_drug->drug_after_meal = $request->drug_after_meal ?: 0;
+			$order_drug->drug_meal = $request->drug_meal ?: 0;
 
 			$order = Order::find($order_drug->order_id);
 			$order->fill($request->input());
