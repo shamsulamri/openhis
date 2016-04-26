@@ -4,7 +4,18 @@
 @if ($admission != NULL)
 	@include('patients.id')
 @endif 	
-<h2>Admission Bed Index</h2>
+
+@if ($flag==1)
+<h1>Bed Movement</h1>
+@else
+<h4>
+<ul class="nav nav-tabs nav-justified">
+  <li role="presentation"><a href="#">Step 1: Encounter</a></li>
+  <li role="presentation"><a href="#">Step 2: Define Admission</a></li>
+  <li role="presentation" class="active"><a href="#">Step 3: Bed Selection</a></li>
+</ul>
+</h4>
+@endif
 <br>
 <form action='/admission_bed/search' method='post'>
 	{{ Form::select('wards', $ward, $ward_code, ['class'=>'form-control']) }}
@@ -20,7 +31,7 @@
 	<tr> 
     <th>Bed</th>
     <th>Class</th>
-	<th>Vacancy</th>
+	<th>Occupancy</th>
 	</tr>
   </thead>
 	<tbody>
@@ -32,7 +43,7 @@
 					</a>
 			</td>
 			<td>
-					{{$admission_bed->class_code}}
+					{{$admission_bed->class_name}}
 			</td>
 			<td>
 					{{$admission_bed->patient_name}}

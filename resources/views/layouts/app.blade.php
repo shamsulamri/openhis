@@ -6,16 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 	    <title>{{ Config::get('host.application_name') }}</title>
+		<!--
 		<link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700" rel="stylesheet" type="text/css">
 		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<link href="/assets/bootstrap/css/starter-template.css" rel="stylesheet">
+
+
+
+		<script src="/assets/bootstrap/js/jquery.min.js"></script>
+		-->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/bootstrap.min.css">
+		<link href="/assets/bootstrap/css/starter-template.css" rel="stylesheet">
 		<script src="/assets/js/moment.min.2.5.0.js"></script>
 		<script src="/assets/js/combodate.js"></script>
 </head>
-<body id="app-layout">
+<body id="app-layout"> 
+	<style>
+input {
+	text-transform:uppercase;
+}
+	</style>
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -35,54 +50,6 @@
             </div>
 
             <div class="collapse navbar-collapse" id="spark-navbar-collapse">
-                <!-- Left Side Of Navbar -->
-            	@if (!Auth::guest())
-                <ul class="nav navbar-nav">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                Patient<span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-									<li><a href="{{ url('/patients') }}">Patients</a></li>
-									<li><a href="{{ url('/encounters') }}">Encounters</a></li>
-									<li><a href="{{ url('/queues') }}">Queues</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                Admission<span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-									<li><a href="{{ url('/admissions') }}">Admissions</a></li>
-									<li><a href="{{ url('/admission_tasks') }}">Admission Tasks</a></li>
-									<li><a href="{{ url('/bed_bookings') }}">Bed Booking</a></li>
-                            </ul>
-                        </li>
-						@if (Auth::user()->authorization->author_consultation==1)
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                Consultation<span class="caret"></span>
-                            </a>
-
-                            <ul class="dropdown-menu" role="menu">
-									<li><a href="{{ url('/patient_lists') }}">Patient List</a></li>
-									<li><a href="{{ url('/consultations') }}">Consultations</a></li>
-									<li><a href="{{ url('/appointments') }}">Appointments</a></li>
-                            </ul>
-                        </li>
-						@endif
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                Order<span class="caret"></span>
-                            </a>
-
-                            <ul class="dropdown-menu" role="menu">
-									<li><a href="{{ url('/order_queues') }}">Queues</a></li>
-                            </ul>
-                        </li>
-						<li><a href="{{ url('/options') }}">Options</a></li>
-				</ul>
-				@endif
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
@@ -105,6 +72,54 @@
         </div>
     </nav>
 	<div class='container'>
+
+		<h6>
+		<ul class='nav nav-pills'>
+					<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patient<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="{{ url('/patients') }}">Patients</a></li>
+								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
+								<li><a href="{{ url('/encounters') }}">Encounters</a></li>
+								<li><a href="{{ url('/queues') }}">Location Queues</a></li>
+								<li><a href="{{ url('/order_queues') }}">Order Queues</a></li>
+							</ul>
+					</li>
+					<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-comment'></span>&nbsp; Consultations<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="{{ url('/consultations') }}">Consultations</a></li>
+								<li><a href="{{ url('/patient_lists') }}">Patient Lists</a></li>
+							</ul>
+					</li>
+					<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Inventory<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="{{ url('/products') }}">Products</a></li>
+								<li><a href="{{ url('/purchase_orders') }}">Purchase Orders</a></li>
+								<li><a href="{{ url('/sets') }}">Order Sets</a></li>
+							</ul>
+					</li>
+					<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-bed'></span>&nbsp; Ward<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="{{ url('/admissions') }}">Admissions</a></li> 
+								<li><a href="{{ url('/bed_bookings') }}">Bed Bookings</a></li> 
+								<li><a href="{{ url('/admission_tasks') }}">Nurse Task</a></li> 
+							</ul>
+					</li>
+					<li><a href="{{ url('/options') }}"><span class='glyphicon glyphicon-th-list'></span>&nbsp; Options</a></li>
+		</ul>
+		</h6>
+
     @yield('content')
 	</div>
 	<script type="text/javascript">

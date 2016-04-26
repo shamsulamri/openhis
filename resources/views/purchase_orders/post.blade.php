@@ -1,14 +1,14 @@
 @extends('layouts.app2')
 
 @section('content')
-<h1>
+<h3>
 Post Purchase Order
-</h1>
+</h3>
 @include('common.errors')
 <br>
 <h4>
 Are you sure you want to post the selected purchase order ?
-{{ Form::open(['url'=>'purchase_order/verify', 'class'=>'pull-right']) }}
+{{ Form::open(['url'=>'purchase_order/verify']) }}
 <br>
 <br>
 	<a class="btn btn-default" href="/purchase_order_lines/index/{{ $purchase_order->purchase_id }}" role="button">Cancel</a>

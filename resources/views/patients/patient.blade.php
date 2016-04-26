@@ -16,7 +16,7 @@
 
     <div class='form-group  @if ($errors->has('title_code')) has-error @endif'>
         {{ Form::label('Title', 'Title',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        <div class='col-sm-4'>
             {{ Form::select('title_code', $title,null, ['class'=>'form-control','maxlength'=>'10']) }}
             @if ($errors->has('title_code')) <p class="help-block">{{ $errors->first('title_code') }}</p> @endif
         </div>

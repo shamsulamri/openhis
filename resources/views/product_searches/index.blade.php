@@ -62,6 +62,14 @@
 
 <script>
 	var frameLine = parent.document.getElementById('frameLine');
-	frameLine.contentWindow.location.reload();
+	@if ($reason=='purchase_order')
+	frameLine.src='/purchase_order_lines/index/{{ $purchase_id }}';
+	@endif
+	@if ($reason=='bom')
+	frameLine.src='/bill_materials/index/{{ $product_code }}';
+	@endif
+	@if ($reason=='asset')
+	frameLine.src='/order_sets/index/{{ $set_code }}';
+	@endif
 </script>
 @endsection

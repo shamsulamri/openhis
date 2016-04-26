@@ -140,7 +140,7 @@
     <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
         {{ Form::label('Description', 'Description',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::textarea('order_description', $order->order_description, ['class'=>'form-control input-sm','placeholder'=>'','rows'=>'3']) }}
+            {{ Form::textarea('order_description', $order->order_description, ['class'=>'form-control input-sm','placeholder'=>'','rows'=>'2']) }}
             @if ($errors->has('order_description')) <p class="help-block">{{ $errors->first('order_description') }}</p> @endif
         </div>
     </div>

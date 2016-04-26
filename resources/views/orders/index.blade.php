@@ -1,7 +1,7 @@
 @extends('layouts.app2')
 
 @section('content')	
-<h2>Order List</h2>
+<h3>Order List</h3>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif

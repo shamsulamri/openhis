@@ -35,7 +35,7 @@
 
 	@if ($purchase_order->purchase_posted==1)
 	
-	<h1>Stock Receive</h1>
+	<h3>Stock Receive</h3>
 	<br>
 
     <div class='form-group  @if ($errors->has('receive_datetime')) has-error @endif'>

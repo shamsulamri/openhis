@@ -38,11 +38,9 @@
 					<tbody>
 						@foreach ($order_products as $order_product)
 							<tr>
-									<!--
 									<td width='10'>
 										{{ Form::checkbox($order_product->product_code, 1, null) }}
 									</td>
-									-->
 									<td>
 										{{ ucfirst(strtoupper($order_product->product_name)) }}
 									</td>
@@ -58,9 +56,7 @@
 			<input type='hidden' name='_set_value' value="{{ $set_value }}">
 			<input type='hidden' name='_page' value="{{ $page }}">
 			<input type='hidden' name='_search' value="{{ $search }}">
-			<!--
-			{{ Form::submit('Add Selection', ['class'=>'btn btn-primary']) }}
-			-->
+			{{ Form::submit('Add Selection', ['class'=>'btn btn-primary btn-xs']) }}
 		</form>
 		@if ($order_products->total()>10)
 		<br>
@@ -75,6 +71,6 @@
 @endif
 <script>
 	var frame = parent.document.getElementById('frameDetail');
-	frame.contentWindow.location.reload();
+	frame.src = "/orders";
 </script>
 @endsection

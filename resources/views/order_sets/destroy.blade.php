@@ -1,12 +1,12 @@
 @extends('layouts.app2')
 
 @section('content')
-<h1>
+<h3>
 Delete Asset
-</h1>
+</h3>
 @include('common.errors')
 <br>
-<h3>
+<h4>
 Are you sure you want to delete the selected record ?
 <br>
 <br>
@@ -19,5 +19,5 @@ Are you sure you want to delete the selected record ?
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 
-</h3>
+</h4>
 @endsection

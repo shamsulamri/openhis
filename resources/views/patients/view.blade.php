@@ -1,11 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.id')
 
-<div class='panel panel-primary'>
+<div class='panel panel-default'>
 	<div class='panel-heading'>
-		Options
+		<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
+		<h6>{{ $patient->patient_mrn }}</h6>
+		<h6>
+		<p class='text-danger'>
+		<strong>Warning !</strong> Outstanding bill
+		</p>
+		</h6>
 	</div>
 	<div class='panel-body'>
 		<ul class='nav nav-pills nav-justified'>
@@ -15,8 +20,8 @@
 				@endif
 			>
 				<a href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id ) }}'>
-					<span class='glyphicon glyphicon-flag' aria-hidden='true'></span><br>
-						New<br>Encounter
+					<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
+						New Encounter
 				</a>
 			</li>
 			<li role='presentation'
@@ -25,8 +30,8 @@
 				@endif
 			>
 				<a href='{{ URL::to('patients/'. $patient->patient_id . '/edit?tab=demography') }}'>
-					<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>
-						Edit<br>Demography		
+					<span class='glyphicon glyphicon-user' aria-hidden='true'></span>
+						Edit Demography		
 				</a>
 			</li>
 			<li role='presentation'
@@ -35,8 +40,8 @@
 				@endif
 			>
 				<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
-					<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span><br>
-						Book<br>Appointment
+					<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span>
+						Book Appointment
 				</a>
 			</li>
 			<li role='presentation'
@@ -45,8 +50,8 @@
 				@endif
 			>
 				<a href='{{ URL::to('bed_bookings/create/'. $patient->patient_id) }}'>
-					<span class='glyphicon glyphicon-bed' aria-hidden='true'></span><br>
-						Book<br>Bed
+					<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
+						Book Bed
 				</a>
 			</li>
 			<li role='presentation'
@@ -55,15 +60,16 @@
 				@endif
 			>
 				<a href='{{ URL::to('patients/dependants/'. $patient->patient_id . '?tab=dependants') }}'>
-					<span class='glyphicon glyphicon-heart' aria-hidden='true'></span><br>
-						Define<br>Dependants
+					<span class='glyphicon glyphicon-heart' aria-hidden='true'></span>
+						Define Dependants
 				</a>
 			</li>
 		</ul>
 	</div>
 </div>
-<h2>Dependants</h2>
-<br>
+@if (count($patients)>0)
+<h1>Dependants</h1>
+
 <table class="table table-hover">
  <thead>
 	<tr> 
@@ -96,5 +102,5 @@
 @endforeach
 </tbody>
 </table>
-
+@endif
 @endsection

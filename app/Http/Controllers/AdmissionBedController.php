@@ -33,16 +33,19 @@ class AdmissionBedController extends Controller
 	{
 			$admission = NULL;
 			$patient = NULL;
+			$flag=$request->flag;
+		
 			if (!empty($request->admission_id)) {
 					$admission = Admission::find($request->admission_id);
 					$patient = $admission->encounter->patient;
 			}
 			$admission_beds = DB::table('beds as a')
-					->select(['b.admission_id','a.bed_code','bed_name','patient_name','ward_code', 'a.class_code','c.patient_id'])
+					->select(['b.admission_id','a.bed_code','bed_name','patient_name','ward_code', 'a.class_code', 'class_name','c.patient_id'])
 					->leftJoin('admissions as b', 'b.bed_code', '=', 'a.bed_code')
 					->leftJoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftJoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
 					->leftJoin('discharges as e', 'e.encounter_id', '=', 'c.encounter_id')
+					->leftJoin('ward_classes as f', 'f.class_code', '=', 'a.class_code')
 					->whereNull('discharge_id')
 					->orderBy('bed_name')
 					->paginate($this->paginateValue);
@@ -52,6 +55,7 @@ class AdmissionBedController extends Controller
 					'ward_code' => '',
 					'admission' => $admission,
 					'patient' => $patient,
+					'flag' => $flag,
 			]);
 	}
 
@@ -155,11 +159,12 @@ class AdmissionBedController extends Controller
 					$patient = $admission->encounter->patient;
 			}
 			$admission_beds = DB::table('beds as a')
-					->select(['b.admission_id','a.bed_code','bed_name','patient_name','ward_code', 'a.class_code','c.patient_id'])
+					->select(['b.admission_id','a.bed_code','bed_name','patient_name','ward_code','class_name', 'a.class_code','c.patient_id'])
 					->leftJoin('admissions as b', 'b.bed_code', '=', 'a.bed_code')
 					->leftJoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftJoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
 					->leftJoin('discharges as e', 'e.encounter_id', '=', 'c.encounter_id')
+					->leftJoin('ward_classes as f', 'f.class_code', '=', 'a.class_code')
 					->where('ward_code','like','%'.$request->wards.'%')
 					->whereNull('discharge_id')
 					->orderBy('bed_name')

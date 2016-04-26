@@ -2,9 +2,13 @@
 
 @section('content')
 @include('patients.id')
-<div class='page-header'>
-		<h2>New Admission</h2>
-</div>
+<h4>
+<ul class="nav nav-tabs nav-justified">
+  <li role="presentation"><a href="#">Step 1: Encounter</a></li>
+  <li role="presentation" class="active"><a href="#">Step 2: Define Admission</a></li>
+  <li role="presentation"><a href="#">Step 3: Bed Selection</a></li>
+</ul>
+</h4>
 @include('common.errors')
 <br>
 {{ Form::model($admission, ['url'=>'admissions', 'class'=>'form-horizontal']) }} 

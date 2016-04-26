@@ -1,5 +1,5 @@
 body {
-  padding-top: 80px;
+  padding-top: 60px;
 }
 .starter-template {
   padding: 40px 15px;
@@ -14,5 +14,13 @@ body {
 		color: $select-color;
 		width: $select-width;
 		height: 30px;
+}
+
+table, th, td {
+   font-size: medium;
+}
+
+h1 {
+	font-size: 3em;
 }
 

@@ -152,6 +152,19 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-6">
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_conversion_code')) has-error @endif'>
+						{{ Form::label('product_conversion_code', 'Conversion Product',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('product_conversion_code', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('product_conversion_code')) <p class="help-block">{{ $errors->first('product_conversion_code') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 	<!-- Sale -->
 	<div class="row">
 			<div class="col-xs-6">

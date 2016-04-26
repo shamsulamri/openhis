@@ -1,16 +1,16 @@
-<h2>Consultation</h2>
+<h1>Consultation</h1>
 <br>
 	<div class="row">
 			<div class="col-xs-6">
-            	<a class="btn btn-default" href="/consultations/progress/{{ $consultation->consultation_id }}" role="button">Progress Notes</a>
+            	<a class="btn btn-success" href="/consultations/progress/{{ $consultation->consultation_id }}" role="button">Progress Notes</a>
 			</div>
 			<div align="right" class="col-xs-6">
-            	<a class="btn btn-warning" href="/consultations/close" role="button">Close Consultation</a>
+            	<a class="btn btn-primary" href="/consultations/close" role="button">Close Consultation</a>
 	
 				@if (!empty($consultation->encounter->discharge->discharge_id))
-            		<a class="btn btn-success" href="/discharges/{{ $consultation->encounter->discharge->discharge_id }}/edit" role="button">Discharge Patient</a>
+            		<a class="btn btn-primary" href="/discharges/{{ $consultation->encounter->discharge->discharge_id }}/edit" role="button">Discharge Patient</a>
 				@else
-            		<a class="btn btn-success" href="/discharges/create" role="button">Discharge Patient</a>
+            		<a class="btn btn-primary" href="/discharges/create" role="button">Discharge Patient</a>
 				@endif
 			</div>
 	</div>

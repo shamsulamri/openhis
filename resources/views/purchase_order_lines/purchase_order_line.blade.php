@@ -40,37 +40,49 @@
 		<h4>Receiving Details</h4>
 	</div>
 
-    <div class='form-group  @if ($errors->has('line_batch_number')) has-error @endif'>
-        {{ Form::label('line_batch_number', 'Batch Number',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::text('line_batch_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'20']) }}
-            @if ($errors->has('line_batch_number')) <p class="help-block">{{ $errors->first('line_batch_number') }}</p> @endif
-        </div>
-    </div>
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('line_batch_number')) has-error @endif'>
+						{{ Form::label('line_batch_number', 'Batch Number',['class'=>'col-sm-2 control-label']) }}
+						<div class='col-sm-10'>
+							{{ Form::text('line_batch_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'20']) }}
+							@if ($errors->has('line_batch_number')) <p class="help-block">{{ $errors->first('line_batch_number') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('line_expiry_date')) has-error @endif'>
+						<label for='line_expiry_date' class='col-sm-2 control-label'>Expiry Date</label>
+						<div class='col-sm-10'>
+							<input id="line_expiry_date" name="line_expiry_date" type="text">
+							@if ($errors->has('line_expiry_date')) <p class="help-block">{{ $errors->first('line_expiry_date') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 
-    <div class='form-group  @if ($errors->has('line_expiry_date')) has-error @endif'>
-        <label for='line_expiry_date' class='col-sm-2 control-label'>Expiry Date</label>
-        <div class='col-sm-10'>
-			<input id="line_expiry_date" name="line_expiry_date" type="text">
-            @if ($errors->has('line_expiry_date')) <p class="help-block">{{ $errors->first('line_expiry_date') }}</p> @endif
-        </div>
-    </div>
 
-    <div class='form-group  @if ($errors->has('line_quantity_received')) has-error @endif'>
-        {{ Form::label('line_quantity_received', 'Quantity Received #1',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::text('line_quantity_received', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('line_quantity_received')) <p class="help-block">{{ $errors->first('line_quantity_received') }}</p> @endif
-        </div>
-    </div>
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('line_quantity_received')) has-error @endif'>
+						{{ Form::label('line_quantity_received', 'Quantity Received #1',['class'=>'col-sm-2 control-label']) }}
+						<div class='col-sm-10'>
+							{{ Form::text('line_quantity_received', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('line_quantity_received')) <p class="help-block">{{ $errors->first('line_quantity_received') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('line_quantity_received_2')) has-error @endif'>
+						{{ Form::label('line_quantity_received_2', 'Quantity Received #2',['class'=>'col-sm-2 control-label']) }}
+						<div class='col-sm-10'>
+							{{ Form::text('line_quantity_received_2', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('line_quantity_received_2')) <p class="help-block">{{ $errors->first('line_quantity_received_2') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 
-    <div class='form-group  @if ($errors->has('line_quantity_received_2')) has-error @endif'>
-        {{ Form::label('line_quantity_received_2', 'Quantity Received #2',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::text('line_quantity_received_2', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('line_quantity_received_2')) <p class="help-block">{{ $errors->first('line_quantity_received_2') }}</p> @endif
-        </div>
-    </div>
 
 	@endif
 	<br>

@@ -52,6 +52,6 @@
 @endif
 <script>
 	var frame = parent.document.getElementById('frameDetail');
-	frame.contentWindow.location.reload();
+	frame.src = '/dependants?patient_id={{ $patient_id }}';
 </script>
 @endsection
