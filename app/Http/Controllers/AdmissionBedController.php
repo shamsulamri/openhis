@@ -154,6 +154,7 @@ class AdmissionBedController extends Controller
 	{
 			$admission = NULL;
 			$patient = NULL;
+			$flag=$request->flag;
 			if (!empty($request->admission_id)) {
 					$admission = Admission::find($request->admission_id);
 					$patient = $admission->encounter->patient;
@@ -176,6 +177,7 @@ class AdmissionBedController extends Controller
 					'ward_code'=>$request->wards,
 					'admission' => $admission,
 					'patient' => $patient,
+					'flag' => $flag,
 					]);
 	}
 
