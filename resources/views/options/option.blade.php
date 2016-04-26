@@ -63,6 +63,8 @@
 			<div class="col-xs-6">
 				<a href="{{ url('/products') }}">Products</a><br>
 				<a href="{{ url('/purchase_orders') }}">Purchase Orders</a><br>
+				<a href="{{ url('/suppliers') }}">Suppliers</a><br>
+				<a href="{{ url('/stores') }}">Stores</a><br>
 				<a href="{{ url('/drugs') }}">Drugs</a><br>
 				<a href="{{ url('/drug_prescriptions') }}">Drug Prescriptions</a><br>
 				<a href="{{ url('/sets') }}">Order Sets</a><br>
@@ -71,16 +73,14 @@
 			<small>
 				<a href="{{ url('/product_categories') }}">Product Categories</a><br>
 				<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
-				<a href="{{ url('/suppliers') }}">Suppliers</a><br>
-				<a href="{{ url('/stores') }}">Stores</a><br>
 				<a href="{{ url('/stock_movements') }}">Stock Movements</a><br>
 				<a href="{{ url('/drug_categories') }}">Drugs Categories</a><br>
 				<a href="{{ url('/drug_systems') }}">Drugs Systems</a><br>
+				<a href="{{ url('/drug_dosages') }}">Drugs Dosages</a><br>
 			</small>
 			</div>
 			<div class="col-xs-3">
 			<small>
-				<a href="{{ url('/drug_dosages') }}">Drugs Dosages</a><br>
 				<a href="{{ url('/drug_frequencies') }}">Drugs Frequencies</a><br>
 				<a href="{{ url('/drug_routes') }}">Drugs Routes</a><br>
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>

@@ -103,6 +103,8 @@ input {
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/products') }}">Products</a></li>
 								<li><a href="{{ url('/purchase_orders') }}">Purchase Orders</a></li>
+								<li><a href="{{ url('/suppliers') }}">Suppliers</a></li>
+								<li><a href="{{ url('/stores') }}">Stores</a></li>
 								<li><a href="{{ url('/sets') }}">Order Sets</a></li>
 							</ul>
 					</li>

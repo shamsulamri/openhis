@@ -4,7 +4,7 @@
 @section('content')
 @include('patients.id')
 @if ($appointment_id == null)
-<h2>Book Appointment</h2>
+<h1>Book Appointment</h1>
 <br>
 <form action='/appointment_services/{{ $patient->patient_id }}/0' method='post'>
 	{{ Form::select('services', $menu_services, $service, ['class'=>'form-control']) }}
