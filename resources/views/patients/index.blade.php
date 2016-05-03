@@ -4,7 +4,7 @@
 <h1>Patient List</h1>
 <br>
 <form action='/patient/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Enter name, identificaiton or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control input-lg' placeholder="Enter name, identification or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<br>
 	<button class="btn btn-default" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

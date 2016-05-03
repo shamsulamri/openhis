@@ -165,6 +165,22 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-6">
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_gst')) has-error @endif'>
+						{{ Form::label('product_gst', 'GST',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							<div class='input-group'>
+							{{ Form::text('product_gst', null, ['class'=>'form-control','placeholder'=>'Goods & Service Tax',]) }}
+							@if ($errors->has('product_gst')) <p class="help-block">{{ $errors->first('product_gst') }}</p> @endif
+								<div class='input-group-addon'>%</div>
+							</div>
+						</div>
+					</div>
+			</div>
+	</div>
 	<!-- Sale -->
 	<div class="row">
 			<div class="col-xs-6">
@@ -221,26 +237,6 @@
 					</div>
 			</div>
 	</div>
-	<div class="row">
-			<div class="col-xs-6">
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_gst')) has-error @endif'>
-						{{ Form::label('product_gst', 'GST',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-							<div class='input-group'>
-							{{ Form::text('product_gst', null, ['class'=>'form-control','placeholder'=>'Goods & Service Tax',]) }}
-							@if ($errors->has('product_gst')) <p class="help-block">{{ $errors->first('product_gst') }}</p> @endif
-								<div class='input-group-addon'>%</div>
-								</div>
-							</div>
-						</div>
-					</div>
-			</div>
-	</div>
-
-
-
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-8">

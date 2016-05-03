@@ -97,6 +97,7 @@ class AdmissionController extends Controller
 
 			if ($valid->passes()) {
 					$admission = new Admission($request->all());
+					$admission->diet_code='normal';
 					$admission->admission_id = $request->admission_id;
 					$admission->save();
 					Session::flash('message', 'Record successfully created.');

@@ -64,6 +64,7 @@ $count=0;
     <th>Product</th>
     <th><div align='right'>Quantity</div></th> 
     <th><div align='right'>Price/Unit</div></th> 
+    <th><div align='right'>GST</div></th> 
     <th><div align='right'>Total</div></th> 
 	<th></th>
 	</tr>
@@ -92,6 +93,9 @@ $count=0;
 			</td>
 			<td width='100' align='right'>
 					{{ number_format($purchase_order_line->line_price,2) }}
+			</td>
+			<td width='100' align='right'>
+					{{ $purchase_order_line->product_gst }}
 			</td>
 			<td width='100' align='right'>
 					{{ number_format($purchase_order_line->line_total,2) }}

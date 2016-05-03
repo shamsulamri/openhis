@@ -26,11 +26,6 @@
 		<script src="/assets/js/combodate.js"></script>
 </head>
 <body id="app-layout"> 
-	<style>
-input {
-	text-transform:uppercase;
-}
-	</style>
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -76,8 +71,8 @@ input {
 		<h6>
 		<ul class='nav nav-pills'>
 					<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patient<span class="caret"></span>
+							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patient <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/patients') }}">Patients</a></li>
@@ -88,17 +83,17 @@ input {
 							</ul>
 					</li>
 					<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-comment'></span>&nbsp; Consultations<span class="caret"></span>
+							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-comment'></span>&nbsp; Consultations <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
-								<li><a href="{{ url('/consultations') }}">Consultations</a></li>
 								<li><a href="{{ url('/patient_lists') }}">Patient Lists</a></li>
+								<li><a href="{{ url('/consultations') }}">Consultations</a></li>
 							</ul>
 					</li>
 					<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Inventory<span class="caret"></span>
+							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Inventory <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/products') }}">Products</a></li>
@@ -109,8 +104,8 @@ input {
 							</ul>
 					</li>
 					<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-bed'></span>&nbsp; Ward<span class="caret"></span>
+							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-bed'></span>&nbsp; Ward <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li> 
@@ -118,7 +113,7 @@ input {
 								<li><a href="{{ url('/admission_tasks') }}">Nurse Task</a></li> 
 							</ul>
 					</li>
-					<li><a href="{{ url('/options') }}"><span class='glyphicon glyphicon-th-list'></span>&nbsp; Options</a></li>
+					<li><a class='btn btn-default' href="{{ url('/options') }}"><span class='glyphicon glyphicon-th-list'></span>&nbsp; Options</a></li>
 		</ul>
 		</h6>
 

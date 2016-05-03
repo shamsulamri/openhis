@@ -89,7 +89,7 @@ class PurchaseOrderLineController extends Controller
 	{
 			$purchase_order_line = PurchaseOrderLine::findOrFail($id);
 			$purchase_order_line->fill($request->input());
-
+			$product = Product::find($purchase_order_line->product_code);
 
 			$valid = $purchase_order_line->validate($request->all(), $request->_method);	
 
@@ -98,6 +98,7 @@ class PurchaseOrderLineController extends Controller
 							$purchase_order_line->line_quantity_received=$purchase_order_line->line_quantity_ordered;
 					}
 					$purchase_order_line->line_total=$purchase_order_line->line_quantity_ordered*$purchase_order_line->line_price;
+					$purchase_order_line->line_total=$purchase_order_line->line_total*(1+($product->product_gst/100));
 					if ($purchase_order_line->purchaseOrder->purchase_posted==1) {
 							$purchase_order_line->line_total=($purchase_order_line->line_quantity_received+$purchase_order_line->line_quantity_received_2)*$purchase_order_line->line_price;
 					}

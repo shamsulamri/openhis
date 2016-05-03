@@ -7,35 +7,52 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('line_price')) has-error @endif'>
-        {{ Form::label('line_price', 'Price',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::label('line_price', $purchase_order_line->line_price, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('line_price')) <p class="help-block">{{ $errors->first('line_price') }}</p> @endif
-        </div>
-    </div>
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('line_price')) has-error @endif'>
+						{{ Form::label('line_price', 'Price',['class'=>'col-sm-2 control-label']) }}
+						<div class='col-sm-10'>
+							{{ Form::label('line_price', $purchase_order_line->line_price, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('line_price')) <p class="help-block">{{ $errors->first('line_price') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('line_price')) has-error @endif'>
+						{{ Form::label('gst', 'GST',['class'=>'col-sm-2 control-label']) }}
+						<div class='col-sm-10'>
+							{{ Form::label('gst', $product->product_gst, ['class'=>'form-control','placeholder'=>'',]) }}
+						</div>
+					</div>
+			</div>
+	</div>
 
+
+	<div class="row">
+			<div class="col-xs-6">
 	@if ($purchase_order_line->purchaseOrder->purchase_posted==0)
 
-    <div class='form-group  @if ($errors->has('line_quantity_ordered')) has-error @endif'>
-        {{ Form::label('line_quantity_ordered', 'Quantity',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::text('line_quantity_ordered', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('line_quantity_ordered')) <p class="help-block">{{ $errors->first('line_quantity_ordered') }}</p> @endif
-        </div>
-    </div>
-
+					<div class='form-group  @if ($errors->has('line_quantity_ordered')) has-error @endif'>
+						{{ Form::label('line_quantity_ordered', 'Quantity',['class'=>'col-sm-2 control-label']) }}
+						<div class='col-sm-10'>
+							{{ Form::text('line_quantity_ordered', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('line_quantity_ordered')) <p class="help-block">{{ $errors->first('line_quantity_ordered') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 
 	@else
 
-    <div class='form-group  @if ($errors->has('line_quantity_ordered')) has-error @endif'>
-        {{ Form::label('line_quantity_ordered', 'Quantity',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::label('line_quantity_ordered', $purchase_order_line->line_quantity_ordered, ['class'=>'form-control']) }}
-            @if ($errors->has('line_quantity_ordered')) <p class="help-block">{{ $errors->first('line_quantity_ordered') }}</p> @endif
-        </div>
-    </div>
-
+					<div class='form-group  @if ($errors->has('line_quantity_ordered')) has-error @endif'>
+						{{ Form::label('line_quantity_ordered', 'Quantity',['class'=>'col-sm-2 control-label']) }}
+						<div class='col-sm-10'>
+							{{ Form::label('line_quantity_ordered', $purchase_order_line->line_quantity_ordered, ['class'=>'form-control']) }}
+							@if ($errors->has('line_quantity_ordered')) <p class="help-block">{{ $errors->first('line_quantity_ordered') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 	<div class='page-header'>
 		<h4>Receiving Details</h4>
 	</div>

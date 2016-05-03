@@ -27,6 +27,7 @@ class Product extends Model
 				'form_code',
 				'product_average_cost',
 				'product_conversion_unit',
+				'product_conversion_code',
 				'product_sale_margin',
 				'product_gst'];
 	

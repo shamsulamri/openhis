@@ -33,7 +33,7 @@ class PurchaseOrderController extends Controller
 	{
 			$purchase_orders = DB::table('purchase_orders as a')
 					->leftJoin('suppliers as b', 'b.supplier_code','=','a.supplier_code')
-					->orderBy('purchase_date')
+					->orderBy('purchase_date','desc')
 					->paginate($this->paginateValue);
 			return view('purchase_orders.index', [
 					'purchase_orders'=>$purchase_orders
@@ -119,6 +119,9 @@ class PurchaseOrderController extends Controller
 
 			foreach ($line_items as $item) {
 					$product = Product::find($item->product_code);
+					if (!empty($product->product_conversion_code)) {
+							$product = Product::find($item->$product_conversion_code);
+					}
 					$stock = new Stock();
 					$stock->line_id = $item->line_id;
 					$stock->store_code = $purchase_order->store_code;
