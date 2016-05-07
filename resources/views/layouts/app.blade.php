@@ -6,18 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 	    <title>{{ Config::get('host.application_name') }}</title>
-		<!--
-		<link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700" rel="stylesheet" type="text/css">
-		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-		<link href="/assets/bootstrap/css/starter-template.css" rel="stylesheet">
-
-
-
-		<script src="/assets/bootstrap/js/jquery.min.js"></script>
-		-->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/bootstrap.min.css">

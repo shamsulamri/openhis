@@ -1,22 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Patient List</h1>
+<h2>Patient List<a href='/patients/create' class='btn btn-primary pull-right'>New Patient</a></h2>
 <br>
 <form action='/patient/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Enter name, identification or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<br>
-	<button class="btn btn-default" type="submit" value="Submit">Search</button>
+	<div class='input-group'>
+			<input type='text' class='form-control input-lg' placeholder="Enter name, identification or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+		<span class='input-group-btn'>
+			<button class="btn btn-default btn-lg" type="submit" value="Submit">Search</button>
+		</span>
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
 @if (Session::has('message'))
 		<div class="alert alert-info">{{ Session::get('message') }}</div>
 @else
-		<br>
 @endif
-<a href='/patients/create' class='btn btn-primary'>New Patient</a>
-<br>
 <br>
 @if ($patients->total()>0)
 <table class="table table-hover">
