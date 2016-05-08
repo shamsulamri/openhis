@@ -129,12 +129,13 @@ class EncounterController extends Controller
 			$valid = $encounter->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+
 					$encounter->save();
 					Session::flash('message', 'Record successfully updated.');
 					if ($encounter->encounter_code=='outpatient') {
 							return redirect('/queues/create?encounter_id='.$encounter->encounter_id);
 					} elseif ($encounter->encounter_code=='inpatient') {
-							$admission = Admission::where('encounter_id',$id)->get()[0];
+							$admission = Admission::where('encounter_id',$id)->first();
 							if (!empty($admission)) {
 								return redirect('/admissions/'.$admission->admission_id.'/edit');
 							} else { 

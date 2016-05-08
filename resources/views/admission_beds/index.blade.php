@@ -10,14 +10,15 @@
 @else
 <h4>
 <ul class="nav nav-tabs nav-justified">
-  <li role="presentation"><a href="#">Step 1: Encounter</a></li>
-  <li role="presentation"><a href="#">Step 2: Define Admission</a></li>
+  <li role="presentation"><a href="/encounters/{{ $encounter->encounter_id }}/edit">Step 1: Encounter</a></li>
+  <li role="presentation"><a href="/admissions/{{ $admission->admission_id }}/edit">Step 2: Define Admission</a></li>
   <li role="presentation" class="active"><a href="#">Step 3: Bed Selection</a></li>
 </ul>
 </h4>
 @endif
 <br>
 <form action='/admission_bed/search' method='post'>
+	<p><strong>Select Department</strong></p>
 	{{ Form::select('wards', $ward, $ward_code, ['class'=>'form-control']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<br>
@@ -31,7 +32,7 @@
 	<tr> 
     <th>Bed</th>
     <th>Class</th>
-	<th>Occupancy</th>
+	<th>Occupant</th>
 	</tr>
   </thead>
 	<tbody>

@@ -34,10 +34,12 @@ class AdmissionBedController extends Controller
 			$admission = NULL;
 			$patient = NULL;
 			$flag=$request->flag;
-		
+			$encounter = NULL;
+
 			if (!empty($request->admission_id)) {
 					$admission = Admission::find($request->admission_id);
 					$patient = $admission->encounter->patient;
+					$encounter= Encounter::find($admission->encounter_id);
 			}
 			$admission_beds = DB::table('beds as a')
 					->select(['b.admission_id','a.bed_code','bed_name','patient_name','ward_code', 'a.class_code', 'class_name','c.patient_id'])
@@ -56,6 +58,7 @@ class AdmissionBedController extends Controller
 					'admission' => $admission,
 					'patient' => $patient,
 					'flag' => $flag,
+					'encounter' => $encounter,
 			]);
 	}
 

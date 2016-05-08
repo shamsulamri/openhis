@@ -1,4 +1,11 @@
 
+<h4>
+<ul class="nav nav-tabs nav-justified">
+  <li role="presentation"><a href="/encounters/{{ $encounter->encounter_id }}/edit">Step 1: Encounter</a></li>
+  <li role="presentation" class="active"><a href="#">Final: Queue</a></li>
+</ul>
+</h4>
+<br>
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
 		<label for='location_code' class='col-sm-2 control-label'>Queue<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>

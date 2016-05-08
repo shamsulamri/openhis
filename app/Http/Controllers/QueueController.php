@@ -63,7 +63,8 @@ class QueueController extends Controller
 			return view('queues.create', [
 					'queue' => $queue,
 					'patient' => $encounter->patient,
-					'location' => $location
+					'location' => $location,
+					'encounter' => $encounter,
 			]);
 	}
 
@@ -94,6 +95,7 @@ class QueueController extends Controller
 					'queue'=>$queue,
 					'patient'=> $encounter->patient,
 					'location'=>Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'encounter' => $encounter,
 					]);
 	}
 
