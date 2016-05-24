@@ -10,6 +10,8 @@
 				<a href="{{ url('/encounters') }}">Encounters</a><br>
 				<a href="{{ url('/queues') }}">Location Queues</a><br>
 				<a href="{{ url('/order_queues') }}">Order Queues</a><br>
+				<a href="{{ url('/bills') }}">Bills</a><br>
+				<a href="{{ url('/payments') }}">Payments</a><br>
 			</div>
 			<div class="col-xs-6">
 			<small>
@@ -77,16 +79,17 @@
 				<a href="{{ url('/drug_categories') }}">Drugs Categories</a><br>
 				<a href="{{ url('/drug_systems') }}">Drugs Systems</a><br>
 				<a href="{{ url('/drug_dosages') }}">Drugs Dosages</a><br>
+				<a href="{{ url('/drug_frequencies') }}">Drugs Frequencies</a><br>
 			</small>
 			</div>
 			<div class="col-xs-3">
 			<small>
-				<a href="{{ url('/drug_frequencies') }}">Drugs Frequencies</a><br>
 				<a href="{{ url('/drug_routes') }}">Drugs Routes</a><br>
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>
 				<a href="{{ url('/forms') }}">Forms</a><br>
 				<a href="{{ url('/form_properties') }}">Form Properties</a><br>
 				<a href="{{ url('/form_positions') }}">Form Positions</a><br>
+				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
 			</small>
 			</div>
 	</div>
@@ -153,6 +156,7 @@
 				<a href="{{ url('/urgencies') }}">Urgencies</a><br>
 				<a href="{{ url('/relationships') }}">Relationships</a><br>
 				<a href="{{ url('/patient_flags') }}">Patient Flags</a><br>
+				<a href="{{ url('/payment_methods') }}">Payment Methods</a><br>
 			</div>
 	</div>
 	</h5>

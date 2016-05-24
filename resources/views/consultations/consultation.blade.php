@@ -1,6 +1,5 @@
 	<div class='form-group  @if ($errors->has('consultation_notes')) has-error @endif'>
         <div class='col-sm-12'>
-			<br>
             {{ Form::textarea('consultation_notes', null, ['class'=>'form-control','placeholder'=>'Click here to enter notes']) }}
             @if ($errors->has('consultation_notes')) <p class="help-block">{{ $errors->first('consultation_notes') }}</p> @endif
         </div>

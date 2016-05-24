@@ -22,8 +22,11 @@ class Order extends Model
 				'order_quantity_supply',
 				'location_code',
 				'order_sale_price',
+				'order_unit_price',
 				'order_total',
 				'order_discount',
+				'order_gst',
+				'order_gst_total',
 				'order_discharge'];
 	
     protected $guarded = ['order_id'];

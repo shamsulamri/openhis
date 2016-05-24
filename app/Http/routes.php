@@ -27,12 +27,45 @@ Route::group(['middleware' => 'web'], function () {
 
 		Route::get('/', function() {
 				return redirect('/login');
-				return view('welcome');
+				#return view('welcome');
 		});
 
 		Route::get('/options', function() {
 				return view('options.option');
 		});
+		Route::resource('patient_billings', 'PatientBillingController');
+		Route::get('/patient_billings/id/{id}', 'PatientBillingController@searchById');
+		Route::post('/patient_billing/search', 'PatientBillingController@search');
+		Route::get('/patient_billing/search', 'PatientBillingController@search');
+		Route::get('/patient_billings/delete/{id}', 'PatientBillingController@delete');
+		
+		Route::resource('tax_codes', 'TaxCodeController');
+		Route::get('/tax_codes/id/{id}', 'TaxCodeController@searchById');
+		Route::post('/tax_code/search', 'TaxCodeController@search');
+		Route::get('/tax_code/search', 'TaxCodeController@search');
+		Route::get('/tax_codes/delete/{id}', 'TaxCodeController@delete');
+		
+		
+		Route::resource('payments', 'PaymentController',['except'=>['create']]);
+		Route::get('/payments/create/{id}', 'PaymentController@create');
+		Route::get('/payments/id/{id}', 'PaymentController@searchById');
+		Route::post('/payment/search', 'PaymentController@search');
+		Route::get('/payment/search', 'PaymentController@search');
+		Route::get('/payments/delete/{id}', 'PaymentController@delete');
+		
+		Route::resource('payment_methods', 'PaymentMethodController');
+		Route::get('/payment_methods/id/{id}', 'PaymentMethodController@searchById');
+		Route::post('/payment_method/search', 'PaymentMethodController@search');
+		Route::get('/payment_method/search', 'PaymentMethodController@search');
+		Route::get('/payment_methods/delete/{id}', 'PaymentMethodController@delete');
+		
+		Route::resource('bills', 'BillController',['except'=>['index','show']]);
+		Route::get('/bills/{id}', 'BillController@index');
+		Route::get('/bills/id/{id}', 'BillController@searchById');
+		Route::post('/bill/search', 'BillController@search');
+		Route::get('/bill/search', 'BillController@search');
+		Route::get('/bills/delete/{id}', 'BillController@delete');
+		Route::get('/bills/generate/{id}', 'BillController@generate');
 
 		Route::resource('patient_dependants', 'PatientDependantController');
 		Route::get('/patient_dependants/id/{id}', 'PatientDependantController@searchById');

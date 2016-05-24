@@ -165,22 +165,6 @@
 					</div>
 			</div>
 	</div>
-	<div class="row">
-			<div class="col-xs-6">
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_gst')) has-error @endif'>
-						{{ Form::label('product_gst', 'GST',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-							<div class='input-group'>
-							{{ Form::text('product_gst', null, ['class'=>'form-control','placeholder'=>'Goods & Service Tax',]) }}
-							@if ($errors->has('product_gst')) <p class="help-block">{{ $errors->first('product_gst') }}</p> @endif
-								<div class='input-group-addon'>%</div>
-							</div>
-						</div>
-					</div>
-			</div>
-	</div>
 	<!-- Sale -->
 	<div class="row">
 			<div class="col-xs-6">
@@ -191,6 +175,23 @@
 							@if ($errors->has('product_sold')) <p class="help-block">{{ $errors->first('product_sold') }}</p> @endif
 						</div>
 					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_sale_margin')) has-error @endif'>
+						{{ Form::label('product_sale_margin', 'Profit Margin',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							<div class='input-group'>
+							{{ Form::text('product_sale_margin', null, ['class'=>'form-control','placeholder'=>'', 'onkeyup'=>'UpdateSalePrice()']) }}
+							@if ($errors->has('product_sale_margin')) <p class="help-block">{{ $errors->first('product_sale_margin') }}</p> @endif
+								<div class='input-group-addon'>%</div>
+							</div>
+						</div>
+					</div>
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-6">
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_sale_price')) has-error @endif'>
@@ -206,24 +207,19 @@
 			</div>
 	</div>
 
-
 	<div class="row">
 			<div class="col-xs-6">
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_sale_margin')) has-error @endif'>
-						{{ Form::label('product_sale_margin', 'Profit Margin',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('tax_code')) has-error @endif'>
+						{{ Form::label('tax_code', 'Tax Code',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							<div class='input-group'>
-							{{ Form::text('product_sale_margin', null, ['class'=>'form-control','placeholder'=>'',]) }}
-							@if ($errors->has('product_sale_margin')) <p class="help-block">{{ $errors->first('product_sale_margin') }}</p> @endif
-								<div class='input-group-addon'>%</div>
-							</div>
+							{{ Form::select('tax_code', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
+							@if ($errors->has('tax_code')) <p class="help-block">{{ $errors->first('tax_code') }}</p> @endif
 						</div>
 					</div>
 			</div>
 	</div>
-
 	<div class="row">
 			<div class="col-xs-6">
 			</div>

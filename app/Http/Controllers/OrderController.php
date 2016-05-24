@@ -93,12 +93,14 @@ class OrderController extends Controller
 
 	public function create($product_code)
 	{
+			Log::info("X");
 			$consultation_id = Session::get('consultation_id');
 			$product=Product::find($product_code);
 			$order = new Order();
 			$order->consultation_id = $consultation_id;
 			$order->product_code = $product_code;
 			$order->order_quantity_request=1;
+			$order->order_total = $product->product_sale_price*$order->order_quantity_request;
 			$order->location_code = $product->location_code;
 
 			$consultation = Consultation::findOrFail($consultation_id);
@@ -293,10 +295,14 @@ class OrderController extends Controller
 			$order->user_id = Auth::user()->id;
 			$order->product_code = $product->product_code;
 			$order->order_quantity_request = 1;
-			$order->order_sale_price = $product->product_sale_price;
+			$order->order_unit_price = $product->product_sale_price; 
+			$order->order_sale_price = number_format($product->product_sale_price * (1+($product->gst->tax_rate/100)),2);
+			$order->order_gst = number_format($product->product_sale_price * (($product->gst->tax_rate/100)),2);
+			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
+			$order->order_gst_total = $order->order_gst*$order->order_quantity_request;
 			$order->location_code = $product->location_code;
 			$order->save();
-			
+
 			if ($product->order_form==2) {
 					$order_drug = new OrderDrug();
 					$order_drug->order_id = $order->order_id;
@@ -314,10 +320,17 @@ class OrderController extends Controller
 							$order_drug->drug_meal = $drug_prescription->drug_meal;
 
 							$order->order_quantity_request = $drug_prescription->drug_total_unit;
+							$order->order_quantity_supply = $drug_prescription->drug_total_unit;
 							$order->order_description = $drug_prescription->drug_description;
 							$order->save();
 					}
 					$order_drug->save();
+					Log::info("----");
+					Log::info($order->order_gst);
+					$order->order_total = $order->order_sale_price*$order->order_quantity_request;
+					$order->order_gst_total = $order->order_gst*$order->order_quantity_request;
+					$order->save();
+					Log::info($order);
 			}
 
 			if ($product->order_form=3) {

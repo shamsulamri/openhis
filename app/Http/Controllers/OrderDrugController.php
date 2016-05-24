@@ -144,8 +144,11 @@ class OrderDrugController extends Controller
 			$order_drug->drug_meal = $request->drug_meal ?: 0;
 
 			$order = Order::find($order_drug->order_id);
+			$product= Product::find($order->product_code);
 			$order->fill($request->input());
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
+			$order->order_quantity_supply = $request->order_quantity_request;
+			$order->order_total = $product->product_sale_price*$order->order_quantity_request;
 			$order->save();
 			
 			$valid = $order_drug->validate($request->all(), $request->_method);	

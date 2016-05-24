@@ -19,6 +19,7 @@ use App\ProductStatus;
 use App\Store;
 use App\Stock;
 use Carbon\Carbon;
+use App\TaxCode;
 
 class ProductController extends Controller
 {
@@ -51,6 +52,7 @@ class ProductController extends Controller
 					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
 					]);
@@ -83,6 +85,7 @@ class ProductController extends Controller
 					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 					]);

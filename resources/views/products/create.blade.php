@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<script>
+	function UpdateSalePrice() {
+			alert("X");
+	}	
+</script>
 <h1><a href='/products'>Product List</a> / New Product</h1>
 @include('common.errors')
 <br>

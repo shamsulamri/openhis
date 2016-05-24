@@ -29,7 +29,7 @@ class Product extends Model
 				'product_conversion_unit',
 				'product_conversion_code',
 				'product_sale_margin',
-				'product_gst'];
+				'tax_code'];
 	
     	protected $guarded = ['product_code'];
     	protected $primaryKey = 'product_code';
@@ -64,5 +64,10 @@ class Product extends Model
 	public function unitMeasure()
 	{
 			return $this->belongsTo('App\UnitMeasure', 'unit_code');
+	}
+
+	public function gst()
+	{
+			return $this->belongsTo('App\TaxCode', 'tax_code');
 	}
 }
