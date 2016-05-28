@@ -7,29 +7,27 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class Payment extends Model
+class Deposit extends Model
 {
-	protected $table = 'payments';
+	protected $table = 'deposits';
 	protected $fillable = [
 				'encounter_id',
-				'payment_amount',
+				'deposit_amount',
 				'payment_code',
-				'user_id',
-				'payment_description'];
+				'deposit_description',
+				'user_id'];
 	
-    protected $guarded = ['payment_id'];
-    protected $primaryKey = 'payment_id';
+    protected $guarded = ['deposit_id'];
+    protected $primaryKey = 'deposit_id';
     public $incrementing = true;
     
 
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
-				'payment_amount'=>'required',
+				'deposit_amount'=>'required',
 				'payment_code'=>'required',
 			];
-
-			
 			
 			$messages = [
 				'required' => 'This field is required'
@@ -42,4 +40,5 @@ class Payment extends Model
 	{
 			return $this->belongsTo('App\Encounter','encounter_id');
 	}
+	
 }

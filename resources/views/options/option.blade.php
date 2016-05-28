@@ -12,6 +12,9 @@
 				<a href="{{ url('/order_queues') }}">Order Queues</a><br>
 				<a href="{{ url('/bills') }}">Bills</a><br>
 				<a href="{{ url('/payments') }}">Payments</a><br>
+				<a href="{{ url('/deposits') }}">Deposits</a><br>
+				<a href="{{ url('/bills') }}">Bills</a><br>
+
 			</div>
 			<div class="col-xs-6">
 			<small>

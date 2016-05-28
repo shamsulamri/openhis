@@ -11,7 +11,7 @@ use App\PaymentMethod;
 use Log;
 use DB;
 use Session;
-
+use Auth;
 
 class PaymentController extends Controller
 {
@@ -50,7 +50,7 @@ class PaymentController extends Controller
 
 			if ($valid->passes()) {
 					$payment = new Payment($request->all());
-					$payment->payment_id = $request->payment_id;
+					$payment->user_id = Auth::user()->id;
 					$payment->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/bills/'.$payment->encounter_id);

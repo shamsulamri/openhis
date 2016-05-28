@@ -25,8 +25,7 @@ class Order extends Model
 				'order_unit_price',
 				'order_total',
 				'order_discount',
-				'order_gst',
-				'order_gst_total',
+				'order_gst_unit',
 				'order_discharge'];
 	
     protected $guarded = ['order_id'];

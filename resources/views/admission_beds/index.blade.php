@@ -12,7 +12,7 @@
 <ul class="nav nav-tabs nav-justified">
   <li role="presentation"><a href="/encounters/{{ $encounter->encounter_id }}/edit">Step 1: Encounter</a></li>
   <li role="presentation"><a href="/admissions/{{ $admission->admission_id }}/edit">Step 2: Define Admission</a></li>
-  <li role="presentation" class="active"><a href="#">Step 3: Bed Selection</a></li>
+  <li role="presentation" class="active"><a href="#">Final: Bed Selection</a></li>
 </ul>
 </h4>
 @endif

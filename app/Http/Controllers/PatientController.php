@@ -24,6 +24,7 @@ use App\Relationship;
 use App\State;
 use App\PatientFlag;
 use App\PatientDependant;
+use App\Encounter;
 
 class PatientController extends Controller
 {
@@ -96,6 +97,10 @@ class PatientController extends Controller
 	{
 			$patient = Patient::findOrFail($id);
 			
+			$encounter = Encounter::where('patient_id', $id)
+							->orderBy('encounter_id')
+							->first();
+
 			$patients = $this->getDependants($id);
 
 			for ($i=0;$i<3;$i++) {
@@ -114,6 +119,7 @@ class PatientController extends Controller
 					'patient'=>$patient,
 					'patientOption'=>'',
 					'patients'=>$patients,
+					'encounter'=>$encounter,
 					]);
 	}
 

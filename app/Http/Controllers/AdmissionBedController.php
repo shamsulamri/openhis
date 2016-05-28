@@ -201,6 +201,7 @@ class AdmissionBedController extends Controller
 			
 			$bed_movement = new BedMovement();
 			$bed_movement->admission_id = $admission_id;
+			$bed_movement->encounter_id = $admission->encounter_id;
 			$bed_movement->move_from = $admission->bed_code;
 			$bed_movement->move_to = $bed_code;
 			$bed_movement->move_date = date('d/m/Y');
@@ -209,7 +210,11 @@ class AdmissionBedController extends Controller
 			$admission->bed_code = $bed_code;
 			$admission->save();
 
-			return redirect('/admissions');
+			return view('admissions.complete', [
+					'admission'=>$admission,
+					'patient'=>$admission->encounter->patient,
+			]);
+
 	}
 	
 }

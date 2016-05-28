@@ -20,6 +20,7 @@ class PatientBilling extends Model
 				'bill_quantity',
 				'bill_unit_price',
 				'bill_total',
+				'bill_gst_unit',
 				'bill_exempted'];
 	
     protected $guarded = ['bill_id'];
@@ -29,16 +30,8 @@ class PatientBilling extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'encounter_id'=>'required',
-				'order_id'=>'required',
-				'product_code'=>'required',
-				'tax_code'=>'required',
-				'tax_rate'=>'required',
-				'bill_discount'=>'required',
 				'bill_quantity'=>'required',
 				'bill_unit_price'=>'required',
-				'bill_total'=>'required',
-				'bill_exempted'=>'required',
 			];
 
 			
@@ -50,5 +43,14 @@ class PatientBilling extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function encounter()
+	{
+			return $this->belongsTo('App\Encounter','encounter_id');
+	}
+
+	public function product()
+	{
+			return $this->belongsTo('App\Product', 'product_code');
+	}
 	
 }

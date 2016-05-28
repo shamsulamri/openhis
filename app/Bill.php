@@ -9,23 +9,24 @@ use App\DojoUtility;
 
 class Bill extends Model
 {
-	protected $table = 'orders';
+	protected $table = 'bills';
 	protected $fillable = [
-				'order_quantity_supply',
-				'order_sale_price',
-				'order_discount',
-				'order_exempted',
-				'order_total'];
+				'encounter_id',
+				'bill_grand_total',
+				'bill_payment_total',
+				'bill_deposit_total',
+				'bill_outstanding',
+				'bill_change'];
 	
-    protected $guarded = ['order_id'];
-    protected $primaryKey = 'order_id';
-    public $incrementing = true;
-    
 
 	public function validate($input, $method) {
 			$rules = [
-				'order_quantity_supply'=>'required',
-				'order_sale_price'=>'required',
+				'encounter_id'=>'required',
+				'bill_grand_total'=>'required',
+				'bill_payment_total'=>'required',
+				'bill_deposit_total'=>'required',
+				'bill_outstanding'=>'required',
+				'bill_change'=>'required',
 			];
 
 			
@@ -35,17 +36,6 @@ class Bill extends Model
 			];
 			
 			return validator::make($input, $rules ,$messages);
-	}
-
-	
-	public function encounter()
-	{
-			return $this->belongsTo('App\Encounter','encounter_id');
-	}
-
-	public function product()
-	{
-			return $this->belongsTo('App\Product', 'product_code');
 	}
 
 	

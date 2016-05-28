@@ -6,14 +6,13 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Bill;
+use App\PatientBilling as Bill;
 use Log;
 use DB;
 use Session;
 use App\Product;
 use App\QueueLocation as Location;
 use App\Encounter;
-use App\PatientBilling;
 
 class BillController extends Controller
 {
@@ -30,10 +29,44 @@ class BillController extends Controller
 			$bill_existing = DB::table('patient_billings')
 								->where('encounter_id','=',$id);
 								
-			//$bill_existing->delete();
+			$bill_existing->delete();
+			return redirect('/bills/'.$id);
+	}
 
+	public function bedBills($id) {
+			$beds = DB::table('bed_movements as a')
+						->leftjoin('products as b', 'move_to','=', 'product_code')
+						->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
+						->where('encounter_id','=',$id)
+						->get();
+
+			foreach ($beds as $bed) {
+					$bill = new Bill();
+					$bill->encounter_id = $id;
+					$bill->order_id = 0;
+					$bill->product_code = $bed->product_code;
+					$bill->tax_code = $bed->tax_code;
+					$bill->tax_rate = $bed->tax_rate;
+					$bill->bill_quantity = 1;
+					$bill->bill_unit_price = $bed->product_sale_price;
+					$bill->bill_total = $bill->bill_unit_price*$bill->bill_quantity;
+					$bill->bill_gst_unit = $bed->product_sale_price*($bed->tax_rate/100);
+					Log::info($bill);
+					try {
+							$bill->save();
+					} catch (\Exception $e) {
+							\Log::info($e->getMessage());
+					}
+			}
+	}
+
+	public function compileBill($id) 
+	{
+
+			$bill_existing = DB::table('patient_billings')
+								->where('encounter_id','=',$id);
 			
-			$fields = 'encounter_id, order_id,order_exempted,b.tax_code, tax_rate, order_discount, a.product_code, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price';
+			$fields = 'encounter_id, order_id,b.tax_code, tax_rate, order_discount, a.product_code, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price, order_gst_unit';
 			$bills = DB::table('orders as a')
 					->selectRaw($fields)
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
@@ -44,7 +77,7 @@ class BillController extends Controller
 					->get();
 
 			foreach ($bills as $bill) {
-					$patientBill = new PatientBilling();
+					$patientBill = new Bill();
 					$patientBill->encounter_id = $bill->encounter_id;
 					$patientBill->order_id = $bill->order_id;
 					$patientBill->product_code = $bill->product_code;
@@ -53,30 +86,15 @@ class BillController extends Controller
 					$patientBill->bill_quantity = $bill->order_quantity_supply;
 					$patientBill->bill_unit_price = $bill->order_sale_price;
 					$patientBill->bill_total = $bill->order_total;
+					$patientBill->bill_gst_unit = $bill->order_gst_unit;
 					try {
 							$patientBill->save();
 					} catch (\Exception $e) {
 							\Log::info($e->getMessage());
 					}
-					Log::info($bill->encounter_id);
 			}
 
-			return $bills;
-	}
-
-	public function index($id)
-	{
-			$encounter = Encounter::find($id);
-			/*
-			$bills = DB::table('orders as a')
-					->selectRaw('encounter_id, order_id,order_exempted,b.tax_code, tax_rate, order_discount, product_name, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price')
-					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
-					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
-					->where('encounter_id','=', $id)
-					->groupBy('a.product_code')
-					->orderBy('encounter_id')
-					->paginate($this->paginateValue);
-			*/	
+			$this->bedBills($id);
 			$bills = DB::table('patient_billings as a')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
@@ -84,19 +102,34 @@ class BillController extends Controller
 					->orderBy('a.product_code')
 					->paginate($this->paginateValue);
 
-			$bill_total = DB::table('orders')
-					->where('encounter_id','=', $id)
-					->where('order_exempted','=',0)
-					->sum('order_total');
+			return $bills;
+	}
 
-			$gst_total = DB::table('orders as a')
-					->selectRaw('sum(order_gst_total) as gst_sum, sum(order_quantity_supply*order_unit_price) as gst_amount, tax_code')
-					->leftJoin('products as b','b.product_code','=', 'a.product_code')
+	public function index($id)
+	{
+			$encounter = Encounter::find($id);
+
+			$bills = DB::table('patient_billings as a')
+					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
+					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->where('encounter_id','=', $id)
-					->where('order_exempted','=',0)
+					->orderBy('a.product_code')
+					->paginate($this->paginateValue);
+
+			if ($bills->total()==0) {
+				$bills=$this->compileBill($id);
+			}
+
+			$bill_grand_total = DB::table('patient_billings')
+					->where('encounter_id','=', $id)
+					->sum('bill_total');
+
+			$gst_total = DB::table('patient_billings as a')
+					->selectRaw('sum(bill_quantity*bill_gst_unit) as gst_sum, sum(bill_quantity*(bill_unit_price-bill_gst_unit)) as gst_amount, tax_code')
+					->where('encounter_id','=', $id)
 					->groupBy('tax_code')
 					->get();
-			
+
 			$payments = DB::table('payments as a')
 					->leftJoin('payment_methods as b', 'b.payment_code','=','a.payment_code')
 					->where('encounter_id','=', $id)
@@ -106,13 +139,20 @@ class BillController extends Controller
 					->where('encounter_id','=', $id)
 					->sum('payment_amount');
 
+			$deposit_total = DB::table('deposits')
+					->where('encounter_id','=', $id)
+					->sum('deposit_amount');
+
 			return view('bills.index', [
 					'bills'=>$bills,
-					'bill_total'=>$bill_total,
+					'bill_grand_total'=>$bill_grand_total,
 					'patient' => $encounter->patient,
 					'payments' => $payments,
 					'payment_total' => $payment_total,
 					'gst_total' => $gst_total,
+					'encounter' => $encounter,
+					'encounter_id' => $id,
+					'deposit_total' => $deposit_total,
 			]);
 	}
 
@@ -165,20 +205,18 @@ class BillController extends Controller
 			switch ($product->category_code) {
 					case "drugs":
 						if ($product->product_unit_charge==1) {
-							$bill->order_total = $bill->order_quantity_supply*$bill->order_sale_price;
+							$bill->bill_total = $bill->bill_quantity*$bill->bill_unit_price;
 						} else {
-							$bill->order_total = $bill->order_sale_price;
+							$bill->bill_total = $bill->bill_unit_price;
 						}
 						break;
 					default:
-						$bill->order_total = $bill->order_quantity_supply*$bill->order_sale_price;
+						$bill->bill_total = $bill->bill_quantity*$bill->bill_unit_price;
 			}
 
-			if ($bill->order_discount>0) {
-					$bill->order_total = $bill->order_total * (1-($bill->order_discount/100));
+			if ($bill->bill_discount>0) {
+					$bill->bill_total = $bill->bill_total * (1-($bill->bill_discount/100));
 			}
-
-			$bill->order_exempted = $request->order_exempted ?: 0;
 
 			$valid = $bill->validate($request->all(), $request->_method);
 
@@ -200,20 +238,33 @@ class BillController extends Controller
 	
 	public function delete($id)
 	{
-		$bill = Bill::findOrFail($id);
+		$bill = Bill::find($id);
 		return view('bills.destroy', [
 			'bill'=>$bill,
 			'patient'=>$bill->encounter->patient,
 			]);
 
 	}
+
 	public function destroy($id)
 	{	
+		$bill = Bill::find($id);
 			Bill::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/bills');
+			return redirect('/bills/'.$bill->encounter_id);
 	}
 	
+	public function reload($id)
+	{
+		$bill = Bill::where('encounter_id','=',$id)->first();
+		return view('bills.reload', [
+			'bill'=>$bill,
+			'patient'=>$bill->encounter->patient,
+			'encounter'=>$bill->encounter,
+			]);
+
+	}
+
 	public function search(Request $request)
 	{
 			$bills = DB::table('orders')

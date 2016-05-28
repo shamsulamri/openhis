@@ -8,35 +8,35 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
-        {{ Form::label('order_quantity_supply', 'Quantity',['class'=>'col-sm-2 control-label']) }}
+    <div class='form-group  @if ($errors->has('bill_quantity')) has-error @endif'>
+        {{ Form::label('bill_quantity', 'Quantity',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('order_quantity_supply', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('order_quantity_supply')) <p class="help-block">{{ $errors->first('order_quantity_supply') }}</p> @endif
+            {{ Form::text('bill_quantity', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('bill_quantity')) <p class="help-block">{{ $errors->first('bill_quantity') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('order_sale_price')) has-error @endif'>
-        {{ Form::label('order_sale_price', 'Sale Price',['class'=>'col-sm-2 control-label']) }}
+    <div class='form-group  @if ($errors->has('bill_unit_price')) has-error @endif'>
+        {{ Form::label('bill_unit_price', 'Sale Price',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('order_sale_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('order_sale_price')) <p class="help-block">{{ $errors->first('order_sale_price') }}</p> @endif
+            {{ Form::text('bill_unit_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('bill_unit_price')) <p class="help-block">{{ $errors->first('bill_unit_price') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('order_discount')) has-error @endif'>
-        {{ Form::label('order_discount', 'Discount',['class'=>'col-sm-2 control-label']) }}
+    <div class='form-group  @if ($errors->has('bill_discount')) has-error @endif'>
+        {{ Form::label('bill_discount', 'Discount',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('order_discount', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('order_discount')) <p class="help-block">{{ $errors->first('order_discount') }}</p> @endif
+            {{ Form::text('bill_discount', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('bill_discount')) <p class="help-block">{{ $errors->first('bill_discount') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('order_is_discharge')) has-error @endif'>
         {{ Form::label('order_exempterd', 'Exempted',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::checkbox('order_exempted', '1') }}
-            @if ($errors->has('order_exempted')) <p class="help-block">{{ $errors->first('order_exempted') }}</p> @endif
+            {{ Form::checkbox('bill_exempted', '1') }}
+            @if ($errors->has('bill_exempted')) <p class="help-block">{{ $errors->first('bill_exempted') }}</p> @endif
         </div>
     </div>
 

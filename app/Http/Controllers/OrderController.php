@@ -274,7 +274,7 @@ class OrderController extends Controller
 					}
 			}
 
-			Session::flash('message', 'Product added to order list.');
+			//Session::flash('message', 'Product added to order list.');
 			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
 			//return redirect('/orders');
 	}
@@ -283,7 +283,7 @@ class OrderController extends Controller
 	{
 			$product = Product::find($product_code);
 			$this->orderItem($product);
-			Session::flash('message', 'Product added to order list.');
+			//Session::flash('message', 'Product added to order list.');
 			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
 	}
 
@@ -296,10 +296,13 @@ class OrderController extends Controller
 			$order->product_code = $product->product_code;
 			$order->order_quantity_request = 1;
 			$order->order_unit_price = $product->product_sale_price; 
-			$order->order_sale_price = number_format($product->product_sale_price * (1+($product->gst->tax_rate/100)),2);
-			$order->order_gst = number_format($product->product_sale_price * (($product->gst->tax_rate/100)),2);
+			if ($product->gst) {
+				$order->order_sale_price = number_format($product->product_sale_price * (1+($product->gst->tax_rate/100)),2);
+				$order->order_gst_unit = number_format($product->product_sale_price * (($product->gst->tax_rate/100)),2);
+			} else {
+				$order->order_sale_price = number_format($product->product_sale_price,2);
+			}	
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
-			$order->order_gst_total = $order->order_gst*$order->order_quantity_request;
 			$order->location_code = $product->location_code;
 			$order->save();
 
@@ -318,17 +321,18 @@ class OrderController extends Controller
 							$order_drug->period_code = $drug_prescription->period_code;
 							$order_drug->drug_prn = $drug_prescription->drug_prn;
 							$order_drug->drug_meal = $drug_prescription->drug_meal;
-
 							$order->order_quantity_request = $drug_prescription->drug_total_unit;
 							$order->order_quantity_supply = $drug_prescription->drug_total_unit;
 							$order->order_description = $drug_prescription->drug_description;
+
+							if ($order->order_quantity_request==0) {
+									$order->order_quantity_request = 1;
+									$order->order_quantity_supply = 1;
+							}
 							$order->save();
 					}
 					$order_drug->save();
-					Log::info("----");
-					Log::info($order->order_gst);
 					$order->order_total = $order->order_sale_price*$order->order_quantity_request;
-					$order->order_gst_total = $order->order_gst*$order->order_quantity_request;
 					$order->save();
 					Log::info($order);
 			}

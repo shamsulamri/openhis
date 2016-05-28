@@ -3,13 +3,13 @@
 @section('content')
 @include('patients.id')
 <h1>
-Edit Bill
+New Deposit
 </h1>
 @include('common.errors')
 <br>
-{{ Form::model($bill, ['route'=>['bills.update',$bill->bill_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
+{{ Form::model($deposit, ['url'=>'deposits', 'class'=>'form-horizontal']) }} 
     
-	@include('bills.bill')
+	@include('deposits.deposit')
 {{ Form::close() }}
 
 @endsection

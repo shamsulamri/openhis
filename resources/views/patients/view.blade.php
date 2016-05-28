@@ -1,72 +1,55 @@
 @extends('layouts.app')
 
 @section('content')
+@include('patients.id')
+<h1>Options</h1>
+<br>
+<h4>
 
-<div class='panel panel-default'>
-	<div class='panel-heading'>
-		<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
-		<h6>{{ $patient->patient_mrn }}</h6>
-		<h6>
-		<p class='text-danger'>
-		<strong>Warning !</strong> Outstanding bill
-		</p>
-		</h6>
-	</div>
-	<div class='panel-body'>
-		<ul class='nav nav-pills nav-justified'>
-			<li role='presentation'
-				@if ($patientOption=='encounter')
-					class='active'
-				@endif
-			>
+@if ($encounter->discharge_id==0) 
 				<a href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id ) }}'>
+@endif
 					<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
 						New Encounter
+@if ($encounter->discharge_id==0) 
 				</a>
-			</li>
-			<li role='presentation'
-				@if ($patientOption=='demography')
-					class='active'
-				@endif
-			>
+@endif
+				<br>
+				<br>
 				<a href='{{ URL::to('patients/'. $patient->patient_id . '/edit?tab=demography') }}'>
 					<span class='glyphicon glyphicon-user' aria-hidden='true'></span>
 						Edit Demography		
 				</a>
-			</li>
-			<li role='presentation'
-				@if ($patientOption=='appointment')
-					class='active'
-				@endif
-			>
+				<br>
+				<br>
 				<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
 					<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span>
 						Book Appointment
 				</a>
-			</li>
-			<li role='presentation'
-				@if ($patientOption=='bed')
-					class='active'
-				@endif
-			>
+				<br>
+				<br>
 				<a href='{{ URL::to('bed_bookings/create/'. $patient->patient_id) }}'>
 					<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
 						Book Bed
 				</a>
-			</li>
-			<li role='presentation'
-				@if ($patientOption=='dependants')
-					class='active'
-				@endif
-			>
+				<br>
+				<br>
 				<a href='{{ URL::to('patients/dependants/'. $patient->patient_id . '?tab=dependants') }}'>
 					<span class='glyphicon glyphicon-heart' aria-hidden='true'></span>
 						Define Dependants
 				</a>
-			</li>
-		</ul>
-	</div>
-</div>
+				<br>
+				<br>
+@if ($encounter->discharge_id>0) 
+				<a href='{{ URL::to('deposits/index/'. $encounter->encounter_id ) }}'>
+@endif
+					<span class='glyphicon glyphicon-usd' aria-hidden='true'></span>
+						Deposit Collection						
+@if ($encounter->discharge_id>0) 
+				</a>
+@endif
+</h4>
+<!--
 @if (count($patients)>0)
 <h1>Dependants</h1>
 
@@ -103,4 +86,5 @@
 </tbody>
 </table>
 @endif
+-->
 @endsection

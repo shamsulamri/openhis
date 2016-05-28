@@ -33,6 +33,22 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/options', function() {
 				return view('options.option');
 		});
+		
+		Route::resource('deposits', 'DepositController');
+		Route::get('/deposits/id/{id}', 'DepositController@searchById');
+		Route::post('/deposit/search', 'DepositController@search');
+		Route::get('/deposit/search', 'DepositController@search');
+		Route::get('/deposits/delete/{id}', 'DepositController@delete');
+		
+		
+		Route::resource('deposits', 'DepositController',['except'=>['create','index']]);
+		Route::get('/deposits/index/{id}', 'DepositController@index');
+		Route::get('/deposits/create/{id}', 'DepositController@create');
+		Route::get('/deposits/id/{id}', 'DepositController@searchById');
+		Route::post('/deposit/search', 'DepositController@search');
+		Route::get('/deposit/search', 'DepositController@search');
+		Route::get('/deposits/delete/{id}', 'DepositController@delete');
+		
 		Route::resource('patient_billings', 'PatientBillingController');
 		Route::get('/patient_billings/id/{id}', 'PatientBillingController@searchById');
 		Route::post('/patient_billing/search', 'PatientBillingController@search');
@@ -62,10 +78,10 @@ Route::group(['middleware' => 'web'], function () {
 		Route::resource('bills', 'BillController',['except'=>['index','show']]);
 		Route::get('/bills/{id}', 'BillController@index');
 		Route::get('/bills/id/{id}', 'BillController@searchById');
-		Route::post('/bill/search', 'BillController@search');
-		Route::get('/bill/search', 'BillController@search');
 		Route::get('/bills/delete/{id}', 'BillController@delete');
 		Route::get('/bills/generate/{id}', 'BillController@generate');
+		Route::get('/bills/reload/{id}', 'BillController@reload');
+		Route::get('/bills/close/{id}', 'BillController@close');
 
 		Route::resource('patient_dependants', 'PatientDependantController');
 		Route::get('/patient_dependants/id/{id}', 'PatientDependantController@searchById');
@@ -457,6 +473,7 @@ Route::group(['middleware' => 'web'], function () {
 		Route::post('/patient/search', 'PatientController@search');
 		Route::get('/patient/search', 'PatientController@search');
 		Route::get('/patients/delete/{id}', 'PatientController@delete');
+		Route::get('/patients/encounter/{id}', 'PatientController@hasActiveEncounter');
 		
 		Route::resource('races', 'RaceController');
 		Route::get('/races/id/{race_code}', 'RaceController@searchById');

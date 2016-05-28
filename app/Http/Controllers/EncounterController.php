@@ -30,10 +30,11 @@ class EncounterController extends Controller
 
 	public function index()
 	{
-			$encounters = DB::table('encounters')
-					->select('encounter_id','patient_mrn','encounters.encounter_code', 'patient_name', 'encounters.patient_id', 'encounter_name','encounters.created_at')
-					->join('patients','patients.patient_id','=','encounters.patient_id')
-					->join('ref_encounter_types', 'ref_encounter_types.encounter_code','=','encounters.encounter_code')
+			$encounters = DB::table('encounters as a')
+					->select('a.encounter_id','patient_mrn','a.encounter_code', 'patient_name', 'a.patient_id', 'encounter_name','a.created_at', 'discharge_id')
+					->join('patients as c','c.patient_id','=','a.patient_id')
+					->join('ref_encounter_types as d', 'd.encounter_code','=','a.encounter_code')
+					->leftJoin('discharges as b', 'b.encounter_id','=', 'a.encounter_id')
 					->orderBy('created_at','desc')
 					->paginate($this->paginateValue);
 
