@@ -7,9 +7,9 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class PatientBilling extends Model
+class BillItem extends Model
 {
-	protected $table = 'patient_billings';
+	protected $table = 'bill_items';
 	protected $fillable = [
 				'encounter_id',
 				'order_id',

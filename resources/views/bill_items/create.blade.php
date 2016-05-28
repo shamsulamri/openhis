@@ -8,7 +8,7 @@ New Bill
 <br>
 {{ Form::model($bill, ['url'=>'bills', 'class'=>'form-horizontal']) }} 
     
-	@include('bills.bill')
+	@include('bill_items.bill')
 {{ Form::close() }}
 
 @endsection

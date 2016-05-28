@@ -6,17 +6,13 @@
 <br>
 <h4>
 
-@if ($encounter->discharge_id==0) 
 				<a href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id ) }}'>
-@endif
 					<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
 						New Encounter
-@if ($encounter->discharge_id==0) 
 				</a>
-@endif
 				<br>
 				<br>
-				<a href='{{ URL::to('patients/'. $patient->patient_id . '/edit?tab=demography') }}'>
+				<a href='{{ URL::to('patients/'. $patient->patient_id) }}'>
 					<span class='glyphicon glyphicon-user' aria-hidden='true'></span>
 						Edit Demography		
 				</a>
@@ -34,19 +30,21 @@
 				</a>
 				<br>
 				<br>
-				<a href='{{ URL::to('patients/dependants/'. $patient->patient_id . '?tab=dependants') }}'>
+				<a href='{{ URL::to('patients/dependants/'. $patient->patient_id) }}'>
 					<span class='glyphicon glyphicon-heart' aria-hidden='true'></span>
 						Define Dependants
 				</a>
 				<br>
 				<br>
-@if ($encounter->discharge_id>0) 
+@if ($encounter)
 				<a href='{{ URL::to('deposits/index/'. $encounter->encounter_id ) }}'>
-@endif
 					<span class='glyphicon glyphicon-usd' aria-hidden='true'></span>
 						Deposit Collection						
-@if ($encounter->discharge_id>0) 
 				</a>
+@else
+
+					<span class='glyphicon glyphicon-usd' aria-hidden='true'></span>
+						Deposit Collection						
 @endif
 </h4>
 <!--

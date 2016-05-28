@@ -6,15 +6,16 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\PatientBilling as Bill;
+use App\BillItem as Bill;
 use Log;
 use DB;
 use Session;
 use App\Product;
 use App\QueueLocation as Location;
 use App\Encounter;
+use App\DojoUtility;
 
-class BillController extends Controller
+class BillItemController extends Controller
 {
 	public $paginateValue=1000;
 
@@ -26,7 +27,7 @@ class BillController extends Controller
 	public function generate($id) 
 	{
 
-			$bill_existing = DB::table('patient_billings')
+			$bill_existing = DB::table('bill_items')
 								->where('encounter_id','=',$id);
 								
 			$bill_existing->delete();
@@ -35,23 +36,26 @@ class BillController extends Controller
 
 	public function bedBills($id) {
 			$beds = DB::table('bed_movements as a')
+						->selectRaw('*, datediff(now(),move_date) as los')
 						->leftjoin('products as b', 'move_to','=', 'product_code')
 						->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 						->where('encounter_id','=',$id)
 						->get();
 
 			foreach ($beds as $bed) {
+					$bed_los = $bed->los;
+					if ($bed_los==0) $bed_los=1;
 					$bill = new Bill();
 					$bill->encounter_id = $id;
 					$bill->order_id = 0;
 					$bill->product_code = $bed->product_code;
 					$bill->tax_code = $bed->tax_code;
 					$bill->tax_rate = $bed->tax_rate;
-					$bill->bill_quantity = 1;
+					$bill->bill_quantity = $bed_los;
 					$bill->bill_unit_price = $bed->product_sale_price;
 					$bill->bill_total = $bill->bill_unit_price*$bill->bill_quantity;
 					$bill->bill_gst_unit = $bed->product_sale_price*($bed->tax_rate/100);
-					Log::info($bill);
+					Log::info('->'.$bill);
 					try {
 							$bill->save();
 					} catch (\Exception $e) {
@@ -63,7 +67,7 @@ class BillController extends Controller
 	public function compileBill($id) 
 	{
 
-			$bill_existing = DB::table('patient_billings')
+			$bill_existing = DB::table('bill_items')
 								->where('encounter_id','=',$id);
 			
 			$fields = 'encounter_id, order_id,b.tax_code, tax_rate, order_discount, a.product_code, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price, order_gst_unit';
@@ -95,7 +99,7 @@ class BillController extends Controller
 			}
 
 			$this->bedBills($id);
-			$bills = DB::table('patient_billings as a')
+			$bills = DB::table('bill_items as a')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->where('encounter_id','=', $id)
@@ -109,7 +113,7 @@ class BillController extends Controller
 	{
 			$encounter = Encounter::find($id);
 
-			$bills = DB::table('patient_billings as a')
+			$bills = DB::table('bill_items as a')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->where('encounter_id','=', $id)
@@ -120,11 +124,11 @@ class BillController extends Controller
 				$bills=$this->compileBill($id);
 			}
 
-			$bill_grand_total = DB::table('patient_billings')
+			$bill_grand_total = DB::table('bill_items')
 					->where('encounter_id','=', $id)
 					->sum('bill_total');
 
-			$gst_total = DB::table('patient_billings as a')
+			$gst_total = DB::table('bill_items as a')
 					->selectRaw('sum(bill_quantity*bill_gst_unit) as gst_sum, sum(bill_quantity*(bill_unit_price-bill_gst_unit)) as gst_amount, tax_code')
 					->where('encounter_id','=', $id)
 					->groupBy('tax_code')
@@ -143,7 +147,7 @@ class BillController extends Controller
 					->where('encounter_id','=', $id)
 					->sum('deposit_amount');
 
-			return view('bills.index', [
+			return view('bill_items.index', [
 					'bills'=>$bills,
 					'bill_grand_total'=>$bill_grand_total,
 					'patient' => $encounter->patient,
@@ -159,7 +163,7 @@ class BillController extends Controller
 	public function create()
 	{
 			$bill = new Bill();
-			return view('bills.create', [
+			return view('bill_items.create', [
 					'bill' => $bill,
 					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
@@ -187,7 +191,7 @@ class BillController extends Controller
 	public function edit($id) 
 	{
 			$bill = Bill::findOrFail($id);
-			return view('bills.edit', [
+			return view('bill_items.edit', [
 					'bill'=>$bill,
 					'product' => Product::find($bill->product_code),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
@@ -225,7 +229,7 @@ class BillController extends Controller
 				Session::flash('message', 'Record successfully updated.');
 				return redirect('/bills/'.$bill->encounter_id);
 			} else {
-				return view('bills.edit', [
+				return view('bill_items.edit', [
 						'bill'=>$bill,
 						'patient'=>$bill->encounter->patient,
 						'product' => Product::find($bill->product_code),
@@ -239,7 +243,7 @@ class BillController extends Controller
 	public function delete($id)
 	{
 		$bill = Bill::find($id);
-		return view('bills.destroy', [
+		return view('bill_items.destroy', [
 			'bill'=>$bill,
 			'patient'=>$bill->encounter->patient,
 			]);
@@ -257,7 +261,7 @@ class BillController extends Controller
 	public function reload($id)
 	{
 		$bill = Bill::where('encounter_id','=',$id)->first();
-		return view('bills.reload', [
+		return view('bill_items.reload', [
 			'bill'=>$bill,
 			'patient'=>$bill->encounter->patient,
 			'encounter'=>$bill->encounter,
@@ -273,7 +277,7 @@ class BillController extends Controller
 					->orderBy('encounter_id')
 					->paginate($this->paginateValue);
 
-			return view('bills.index', [
+			return view('bill_items.index', [
 					'bills'=>$bills,
 					'search'=>$request->search
 					]);
@@ -285,7 +289,7 @@ class BillController extends Controller
 					->where('order_id','=',$id)
 					->paginate($this->paginateValue);
 
-			return view('bills.index', [
+			return view('bill_items.index', [
 					'bills'=>$bills
 			]);
 	}

@@ -75,13 +75,13 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/payment_method/search', 'PaymentMethodController@search');
 		Route::get('/payment_methods/delete/{id}', 'PaymentMethodController@delete');
 		
-		Route::resource('bills', 'BillController',['except'=>['index','show']]);
-		Route::get('/bills/{id}', 'BillController@index');
-		Route::get('/bills/id/{id}', 'BillController@searchById');
-		Route::get('/bills/delete/{id}', 'BillController@delete');
-		Route::get('/bills/generate/{id}', 'BillController@generate');
-		Route::get('/bills/reload/{id}', 'BillController@reload');
-		Route::get('/bills/close/{id}', 'BillController@close');
+		Route::resource('bills', 'BillItemController',['except'=>['index','show']]);
+		Route::get('/bills/{id}', 'BillItemController@index');
+		Route::get('/bills/id/{id}', 'BillItemController@searchById');
+		Route::get('/bills/delete/{id}', 'BillItemController@delete');
+		Route::get('/bills/generate/{id}', 'BillItemController@generate');
+		Route::get('/bills/reload/{id}', 'BillItemController@reload');
+		Route::get('/bills/close/{id}', 'BillItemController@close');
 
 		Route::resource('patient_dependants', 'PatientDependantController');
 		Route::get('/patient_dependants/id/{id}', 'PatientDependantController@searchById');

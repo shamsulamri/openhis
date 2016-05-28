@@ -9,7 +9,7 @@ Edit Bill
 <br>
 {{ Form::model($bill, ['route'=>['bills.update',$bill->bill_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
-	@include('bills.bill')
+	@include('bill_items.bill')
 {{ Form::close() }}
 
 @endsection

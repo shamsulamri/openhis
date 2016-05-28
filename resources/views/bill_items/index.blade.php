@@ -167,6 +167,11 @@ Interim Bill
 	</tr>
 </tbody>
 </table>
+@else
+	No payment collected.
+	<br>
+	<br>
+@endif
 <table width='100%'>
 	<tr>
 			<td>
@@ -214,9 +219,6 @@ Interim Bill
 	</tr>
 	@endif
 </table>
-@else
-	No payment collected.
-@endif
 </div>
 </div>
 @endsection
