@@ -12,7 +12,7 @@
 				</a>
 				<br>
 				<br>
-				<a href='{{ URL::to('patients/'. $patient->patient_id) }}'>
+				<a href='{{ URL::to('patients/'. $patient->patient_id).'/edit' }}'>
 					<span class='glyphicon glyphicon-user' aria-hidden='true'></span>
 						Edit Demography		
 				</a>
@@ -42,10 +42,15 @@
 						Deposit Collection						
 				</a>
 @else
-
 					<span class='glyphicon glyphicon-usd' aria-hidden='true'></span>
 						Deposit Collection						
 @endif
+				<br>
+				<br>
+				<a href='{{ URL::to('payments/'. $patient->patient_id) }}'>
+					<span class='glyphicon glyphicon-book' aria-hidden='true'></span>
+						Payment List
+				</a>
 </h4>
 <!--
 @if (count($patients)>0)

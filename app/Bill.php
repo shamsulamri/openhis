@@ -16,6 +16,7 @@ class Bill extends Model
 				'bill_payment_total',
 				'bill_deposit_total',
 				'bill_outstanding',
+				'user_id',
 				'bill_change'];
 	
 

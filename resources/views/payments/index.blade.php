@@ -1,26 +1,24 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Payment Index</h1>
-<br>
-<form action='/payment/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-</form>
-<br>
+@include('patients.id')
+<h1>Payment List</h1>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <br>
-<a href='/payments/create' class='btn btn-primary'>Create</a>
+<a href='/patients/{{ $patient_id }}' class='btn btn-default'>Back</a>
+<a href='/payments/create/{{ $patient_id }}' class='btn btn-primary'>Create</a>
 <br>
 <br>
 @if ($payments->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>encounter_id</th>
-    <th>payment_id</th> 
+    <th>Encounter Id</th>
+    <th>Encounter Date</th>
+    <th>Amount</th> 
+    <th>Description</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -32,8 +30,14 @@
 						{{$payment->encounter_id}}
 					</a>
 			</td>
+			<td width='200'>
+					{{ date('d F Y, H:i', strtotime($payment->encounter_date)) }}
+			</td>
 			<td>
-					{{$payment->payment_id}}
+					{{$payment->payment_amount}}
+			</td>
+			<td>
+					{{$payment->payment_description}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('payments/delete/'. $payment->payment_id) }}'>Delete</a>

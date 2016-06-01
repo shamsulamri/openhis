@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\BillItem as Bill;
+use App\BillItem;
+use App\Bill;
 use Log;
 use DB;
 use Session;
@@ -31,7 +32,7 @@ class BillItemController extends Controller
 								->where('encounter_id','=',$id);
 								
 			$bill_existing->delete();
-			return redirect('/bills/'.$id);
+			return redirect('/bill_items/'.$id);
 	}
 
 	public function bedBills($id) {
@@ -45,19 +46,18 @@ class BillItemController extends Controller
 			foreach ($beds as $bed) {
 					$bed_los = $bed->los;
 					if ($bed_los==0) $bed_los=1;
-					$bill = new Bill();
-					$bill->encounter_id = $id;
-					$bill->order_id = 0;
-					$bill->product_code = $bed->product_code;
-					$bill->tax_code = $bed->tax_code;
-					$bill->tax_rate = $bed->tax_rate;
-					$bill->bill_quantity = $bed_los;
-					$bill->bill_unit_price = $bed->product_sale_price;
-					$bill->bill_total = $bill->bill_unit_price*$bill->bill_quantity;
-					$bill->bill_gst_unit = $bed->product_sale_price*($bed->tax_rate/100);
-					Log::info('->'.$bill);
+					$item = new BillItem();
+					$item->encounter_id = $id;
+					$item->order_id = 0;
+					$item->product_code = $bed->product_code;
+					$item->tax_code = $bed->tax_code;
+					$item->tax_rate = $bed->tax_rate;
+					$item->bill_quantity = $bed_los;
+					$item->bill_unit_price = $bed->product_sale_price;
+					$item->bill_total = $item->bill_unit_price*$item->bill_quantity;
+					$item->bill_gst_unit = $bed->product_sale_price*($bed->tax_rate/100);
 					try {
-							$bill->save();
+							$item->save();
 					} catch (\Exception $e) {
 							\Log::info($e->getMessage());
 					}
@@ -71,7 +71,7 @@ class BillItemController extends Controller
 								->where('encounter_id','=',$id);
 			
 			$fields = 'encounter_id, order_id,b.tax_code, tax_rate, order_discount, a.product_code, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price, order_gst_unit';
-			$bills = DB::table('orders as a')
+			$orders = DB::table('orders as a')
 					->selectRaw($fields)
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
@@ -80,19 +80,19 @@ class BillItemController extends Controller
 					->orderBy('encounter_id')
 					->get();
 
-			foreach ($bills as $bill) {
-					$patientBill = new Bill();
-					$patientBill->encounter_id = $bill->encounter_id;
-					$patientBill->order_id = $bill->order_id;
-					$patientBill->product_code = $bill->product_code;
-					$patientBill->tax_code = $bill->tax_code;
-					$patientBill->tax_rate = $bill->tax_rate;
-					$patientBill->bill_quantity = $bill->order_quantity_supply;
-					$patientBill->bill_unit_price = $bill->order_sale_price;
-					$patientBill->bill_total = $bill->order_total;
-					$patientBill->bill_gst_unit = $bill->order_gst_unit;
+			foreach ($orders as $order) {
+					$item = new BillItem();
+					$item->encounter_id = $order->encounter_id;
+					$item->order_id = $order->order_id;
+					$item->product_code = $order->product_code;
+					$item->tax_code = $order->tax_code;
+					$item->tax_rate = $order->tax_rate;
+					$item->bill_quantity = $order->order_quantity_supply;
+					$item->bill_unit_price = $order->order_sale_price;
+					$item->bill_total = $order->order_total;
+					$item->bill_gst_unit = $order->order_gst_unit;
 					try {
-							$patientBill->save();
+							$item->save();
 					} catch (\Exception $e) {
 							\Log::info($e->getMessage());
 					}
@@ -146,9 +146,28 @@ class BillItemController extends Controller
 			$deposit_total = DB::table('deposits')
 					->where('encounter_id','=', $id)
 					->sum('deposit_amount');
+			
+			$bill_change=0;
+			$bill_outstanding=0;
+			
+			$balance = $payment_total+$deposit_total-$bill_grand_total;
+
+			if ($balance<0) {
+					$bill_outstanding = $balance;
+			}
+
+			if ($balance>0) {
+					$bill_change = $balance;
+			}
+
+			$billPost = Bill::where('encounter_id','=',$id)->get();
+			
+			$billPosted=False;
+			if (count($billPost)>0) $billPosted=True;
 
 			return view('bill_items.index', [
 					'bills'=>$bills,
+					'billPosted'=>$billPosted,
 					'bill_grand_total'=>$bill_grand_total,
 					'patient' => $encounter->patient,
 					'payments' => $payments,
@@ -157,12 +176,14 @@ class BillItemController extends Controller
 					'encounter' => $encounter,
 					'encounter_id' => $id,
 					'deposit_total' => $deposit_total,
+					'bill_change' => $bill_change,
+					'bill_outstanding' => $bill_outstanding,
 			]);
 	}
 
 	public function create()
 	{
-			$bill = new Bill();
+			$bill = new BillItem();
 			return view('bill_items.create', [
 					'bill' => $bill,
 					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
@@ -172,7 +193,7 @@ class BillItemController extends Controller
 
 	public function store(Request $request) 
 	{
-			$bill = new Bill();
+			$bill = new BillItem();
 			$valid = $bill->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
@@ -180,9 +201,9 @@ class BillItemController extends Controller
 					$bill->order_id = $request->order_id;
 					$bill->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/bills/id/'.$bill->order_id);
+					return redirect('/bill_items/id/'.$bill->order_id);
 			} else {
-					return redirect('/bills/create')
+					return redirect('/bill_items/create')
 							->withErrors($valid)
 							->withInput();
 			}
@@ -190,7 +211,7 @@ class BillItemController extends Controller
 
 	public function edit($id) 
 	{
-			$bill = Bill::findOrFail($id);
+			$bill = BillItem::findOrFail($id);
 			return view('bill_items.edit', [
 					'bill'=>$bill,
 					'product' => Product::find($bill->product_code),
@@ -201,7 +222,7 @@ class BillItemController extends Controller
 
 	public function update(Request $request, $id) 
 	{
-			$bill = Bill::findOrFail($id);
+			$bill = BillItem::findOrFail($id);
 			$bill->fill($request->input());
 
 			$product = Product::find($bill->product_code);
@@ -227,7 +248,7 @@ class BillItemController extends Controller
 			if ($valid->passes()) {
 				$bill->save();
 				Session::flash('message', 'Record successfully updated.');
-				return redirect('/bills/'.$bill->encounter_id);
+				return redirect('/bill_items/'.$bill->encounter_id);
 			} else {
 				return view('bill_items.edit', [
 						'bill'=>$bill,
@@ -242,7 +263,7 @@ class BillItemController extends Controller
 	
 	public function delete($id)
 	{
-		$bill = Bill::find($id);
+		$bill = BillItem::find($id);
 		return view('bill_items.destroy', [
 			'bill'=>$bill,
 			'patient'=>$bill->encounter->patient,
@@ -252,15 +273,15 @@ class BillItemController extends Controller
 
 	public function destroy($id)
 	{	
-		$bill = Bill::find($id);
-			Bill::find($id)->delete();
+		$bill = BillItem::find($id);
+			BillItem::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/bills/'.$bill->encounter_id);
+			return redirect('/bill_items/'.$bill->encounter_id);
 	}
 	
 	public function reload($id)
 	{
-		$bill = Bill::where('encounter_id','=',$id)->first();
+		$bill = BillItem::where('encounter_id','=',$id)->first();
 		return view('bill_items.reload', [
 			'bill'=>$bill,
 			'patient'=>$bill->encounter->patient,

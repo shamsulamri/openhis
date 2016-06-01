@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Payment;
 use App\PaymentMethod;
+use App\Patient;
 use Log;
 use DB;
 use Session;
@@ -22,24 +23,42 @@ class PaymentController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index($id)
 	{
-			$payments = DB::table('payments')
-					->orderBy('encounter_id')
+			$payments = DB::table('payments as a')
+					->select('payment_id', 'a.encounter_id', 'c.created_at as encounter_date', 'payment_amount', 'payment_description')
+					->leftJoin('patients as b', 'b.patient_id', '=',  'a.patient_id')
+					->leftJoin('encounters as c', 'c.encounter_id','=', 'a.encounter_id')
+					->where('a.patient_id','=', $id)
+					->orderBy('a.encounter_id')
 					->paginate($this->paginateValue);
+
+			$patient = Patient::find($id);
 			return view('payments.index', [
+					'patient_id'=>$id,
+					'patient'=>$patient,
 					'payments'=>$payments,
 			]);
 	}
 
-	public function create($id)
+	public function create($patient_id=null, $encounter_id=0 )
 	{
 			$payment = new Payment();
-			$payment->encounter_id = $id;
+			$payment->encounter_id = $encounter_id;
+
+			$patient = null;
+			if ($patient_id) {
+					$patient = Patient::find($patient_id);
+			} else {
+					$patient = $payment->encounter->patient;
+			}
+
+			$payment->patient_id = $patient->patient_id;
+
 			return view('payments.create', [
 					'payment' => $payment,
 					'payment_methods' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
-					'patient' => $payment->encounter->patient,
+					'patient' => $patient,
 					]);
 	}
 
@@ -53,7 +72,11 @@ class PaymentController extends Controller
 					$payment->user_id = Auth::user()->id;
 					$payment->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/bills/'.$payment->encounter_id);
+					if ($payment->encounter_id>0) {
+							return redirect('/bill_items/'.$payment->encounter_id);
+					} else {
+							return redirect('/payments/'.$payment->patient_id);
+					}
 			} else {
 					return redirect('/payments/create')
 							->withErrors($valid)
@@ -64,10 +87,11 @@ class PaymentController extends Controller
 	public function edit($id) 
 	{
 			$payment = Payment::findOrFail($id);
+			$patient = Patient::find($payment->patient_id);
 			return view('payments.edit', [
 					'payment'=>$payment,
 					'payment_methods' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
-					'patient' => $payment->encounter->patient,
+					'patient' => $patient,
 					]);
 	}
 
@@ -82,7 +106,11 @@ class PaymentController extends Controller
 			if ($valid->passes()) {
 					$payment->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/bills/'.$payment->encounter_id);
+					if ($payment->encounter_id>0) {
+							return redirect('/bill_items/'.$payment->encounter_id);
+					} else {
+							return redirect('/payments/'.$payment->patient_id);
+					}
 			} else {
 					return view('payments.edit', [
 							'payment'=>$payment,
@@ -96,7 +124,8 @@ class PaymentController extends Controller
 	{
 		$payment = Payment::findOrFail($id);
 		return view('payments.destroy', [
-			'payment'=>$payment
+			'payment'=>$payment,
+			'patient'=>$payment->encounter->patient,
 			]);
 
 	}
@@ -105,7 +134,11 @@ class PaymentController extends Controller
 			$payment = Payment::find($id);
 			Payment::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/bills/'.$payment->encounter_id);
+			if ($payment->encounter_id>0) {
+					return redirect('/bill_items/'.$payment->encounter_id);
+			} else {
+					return redirect('/payments/'.$payment->patient_id);
+			}
 	}
 	
 	public function search(Request $request)

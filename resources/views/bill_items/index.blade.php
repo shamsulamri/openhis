@@ -13,12 +13,10 @@ Interim Bill
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-@if ($encounter->discharge)
+@if (!$billPosted)
+<a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
 <br>
-<a href='/bills/close/{{ $encounter_id }}' class='btn btn-default'>Financial Discharge</a>
 @endif
-<a href='/bills/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
-<br>
 <br>
 <table class="table table-hover">
  <thead>
@@ -37,9 +35,13 @@ Interim Bill
 		@foreach ($bills as $bill)
 			<tr>
 					<td>
-							<a href='{{ URL::to('bills/'. $bill->bill_id . '/edit') }}'>
+							@if (!$billPosted)
+							<a href='{{ URL::to('bill_items/'. $bill->bill_id . '/edit') }}'>
+							@endif
 							{{$bill->product_name}}
+							@if (!$billPosted)
 							</a>
+							@endif
 					</td>
 					<td align='right' width='100'>
 							{{ $bill->tax_code }}
@@ -68,7 +70,9 @@ Interim Bill
 							{{ number_format($bill->bill_total,2) }}
 					</td>
 					<td align='right' width='80'>
-							<a class='btn btn-danger btn-xs' href='{{ URL::to('bills/delete/'. $bill->bill_id) }}'>Delete</a>
+						@if (!$billPosted)
+							<a class='btn btn-danger btn-xs' href='{{ URL::to('bill_items/delete/'. $bill->bill_id) }}'>Delete</a>
+						@endif
 					</td>
 			</tr>
 		@endforeach
@@ -124,10 +128,11 @@ Interim Bill
 	@endif
 @endif
 <!-- Payments -->
-<div class='panel panel-default'>
-	<div class='panel-heading'>
+<div class='well'>
 <h4>Payments
-<a href='/payments/create/{{ $bill->encounter_id }}' class='btn btn-primary pull-right'>New Payment</a>
+@if (!$billPosted)
+<a href='/payments/create/{{ $patient->patient_id }}/{{ $bill->encounter_id }}' class='btn btn-primary pull-right'>New Payment</a>
+@endif
 </h4>
 @if ($payments->total()>0)
 <br>
@@ -136,9 +141,14 @@ Interim Bill
 @foreach ($payments as $payment)
 	<tr>
 			<td>
+					
+					@if (!$billPosted)
 					<a href='{{ URL::to('payments/'. $payment->payment_id . '/edit') }}'>
+					@endif	
 							{{$payment->payment_name}}
+					@if (!$billPosted)
 					</a>
+					@endif
 			</td>
 			<td>
 					{{ $payment->payment_description }}
@@ -147,7 +157,9 @@ Interim Bill
 					{{ number_format($payment->payment_amount,2) }}
 			</td>
 			<td align='right' width='80'>
+				@if (!$billPosted)
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('payments/delete/'. $payment->payment_id) }}'>Delete</a>
+				@endif
 			</td>
 	</tr>
 @endforeach
@@ -220,5 +232,38 @@ Interim Bill
 	@endif
 </table>
 </div>
+@if (!$billPosted)
+{{ Form::model($bill, ['id'=>'post_form','url'=>'bills', 'class'=>'form-horizontal']) }} 
+			<input type='checkbox' id='post_checkbox' value='1' onchange='javascript:enablePostButton()'>
+			<strong>I have confirmed that all the information above are correct. Warning this process cannot be reversed.</strong>
+            {{ Form::hidden('encounter_id', null, ['id'=>'encounter_id','class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::hidden('bill_grand_total', $bill_grand_total, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::hidden('bill_payment_total', $payment_total, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::hidden('bill_deposit_total', $deposit_total, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::hidden('bill_outstanding', $bill_outstanding, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::hidden('bill_change', $bill_change, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::submit('Post Payment', ['class'=>'btn btn-primary','id'=>'button_post']) }}
+{{ Form::close() }}
+@else
+<div class='alert alert-success'>
+This bill has been posted.
 </div>
+@endif
+<script>
+	function disablePostButton() {
+			postForm = document.getElementById('post_form');
+			postForm.button_post.disabled=true;
+	}
+	function enablePostButton() {
+			postForm = document.getElementById('post_form');
+			if (postForm.post_checkbox.checked==true) {
+					postForm.button_post.disabled=false;
+			} else {
+					postForm.button_post.disabled=true;
+			}
+	}
+	disablePostButton();
+</script>
+	
+
 @endsection

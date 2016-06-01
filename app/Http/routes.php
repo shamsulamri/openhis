@@ -33,6 +33,12 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/options', function() {
 				return view('options.option');
 		});
+		Route::resource('bills', 'BillController');
+		Route::get('/bills/id/{id}', 'BillController@searchById');
+		Route::post('/bill/search', 'BillController@search');
+		Route::get('/bill/search', 'BillController@search');
+		Route::get('/bills/delete/{id}', 'BillController@delete');
+		
 		
 		Route::resource('deposits', 'DepositController');
 		Route::get('/deposits/id/{id}', 'DepositController@searchById');
@@ -62,8 +68,9 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/tax_codes/delete/{id}', 'TaxCodeController@delete');
 		
 		
-		Route::resource('payments', 'PaymentController',['except'=>['create']]);
-		Route::get('/payments/create/{id}', 'PaymentController@create');
+		Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
+		Route::get('/payments/{id}', 'PaymentController@index');
+		Route::get('/payments/create/{patient_id?}/{encounter_id?}', 'PaymentController@create');
 		Route::get('/payments/id/{id}', 'PaymentController@searchById');
 		Route::post('/payment/search', 'PaymentController@search');
 		Route::get('/payment/search', 'PaymentController@search');
@@ -75,13 +82,13 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/payment_method/search', 'PaymentMethodController@search');
 		Route::get('/payment_methods/delete/{id}', 'PaymentMethodController@delete');
 		
-		Route::resource('bills', 'BillItemController',['except'=>['index','show']]);
-		Route::get('/bills/{id}', 'BillItemController@index');
-		Route::get('/bills/id/{id}', 'BillItemController@searchById');
-		Route::get('/bills/delete/{id}', 'BillItemController@delete');
-		Route::get('/bills/generate/{id}', 'BillItemController@generate');
-		Route::get('/bills/reload/{id}', 'BillItemController@reload');
-		Route::get('/bills/close/{id}', 'BillItemController@close');
+		Route::resource('bill_items', 'BillItemController',['except'=>['index','show']]);
+		Route::get('/bill_items/{id}', 'BillItemController@index');
+		Route::get('/bill_items/id/{id}', 'BillItemController@searchById');
+		Route::get('/bill_items/delete/{id}', 'BillItemController@delete');
+		Route::get('/bill_items/generate/{id}', 'BillItemController@generate');
+		Route::get('/bill_items/reload/{id}', 'BillItemController@reload');
+		Route::get('/bill_items/close/{id}', 'BillItemController@close');
 
 		Route::resource('patient_dependants', 'PatientDependantController');
 		Route::get('/patient_dependants/id/{id}', 'PatientDependantController@searchById');

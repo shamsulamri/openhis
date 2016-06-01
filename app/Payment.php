@@ -15,6 +15,7 @@ class Payment extends Model
 				'payment_amount',
 				'payment_code',
 				'user_id',
+				'patient_id',
 				'payment_description'];
 	
     protected $guarded = ['payment_id'];
