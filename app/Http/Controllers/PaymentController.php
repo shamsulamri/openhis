@@ -26,9 +26,10 @@ class PaymentController extends Controller
 	public function index($id)
 	{
 			$payments = DB::table('payments as a')
-					->select('payment_id', 'a.encounter_id', 'c.created_at as encounter_date', 'payment_amount', 'payment_description')
+					->select('payment_id', 'a.encounter_id', 'a.created_at', 'payment_amount','payment_name', 'payment_description')
 					->leftJoin('patients as b', 'b.patient_id', '=',  'a.patient_id')
 					->leftJoin('encounters as c', 'c.encounter_id','=', 'a.encounter_id')
+					->leftJoin('payment_methods as d', 'd.payment_code', '=', 'a.payment_code')
 					->where('a.patient_id','=', $id)
 					->orderBy('a.encounter_id')
 					->paginate($this->paginateValue);

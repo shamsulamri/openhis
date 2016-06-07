@@ -15,9 +15,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Encounter Id</th>
-    <th>Encounter Date</th>
+    <th>Date</th>
     <th>Amount</th> 
+    <th>Method</th> 
     <th>Description</th> 
 	<th></th>
 	</tr>
@@ -27,14 +27,14 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('payments/'. $payment->payment_id . '/edit') }}'>
-						{{$payment->encounter_id}}
+						{{ date('d F Y, H:i', strtotime($payment->created_at)) }}
 					</a>
 			</td>
-			<td width='200'>
-					{{ date('d F Y, H:i', strtotime($payment->encounter_date)) }}
+			<td>
+					{{ number_format($payment->payment_amount,2) }}
 			</td>
 			<td>
-					{{$payment->payment_amount}}
+					{{$payment->payment_name}}
 			</td>
 			<td>
 					{{$payment->payment_description}}

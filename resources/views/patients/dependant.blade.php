@@ -8,7 +8,7 @@ iframe { border: 1px #C0C0C0 solid; }
 @include('patients.id')
 <h1>Patient Dependants</h1>
 <br>
-<a class='btn btn-default' href='/patients/{{ $patient->patient_id }}'>Back<a/>
+<a class='btn btn-default' href='/patients/{{ $patient->patient_id }}'>Return<a/>
 <br>
 <br>
 <div class="row">

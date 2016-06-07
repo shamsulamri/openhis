@@ -67,8 +67,8 @@
 								<li><a href="{{ url('/patients') }}">Patients</a></li>
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
 								<li><a href="{{ url('/encounters') }}">Encounters</a></li>
-								<li><a href="{{ url('/queues') }}">Location Queues</a></li>
-								<li><a href="{{ url('/order_queues') }}">Order Queues</a></li>
+								<li><a href="{{ url('/queues') }}">Queues</a></li>
+								<li><a href="{{ url('/order_queues') }}">Orders</a></li>
 							</ul>
 					</li>
 					@endcan
