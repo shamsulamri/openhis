@@ -1,7 +1,7 @@
 @extends('layouts.app2')
 
 @section('content')
-@if (Auth::user()->authorization->author_consultation==1)
+@if (Auth::user()->authorization->module_consultation==1)
 @else
 		@include('patients.id')
 @endif

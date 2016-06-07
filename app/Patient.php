@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use DB;
 use Log;
 
 class Patient extends Model
@@ -142,6 +143,7 @@ class Patient extends Model
 	{
 			return DojoUtility::timeReadFormat($value);
 	}
+
 	public function patientIdentification()
 	{
 			if (!empty($this->attributes['patient_new_ic'])) {
@@ -185,4 +187,40 @@ class Patient extends Model
 	{
 			return $this->hasMany('App\MedicalAlert', 'patient_id', 'patient_id');
 	}
+
+	public function outstandingBill()
+	{
+			$amount = DB::table('bills as a')
+						->leftjoin('encounters as b', 'a.encounter_id','=', 'b.encounter_id')
+						->where('b.patient_id','=',$this->patient_id)
+						->sum('bill_outstanding');
+
+			return $amount;
+	}
+
+	public function hasActiveEncounter() 
+	{
+			$encounter_active=True;
+			$encounter_completed=True;
+			$encounter = Encounter::where('patient_id', $this->patient_id)
+							->orderBy('encounter_id')
+							->first();
+
+			if (count($encounter)==0) $encounter_active=False;
+			if ($encounter) {
+					if ($encounter->admission==null && $encounter->queue==null) $encounter_completed=False;
+			}
+			
+			if (!$encounter_completed) {
+					Encounter::find($encounter->encounter_id)->delete();
+					$encounter_active=false;
+			}
+
+			if ($encounter_active) {
+					return "1";
+			} else {
+					return "0";
+			}
+	}
+
 }

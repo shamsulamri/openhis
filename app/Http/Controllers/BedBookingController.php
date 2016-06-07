@@ -57,12 +57,14 @@ class BedBookingController extends Controller
 			]);
 	}
 
-	public function create($patient_id, $admission_id = null)
+	public function create(Request $request, $patient_id, $admission_id = null)
 	{
 			$bed_booking = new BedBooking();
 			$bed_booking->patient_id = $patient_id;
 			$bed_booking->book_date = date('d/m/Y');
 
+			$title = "Bed Booking";
+			if ($request->book=='preadmission') $title = "Preadmission";
 			if ($admission_id != null) {
 					$admission = Admission::find($admission_id);
 					$bed_booking->bed_code = $admission->bed_code;
@@ -72,6 +74,7 @@ class BedBookingController extends Controller
 					'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'patient' => Patient::find($bed_booking->patient_id),
+					'title' => $title,
 					]);
 	}
 

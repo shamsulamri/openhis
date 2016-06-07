@@ -19,7 +19,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>author_consultation</th>
+    <th>module_consultation</th>
     <th>id</th> 
 	<th></th>
 	</tr>
@@ -29,7 +29,7 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('user_authorizations/'. $user_authorization->id . '/edit') }}'>
-						{{$user_authorization->author_consultation}}
+						{{$user_authorization->module_consultation}}
 					</a>
 			</td>
 			<td>

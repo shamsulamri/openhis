@@ -48,6 +48,9 @@ class AuthServiceProvider extends ServiceProvider
 		$gate->define('module-ward', function ($user) {
 				return $user->authorization->module_ward;
 		});
-        //
+		
+		$gate->define('module-admin', function ($user) {
+				return $user->authorization->system_administrator;
+		});
     }
 }

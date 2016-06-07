@@ -5,40 +5,48 @@
 <h1>Options</h1>
 <br>
 <h4>
-
-				<a href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id ) }}'>
-					<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
-						New Encounter
-				</a>
+					@if ($encounter_active==1)
+							<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
+								@if ($encounter->admission)
+									Patient admitted at {{ $encounter->admission->bed->bed_name }} ({{ $encounter->admission->bed->ward->ward_name }})
+								@else
+									Patient queue at {{ $encounter->queue->location->location_name }}
+								@endif
+					@else
+						<a href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id ) }}'>
+							<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
+								New Encounter
+						</a>
+					@endif
 				<br>
 				<br>
-				<a href='{{ URL::to('patients/'. $patient->patient_id).'/edit' }}'>
 					<span class='glyphicon glyphicon-user' aria-hidden='true'></span>
-						Edit Demography		
+				<a href='{{ URL::to('patients/'. $patient->patient_id).'/edit' }}'>
+						Edit Patient 
 				</a>
 				<br>
 				<br>
-				<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
 					<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span>
-						Book Appointment
+				<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
+						Set Appointment
 				</a>
 				<br>
 				<br>
-				<a href='{{ URL::to('bed_bookings/create/'. $patient->patient_id) }}'>
 					<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
-						Book Bed
+				<a href='{{ URL::to('bed_bookings/create/'. $patient->patient_id.'?book=preadmission') }}'>
+						Preadmission 
 				</a>
 				<br>
 				<br>
-				<a href='{{ URL::to('patients/dependants/'. $patient->patient_id) }}'>
 					<span class='glyphicon glyphicon-heart' aria-hidden='true'></span>
-						Define Dependants
+				<a href='{{ URL::to('patients/dependant_list/'. $patient->patient_id) }}'>
+						Dependant List
 				</a>
 				<br>
 				<br>
-@if ($encounter)
-				<a href='{{ URL::to('deposits/index/'. $encounter->encounter_id ) }}'>
+@if ($encounter_active==1)
 					<span class='glyphicon glyphicon-usd' aria-hidden='true'></span>
+				<a href='{{ URL::to('deposits/index/'. $encounter->encounter_id ) }}'>
 						Deposit Collection						
 				</a>
 @else
@@ -47,9 +55,9 @@
 @endif
 				<br>
 				<br>
-				<a href='{{ URL::to('payments/'. $patient->patient_id) }}'>
 					<span class='glyphicon glyphicon-book' aria-hidden='true'></span>
-						Payment List
+				<a href='{{ URL::to('payments/'. $patient->patient_id) }}'>
+						Payment Collection
 				</a>
 </h4>
 <!--

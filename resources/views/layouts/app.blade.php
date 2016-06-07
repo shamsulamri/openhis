@@ -78,8 +78,8 @@
 							  <span class='glyphicon glyphicon-comment'></span>&nbsp; Consultations <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
-								<li><a href="{{ url('/patient_lists') }}">Patient Lists</a></li>
-								<li><a href="{{ url('/consultations') }}">Consultations</a></li>
+								<li><a href="{{ url('/patient_lists') }}">Patient List</a></li>
+								<li><a href="{{ url('/consultations') }}">Consultation List</a></li>
 							</ul>
 					</li>
 					@endcan

@@ -65,17 +65,45 @@ class EncounterController extends Controller
 				]);
 	}
 
+	public function encounterInitiated($patient_id) 
+	{
+
+			$encounterInitiated=True;
+			$encounter = Encounter::where('patient_id', $patient_id)
+							->orderBy('encounter_id','desc')
+							->first();
+
+			if ($encounter==null) $encounterInitiated=False;
+			if ($encounter) {
+					if ($encounter->admission==null && $encounter->queue==null) $encounterInitiated=True;
+			}
+
+			if ($encounterInitiated) {
+					Log::info("1");
+					return $encounter->encounter_id;
+			} else {
+					Log::info("0");
+					return 0;
+			}	
+	}
+
 	public function store(Request $request) 
 	{
+
 			$encounter = new Encounter();
 			$valid = $encounter->validate($request->all(), $request->_method);
 			if ($valid->passes()) {
 					$encounter = new Encounter($request->all());
 					$encounter->encounter_id = $request->encounter_id;
-					$encounter->save();
+					$initId = $this->encounterInitiated($encounter->patient_id);
+					if ($initId==0) {
+							$encounter->save();
+					} else {
+							$encounter = Encounter::find($initId);
+					}
 
 					$patient = Patient::find($encounter->patient_id);
-					Log::info($patient->patient_mrn);
+
 					if ($patient->patient_mrn=='-') {
 							$mrn = "MSU".str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
 							$patient->patient_mrn = $mrn;

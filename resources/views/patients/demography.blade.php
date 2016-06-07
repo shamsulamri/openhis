@@ -2,6 +2,10 @@
 
 @section('content')
 @include('patients.id')
+<h1>
+Edit Patient
+</h1>
+<br>
 @include('common.errors')
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>

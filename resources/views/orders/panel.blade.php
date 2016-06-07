@@ -1,6 +1,6 @@
 
 
-@if (Auth::user()->authorization->author_consultation==1)
+@if (Auth::user()->authorization->module_consultation==1)
 		@include('patients.label')
 		@include('consultations.panel')		
 @else

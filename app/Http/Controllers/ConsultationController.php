@@ -130,7 +130,7 @@ class ConsultationController extends Controller
 					->where('post_id','=',0)
 					->update(['post_id'=>$post->post_id]);
 
-			if (Auth::user()->authorization->author_consultation==1) {
+			if (Auth::user()->authorization->module_consultation==1) {
 					return redirect('/patient_lists');
 			} else {
 					return redirect('/order_queues');

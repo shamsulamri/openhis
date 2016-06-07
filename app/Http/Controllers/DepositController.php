@@ -25,7 +25,8 @@ class DepositController extends Controller
 
 	public function index($id)
 	{
-			$deposits = DB::table('deposits')
+			$deposits = DB::table('deposits as a')
+					->leftjoin('payment_methods as b', 'a.payment_code','=','b.payment_code')
 					->where('encounter_id','=', $id)
 					->orderBy('encounter_id')
 					->paginate($this->paginateValue);

@@ -24,7 +24,7 @@ class UserAuthorizationController extends Controller
 	public function index()
 	{
 			$user_authorizations = DB::table('user_authorizations')
-					->orderBy('author_consultation')
+					->orderBy('module_consultation')
 					->paginate($this->paginateValue);
 			return view('user_authorizations.index', [
 					'user_authorizations'=>$user_authorizations
@@ -72,7 +72,7 @@ class UserAuthorizationController extends Controller
 			$user_authorization = UserAuthorization::findOrFail($id);
 			$user_authorization->fill($request->input());
 
-			$user_authorization->author_consultation = $request->author_consultation ?: 0;
+			$user_authorization->module_consultation = $request->module_consultation ?: 0;
 
 			$valid = $user_authorization->validate($request->all(), $request->_method);	
 
@@ -107,9 +107,9 @@ class UserAuthorizationController extends Controller
 	public function search(Request $request)
 	{
 			$user_authorizations = DB::table('user_authorizations')
-					->where('author_consultation','like','%'.$request->search.'%')
+					->where('module_consultation','like','%'.$request->search.'%')
 					->orWhere('id', 'like','%'.$request->search.'%')
-					->orderBy('author_consultation')
+					->orderBy('module_consultation')
 					->paginate($this->paginateValue);
 
 			return view('user_authorizations.index', [

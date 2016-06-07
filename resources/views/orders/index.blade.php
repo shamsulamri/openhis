@@ -6,9 +6,9 @@
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 
-@if (Auth::user()->authorization->author_consultation<>1)
+@cannot('module-consultation')
         <a class="btn btn-default" href="/order_tasks/task/{{ Session::get('encounter_id') }}/{{Cookie::get('queue_location')}}" role="button">Back to Task</a>
-@endif
+@endcannot
 
 <br>
 @if ($orders->total()>0)

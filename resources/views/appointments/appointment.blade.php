@@ -23,7 +23,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/appointments" role="button">Cancel</a>
+            <a class="btn btn-default" href="javascript:window.history.back()" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

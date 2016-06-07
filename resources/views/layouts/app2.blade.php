@@ -17,9 +17,6 @@
 		table, th, td {
 		   font-size: small;
 		}
-		input {
-			text-transform:uppercase;
-		}
 	</style>
 	<div class='container'>
     @yield('content')

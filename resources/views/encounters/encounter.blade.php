@@ -1,4 +1,5 @@
 
+<!--
 <h4>
 <ul class="nav nav-tabs nav-justified">
   <li role="presentation" class="active"><a href="#">Step 1: Encounter</a></li>
@@ -6,7 +7,11 @@
   <li role="presentation" class='disabled'><a href="#">&nbsp;</a></li>
 </ul>
 </h4>
-<br>
+-->
+<h4><strong>Step 1:</strong> Define the encounter nature and billing information of the patient</h4>
+	<div class='page-header'>
+		<h4>Encounter</h4>
+	</div>
 	<div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
         <label for='encounter_code' class='col-sm-2 control-label'>Encounter<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
@@ -25,7 +30,7 @@
     </div>
 
 	<div class='page-header'>
-		<h4>Payor Information</h4>
+		<h4>Billing Information</h4>
 	</div>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
@@ -53,7 +58,7 @@
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
             <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
-            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+            {{ Form::submit('Next', ['class'=>'btn btn-primary']) }}
         </div>
     </div>		
 	{{ Form::hidden('patient_id', $patient->patient_id) }}

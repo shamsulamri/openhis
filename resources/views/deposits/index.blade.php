@@ -2,11 +2,12 @@
 
 @section('content')
 @include('patients.id')
-<h1>Deposit Collections</h1>
+<h1>Deposit Collection</h1>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <br>
+<a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
 <a href='/deposits/create/{{ $encounter->encounter_id }}' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -28,7 +29,7 @@
 			</td>
 			<td>
 					<a href='{{ URL::to('deposits/'. $deposit->deposit_id . '/edit') }}'>
-						{{$deposit->encounter_id}}
+						{{$deposit->payment_name}}
 					</a>
 			</td>
 			<td>

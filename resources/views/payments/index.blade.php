@@ -2,12 +2,12 @@
 
 @section('content')
 @include('patients.id')
-<h1>Payment List</h1>
+<h1>Payment Collection</h1>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <br>
-<a href='/patients/{{ $patient_id }}' class='btn btn-default'>Back</a>
+<a href='/patients/{{ $patient_id }}' class='btn btn-default'>Return</a>
 <a href='/payments/create/{{ $patient_id }}' class='btn btn-primary'>Create</a>
 <br>
 <br>

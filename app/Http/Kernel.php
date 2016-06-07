@@ -43,6 +43,10 @@ class Kernel extends HttpKernel
 			\App\Http\Middleware\InventoryMiddleware::class,
         ],
 
+        'ward' => [
+			\App\Http\Middleware\WardMiddleware::class,
+        ],
+
         'admin' => [
 			\App\Http\Middleware\AdminMiddleware::class,
         ],

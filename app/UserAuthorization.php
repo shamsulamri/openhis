@@ -22,7 +22,7 @@ class UserAuthorization extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'author_consultation'=>'required',
+				'module_consultation'=>'required',
 			];
 
 			

@@ -6,6 +6,9 @@
 @if ($appointment_id == null)
 <h1>Book Appointment</h1>
 <br>
+<a href='/patients/{{ $patient->patient_id }}' class='btn btn-default'>Return</a>
+<br>
+<br>
 <form action='/appointment_services/{{ $patient->patient_id }}/0' method='post'>
 	{{ Form::select('services', $menu_services, $service, ['class'=>'form-control']) }}
 	<br>

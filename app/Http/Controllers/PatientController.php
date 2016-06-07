@@ -97,10 +97,24 @@ class PatientController extends Controller
 	{
 			$patient = Patient::findOrFail($id);
 			
+			$encounter_active=True;
+			$encounter_completed=True;
 			$encounter = Encounter::where('patient_id', $id)
 							->orderBy('encounter_id')
 							->first();
 
+			/*
+			if (count($encounter)==0) $encounter_active=False;
+			if ($encounter) {
+					if ($encounter->admission==null && $encounter->queue==null) $encounter_completed=False;
+			}
+			
+			if (!$encounter_completed) {
+					Encounter::find($encounter->encounter_id)->delete();
+					$encounter_active=false;
+			}
+			 */
+			
 			$patients = $this->getDependants($id);
 
 			for ($i=0;$i<3;$i++) {
@@ -120,6 +134,7 @@ class PatientController extends Controller
 					'patientOption'=>'',
 					'patients'=>$patients,
 					'encounter'=>$encounter,
+					'encounter_active'=>$patient->hasActiveEncounter(),
 					]);
 	}
 
@@ -212,5 +227,29 @@ class PatientController extends Controller
 					'patient' => $patient,
 			]);
 
+	}
+
+	public function dependantList($id)
+	{
+			$patient = Patient::findOrFail($id);
+			
+			$patients = $this->getDependants($id);
+
+			for ($i=0;$i<3;$i++) {
+					foreach ($patients as $x) {
+							$patients = $patients->merge($this->getDependants($x->id));
+							Log::info($patients);
+					}
+			}
+			$patients=$patients->except([$id]);
+			$patients = Patient::select('patient_name', 'patient_id', 'patient_mrn','patient_phone_home', 'patient_phone_mobile')
+					->whereIn('patient_id', $patients->unique())
+					->orderBy('patient_name')
+					->get();
+
+			return view('patients.dependant_list', [
+					'patient'=>$patient,
+					'patients'=>$patients,
+					]);
 	}
 }

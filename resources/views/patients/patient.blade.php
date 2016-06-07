@@ -1,7 +1,7 @@
 
     <div class='form-group'>
         <div class=" col-sm-10">
-            <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
+            <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
@@ -393,7 +393,7 @@
 	<br>
     <div class='form-group'>
         <div class="col-sm-10">
-            <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
+            <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
