@@ -12,7 +12,12 @@ class UserAuthorization extends Model
 	protected $table = 'user_authorizations';
 	protected $fillable = [
 				'id',
-				'author_consultation'];
+				'module_patient',
+				'module_consultation',
+				'module_inventory',
+				'module_ward',
+				'system_administrator',
+		];
 	
 
 	public function validate($input, $method) {

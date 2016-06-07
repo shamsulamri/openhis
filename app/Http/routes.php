@@ -22,30 +22,188 @@
 |
 */
 
+
 Route::group(['middleware' => 'web'], function () {
 		Route::auth();
 
 		Route::get('/', function() {
-				return redirect('/login');
-				#return view('welcome');
+				//return view('welcome');
+				if (Auth::check()) {
+					return redirect('/landing');
+				} else {
+					return redirect('/login');
+				}
 		});
 
 		Route::get('/options', function() {
 				return view('options.option');
 		});
+
+		Route::get('/unauthorized', function() {
+				return view('common.403');
+		});
+
+		Route::group(['middleware' => 'landing'], function () {
+				Route::get('/landing', function() {
+						return "Landing page";
+				});
+		});
+
+		Route::group(['middleware' => 'patient'], function () {
+
+				Route::resource('patients', 'PatientController');
+				Route::get('/patients/id/{id}', 'PatientController@searchById');
+				Route::get('/patients/dependants/{id}', 'PatientController@dependants');
+				Route::get('/patient/dependants', 'PatientController@find');
+				Route::post('/patient/search', 'PatientController@search');
+				Route::get('/patient/search', 'PatientController@search');
+				Route::get('/patients/delete/{id}', 'PatientController@delete');
+				Route::get('/patients/encounter/{id}', 'PatientController@hasActiveEncounter');
+
+				Route::resource('appointments', 'AppointmentController',['except'=>['create','edit']]);
+				Route::get('/appointments/create/{patient_id}/{service_id}/{slot}', 'AppointmentController@create');
+				Route::get('/appointments/{id}/edit/{appointment_slot}', 'AppointmentController@edit');
+				Route::get('/appointments/id/{id}', 'AppointmentController@searchById');
+				Route::post('/appointment/search', 'AppointmentController@search');
+				Route::get('/appointment/search', 'AppointmentController@search');
+				Route::get('/appointments/delete/{id}', 'AppointmentController@delete');
+
+				Route::resource('encounters', 'EncounterController');
+				Route::get('/encounters/id/{id}', 'EncounterController@searchById');
+				Route::post('/encounter/search', 'EncounterController@search');
+				Route::get('/encounter/search', 'EncounterController@search');
+				Route::get('/encounters/delete/{id}', 'EncounterController@delete');
+
+				Route::resource('queues', 'QueueController');
+				Route::get('/queues/id/{id}', 'QueueController@searchById');
+				Route::post('/queue/search', 'QueueController@search');
+				Route::get('/queue/search', 'QueueController@search');
+				Route::get('/queues/delete/{id}', 'QueueController@delete');
+
+				Route::resource('order_queues', 'OrderQueueController');
+				Route::get('/order_queues/id/{id}', 'OrderQueueController@searchById');
+				Route::post('/order_queue/search', 'OrderQueueController@search');
+				Route::get('/order_queue/search', 'OrderQueueController@search');
+				Route::get('/order_queues/delete/{id}', 'OrderQueueController@delete');
+
+		});
+
+		Route::group(['middleware' => 'consultation'], function () {
+
+				Route::resource('patient_lists', 'PatientListController');
+				Route::get('/patient_lists/id/{id}', 'PatientListController@searchById');
+				Route::post('/patient_list/search', 'PatientListController@search');
+				Route::get('/patient_list/search', 'PatientListController@search');
+				Route::get('/patient_lists/delete/{id}', 'PatientListController@delete');
+
+				Route::get('/consultations/close', 'ConsultationController@close');
+				Route::get('/consultations/progress/{consultation_id}', 'ConsultationController@progress');
+				Route::resource('consultations', 'ConsultationController');
+				Route::get('/consultations/id/{id}', 'ConsultationController@searchById');
+				Route::post('/consultation/search', 'ConsultationController@search');
+				Route::get('/consultation/search', 'ConsultationController@search');
+				Route::get('/consultations/delete/{id}', 'ConsultationController@delete');
+
+
+		});
+
+		Route::group(['middleware' => 'inventory'], function () {
+
+				Route::resource('products', 'ProductController');
+				Route::get('/products/id/{id}', 'ProductController@searchById');
+				Route::post('/product/search', 'ProductController@search');
+				Route::get('/product/search', 'ProductController@search');
+				Route::get('/products/delete/{id}', 'ProductController@delete');
+
+				Route::resource('bill_materials', 'BillMaterialController',['except'=>['index', 'show']]);
+				Route::get('/bill_materials/{product_code}', 'BillMaterialController@show');
+				Route::get('/bill_materials/index/{product_code}', 'BillMaterialController@index');
+				Route::get('/bill_materials/id/{id}', 'BillMaterialController@searchById');
+				Route::post('/bill_material/search', 'BillMaterialController@search');
+				Route::get('/bill_material/search', 'BillMaterialController@search');
+				Route::get('/bill_materials/delete/{id}', 'BillMaterialController@delete');
+				
+				Route::get('/stocks/total/{product_code}', 'StockController@totalOnHand');
+				Route::get('/stocks/delete/{id}', 'StockController@delete');
+				Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);
+				Route::get('/stocks/{product_code}/{store_code?}', 'StockController@show');
+				Route::get('/stocks/onhand/{product_code}/{store_code}', 'StockController@onHand');
+				Route::get('/stocks/create/{product_code}/{store_code}', 'StockController@create');
+				Route::get('/stocks/id/{id}', 'StockController@searchById');
+				Route::post('/stock/search', 'StockController@search');
+				Route::get('/stock/search', 'StockController@search');
+				
+				Route::resource('stock_movements', 'StockMovementController');
+				Route::get('/stock_movements/id/{id}', 'StockMovementController@searchById');
+				Route::post('/stock_movement/search', 'StockMovementController@search');
+				Route::get('/stock_movement/search', 'StockMovementController@search');
+				Route::get('/stock_movements/delete/{id}', 'StockMovementController@delete');
+				
+				Route::resource('purchase_order_lines', 'PurchaseOrderLineController', ['except'=>['index','create']]);
+				Route::get('/purchase_order_lines/index/{purchase_id}', 'PurchaseOrderLineController@index');
+				Route::get('/purchase_order_lines/create/{purchase_id}', 'PurchaseOrderLineController@create');
+				Route::get('/purchase_order_lines/id/{id}', 'PurchaseOrderLineController@searchById');
+				Route::post('/purchase_order_line/search', 'PurchaseOrderLineController@search');
+				Route::get('/purchase_order_line/search', 'PurchaseOrderLineController@search');
+				Route::get('/purchase_order_lines/delete/{id}', 'PurchaseOrderLineController@delete');
+				
+				Route::resource('urgencies', 'UrgencyController');
+				Route::get('/urgencies/id/{id}', 'UrgencyController@searchById');
+				Route::post('/urgency/search', 'UrgencyController@search');
+				Route::get('/urgency/search', 'UrgencyController@search');
+				Route::get('/urgencies/delete/{id}', 'UrgencyController@delete');
+
+				Route::resource('suppliers', 'SupplierController');
+				Route::get('/suppliers/id/{id}', 'SupplierController@searchById');
+				Route::post('/supplier/search', 'SupplierController@search');
+				Route::get('/supplier/search', 'SupplierController@search');
+				Route::get('/suppliers/delete/{id}', 'SupplierController@delete');
+
+				Route::resource('stores', 'StoreController');
+				Route::get('/stores/id/{id}', 'StoreController@searchById');
+				Route::post('/store/search', 'StoreController@search');
+				Route::get('/store/search', 'StoreController@search');
+				Route::get('/stores/delete/{id}', 'StoreController@delete');
+
+				Route::resource('purchase_orders', 'PurchaseOrderController');
+				Route::get('/purchase_orders/id/{id}', 'PurchaseOrderController@searchById');
+				Route::post('/purchase_order/search', 'PurchaseOrderController@search');
+				Route::get('/purchase_order/search', 'PurchaseOrderController@search');
+				Route::get('/purchase_order/post', 'PurchaseOrderController@post');
+				Route::post('/purchase_order/verify', 'PurchaseOrderController@postVerify');
+				Route::get('/purchase_orders/delete/{id}', 'PurchaseOrderController@delete');
+
+				Route::resource('drug_prescriptions', 'DrugPrescriptionController');
+				Route::get('/drug_prescriptions/id/{id}', 'DrugPrescriptionController@searchById');
+				Route::post('/drug_prescription/search', 'DrugPrescriptionController@search');
+				Route::get('/drug_prescription/search', 'DrugPrescriptionController@search');
+				Route::get('/drug_prescriptions/delete/{id}', 'DrugPrescriptionController@delete');
+
+				Route::resource('drugs', 'DrugController');
+				Route::get('/drugs/id/{id}', 'DrugController@searchById');
+				Route::post('/drug/search', 'DrugController@search');
+				Route::get('/drug/search', 'DrugController@search');
+				Route::get('/drugs/delete/{id}', 'DrugController@delete');
+
+				Route::resource('sets', 'SetController', ['except'=>['show']]);
+				Route::get('/sets/{set_code}', 'SetController@show');
+				Route::get('/sets/id/{id}', 'SetController@searchById');
+				Route::post('/set/search', 'SetController@search');
+				Route::get('/set/search', 'SetController@search');
+				Route::get('/sets/delete/{id}', 'SetController@delete');
+		});
+
 		Route::resource('bills', 'BillController');
 		Route::get('/bills/id/{id}', 'BillController@searchById');
 		Route::post('/bill/search', 'BillController@search');
 		Route::get('/bill/search', 'BillController@search');
 		Route::get('/bills/delete/{id}', 'BillController@delete');
 		
-		
 		Route::resource('deposits', 'DepositController');
 		Route::get('/deposits/id/{id}', 'DepositController@searchById');
 		Route::post('/deposit/search', 'DepositController@search');
 		Route::get('/deposit/search', 'DepositController@search');
 		Route::get('/deposits/delete/{id}', 'DepositController@delete');
-		
 		
 		Route::resource('deposits', 'DepositController',['except'=>['create','index']]);
 		Route::get('/deposits/index/{id}', 'DepositController@index');
@@ -67,8 +225,7 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/tax_code/search', 'TaxCodeController@search');
 		Route::get('/tax_codes/delete/{id}', 'TaxCodeController@delete');
 		
-		
-		Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
+		route::resource('payments', 'paymentcontroller',['except'=>['index','show','create']]);
 		Route::get('/payments/{id}', 'PaymentController@index');
 		Route::get('/payments/create/{patient_id?}/{encounter_id?}', 'PaymentController@create');
 		Route::get('/payments/id/{id}', 'PaymentController@searchById');
@@ -145,12 +302,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/order_set/search', 'OrderSetController@search');
 		Route::get('/order_sets/delete/{id}', 'OrderSetController@delete');
 		
-		Route::resource('sets', 'SetController', ['except'=>['show']]);
-		Route::get('/sets/{set_code}', 'SetController@show');
-		Route::get('/sets/id/{id}', 'SetController@searchById');
-		Route::post('/set/search', 'SetController@search');
-		Route::get('/set/search', 'SetController@search');
-		Route::get('/sets/delete/{id}', 'SetController@delete');
 		
 		Route::resource('user_authorizations', 'UserAuthorizationController');
 		Route::get('/user_authorizations/id/{id}', 'UserAuthorizationController@searchById');
@@ -158,11 +309,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/user_authorization/search', 'UserAuthorizationController@search');
 		Route::get('/user_authorizations/delete/{id}', 'UserAuthorizationController@delete');
 		
-		Route::resource('patient_lists', 'PatientListController');
-		Route::get('/patient_lists/id/{id}', 'PatientListController@searchById');
-		Route::post('/patient_list/search', 'PatientListController@search');
-		Route::get('/patient_list/search', 'PatientListController@search');
-		Route::get('/patient_lists/delete/{id}', 'PatientListController@delete');
 		
 		Route::get('/ward_arrivals/create/{id}', 'WardArrivalController@create');
 		Route::resource('ward_arrivals', 'WardArrivalController', ['except'=>['create']]);
@@ -185,11 +331,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/task_cancellation/search', 'TaskCancellationController@search');
 		Route::get('/task_cancellations/delete/{id}', 'TaskCancellationController@delete');
 		
-		Route::resource('order_queues', 'OrderQueueController');
-		Route::get('/order_queues/id/{id}', 'OrderQueueController@searchById');
-		Route::post('/order_queue/search', 'OrderQueueController@search');
-		Route::get('/order_queue/search', 'OrderQueueController@search');
-		Route::get('/order_queues/delete/{id}', 'OrderQueueController@delete');
 		
 		Route::post('/order_task/status', 'OrderTaskController@status');
 		Route::get('/order_tasks/task/{consultation_id}/{location_code}', 'OrderTaskController@task');
@@ -234,13 +375,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/encounter_type/search', 'EncounterTypeController@search');
 		Route::get('/encounter_types/delete/{id}', 'EncounterTypeController@delete');
 		
-		Route::resource('appointments', 'AppointmentController',['except'=>['create','edit']]);
-		Route::get('/appointments/create/{patient_id}/{service_id}/{slot}', 'AppointmentController@create');
-		Route::get('/appointments/{id}/edit/{appointment_slot}', 'AppointmentController@edit');
-		Route::get('/appointments/id/{id}', 'AppointmentController@searchById');
-		Route::post('/appointment/search', 'AppointmentController@search');
-		Route::get('/appointment/search', 'AppointmentController@search');
-		Route::get('/appointments/delete/{id}', 'AppointmentController@delete');
 		
 		Route::resource('block_dates', 'BlockDateController');
 		Route::get('/block_dates/id/{id}', 'BlockDateController@searchById');
@@ -329,43 +463,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/diet_wastage/search', 'DietWastageController@search');
 		Route::get('/diet_wastages/delete/{id}', 'DietWastageController@delete');
 		
-		Route::resource('bill_materials', 'BillMaterialController',['except'=>['index', 'show']]);
-		Route::get('/bill_materials/{product_code}', 'BillMaterialController@show');
-		Route::get('/bill_materials/index/{product_code}', 'BillMaterialController@index');
-		Route::get('/bill_materials/id/{id}', 'BillMaterialController@searchById');
-		Route::post('/bill_material/search', 'BillMaterialController@search');
-		Route::get('/bill_material/search', 'BillMaterialController@search');
-		Route::get('/bill_materials/delete/{id}', 'BillMaterialController@delete');
-		
-		Route::get('/stocks/total/{product_code}', 'StockController@totalOnHand');
-		Route::get('/stocks/delete/{id}', 'StockController@delete');
-		Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);
-		Route::get('/stocks/{product_code}/{store_code?}', 'StockController@show');
-		Route::get('/stocks/onhand/{product_code}/{store_code}', 'StockController@onHand');
-		Route::get('/stocks/create/{product_code}/{store_code}', 'StockController@create');
-		Route::get('/stocks/id/{id}', 'StockController@searchById');
-		Route::post('/stock/search', 'StockController@search');
-		Route::get('/stock/search', 'StockController@search');
-		
-		Route::resource('stock_movements', 'StockMovementController');
-		Route::get('/stock_movements/id/{id}', 'StockMovementController@searchById');
-		Route::post('/stock_movement/search', 'StockMovementController@search');
-		Route::get('/stock_movement/search', 'StockMovementController@search');
-		Route::get('/stock_movements/delete/{id}', 'StockMovementController@delete');
-		
-		Route::resource('purchase_order_lines', 'PurchaseOrderLineController', ['except'=>['index','create']]);
-		Route::get('/purchase_order_lines/index/{purchase_id}', 'PurchaseOrderLineController@index');
-		Route::get('/purchase_order_lines/create/{purchase_id}', 'PurchaseOrderLineController@create');
-		Route::get('/purchase_order_lines/id/{id}', 'PurchaseOrderLineController@searchById');
-		Route::post('/purchase_order_line/search', 'PurchaseOrderLineController@search');
-		Route::get('/purchase_order_line/search', 'PurchaseOrderLineController@search');
-		Route::get('/purchase_order_lines/delete/{id}', 'PurchaseOrderLineController@delete');
-		
-		Route::resource('urgencies', 'UrgencyController');
-		Route::get('/urgencies/id/{id}', 'UrgencyController@searchById');
-		Route::post('/urgency/search', 'UrgencyController@search');
-		Route::get('/urgency/search', 'UrgencyController@search');
-		Route::get('/urgencies/delete/{id}', 'UrgencyController@delete');
 		
 		Route::resource('order_investigations', 'OrderInvestigationController');
 		Route::get('/order_investigations/create/{code}', 'OrderInvestigationController@create');
@@ -431,11 +528,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/delivery_mode/search', 'DeliveryModeController@search');
 		Route::get('/delivery_modes/delete/{id}', 'DeliveryModeController@delete');
 		
-		Route::resource('drug_prescriptions', 'DrugPrescriptionController');
-		Route::get('/drug_prescriptions/id/{id}', 'DrugPrescriptionController@searchById');
-		Route::post('/drug_prescription/search', 'DrugPrescriptionController@search');
-		Route::get('/drug_prescription/search', 'DrugPrescriptionController@search');
-		Route::get('/drug_prescriptions/delete/{id}', 'DrugPrescriptionController@delete');
 		
 		Route::resource('periods', 'PeriodController');
 		Route::get('/periods/id/{id}', 'PeriodController@searchById');
@@ -473,14 +565,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/drug_category/search', 'DrugCategoryController@search');
 		Route::get('/drug_categories/delete/{id}', 'DrugCategoryController@delete');
 		
-		Route::resource('patients', 'PatientController');
-		Route::get('/patients/id/{id}', 'PatientController@searchById');
-		Route::get('/patients/dependants/{id}', 'PatientController@dependants');
-		Route::get('/patient/dependants', 'PatientController@find');
-		Route::post('/patient/search', 'PatientController@search');
-		Route::get('/patient/search', 'PatientController@search');
-		Route::get('/patients/delete/{id}', 'PatientController@delete');
-		Route::get('/patients/encounter/{id}', 'PatientController@hasActiveEncounter');
 		
 		Route::resource('races', 'RaceController');
 		Route::get('/races/id/{race_code}', 'RaceController@searchById');
@@ -598,12 +682,14 @@ Route::group(['middleware' => 'web'], function () {
 		Route::post('/queue_location/search', 'QueueLocationController@search');
 		Route::get('/queue_location/search', 'QueueLocationController@search');
 		Route::get('/queue_locations/delete/{id}', 'QueueLocationController@delete');
-
+		
+		/*
 		Route::resource('products', 'ProductController');
 		Route::get('/products/id/{id}', 'ProductController@searchById');
 		Route::post('/product/search', 'ProductController@search');
 		Route::get('/product/search', 'ProductController@search');
 		Route::get('/products/delete/{id}', 'ProductController@delete');
+		 */
 
 		Route::resource('order_forms', 'OrderFormController');
 		Route::get('/order_forms/id/{id}', 'OrderFormController@searchById');
@@ -611,11 +697,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/order_form/search', 'OrderFormController@search');
 		Route::get('/order_forms/delete/{id}', 'OrderFormController@delete');
 		
-		Route::resource('suppliers', 'SupplierController');
-		Route::get('/suppliers/id/{id}', 'SupplierController@searchById');
-		Route::post('/supplier/search', 'SupplierController@search');
-		Route::get('/supplier/search', 'SupplierController@search');
-		Route::get('/suppliers/delete/{id}', 'SupplierController@delete');
 
 		Route::resource('form_properties', 'FormPropertyController');
 		Route::get('/form_properties/id/{id}', 'FormPropertyController@searchById');
@@ -629,31 +710,8 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/form_position/search', 'FormPositionController@search');
 		Route::get('/form_positions/delete/{id}', 'FormPositionController@delete');
 
-		Route::resource('stores', 'StoreController');
-		Route::get('/stores/id/{id}', 'StoreController@searchById');
-		Route::post('/store/search', 'StoreController@search');
-		Route::get('/store/search', 'StoreController@search');
-		Route::get('/stores/delete/{id}', 'StoreController@delete');
 
-		Route::resource('purchase_orders', 'PurchaseOrderController');
-		Route::get('/purchase_orders/id/{id}', 'PurchaseOrderController@searchById');
-		Route::post('/purchase_order/search', 'PurchaseOrderController@search');
-		Route::get('/purchase_order/search', 'PurchaseOrderController@search');
-		Route::get('/purchase_order/post', 'PurchaseOrderController@post');
-		Route::post('/purchase_order/verify', 'PurchaseOrderController@postVerify');
-		Route::get('/purchase_orders/delete/{id}', 'PurchaseOrderController@delete');
 
-		Route::resource('encounters', 'EncounterController');
-		Route::get('/encounters/id/{id}', 'EncounterController@searchById');
-		Route::post('/encounter/search', 'EncounterController@search');
-		Route::get('/encounter/search', 'EncounterController@search');
-		Route::get('/encounters/delete/{id}', 'EncounterController@delete');
-
-		Route::resource('queues', 'QueueController');
-		Route::get('/queues/id/{id}', 'QueueController@searchById');
-		Route::post('/queue/search', 'QueueController@search');
-		Route::get('/queue/search', 'QueueController@search');
-		Route::get('/queues/delete/{id}', 'QueueController@delete');
 
 		Route::get('/diet', 'AdmissionController@diet');
 		Route::get('/admission/dietUpdate', 'AdmissionController@dietUpdate');
@@ -729,13 +787,6 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/triage/search', 'TriageController@search');
 		Route::get('/triages/delete/{id}', 'TriageController@delete');
 
-		Route::get('/consultations/close', 'ConsultationController@close');
-		Route::get('/consultations/progress/{consultation_id}', 'ConsultationController@progress');
-		Route::resource('consultations', 'ConsultationController');
-		Route::get('/consultations/id/{id}', 'ConsultationController@searchById');
-		Route::post('/consultation/search', 'ConsultationController@search');
-		Route::get('/consultation/search', 'ConsultationController@search');
-		Route::get('/consultations/delete/{id}', 'ConsultationController@delete');
 
 		Route::resource('diagnosis_types', 'DiagnosisTypeController');
 		Route::get('/diagnosis_types/id/{id}', 'DiagnosisTypeController@searchById');
@@ -769,12 +820,9 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/order/search', 'OrderController@search');
 		Route::get('/orders/delete/{id}', 'OrderController@delete');
 
-		Route::resource('drugs', 'DrugController');
-		Route::get('/drugs/id/{id}', 'DrugController@searchById');
-		Route::post('/drug/search', 'DrugController@search');
-		Route::get('/drug/search', 'DrugController@search');
-		Route::get('/drugs/delete/{id}', 'DrugController@delete');
 
 		Route::get('auth/logout', 'Auth\AuthCOntroller@getLogout');
 		
 });
+
+

@@ -10,7 +10,7 @@ use App\Race;
 use Log;
 use DB;
 use Session;
-
+use Gate;
 
 class RaceController extends Controller
 {
@@ -70,6 +70,9 @@ class RaceController extends Controller
 	public function update(Request $request, $id) 
 	{
 			$race = Race::findOrFail($id);
+			if (Gate::denies('update-race',$race)) {
+					return "XCXXX";
+			}
 			$race->fill($request->input());
 
 

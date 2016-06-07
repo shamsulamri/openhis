@@ -20,6 +20,7 @@ use App\Store;
 use App\Stock;
 use Carbon\Carbon;
 use App\TaxCode;
+use Gate;
 
 class ProductController extends Controller
 {
@@ -32,6 +33,13 @@ class ProductController extends Controller
 
 	public function index()
 	{
+			//$this->authorize('module-inventory');
+			/*
+			if (Gate::denies('module-inventory')) {
+				return view('common.403');
+			}
+			 */
+
 			$products = DB::table('products')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);

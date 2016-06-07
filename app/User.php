@@ -13,6 +13,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name', 'email', 'password',
+		'module_patient',
     ];
 
     /**
@@ -27,7 +28,7 @@ class User extends Authenticatable
 
 	public function authorization()
 	{
-		return $this->hasOne('App\UserAuthorization', 'id','id');
+		return $this->hasOne('App\UserAuthorization', 'author_id','author_id');
 	}
 
 	public function appointment()

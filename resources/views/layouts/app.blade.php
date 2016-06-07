@@ -58,6 +58,7 @@
 
 		<h6>
 		<ul class='nav nav-pills'>
+					@can('module-patient')
 					<li role="presentation" class="dropdown">
 							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patient <span class="caret"></span>
@@ -70,6 +71,8 @@
 								<li><a href="{{ url('/order_queues') }}">Order Queues</a></li>
 							</ul>
 					</li>
+					@endcan
+					@can('module-consultation')
 					<li role="presentation" class="dropdown">
 							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 							  <span class='glyphicon glyphicon-comment'></span>&nbsp; Consultations <span class="caret"></span>
@@ -79,6 +82,8 @@
 								<li><a href="{{ url('/consultations') }}">Consultations</a></li>
 							</ul>
 					</li>
+					@endcan
+					@can('module-inventory')
 					<li role="presentation" class="dropdown">
 							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 							  <span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Inventory <span class="caret"></span>
@@ -91,6 +96,8 @@
 								<li><a href="{{ url('/sets') }}">Order Sets</a></li>
 							</ul>
 					</li>
+					@endcan
+					@can('module-ward')
 					<li role="presentation" class="dropdown">
 							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 							  <span class='glyphicon glyphicon-bed'></span>&nbsp; Ward <span class="caret"></span>
@@ -101,7 +108,10 @@
 								<li><a href="{{ url('/admission_tasks') }}">Nurse Task</a></li> 
 							</ul>
 					</li>
+					@endcan
+					@can('system-administrator')
 					<li><a class='btn btn-default' href="{{ url('/options') }}"><span class='glyphicon glyphicon-th-list'></span>&nbsp; Options</a></li>
+					@endcan
 		</ul>
 		</h6>
 

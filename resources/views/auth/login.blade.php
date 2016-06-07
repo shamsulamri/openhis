@@ -18,7 +18,7 @@
 
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                             <div class="col-md-12">
-                                <input type="email" placeholder='Username' class="form-control" name="email" value="{{ old('email') }}">
+                                <input type="text" placeholder='Username' class="form-control" name="email" value="{{ old('email') }}">
 
                                 @if ($errors->has('email'))
                                     <span class="help-block">
