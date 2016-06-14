@@ -55,12 +55,6 @@
         </div>
     </div>
 
-    <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
-            {{ Form::submit('Next', ['class'=>'btn btn-primary']) }}
-        </div>
-    </div>		
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
 
 <script>

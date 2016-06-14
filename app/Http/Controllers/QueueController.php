@@ -160,7 +160,7 @@ class QueueController extends Controller
 			
 			return view('queues.index', [
 					'queues'=>$queues,
-					'locations' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'locations' => Location::whereNotNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location' => $location,
 					'search' => $request->search,
 					'selectedLocation' => $selectedLocation,

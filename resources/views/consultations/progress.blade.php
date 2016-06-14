@@ -3,9 +3,9 @@
 
 @section('content')
 @include('patients.label')
-<h2>
+<h1>
 Progress Notes
-</h2>
+</h1>
 	<br>
 	<div class="row">
 			<div class="col-xs-6">

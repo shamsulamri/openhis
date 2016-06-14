@@ -2,7 +2,7 @@
 
 @section('content')
 @include('patients.label')
-<h2>Medical Alerts</h2>
+<h1>Medical Alerts</h1>
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>

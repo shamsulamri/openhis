@@ -16,7 +16,7 @@
 	</div>
 
 <br>
-<ul class="nav nav-tabs nav-justified">
+<ul class="nav nav-pills">
   <li role="presentation" class="
 @if ($tab=='clinical')
 	active
@@ -38,5 +38,5 @@
 	active
 @endif
 "><a href="/orders/make" role="button">Order</a></li>
-
+</ul>
 <br>

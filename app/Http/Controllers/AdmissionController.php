@@ -86,7 +86,7 @@ class AdmissionController extends Controller
 					'texture' => DietTexture::all()->sortBy('texture_name')->lists('texture_name', 'texture_code')->prepend('',''),
 					'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
-					'admission_type' => AdmissionType::all()->sortBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
+					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 					'encounter' => $encounter,
 					]);
 	}
@@ -134,6 +134,7 @@ class AdmissionController extends Controller
 			$admission = Admission::findOrFail($id);
 			$admission->fill($request->input());
 			$admission->admission_nbm = $request->admission_nbm ?: 0;
+			$encounter = Encounter::findOrFail($admission->encounter_id);
 
 			if ($request->consultation_id>0) {
 					$admission->diet_code = $request->diet_code;
@@ -150,6 +151,7 @@ class AdmissionController extends Controller
 					if ($valid->passes()) {
 							$admission->save();
 							Session::flash('message', 'Record successfully updated.');
+							return redirect('/admissions');
 							return redirect('/admission_beds?admission_id='.$admission->admission_id);
 					} else {
 							return view('admissions.edit', [
@@ -162,6 +164,7 @@ class AdmissionController extends Controller
 									'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
 									'admission_type' => AdmissionType::all()->sortBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 									'consultant' => User::orderBy('name')->lists('name', 'id')->prepend('',''),
+									'encounter' => $encounter,
 									])
 									->withErrors($valid);			
 					}

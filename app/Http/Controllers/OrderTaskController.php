@@ -114,6 +114,7 @@ class OrderTaskController extends Controller
 	public function edit($id) 
 	{
 			$order_task = OrderTask::findOrFail($id);
+			$order_task->order_completed=1;
 			return view('order_tasks.edit', [
 					'order_task'=>$order_task,
 					'product' => $order_task->product,

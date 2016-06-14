@@ -166,6 +166,13 @@ class EncounterController extends Controller
 
 					$encounter->save();
 					Session::flash('message', 'Record successfully updated.');
+					if ($encounter->encounter_code=='inpatient') {
+							$admission = Admission::where('encounter_id',$encounter->encounter_id)->first();
+							return redirect('/admissions/'.$admission->admission_id.'/edit');
+					} else {
+							return redirect('/encounters');
+					}
+					/*
 					if ($encounter->encounter_code=='outpatient') {
 							return redirect('/queues/create?encounter_id='.$encounter->encounter_id);
 					} elseif ($encounter->encounter_code=='inpatient') {
@@ -186,6 +193,7 @@ class EncounterController extends Controller
 					} else {
 							return redirect('/encounters/id/'.$id);
 					}			
+					 */
 			} else {
 					return view('encounters.edit', [
 							'encounter'=>$encounter,

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h2>Patient List<a href='/patients/create' class='btn btn-primary pull-right'>New Patient</a></h2>
+<h1>Patient List<a href='/patients/create' class='btn btn-primary pull-right'>New Patient</a></h1>
 <br>
 <form action='/patient/search' method='post'>
 	<div class='input-group'>

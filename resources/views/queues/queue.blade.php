@@ -27,16 +27,3 @@
 	{{ Form::hidden('encounter_id', null) }}
 
 
-	<script>
-		@if ($queue->queue_id != null)
-		$('input[name=location_code]').attr('checked',false);
-		@endif
-
-		document.getElementById('save').disabled=true;
-
-		$('input[name=location_code]').change(function(){
-			document.getElementById('save').disabled=false;
-		});
-
-
-	</script>

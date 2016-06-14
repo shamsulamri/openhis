@@ -15,6 +15,9 @@ use App\Consultation;
 use Auth;
 use App\Order;
 use App\OrderPost;
+use Carbon\Carbon;
+use App\MedicalCertificate;
+use App\DojoUtility;
 
 class DischargeController extends Controller
 {
@@ -68,9 +71,11 @@ class DischargeController extends Controller
 					'discharge' => $discharge,
 					'type' => Type::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'consultation' => $consultation,
+					'mc' => $consultation->medical_certificate,
 					'patient' => $consultation->encounter->patient,
 					'consultOption' => 'consultation',
-					'discharge_orders' => $discharge_orders
+					'discharge_orders' => $discharge_orders,
+					'minYear' => Carbon::now()->year,
 					]);
 	}
 

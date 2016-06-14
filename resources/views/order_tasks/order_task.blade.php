@@ -25,6 +25,7 @@
         </div>
     </div>
 
+	<!--
     <div class='form-group  @if ($errors->has('order_sale_price')) has-error @endif'>
         {{ Form::label('order_sale_price', 'Sale Price',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
@@ -40,7 +41,7 @@
             @if ($errors->has('order_discount')) <p class="help-block">{{ $errors->first('order_discount') }}</p> @endif
         </div>
     </div>
-
+	-->
     <div class='form-group  @if ($errors->has('order_completed')) has-error @endif'>
         {{ Form::label('order_completed', 'Completed',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>

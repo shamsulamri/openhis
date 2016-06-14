@@ -42,7 +42,9 @@
 					{{$encounter->encounter_name}}
 			</td>
 			<td align='right'>
+					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('encounters/delete/'. $encounter->encounter_id) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

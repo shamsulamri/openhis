@@ -4,9 +4,11 @@
 <h1>Admission List</h1>
 <br>
 <form action='/admission/search' method='post'>
-	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
+	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control input-lg','maxlength'=>'10']) }}
+	<!--
 	<br>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	-->
 	<br>
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

@@ -33,7 +33,8 @@ class OrderQueueController extends Controller
 
 	public function index(Request $request)
 	{
-			$location = $request->cookie('queue_location');
+			$location_code = $request->cookie('queue_location');
+			$location = QueueLocation::find($location_code);
 			/*
 			$order_queues = DB::table('orders as a')
 					->distinct()
@@ -52,7 +53,7 @@ class OrderQueueController extends Controller
 					->leftjoin('beds as m', 'm.bed_code', '=', 'l.bed_code')
 					->where('a.post_id','>',0)
 					->whereNull('cancel_id')
-					->where('g.location_code','=',$location)
+					->where('g.location_code','=',$location_code)
 					->where('order_completed', '=', 0)
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
@@ -84,7 +85,7 @@ class OrderQueueController extends Controller
 					->leftjoin('beds as l', 'l.bed_code', '=', 'i.bed_code')
 					->leftjoin('queues as j', 'j.encounter_id', '=', 'c.encounter_id')
 					->leftjoin('queue_locations as k', 'k.location_code', '=', 'j.location_code')
-					->where('a.location_code','=',$location)
+					->where('a.location_code','=',$location_code)
 					->whereNull('cancel_id')
 					->where('order_completed', '=', 0)
 					->groupBy('a.encounter_id')

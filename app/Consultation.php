@@ -76,7 +76,12 @@ class Consultation extends Model
 	{
 			return $this->hasOne('App\Queue', 'encounter_id','encounter_id');
 	}
-
+	
+	public function medical_certificate()
+	{
+			return $this->hasOne('App\MedicalCertificate', 'consultation_id');
+	}
+	
 	public static function boot()
 	{
 			parent::boot();

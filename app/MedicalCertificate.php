@@ -49,7 +49,6 @@ class MedicalCertificate extends Model
 		}
 	}
 
-
 	public function getMcStartAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);

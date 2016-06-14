@@ -47,6 +47,7 @@
 
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+                                <li><a href="{{ url('/queue_locations') }}"><i class="fa fa-btn"></i>Set Location</a></li>
                             </ul>
                         </li>
                     @endif
@@ -55,21 +56,23 @@
         </div>
     </nav>
 	<div class='container'>
-
 		<h6>
 		<ul class='nav nav-pills'>
 					@can('module-patient')
+					<li role="presentation"><a class='btn btn-default' href="/patients">
+							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patients</a>
+					</li>
 					<li role="presentation" class="dropdown">
 							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patient <span class="caret"></span>
+							  <span class='glyphicon glyphicon-menu-hamburger'></span>&nbsp; Options <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
-								<li><a href="{{ url('/patients') }}">Patients</a></li>
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
 								<li><a href="{{ url('/discharges') }}">Discharges</a></li>
 								<li><a href="{{ url('/queues') }}">Queues</a></li>
 								<li><a href="{{ url('/order_queues') }}">Orders</a></li>
 								<li><a href="{{ url('/encounters') }}">Encounters</a></li>
+								<li><a href="{{ url('/admissions') }}">Admissions</a></li>
 							</ul>
 					</li>
 					@endcan

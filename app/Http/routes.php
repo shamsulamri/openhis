@@ -49,6 +49,14 @@ Route::group(['middleware' => 'web'], function () {
 				});
 		});
 
+		Route::get('/queue_locations/set/{id}', 'QueueLocationController@setLocation');
+		Route::get('/queue_locations/get', 'QueueLocationController@getLocation');
+		Route::resource('queue_locations', 'QueueLocationController');
+		Route::get('/queue_locations/id/{id}', 'QueueLocationController@searchById');
+		Route::post('/queue_location/search', 'QueueLocationController@search');
+		Route::get('/queue_location/search', 'QueueLocationController@search');
+		Route::get('/queue_locations/delete/{id}', 'QueueLocationController@delete');
+
 		Route::group(['middleware' => 'patient'], function () {
 
 				Route::resource('patients', 'PatientController');
@@ -747,13 +755,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/form/search', 'FormController@search');
 				Route::get('/forms/delete/{id}', 'FormController@delete');
 
-				Route::get('/queue_locations/set/{id}', 'QueueLocationController@setLocation');
-				Route::get('/queue_locations/get', 'QueueLocationController@getLocation');
-				Route::resource('queue_locations', 'QueueLocationController');
-				Route::get('/queue_locations/id/{id}', 'QueueLocationController@searchById');
-				Route::post('/queue_location/search', 'QueueLocationController@search');
-				Route::get('/queue_location/search', 'QueueLocationController@search');
-				Route::get('/queue_locations/delete/{id}', 'QueueLocationController@delete');
 				
 				/*
 				Route::resource('products', 'ProductController');

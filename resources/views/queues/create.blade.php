@@ -15,4 +15,15 @@
     </div>
 {{ Form::close() }}
 
+	<script>
+		$('input[name=location_code]').attr('checked',false);
+
+		document.getElementById('save').disabled=true;
+
+		$('input[name=location_code]').change(function(){
+			document.getElementById('save').disabled=false;
+		});
+
+
+	</script>
 @endsection

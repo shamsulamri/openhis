@@ -1,13 +1,4 @@
-@if (count($patient->alert)>0)
-	<div class='alert alert-danger'>
-	@foreach ($patient->alert as $alert)
-		- {{ $alert->alert_description }}
-		@if ($alert != end($patient->alert))
-			<br>
-		@endif
-	@endforeach
-	</div>
-@endif
+
 @if (!empty($consultation->encounter->discharge->discharge_id))
 <div class='alert alert-warning' role='warning'>
 <strong>Warning ! </strong>Editting discharged case.
@@ -17,6 +8,18 @@
 	<div class='panel-heading'>
 		<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
 		<h6>{{ $patient->patient_mrn }}</h6>
+@if (count($patient->alert)>0)
+	<h4 class='text-danger'>
+	<strong>
+	@foreach ($patient->alert as $alert)
+		- {{ $alert->alert_description }}
+		@if ($alert != end($patient->alert))
+			<br>
+		@endif
+	@endforeach
+	</strong>
+	</h4>
+@endif
 	</div>
 	<div class='panel-body'>
 <ul class='nav nav-pills nav-justified'>
