@@ -6,24 +6,37 @@
 </ul>
 </h4>
 -->
-
-<h4><strong>Final Step:</strong> Select queue location for the patient</h4>
-	<div class='page-header'>
-		<h4>Queue</h4>
-	</div>
+<div class='page-header'>
+	<h2>{{ $encounter->encounterType->encounter_name }}</h2>
+</div>
+<h4>Select queue location for the patient.</h4>
+<br>
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
-		<label for='location_code' class='col-sm-2 control-label'>Location<span style='color:red;'> *</span></label>
+		<label for='location_code' class='col-sm-2 control-label'></label>
         <div class='col-sm-10'>
-            {{ Form::select('location_code', $location,null, ['class'=>'form-control','maxlength'=>'20']) }}
+			@foreach($locations as $l)
+			<div class='checkbox'>
+            {{ Form::radio('location_code', $l->location_code) }} {{ $l->location_name }}
+			</div>
+			@endforeach
             @if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
-            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
-        </div>
-    </div>
 
 	{{ Form::hidden('encounter_id', null) }}
+
+
+	<script>
+		@if ($queue->queue_id != null)
+		$('input[name=location_code]').attr('checked',false);
+		@endif
+
+		document.getElementById('save').disabled=true;
+
+		$('input[name=location_code]').change(function(){
+			document.getElementById('save').disabled=false;
+		});
+
+
+	</script>

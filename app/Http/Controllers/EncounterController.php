@@ -58,7 +58,7 @@ class EncounterController extends Controller
 					'patient_type' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'employer' => Employer::all()->sortBy('employer_name')->lists('employer_name', 'employer_code')->prepend('',''),
 					'organisation' => CareOrganisation::all()->sortBy('organisation_name')->lists('organisation_name', 'organisation_code')->prepend('',''),
-					'triage' => Triage::all()->sortBy('triage_name')->lists('triage_name', 'triage_code')->prepend('',''),
+					'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'patientOption' => 'encounter',
@@ -118,9 +118,14 @@ class EncounterController extends Controller
 							return redirect('/admissions/create?encounter_id='.$encounter->encounter_id);
 					} elseif ($encounter->encounter_code=='emergency') {
 							if ($encounter->triage_code=='green') {
-								return redirect('/queues/create?encounter_id='.$encounter->encounter_id);
+									return redirect('/queues/create?encounter_id='.$encounter->encounter_id);
 							} else {
-								return redirect('/admissions/create?encounter_id='.$encounter->encounter_id);
+									$admission = new Admission($request->all());
+									$admission->encounter_id = $encounter->encounter_id;
+									$admission->admission_code = 'observe';
+									$admission->diet_code='normal';
+									$admission->save();
+									return redirect('/admission_beds?admission_id='.$admission->admission_id);
 							}	
 					} elseif ($encounter->encounter_code=='daycare') {
 							return redirect('/admissions/create?encounter_id='.$encounter->encounter_id);
@@ -128,7 +133,7 @@ class EncounterController extends Controller
 							return redirect('/encounters/id/'.$encounter->encounter_id);
 					}
 			} else {
-					return redirect('/encounters/create')
+					return redirect('/encounters/create?patient_id='.$request->patient_id)
 							->withErrors($valid)
 							->withInput();
 			}

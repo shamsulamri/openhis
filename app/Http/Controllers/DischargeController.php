@@ -27,8 +27,11 @@ class DischargeController extends Controller
 
 	public function index()
 	{
-			$discharges = DB::table('discharges')
-					->orderBy('type_code')
+			$discharges = DB::table('discharges as a')
+					->select('patient_mrn', 'patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at')
+					->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
+					->leftJoin('ref_discharge_types as d', 'd.type_code','=','a.type_code')
 					->paginate($this->paginateValue);
 			return view('discharges.index', [
 					'discharges'=>$discharges

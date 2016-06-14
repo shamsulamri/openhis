@@ -8,24 +8,24 @@
 @if ($flag==1)
 <h1>Bed Movement</h1>
 @else
-<h4>
-<ul class="nav nav-tabs nav-justified">
-  <li role="presentation"><a href="/encounters/{{ $encounter->encounter_id }}/edit">Step 1: Encounter</a></li>
-  <li role="presentation"><a href="/admissions/{{ $admission->admission_id }}/edit">Step 2: Define Admission</a></li>
-  <li role="presentation" class="active"><a href="#">Final: Bed Selection</a></li>
-</ul>
-</h4>
+<h1>New Encounter</h1>
+<div class='page-header'>
+		<h2>{{ $encounter->encounterType->encounter_name }}</h2>
+</div>
+<h4>Select bed for this patient.</h4>
 @endif
 <br>
+@if ($encounter->encounter_code<>'emergency')
 <form action='/admission_bed/search' method='post'>
-	<p><strong>Select Department</strong></p>
 	{{ Form::select('wards', $ward, $ward_code, ['class'=>'form-control']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<br>
+    <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
 	{{ Form::submit('Refresh', ['class'=>'btn btn-primary']) }}
 	{{ Form::hidden('admission_id', $admission->admission_id) }}
 </form>
 <br>
+@endif
 @if ($admission_beds->total()>0)
 <table class="table table-hover">
  <thead>
@@ -33,15 +33,14 @@
     <th>Bed</th>
     <th>Class</th>
 	<th>Occupant</th>
+	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($admission_beds as $admission_bed)
 	<tr>
 			<td>
-					<a href='{{ URL::to('admission_beds/'. $admission_bed->bed_code . '/edit') }}'>
-						{{$admission_bed->bed_name}}
-					</a>
+					{{$admission_bed->bed_name}}
 			</td>
 			<td>
 					{{$admission_bed->class_name}}

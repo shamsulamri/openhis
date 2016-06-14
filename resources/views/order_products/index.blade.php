@@ -16,13 +16,13 @@
 <form action='/order_product/search' method='post'>
 	<div class="row">
 			<div class="col-xs-12">
-				<input type='text' class='form-control' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+            {{ Form::select('set_code', $sets,$set_value, ['class'=>'form-control','maxlength'=>'10']) }}
 			</div>
 	</div>
 	<br>
 	<div class="row">
 			<div class="col-xs-12">
-            {{ Form::select('set_code', $sets,$set_value, ['class'=>'form-control','maxlength'=>'10']) }}
+				<input type='text' class='form-control' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 			</div>
 	</div>
 <br>

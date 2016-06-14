@@ -372,6 +372,7 @@ class OrderController extends Controller
 					'orders'=>$orders,
 					'consultation'=>$consultation,
 					'patient'=>$encounter->patient,
+					'encounter'=>$encounter,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
 			]);

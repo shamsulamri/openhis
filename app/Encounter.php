@@ -7,6 +7,8 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 use App\Consultation;
+use App\EncounterType;
+use DB;
 
 class Encounter extends Model
 {
@@ -68,6 +70,11 @@ class Encounter extends Model
 			return $this->hasOne('App\Queue', 'encounter_id');
 	}
 
+	public function encounterType() 
+	{
+			return $this->belongsTo('App\EncounterType', 'encounter_code');
+	}
+
 	public static function boot()
 	{
 			parent::boot();
@@ -78,8 +85,15 @@ class Encounter extends Model
 				$encounter->consultation()->delete();
 			});
 	}
-
 	
+	public function encounterPaid()
+	{
+			$amount = DB::table('bills as a')
+						->where('encounter_id','=',$this->encounter_id)
+						->sum('bill_outstanding');
+
+			return $amount;
+	}
 
 
 }

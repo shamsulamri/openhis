@@ -1,4 +1,11 @@
 
+    <div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
+        {{ Form::label('encounter_code', 'encounter_code',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::select('encounter_code', $encounter_type,null, ['class'=>'form-control','maxlength'=>'1']) }}
+            @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('gender_code')) has-error @endif'>
         {{ Form::label('gender_code', 'gender_code',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>

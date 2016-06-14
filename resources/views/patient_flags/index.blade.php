@@ -36,7 +36,9 @@
 					{{$patient_flag->flag_code}}
 			</td>
 			<td align='right'>
+					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('patient_flags/delete/'. $patient_flag->flag_code) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

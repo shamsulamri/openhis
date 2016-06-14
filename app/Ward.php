@@ -12,6 +12,7 @@ class Ward extends Model
 	protected $table = 'wards';
 	protected $fillable = [
 				'ward_code',
+				'encounter_code',
 				'gender_code',
 				'department_code',
 				'ward_name'];

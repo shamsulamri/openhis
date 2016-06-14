@@ -1,11 +1,6 @@
 @extends('layouts.app2')
 
 @section('content')
-@if (Auth::user()->authorization->module_consultation==1)
-
-@else
-		@include('patients.id')
-@endif
 <h2>
 Delete Order
 </h2>

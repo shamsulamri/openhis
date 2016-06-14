@@ -35,12 +35,16 @@ class AdmissionBedController extends Controller
 			$patient = NULL;
 			$flag=$request->flag;
 			$encounter = NULL;
-
+			$ward_code = $request->wards;
 			if (!empty($request->admission_id)) {
 					$admission = Admission::find($request->admission_id);
 					$patient = $admission->encounter->patient;
 					$encounter= Encounter::find($admission->encounter_id);
+
+
+					if ($encounter->encounter_code =='emergency') $ward_code = 'observation';
 			}
+
 			$admission_beds = DB::table('beds as a')
 					->select(['b.admission_id','a.bed_code','bed_name','patient_name','ward_code', 'a.class_code', 'class_name','c.patient_id'])
 					->leftJoin('admissions as b', 'b.bed_code', '=', 'a.bed_code')
@@ -49,12 +53,14 @@ class AdmissionBedController extends Controller
 					->leftJoin('discharges as e', 'e.encounter_id', '=', 'c.encounter_id')
 					->leftJoin('ward_classes as f', 'f.class_code', '=', 'a.class_code')
 					->whereNull('discharge_id')
+					->where('ward_code','=',$ward_code)
 					->orderBy('bed_name')
 					->paginate($this->paginateValue);
+
 			return view('admission_beds.index', [
 					'admission_beds'=>$admission_beds,
-					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'ward_code' => '',
+					'ward' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward_code' => $ward_code,
 					'admission' => $admission,
 					'patient' => $patient,
 					'flag' => $flag,
@@ -161,6 +167,7 @@ class AdmissionBedController extends Controller
 			if (!empty($request->admission_id)) {
 					$admission = Admission::find($request->admission_id);
 					$patient = $admission->encounter->patient;
+					$encounter= Encounter::find($admission->encounter_id);
 			}
 			$admission_beds = DB::table('beds as a')
 					->select(['b.admission_id','a.bed_code','bed_name','patient_name','ward_code','class_name', 'a.class_code','c.patient_id'])
@@ -176,10 +183,11 @@ class AdmissionBedController extends Controller
 
 			return view('admission_beds.index', [
 					'admission_beds'=>$admission_beds,
-					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward_code'=>$request->wards,
 					'admission' => $admission,
 					'patient' => $patient,
+					'encounter' => $encounter,
 					'flag' => $flag,
 					]);
 	}

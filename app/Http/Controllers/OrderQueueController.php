@@ -92,7 +92,7 @@ class OrderQueueController extends Controller
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,
-					'locations' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location'=>$location,
 					]);
 	}
@@ -172,29 +172,6 @@ class OrderQueueController extends Controller
 	public function search(Request $request)
 	{
 			$location = $request->locations;
-			$order_queues = DB::table('orders as a')
-					->distinct()
-					->select($this->fields)
-					->join('consultations as b', 'b.consultation_id', '=', 'a.consultation_id')
-					->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
-					->join('patients as d', 'd.patient_id','=', 'c.patient_id')
-					->join('products as e','e.product_code','=','a.product_code')
-					->leftjoin('order_cancellations as f', 'f.order_id', '=', 'a.order_id')
-					->leftjoin('product_categories as g', 'g.category_code', '=', 'e.category_code')
-					->leftjoin('queues as h', 'h.encounter_id', '=', 'c.encounter_id')
-					->leftjoin('queue_locations as i', 'i.location_code', '=', 'h.location_code')
-					->leftjoin('order_posts as j', 'j.post_id', '=', 'a.post_id')
-					->leftjoin('admissions as l', 'l.encounter_id', '=', 'c.encounter_id')
-					->leftjoin('beds as m', 'm.bed_code', '=', 'l.bed_code')
-					->where('a.post_id','>',0)
-					->where('g.location_code','=',$location)
-					->where('order_completed', '=', 0)
-					->orderBy('a.post_id')
-					->orderBy('a.created_at')
-					->orderBy('order_is_discharge','desc')
-					->orderBy('a.created_at', 'desc')
-					->groupBy('c.encounter_id')
-					->paginate($this->paginateValue);
 
 			$fields = ['a.order_id',
 					'patient_name', 
@@ -204,7 +181,11 @@ class OrderQueueController extends Controller
 					'g.location_code',
 					'cancel_id',
 					'a.created_at',
+					'bed_name',
+					'k.location_name',
 					];
+
+
 			$order_queues = DB::table('orders as a')
 					->select($fields)
 					->join('consultations as b', 'b.consultation_id', '=', 'a.consultation_id')
@@ -213,17 +194,20 @@ class OrderQueueController extends Controller
 					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'a.order_id')
 					->leftjoin('queue_locations as g', 'g.location_code', '=', 'a.location_code')
 					->leftjoin('ref_encounter_types as h', 'h.encounter_code', '=', 'c.encounter_code')
+					->leftjoin('admissions as i', 'i.encounter_id', '=', 'c.encounter_id')
+					->leftjoin('beds as l', 'l.bed_code', '=', 'i.bed_code')
+					->leftjoin('queues as j', 'j.encounter_id', '=', 'c.encounter_id')
+					->leftjoin('queue_locations as k', 'k.location_code', '=', 'j.location_code')
 					->where('a.location_code','=',$location)
 					->whereNull('cancel_id')
 					->where('order_completed', '=', 0)
 					->groupBy('a.encounter_id')
 					->paginate($this->paginateValue);
 
-
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,
-					'locations' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location'=>$location,
 					])
 				->withCookie(cookie('queue_location',$location));

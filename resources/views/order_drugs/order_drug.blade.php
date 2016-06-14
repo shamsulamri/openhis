@@ -36,7 +36,7 @@
 					<div class='form-group  @if ($errors->has('drug_dosage')) has-error @endif'>
 						{{ Form::label('drug_dosage', 'Dosage',['class'=>'col-md-4 control-label']) }}
 						<div class='col-md-8'>
-							{{ Form::text('drug_dosage', null, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
+							{{ Form::text('drug_dosage', null, ['id'=>'dosage','class'=>'form-control input-sm','placeholder'=>'','onchange'=>'countTotalUnit()',]) }}
 							@if ($errors->has('drug_dosage')) <p class="help-block">{{ $errors->first('drug_dosage') }}</p> @endif
 						</div>
 					</div>
@@ -66,7 +66,7 @@
 					<div class='form-group  @if ($errors->has('frequency_code')) has-error @endif'>
 						{{ Form::label('frequency_code', 'Frequency',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::select('frequency_code', $frequency,null, ['class'=>'form-control input-sm','maxlength'=>'20']) }}
+							{{ Form::select('frequency_code', $frequency,null, ['id'=>'frequency','class'=>'form-control input-sm','maxlength'=>'20','onchange'=>'countTotalUnit()']) }}
 							@if ($errors->has('frequency_code')) <p class="help-block">{{ $errors->first('frequency_code') }}</p> @endif
 						</div>
 					</div>
@@ -79,7 +79,7 @@
 					<div class='form-group  @if ($errors->has('drug_duration')) has-error @endif'>
 						{{ Form::label('drug_duration', 'Duration',['class'=>'col-md-4 control-label']) }}
 						<div class='col-md-8'>
-							{{ Form::text('drug_duration', null, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
+							{{ Form::text('drug_duration', null, ['id'=>'duration','class'=>'form-control input-sm','placeholder'=>'','onchange'=>'countTotalUnit()',]) }}
 							@if ($errors->has('drug_duration')) <p class="help-block">{{ $errors->first('drug_duration') }}</p> @endif
 						</div>
 					</div>
@@ -88,7 +88,7 @@
 					<div class='form-group  @if ($errors->has('period_code')) has-error @endif'>
 						{{ Form::label('unit', 'Period',['class'=>'col-md-4 control-label']) }}
 						<div class='col-md-8'>
-							{{ Form::select('period_code', $period,null, ['class'=>'form-control input-sm','maxlength'=>'10']) }}
+							{{ Form::select('period_code', $period,null, ['id'=>'period', 'class'=>'form-control input-sm','maxlength'=>'10','onchange'=>'countTotalUnit()']) }}
 							@if ($errors->has('period_code')) <p class="help-block">{{ $errors->first('period_code') }}</p> @endif
 						</div>
 					</div>
@@ -100,7 +100,7 @@
 					<div class='form-group  @if ($errors->has('order_quantity_request')) has-error @endif'>
 						{{ Form::label('order_quantity_request', 'Total Unit',['class'=>'col-sm-2 control-label']) }}
 						<div class='col-sm-10'>
-							{{ Form::text('order_quantity_request', $order->order_quantity_request, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
+							{{ Form::text('order_quantity_request', $order->order_quantity_request, ['id'=>'total','class'=>'form-control input-sm','placeholder'=>'',]) }}
 							@if ($errors->has('order_quantity_request')) <p class="help-block">{{ $errors->first('order_quantity_request') }}</p> @endif
 						</div>
 					</div>
@@ -161,3 +161,25 @@
 
     {{ Form::hidden('consultation_id', $consultation->consultation_id, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
     {{ Form::hidden('product_code', $product->product_code, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
+<script>
+	function getPeriodValue(periodCode) {
+		if (periodCode=='day') return 1;
+		if (periodCode=='week') return 7;
+		if (periodCode=='month') return 30;
+	}
+
+	function getFrequencyValue(frequencyCode) {
+			@foreach($frequencyValues as $f)
+					if (frequencyCode=='{{ $f->frequency_code }}') return {{ $f->frequency_value }};
+			@endforeach
+	}
+
+	function countTotalUnit() {
+			dosage = document.getElementById('dosage').value;
+			frequency = getFrequencyValue(document.getElementById('frequency').value) 
+			period = getPeriodValue(document.getElementById('period').value) 
+			duration = document.getElementById('duration').value;
+			total = frequency*duration*period*dosage;
+			document.getElementById('total').value=total;
+	}
+</script>

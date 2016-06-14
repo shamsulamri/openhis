@@ -29,6 +29,7 @@ class Product extends Model
 				'product_conversion_unit',
 				'product_conversion_code',
 				'product_sale_margin',
+				'product_on_hand',
 				'tax_code'];
 	
     	protected $guarded = ['product_code'];
@@ -69,5 +70,10 @@ class Product extends Model
 	public function gst()
 	{
 			return $this->belongsTo('App\TaxCode', 'tax_code');
+	}
+
+	public function getProductOnHandAttribute($value) 
+	{
+			return str_replace('.00','',$value);
 	}
 }

@@ -1,12 +1,4 @@
 
-    <div class='form-group  @if ($errors->has('drug_code')) has-error @endif'>
-        <label for='drug_code' class='col-sm-2 control-label'>Drug Code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-            {{ Form::text('drug_code', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('drug_code')) <p class="help-block">{{ $errors->first('drug_code') }}</p> @endif
-        </div>
-    </div>
-
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('drug_strength')) has-error @endif'>
@@ -116,7 +108,9 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/products" role="button">Cancel</a>
+            <a class="btn btn-default" href="javascript:window.history.back()" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+
+	{{ Form::hidden('drug_code', null) }}

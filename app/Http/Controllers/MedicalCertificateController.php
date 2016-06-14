@@ -36,12 +36,17 @@ class MedicalCertificateController extends Controller
 	{
 			$consultation = Consultation::find(Session::get('consultation_id'));
 			$medical_certificate = MedicalCertificate::where('encounter_id','=',$consultation->encounter->encounter_id)->get();
+			
 			if (count($medical_certificate)>0) {
 					return redirect('/medical_certificates/'.$medical_certificate[0]->mc_id.'/edit');
 			}
 
 			$medical_certificate = new MedicalCertificate();
 			$medical_certificate->encounter_id = $consultation->encounter->encounter_id;
+
+			$today = date('d/m/Y', strtotime(Carbon::now()));  
+			$medical_certificate->mc_start = $today;
+
 			return view('medical_certificates.create', [
 					'medical_certificate' => $medical_certificate,
 					'consultation' => $consultation,

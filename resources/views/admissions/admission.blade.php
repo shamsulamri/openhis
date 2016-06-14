@@ -1,11 +1,8 @@
 
-<h4>
-<ul class="nav nav-tabs nav-justified">
-  <li role="presentation"><a href="/encounters/{{ $encounter->encounter_id }}/edit">Step 1: Encounter</a></li>
-  <li role="presentation" class="active"><a href="#">Step 2: Define Admission</a></li>
-  <li role="presentation" class='disabled'><a href="#">Final: Bed Selection</a></li>
-</ul>
-</h4>
+	<div class='page-header'>
+		<h2>{{ $encounter->encounterType->encounter_name }}</h2>
+	</div>
+<h4>Define admission details.</h4>
 <br>
     <div class='form-group  @if ($errors->has('admission_code')) has-error @endif'>
         {{ Form::label('admission_code', 'Admission Type',['class'=>'col-sm-2 control-label']) }}
@@ -33,7 +30,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/admissions" role="button">Cancel</a>
+            <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

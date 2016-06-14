@@ -42,7 +42,7 @@ class QueueController extends Controller
 			
 			return view('queues.index', [
 					'queues'=>$queues,
-					'locations' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'locations' => Location::whereNotNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location' => $location,
 					'selectedLocation' => "",
 			]);
@@ -57,13 +57,15 @@ class QueueController extends Controller
 			if (empty($request->encounter_id)==false) {
 					$queue->encounter_id = $request->encounter_id;
 					$encounter = Encounter::findOrFail($queue->encounter_id);
-					$location = Location::where('encounter_code',$encounter->encounter_code)->lists('location_name','location_code')->prepend('','');
+					$location = Location::where('encounter_code',$encounter->encounter_code)->orderBy('location_name')->lists('location_name','location_code')->prepend('','');
+					$locations= Location::where('encounter_code',$encounter->encounter_code)->orderBy('location_name')->get();
 			}
 			
 			return view('queues.create', [
 					'queue' => $queue,
 					'patient' => $encounter->patient,
 					'location' => $location,
+					'locations' => $locations,
 					'encounter' => $encounter,
 			]);
 	}
@@ -90,11 +92,13 @@ class QueueController extends Controller
 	{
 			$queue = Queue::findOrFail($id);
 			$encounter = Encounter::findOrFail($queue->encounter_id);
+			$locations= Location::where('encounter_code',$encounter->encounter_code)->orderBy('location_name')->get();
 
 			return view('queues.edit', [
 					'queue'=>$queue,
 					'patient'=> $encounter->patient,
 					'location'=>Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'locations' => $locations,
 					'encounter' => $encounter,
 					]);
 	}

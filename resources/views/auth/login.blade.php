@@ -4,12 +4,7 @@
 <div class="container">
 	<br>
     <div class="row">
-        <div class="col-md-5 col-md-offset-7">
-            <div class="panel panel-heading">
-                <img src='msu_logo.png'>
-			</div>
-		</div>
-        <div class="col-md-5 col-md-offset-7">
+        <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default">
                 <div class="panel-heading"><h6>Login</h6></div>
                 <div class="panel-body">
@@ -55,8 +50,9 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-btn fa-sign-in"></i>Login
                                 </button>
-
-                                <a class="btn btn-link" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
+								<br>
+								<br>
+                                <a href="{{ url('/password/reset') }}">Forgot Your Password?</a>
                             </div>
                         </div>
                     </form>

@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Order Queue List</h1>
+<h1>Queue Order List</h1>
 <br>
 <form action='/order_queue/search' method='post'>
-	{{ Form::select('locations', $locations, $location, ['class'=>'form-control','maxlength'=>'10']) }}
+	{{ Form::select('locations', $locations, $location, ['class'=>'form-control input-lg','maxlength'=>'10']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<br>
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
@@ -37,15 +37,18 @@
 					{{ $order->patient_mrn }}
 			</td>
 			<td>
-					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}'>
-						{{$order->patient_name}}
-					</a>
+					{{$order->patient_name}}
 			</td>
 			<td>
 					{{ $order->encounter_name }} ({{ $order->location_name }}{{ $order->bed_name }})
 			</td>
 			<td align='right'>
+					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}' class='btn btn-primary btn-sm'>
+						Open	
+					</a>
+					@can('system-admisitrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

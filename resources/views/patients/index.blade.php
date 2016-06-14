@@ -25,7 +25,9 @@
     <th>MRN</th> 
     <th>Name</th>
     <th>Identification</th>
+	@can('system-administrator')	
 	<th></th>
+	@endcan
 	</tr>
   </thead>
 	<tbody>
@@ -42,9 +44,11 @@
 			<td width='10%'>
 					{{ $patient->patient_new_ic }}
 			</td>
+					@can('system-administrator')
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('patients/delete/'. $patient->patient_id) }}'>Delete</a>
 			</td>
+					@endcan
 	</tr>
 @endforeach
 @endif

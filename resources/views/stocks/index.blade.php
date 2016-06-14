@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<h1><a href='/products'>Product List</a> / Stock Movements</h1>
+<h1>Stock Movements</h1>
 <br>
 @include('products.id')
 <form action='/stock/search' method='post'>
     {{ Form::select('store_code', $store,$store_code, ['class'=>'form-control']) }}
-	<br>{{ Form::submit('Refresh', ['class'=>'btn btn-default']) }}
+	<br>
+    <a class="btn btn-default" href="/products" role="button">Cancel</a>
+	{{ Form::submit('Refresh', ['class'=>'btn btn-default']) }}
 	{{ Form::hidden('product_code', $product->product_code) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
@@ -15,6 +17,7 @@
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 @if (!empty($store_code))
+<h3>Movement History</h3>
 <br>
 <a href='/stocks/create/{{ $product->product_code }}/{{ $store_code }}' class='btn btn-primary'>Create</a>
 <br>

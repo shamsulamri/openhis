@@ -12,7 +12,7 @@ use DB;
 use Session;
 use App\Gender;
 use App\Department;
-
+use App\EncounterType;
 
 class WardController extends Controller
 {
@@ -40,6 +40,7 @@ class WardController extends Controller
 					'ward' => $ward,
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					]);
 	}
 
@@ -68,6 +69,7 @@ class WardController extends Controller
 					'ward'=>$ward,
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					]);
 	}
 

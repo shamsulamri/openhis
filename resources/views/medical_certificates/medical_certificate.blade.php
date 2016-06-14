@@ -10,7 +10,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('mc_end')) has-error @endif'>
-        <label for='mc_end' class='col-sm-2 control-label'>Date End<span style='color:red;'> *</span></label>
+        <label for='mc_end' class='col-sm-2 control-label'>Date End</label>
         <div class='col-sm-10'>
 			<input id="mc_end" name="mc_end" type="text">
             @if ($errors->has('mc_end')) <p class="help-block">{{ $errors->first('mc_end') }}</p> @endif

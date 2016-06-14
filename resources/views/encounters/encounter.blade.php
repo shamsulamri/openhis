@@ -8,14 +8,14 @@
 </ul>
 </h4>
 -->
-<h4><strong>Step 1:</strong> Define the encounter nature and billing information of the patient</h4>
+<h4>Define the encounter nature and billing information of the patient</h4>
 	<div class='page-header'>
 		<h4>Encounter</h4>
 	</div>
 	<div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
         <label for='encounter_code' class='col-sm-2 control-label'>Encounter<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-			{{ Form::select('encounter_code', $encounter_type, null, ['class'=>'form-control']) }}
+			{{ Form::select('encounter_code', $encounter_type, null, ['id'=>'encounter','class'=>'form-control','onchange'=>'checkTriage()']) }}
             @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
         </div>
     </div>
@@ -23,7 +23,7 @@
 	 <div class='form-group  @if ($errors->has('triage_code')) has-error @endif'>
         {{ Form::label('Triage', 'Triage',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::select('triage_code', $triage, null, ['class'=>'form-control','maxlength'=>'20']) }}
+            {{ Form::select('triage_code', $triage, null, ['id'=>'triage','class'=>'form-control','maxlength'=>'20']) }}
 			<br>
 			<small>For emergency cases only</small>
         </div>
@@ -62,3 +62,19 @@
         </div>
     </div>		
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
+
+<script>
+	document.getElementById('triage').disabled = true;
+
+	function checkTriage() {
+		triage = document.getElementById('triage');
+		encounter = document.getElementById('encounter').value;
+		if (encounter=='emergency') {
+				triage.disabled=false;
+		} else {
+				triage.value = '';
+				triage.disabled=true;
+		}
+				
+	}
+</script>

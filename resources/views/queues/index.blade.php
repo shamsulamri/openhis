@@ -4,14 +4,15 @@
 <h1>Queue List</h1>
 <br>
 <form action='/queue/search' method='post'>
-	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<!--
 	<br>
 	{{ Form::select('locations', $locations, $selectedLocation, ['class'=>'form-control','maxlength'=>'10']) }}
+	-->
 	<br>
     {{ Form::submit('Search', ['class'=>'btn btn-primary']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
@@ -42,7 +43,9 @@
 					{{$queue->location_name}}
 			</td>
 			<td align='right'>
+					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

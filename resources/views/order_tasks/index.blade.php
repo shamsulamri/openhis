@@ -8,7 +8,7 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<button class="btn btn-primary" type="submit" value="Submit">Update Status</button>
-					<a class='btn btn-primary' href='/orders'>Edit Orders</a>
+					<a class='btn btn-primary' href='/orders/make'>Edit Orders</a>
 			</div>
 			<div align="right" class="col-xs-6">
 			</div>
@@ -36,9 +36,6 @@
 	@if ($order->order_completed==1) 
 			<?php $status='success' ?>
 	@endif
-	@if (isset($order->cancel_id)) 
-			<?php $status='danger' ?>
-	@endif
 	<tr class='{{ $status }}'>
 			<td width='10'>
 					@if (!isset($order->cancel_id))
@@ -51,7 +48,9 @@
 					{{$order->product_name}}
 					</a>
 					@else
-					CANCEL: {{$order->product_name}}
+					<strike>
+					{{$order->product_name}}
+					</strike>
 					@endif
 			</td>
 			<td>

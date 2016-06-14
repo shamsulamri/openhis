@@ -42,13 +42,6 @@
 					{{$encounter->encounter_name}}
 			</td>
 			<td align='right'>
-					<?php
-					$bill_label="Interim Bill";
-					if ($encounter->discharge_id>0) {
-						$bill_label = "Final Bill";
-					}
-					?>
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('bill_items/'. $encounter->encounter_id) }}'>{{ $bill_label }}</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('encounters/delete/'. $encounter->encounter_id) }}'>Delete</a>
 			</td>
 	</tr>

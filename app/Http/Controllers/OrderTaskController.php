@@ -63,6 +63,7 @@ class OrderTaskController extends Controller
 	{
 			Session::set('encounter_id', $encounter_id);
 			$encounter = Encounter::find($encounter_id);
+
 			$consultation = Consultation::where('patient_id','=',$encounter->patient_id)
 					->orderBy('created_at','desc')
 					->first();
@@ -105,6 +106,7 @@ class OrderTaskController extends Controller
 			return view('order_tasks.index', [
 					'order_tasks'=>$order_tasks,
 					'patient'=>$encounter->patient,
+					'encounter'=>$encounter,
 					'encounter_id' => $encounter_id,
 					'ids'=>$ids,
 			]);
@@ -116,6 +118,7 @@ class OrderTaskController extends Controller
 					'order_task'=>$order_task,
 					'product' => $order_task->product,
 					'patient'=>$order_task->consultation->encounter->patient,
+					'encounter'=>$order_task->consultation->encounter,
 					'encounter_id' => $order_task->consultation->encounter_id,
 					]);
 	}

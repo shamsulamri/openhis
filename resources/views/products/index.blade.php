@@ -38,17 +38,17 @@
 			</td>
 			<td>
 				@if ($product->product_on_hand>0)
-					{{$product->product_on_hand}}
+					{{ str_replace('.00','',$product->product_on_hand) }}
 				@endif
 			</td>
 			<td align='right'>
 					@if ($product->product_bom==1)
-					<a class='btn btn-default btn-xs' href='{{ URL::to('bill_materials/'. $product->product_code) }}'><span class='glyphicon glyphicon-link' aria-hidden='true'></span></a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('bill_materials/'. $product->product_code) }}'>Bill of Materials</a>
 					@endif
 					@if ($product->category_code=='drugs')
-					<a class='btn btn-default btn-xs' href='{{ URL::to('drug_prescriptions/'. $product->product_code.'/edit') }}'><span class='glyphicon glyphicon-list' aria-hidden='true'></span></a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('drug_prescriptions/'. $product->product_code.'/edit') }}'>Prescription</a>
 					@endif
-					<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $product->product_code) }}'><span class='glyphicon glyphicon-shopping-cart' aria-hidden='true'></span></a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $product->product_code) }}'>Stock</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('products/delete/'. $product->product_code) }}'>Delete</a>
 			</td>
 	</tr>

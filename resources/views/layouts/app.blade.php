@@ -66,9 +66,10 @@
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/patients') }}">Patients</a></li>
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
-								<li><a href="{{ url('/encounters') }}">Encounters</a></li>
+								<li><a href="{{ url('/discharges') }}">Discharges</a></li>
 								<li><a href="{{ url('/queues') }}">Queues</a></li>
 								<li><a href="{{ url('/order_queues') }}">Orders</a></li>
+								<li><a href="{{ url('/encounters') }}">Encounters</a></li>
 							</ul>
 					</li>
 					@endcan

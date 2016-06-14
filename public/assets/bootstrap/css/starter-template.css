@@ -21,6 +21,10 @@ table, th, td {
 }
 
 /*
+input
+{
+		vertical-align:bottom;
+}
 h1 {
 	font-size: 2.0em;
 }
