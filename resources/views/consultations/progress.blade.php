@@ -2,18 +2,11 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
+@include('consultations.panel')
 <h1>
 Progress Notes
 </h1>
-	<br>
-	<div class="row">
-			<div class="col-xs-6">
-            	<a class="btn btn-default" href="/consultations/{{ $consultation->consultation_id }}/edit" role="button">Back to Consultation</a>
-			</div>
-	</div>
 @if (count($notes)>0)
-<br>
 <br>
 <table class="table table-hover">
 	<tbody>

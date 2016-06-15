@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
 @include('consultations.panel')
+<h1>Diagnoses</h1>
+<br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif

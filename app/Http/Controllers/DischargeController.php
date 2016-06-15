@@ -67,6 +67,8 @@ class DischargeController extends Controller
 					->where('d.encounter_id', $consultation->encounter_id)
 					->get();
 
+			$mc = $consultation->medical_certificate;
+
 			return view('discharges.create', [
 					'discharge' => $discharge,
 					'type' => Type::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),

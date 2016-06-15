@@ -54,13 +54,18 @@ class MedicalCertificate extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
+	public function getMcStart() 
+	{
+			$dt = Carbon::createFromFormat('Y-m-d', $this->attributes['mc_start']);
+			return $dt;
+	}
+
 	public function setMcEndAttribute($value)
 	{
 		if (DojoUtility::validateDate($value)==true) {
 			$this->attributes['mc_end'] = DojoUtility::dateWriteFormat($value);
 		}
 	}
-
 
 	public function getMcEndAttribute($value)
 	{

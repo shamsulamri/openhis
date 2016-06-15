@@ -1,5 +1,5 @@
 
-<h2>Medical Alerts</h2>
+<h1>Medical Alerts</h1>
 <br>
 
     <div class='form-group  @if ($errors->has('alert_description')) has-error @endif'>

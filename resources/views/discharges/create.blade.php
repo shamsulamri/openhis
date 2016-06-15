@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
+@include('consultations.panel')
 @include('common.errors')
 
 {{ Form::model($discharge, ['url'=>'discharges', 'class'=>'form-horizontal']) }} 

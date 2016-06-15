@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
 @include('consultations.panel')
-<h2>
+<h1>
 Delete Procedure
-</h2>
+</h1>
 @include('common.errors')
 <br>
 <h4>

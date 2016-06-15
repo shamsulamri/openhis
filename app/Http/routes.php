@@ -279,6 +279,13 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/newborns/delete/{id}', 'NewbornController@delete');
 
 				Route::get('/diet', 'AdmissionController@diet');
+
+				Route::resource('order_cancellations', 'OrderCancellationController', ['except'=>['create']]);
+				Route::get('/order_cancellations/create/{id}', 'OrderCancellationController@create');
+				Route::get('/order_cancellations/id/{id}', 'OrderCancellationController@searchById');
+				Route::post('/order_cancellation/search', 'OrderCancellationController@search');
+				Route::get('/order_cancellation/search', 'OrderCancellationController@search');
+				Route::get('/order_cancellations/delete/{id}', 'OrderCancellationController@delete');
 		});
 
 		Route::group(['middleware' => 'inventory'], function () {
@@ -579,12 +586,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/frequency/search', 'FrequencyController@search');
 				Route::get('/frequencies/delete/{id}', 'FrequencyController@delete');
 			
-				Route::resource('order_cancellations', 'OrderCancellationController', ['except'=>['create']]);
-				Route::get('/order_cancellations/create/{id}', 'OrderCancellationController@create');
-				Route::get('/order_cancellations/id/{id}', 'OrderCancellationController@searchById');
-				Route::post('/order_cancellation/search', 'OrderCancellationController@search');
-				Route::get('/order_cancellation/search', 'OrderCancellationController@search');
-				Route::get('/order_cancellations/delete/{id}', 'OrderCancellationController@delete');
 				
 				
 				

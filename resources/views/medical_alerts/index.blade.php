@@ -1,14 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
+@include('consultations.panel')
 <h1>Medical Alerts</h1>
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <a href='/medical_alerts/create' class='btn btn-primary'>Create</a>
-<br>
 <br>
 @if ($medical_alerts->total()>0)
 <table class="table table-hover">

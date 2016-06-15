@@ -1,18 +1,19 @@
-<h2>Discharge</h2>
+<h1>Clincal Discharge</h1>
 <br>
-    <div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
-        <label for='discharge_date' class='col-sm-2 control-label'>Date Start<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-			<input id="discharge_date" name="discharge_date" type="text">
-            @if ($errors->has('discharge_date')) <p class="help-block">{{ $errors->first('discharge_date') }}</p> @endif
-        </div>
-    </div>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
-        <label for='type_code' class='col-sm-2 control-label'>Discharge Type<span style='color:red;'> *</span></label>
+        <label for='type_code' class='col-sm-2 control-label'>Outcome<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::select('type_code', $type,null, ['class'=>'form-control','maxlength'=>'10']) }}
             @if ($errors->has('type_code')) <p class="help-block">{{ $errors->first('type_code') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
+        <label for='discharge_date' class='col-sm-2 control-label'>Date<span style='color:red;'> *</span></label>
+        <div class='col-sm-10'>
+			<input id="discharge_date" name="discharge_date" type="text">
+            @if ($errors->has('discharge_date')) <p class="help-block">{{ $errors->first('discharge_date') }}</p> @endif
         </div>
     </div>
 	@if ($consultation->encounter->encounter_code=='inpatient')
@@ -37,7 +38,7 @@
         {{ Form::label('mc', 'Medical Certificate',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
 		@if ($mc)
-        		{{ Form::label('product', 'Start: '.$mc->mc_start,['class'=>'control-label']) }}<br>
+        		{{ Form::label('product', $mc->getMcStart()->format('d M Y'),['class'=>'control-label']) }}<br>
 				@if (empty($mc->mc_end))
         		{{ Form::label('product', 'End: '.$mc->mc_end,['class'=>'control-label']) }}<br>
 				@endif

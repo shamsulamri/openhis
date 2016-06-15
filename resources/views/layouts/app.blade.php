@@ -122,6 +122,7 @@
     @yield('content')
 	</div>
 	<script type="text/javascript">
+		/*
 		$(document).ready(function () {
 		 
 				window.setTimeout(function() {
@@ -132,7 +133,10 @@
 
 				 
 		});
+		*/
 
-	
+		$(function () {
+			  $('[data-toggle="tooltip"]').tooltip()
+		})	  
 	</script>
 </body>

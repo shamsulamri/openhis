@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
+@include('consultations.panel')
 @include('common.errors')
-<h2>Delete Diagnosis</h2>
+<h1>Delete Diagnosis</h1>
 <br>
 <h4>
 Are you sure you want to delete the selected record ?

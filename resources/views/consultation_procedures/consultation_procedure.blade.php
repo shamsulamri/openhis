@@ -1,4 +1,6 @@
 
+<h1>Procedures</h1>
+<br>
     <div class='form-group  @if ($errors->has('procedure_description')) has-error @endif'>
         {{ Form::label('procedure_description', 'Description',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
@@ -17,7 +19,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/consultation_procedures/{{ $consultation->consultation_id }}" role="button">Cancel</a>
+            <a class="btn btn-default" href="/consultation_procedures" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

@@ -8,11 +8,13 @@
 	<div class='panel-heading'>
 		<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
 		<h6>{{ $patient->patient_mrn }}</h6>
+	</div>
+	<div class='panel-body'>
 @if (count($patient->alert)>0)
 	<h4 class='text-danger'>
 	<strong>
 	@foreach ($patient->alert as $alert)
-		- {{ $alert->alert_description }}
+		{{ $alert->alert_description }}
 		@if ($alert != end($patient->alert))
 			<br>
 		@endif
@@ -20,8 +22,7 @@
 	</strong>
 	</h4>
 @endif
-	</div>
-	<div class='panel-body'>
+<!--
 <ul class='nav nav-pills nav-justified'>
 			<li role='presentation' class=
 				@if ($consultOption=='consultation')
@@ -52,6 +53,7 @@
 			><a href="/diet"><span class='glyphicon glyphicon-cutlery' aria-hidden='true'></span> &nbsp;Dietary</a></li>
 			@endif
 </ul>
+-->
 	</div>
 </div>
 
