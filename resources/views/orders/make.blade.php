@@ -4,10 +4,15 @@
 <style>
 iframe { border: 1px #C0C0C0 solid; }
 </style>
-@include('orders.panel')
-<h1>Orders</h1>
-<br>
+@can('module-consultation')
+		@include('consultations.panel')		
+		<h1>Orders</h1>
+		<br>
+@endcan
 @cannot('module-consultation')
+		@include('patients.id')
+		<h1>Edit Orders</h1>
+		<br>
         <a class="btn btn-default" href="/order_tasks/task/{{ Session::get('encounter_id') }}/{{Cookie::get('queue_location')}}" role="button">Back to Task</a>
 		<br>
 		<br>

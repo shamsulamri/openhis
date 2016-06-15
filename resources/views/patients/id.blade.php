@@ -12,11 +12,11 @@
 		@if (isset($encounter))
 			@if ($encounter->encounter_code=='outpatient' || $encounter->encounter_code=='emergency')
 				@if ($encounter->encounterPaid()==0)
-				<h4 class='text-danger'>
+				<h3 class='text-danger'>
 					<strong>
 					Encounter not paid
 					</strong>	
-				</h4>
+				</h3>
 				@endif
 			@endif
 		@endif

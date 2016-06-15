@@ -2,9 +2,9 @@
 
 @section('content')
 @include('patients.id')
-<h2>
+<h1>
 Task Outcome
-</h2>
+</h1>
 @include('common.errors')
 <br>
 {{ Form::model($order_task, ['route'=>['order_tasks.update',$order_task->order_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 

@@ -62,6 +62,9 @@
 					<li role="presentation"><a class='btn btn-default' href="/patients">
 							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patients</a>
 					</li>
+					<li role="presentation"><a class='btn btn-default' href="{{ url('/order_queues') }}">
+							  <span class='glyphicon glyphicon-inbox'></span>&nbsp; Orders</a>
+					</li>
 					<li role="presentation" class="dropdown">
 							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 							  <span class='glyphicon glyphicon-menu-hamburger'></span>&nbsp; Options <span class="caret"></span>
@@ -70,7 +73,6 @@
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
 								<li><a href="{{ url('/discharges') }}">Discharges</a></li>
 								<li><a href="{{ url('/queues') }}">Queues</a></li>
-								<li><a href="{{ url('/order_queues') }}">Orders</a></li>
 								<li><a href="{{ url('/encounters') }}">Encounters</a></li>
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li>
 							</ul>

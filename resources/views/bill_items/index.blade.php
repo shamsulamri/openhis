@@ -9,6 +9,8 @@ Final Bill
 Interim Bill
 @endif
 </h1>
+<a class="btn btn-default" href="javascript:window.history.back()" role="button">Back</a>
+<br>
 @if ($bills->total()>0)
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
@@ -35,9 +37,11 @@ Interim Bill
 		@foreach ($bills as $bill)
 			<tr>
 					<td>
+							<!--
 							@if ($bill->order_completed==0) 
 								<span class='label label-danger'>Pending</span>
 							@endif
+							-->
 							@if (!$billPosted)
 							<a href='{{ URL::to('bill_items/'. $bill->bill_id . '/edit') }}'>
 							@endif
@@ -240,11 +244,13 @@ Interim Bill
 	@endif
 </table>
 </div>
+<!--
 @if ($pending>0) 
-<div class="alert alert-danger" role="alert">
-<strong>Warning !</strong> Do not post this bill until all orders are completed.
+<div class="alert alert-warning" role="alert">
+<strong>Warning !</strong> There are incomplete orders.
 </div>
 @endif
+-->
 @if (!$billPosted)
 {{ Form::model($bill, ['id'=>'post_form','url'=>'bills', 'class'=>'form-horizontal']) }} 
 			<input type='checkbox' id='post_checkbox' value='1' onchange='javascript:enablePostButton()'>

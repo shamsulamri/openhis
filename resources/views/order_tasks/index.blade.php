@@ -2,7 +2,7 @@
 
 @section('content')
 @include('patients.id')
-<h2>Order Task</h1>
+<h1>Order Task</h1>
 <br>
 <form action='/order_task/status' method='post'>
 	<div class="row">

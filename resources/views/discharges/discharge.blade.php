@@ -1,5 +1,3 @@
-<h1>Clincal Discharge</h1>
-<br>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         <label for='type_code' class='col-sm-2 control-label'>Outcome<span style='color:red;'> *</span></label>
@@ -68,8 +66,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" href="/consultations/{{ $consultation->consultation_id }}/edit" role="button">Cancel</a>
-            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+            {{ Form::submit('Discharge Patient', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
 

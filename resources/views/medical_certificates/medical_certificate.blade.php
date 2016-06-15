@@ -1,6 +1,4 @@
 
-<h1>Medical Certificate</h1>
-<br>
     <div class='form-group  @if ($errors->has('mc_start')) has-error @endif'>
         <label for='mc_start' class='col-sm-2 control-label'>Date Start<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>

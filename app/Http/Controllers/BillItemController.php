@@ -70,7 +70,7 @@ class BillItemController extends Controller
 			$bill_existing = DB::table('bill_items')
 								->where('encounter_id','=',$id);
 			
-			$fields = 'encounter_id, a.order_id,b.tax_code, tax_rate, order_discount, a.product_code, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price, order_gst_unit';
+			$fields = 'encounter_id, a.order_id,b.tax_code, tax_rate, order_discount, a.product_code, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price, order_gst_unit, order_completed';
 			$orders = DB::table('orders as a')
 					->selectRaw($fields)
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
@@ -125,6 +125,19 @@ class BillItemController extends Controller
 					->paginate($this->paginateValue);
 
 
+
+			if ($bills->total()==0) {
+				$bills=$this->compileBill($id);
+			$bills = DB::table('bill_items as a')
+					->select('bill_id','a.encounter_id','a.order_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_total','bill_gst_unit','bill_exempted','order_completed')
+					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
+					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
+					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
+					->where('a.encounter_id','=', $id)
+					->orderBy('a.product_code')
+					->paginate($this->paginateValue);
+			}
+
 			$pending = DB::table('bill_items as a')
 					->select('bill_id')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
@@ -133,10 +146,6 @@ class BillItemController extends Controller
 					->where('a.encounter_id','=', $id)
 					->where('order_completed','=',0)
 					->count('bill_id');
-
-			if ($bills->total()==0) {
-				$bills=$this->compileBill($id);
-			}
 
 			$bill_grand_total = DB::table('bill_items')
 					->where('encounter_id','=', $id)

@@ -58,6 +58,7 @@ class BillController extends Controller
 							$encounter = Encounter::find($bill->encounter_id);
 							return view('bills.post', [
 									'patient'=>$encounter->patient,
+									'encounter'=>$encounter,
 							]);
 					}
 			} else {

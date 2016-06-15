@@ -107,6 +107,7 @@ class MedicalCertificateController extends Controller
 							'consultation' => $consultation,
 							'patient' => $consultation->encounter->patient,
 							'consultOption' => 'medical_certificate',
+							'minYear' => Carbon::now()->year,
 							])
 							->withErrors($valid);			
 			}

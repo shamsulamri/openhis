@@ -31,10 +31,11 @@ class DischargeController extends Controller
 	public function index()
 	{
 			$discharges = DB::table('discharges as a')
-					->select('patient_mrn', 'patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at')
+					->select('patient_mrn', 'patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'id')
 					->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('ref_discharge_types as d', 'd.type_code','=','a.type_code')
+					->leftJoin('bills as e', 'e.encounter_id', '=', 'a.encounter_id')
 					->paginate($this->paginateValue);
 			return view('discharges.index', [
 					'discharges'=>$discharges
@@ -106,7 +107,7 @@ class DischargeController extends Controller
 					Session::flash('message', 'Patient has been discharged.');
 					return redirect('/patient_lists');
 			} else {
-					return redirect('/discharges/create/'.$request->consultation_id)
+					return redirect('/discharges/create/')
 							->withErrors($valid)
 							->withInput();
 			}

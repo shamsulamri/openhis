@@ -3,7 +3,7 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('investigation_date')) has-error @endif'>
-						<label for='investigation_date' class='col-sm-2 control-label'>Date Start<span style='color:red;'> *</span></label>
+						<label for='investigation_date' class='col-sm-2 control-label'>Date<span style='color:red;'> *</span></label>
 						<div class='col-sm-10'>
 							<input id="investigation_date" name="investigation_date" type="text">
 							@if ($errors->has('investigation_date')) <p class="help-block">{{ $errors->first('investigation_date') }}</p> @endif

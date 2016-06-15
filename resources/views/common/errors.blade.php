@@ -3,4 +3,6 @@
     <div class="alert alert-danger">
 			Please correct the errors highlighted below.
     </div>
+@else
+	<br>
 @endif

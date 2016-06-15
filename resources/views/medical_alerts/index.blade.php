@@ -3,10 +3,7 @@
 @section('content')
 @include('consultations.panel')
 <h1>Medical Alerts</h1>
-<br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+@include('common.notification')
 <a href='/medical_alerts/create' class='btn btn-primary'>Create</a>
 <br>
 @if ($medical_alerts->total()>0)

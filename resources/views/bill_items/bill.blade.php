@@ -8,19 +8,19 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('bill_unit_price')) has-error @endif'>
+        {{ Form::label('bill_unit_price', 'Sale Price',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::label('bill_unit_price', $bill->bill_unit_price, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('bill_unit_price')) <p class="help-block">{{ $errors->first('bill_unit_price') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('bill_quantity')) has-error @endif'>
         {{ Form::label('bill_quantity', 'Quantity',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::text('bill_quantity', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('bill_quantity')) <p class="help-block">{{ $errors->first('bill_quantity') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('bill_unit_price')) has-error @endif'>
-        {{ Form::label('bill_unit_price', 'Sale Price',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
-            {{ Form::text('bill_unit_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('bill_unit_price')) <p class="help-block">{{ $errors->first('bill_unit_price') }}</p> @endif
         </div>
     </div>
 

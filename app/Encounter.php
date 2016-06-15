@@ -90,7 +90,7 @@ class Encounter extends Model
 	{
 			$amount = DB::table('bills as a')
 						->where('encounter_id','=',$this->encounter_id)
-						->sum('bill_outstanding');
+						->count('bill_outstanding');
 
 			return $amount;
 	}

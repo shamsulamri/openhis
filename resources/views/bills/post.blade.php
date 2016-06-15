@@ -8,5 +8,5 @@ Bill Posted
 <h3>
 The bill has been successfully posted.
 </h3>
-
+<a href='/bill_items/{{ $encounter->encounter_id }}' class='btn btn-default'>Return</a>
 @endsection

@@ -48,6 +48,7 @@
 					$bill_label="Interim Bill";
 					if ($discharge->discharge_id>0) {
 						$bill_label = "Final Bill";
+						if ($discharge->id>0) $bill_label="&nbsp;&nbsp; Paid &nbsp;&nbsp;";
 					}
 					?>
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
