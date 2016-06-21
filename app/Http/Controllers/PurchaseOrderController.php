@@ -43,6 +43,9 @@ class PurchaseOrderController extends Controller
 	public function create()
 	{
 			$purchase_order = new PurchaseOrder();
+			$today = date('d/m/Y', strtotime(Carbon::now()));  
+			$purchase_order->purchase_date = $today;
+
 			return view('purchase_orders.create', [
 					'purchase_order' => $purchase_order,
 					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),

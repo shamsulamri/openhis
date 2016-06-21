@@ -55,14 +55,17 @@ class OrderTaskController extends Controller
 					->paginate($this->paginateValue);
 
 			return view('order_tasks.index', [
-					'order_tasks'=>$order_tasks
+					'order_tasks'=>$order_tasks,
 			]);
 	}
 
-	public function task($encounter_id, $location_code)
+	public function task(Request $request, $encounter_id, $location_code)
 	{
 			Session::set('encounter_id', $encounter_id);
 			$encounter = Encounter::find($encounter_id);
+
+			$location_code = $request->cookie('queue_location');
+			$location = Location::find($location_code);
 
 			$consultation = Consultation::where('patient_id','=',$encounter->patient_id)
 					->orderBy('created_at','desc')
@@ -109,6 +112,7 @@ class OrderTaskController extends Controller
 					'encounter'=>$encounter,
 					'encounter_id' => $encounter_id,
 					'ids'=>$ids,
+					'location'=>$location,
 			]);
 	}
 	public function edit($id) 
@@ -135,7 +139,11 @@ class OrderTaskController extends Controller
 			if ($valid->passes()) {
 					$order_task->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->category->location_code);
+					if ($request->user()->can('module-support')) {
+						return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->category->location_code);
+					} else {
+						return redirect('/admission_tasks');
+					}
 			} else {
 					return view('order_tasks.edit', [
 							'order_task'=>$order_task,

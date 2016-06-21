@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Options</h1>
+<h1>Maintenance</h1>
 <h3>Patient Management</h3>
 	<h5>
 	<div class="row">
@@ -69,7 +69,6 @@
 				<a href="{{ url('/suppliers') }}">Suppliers</a><br>
 				<a href="{{ url('/stores') }}">Stores</a><br>
 				<a href="{{ url('/drugs') }}">Drugs</a><br>
-				<a href="{{ url('/drug_prescriptions') }}">Drug Prescriptions</a><br>
 				<a href="{{ url('/sets') }}">Order Sets</a><br>
 			</div>
 			<div class="col-xs-3">

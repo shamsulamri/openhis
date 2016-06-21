@@ -6,7 +6,6 @@
     font-size: 60%;
 }
 </style>
-
 @if (Session::has('message'))
 	<br>
     <div class="alert alert-info">{{ Session::get('message') }}</div>
@@ -27,6 +26,7 @@
 	</div>
 <br>
 	<button class="btn btn-default btn-xs" type="submit" value="Submit">Refresh</button>
+	<a href='/order_product/drug' class='btn btn-default btn-xs'>Drug History</a>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<input type='hidden' name='set_value' value="{{ $set_value }}">
 </form>
@@ -43,6 +43,32 @@
 									</td>
 									<td>
 										{{ ucfirst(strtoupper($order_product->product_name)) }}
+										@if ($tab=='drug')
+											<!--
+											<p class='pull-right'>
+												{{ $dojo->diffForHumans($order_product->created_at) }}
+												{{ date('d F Y', strtotime($order_product->created_at)) }}
+											</p>
+											-->
+											<br>
+											@if ($order_product->drug_strength>0)
+											{{ $order_product->drug_strength }} {{ $order_product->unit_name }}, 
+											@endif
+
+											@if ($order_product->drug_dosage>0)
+											{{ $order_product->drug_dosage }} {{ $order_product->dosage_name }}, 
+											@endif
+
+											@if ($order_product->route_name != '')
+											{{ $order_product->route_name }},  
+											@endif
+											@if ($order_product->frequency_name !='')
+											{{ $order_product->frequency_name }}, 
+											@endif
+											@if ($order_product->drug_duration>0)
+											{{ $order_product->drug_duration }} {{ $order_product->period_name }}
+											@endif
+										@endif
 									</td>
 									<td width='10'>
 										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}' class='btn btn-primary btn-xs'>+</a>
@@ -56,7 +82,9 @@
 			<input type='hidden' name='_set_value' value="{{ $set_value }}">
 			<input type='hidden' name='_page' value="{{ $page }}">
 			<input type='hidden' name='_search' value="{{ $search }}">
+			@if ($order_products->total()>0)
 			{{ Form::submit('Add Selection', ['class'=>'btn btn-primary btn-xs']) }}
+			@endif
 		</form>
 		@if ($order_products->total()>10)
 		<br>

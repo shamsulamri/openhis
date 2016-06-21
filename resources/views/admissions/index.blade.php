@@ -4,7 +4,7 @@
 <h1>Admission List</h1>
 <br>
 <form action='/admission/search' method='post'>
-	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control input-lg','maxlength'=>'10']) }}
+	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
 	<!--
 	<br>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -16,7 +16,6 @@
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
-	<br>
 @endif
 @if ($admissions->total()>0)
 <table class="table table-hover">
@@ -64,8 +63,11 @@
 					<a class='btn btn-success btn-xs' href='{{ URL::to('ward_discharges/create/'. $admission->encounter_id) }}'>Discharge</a>
 			@else
 					<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}'>Bed Movement</a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('bed_bookings/create/'. $admission->patient_id.'/'.$admission->admission_id) }}'>Bed Request</a>
 			@endif
+			@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
+			@endcan
 			</td>
 	</tr>
 @endforeach

@@ -95,6 +95,11 @@ class Patient extends Model
 	}
 
 	
+	public function setPatientNameAttribute($value) 
+	{
+			$this->attributes['patient_name'] = strtoupper($value);
+	}
+
 	public function setPatientBirthdateAttribute($value)
 	{
 		if (DojoUtility::validateDate($value)==true) {

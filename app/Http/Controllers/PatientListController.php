@@ -55,6 +55,7 @@ class PatientListController extends Controller
 							->whereNull('discharge_id')
 							->get();
 
+
 			return view('patient_lists.index', [
 					'outpatient_lists'=>$outpatients,
 					'user_id' => Auth::user()->id,

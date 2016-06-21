@@ -10,7 +10,6 @@
 		</h4>
 		@endif
 		@if (isset($encounter))
-			@if ($encounter->encounter_code=='outpatient' || $encounter->encounter_code=='emergency')
 				@if ($encounter->encounterPaid()==0)
 				<h3 class='text-danger'>
 					<strong>
@@ -18,6 +17,5 @@
 					</strong>	
 				</h3>
 				@endif
-			@endif
 		@endif
 </div>

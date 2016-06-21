@@ -33,7 +33,9 @@ class AdmissionTaskController extends Controller
 					->leftjoin('admissions as e', 'e.encounter_id', '=', 'b.encounter_id')
 					->leftjoin('beds as f', 'f.bed_code', '=', 'e.bed_code')
 					->leftjoin('wards as g', 'g.ward_code', '=', 'f.ward_code')
+					->leftjoin('order_cancellations as h', 'h.order_id', '=', 'a.order_id')
 					->where('b.encounter_code','<>', 'outpatient')
+					->whereNull('cancel_id')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
 			return view('admission_tasks.index', [

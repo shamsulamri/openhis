@@ -11,6 +11,9 @@
 					<a class='btn btn-primary' href='/orders/make'>Edit Orders</a>
 			</div>
 			<div align="right" class="col-xs-6">
+			@if ($location->location_code == 'pharmacy')
+					<a class="btn btn-primary pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" role="button">Print Drug Label</a>
+			@endif
 			</div>
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
@@ -61,7 +64,6 @@
 			</td>
 			<td align='right'>
 					@if (!isset($order->cancel_id))
-					<a class='btn btn-primary btn-xs' href='#'>Print Label</a>
 					@endif
 					@if ($order->order_completed==0 && !isset($order->cancel_id))
 					<a class='btn btn-warning btn-xs' href='{{ URL::to('/task_cancellations/create/'. $order->order_id) }}'>Cancel</a>

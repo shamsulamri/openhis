@@ -33,6 +33,9 @@ class OrderQueueController extends Controller
 
 	public function index(Request $request)
 	{
+			if (empty($request->cookie('queue_location'))) {
+					return "Location not set";
+			}
 			$location_code = $request->cookie('queue_location');
 			$location = QueueLocation::find($location_code);
 			/*
@@ -88,8 +91,13 @@ class OrderQueueController extends Controller
 					->where('a.location_code','=',$location_code)
 					->whereNull('cancel_id')
 					->where('order_completed', '=', 0)
+					->where('c.encounter_code', '!=', 'inpatient')
 					->groupBy('a.encounter_id')
 					->paginate($this->paginateValue);
+
+			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
+			//return $locations;
+			
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,

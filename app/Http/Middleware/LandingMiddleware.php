@@ -16,6 +16,10 @@ class LandingMiddleware
     public function handle($request, Closure $next)
     {
 
+		if ($request->user()->can('system-administrator')) {
+				return redirect('/maintenance');
+		} 		
+
 		if ($request->user()->can('module-patient')) {
 				return redirect('/patients');
 		} 		
@@ -28,6 +32,17 @@ class LandingMiddleware
 				return redirect('/products');
 		} 		
 
+		if ($request->user()->can('module-support')) {
+				return redirect('/order_queues');
+		} 		
+
+		if ($request->user()->can('module-discharge')) {
+				return redirect('/discharges');
+		} 		
+
+		if ($request->user()->can('module-ward')) {
+				return redirect('/admissions');
+		} 		
         return $next($request);
     }
 }

@@ -11,10 +11,10 @@
 	<br>
 	{{ Form::submit('Refresh', ['class'=>'btn btn-primary']) }}
 </form>
+<br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 @if ($admission_tasks->total()>0)
 <form action='/admission_task/status' method='post'>
 <table class="table table-hover">
@@ -33,7 +33,7 @@
 @foreach ($admission_tasks as $admission_task)
 	<tr>
 			<td width='10'>
-					{{ Form::checkbox($admission_task->order_id, 1, null) }}
+					{{ Form::checkbox($admission_task->order_id, 1, $admission_task->order_completed) }}
 			</td>
 			<td>
 					{{ date('d M, H:i', strtotime($admission_task->created_at)) }}

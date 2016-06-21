@@ -6,23 +6,29 @@
 @endif 	
 
 @if ($flag==1)
-<h1>Bed Movement</h1>
+		<h1>Bed Movement</h1>
 @else
-<h1>New Encounter</h1>
-<div class='page-header'>
-		<h2>{{ $encounter->encounterType->encounter_name }}</h2>
-</div>
-<h4>Select bed for this patient.</h4>
+		<h1>New Encounter</h1>
+		<div class='page-header'>
+				<h2>{{ $encounter->encounterType->encounter_name }}</h2>
+		</div>
+		<h4>Select bed for this patient.</h4>
 @endif
 <br>
 @if ($encounter->encounter_code<>'emergency')
 <form action='/admission_bed/search' method='post'>
-	{{ Form::select('wards', $ward, $ward_code, ['class'=>'form-control']) }}
+	{{ Form::select('ward_class', $ward_classes, $ward_class, ['class'=>'form-control']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<br>
+	@can('module-patient')
     <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
+	@endcan
+	@can('module-ward')
+    <a class="btn btn-default" href="/admissions" role="button">Cancel</a>
+	@endcan
 	{{ Form::submit('Refresh', ['class'=>'btn btn-primary']) }}
 	{{ Form::hidden('admission_id', $admission->admission_id) }}
+	{{ Form::hidden('flag', $flag) }}
 </form>
 <br>
 @endif
@@ -50,7 +56,11 @@
 			</td>
 			<td align='right'>
 					@if (empty($admission_bed->patient_name))
-<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/move/'.$admission->admission_id.'/'. $admission_bed->bed_code) }}'>
+							@if (!empty($book_id))
+								<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/move/'.$admission->admission_id.'/'. $admission_bed->bed_code.'?book_id='.$book_id) }}'>
+							@else
+								<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/move/'.$admission->admission_id.'/'. $admission_bed->bed_code) }}'>
+							@endif
 							@if (empty($admission->bed->bed_code))
 									Admit
 							@else

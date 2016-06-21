@@ -2,8 +2,8 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
-<h2>Dietary</h2>
+@include('consultations.panel')
+<h1>Dietary</h1>
 <br>
 @include('common.errors')
 @if (Session::has('message'))

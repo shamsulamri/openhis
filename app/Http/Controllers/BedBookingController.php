@@ -45,7 +45,7 @@ class BedBookingController extends Controller
 
 			//return $class_availability;
 			$bed_bookings = DB::table('bed_bookings as a')
-					->select(['book_id', 'a.created_at', 'patient_name', 'b.class_name', 'a.class_code'])
+					->select(['book_id', 'a.created_at', 'admission_id', 'patient_name', 'b.class_name', 'a.class_code'])
 					->leftJoin('ward_classes as b', 'b.class_code','=', 'a.class_code')
 					->leftJoin('patients as c', 'c.patient_id','=', 'a.patient_id')
 					->orderBy('a.created_at')
@@ -62,6 +62,7 @@ class BedBookingController extends Controller
 			$bed_booking = new BedBooking();
 			$bed_booking->patient_id = $patient_id;
 			$bed_booking->book_date = date('d/m/Y');
+			$bed_booking->admission_id = $admission_id;
 
 			$title = "Bed Booking";
 			if ($request->book=='preadmission') $title = "Preadmission";
@@ -75,6 +76,7 @@ class BedBookingController extends Controller
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'patient' => Patient::find($bed_booking->patient_id),
 					'title' => $title,
+					'admission_id' => $admission_id,
 					]);
 	}
 

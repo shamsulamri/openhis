@@ -24,9 +24,16 @@
   </thead>
 	<tbody>
 @foreach ($consultations as $consultation)
-	<tr height='80'>
+	<?php
+		$consultation = $consult::find($consultation->consultation_id);
+	?>
+	<tr>
 			<td>
 					{{ date('d F, H:i', strtotime($consultation->created_at)) }}
+					<br>
+					<small>
+					About {{ $dojo->diffForHumans($consultation->created_at) }}
+					</small>
 			</td>
 			<td>
 					{{$consultation->encounter->patient->patient_name}}<br>

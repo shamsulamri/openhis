@@ -16,6 +16,8 @@ class UserAuthorization extends Model
 				'module_consultation',
 				'module_inventory',
 				'module_ward',
+				'module_support',
+				'module_discharge',
 				'system_administrator',
 		];
 	

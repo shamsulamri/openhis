@@ -62,7 +62,7 @@ class QueueLocationController extends Controller
 			}
 	}
 
-	public function edit($id) 
+	public function edit(Request $request,$id) 
 	{
 			$queue_location = QueueLocation::findOrFail($id);
 			return view('queue_locations.edit', [
@@ -135,9 +135,10 @@ class QueueLocationController extends Controller
 			]);
 	}
 
-	public function setLocation($id) 
+	public function setLocation(Request $request, $id) 
 	{
 			$location = QueueLocation::find($id);
+
 			Session::flash('message', 'This terminal has been set to '.$location->location_name);
 			return redirect('/queue_locations')
 				->withCookie(cookie('queue_location',$id));

@@ -12,6 +12,7 @@ class BedBooking extends Model
 	protected $table = 'bed_bookings';
 	protected $fillable = [
 				'patient_id',
+				'admission_id',
 				'class_code',
 				'book_date',
 				'book_description'];

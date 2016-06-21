@@ -62,16 +62,26 @@
 					<li role="presentation"><a class='btn btn-default' href="/patients">
 							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patients</a>
 					</li>
+					@endcan
+					@can('module-support')
 					<li role="presentation"><a class='btn btn-default' href="{{ url('/order_queues') }}">
 							  <span class='glyphicon glyphicon-inbox'></span>&nbsp; Orders</a>
 					</li>
+					@endcan
+					@can('module-discharge')
+					<li role="presentation">
+						<a class='btn btn-default' href="{{ url('/discharges') }}">
+							  <span class='glyphicon glyphicon-home'></span>&nbsp; Discharges
+						</a>
+					</li>
+					@endcan
+					@can('module-patient')
 					<li role="presentation" class="dropdown">
 							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 							  <span class='glyphicon glyphicon-menu-hamburger'></span>&nbsp; Options <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
-								<li><a href="{{ url('/discharges') }}">Discharges</a></li>
 								<li><a href="{{ url('/queues') }}">Queues</a></li>
 								<li><a href="{{ url('/encounters') }}">Encounters</a></li>
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li>
@@ -79,14 +89,11 @@
 					</li>
 					@endcan
 					@can('module-consultation')
-					<li role="presentation" class="dropdown">
-							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-comment'></span>&nbsp; Consultations <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{{ url('/patient_lists') }}">Patient List</a></li>
-								<li><a href="{{ url('/consultations') }}">Consultation List</a></li>
-							</ul>
+					<li role="presentation"><a class='btn btn-default' href="/patient_lists">
+							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a>
+					</li>
+					<li role="presentation"><a class='btn btn-default' href="/consultations">
+							  <span class='glyphicon glyphicon-comment'></span>&nbsp; Consultation List</a>
 					</li>
 					@endcan
 					@can('module-inventory')
@@ -110,13 +117,13 @@
 							</a>
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li> 
-								<li><a href="{{ url('/bed_bookings') }}">Bed Bookings</a></li> 
+								<li><a href="{{ url('/bed_bookings') }}">Bed Request List</a></li> 
 								<li><a href="{{ url('/admission_tasks') }}">Nurse Task</a></li> 
 							</ul>
 					</li>
 					@endcan
 					@can('system-administrator')
-					<li><a class='btn btn-default' href="{{ url('/options') }}"><span class='glyphicon glyphicon-th-list'></span>&nbsp; Options</a></li>
+					<li><a class='btn btn-default' href="{{ url('/maintenance') }}"><span class='glyphicon glyphicon-cog'></span>&nbsp; Maintenance</a></li>
 					@endcan
 		</ul>
 		</h6>

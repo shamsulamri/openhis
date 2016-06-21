@@ -17,6 +17,7 @@ use App\Form;
 use App\Consultation;
 use App\Set;
 use App\OrderSet;
+use App\DojoUtility;
 
 class OrderProductController extends Controller
 {
@@ -29,6 +30,7 @@ class OrderProductController extends Controller
 
 	public function index()
 	{
+			return redirect('/order_product/drug');
 			$order_products = DB::table('products')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
@@ -169,6 +171,41 @@ class OrderProductController extends Controller
 					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('',''),
 					'set_value' => $request->set_code,
 					'page' => $request->page,
+					]);
+	}
+
+	public function drugHistory(Request $request)
+	{
+			$consultation_id = Session::get('consultation_id'); //$request->consultation_id;
+			$consultation = Consultation::findOrFail($consultation_id);
+
+			$order_products = DB::table('orders as a')
+					->select('a.order_id','a.product_code', 'product_name', 'b.created_at', 'drug_strength', 'unit_name', 'drug_dosage', 'dosage_name', 'route_name', 'frequency_name','drug_duration', 'period_name')
+					->leftJoin('encounters as b', 'a.encounter_id','=', 'b.encounter_id')
+					->leftJoin('products as c', 'c.product_code', '=', 'a.product_code')
+					->leftJoin('order_drugs as d', 'd.order_id', '=', 'a.order_id')
+					->leftJoin('drug_dosages as e', 'e.dosage_code', '=', 'd.dosage_code')
+					->leftJoin('drug_routes as f', 'f.route_code', '=', 'd.route_code')
+					->leftJoin('drug_frequencies as g', 'g.frequency_code', '=', 'd.frequency_code')
+					->leftJoin('ref_periods as h', 'h.period_code', '=', 'd.period_code')
+					->leftJoin('ref_unit_measures as i', 'i.unit_code', '=', 'd.unit_code')
+					->where('patient_id',$consultation->encounter->patient->patient_id)
+					->where('category_code','drugs')
+					->orderBy('order_id','desc')
+					->paginate($this->paginateValue);
+					
+
+			return view('order_products.index', [
+					'order_products'=>$order_products,
+					'search'=>$request->search,
+					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
+					'tab'=>'drug',
+					'consultOption' => 'consultation',
+					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('',''),
+					'set_value' => $request->set_code,
+					'page' => $request->page,
+					'dojo' => new DojoUtility(),
 					]);
 	}
 

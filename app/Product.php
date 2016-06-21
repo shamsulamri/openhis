@@ -57,6 +57,11 @@ class Product extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function setProductNameAtrribute($value)
+	{
+			$this->attributes['product_name'] = strtoupper($value);
+	}
+
 	public function category()
 	{
 			return $this->belongsTo('App\ProductCategory','category_code');

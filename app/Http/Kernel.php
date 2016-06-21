@@ -47,6 +47,14 @@ class Kernel extends HttpKernel
 			\App\Http\Middleware\WardMiddleware::class,
         ],
 
+        'support' => [
+			\App\Http\Middleware\SupportMiddleware::class,
+        ],
+
+        'discharge' => [
+			\App\Http\Middleware\DischargeMiddleware::class,
+        ],
+		
         'admin' => [
 			\App\Http\Middleware\AdminMiddleware::class,
         ],

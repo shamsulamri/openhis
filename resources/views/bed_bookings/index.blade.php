@@ -1,16 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Bed Booking List</h1>
+<h1>Bed Request List</h1>
 <br>
 <form action='/bed_booking/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
+<br>
 @include('common.notification')
-<a href='/bed_bookings/create' class='btn btn-primary'>Create</a>
-<br>
-<br>
 @if ($bed_bookings->total()>0)
 <table class="table table-hover">
  <thead>
@@ -49,6 +47,9 @@
 					?>
 			</td>
 			<td align='right'>
+					@if ($class_availability[$bed_booking->class_code]>0)
+					<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?flag=1&admission_id='.$bed_booking->admission_id.'&book_id='.$bed_booking->book_id) }}'>&nbsp; Move &nbsp;</a>
+					@endif
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('bed_bookings/delete/'. $bed_booking->book_id) }}'>Delete</a>
 			</td>
 	</tr>

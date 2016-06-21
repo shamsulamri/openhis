@@ -15,6 +15,7 @@ use App\Patient;
 use App\Order;
 use App\OrderPost;
 use App\Encounter;
+use App\DojoUtility;
 
 class ConsultationController extends Controller
 {
@@ -32,7 +33,9 @@ class ConsultationController extends Controller
 					->paginate($this->paginateValue);
 
 			return view('consultations.index', [
-					'consultations'=>$consultations
+					'consultations'=>$consultations,
+					'dojo'=>new DojoUtility(),
+					'consult'=>new Consultation(),
 			]);
 	}
 
@@ -40,7 +43,7 @@ class ConsultationController extends Controller
 			$consultation = Consultation::find($consultation_id);
 			$notes = Consultation::where('patient_id', $consultation->patient_id)
 					->orderBy('created_at','desc')
-					->paginate(3);
+					->paginate($this->paginateValue);
 			return view('consultations.progress', [
 					'notes'=>$notes,
 					'consultation'=>$consultation,
@@ -58,14 +61,14 @@ class ConsultationController extends Controller
 					and consultation_status=0
 					and encounter_id = ".$request->encounter_id);
 
-			if ($encounter->encounter_code!='inpatient') {
+			//if ($encounter->encounter_code!='inpatient') {
 					$consultation = DB::select("select consultation_id, encounter_id from consultations 
 							where user_id = ".Auth::user()->id."
 							and consultation_status=1
 							and encounter_id = ".$request->encounter_id);
-			}
 
-			$consultation_id=0;
+			//}
+
 			if (!empty($consultation)) {
 					$consultation_id = $consultation[0]->consultation_id;
 			}
@@ -93,6 +96,7 @@ class ConsultationController extends Controller
 					return view('consultations.edit', [
 						'consultation'=>$consultation,
 						'tab'=>'clinical',
+						'patient'=>$encounter->patient,
 					]);
 			};
 	}
@@ -119,7 +123,11 @@ class ConsultationController extends Controller
 	{
 			$id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail($id);
-			$consultation->consultation_status = 1;
+			if ($consultation->encounter->encounter_code=='outpatient') {
+					$consultation->consultation_status = 1;
+			} else {
+					$consultation->consultation_status = 2;
+			}
 			$consultation->save();
 
 			$post = new OrderPost();
@@ -147,6 +155,7 @@ class ConsultationController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'clinical',
 					'consultOption'=>'consultation',
+					'admission'=>$consultation->encounter->admission,
 					]);
 	}
 
@@ -189,15 +198,18 @@ class ConsultationController extends Controller
 	
 	public function search(Request $request)
 	{
-			$consultations = DB::table('consultations')
-					->where('consultation_status','like','%'.$request->search.'%')
-					->orWhere('consultation_id', 'like','%'.$request->search.'%')
+			$consultations = DB::table('consultations as a')
+					->leftjoin('patients as b','b.patient_id','=', 'a.patient_id')
+					->where('patient_name','like','%'.$request->search.'%')
+					->orWhere('patient_mrn', 'like','%'.$request->search.'%')
 					->orderBy('consultation_status')
 					->paginate($this->paginateValue);
 
 			return view('consultations.index', [
 					'consultations'=>$consultations,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'consult'=>new Consultation(),
+					'dojo'=>new DojoUtility(),
 					]);
 	}
 

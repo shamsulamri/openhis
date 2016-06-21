@@ -9,7 +9,7 @@
 	<div class='form-group  @if ($errors->has('patient_name')) has-error @endif'>
         <label for='patient_name' class='col-sm-2 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-            {{ Form::text('patient_name', null, ['class'=>'form-control input-lg','placeholder'=>'','maxlength'=>'50']) }}
+            {{ Form::text('patient_name', null, ['class'=>'form-control input-lg','placeholder'=>'','maxlength'=>'50','style'=>'text-transform: uppercase']) }}
             @if ($errors->has('patient_name')) <p class="help-block">{{ $errors->first('patient_name') }}</p> @endif
         </div>
     </div>

@@ -3,7 +3,11 @@
 @section('content')
 @include('patients.id')
 <h1>
+@if ($moves==0)
 Admission Complete
+@else
+Move Complete
+@endif
 </h1>
 @include('common.errors')
 <br>
@@ -27,7 +31,12 @@ The patient has been successfully admitted to the following location:
 </table>
 <br>
 <br>
+@can('module-patient')
 <a class="btn btn-default" href="/patients" role="button">Return</a>
+@endcan
 
+@can('module-ward')
+<a class="btn btn-default" href="/admissions" role="button">Return</a>
+@endcan
 </h4>
 @endsection

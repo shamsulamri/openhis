@@ -42,6 +42,9 @@
 </div>
 <div class="btn-group" role="group" aria-label="...">
 	<a href="/medical_alerts" class="btn btn-default" title='Medical Alerts'>Medical Alerts</a>
+	@if ($consultation->encounter->encounter_code=='inpatient')
+	<a href="/diet" class='btn btn-default'>Dietary</a>
+	@endif
 </div>
 
 <div class="dropdown pull-right">
@@ -60,7 +63,7 @@
 	</li>
     <li role="separator" class="divider"></li>
     <li>
-		<a href="/consultations/close">Suspend</a>
+		<a href="/consultations/close">Close</a>
 	</li>
   </ul>
 </div>

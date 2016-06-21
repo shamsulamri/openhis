@@ -24,12 +24,15 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
+			@can('module-patient')
             <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
-			<!--
-            <a class="btn btn-default" href="/bed_bookings" role="button">Cancel</a>
-			-->
+			@endcan
+			@can('module-ward')
+            <a class="btn btn-default" href="/admissions" role="button">Cancel</a>
+			@endcan
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
 
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
+	{{ Form::hidden('admission_id', $admission_id ) }}

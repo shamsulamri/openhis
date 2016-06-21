@@ -1,4 +1,4 @@
-	<h1>Order Report</h1>
+	<h3>Order Report</h3>
 	<br>
 	<div class='form-group'>
         {{ Form::label('product', 'Product',['class'=>'col-sm-2 control-label']) }}

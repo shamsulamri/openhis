@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+@include('patients.id')
 <h1>
-New Ward Discharge
+Ward Discharge
 </h1>
 @include('common.errors')
 <br>

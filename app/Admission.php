@@ -75,7 +75,7 @@ class Admission extends Model
 	public function hasOpenConsultation($patientId)
 	{
 			$consultation = Consultation::where('patient_id','=',$patientId)
-					->where('consultation_status',2)
+					->where('consultation_status',1)
 					->get();
 			
 		    if (count($consultation)>0) {	

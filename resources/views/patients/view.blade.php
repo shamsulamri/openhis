@@ -33,7 +33,7 @@
 				<br>
 				<br>
 					<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
-				<a href='{{ URL::to('bed_bookings/create/'. $patient->patient_id.'?book=preadmission') }}'>
+				<a href='{{ URL::to('preadmissions/create/'. $patient->patient_id.'?book=preadmission') }}'>
 						Preadmission 
 				</a>
 				<br>
@@ -58,6 +58,12 @@
 					<span class='glyphicon glyphicon-book' aria-hidden='true'></span>
 				<a href='{{ URL::to('payments/'. $patient->patient_id) }}'>
 						Payment Collection
+				</a>
+				<br>
+				<br>
+					<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+				<a href='{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}'>
+						{{ $patient->patient_Id }}Print Label
 				</a>
 </h4>
 @endsection

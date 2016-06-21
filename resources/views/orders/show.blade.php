@@ -1,13 +1,9 @@
 @extends('layouts.app2')
 
 @section('content')
-@if (Auth::user()->authorization->module_consultation==1)
-
-@else
+@cannot('module-consultation')
 		@include('patients.id')
-@endif
-@include('common.errors')
-
+@endcan
 {{ Form::model($order, ['url'=>'orders', 'class'=>'form-horizontal']) }} 
 	@include('orders.order_show')
 {{ Form::close() }}

@@ -9,16 +9,19 @@ Final Bill
 Interim Bill
 @endif
 </h1>
-<a class="btn btn-default" href="javascript:window.history.back()" role="button">Back</a>
-<br>
 @if ($bills->total()>0)
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
+<a class="btn btn-default" href="javascript:window.history.back()" role="button">Back</a>
 @if (!$billPosted)
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
-<br>
+<p class='pull-right'>&nbsp;</p>
 @endif
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}" role="button">Print Tax Invoice</a> 
+<p class='pull-right'>&nbsp;</p>
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button">Print Medical Certificate</a>
+<br>
 <br>
 <table class="table table-hover">
  <thead>

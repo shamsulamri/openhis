@@ -18,6 +18,7 @@ use Auth;
 use App\OrderInvestigation;
 use App\OrderDrug;
 use App\DrugPrescription;
+use App\DojoUtility;
 
 class OrderController extends Controller
 {
@@ -68,7 +69,7 @@ class OrderController extends Controller
 					'cancel_id', 
 					'a.order_id', 
 					'post_id', 
-					'a.created_at',
+					'd.created_at',
 					'order_is_discharge',
 					'order_completed',
 					'order_report',
@@ -88,6 +89,7 @@ class OrderController extends Controller
 					'patient'=>$encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
+					'dojo'=> new DojoUtility(),
 			]);
 	}
 

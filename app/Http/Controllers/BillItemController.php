@@ -45,7 +45,7 @@ class BillItemController extends Controller
 
 			foreach ($beds as $bed) {
 					$bed_los = $bed->los;
-					if ($bed_los==0) $bed_los=1;
+					if ($bed_los<=0) $bed_los=1;
 					$item = new BillItem();
 					$item->encounter_id = $id;
 					$item->order_id = 0;

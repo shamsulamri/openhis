@@ -52,5 +52,13 @@ class AuthServiceProvider extends ServiceProvider
 		$gate->define('module-admin', function ($user) {
 				return $user->authorization->system_administrator;
 		});
+
+		$gate->define('module-support', function ($user) {
+				return $user->authorization->module_support;
+		});
+		
+		$gate->define('module-discharge', function ($user) {
+				return $user->authorization->module_discharge;
+		});
     }
 }

@@ -10,15 +10,27 @@
 @if ($orders->total()>0)
 <table class="table table-condensed">
 	<tbody>
+<?php $ago='';?>
 @foreach ($orders as $order)
-	<?php $status='' ?>
+	<?php $status='';?>
+
 	@if ($order->order_is_discharge==1) 
 			<?php $status='warning' ?>
 	@endif
 	@if ($order->order_completed==1) 
 			<?php $status='success' ?>
 	@endif
-	<tr class='{{ $status }}'>
+	@if ($ago!=$dojo->diffForHumans($order->created_at))
+	<tr class='info'>
+		<td colspan=2>
+			<small>
+			<?php $ago =$dojo->diffForHumans($order->created_at); ?> 
+			{{ $ago }}
+			</small>	
+		</td>
+	</tr>
+	@endif
+	<tr>
 			<td>
 			@if (isset($order->cancel_id)) 
 					<a href='{{ URL::to('order_cancellations/'. $order->cancel_id) }}'>
@@ -34,9 +46,11 @@
 					</a>
 			@else
 					<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>
+						<span class='glyphicon glyphicon-ok'></span>
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>
 			@endif
+			
 			</td>
 			<td align='right'>
 				@if ($order->order_completed==0) 
