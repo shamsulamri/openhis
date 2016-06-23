@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id')
 <h1>
-@if ($moves==0)
+@if ($moves==1)
 Admission Complete
 @else
 Move Complete

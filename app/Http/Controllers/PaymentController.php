@@ -13,6 +13,7 @@ use Log;
 use DB;
 use Session;
 use Auth;
+use App\Encounter;
 
 class PaymentController extends Controller
 {
@@ -47,6 +48,7 @@ class PaymentController extends Controller
 			$payment = new Payment();
 			$payment->encounter_id = $encounter_id;
 
+			$encounter = Encounter::find($encounter_id);
 			$patient = null;
 			if ($patient_id) {
 					$patient = Patient::find($patient_id);
@@ -60,6 +62,7 @@ class PaymentController extends Controller
 					'payment' => $payment,
 					'payment_methods' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
 					'patient' => $patient,
+					'encounter' => $encounter,
 					]);
 	}
 
@@ -126,7 +129,7 @@ class PaymentController extends Controller
 		$payment = Payment::findOrFail($id);
 		return view('payments.destroy', [
 			'payment'=>$payment,
-			'patient'=>$payment->encounter->patient,
+			'patient'=>$payment->patient,
 			]);
 
 	}

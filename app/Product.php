@@ -81,4 +81,5 @@ class Product extends Model
 	{
 			return str_replace('.00','',$value);
 	}
+
 }

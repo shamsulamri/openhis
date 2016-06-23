@@ -5,8 +5,8 @@
 <h1>Options</h1>
 <br>
 <h4>
-					@if ($encounter_active==1)
-							<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
+					<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
+					@if ($encounter_active)
 								@if ($encounter->admission)
 									Admitted at {{ $encounter->admission->bed->bed_name }} ({{ $encounter->admission->bed->ward->ward_name }})
 								@else
@@ -14,7 +14,6 @@
 								@endif
 					@else
 						<a href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id ) }}'>
-							<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
 								New Encounter
 						</a>
 					@endif
@@ -44,7 +43,7 @@
 				</a>
 				<br>
 				<br>
-@if ($encounter_active==1)
+@if ($encounter_active)
 					<span class='glyphicon glyphicon-usd' aria-hidden='true'></span>
 				<a href='{{ URL::to('deposits/index/'. $encounter->encounter_id ) }}'>
 						Deposit Collection						

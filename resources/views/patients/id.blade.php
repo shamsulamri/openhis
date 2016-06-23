@@ -3,19 +3,18 @@
 		<h6>{{ $patient->patient_mrn }}</h6>
 		@if ($patient->outstandingBill() < 0) 
 		<h4>
-		<p class='text-danger'>
+		<p class='text-warning'>
 		<strong>Warning !</strong> Outstanding bill
-		{{ $patient->outstandingBill() }}
 		</p>
 		</h4>
 		@endif
 		@if (isset($encounter))
-				@if ($encounter->encounterPaid()==0)
-				<h3 class='text-danger'>
+				@if (!$encounter->encounterPaid())
+				<h4 class='text-danger'>
 					<strong>
 					Encounter not paid
 					</strong>	
-				</h3>
+				</h4>
 				@endif
 		@endif
 </div>

@@ -21,6 +21,7 @@ use App\Stock;
 use Carbon\Carbon;
 use App\TaxCode;
 use Gate;
+use App\Order;
 
 class ProductController extends Controller
 {
@@ -205,14 +206,27 @@ class ProductController extends Controller
 									->where('store_code','=',$store_code)
 									->where('move_code','<>', 'take')
 									->sum('stock_quantity');
-					$stock_on_hand = $stock_value + $stocks;
+
+					$used = Order::where('product_code','=', $product_code)
+								->where('created_at','>', $take_date)
+								->where('order_completed','=',1)
+								->sum('order_quantity_supply');
+
+					$stock_on_hand = $stock_value + $stocks - $used;
 			} else {
 					$stocks = Stock::where('product_code','=',$product_code)
 									->where('store_code','=',$store_code)
 									->sum('stock_quantity');
-					$stock_on_hand=$stocks;
+
+					$used = Order::where('product_code','=', $product_code)
+								->where('order_completed','=',1)
+								->where('store_code', '=', $store_code)
+								->sum('order_quantity_supply');
+					Log::info($used);
+					$stock_on_hand=$stocks - $used;
 			}
 
 			return $stock_on_hand;
 	}
+
 }

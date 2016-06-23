@@ -78,14 +78,36 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/order_task/search', 'OrderTaskController@search');
 		Route::get('/order_tasks/delete/{id}', 'OrderTaskController@delete');
 
+		Route::resource('appointments', 'AppointmentController',['except'=>['create','edit']]);
+		Route::get('/appointments/create/{patient_id}/{service_id}/{slot}/{admission_id?}', 'AppointmentController@create');
+		Route::get('/appointments/{id}/edit/{appointment_slot}', 'AppointmentController@edit');
+		Route::get('/appointments/id/{id}', 'AppointmentController@searchById');
+		Route::post('/appointment/search', 'AppointmentController@search');
+		Route::get('/appointment/search', 'AppointmentController@search');
+		Route::get('/appointments/delete/{id}', 'AppointmentController@delete');
+
+		Route::resource('appointment_services', 'AppointmentServiceController', ['except'=>['show']]);
+		Route::get('/appointment_services/id/{id}', 'AppointmentServiceController@searchById');
+		Route::get('/appointment_services/{id}/{selected_week}/{service_id?}/{appointment_id?}', 'AppointmentServiceController@show');
+		Route::post('/appointment_services/{id}/{selected_week}/{service_id?}/{appointment_id?}', 'AppointmentServiceController@show');
+		Route::post('/appointment_service/search', 'AppointmentServiceController@search');
+		Route::get('/appointment_service/search', 'AppointmentServiceController@search');
+		Route::get('/appointment_services/delete/{id}', 'AppointmentServiceController@delete');
+
+		Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
+		Route::get('/payments/{id}', 'PaymentController@index');
+		Route::get('/payments/create/{patient_id?}/{encounter_id?}', 'PaymentController@create');
+		Route::get('/payments/id/{id}', 'PaymentController@searchById');
+		Route::post('/payment/search', 'PaymentController@search');
+		Route::get('/payment/search', 'PaymentController@search');
+		Route::get('/payments/delete/{id}', 'PaymentController@delete');
+
 		Route::group(['middleware' => 'support'], function () {
 				Route::resource('order_queues', 'OrderQueueController');
 				Route::get('/order_queues/id/{id}', 'OrderQueueController@searchById');
 				Route::post('/order_queue/search', 'OrderQueueController@search');
 				Route::get('/order_queue/search', 'OrderQueueController@search');
 				Route::get('/order_queues/delete/{id}', 'OrderQueueController@delete');
-
-
 		});
 
 		Route::group(['middleware' => 'discharge'], function () {
@@ -100,13 +122,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/bill_items/reload/{id}', 'BillItemController@reload');
 				Route::get('/bill_items/close/{id}', 'BillItemController@close');
 
-				Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
-				Route::get('/payments/{id}', 'PaymentController@index');
-				Route::get('/payments/create/{patient_id?}/{encounter_id?}', 'PaymentController@create');
-				Route::get('/payments/id/{id}', 'PaymentController@searchById');
-				Route::post('/payment/search', 'PaymentController@search');
-				Route::get('/payment/search', 'PaymentController@search');
-				Route::get('/payments/delete/{id}', 'PaymentController@delete');
 
 				Route::resource('bills', 'BillController');
 				Route::get('/bills/id/{id}', 'BillController@searchById');
@@ -127,14 +142,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/patient/search', 'PatientController@search');
 				Route::get('/patients/delete/{id}', 'PatientController@delete');
 				Route::get('/patients/encounter/{id}', 'PatientController@hasActiveEncounter');
-
-				Route::resource('appointments', 'AppointmentController',['except'=>['create','edit']]);
-				Route::get('/appointments/create/{patient_id}/{service_id}/{slot}', 'AppointmentController@create');
-				Route::get('/appointments/{id}/edit/{appointment_slot}', 'AppointmentController@edit');
-				Route::get('/appointments/id/{id}', 'AppointmentController@searchById');
-				Route::post('/appointment/search', 'AppointmentController@search');
-				Route::get('/appointment/search', 'AppointmentController@search');
-				Route::get('/appointments/delete/{id}', 'AppointmentController@delete');
 
 				Route::resource('encounters', 'EncounterController');
 				Route::get('/encounters/id/{id}', 'EncounterController@searchById');
@@ -163,13 +170,6 @@ Route::group(['middleware' => 'web'], function () {
 				//Route::get('/deposit/search', 'DepositController@search');
 				//Route::get('/deposits/delete/{id}', 'DepositController@delete');
 				
-				Route::resource('appointment_services', 'AppointmentServiceController', ['except'=>['show']]);
-				Route::get('/appointment_services/id/{id}', 'AppointmentServiceController@searchById');
-				Route::get('/appointment_services/{id}/{selected_week}/{service_id?}/{appointment_id?}', 'AppointmentServiceController@show');
-				Route::post('/appointment_services/{id}/{selected_week}/{service_id?}/{appointment_id?}', 'AppointmentServiceController@show');
-				Route::post('/appointment_service/search', 'AppointmentServiceController@search');
-				Route::get('/appointment_service/search', 'AppointmentServiceController@search');
-				Route::get('/appointment_services/delete/{id}', 'AppointmentServiceController@delete');
 
 				Route::resource('preadmissions', 'BedBookingController',['except'=>['create']]);
 				Route::get('/preadmissions/create/{patient_id}/{admission_id?}', 'BedBookingController@create');

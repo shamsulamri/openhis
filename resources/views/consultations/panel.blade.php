@@ -53,17 +53,17 @@
     <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-	<li>
+    <li>
+		<a href="/consultations/close">Close</a>
 		<a href="/medical_certificates/create">Medical Certificate</a>
+	</li>
+    <li role="separator" class="divider"></li>
+	<li>
 		@if (!empty($consultation->encounter->discharge->discharge_id))
 			<a href="/discharges/{{ $consultation->encounter->discharge->discharge_id }}/edit" role="button">Discharge</a>
 		@else
 			<a href="/discharges/create" role="button">Clincal Discharge</a>
 		@endif
-	</li>
-    <li role="separator" class="divider"></li>
-    <li>
-		<a href="/consultations/close">Close</a>
 	</li>
   </ul>
 </div>

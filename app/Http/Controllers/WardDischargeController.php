@@ -14,6 +14,8 @@ use App\Order;
 use App\MedicalCertificate;
 use App\Encounter;
 use App\Bill;
+use App\Admission;
+use App\Appointment;
 
 class WardDischargeController extends Controller
 {
@@ -34,27 +36,35 @@ class WardDischargeController extends Controller
 			]);
 	}
 
-	public function create($encounter_id)
+	public function create($admission_id)
 	{
-			$encounter = Encounter::find($encounter_id);
+			$admission = Admission::find($admission_id);
+			$encounter = $admission->encounter;
+			$encounter_id = $encounter->encounter_id;
 			$ward_discharge = new WardDischarge();
 			$ward_discharge->encounter_id = $encounter_id;
 
 			$orders = Order::where('encounter_id',$encounter_id)
 						->where('order_is_discharge',1)
-						->paginate($this->paginateValue);
+						->get();
 
 			$mc = MedicalCertificate::where('encounter_id', $encounter_id)->get();
 
 			$bill = Bill::where('encounter_id', $encounter_id)->get();
+			$appointments = Appointment::where('admission_id', $admission_id)->get();
+			
+			$service_id = $admission->user_id;
 
 			return view('ward_discharges.create', [
 					'ward_discharge' => $ward_discharge,
-					'mc'=>$mc,
+					'mc'=>$mc[0],
 					'discharge_orders'=>$orders,	
 					'patient'=>$encounter->patient,
 					'encounter'=>$encounter,
 					'bill'=>$bill,
+					'service_id'=>$service_id,
+					'admission_id'=>$admission_id,
+					'appointments'=>$appointments,
 					]);
 	}
 

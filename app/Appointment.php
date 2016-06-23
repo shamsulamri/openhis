@@ -13,6 +13,7 @@ class Appointment extends Model
 	protected $fillable = [
 				'patient_id',
 				'service_id',
+				'admission_id',
 				'appointment_description',
 				'appointment_datetime',
 				'appointment_slot'];
@@ -28,8 +29,6 @@ class Appointment extends Model
 				'service_id'=>'required',
 				'appointment_slot'=>'required',
 			];
-
-			
 			
 			$messages = [
 				'required' => 'This field is required'
@@ -42,4 +41,10 @@ class Appointment extends Model
 	{
 			return $this->belongsTo('App\Patient','patient_id');
 	}	
+
+	public function service()
+	{
+			return $this->belongsTo('App\AppointmentService', 'service_id');
+	}
+
 }

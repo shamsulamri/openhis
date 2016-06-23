@@ -17,6 +17,8 @@
 <br>
 @if ($encounter->encounter_code<>'emergency')
 <form action='/admission_bed/search' method='post'>
+	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control']) }}
+	<br>
 	{{ Form::select('ward_class', $ward_classes, $ward_class, ['class'=>'form-control']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<br>
@@ -37,6 +39,7 @@
  <thead>
 	<tr> 
     <th>Bed</th>
+    <th>Ward</th>
     <th>Class</th>
 	<th>Occupant</th>
 	<th></th>
@@ -47,6 +50,9 @@
 	<tr>
 			<td>
 					{{$admission_bed->bed_name}}
+			</td>
+			<td>
+					{{$admission_bed->ward_name}}
 			</td>
 			<td>
 					{{$admission_bed->class_name}}

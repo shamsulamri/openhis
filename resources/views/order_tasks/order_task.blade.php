@@ -25,6 +25,12 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('stock_code')) has-error @endif'>
+        {{ Form::label('stock_code', 'Store',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+    		{{ Form::select('store_code', $store, null, ['class'=>'form-control']) }}
+        </div>
+    </div>
 	<!--
     <div class='form-group  @if ($errors->has('order_sale_price')) has-error @endif'>
         {{ Form::label('order_sale_price', 'Sale Price',['class'=>'col-sm-2 control-label']) }}

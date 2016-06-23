@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id')
 <h1>
-New Collection
+Payment Collection
 </h1>
 @include('common.errors')
 <br>

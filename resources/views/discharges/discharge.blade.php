@@ -1,4 +1,12 @@
 
+    <div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
+        <label for='discharge_date' class='col-sm-2 control-label'>Date<span style='color:red;'> *</span></label>
+        <div class='col-sm-10'>
+			<input id="discharge_date" name="discharge_date" type="text">
+            @if ($errors->has('discharge_date')) <p class="help-block">{{ $errors->first('discharge_date') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         <label for='type_code' class='col-sm-2 control-label'>Outcome<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
@@ -7,13 +15,6 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
-        <label for='discharge_date' class='col-sm-2 control-label'>Date<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-			<input id="discharge_date" name="discharge_date" type="text">
-            @if ($errors->has('discharge_date')) <p class="help-block">{{ $errors->first('discharge_date') }}</p> @endif
-        </div>
-    </div>
 	@if ($consultation->encounter->encounter_code=='inpatient')
     <div class='form-group  @if ($errors->has('discharge_diagnosis')) has-error @endif'>
         {{ Form::label('discharge_diagnosis', 'Diagnosis',['class'=>'col-sm-2 control-label']) }}
@@ -38,11 +39,11 @@
 		@if ($mc)
         		{{ Form::label('product', $mc->getMcStart()->format('d M Y'),['class'=>'control-label']) }}<br>
 				@if (empty($mc->mc_end))
-        		{{ Form::label('product', 'End: '.$mc->mc_end,['class'=>'control-label']) }}<br>
+        		{{ Form::label('mc', 'End: '.$mc->mc_end,['class'=>'control-label']) }}<br>
 				@endif
-        		{{ Form::label('product', 'Serial Number: '.$mc->mc_identification,['class'=>'control-label']) }}
+        		{{ Form::label('mc', 'Serial Number: '.$mc->mc_identification,['class'=>'control-label']) }}
 				@else
-				-
+        		{{ Form::label('mc', 'None',['class'=>'control-label']) }}
 		@endif
         </div>
     </div>

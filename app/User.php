@@ -25,7 +25,6 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-
 	public function authorization()
 	{
 		return $this->hasOne('App\UserAuthorization', 'author_id','author_id');

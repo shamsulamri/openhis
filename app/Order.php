@@ -20,6 +20,7 @@ class Order extends Model
 				'order_report',
 				'order_completed',
 				'order_quantity_supply',
+				'store_code',
 				'location_code',
 				'order_sale_price',
 				'order_unit_price',

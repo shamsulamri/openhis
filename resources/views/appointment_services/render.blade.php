@@ -6,10 +6,15 @@
 @if ($appointment_id == null)
 <h1>Book Appointment</h1>
 <br>
+@can('module-patient')
 <a href='/patients/{{ $patient->patient_id }}' class='btn btn-default'>Return</a>
+@endcan
+@can('module-ward')
+<a href='/ward_discharges/create/{{ $admission_id }}' class='btn btn-default'>Return</a>
+@endcan
 <br>
 <br>
-<form action='/appointment_services/{{ $patient->patient_id }}/0' method='post'>
+<form action='/appointment_services/{{ $patient->patient_id }}/0?admission_id={{ $admission_id }}' method='post'>
 	{{ Form::select('services', $menu_services, $service, ['class'=>'form-control']) }}
 	<br>
 	<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>
@@ -28,14 +33,14 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 		<table width='100%'> 
 			<tr>
 			<td width='30%' >
-				<a href='/appointment_services/{{ $patient->patient_id }}/0{{ $service_path }}' class='btn btn-default btn-xs'>This Week</a>
-				<a href='/appointment_services/{{ $patient->patient_id }}/2{{ $service_path }}' class='btn btn-default btn-xs'>2/52</a>
-				<a href='/appointment_services/{{ $patient->patient_id }}/4{{ $service_path }}' class='btn btn-default btn-xs'>1/12</a>
-				<a href='/appointment_services/{{ $patient->patient_id }}/12{{ $service_path }}' class='btn btn-default btn-xs'>3/12</a>
+				<a href='/appointment_services/{{ $patient->patient_id }}/0{{ $service_path }}?admission_id={{ $admission_id }}' class='btn btn-default btn-xs'>This Week</a>
+				<a href='/appointment_services/{{ $patient->patient_id }}/2{{ $service_path }}?admission_id={{ $admission_id }}' class='btn btn-default btn-xs'>2/52</a>
+				<a href='/appointment_services/{{ $patient->patient_id }}/4{{ $service_path }}?admission_id={{ $admission_id }}' class='btn btn-default btn-xs'>1/12</a>
+				<a href='/appointment_services/{{ $patient->patient_id }}/12{{ $service_path }}?admission_id={{ $admission_id }}' class='btn btn-default btn-xs'>3/12</a>
 			</td>
 			<td width='70' align='right'>
 			@if ($selected_week-1>=0)
-				<a href='/appointment_services/{{ $patient->patient_id }}/{{ $selected_week-1 }}{{ $service_path }}' class='btn btn-warning btn-xs'><span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span></a>
+				<a href='/appointment_services/{{ $patient->patient_id }}/{{ $selected_week-1 }}{{ $service_path }}?admission_id={{ $admission_id }}' class='btn btn-warning btn-xs'><span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span></a>
 			@else
 				<a href='#' class='btn btn-warning btn-xs disabled'><span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span></a>
 			@endif
@@ -53,7 +58,7 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 			</td>
 			@endforeach
 			<td width='50'>
-				<a href='/appointment_services/{{ $patient->patient_id }}/{{ $selected_week+1 }}{{ $service_path }}' class='btn btn-warning btn-xs'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span></a>
+				<a href='/appointment_services/{{ $patient->patient_id }}/{{ $selected_week+1 }}{{ $service_path }}?admission_id={{ $admission_id }}' class='btn btn-warning btn-xs'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span></a>
 			</td>
 			</tr>
 		</table>	
@@ -108,7 +113,7 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 								<a href='#' class='btn btn-default btn-sm disabled'>{{ $slot_time->format('h:i a') }}</a>
 							@else
 								@if ($appointment_id == null)
-								<a href='/appointments/create/{{ $patient->patient_id }}/{{ $service->service_id }}/{{ $slot }}' class='btn btn-default btn-sm'>{{ $slot_time->format('h:i a') }}</a>
+								<a href='/appointments/create/{{ $patient->patient_id }}/{{ $service->service_id }}/{{ $slot }}/{{ $admission_id }}' class='btn btn-default btn-sm'>{{ $slot_time->format('h:i a') }}</a>
 								@else
 								<a href='/appointments/{{ $appointment_id }}/edit/{{ $slot }}' class='btn btn-default btn-sm'>{{ $slot_time->format('h:i a') }}</a>
 								@endif

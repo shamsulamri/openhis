@@ -31,3 +31,4 @@
 	{{ Form::hidden('patient_id', null) }}
 	{{ Form::hidden('appointment_slot', null) }}
 	{{ Form::hidden('service_id', null) }}
+	{{ Form::hidden('admission_id', $admission_id) }}

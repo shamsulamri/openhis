@@ -271,6 +271,8 @@ class BillItemController extends Controller
 			$valid = $bill->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
+				$bill->bill_exempted = $request->bill_exempted ?: 0;
+				if ($bill->bill_exempted) $bill->bill_total=0;
 				$bill->save();
 				Session::flash('message', 'Record successfully updated.');
 				return redirect('/bill_items/'.$bill->encounter_id);

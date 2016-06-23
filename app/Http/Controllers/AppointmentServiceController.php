@@ -179,6 +179,11 @@ class AppointmentServiceController extends Controller
 
 			$appointment=null;
 
+			$admission_id = 0;
+			if (isset($request->admission_id)) {
+				$admission_id = $request->admission_id;
+			}
+
 			if ($appointment_id != null) {
 					$appointment = Appointment::find($appointment_id);
 					$service_path = $service_path.'/'.$appointment_id;
@@ -198,6 +203,7 @@ class AppointmentServiceController extends Controller
 					'service_path'=>$service_path,
 					'appointment_id'=>$appointment_id, 
 					'appointment'=>$appointment, 
+					'admission_id'=>$admission_id, 
 					]);
 
 	}

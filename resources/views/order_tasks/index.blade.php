@@ -27,6 +27,7 @@
 	<tr> 
     <th></th>
     <th>Product</th>
+    <th>Request</th>
     <th>Ordered By</th>
     <th>Date</th>
 	<th></th>
@@ -35,7 +36,10 @@
 	<tbody>
 @foreach ($order_tasks as $order)
 
-	<?php $status='' ?>
+	<?php 
+	$status='';
+	$order_product = $product->find($order->product_code);
+	?>
 	@if ($order->order_completed==1) 
 			<?php $status='success' ?>
 	@endif
@@ -54,6 +58,12 @@
 					<strike>
 					{{$order->product_name}}
 					</strike>
+					@endif
+			</td>
+			<td>
+					{{ $order->order_quantity_request }}
+					@if (!empty($order_product->unitMeasure->unit_name))
+					{{ $order_product->unitMeasure->unit_name }}
 					@endif
 			</td>
 			<td>

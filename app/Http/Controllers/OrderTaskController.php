@@ -14,6 +14,9 @@ use App\Product;
 use App\QueueLocation as Location;
 use App\Encounter;
 use App\Consultation;
+use App\Http\Controllers\ProductController;
+use App\Store;
+use App\Order;
 
 class OrderTaskController extends Controller
 {
@@ -75,6 +78,7 @@ class OrderTaskController extends Controller
 			$fields = ['patient_name', 'product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'a.post_id', 'a.created_at','order_is_discharge',
 					'i.location_name',	
 					'cancel_id',
+					'order_quantity_request',
 					'a.created_at',
 					'k.name',
 					'order_completed',
@@ -113,6 +117,7 @@ class OrderTaskController extends Controller
 					'encounter_id' => $encounter_id,
 					'ids'=>$ids,
 					'location'=>$location,
+					'product'=> new Product(),
 			]);
 	}
 	public function edit($id) 
@@ -125,6 +130,7 @@ class OrderTaskController extends Controller
 					'patient'=>$order_task->consultation->encounter->patient,
 					'encounter'=>$order_task->consultation->encounter,
 					'encounter_id' => $order_task->consultation->encounter_id,
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 
@@ -135,9 +141,13 @@ class OrderTaskController extends Controller
 
 			$order_task->order_completed = $request->order_completed ?: 0;
 			$valid = $order_task->validate($request->all(), $request->_method);	
+			
+			
 
 			if ($valid->passes()) {
 					$order_task->save();
+					$productController = new ProductController();
+					$productController->totalOnHand($order_task->product_code);
 					Session::flash('message', 'Record successfully updated.');
 					if ($request->user()->can('module-support')) {
 						return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->category->location_code);
@@ -189,8 +199,13 @@ class OrderTaskController extends Controller
 
 			foreach ($values as $orderId) {
 					$value = $request->$orderId ?: 0;
-					OrderTask::where('order_id', $orderId)
-						->update(['order_completed'=>$value]);				
+					if ($orderId>0) {
+							OrderTask::where('order_id', $orderId)
+								->update(['order_completed'=>$value]);				
+							$order = OrderTask::find($orderId);
+							$productController = new ProductController();
+							$productController->totalOnHand($order->product_code);
+					}
 			}
 			$order_task = OrderTask::find($values[0]);
 			Session::flash('message', 'Record successfully updated.');

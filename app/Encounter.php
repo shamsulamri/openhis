@@ -9,6 +9,7 @@ use App\DojoUtility;
 use App\Consultation;
 use App\EncounterType;
 use DB;
+use Log;
 
 class Encounter extends Model
 {
@@ -65,6 +66,11 @@ class Encounter extends Model
 			return $this->hasOne('App\Discharge','encounter_id');
 	}
 
+	public function bill()
+	{
+			return $this->hasOne('App\Bill', 'encounter_id');
+	}
+
 	public function queue()
 	{
 			return $this->hasOne('App\Queue', 'encounter_id');
@@ -86,6 +92,7 @@ class Encounter extends Model
 			});
 	}
 	
+	/*
 	public function encounterPaid()
 	{
 			$amount = DB::table('bills as a')
@@ -93,6 +100,23 @@ class Encounter extends Model
 						->count('bill_outstanding');
 
 			return $amount;
+	}
+	 */
+	public function encounterPaid() {
+
+			$paid=False;
+			$encounter = Encounter::where('patient_id', $this->patient_id)
+							->orderBy('encounter_id','desc')
+							->first();
+
+			if ($encounter) {
+					if ($encounter->bill) {
+							$paid=True;
+					}
+			} 			
+			
+
+			return $paid;
 	}
 
 

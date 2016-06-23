@@ -200,8 +200,23 @@ class Patient extends Model
 						->where('b.patient_id','=',$this->patient_id)
 						->sum('bill_outstanding');
 
-			return $amount;
+			$sql = "select (sum(bill_payment_total-bill_change-bill_grand_total) + IFNULL(nonenc_payment,0)) as outstanding
+						from bills as a
+						left join encounters b on (a.encounter_id=b.encounter_id)
+						left join (
+							select patient_id, sum(payment_amount) as nonenc_payment from payments 
+							where encounter_id=0
+							group by patient_id
+						) as c on (c.patient_id = b.patient_id)
+						where b.patient_id=".$this->patient_id." group by b.patient_id";
+			$amount = DB::select($sql);
+
+			$value = 0;
+
+			if ($amount) $value = $amount[0]->outstanding;
+			return $value;
 	}
+
 
 	public function hasActiveEncounter() 
 	{
@@ -211,21 +226,21 @@ class Patient extends Model
 							->orderBy('encounter_id')
 							->first();
 
-			if (count($encounter)==0) $encounter_active=False;
 			if ($encounter) {
 					if ($encounter->admission==null && $encounter->queue==null) $encounter_completed=False;
-			}
-			
-			if (!$encounter_completed) {
-					Encounter::find($encounter->encounter_id)->delete();
-					$encounter_active=false;
+					if ($encounter->discharge) {
+							$encounter_active=False;
+					}
+			} else {
+				$encounter_active=False;
 			}
 
-			if ($encounter_active) {
-					return "1";
-			} else {
-					return "0";
+			if (!$encounter_completed) {
+					Encounter::find($encounter->encounter_id)->delete();
+					$encounter_active=False;
 			}
+			
+			return $encounter_active;
 	}
 
 }

@@ -5,8 +5,8 @@
 <h1>
 New {{ $title }}
 </h1>
-@include('common.errors')
 <br>
+@include('common.errors')
 {{ Form::model($bed_booking, ['url'=>'bed_bookings', 'class'=>'form-horizontal']) }} 
     
 	@include('bed_bookings.bed_booking')

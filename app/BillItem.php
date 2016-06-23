@@ -31,7 +31,6 @@ class BillItem extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'bill_quantity'=>'required',
-				'bill_unit_price'=>'required',
 			];
 
 			

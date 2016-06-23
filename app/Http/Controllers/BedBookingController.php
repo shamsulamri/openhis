@@ -92,7 +92,7 @@ class BedBookingController extends Controller
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/bed_bookings');
 			} else {
-					return redirect('/bed_bookings/create')
+					return redirect('/bed_bookings/create/'.$request->patient_id.'/'.$request->admission_id)
 							->withErrors($valid)
 							->withInput();
 			}

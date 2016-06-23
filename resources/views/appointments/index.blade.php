@@ -30,13 +30,15 @@
 @foreach ($appointments as $appointment)
 	<tr>
 			<td>
+					<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/0/'.$appointment->service_id. '/'.$appointment->appointment_id) }}'>
 					{{ date('D, d F Y, H:i', strtotime($appointment->appointment_datetime)) }}
+					</a>
 			</td>
 			<td>
 					{{$appointment->service_name}}
 			</td>
 			<td>
-					<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/0/'.$appointment->service_id. '/'.$appointment->appointment_id) }}'>
+					<a href='{{ URL::to('patients/'. $appointment->patient_id) }}'>
 						{{$appointment->patient_name}}
 					</a>
 					<br>

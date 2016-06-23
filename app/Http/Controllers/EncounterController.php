@@ -70,7 +70,8 @@ class EncounterController extends Controller
 
 			$encounterInitiated=True;
 			$encounter = Encounter::where('patient_id', $patient_id)
-							->orderBy('encounter_id','desc')
+							->leftjoin('discharges', 'discharges.encounter_id','=','encounters.encounter_id')
+							->orderBy('encounters.encounter_id','desc')
 							->first();
 
 			if ($encounter==null) $encounterInitiated=False;
@@ -89,18 +90,20 @@ class EncounterController extends Controller
 
 	public function store(Request $request) 
 	{
-
 			$encounter = new Encounter();
 			$valid = $encounter->validate($request->all(), $request->_method);
 			if ($valid->passes()) {
 					$encounter = new Encounter($request->all());
 					$encounter->encounter_id = $request->encounter_id;
+					/*
 					$initId = $this->encounterInitiated($encounter->patient_id);
 					if ($initId==0) {
 							$encounter->save();
 					} else {
 							$encounter = Encounter::find($initId);
 					}
+					 */
+					$encounter->save();
 
 					$patient = Patient::find($encounter->patient_id);
 

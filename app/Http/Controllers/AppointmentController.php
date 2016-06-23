@@ -13,6 +13,7 @@ use Session;
 use App\AppointmentService as Service;
 use Carbon\Carbon;
 use App\Patient;
+use Auth;
 
 class AppointmentController extends Controller
 {
@@ -38,7 +39,7 @@ class AppointmentController extends Controller
 			]);
 	}
 
-	public function create($patient_id, $service_id, $slot)
+	public function create($patient_id, $service_id, $slot, $admission_id)
 	{
 			$appointment = new Appointment();
 			$appointment->patient_id = $patient_id;
@@ -51,14 +52,15 @@ class AppointmentController extends Controller
 			$hour = substr($appointment->appointment_slot,8,2);
 			$minute = substr($appointment->appointment_slot,10,2);
 			$appointment_datetime = Carbon::create($year, $month, $day, $hour, $minute);
-
 			$service_name = Service::find($service_id)->service_name;
+
 			return view('appointments.create', [
 					'appointment' => $appointment,
 					'service' => Service::all()->sortBy('service_name')->lists('service_name', 'service_code')->prepend('',''),
 					'patient' => Patient::find($patient_id),
 					'appointment_datetime' => $appointment_datetime,
 					'service_name' => $service_name,
+					'admission_id' => $admission_id,
 					]);
 	}
 
@@ -82,7 +84,11 @@ class AppointmentController extends Controller
 					$appointment->appointment_datetime = $appointment_datetime;
 					$appointment->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/appointments/id/'.$appointment->appointment_id);
+					if (Auth::user()->can('module-ward')) {
+						return redirect('/ward_discharges/create/'.$appointment->admission_id);
+					} else {
+						return redirect('/appointments/id/'.$appointment->appointment_id);
+					}
 			} else {
 					return redirect('/appointments/create/'.$request->patient_id.'/'.$request->service_id.'/'.$request->appointment_slot)
 							->withErrors($valid)
@@ -109,7 +115,8 @@ class AppointmentController extends Controller
 					'service_name'=>$service_name,
 					'service' => Service::all()->sortBy('service_name')->lists('service_name', 'service_code')->prepend('',''),
 					'patient' => Patient::find($appointment->patient_id),
-					'appointment_datetime' => $appointment->appointment_datetime
+					'appointment_datetime' => $appointment->appointment_datetime,
+					'admission_id'=>null,
 					]);
 	}
 

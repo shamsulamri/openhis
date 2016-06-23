@@ -13,7 +13,7 @@ Interim Bill
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<a class="btn btn-default" href="javascript:window.history.back()" role="button">Back</a>
+<a class="btn btn-default" href="/discharges" role="button">Back</a>
 @if (!$billPosted)
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
 <p class='pull-right'>&nbsp;</p>
@@ -23,7 +23,7 @@ Interim Bill
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button">Print Medical Certificate</a>
 <br>
 <br>
-<table class="table table-hover">
+<table class="table table-condensed">
  <thead>
 	<tr> 
     <th>Item</th> 
@@ -33,9 +33,11 @@ Interim Bill
     <th><div align='right'>Unit Price</div></th> 
     <th><div align='right'>Discount(%)</div></th> 
     <th><div align='right'>Total</div></th> 
+	@can('system-administrator')	
 	<th></th>
+	@endcan
 	</tr>
-  </thead>
+</thead>
 	<tbody>
 		@foreach ($bills as $bill)
 			<tr>
@@ -48,7 +50,7 @@ Interim Bill
 							@if (!$billPosted)
 							<a href='{{ URL::to('bill_items/'. $bill->bill_id . '/edit') }}'>
 							@endif
-							{{$bill->product_name}}
+							{{ strtoupper($bill->product_name) }}
 							@if (!$billPosted)
 							</a>
 							@endif
@@ -79,11 +81,13 @@ Interim Bill
 					<td align='right' width='80'>
 							{{ number_format($bill->bill_total,2) }}
 					</td>
+					@can('system-administrator')
 					<td align='right' width='80'>
 						@if (!$billPosted)
 							<a class='btn btn-danger btn-xs' href='{{ URL::to('bill_items/delete/'. $bill->bill_id) }}'>Delete</a>
 						@endif
 					</td>
+					@endcan
 			</tr>
 		@endforeach
 	<tr>
@@ -98,8 +102,10 @@ Interim Bill
 			<td align='right'>
 					<strong>{{number_format($bill_grand_total,2)}}<strong>
 			</td>
+			@can('system-administrator')
 			<td align='right'>
 			</td>
+			@endcan
 	</tr>
 </tbody>
 </table>

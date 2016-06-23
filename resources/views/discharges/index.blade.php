@@ -30,9 +30,13 @@
 @foreach ($discharges as $discharge)
 	<tr>
 			<td width='10%'>
+					<!--
 					<a href='{{ URL::to('discharges/'. $discharge->discharge_id . '/edit') }}'>
+					-->
 						{{$discharge->patient_mrn}}
+					<!--
 					</a>
+					-->
 			</td>
 			<td>
 					{{$discharge->patient_name}}

@@ -83,7 +83,6 @@
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
 								<li><a href="{{ url('/queues') }}">Queues</a></li>
-								<li><a href="{{ url('/encounters') }}">Encounters</a></li>
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li>
 							</ul>
 					</li>
@@ -116,9 +115,10 @@
 							  <span class='glyphicon glyphicon-bed'></span>&nbsp; Ward <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
+								<li><a href="{{ url('/admission_tasks') }}">Nurse Task</a></li> 
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li> 
 								<li><a href="{{ url('/bed_bookings') }}">Bed Request List</a></li> 
-								<li><a href="{{ url('/admission_tasks') }}">Nurse Task</a></li> 
+								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
 							</ul>
 					</li>
 					@endcan
@@ -147,5 +147,9 @@
 		$(function () {
 			  $('[data-toggle="tooltip"]').tooltip()
 		})	  
+
+		function goBack() {
+				window.history.back();
+		}					
 	</script>
 </body>
