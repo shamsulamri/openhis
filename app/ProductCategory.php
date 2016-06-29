@@ -12,6 +12,7 @@ class ProductCategory extends Model
 	protected $table = 'product_categories';
 	protected $fillable = [
 				'category_name',
+				'product_stocked',
 				'location_code'];
 	
     protected $guarded = ['category_code'];
@@ -24,12 +25,10 @@ class ProductCategory extends Model
 				'category_name'=>'required',
 				'location_code'=>'required',
 			];
-
 			
         	if ($method=='') {
         	    $rules['category_code'] = 'required|max:20|unique:product_categories';
         	}
-        
 			
 			$messages = [
 				'required' => 'This field is required'

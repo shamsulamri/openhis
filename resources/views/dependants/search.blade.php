@@ -5,6 +5,8 @@
 <form action='/dependant/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Enter patients name or identification" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
+	<input type='hidden' name="patient_id" value="{{ $patient_id }}">
+	
 </form>
 <br>
 @if (Session::has('message'))

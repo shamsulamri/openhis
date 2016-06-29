@@ -40,6 +40,7 @@ class DependantController extends Controller
 					->where('a.patient_id','=', $request->patient_id)
 					->paginate($this->paginateValue);
 		
+
 			return view('dependants.index', [
 					'dependants'=>$dependants,
 					'patient_id'=>$request->patient_id,

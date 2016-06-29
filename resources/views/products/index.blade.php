@@ -50,8 +50,12 @@
 					@if ($product->category_code=='drugs')
 					<a class='btn btn-default btn-xs' href='{{ URL::to('drug_prescriptions/'. $product->product_code.'/edit') }}'>Prescription</a>
 					@endif
+					@if ($product->product_stocked==1)
 					<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $product->product_code) }}'>Stock</a>
+					@endif
+					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('products/delete/'. $product->product_code) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

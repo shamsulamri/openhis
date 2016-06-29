@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\BedController;
 use App\BedBooking;
 use Log;
 use DB;
@@ -14,6 +15,9 @@ use App\Admission;
 use App\WardClass;
 use App\Patient;
 use App\Bed;
+use App\Ward;
+use Carbon\Carbon;
+use App\DojoUtility;
 
 class BedBookingController extends Controller
 {
@@ -26,34 +30,22 @@ class BedBookingController extends Controller
 
 	public function index()
 	{
-			$sql = '
-			select a.class_code, (count(*)-IFNULL(occupied,0)) as available from beds a
-			left join (
-						select count(*) occupied, b.class_code 
-						from admissions as a
-						left join beds as b on (a.bed_code = b.bed_code)
-						where b.class_code is not null
-						group by class_code
-			) as b on (a.class_code = b.class_code)
-			group by a.class_code
-			';
-			$beds = DB::select($sql);
-			$class_availability = [];
-			foreach ($beds as $bed) {
-					$class_availability[$bed->class_code]=$bed->available;
-			}
-
-			//return $class_availability;
 			$bed_bookings = DB::table('bed_bookings as a')
-					->select(['book_id', 'a.created_at', 'admission_id', 'patient_name', 'b.class_name', 'a.class_code'])
+					->select(['d.ward_code', 'book_id', 'book_date', 'a.created_at', 'bed_name', 'a.admission_id', 'patient_name', 'b.class_name', 'a.class_code','ward_name'])
 					->leftJoin('ward_classes as b', 'b.class_code','=', 'a.class_code')
 					->leftJoin('patients as c', 'c.patient_id','=', 'a.patient_id')
-					->orderBy('a.created_at')
+					->leftJoin('wards as d', 'd.ward_code', '=', 'a.ward_code')
+					->leftJoin('admissions as e', 'e.admission_id','=', 'a.admission_id')
+					->leftJoin('encounters as f', 'f.encounter_id', '=', 'e.encounter_id')
+					->leftJoin('discharges as g', 'g.encounter_id', '=', 'f.encounter_id')
+					->leftJoin('beds as h', 'h.bed_code', '=', 'a.bed_code')
+					->whereNull('discharge_id')
+					->orderBy('a.book_date')
 					->paginate($this->paginateValue);
 		
 			return view('bed_bookings.index', [
 					'bed_bookings'=>$bed_bookings,
-					'class_availability' => $class_availability,
+					'bedController' => new BedController(),
 			]);
 	}
 
@@ -61,18 +53,24 @@ class BedBookingController extends Controller
 	{
 			$bed_booking = new BedBooking();
 			$bed_booking->patient_id = $patient_id;
-			$bed_booking->book_date = date('d/m/Y');
+			$bed_booking->book_date = DojoUtility::now();
 			$bed_booking->admission_id = $admission_id;
+			$bed_booking->ward_code = $request->ward_code;
+			$bed_booking->class_code = $request->class_code;
+			$bed_booking->bed_code = $request->bed_code;
 
-			$title = "Bed Booking";
+			$title = "Bed Request";
 			if ($request->book=='preadmission') $title = "Preadmission";
 			if ($admission_id != null) {
 					$admission = Admission::find($admission_id);
-					$bed_booking->bed_code = $admission->bed_code;
+					//$bed_booking->bed_code = $admission->bed_code;
 			}
 			return view('bed_bookings.create', [
 					'bed_booking' => $bed_booking,
-					'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
+					'bed' => Bed::where('ward_code', $request->ward_code)
+								->where('class_code', $request->class_code)
+								->orderBY('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
+					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'patient' => Patient::find($bed_booking->patient_id),
 					'title' => $title,
@@ -87,6 +85,7 @@ class BedBookingController extends Controller
 
 			if ($valid->passes()) {
 					$bed_booking = new BedBooking($request->all());
+					$bed_booking->bed_code = $request->bed;
 					$bed_booking->book_id = $request->book_id;
 					$bed_booking->save();
 					Session::flash('message', 'Record successfully created.');
@@ -105,6 +104,11 @@ class BedBookingController extends Controller
 					'bed_booking'=>$bed_booking,
 					'patient' => Patient::find($bed_booking->patient_id),
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'bed' => Bed::where('ward_code', $bed_booking->ward_code)
+								->where('class_code', $bed_booking->class_code)
+								->orderBY('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
+					'admission_id' => $bed_booking->admission_id,
 					]);
 	}
 
@@ -133,8 +137,10 @@ class BedBookingController extends Controller
 	public function delete($id)
 	{
 		$bed_booking = BedBooking::findOrFail($id);
+		$patient = Patient::find($bed_booking->patient_id);
 		return view('bed_bookings.destroy', [
-			'bed_booking'=>$bed_booking
+				'bed_booking'=>$bed_booking,
+				'patient'=>$patient,
 			]);
 
 	}

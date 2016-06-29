@@ -1,8 +1,16 @@
     <div class='form-group  @if ($errors->has('book_date')) has-error @endif'>
         <label for='book_date' class='col-sm-2 control-label'>Date<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-            {{ Form::text('book_date', null, ['class'=>'form-control','placeholder'=>'',]) }}
+			<input id="book_date" name="book_date" type="text">
             @if ($errors->has('book_date')) <p class="help-block">{{ $errors->first('book_date') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('ward_code')) has-error @endif'>
+        <label for='ward_code' class='col-sm-2 control-label'>Ward<span style='color:red;'> *</span></label>
+        <div class='col-sm-10'>
+            {{ Form::select('ward_code', $ward,null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('ward_code')) <p class="help-block">{{ $errors->first('ward_code') }}</p> @endif
         </div>
     </div>
 
@@ -11,6 +19,13 @@
         <div class='col-sm-10'>
             {{ Form::select('class_code', $class,null, ['class'=>'form-control','maxlength'=>'10']) }}
             @if ($errors->has('class_code')) <p class="help-block">{{ $errors->first('class_code') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('bed_code')) has-error @endif'>
+        <label for='bed_code' class='col-sm-2 control-label'>Bed</label>
+        <div class='col-sm-10'>
+            {{ Form::select('bed_code', $bed,$bed_booking->bed_code, ['id'=>'bed_code','class'=>'form-control','maxlength'=>'10']) }}
         </div>
     </div>
 
@@ -36,3 +51,20 @@
 
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
 	{{ Form::hidden('admission_id', $admission_id ) }}
+	{{ Form::hidden('bed', $bed_booking->bed_code ) }}
+
+<script>
+	document.getElementById('bed_code').disabled = true;
+	</script>
+	<script>
+		$(function(){
+				$('#book_date').combodate({
+						format: "DD/MM/YYYY HH:mm",
+						template: "DD MMMM YYYY     HH : mm",
+						value: '{{ $bed_booking->book_date }}',
+						maxYear: '{{ \Carbon\Carbon::now()->year+5 }}',
+						minYear: '{{ \Carbon\Carbon::now()->year }}',
+						customClass: 'select'
+				});    
+		});
+	</script>

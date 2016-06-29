@@ -15,6 +15,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('product_stocked')) has-error @endif'>
+        {{ Form::label('product_stocked', 'Product Stocked',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::checkbox('product_stocked', '1') }}
+            @if ($errors->has('product_stocked')) <p class="help-block">{{ $errors->first('product_stocked') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
             <a class="btn btn-default" href="/product_categories" role="button">Cancel</a>

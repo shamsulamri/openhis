@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id')
 <h1>
-New {{ $title }}
+{{ $title }}
 </h1>
 <br>
 @include('common.errors')

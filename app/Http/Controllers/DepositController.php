@@ -30,6 +30,11 @@ class DepositController extends Controller
 					->where('encounter_id','=', $id)
 					->orderBy('encounter_id')
 					->paginate($this->paginateValue);
+
+			if (count($deposits)==0) {
+					return redirect('/deposits/create/'.$id);
+			}
+
 			$encounter = Encounter::find($id);
 			return view('deposits.index', [
 					'deposits'=>$deposits,

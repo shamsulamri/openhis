@@ -27,7 +27,7 @@
 				<br>
 					<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span>
 				<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
-						Book Appointment
+						Appointment
 				</a>
 				<br>
 				<br>

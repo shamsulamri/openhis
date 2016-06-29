@@ -151,4 +151,23 @@ class BedController extends Controller
 					'beds'=>$beds
 			]);
 	}
+
+	public function bedVacant($ward_code, $class_code) 
+	{
+			$sql = "
+				select count(*) as count
+				from beds a
+				left join (
+						select a.encounter_id,discharge_id, bed_code from admissions a
+						left join discharges b on (a.encounter_id = b.encounter_id)
+						where discharge_id is null
+				) as b on (a.bed_code = b.bed_code) 
+				where discharge_id is null
+				and ward_code='".$ward_code."'
+				and a.class_code = '".$class_code."'
+				and encounter_id is null";
+			$beds = DB::select($sql);
+			return $beds[0]->count;
+	}
+
 }

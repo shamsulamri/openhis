@@ -102,6 +102,20 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/payment/search', 'PaymentController@search');
 		Route::get('/payments/delete/{id}', 'PaymentController@delete');
 
+		Route::get('/wards/set/{id}', 'WardController@setWard');
+		Route::resource('wards', 'WardController');
+		Route::get('/wards/id/{id}', 'WardController@searchById');
+		Route::post('/ward/search', 'WardController@search');
+		Route::get('/ward/search', 'WardController@search');
+		Route::get('/wards/delete/{id}', 'WardController@delete');
+
+		Route::resource('bed_bookings', 'BedBookingController',['except'=>['create']]);
+		Route::get('/bed_bookings/create/{patient_id}/{admission_id?}', 'BedBookingController@create');
+		Route::get('/bed_bookings/id/{id}', 'BedBookingController@searchById');
+		Route::post('/bed_booking/search', 'BedBookingController@search');
+		Route::get('/bed_booking/search', 'BedBookingController@search');
+		Route::get('/bed_bookings/delete/{id}', 'BedBookingController@delete');
+
 		Route::group(['middleware' => 'support'], function () {
 				Route::resource('order_queues', 'OrderQueueController');
 				Route::get('/order_queues/id/{id}', 'OrderQueueController@searchById');
@@ -186,13 +200,18 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/dependants/delete/{id}', 'DependantController@delete');
 				Route::get('/dependants/add/{dependant_id}/{patient_id}', 'DependantController@add');
 
-
 				Route::resource('task_cancellations', 'TaskCancellationController',['except'=>['create']]);
 				Route::get('/task_cancellations/create/{id}', 'TaskCancellationController@create');
 				Route::get('/task_cancellations/id/{id}', 'TaskCancellationController@searchById');
 				Route::post('/task_cancellation/search', 'TaskCancellationController@search');
 				Route::get('/task_cancellation/search', 'TaskCancellationController@search');
 				Route::get('/task_cancellations/delete/{id}', 'TaskCancellationController@delete');
+
+				Route::resource('patient_dependants', 'PatientDependantController');
+				Route::get('/patient_dependants/id/{id}', 'PatientDependantController@searchById');
+				Route::post('/patient_dependant/search', 'PatientDependantController@search');
+				Route::get('/patient_dependant/search', 'PatientDependantController@search');
+				Route::get('/patient_dependants/delete/{id}', 'PatientDependantController@delete');
 		});
 
 				Route::get('/orders/single/{product_code}', 'OrderController@single');
@@ -406,12 +425,6 @@ Route::group(['middleware' => 'web'], function () {
 		
 				Route::get('/admission/dietUpdate', 'AdmissionController@dietUpdate');
 
-				Route::resource('bed_bookings', 'BedBookingController',['except'=>['create']]);
-				Route::get('/bed_bookings/create/{patient_id}/{admission_id?}', 'BedBookingController@create');
-				Route::get('/bed_bookings/id/{id}', 'BedBookingController@searchById');
-				Route::post('/bed_booking/search', 'BedBookingController@search');
-				Route::get('/bed_booking/search', 'BedBookingController@search');
-				Route::get('/bed_bookings/delete/{id}', 'BedBookingController@delete');
 
 				Route::resource('admission_tasks', 'AdmissionTaskController');
 				Route::get('/admission_tasks/id/{id}', 'AdmissionTaskController@searchById');
@@ -464,11 +477,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/payment_methods/delete/{id}', 'PaymentMethodController@delete');
 				
 
-				Route::resource('patient_dependants', 'PatientDependantController');
-				Route::get('/patient_dependants/id/{id}', 'PatientDependantController@searchById');
-				Route::post('/patient_dependant/search', 'PatientDependantController@search');
-				Route::get('/patient_dependant/search', 'PatientDependantController@search');
-				Route::get('/patient_dependants/delete/{id}', 'PatientDependantController@delete');
 				
 				
 				
@@ -736,12 +744,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/department/search', 'DepartmentController@search');
 				Route::get('/departments/delete/{id}', 'DepartmentController@delete');
 
-				Route::get('/wards/set/{id}', 'WardController@setWard');
-				Route::resource('wards', 'WardController');
-				Route::get('/wards/id/{id}', 'WardController@searchById');
-				Route::post('/ward/search', 'WardController@search');
-				Route::get('/ward/search', 'WardController@search');
-				Route::get('/wards/delete/{id}', 'WardController@delete');
 
 				Route::resource('rooms', 'RoomController');
 				Route::get('/rooms/id/{id}', 'RoomController@searchById');

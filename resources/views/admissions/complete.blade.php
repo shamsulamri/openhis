@@ -22,7 +22,7 @@ The patient has been successfully admitted to the following location:
 	</tr>
 	<tr>
 		<td width='100' height='30'>Room</td>
-		<td><strong>{{ $admission->bed->room->room_name }}</strong></td>
+		<td><strong>{{ $admission->bed->wardClass->class_name }}</strong></td>
 	</tr>
 	<tr>
 		<td width='100' height='30'>Bed</td>
@@ -31,12 +31,6 @@ The patient has been successfully admitted to the following location:
 </table>
 <br>
 <br>
-@can('module-patient')
-<a class="btn btn-default" href="/patients" role="button">Return</a>
-@endcan
-
-@can('module-ward')
 <a class="btn btn-default" href="/admissions" role="button">Return</a>
-@endcan
 </h4>
 @endsection

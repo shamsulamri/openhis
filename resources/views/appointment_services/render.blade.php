@@ -4,7 +4,7 @@
 @section('content')
 @include('patients.id')
 @if ($appointment_id == null)
-<h1>Book Appointment</h1>
+<h1>Appointment</h1>
 <br>
 @can('module-patient')
 <a href='/patients/{{ $patient->patient_id }}' class='btn btn-default'>Return</a>

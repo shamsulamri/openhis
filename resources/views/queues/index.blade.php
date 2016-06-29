@@ -8,7 +8,7 @@
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<br>
 	-->
-	{{ Form::select('locations', $locations, $selectedLocation, ['class'=>'form-control input-lg','maxlength'=>'10']) }}
+	{{ Form::select('locations', $locations, $selectedLocation, ['class'=>'form-control','maxlength'=>'10']) }}
 	<br>
     {{ Form::submit('Search', ['class'=>'btn btn-primary']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

@@ -1,6 +1,6 @@
 
     <div class='form-group  @if ($errors->has('store_name')) has-error @endif'>
-        <label for='store_name' class='col-sm-2 control-label'>store_name<span style='color:red;'> *</span></label>
+        <label for='store_name' class='col-sm-2 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::text('store_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('store_name')) <p class="help-block">{{ $errors->first('store_name') }}</p> @endif
@@ -8,7 +8,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('store_receiving')) has-error @endif'>
-        {{ Form::label('store_receiving', 'store_receiving',['class'=>'col-sm-2 control-label']) }}
+        {{ Form::label('store_receiving', 'Receiving Store',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::checkbox('store_receiving', '1') }}
             @if ($errors->has('store_receiving')) <p class="help-block">{{ $errors->first('store_receiving') }}</p> @endif

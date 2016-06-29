@@ -10,7 +10,8 @@ use App\Supplier;
 use Log;
 use DB;
 use Session;
-
+use App\State;
+use App\Nation;
 
 class SupplierController extends Controller
 {
@@ -36,7 +37,8 @@ class SupplierController extends Controller
 			$supplier = new Supplier();
 			return view('suppliers.create', [
 					'supplier' => $supplier,
-				
+					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
+					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
 					]);
 	}
 
@@ -63,7 +65,8 @@ class SupplierController extends Controller
 			$supplier = Supplier::findOrFail($id);
 			return view('suppliers.edit', [
 					'supplier'=>$supplier,
-				
+					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
+					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
 					]);
 	}
 
@@ -82,9 +85,8 @@ class SupplierController extends Controller
 			} else {
 					return view('suppliers.edit', [
 							'supplier'=>$supplier,
-				
-							])
-							->withErrors($valid);			
+					])
+					->withErrors($valid);			
 			}
 	}
 	

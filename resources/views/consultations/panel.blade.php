@@ -45,6 +45,7 @@
 	@if ($consultation->encounter->encounter_code=='inpatient')
 	<a href="/diet" class='btn btn-default'>Dietary</a>
 	@endif
+	<a href="/medical_certificates/create" class='btn btn-default'>Medical Certificate</a>
 </div>
 
 <div class="dropdown pull-right">
@@ -55,7 +56,6 @@
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
     <li>
 		<a href="/consultations/close">Close</a>
-		<a href="/medical_certificates/create">Medical Certificate</a>
 	</li>
     <li role="separator" class="divider"></li>
 	<li>

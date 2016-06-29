@@ -42,6 +42,7 @@ class ProductController extends Controller
 			 */
 
 			$products = DB::table('products')
+					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
 			return view('products.index', [
@@ -147,7 +148,8 @@ class ProductController extends Controller
 	
 	public function search(Request $request)
 	{
-			$products = DB::table('products')
+			$products = DB::table('products as a')
+					->leftjoin('product_categories as b', 'b.category_code','=', 'a.category_code')
 					->where('product_name','like','%'.$request->search.'%')
 					->orWhere('product_code', 'like','%'.$request->search.'%')
 					->orderBy('product_name')

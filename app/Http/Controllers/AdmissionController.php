@@ -26,6 +26,7 @@ class AdmissionController extends Controller
 {
 	public $paginateValue=10;
 
+
 	public function __construct()
 	{
 			$this->middleware('auth');
@@ -34,6 +35,7 @@ class AdmissionController extends Controller
 	public function index(Request $request)
 	{
 			$ward = $request->cookie('ward');
+			$setWard = $request->cookie('ward');
 
 			$selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','d.consultation_id','a.encounter_id','a.user_id','e.discharge_id', 
 					'f.discharge_id as ward_discharge',
@@ -45,6 +47,7 @@ class AdmissionController extends Controller
 					'a.user_id',
 					'k.name',
 			];
+
 			$admissions = DB::table('admissions as a')
 					->select($selectFields)
 					->leftJoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
@@ -63,11 +66,13 @@ class AdmissionController extends Controller
 					->orderBy('g.encounter_id')
 					->orderBy('a.bed_code')
 					->paginate($this->paginateValue);
+
 			return view('admissions.index', [
 					'admissions'=>$admissions,
 					'user'=>Auth::user(),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward' => $ward, 
+					'setWard' => $setWard, 
 			]);
 	}
 
@@ -77,10 +82,16 @@ class AdmissionController extends Controller
 			$admission->encounter_id = $request->encounter_id;
 			$encounter = Encounter::findOrFail($admission->encounter_id);
 
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+			->where('module_consultation',1)
+			->orderBy('name')
+			->lists('name','id')
+			->prepend('','');
+
 			return view('admissions.create', [
 					'admission' => $admission,
 					'patient' => $encounter->patient,
-					'consultant' => User::orderBy('name')->lists('name', 'id')->prepend('',''),
+					'consultant' => $consultants,
 					'bed' => Bed::where('encounter_code',$encounter->encounter_code)->orderBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
 					'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
 					'texture' => DietTexture::all()->sortBy('texture_name')->lists('texture_name', 'texture_code')->prepend('',''),
@@ -206,6 +217,7 @@ class AdmissionController extends Controller
 	public function search(Request $request)
 	{
 			$ward = $request->ward;
+			$setWard = $request->cookie('ward');
 
 			$selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','d.consultation_id','a.encounter_id','a.user_id','e.discharge_id', 
 					'f.discharge_id as ward_discharge',
@@ -241,7 +253,8 @@ class AdmissionController extends Controller
 					'user'=>Auth::user(),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward' => $request->ward,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'setWard'=>$setWard,
 			]);
 	}
 

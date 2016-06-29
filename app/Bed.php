@@ -58,6 +58,11 @@ class Bed extends Model
 			return $this->belongsTo('App\Room', 'room_code', 'room_code');
 	}
 
+	public function wardClass()
+	{
+			return $this->belongsTo('App\WardClass', 'class_code', 'class_code');
+	}
+
 	public function classAvailable($class_code) 
 	{
 			$beds = DB::table('beds as a')

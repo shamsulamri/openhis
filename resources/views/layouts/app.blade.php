@@ -48,6 +48,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
                                 <li><a href="{{ url('/queue_locations') }}"><i class="fa fa-btn"></i>Set Location</a></li>
+                                <li><a href="{{ url('/wards') }}"><i class="fa fa-btn"></i>Set Ward</a></li>
                             </ul>
                         </li>
                     @endif
@@ -84,6 +85,7 @@
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
 								<li><a href="{{ url('/queues') }}">Queues</a></li>
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li>
+								<li><a href="{{ url('/bed_bookings') }}">Bed Bookings</a></li>
 							</ul>
 					</li>
 					@endcan
@@ -117,7 +119,7 @@
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/admission_tasks') }}">Nurse Task</a></li> 
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li> 
-								<li><a href="{{ url('/bed_bookings') }}">Bed Request List</a></li> 
+								<li><a href="{{ url('/bed_bookings') }}">Bed Bookings</a></li> 
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
 							</ul>
 					</li>

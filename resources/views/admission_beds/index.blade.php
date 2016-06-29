@@ -26,10 +26,15 @@
     <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
 	@endcan
 	@can('module-ward')
+	@if (!empty($book_id))
+    <a class="btn btn-default" href="/bed_bookings" role="button">Cancel</a>
+	@else
     <a class="btn btn-default" href="/admissions" role="button">Cancel</a>
+	@endif
 	@endcan
 	{{ Form::submit('Refresh', ['class'=>'btn btn-primary']) }}
 	{{ Form::hidden('admission_id', $admission->admission_id) }}
+	{{ Form::hidden('book_id', $book_id) }}
 	{{ Form::hidden('flag', $flag) }}
 </form>
 <br>
@@ -38,24 +43,39 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Bed</th>
     <th>Ward</th>
     <th>Class</th>
+    <th>Bed</th>
 	<th>Occupant</th>
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($admission_beds as $admission_bed)
-	<tr>
+	<?php
+	$status="";
+	if (!empty($book)) {
+			if ($book->class_code == $admission_bed->class_code) {
+				$status = "success";
+			}
+			if (!empty($admission_bed->patient_name)) {
+					$status="";
+			}
+			if ($book->bed_code == $admission_bed->bed_code) {
+				$status = "warning";
+			}
+	}
+	?>
+	<tr class='{{ $status }}'>
 			<td>
-					{{$admission_bed->bed_name}}
-			</td>
-			<td>
+
 					{{$admission_bed->ward_name}}
 			</td>
 			<td>
 					{{$admission_bed->class_name}}
+			</td>
+			<td>
+					{{$admission_bed->bed_name}}
 			</td>
 			<td>
 					{{$admission_bed->patient_name}}
@@ -83,8 +103,8 @@
 							</a>
 					@else
 						@if ($admission->encounter->patient_id<>$admission_bed->patient_id)
-						<a class='btn btn-default btn-xs' href='{{ URL::to('bed_bookings/create/'.$admission->encounter->patient_id.'/'.$admission_bed->admission_id) }}'>
-						Booking
+						<a class='btn btn-default btn-xs' href='{{ URL::to('bed_bookings/create/'.$admission->encounter->patient_id.'/'.$admission_bed->admission_id.'?class_code='.$admission_bed->class_code.'&ward_code='.$admission_bed->ward_code.'&bed_code='.$admission_bed->bed_code) }}'>
+						Bed Request
 						</a>
 						@endif
 					@endif

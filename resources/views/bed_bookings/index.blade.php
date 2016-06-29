@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Bed Request List</h1>
+<h1>Bed Bookings </h1>
 <br>
 <form action='/bed_booking/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -15,8 +15,10 @@
 	<tr> 
     <th>Date</th>
     <th>Patient</th>
+    <th>Ward</th>
 	<th>Class</th>
-	<th>Availability</th>
+	<th>Bed</th>
+	<th><div align='right'>Vacant</div></th>
 	<th></th>
 	</tr>
   </thead>
@@ -24,13 +26,18 @@
 @foreach ($bed_bookings as $bed_booking)
 	<?php
 	$status="";
-	if ($class_availability[$bed_booking->class_code]>0) {
+	$bedVacant = $bedController->bedVacant($bed_booking->ward_code, $bed_booking->class_code);
+	if ($bedVacant>0) {
 		$status='success';
 	}
 	?>
 	<tr class='{{ $status }}'>
 			<td>
-					{{ date('d F, H:i', strtotime($bed_booking->created_at)) }}
+				@if ($bed_booking->admission_id==0)
+					{{ date('d F Y', strtotime($bed_booking->book_date)) }}
+				@else
+					{{ date('d F, H:i', strtotime($bed_booking->book_date)) }}
+				@endif
 			</td>
 			<td>
 					<a href='{{ URL::to('bed_bookings/'. $bed_booking->book_id . '/edit') }}'>
@@ -38,18 +45,24 @@
 					</a>
 			</td>
 			<td>
+					{{$bed_booking->ward_name }}
+			</td>
+			<td>
 					{{$bed_booking->class_name }}
 			</td>
 			<td>
-					{{ $class_availability[$bed_booking->class_code] }}
-					<?php
-					$class_availability[$bed_booking->class_code] -=1;
-					?>
+					{{$bed_booking->bed_name }}
 			</td>
 			<td align='right'>
-					@if ($class_availability[$bed_booking->class_code]>0)
+					{{ $bedVacant }}
+			</td>
+			<td align='right'>
+					
+					@can('module-ward')
+					@if ($bedVacant>0)
 					<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?flag=1&admission_id='.$bed_booking->admission_id.'&book_id='.$bed_booking->book_id) }}'>&nbsp; Move &nbsp;</a>
 					@endif
+					@endcan
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('bed_bookings/delete/'. $bed_booking->book_id) }}'>Delete</a>
 			</td>
 	</tr>

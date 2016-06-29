@@ -1,7 +1,7 @@
 
-	<div class='page-header'>
-		<h2>{{ $encounter->encounterType->encounter_name }}</h2>
-	</div>
+<div class='page-header'>
+<h2>{{ $encounter->encounterType->encounter_name }}</h2>
+</div>
 <h4>Define admission details.</h4>
 <br>
     <div class='form-group  @if ($errors->has('admission_code')) has-error @endif'>
@@ -30,3 +30,10 @@
 
 			
 	{{ Form::hidden('encounter_id', null) }}
+
+@if ($encounter->encounter_code=='daycare')
+<script>
+	document.getElementById('admission_code').disabled = true;
+	document.getElementById('referral_code').disabled = true;
+</script>
+@endif

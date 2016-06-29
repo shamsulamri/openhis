@@ -49,7 +49,7 @@
 					{{ $stock->store_name }}
 			</td>
 			<td>
-					{{ number_format($stock->stock_quantity,2) }}
+					{{ str_replace('.00','',number_format($stock->stock_quantity,2)) }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('stocks/delete/'. $stock->stock_id) }}'>Delete</a>

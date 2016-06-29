@@ -13,6 +13,7 @@ class BedBooking extends Model
 	protected $fillable = [
 				'patient_id',
 				'admission_id',
+				'ward_code',
 				'class_code',
 				'book_date',
 				'book_description'];
@@ -26,7 +27,8 @@ class BedBooking extends Model
 			$rules = [
 				'patient_id'=>'required',
 				'class_code'=>'required',
-				'book_date'=>'size:10|date_format:d/m/Y',
+				'ward_code'=>'required',
+				'book_date'=>'size:16|date_format:d/m/Y H:i',
 			];
 
 			
@@ -41,16 +43,16 @@ class BedBooking extends Model
 	
 	public function setBookDateAttribute($value)
 	{
-		if (DojoUtility::validateDate($value)==true) {
-			$this->attributes['book_date'] = DojoUtility::dateWriteFormat($value);
+		if (DojoUtility::validateDateTime($value)==true) {
+			$this->attributes['book_date'] = DojoUtility::dateTimeWriteFormat($value);
 		}
 	}
 
-
 	public function getBookDateAttribute($value)
 	{
-		return DojoUtility::dateReadFormat($value);
+		return DojoUtility::dateTimeReadFormat($value);
 	}
+
 
 	public function bed()
 	{

@@ -35,6 +35,10 @@ class PaymentController extends Controller
 					->orderBy('a.encounter_id')
 					->paginate($this->paginateValue);
 
+			if (count($payments)==0) {
+					return redirect('/payments/create/'.$id);
+			}
+
 			$patient = Patient::find($id);
 			return view('payments.index', [
 					'patient_id'=>$id,

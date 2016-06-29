@@ -231,6 +231,7 @@ class PatientController extends Controller
 
 	public function dependantList($id)
 	{
+			
 			$patient = Patient::findOrFail($id);
 			
 			$patients = $this->getDependants($id);
@@ -247,6 +248,9 @@ class PatientController extends Controller
 					->orderBy('patient_name')
 					->get();
 
+			if (count($patients)==0) {
+					return redirect('/patients/dependants/'.$id);
+			}
 			return view('patients.dependant_list', [
 					'patient'=>$patient,
 					'patients'=>$patients,

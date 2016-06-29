@@ -32,17 +32,23 @@ class AdmissionBedController extends Controller
 
 	public function index(Request $request)
 	{
+			$ward_code = $request->cookie('ward');
 			$admission = NULL;
 			$patient = NULL;
 			$flag=$request->flag;
 			$encounter = NULL;
 			$ward_class = $request->ward_class;
 			$book_id = NULL;
+			$book= NULL;
 			if (!empty($request->admission_id)) {
 					$admission = Admission::find($request->admission_id);
 					$patient = $admission->encounter->patient;
 					$encounter= Encounter::find($admission->encounter_id);
 
+					$current_bed = BedMovement::where('encounter_id',$admission->encounter_id)->orderBy('move_id','desc')->first();
+					if ($current_bed) {
+							$ward_code = $current_bed->bed->ward_code;
+					}
 
 					if ($encounter->encounter_code =='emergency') $ward_code = 'observation';
 			}
@@ -51,8 +57,10 @@ class AdmissionBedController extends Controller
 					$book_id = $request->book_id;
 					$book = BedBooking::find($book_id);
 					$ward_class=$book->class_code;
+					$ward_code = $book->ward_code;
 
 			}
+
 
 			$admission_beds = DB::table('beds as a')
 					->select(['b.admission_id','a.bed_code','bed_name','patient_name','a.ward_code', 'ward_name', 'a.class_code', 'class_name','c.patient_id'])
@@ -63,21 +71,27 @@ class AdmissionBedController extends Controller
 					->leftJoin('ward_classes as f', 'f.class_code', '=', 'a.class_code')
 					->leftJoin('wards as g', 'g.ward_code', '=', 'a.ward_code')
 					->whereNull('discharge_id')
-					->where('a.class_code','=',$ward_class)
-					->orderBy('ward_name')
+					->where('a.ward_code','like','%'.$ward_code.'%')
+					->where('a.class_code','like','%'.$ward_class.'%')
+					->where('g.encounter_code',$encounter->encounter_code)
+					->orderBy('patient_name')
+					->orderBy('class_name')
 					->orderBy('bed_name')
+					->orderBy('ward_name')
+					->orderBy('class_name')
 					->paginate($this->paginateValue);
 
 			return view('admission_beds.index', [
 					'admission_beds'=>$admission_beds,
 					'wards' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'ward_code'=>$request->ward_code,
+					'ward_code'=>$ward_code,
 					'ward_class' => $ward_class,
 					'admission' => $admission,
 					'patient' => $patient,
 					'flag' => $flag,
 					'encounter' => $encounter,
 					'book_id' => $book_id,
+					'book' => $book,
 					'ward_classes' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 			]);
 	}
@@ -100,7 +114,7 @@ class AdmissionBedController extends Controller
 	public function store(Request $request) 
 	{
 			$admission_bed = new AdmissionBed();
-			$valid = $admission_bed->validate($request->all(), $request->_method);
+			$admissionsvalid = $admission_bed->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
 					$admission_bed = new AdmissionBed($request->all());
@@ -177,12 +191,16 @@ class AdmissionBedController extends Controller
 	{
 			$admission = NULL;
 			$patient = NULL;
+			$book = NULL;
+			$book_id = NULL;
 			$flag=$request->flag;
+
 			if (!empty($request->admission_id)) {
 					$admission = Admission::find($request->admission_id);
 					$patient = $admission->encounter->patient;
 					$encounter= Encounter::find($admission->encounter_id);
 			}
+
 			$admission_beds = DB::table('beds as a')
 					->select(['b.admission_id','a.bed_code','bed_name','patient_name','a.ward_code', 'ward_name','class_name', 'a.class_code','c.patient_id'])
 					->leftJoin('admissions as b', 'b.bed_code', '=', 'a.bed_code')
@@ -196,9 +214,16 @@ class AdmissionBedController extends Controller
 					->where('a.encounter_code','=', $encounter->encounter_code)
 					->whereNull('discharge_id')
 					->orderBy('patient_name')
+					->orderBy('class_name')
+					->orderBy('bed_name')
 					->orderBy('ward_name')
 					->orderBy('class_name')
 					->paginate($this->paginateValue);
+
+			if (!empty($request->book_id)) {
+					$book_id = $request->book_id;
+					$book = BedBooking::find($book_id);
+			}
 
 			return view('admission_beds.index', [
 					'admission_beds'=>$admission_beds,
@@ -210,6 +235,8 @@ class AdmissionBedController extends Controller
 					'encounter' => $encounter,
 					'flag' => $flag,
 					'ward_classes' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'book' => $book,
+					'book_id' => $book_id,
 					]);
 	}
 
@@ -235,7 +262,7 @@ class AdmissionBedController extends Controller
 			$bed_movement->move_to = $bed_code;
 			$bed_movement->move_date = date('d/m/Y');
 			$bed_movement->save();
-
+			
 			$admission->bed_code = $bed_code;
 			$admission->save();
 
