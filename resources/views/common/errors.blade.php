@@ -3,5 +3,4 @@
     <div class="alert alert-danger">
 			please correct the errors highlighted below.
     </div>
-	<br>
 @endif

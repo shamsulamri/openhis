@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-New Set
+New Order Set
 </h1>
 @include('common.errors')
 <br>

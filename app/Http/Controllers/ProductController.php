@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\ProductCategory as Category;
+use App\ProductStatus as Status;
 use App\UnitMeasure as Unit;
 use App\QueueLocation as Location;
 use App\Form;
@@ -45,6 +46,7 @@ class ProductController extends Controller
 					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
+			
 			return view('products.index', [
 					'products'=>$products
 			]);
@@ -66,6 +68,24 @@ class ProductController extends Controller
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
 					]);
+	}
+
+	public function show(Request $request, $id)
+	{
+			$return_id = $request->id;
+			$product = Product::find($id); 
+			return view('products.show', [
+					'product' => $product,
+					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
+					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
+					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
+					'status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
+					'return_id' => $return_id,
+					'reason' => $request->reason,
+				]);	
 	}
 
 	public function store(Request $request) 
@@ -109,9 +129,10 @@ class ProductController extends Controller
 			$product->product_purchased = $request->product_purchased ?: 0;
 			$product->product_sold = $request->product_sold ?: 0;
 			$product->product_bom = $request->product_bom ?: 0;
-			$product->product_gst = $request->product_gst ?: 0;
+			$product->product_stocked = $request->product_stocked ?: 0;
 
 			$valid = $product->validate($request->all(), $request->_method);	
+
 
 			if ($valid->passes()) {
 					$product->save();

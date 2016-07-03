@@ -89,6 +89,15 @@
 
 	<div class="row">
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_stocked')) has-error @endif'>
+						{{ Form::label('product_stocked', 'Stocked',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('product_stocked', '1') }}
+							@if ($errors->has('product_stocked')) <p class="help-block">{{ $errors->first('product_stocked') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_bom')) has-error @endif'>
 						{{ Form::label('product_bom', 'Bill of Materials',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
@@ -96,8 +105,6 @@
 							@if ($errors->has('product_bom')) <p class="help-block">{{ $errors->first('product_bom') }}</p> @endif
 						</div>
 					</div>
-			</div>
-			<div class="col-xs-6">
 			</div>
 	</div>
 	<!-- Purchase -->

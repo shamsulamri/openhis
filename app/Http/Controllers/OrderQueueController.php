@@ -34,7 +34,8 @@ class OrderQueueController extends Controller
 	public function index(Request $request)
 	{
 			if (empty($request->cookie('queue_location'))) {
-					return "Location not set";
+					//return "Location not set";
+					return redirect('queue_locations');
 			}
 			$location_code = $request->cookie('queue_location');
 			$location = QueueLocation::find($location_code);

@@ -14,7 +14,7 @@
 	<input type='hidden' name="reason" value="{{ $reason }}">
 	<input type='hidden' name="product_code" value="{{ $product_code }}">
 	<input type='hidden' name="set_code" value="{{ $set_code }}">
-
+	<input type='hidden' name="return_id" value="{{ $return_id }}">
 </form>
 @if (Session::has('message'))
 	<br>
@@ -28,13 +28,15 @@
 @foreach ($product_searches as $product_search)
 	<tr>
 			<td>
-					<a href='{{ URL::to('product_searches/'. $product_search->product_code . '/edit') }}'>
+					<a href='{{ URL::to('products/'. $product_search->product_code.'?reason='.$reason.'&id='.$return_id) }}' target='frameLine'>
 						{{$product_search->product_name}}
 					</a>
 			</td>
 			<td align='right'>
 				@if ($reason=='purchase_order')
+					@if ($purchase_order->purchase_posted==0)
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/add/'. $purchase_id . '/' . $product_search->product_code) }}'>+</a>
+					@endif
 				@endif
 				@if ($reason=='bom')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/bom/'. $product_code . '/' . $product_search->product_code) }}'>+</a>
@@ -60,6 +62,7 @@
 	No record found.
 @endif
 
+@if (Session::has('message'))
 <script>
 	var frameLine = parent.document.getElementById('frameLine');
 	@if ($reason=='purchase_order')
@@ -72,4 +75,5 @@
 	frameLine.src='/order_sets/index/{{ $set_code }}';
 	@endif
 </script>
+@endif
 @endsection

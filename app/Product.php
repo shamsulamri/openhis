@@ -18,6 +18,7 @@ class Product extends Model
 				'product_upc',
 				'product_unit_charge',
 				'product_purchased',
+				'product_stocked',
 				'product_sold',
 				'product_sale_price',
 				'product_bom',

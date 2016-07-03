@@ -73,8 +73,6 @@ class ProductCategoryController extends Controller
 			$product_category = ProductCategory::findOrFail($id);
 			$product_category->fill($request->input());
 
-			$product_category->product_stocked = $request->product_stocked ?: 0;
-
 			$valid = $product_category->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {

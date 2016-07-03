@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
-<h1>
-Edit Product Search
-</h1>
+<h3>
+{{ $product_search->product_name }}
+</h3>
 @include('common.errors')
 <br>
 {{ Form::model($product_search, ['route'=>['product_searches.update',$product_search->product_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 

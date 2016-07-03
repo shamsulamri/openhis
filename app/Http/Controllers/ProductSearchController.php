@@ -10,15 +10,16 @@ use App\ProductSearch;
 use Log;
 use DB;
 use Session;
-use App\Category;
-use App\Unit;
-use App\Location;
+use App\ProductCategory as Category;
+use App\ProductStatus as Status;
+use App\UnitMeasure as Unit;
+use App\QueueLocation as Location;
 use App\Form;
-use App\Status;
 use App\PurchaseOrderLine;
 use App\Product;
 use App\BillMaterial;
 use App\OrderSet;
+use App\PurchaseOrder;
 
 class ProductSearchController extends Controller
 {
@@ -34,12 +35,31 @@ class ProductSearchController extends Controller
 			$product_searches = DB::table('products')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
+			$purchase_order = PurchaseOrder::find($request->purchase_id);
+
+			$reason = $request->reason;
+			$return_id = 0;
+
+			switch ($reason) {
+					case "purchase_order":
+							$return_id = $request->purchase_id;
+							break;
+					case "bom":
+							$return_id = $request->product_code;
+							break;
+					case "asset":
+							$return_id = $request->set_code;
+							break;
+			}
+
 			return view('product_searches.index', [
 					'product_searches'=>$product_searches,
 					'purchase_id'=>$request->purchase_id,
 					'product_code'=>$request->product_code,
 					'set_code'=>$request->set_code,
 					'reason'=>$request->reason,
+					'purchase_order'=>$purchase_order,
+					'return_id'=>$return_id,
 			]);
 	}
 
@@ -175,6 +195,8 @@ class ProductSearchController extends Controller
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
 
+			$purchase_order = PurchaseOrder::find($request->purchase_id);
+
 			return view('product_searches.index', [
 					'product_searches'=>$product_searches,
 					'search'=>$request->search,
@@ -182,6 +204,8 @@ class ProductSearchController extends Controller
 					'reason'=>$request->reason,
 					'product_code'=>$request->product_code,
 					'set_code'=>$request->set_code,
+					'purchase_order'=>$purchase_order,
+					'return_id'=>$request->return_id,
 					]);
 	}
 

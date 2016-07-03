@@ -65,7 +65,9 @@ $count=0;
     <th><div align='right'>Quantity</div></th> 
     <th><div align='right'>Price/Unit</div></th> 
     <th><div align='right'>Total</div></th> 
+	@if ($purchase_order->purchase_posted==0)
 	<th></th>
+	@endif
 	</tr>
   </thead>
 	<tbody>
@@ -90,17 +92,19 @@ $count=0;
 			<td width='100' align='right'>
 					{{ $purchase_order_line->line_quantity_received+$purchase_order_line->line_quantity_received_2 }}
 			</td>
-			<td width='100' align='right'>
+			<td width='50' align='right'>
 					{{ number_format($purchase_order_line->line_price,2) }}
 			</td>
-			<td width='100' align='right'>
+			<td width='10' align='right'>
 					{{ number_format($purchase_order_line->line_total,2) }}
 			</td>
+			@if ($purchase_order->purchase_posted==0)
 			<td align='right' width='20'>
 					@if ($purchase_order->purchase_received==0)
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('purchase_order_lines/delete/'. $purchase_order_line->line_id) }}'>-</a>
 					@endif
 			</td>
+			@endif
 	</tr>
 @endforeach
 @endif
@@ -108,10 +112,12 @@ $count=0;
 	<tr>
 		<td></td>
 		<td></td>
-		<td width='100' align='right'></td>
-		<td width='100' align='right'><br><strong>Total</strong></td>
-		<td width='100' align='right'><br>{{ number_format($grandTotal,2) }}</td>
+		<td width='50' align='right'></td>
+		<td width='10' align='right'><br><strong>Total</strong></td>
+		<td width='20' align='right'><br>{{ number_format($grandTotal,2) }}</td>
+		@if ($purchase_order->purchase_posted==0)
 		<td></td>
+		@endif
 	</tr>
 @endif
 </tbody>

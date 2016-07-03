@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
 class PurchaseOrder extends Model
 {
@@ -35,6 +36,10 @@ class PurchaseOrder extends Model
 				'invoice_date'=>'date|date_format:d/m/Y|size:10',
 				'receive_datetime'=>'size:16|date_format:d/m/Y H:i',
 			];
+
+        	if ($method!='') {
+        	    $rules['store_code'] = 'required';
+        	}
 
 			$messages = [
 				'required' => 'This field is required'
