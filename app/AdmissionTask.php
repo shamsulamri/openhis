@@ -50,5 +50,26 @@ class AdmissionTask extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function product()
+	{
+			return $this->belongsTo('App\Product', 'product_code');
+	}
+
+	public function user()
+	{
+			return $this->belongsTo('App\User', 'user_id','id');
+	}
+
+	public function save(array $options = array())
+	{
+			$changed = $this->isDirty() ? $this->getDirty() : false;
+
+			parent::save();
+
+			if ($changed) 
+			{
+				Log::info("Changed:".$changed);
+			}	
+	}
 	
 }

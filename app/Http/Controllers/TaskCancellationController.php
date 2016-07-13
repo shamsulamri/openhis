@@ -31,7 +31,7 @@ class TaskCancellationController extends Controller
 			]);
 	}
 
-	public function create($order_id)
+	public function create(Request $request, $order_id)
 	{
 			$task_cancellation = new TaskCancellation();
 			$task_cancellation->order_id = $order_id;
@@ -40,6 +40,7 @@ class TaskCancellationController extends Controller
 					'task_cancellation' => $task_cancellation,
 					'consultation' => $task_cancellation->order->consultation,	
 					'patient' => $task_cancellation->order->consultation->encounter->patient,	
+					'source' => $request->source,
 					]);
 	}
 
@@ -49,15 +50,18 @@ class TaskCancellationController extends Controller
 			$valid = $task_cancellation->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
-					Log::info("XXX");
 					$task_cancellation = new TaskCancellation($request->all());
 					$task_cancellation->cancel_id = $request->cancel_id;
 					$task_cancellation->user_id = Auth::user()->id;
 					$task_cancellation->save();
-					Session::flash('message', 'Record successfully created.');
-					return redirect('/order_tasks/task/'.Session::get('encounter_id').'/'.$task_cancellation->order->product->category->location_code);
+					Session::flash('message', 'The selected order has been cancel.');
+					if ($request->source=='nurse') {
+							return redirect('/admission_tasks');
+					} else {
+							return redirect('/order_tasks/task/'.Session::get('encounter_id').'/'.$task_cancellation->order->product->category->location_code);
+					}
 			} else {
-					return redirect('/task_cancellations/create/'.$request->order_id)
+					return redirect('/task_cancellations/create/'.$request->order_id.'?source='.$request->source)
 							->withErrors($valid)
 							->withInput();
 			}

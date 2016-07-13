@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id')
 <h1>
-Task Cancellation
+Cancel Task 
 </h1>
 <br>
 @include('common.errors')

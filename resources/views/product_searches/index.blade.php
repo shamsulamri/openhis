@@ -14,6 +14,10 @@
 	<input type='hidden' name="reason" value="{{ $reason }}">
 	<input type='hidden' name="product_code" value="{{ $product_code }}">
 	<input type='hidden' name="set_code" value="{{ $set_code }}">
+	<input type='hidden' name="class_code" value="{{ $class_code }}">
+	<input type='hidden' name="period_code" value="{{ $period_code }}">
+	<input type='hidden' name="week" value="{{ $week }}">
+	<input type='hidden' name="day" value="{{ $day }}">
 	<input type='hidden' name="return_id" value="{{ $return_id }}">
 </form>
 @if (Session::has('message'))
@@ -44,6 +48,9 @@
 				@if ($reason=='asset')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/asset/'. $set_code . '/' . $product_search->product_code) }}'>+</a>
 				@endif
+				@if ($reason=='menu')
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/menu/'. $class_code . '/' . $period_code . '/' . $week . '/'. $day . '/'. $product_search->product_code) }}'>+</a>
+				@endif
 			</td>
 	</tr>
 @endforeach
@@ -51,9 +58,9 @@
 </table>
 @endif
 @if (isset($search)) 
-	{{ $product_searches->appends(['set_code'=>$set_code, 'product_code'=>$product_code, 'search'=>$search,'reason'=>$reason,  'purchase_id'=>$purchase_id])->render() }}
+	{{ $product_searches->appends(['class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'search'=>$search,'reason'=>$reason,  'purchase_id'=>$purchase_id])->render() }}
 	@else
-	{{ $product_searches->appends(['set_code'=>$set_code, 'product_code'=>$product_code, 'reason'=>$reason, 'purchase_id'=>$purchase_id])->render() }}
+	{{ $product_searches->appends(['class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'reason'=>$reason, 'purchase_id'=>$purchase_id])->render() }}
 @endif
 <br>
 @if ($product_searches->total()>0)
@@ -73,6 +80,9 @@
 	@endif
 	@if ($reason=='asset')
 	frameLine.src='/order_sets/index/{{ $set_code }}';
+	@endif
+	@if ($reason=='menu')
+	frameLine.src='/diet_menus/menu/{{ $class_code }}/{{ $period_code }}/{{ $week }}/{{ $day }}';
 	@endif
 </script>
 @endif

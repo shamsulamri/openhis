@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+@include('patients.id')
 <h1>
-Edit Admission Task
+Edit Task
 </h1>
 @include('common.errors')
 <br>

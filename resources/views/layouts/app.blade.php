@@ -117,7 +117,7 @@
 							  <span class='glyphicon glyphicon-bed'></span>&nbsp; Ward <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
-								<li><a href="{{ url('/admission_tasks') }}">Nurse Task</a></li> 
+								<li><a href="{{ url('/admission_tasks') }}">Nurse Care Plan</a></li> 
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li> 
 								<li><a href="{{ url('/bed_bookings') }}">Bed Bookings</a></li> 
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>

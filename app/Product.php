@@ -58,7 +58,7 @@ class Product extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	public function setProductNameAtrribute($value)
+	public function setProductNameAttribute($value)
 	{
 			$this->attributes['product_name'] = strtoupper($value);
 	}

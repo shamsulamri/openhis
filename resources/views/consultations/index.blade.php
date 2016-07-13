@@ -20,6 +20,7 @@
     <th>Name</th> 
     <th>Room/Bed</th> 
 	<th>Complain</th>
+	<th></th>
 	</tr>
   </thead>
 	<tbody>

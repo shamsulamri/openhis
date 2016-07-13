@@ -19,6 +19,7 @@ class Order extends Model
 				'order_description',
 				'order_report',
 				'order_completed',
+				'order_completed_by',
 				'order_quantity_supply',
 				'store_code',
 				'location_code',
@@ -27,7 +28,9 @@ class Order extends Model
 				'order_total',
 				'order_discount',
 				'order_gst_unit',
-				'order_discharge'];
+				'order_discharge',
+				'update_by',
+		];
 	
     protected $guarded = ['order_id'];
     protected $primaryKey = 'order_id';

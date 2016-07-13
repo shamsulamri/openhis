@@ -117,6 +117,7 @@
 	<h5>
 	<div class="row">
 			<div class="col-xs-6">
+				<a href="{{ url('/diet_menus') }}">Diet Menu</a><br>
 				<a href="{{ url('/diet_complains') }}">Diet Complains</a><br>
 				<a href="{{ url('/diet_wastages') }}">Diet Wastages</a><br>
 				<a href="{{ url('/diet_qualities') }}">Diet Qualities</a><br>

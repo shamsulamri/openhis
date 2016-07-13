@@ -22,9 +22,14 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
+		@if ($source=='nurse')
+            <a class="btn btn-default" href="/admission_tasks" role="button">Cancel</a>
+		@else
             <a class="btn btn-default" href="/order_tasks/task/{{ Session::get('encounter_id') }}/{{ $task_cancellation->order->product->category->location_code }}" role="button">Cancel</a>
+		@endif
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
 
-    {{ Form::hidden('order_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
+    {{ Form::hidden('order_id', null) }}
+	{{ Form::hidden('source', $source) }}

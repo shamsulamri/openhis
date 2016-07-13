@@ -6,6 +6,7 @@
 @include('common.notification')
 <a href='/medical_alerts/create' class='btn btn-primary'>Create</a>
 <br>
+<br>
 @if ($medical_alerts->total()>0)
 <table class="table table-hover">
  <thead>

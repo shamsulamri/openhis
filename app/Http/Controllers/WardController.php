@@ -16,7 +16,7 @@ use App\EncounterType;
 
 class WardController extends Controller
 {
-	public $paginateValue=10;
+	public $paginateValue=1000;
 
 	public function __construct()
 	{
@@ -141,7 +141,7 @@ class WardController extends Controller
 			Session::flash('message', 'This terminal has been set to '.$ward->ward_name);
 
 			return redirect('/wards')
-				->withCookie(cookie('ward',$id));
+				->withCookie(cookie('ward',$id, 2628000));
 	}
 
 	public function getWard(Request $request)

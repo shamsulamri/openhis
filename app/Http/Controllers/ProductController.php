@@ -109,6 +109,7 @@ class ProductController extends Controller
 	public function edit($id) 
 	{
 			$product = Product::findOrFail($id);
+			Log::info($product->product_name);
 			return view('products.edit', [
 					'product'=>$product,
 					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),

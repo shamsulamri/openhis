@@ -49,6 +49,10 @@ Route::group(['middleware' => 'web'], function () {
 				});
 		});
 
+		Route::get('/diet_menus', 'DietMenuController@menu');
+		Route::get('/diet_menus/{class}/{period}/{week}/{day}', 'DietMenuController@create');
+		Route::get('/diet_menus/menu/{class}/{period}/{week}/{day}', 'DietMenuController@index');
+
 		Route::get('/queue_locations/set/{id}', 'QueueLocationController@setLocation');
 		Route::get('/queue_locations/get', 'QueueLocationController@getLocation');
 		Route::resource('queue_locations', 'QueueLocationController');
@@ -115,6 +119,13 @@ Route::group(['middleware' => 'web'], function () {
 		Route::post('/bed_booking/search', 'BedBookingController@search');
 		Route::get('/bed_booking/search', 'BedBookingController@search');
 		Route::get('/bed_bookings/delete/{id}', 'BedBookingController@delete');
+
+		Route::resource('task_cancellations', 'TaskCancellationController',['except'=>['create']]);
+		Route::get('/task_cancellations/create/{id}', 'TaskCancellationController@create');
+		Route::get('/task_cancellations/id/{id}', 'TaskCancellationController@searchById');
+		Route::post('/task_cancellation/search', 'TaskCancellationController@search');
+		Route::get('/task_cancellation/search', 'TaskCancellationController@search');
+		Route::get('/task_cancellations/delete/{id}', 'TaskCancellationController@delete');
 
 		Route::group(['middleware' => 'support'], function () {
 				Route::resource('order_queues', 'OrderQueueController');
@@ -200,12 +211,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/dependants/delete/{id}', 'DependantController@delete');
 				Route::get('/dependants/add/{dependant_id}/{patient_id}', 'DependantController@add');
 
-				Route::resource('task_cancellations', 'TaskCancellationController',['except'=>['create']]);
-				Route::get('/task_cancellations/create/{id}', 'TaskCancellationController@create');
-				Route::get('/task_cancellations/id/{id}', 'TaskCancellationController@searchById');
-				Route::post('/task_cancellation/search', 'TaskCancellationController@search');
-				Route::get('/task_cancellation/search', 'TaskCancellationController@search');
-				Route::get('/task_cancellations/delete/{id}', 'TaskCancellationController@delete');
 
 				Route::resource('patient_dependants', 'PatientDependantController');
 				Route::get('/patient_dependants/id/{id}', 'PatientDependantController@searchById');
@@ -403,6 +408,7 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/set/search', 'SetController@search');
 				Route::get('/sets/delete/{id}', 'SetController@delete');
 
+				Route::get('/product_searches/menu/{class_code}/{period_code}/{week}/{day}/{product_code}', 'ProductSearchController@menu');
 				Route::resource('product_searches', 'ProductSearchController');
 				Route::get('/product_searches/id/{id}', 'ProductSearchController@searchById');
 				Route::get('/product_searches/add/{purchase_id}/{id}', 'ProductSearchController@add');
@@ -426,6 +432,7 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/admission/dietUpdate', 'AdmissionController@dietUpdate');
 
 
+				Route::post('/admission_task/status', 'AdmissionTaskController@status');
 				Route::resource('admission_tasks', 'AdmissionTaskController');
 				Route::get('/admission_tasks/id/{id}', 'AdmissionTaskController@searchById');
 				Route::post('/admission_task/search', 'AdmissionTaskController@search');

@@ -38,5 +38,9 @@ class DietClass extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function diet()
+	{
+			return $this->belongsTo('App\Diet', 'diet_code');
+	}
 	
 }

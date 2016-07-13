@@ -20,6 +20,7 @@ use App\Product;
 use App\BillMaterial;
 use App\OrderSet;
 use App\PurchaseOrder;
+use App\DietMenu;
 
 class ProductSearchController extends Controller
 {
@@ -60,6 +61,10 @@ class ProductSearchController extends Controller
 					'reason'=>$request->reason,
 					'purchase_order'=>$purchase_order,
 					'return_id'=>$return_id,
+					'class_code'=>$request->class_code,
+					'period_code'=>$request->period_code,
+					'week'=>$request->week,
+					'day'=>$request->day,
 			]);
 	}
 
@@ -129,6 +134,19 @@ class ProductSearchController extends Controller
 			return redirect('/product_searches?reason=asset&set_code='.$set_code);
 	}
 			
+	public function menu($class_code, $period_code, $week, $day, $product_code)
+	{
+			$diet_menu = new DietMenu();
+			$diet_menu->class_code = $class_code;
+			$diet_menu->period_code = $period_code;
+			$diet_menu->product_code = $product_code;
+			$diet_menu->week_index = $week;
+			$diet_menu->day_index = $day;
+			$diet_menu->save();
+
+			Session::flash('message', 'Record successfully created.');
+			return redirect('/product_searches?reason=menu&class_code='.$class_code.'&period_code='.$period_code.'&week='.$week.'&day='.$day);
+	}
 
 	public function edit($id) 
 	{
@@ -189,11 +207,28 @@ class ProductSearchController extends Controller
 	
 	public function search(Request $request)
 	{
-			$product_searches = DB::table('products')
-					->where('product_name','like','%'.$request->search.'%')
-					->orWhere('product_code', 'like','%'.$request->search.'%')
-					->orderBy('product_name')
-					->paginate($this->paginateValue);
+			$reason=$request->reason;
+			$product_searches=null;
+			$search = $request->search;
+			switch ($reason) {
+					case "bom":
+							$product_searches = DB::table('products')
+									->where('product_code','!=', $request->product_code)
+									->where('product_bom','!=',1)
+									->where(function ($query) use($search) {
+											$query->where('product_name','like','%'.$search.'%')
+												  ->orWhere('product_code', 'like','%'.$search.'%');
+									})
+									->orderBy('product_name')
+									->paginate($this->paginateValue);
+							break;
+					default:
+							$product_searches = DB::table('products')
+									->where('product_name','like','%'.$request->search.'%')
+									->orWhere('product_code', 'like','%'.$request->search.'%')
+									->orderBy('product_name')
+									->paginate($this->paginateValue);
+			}
 
 			$purchase_order = PurchaseOrder::find($request->purchase_id);
 
@@ -206,6 +241,10 @@ class ProductSearchController extends Controller
 					'set_code'=>$request->set_code,
 					'purchase_order'=>$purchase_order,
 					'return_id'=>$request->return_id,
+					'class_code'=>$request->class_code,
+					'period_code'=>$request->period_code,
+					'week'=>$request->week,
+					'day'=>$request->day,
 					]);
 	}
 
