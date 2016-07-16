@@ -2,6 +2,7 @@
 
 @section('content')
 <h1>Nurse Care Plan</h1>
+<h3>{{ $ward_model->ward_name }}</h3>
 <br>
 <form class='form-inline' action='/admission_task/search' method='post'>
 	<!--
@@ -91,7 +92,7 @@ $header_count=0;
 					{{ Form::checkbox($admission_task->order_id, 1, $admission_task->order_completed) }}
 			</td>
 			@if ($group_by=='order')
-			<td width='100'>
+			<td width='150'>
 					{{$admission_task->bed_name}}
 			</td>
 			<td width='30'>

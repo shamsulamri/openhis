@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+@include('products.id')
 <h1>Stock Movements</h1>
 <br>
-@include('products.id')
 <form action='/stock/search' method='post'>
     {{ Form::select('store_code', $store,$store_code, ['class'=>'form-control']) }}
 	<br>
-    <a class="btn btn-default" href="/products" role="button">Cancel</a>
+    <a class="btn btn-default" href="/products/{{ $product->product_code }}/option" role="button">Back</a>
 	{{ Form::submit('Refresh', ['class'=>'btn btn-default']) }}
 	{{ Form::hidden('product_code', $product->product_code) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
@@ -52,6 +52,7 @@
 					{{ str_replace('.00','',number_format($stock->stock_quantity,2)) }}
 			</td>
 			<td align='right'>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $stock->stock_id . '/edit') }}'>Edit</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('stocks/delete/'. $stock->stock_id) }}'>Delete</a>
 			</td>
 	</tr>

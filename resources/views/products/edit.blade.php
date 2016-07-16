@@ -11,9 +11,11 @@
 			form.product_sale_price.value= product_sale_price.toFixed(2);
 	}	
 </script>
-<h1><a href='/products'>Product List</a> / Edit Product</h1>
-<br>
 @include('products.id')
+<h1>Edit Product</h1>
+<a class="btn btn-default" href="/products/{{ $product->product_code }}/option" role="button">Back</a>
+<br>
+<br>
 @include('common.errors')
 {{ Form::model($product, ['route'=>['products.update',$product->product_code],'method'=>'PUT', 'class'=>'form-horizontal', 'name'=>'product_form']) }} 
     

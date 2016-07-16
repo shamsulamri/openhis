@@ -40,5 +40,14 @@ class UnitMeasure extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function getUnitShortnameAttribute($value)
+	{
+			if (empty($value)) {
+					return "-";
+			} else {
+					return $value;
+			}	
+	}	
+
 	
 }

@@ -135,7 +135,7 @@ class PurchaseOrderController extends Controller
 					$stock->save();
 
 					$product = new ProductController();
-					$product->totalOnHand($item->product_code);
+					$product->updateTotalOnHand($item->product_code);
 			}
 			return $line_items;
 	}

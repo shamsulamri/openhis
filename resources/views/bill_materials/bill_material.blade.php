@@ -10,9 +10,9 @@
 		{{ Form::label('quantity', 'Quantity',['class'=>'col-sm-4 control-label']) }}
 		<div class='col-sm-8'>
 			<div class='input-group'>
-			{{ Form::text('bom_quantity', null, ['class'=>'form-control','placeholder'=>'']) }}
+			{{ Form::text('bom_quantity', $bill_material->bom_quantity, ['class'=>'form-control','placeholder'=>'']) }}
 			@if ($errors->has('quantity')) <p class="help-block">{{ $errors->first('quantity') }}</p> @endif
-				<div class='input-group-addon'>{{ $bill_material->product->unitMeasure->unit_shortname }}</div>
+				<div class='input-group-addon'>{{ $unit }}</div>
 			</div>
 		</div>
 	</div>

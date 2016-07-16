@@ -147,7 +147,7 @@ class OrderTaskController extends Controller
 			if ($valid->passes()) {
 					$order_task->save();
 					$productController = new ProductController();
-					$productController->totalOnHand($order_task->product_code);
+					$productController->updateTotalOnHand($order_task->product_code);
 					Session::flash('message', 'Record successfully updated.');
 					if ($request->user()->can('module-support')) {
 						return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->category->location_code);
@@ -204,7 +204,7 @@ class OrderTaskController extends Controller
 								->update(['order_completed'=>$value]);				
 							$order = OrderTask::find($orderId);
 							$productController = new ProductController();
-							$productController->totalOnHand($order->product_code);
+							$productController->updateTotalOnHand($order->product_code);
 					}
 			}
 			$order_task = OrderTask::find($values[0]);

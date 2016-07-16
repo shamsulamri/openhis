@@ -43,6 +43,7 @@ class LandingMiddleware
 		if ($request->user()->can('module-ward')) {
 				return redirect('/admissions');
 		} 		
+
         return $next($request);
     }
 }

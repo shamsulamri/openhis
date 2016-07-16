@@ -35,10 +35,6 @@ Route::group(['middleware' => 'web'], function () {
 				}
 		});
 
-		Route::get('/maintenance', function() {
-				return view('maintenance.maintenance');
-		});
-
 		Route::get('/unauthorized', function() {
 				return view('common.403');
 		});
@@ -49,9 +45,22 @@ Route::group(['middleware' => 'web'], function () {
 				});
 		});
 
+		Route::get('/diet_bom', 'DietMenuController@bom');
+		Route::post('/diet_bom', 'DietMenuController@bom');
 		Route::get('/diet_menus', 'DietMenuController@menu');
+		Route::post('/diet_menus', 'DietMenuController@menu');
+		Route::get('/diet_orders', 'DietMenuController@order');
+		Route::post('/diet_orders', 'DietMenuController@order');
+		Route::get('/diet_distribution', 'DietMenuController@distribution');
+		Route::post('/diet_distribution', 'DietMenuController@distribution');
+		Route::get('/diet_cooklist', 'DietMenuController@cooklist');
+		Route::post('/diet_cooklist', 'DietMenuController@cooklist');
+		Route::get('/diet_workorder', 'DietMenuController@workorder');
+		Route::post('/diet_workorder', 'DietMenuController@workorder');
 		Route::get('/diet_menus/{class}/{period}/{week}/{day}', 'DietMenuController@create');
 		Route::get('/diet_menus/menu/{class}/{period}/{week}/{day}', 'DietMenuController@index');
+		Route::get('/diet_menus/delete/{id}', 'DietMenuController@delete');
+		Route::delete('/diet_menus/delete/{id}', 'DietMenuController@destroy');
 
 		Route::get('/queue_locations/set/{id}', 'QueueLocationController@setLocation');
 		Route::get('/queue_locations/get', 'QueueLocationController@getLocation');
@@ -277,8 +286,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/consultation_procedure/search', 'ConsultationProcedureController@search');
 				Route::get('/consultation_procedures/delete/{id}', 'ConsultationProcedureController@delete');
 
-
-
 				Route::resource('order_drugs', 'OrderDrugController',['except'=>['create']]);
 				Route::get('/order_drugs/id/{id}', 'OrderDrugController@searchById');
 				Route::get('/order_drugs/create/{product_code}', 'OrderDrugController@create');
@@ -292,7 +299,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::post('/order_investigation/search', 'OrderInvestigationController@search');
 				Route::get('/order_investigation/search', 'OrderInvestigationController@search');
 				Route::get('/order_investigations/delete/{id}', 'OrderInvestigationController@delete');
-				
 
 				Route::resource('medical_alerts', 'MedicalAlertController');
 				Route::get('/medical_alerts/{id}', 'MedicalAlertController@index');
@@ -325,6 +331,7 @@ Route::group(['middleware' => 'web'], function () {
 
 		Route::group(['middleware' => 'inventory'], function () {
 
+				Route::get('/products/{id}/option', 'ProductController@option');
 				Route::resource('products', 'ProductController');
 				Route::get('/products/id/{id}', 'ProductController@searchById');
 				Route::post('/product/search', 'ProductController@search');
@@ -339,7 +346,7 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/bill_material/search', 'BillMaterialController@search');
 				Route::get('/bill_materials/delete/{id}', 'BillMaterialController@delete');
 				
-				Route::get('/stocks/total/{product_code}', 'StockController@totalOnHand');
+				Route::get('/stocks/total/{product_code}', 'StockController@updateTotalOnHand');
 				Route::get('/stocks/delete/{id}', 'StockController@delete');
 				Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);
 				Route::get('/stocks/{product_code}/{store_code?}', 'StockController@show');
@@ -354,6 +361,11 @@ Route::group(['middleware' => 'web'], function () {
 				Route::post('/stock_movement/search', 'StockMovementController@search');
 				Route::get('/stock_movement/search', 'StockMovementController@search');
 				Route::get('/stock_movements/delete/{id}', 'StockMovementController@delete');
+
+				Route::get('/build_assembly/{id}', 'AssemblyController@index');
+				Route::post('/build_assembly/{id}', 'AssemblyController@build');
+				Route::get('/dismantle_assembly/{id}', 'AssemblyController@dismantle');
+				Route::post('/dismantle_assembly/{id}', 'AssemblyController@destroy');
 				
 				Route::resource('purchase_order_lines', 'PurchaseOrderLineController', ['except'=>['index','create']]);
 				Route::get('/purchase_order_lines/index/{purchase_id}', 'PurchaseOrderLineController@index');
@@ -464,6 +476,10 @@ Route::group(['middleware' => 'web'], function () {
 		
 		Route::group(['middleware' => 'admin'], function () {
 
+				Route::get('/maintenance', function() {
+						return view('maintenance.maintenance');
+				});
+				
 				Route::resource('patient_billings', 'PatientBillingController');
 				Route::get('/patient_billings/id/{id}', 'PatientBillingController@searchById');
 				Route::post('/patient_billing/search', 'PatientBillingController@search');

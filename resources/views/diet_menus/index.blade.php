@@ -11,7 +11,7 @@
 					{{ $menu->product->product_name }}
 			</td>
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('diet_menu/delete/'. $menu->menu_id) }}'>-</a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('diet_menus/delete/'. $menu->menu_id) }}'>-</a>
 			</td>
 	</tr>
 @endforeach

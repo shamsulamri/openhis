@@ -47,12 +47,12 @@ class Product extends Model
 
 			
         	if ($method=='') {
-        	    $rules['product_code'] = 'required|max:20.0|unique:products';
+        	    $rules['product_code'] = 'required|max:20.0|unique:products|alpha_dash';
         	}
         
 			
 			$messages = [
-				'required' => 'This field is required'
+					'required' => 'This field is required',
 			];
 			
 			return validator::make($input, $rules ,$messages);

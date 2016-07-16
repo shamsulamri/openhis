@@ -23,8 +23,10 @@
 	<tr> 
     <th>Code</th> 
     <th>Name</th>
-    <th>On Hand</th> 
+    <th><div align='right'>On Hand</div></th> 
+	@can('system-administrator')
 	<th></th>
+	@endcan
 	</tr>
   </thead>
 	<tbody>
@@ -34,18 +36,23 @@
 					{{$product->product_code}}
 			</td>
 			<td>
-					<a href='{{ URL::to('products/'. $product->product_code . '/edit') }}'>
+					<a href='{{ URL::to('products/'. $product->product_code . '/option') }}'>
 						{{$product->product_name}}
 					</a>
 			</td>
-			<td>
+			<td align='right'>
 				@if ($product->product_on_hand>0)
 					{{ str_replace('.00','',$product->product_on_hand) }}
 				@endif
 			</td>
+			@can('system-administrator')
 			<td align='right'>
+					<!--	
 					@if ($product->product_bom==1)
 					<a class='btn btn-default btn-xs' href='{{ URL::to('bill_materials/'. $product->product_code) }}'>Bill of Materials</a>
+					@endif
+					@if ($product->category_code=='assembly')
+					<a class='btn btn-default btn-xs' href='{{ URL::to('build_assembly/'. $product->product_code) }}'>Build Assemblies</a>
 					@endif
 					@if ($product->category_code=='drugs')
 					<a class='btn btn-default btn-xs' href='{{ URL::to('drug_prescriptions/'. $product->product_code.'/edit') }}'>Prescription</a>
@@ -53,10 +60,10 @@
 					@if ($product->product_stocked==1)
 					<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $product->product_code) }}'>Stock</a>
 					@endif
-					@can('system-administrator')
+					-->
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('products/delete/'. $product->product_code) }}'>Delete</a>
-					@endcan
 			</td>
+			@endcan
 	</tr>
 @endforeach
 @endif

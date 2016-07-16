@@ -23,8 +23,10 @@ class BillMaterialController extends Controller
 
 	public function show($product_code)
 	{
+			$product = Product::find($product_code);
 			return view('bill_materials.show', [
 				'product_code'=>$product_code,
+				'product'=>$product,
 			]);
 	}
 
@@ -74,6 +76,7 @@ class BillMaterialController extends Controller
 	{
 			$bill_material = BillMaterial::findOrFail($id);
 			$unit = isset($bill_material->product->unitMeasure->unit_shortname) ? $bill_material->product->unitMeasure->unit_shortname : '-';
+
 			return view('bill_materials.edit', [
 					'bill_material'=>$bill_material,
 					'unit'=> $unit,

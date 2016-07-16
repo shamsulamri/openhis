@@ -118,6 +118,11 @@
 	<div class="row">
 			<div class="col-xs-6">
 				<a href="{{ url('/diet_menus') }}">Diet Menu</a><br>
+				<a href="{{ url('/diet_orders') }}">Diet Orders</a><br>
+				<a href="{{ url('/diet_cooklist') }}">Diet Cooklist</a><br>
+				<a href="{{ url('/diet_bom') }}">Diet Bill of Material</a><br>
+				<a href="{{ url('/diet_workorder') }}">Diet Work Order</a><br>
+				<a href="{{ url('/diet_distribution') }}">Diet Distribution</a><br>
 				<a href="{{ url('/diet_complains') }}">Diet Complains</a><br>
 				<a href="{{ url('/diet_wastages') }}">Diet Wastages</a><br>
 				<a href="{{ url('/diet_qualities') }}">Diet Qualities</a><br>

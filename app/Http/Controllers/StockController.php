@@ -64,7 +64,7 @@ class StockController extends Controller
 					$stock->save();
 					
 					$product = new ProductController();
-					$product->totalOnHand($stock->product_code);
+					$product->updateTotalOnHand($stock->product_code);
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/stocks/'.$stock->product_code.'/'.$stock->store_code);
 			} else {
@@ -74,10 +74,10 @@ class StockController extends Controller
 			}
 	}
 
-	public function totalOnHand($product_code)
+	public function updateTotalOnHand($product_code)
 	{
 			$product = new ProductController();
-			return $product->totalOnHand($product_code);
+			return $product->updateTotalOnHand($product_code);
 	}
 
 
@@ -104,7 +104,7 @@ class StockController extends Controller
 			if ($valid->passes()) {
 					$stock->save();
 					$product = new ProductController();
-					$product->totalOnHand($stock->product_code);
+					$product->updateTotalOnHand($stock->product_code);
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/stocks/'.$stock->product_code.'/'.$stock->store_code);
 			} else {
@@ -133,7 +133,7 @@ class StockController extends Controller
 			$stock = Stock::find($id);
 			Stock::find($id)->delete();
 			$product = new ProductController();
-			$product->totalOnHand($stock->product_code);
+			$product->updateTotalOnHand($stock->product_code);
 			Session::flash('message', 'Record deleted.');
 			return redirect('/stocks/'.$stock->product_code);
 	}
@@ -145,7 +145,7 @@ class StockController extends Controller
 					->leftJoin('stores as c', 'c.store_code', '=','a.store_code')
 					->where('product_code','=',$request->product_code)
 					->where('a.store_code','=',$request->store_code)
-					->orderBy('stock_date')
+					->orderBy('stock_date', 'desc')
 					->paginate($this->paginateValue);
 			$product = Product::find($request->product_code);
 			return view('stocks.index', [

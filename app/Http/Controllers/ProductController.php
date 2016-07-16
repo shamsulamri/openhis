@@ -70,6 +70,14 @@ class ProductController extends Controller
 					]);
 	}
 
+	public function option($id)
+	{
+			$product = Product::find($id); 
+			return view('products.option', [
+					'product' => $product,
+			]);	
+	}
+
 	public function show(Request $request, $id)
 	{
 			$return_id = $request->id;
@@ -194,7 +202,7 @@ class ProductController extends Controller
 			]);
 	}
 
-	public function totalOnHand($product_code)
+	public function updateTotalOnHand($product_code)
 	{
 			$stores = Store::all();
 			$total=0;

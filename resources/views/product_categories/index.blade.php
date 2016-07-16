@@ -19,8 +19,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>category_name</th>
-    <th>category_code</th> 
+    <th>Code</th> 
+    <th>Name</th>
 	<th></th>
 	</tr>
   </thead>
@@ -28,12 +28,12 @@
 @foreach ($product_categories as $product_category)
 	<tr>
 			<td>
+					{{$product_category->category_code}}
+			</td>
+			<td>
 					<a href='{{ URL::to('product_categories/'. $product_category->category_code . '/edit') }}'>
 						{{$product_category->category_name}}
 					</a>
-			</td>
-			<td>
-					{{$product_category->category_code}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('product_categories/delete/'. $product_category->category_code) }}'>Delete</a>

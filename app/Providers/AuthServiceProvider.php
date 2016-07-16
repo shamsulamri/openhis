@@ -60,5 +60,9 @@ class AuthServiceProvider extends ServiceProvider
 		$gate->define('module-discharge', function ($user) {
 				return $user->authorization->module_discharge;
 		});
+
+		$gate->define('module-diet', function ($user) {
+				return $user->authorization->module_diet;
+		});
     }
 }

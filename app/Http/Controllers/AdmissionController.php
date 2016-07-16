@@ -34,7 +34,13 @@ class AdmissionController extends Controller
 
 	public function index(Request $request)
 	{
-			$ward = $request->cookie('ward');
+			if (empty($request->cookie('ward'))) {
+					Session::flash('message', 'Ward not set. Please select your ward.');
+					return redirect('/wards');
+			}
+
+			$ward = Ward::where('ward_code', $request->cookie('ward'))->first();
+
 			$setWard = $request->cookie('ward');
 
 			$selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','d.consultation_id','a.encounter_id','a.user_id','e.discharge_id', 
@@ -46,6 +52,8 @@ class AdmissionController extends Controller
 					'room_name',
 					'a.user_id',
 					'k.name',
+					'diet_name',
+					'class_name',
 			];
 
 			$admissions = DB::table('admissions as a')
@@ -60,7 +68,9 @@ class AdmissionController extends Controller
 					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
 					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
 					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
-					->where('h.ward_code','like', '%'.$ward.'%')
+					->leftJoin('diets as l', 'l.diet_code', '=', 'a.diet_code')
+					->leftJoin('diet_classes as m', 'm.class_code', '=', 'a.class_code')
+					->where('h.ward_code','like', '%'.$ward->ward_code.'%')
 					->whereNull('f.encounter_id')
 					->groupBy('b.encounter_id')
 					->orderBy('g.encounter_id')

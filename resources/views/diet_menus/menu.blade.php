@@ -3,17 +3,18 @@
 @section('content')
 <h1>Diet Menu</h1>
 <br>
-<form class='form-inline' action='/diet_menu/search' method='post'>
+<form class='form-inline' action='/diet_menus' name='myform' method='post'>
 	<label>Diet&nbsp;</label>
-	{{ Form::select('diet_code', $diets, $diet_code, ['class'=>'form-control']) }}
+	{{ Form::select('diet_code', $diets, $diet_code, ['class'=>'form-control','onchange'=>'reload()']) }}
 	<!--
 	<label>Class&nbsp;</label>
 	{{ Form::select('class_code', $diet_classes, $class_code, ['class'=>'form-control']) }}
 	-->
 	<label>Week&nbsp;</label>
-	{{ Form::select('weekOfMonth', $weeks, $weekOfMonth, ['class'=>'form-control']) }}
+	{{ Form::select('weekOfMonth', $weeks, $weekOfMonth, ['class'=>'form-control','onchange'=>'reload()']) }}
 	<label>Day&nbsp;</label>
-	{{ Form::select('dayOfWeek', $days, $dayOfWeek, ['class'=>'form-control']) }}
+	{{ Form::select('dayOfWeek', $days, $dayOfWeek, ['class'=>'form-control','onchange'=>'reload()']) }}
+	<input type='hidden' name="_token" value="{{ csrf_token() }}">	
 </form>
 
 <br>
@@ -48,5 +49,10 @@
 	@endforeach
 </table>
 
+<script>
+	function reload() {
+			document.myform.submit();
+	}
+</script>
 
 @endsection

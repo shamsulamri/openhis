@@ -124,6 +124,24 @@
 							</ul>
 					</li>
 					@endcan
+					@can('module-diet')
+					<li role="presentation" class="dropdown">
+							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-cutlery'></span>&nbsp;&nbsp; Diet &nbsp;&nbsp;<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="{{ url('/diet_menus') }}">Diet Menus</a></li> 
+								<li><a href="{{ url('/diet_orders') }}">Diet Orders</a></li> 
+								<li><a href="{{ url('/diet_cooklist') }}">Diet Cooklist</a></li> 
+								<li><a href="{{ url('/diet_bom') }}">Diet Bill of Materials</a></li> 
+								<li><a href="{{ url('/diet_workorder') }}">Diet Work Order</a></li> 
+								<li><a href="{{ url('/diet_distribution') }}">Diet Distribution</a></li>
+				<li><a href="{{ url('/diet_complains') }}">Diet Complains</a></li>
+				<li><a href="{{ url('/diet_wastages') }}">Diet Wastages</a></li>
+				<li><a href="{{ url('/diet_qualities') }}">Diet Qualities</a></li>
+							</ul>
+					</li>
+					@endcan
 					@can('system-administrator')
 					<li><a class='btn btn-default' href="{{ url('/maintenance') }}"><span class='glyphicon glyphicon-cog'></span>&nbsp; Maintenance</a></li>
 					@endcan

@@ -33,6 +33,8 @@ class AdmissionTaskController extends Controller
 					return redirect('/wards');
 			}
 
+			$ward_code = $request->cookie('ward');
+
 			$admission_tasks = DB::table('orders as a')
 					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
@@ -45,6 +47,7 @@ class AdmissionTaskController extends Controller
 					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('order_completed','=',0)
+					->where('f.ward_code', '=', $ward_code)
 					->whereNull('cancel_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');
@@ -53,16 +56,16 @@ class AdmissionTaskController extends Controller
 			
 			$admission_tasks = $admission_tasks->paginate($this->paginateValue);
 
-			$ward = $request->cookie('ward');
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-					'ward' => $request->cookie('ward'),
+					'ward' => $ward_code,
 					'category' => '',
 					'group_by' => 'order',
 					'order_ids' => $order_ids,
 					'show_all' => null,
+					'ward_model' => Ward::where('ward_code', $ward_code)->first(),
 			]);
 	}
 

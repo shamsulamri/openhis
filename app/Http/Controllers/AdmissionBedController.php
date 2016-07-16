@@ -20,6 +20,7 @@ use App\Department;
 use App\Admission;
 use App\BedMovement;
 use App\BedBooking;
+use App\Bed;
 
 class AdmissionBedController extends Controller
 {
@@ -263,7 +264,10 @@ class AdmissionBedController extends Controller
 			$bed_movement->move_date = date('d/m/Y');
 			$bed_movement->save();
 			
+			$bed = Bed::where('bed_code', '=',$bed_code)->first();
+
 			$admission->bed_code = $bed_code;
+			$admission->class_code = $bed->class_code; 
 			$admission->save();
 
 			if (!empty($request->book_id)) {
