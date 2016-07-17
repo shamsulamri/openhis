@@ -15,6 +15,6 @@
 	<label>Quanity</label>
 	{{ Form::text('quantity', null, ['class'=>'form-control','placeholder'=>'']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-	{{ Form::submit('Dismantle', ['class'=>'btn btn-default']) }}
+	{{ Form::submit('Submit', ['class'=>'btn btn-default']) }}
 </form>
 @endsection

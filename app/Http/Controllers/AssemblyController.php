@@ -54,20 +54,28 @@ class AssemblyController extends Controller
 			$flag=True;
 			$quantity = $request->quantity;
 			$product_controller = new ProductController();
+			$max = $request->max;
+			$msg="";
 
 			foreach($products as $product) {
 					if ($product->product_on_hand<$product->bom_quantity*$quantity) $flag=False;
 			}
 
-			if (empty($request->store_code)) $flag=False;
+			if (empty($request->store_code)) {
+					$flag=False;
+					$msg = "Store not selected"; 
+			}
+			if ($quantity<0) {
+					$flag=False;
+					$msg = "Build count error"; 
+			}
+
+			if ($quantity>$max) {
+					$flag=False;
+					$msg = "Build cannot be greater than ".$max;
+			}
 			if ($flag) {
 				foreach($products as $product) {
-						/*
-						$bom = Product::find($product->bom_product_code);
-						$bom->product_on_hand = $bom->product_on_hand-($quantity*$product->bom_quantity);
-						$bom->save();
-						 */
-
 						$stock = new Stock();
 						$stock->move_code='adjust';
 						$stock->store_code = $request->store_code;
@@ -91,13 +99,6 @@ class AssemblyController extends Controller
 				$stock->save();
 
 				$product_controller->updateTotalOnHand($id);
-				/*
-				$product = Product::find($id);
-				$product->product_on_hand = $product->product_on_hand + $quantity;
-				Log::info($product);
-				$product->save();
-				 */
-
 				Session::flash('message', 'Product built.');
 				return redirect('/products/id/'.$id);
 			} else {
@@ -106,6 +107,7 @@ class AssemblyController extends Controller
 					} else {
 						Session::flash('message', 'Not enough item to build');
 					}
+					Session::flash('message', $msg);
 					$product = Product::findOrFail($id);
 					return view('assemblies.index', [
 							'product'=>$product,
@@ -132,6 +134,15 @@ class AssemblyController extends Controller
 			$product_controller = new ProductController();
 			$quantity = $request->quantity;
 			$bom_products = BillMaterial::where('product_code',$id)->get();
+			$product = Product::find($id);
+
+			if ($quantity>$product->product_on_hand) {
+					Session::flash('message', 'Quantity more than on hand.');
+					return view('assemblies.dismantle', [
+							'product'=>$product,
+					]);
+			}
+
 
 			foreach ($bom_products as $bom_product) {
 

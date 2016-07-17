@@ -55,5 +55,6 @@
 	{{ Form::text('quantity', $quantity, ['class'=>'form-control','placeholder'=>'']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	{{ Form::submit('Build', ['class'=>'btn btn-default']) }}
+	{{ Form::hidden('max', round($max)) }}
 </form>
 @endsection
