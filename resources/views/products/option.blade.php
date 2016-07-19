@@ -42,7 +42,7 @@ Build Assemblies
 <br>
 <span class='glyphicon glyphicon-th' aria-hidden='true'></span>
 @if ($product->category_code=='assembly')
-<a href='{{ URL::to('dismantle_assembly/'. $product->product_code) }}'>Dismantle Assembly</a>
+<a href='{{ URL::to('explode_assembly/'. $product->product_code) }}'>Explode Assembly</a>
 @else
 Dismantle Assemblies
 @endif
@@ -56,5 +56,14 @@ Dismantle Assemblies
 Drug Prescription
 @endif
 
+<br>
+<br>
+<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span>
+<a href='{{ URL::to('product_maintenances/'. $product->product_code) }}'>Product Maintenance</a>
+
+<br>
+<br>
+<span class='glyphicon glyphicon-leaf' aria-hidden='true'></span>
+<a href='{{ URL::to('loans/request/'. $product->product_code) }}'>Loan</a>
 </h4>
 @endsection

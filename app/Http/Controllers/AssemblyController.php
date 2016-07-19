@@ -120,11 +120,11 @@ class AssemblyController extends Controller
 				
 	}
 
-	public function dismantle($id)
+	public function explode($id)
 	{
 			$product = Product::find($id);
 
-			return view('assemblies.dismantle', [
+			return view('assemblies.explode', [
 					'product'=>$product,
 			]);
 	}
@@ -138,7 +138,7 @@ class AssemblyController extends Controller
 
 			if ($quantity>$product->product_on_hand) {
 					Session::flash('message', 'Quantity more than on hand.');
-					return view('assemblies.dismantle', [
+					return view('assemblies.explode', [
 							'product'=>$product,
 					]);
 			}
@@ -168,7 +168,7 @@ class AssemblyController extends Controller
 				$stock->save();
 
 				$product_controller->updateTotalOnHand($id);
-			Session::flash('message', 'Product dismantle.');
+			Session::flash('message', 'Product exploded.');
 			return redirect('/products/id/'.$id);
 	}
 }

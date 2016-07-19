@@ -44,6 +44,32 @@ Route::group(['middleware' => 'web'], function () {
 						return "Landing page";
 				});
 		});
+		
+		Route::resource('loans', 'LoanController');
+		Route::get('/loans/id/{id}', 'LoanController@searchById');
+		Route::post('/loan/search', 'LoanController@search');
+		Route::get('/loan/search', 'LoanController@search');
+		Route::get('/loans/delete/{id}', 'LoanController@delete');
+		Route::get('/loans/request/{id}', 'LoanController@request');
+		Route::post('/loans/request/{id}', 'LoanController@requestSubmit');
+
+		Route::resource('loan_statuses', 'LoanStatusController');
+		Route::get('/loan_statuses/id/{id}', 'LoanStatusController@searchById');
+		Route::post('/loan_status/search', 'LoanStatusController@search');
+		Route::get('/loan_status/search', 'LoanStatusController@search');
+		Route::get('/loan_statuses/delete/{id}', 'LoanStatusController@delete');
+
+		Route::resource('product_maintenances', 'ProductMaintenanceController');
+		Route::get('/product_maintenances/id/{id}', 'ProductMaintenanceController@searchById');
+		Route::post('/product_maintenance/search', 'ProductMaintenanceController@search');
+		Route::get('/product_maintenance/search', 'ProductMaintenanceController@search');
+		Route::get('/product_maintenances/delete/{id}', 'ProductMaintenanceController@delete');
+		
+		Route::resource('maintenance_reasons', 'MaintenanceReasonController');
+		Route::get('/maintenance_reasons/id/{id}', 'MaintenanceReasonController@searchById');
+		Route::post('/maintenance_reason/search', 'MaintenanceReasonController@search');
+		Route::get('/maintenance_reason/search', 'MaintenanceReasonController@search');
+		Route::get('/maintenance_reasons/delete/{id}', 'MaintenanceReasonController@delete');
 
 		Route::get('/diet_bom', 'DietMenuController@bom');
 		Route::post('/diet_bom', 'DietMenuController@bom');
@@ -364,8 +390,8 @@ Route::group(['middleware' => 'web'], function () {
 
 				Route::get('/build_assembly/{id}', 'AssemblyController@index');
 				Route::post('/build_assembly/{id}', 'AssemblyController@build');
-				Route::get('/dismantle_assembly/{id}', 'AssemblyController@dismantle');
-				Route::post('/dismantle_assembly/{id}', 'AssemblyController@destroy');
+				Route::get('/explode_assembly/{id}', 'AssemblyController@explode');
+				Route::post('/explode_assembly/{id}', 'AssemblyController@destroy');
 				
 				Route::resource('purchase_order_lines', 'PurchaseOrderLineController', ['except'=>['index','create']]);
 				Route::get('/purchase_order_lines/index/{purchase_id}', 'PurchaseOrderLineController@index');

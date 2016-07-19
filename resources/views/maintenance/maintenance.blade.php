@@ -65,11 +65,13 @@
 	<div class="row">
 			<div class="col-xs-6">
 				<a href="{{ url('/products') }}">Products</a><br>
+				<a href="{{ url('/product_maintenances') }}">Product Maintenances</a><br>
 				<a href="{{ url('/purchase_orders') }}">Purchase Orders</a><br>
 				<a href="{{ url('/suppliers') }}">Suppliers</a><br>
 				<a href="{{ url('/stores') }}">Stores</a><br>
 				<a href="{{ url('/drugs') }}">Drugs</a><br>
 				<a href="{{ url('/sets') }}">Order Sets</a><br>
+				<a href="{{ url('/loans') }}">Loans</a><br>
 			</div>
 			<div class="col-xs-3">
 			<small>
@@ -80,16 +82,18 @@
 				<a href="{{ url('/drug_systems') }}">Drugs Systems</a><br>
 				<a href="{{ url('/drug_dosages') }}">Drugs Dosages</a><br>
 				<a href="{{ url('/drug_frequencies') }}">Drugs Frequencies</a><br>
+				<a href="{{ url('/drug_routes') }}">Drugs Routes</a><br>
 			</small>
 			</div>
 			<div class="col-xs-3">
 			<small>
-				<a href="{{ url('/drug_routes') }}">Drugs Routes</a><br>
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>
 				<a href="{{ url('/forms') }}">Forms</a><br>
 				<a href="{{ url('/form_properties') }}">Form Properties</a><br>
 				<a href="{{ url('/form_positions') }}">Form Positions</a><br>
 				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
+				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
+				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
 			</small>
 			</div>
 	</div>

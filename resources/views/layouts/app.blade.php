@@ -108,6 +108,7 @@
 								<li><a href="{{ url('/suppliers') }}">Suppliers</a></li>
 								<li><a href="{{ url('/stores') }}">Stores</a></li>
 								<li><a href="{{ url('/sets') }}">Order Sets</a></li>
+								<li><a href="{{ url('/loans') }}">Loans</a></li>
 							</ul>
 					</li>
 					@endcan
