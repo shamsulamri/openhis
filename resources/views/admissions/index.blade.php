@@ -78,6 +78,8 @@
 					@elseif (!is_null($admission->discharge_id))
 							<a class='btn btn-success btn-xs' href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}'>Discharge</a>
 					@else
+							<a class='btn btn-default btn-xs' href='{{ URL::to('loans/request/'. $admission->patient_mrn.'?type=folder') }}'>Folder Request</a>
+							<br>
 							<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}'>Bed Movement</a>
 							<br>
 							<a class='btn btn-default btn-xs' href='{{ URL::to('bed_bookings/create/'. $admission->patient_id.'/'.$admission->admission_id) }}'>&nbsp; Bed Booking &nbsp; </a>

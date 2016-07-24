@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use App\TaxCode;
 use Gate;
 use App\Order;
+use Auth;
 
 class ProductController extends Controller
 {
@@ -42,13 +43,18 @@ class ProductController extends Controller
 			}
 			 */
 
+			$loan=False;
+			if (Auth::user()->authorization->author_id==7) {
+					$loan=True;
+			}
 			$products = DB::table('products')
 					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
 			
 			return view('products.index', [
-					'products'=>$products
+					'products'=>$products,
+					'loan'=>$loan,
 			]);
 	}
 
@@ -178,6 +184,10 @@ class ProductController extends Controller
 	
 	public function search(Request $request)
 	{
+			$loan=False;
+			if (Auth::user()->authorization->author_id==7) {
+					$loan=True;
+			}
 			$products = DB::table('products as a')
 					->leftjoin('product_categories as b', 'b.category_code','=', 'a.category_code')
 					->where('product_name','like','%'.$request->search.'%')
@@ -187,7 +197,8 @@ class ProductController extends Controller
 
 			return view('products.index', [
 					'products'=>$products,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'loan'=>$loan,
 					]);
 	}
 

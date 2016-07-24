@@ -35,7 +35,7 @@ Bill of Materials
 @if ($product->category_code=='assembly')
 <a href='{{ URL::to('build_assembly/'. $product->product_code) }}'>Build Assembly</a>
 @else
-Build Assemblies
+Build Assembly
 @endif
 
 <br>
@@ -44,7 +44,7 @@ Build Assemblies
 @if ($product->category_code=='assembly')
 <a href='{{ URL::to('explode_assembly/'. $product->product_code) }}'>Explode Assembly</a>
 @else
-Dismantle Assemblies
+Explode Assembly
 @endif
 
 <br>

@@ -1,3 +1,4 @@
+@if (!empty($patient))
 <div class='well'>
 		<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
 		<h6>{{ $patient->patient_mrn }}</h6>
@@ -18,3 +19,4 @@
 				@endif
 		@endif
 </div>
+@endif

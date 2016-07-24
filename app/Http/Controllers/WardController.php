@@ -23,13 +23,19 @@ class WardController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
+			if (empty($request->cookie('ward'))) {
+					Session::flash('message', 'Ward not set. Please select your ward.');
+					return redirect('/wards');
+			}
+
 			$wards = DB::table('wards')
 					->orderBy('ward_name')
 					->paginate($this->paginateValue);
 			return view('wards.index', [
-					'wards'=>$wards
+					'wards'=>$wards,
+					'ward_code'=>$request->cookie('ward'),
 			]);
 	}
 

@@ -2,13 +2,9 @@
 
 @section('content')
 <h1>Nurse Care Plan</h1>
-<h3>{{ $ward_model->ward_name }}</h3>
+<h3>{{ $ward->ward_name }}</h3>
 <br>
 <form class='form-inline' action='/admission_task/search' method='post'>
-	<!--
-	{{ Form::select('wards', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
-	<br>
-	-->
 	<label>Type&nbsp;</label>
 	{{ Form::select('categories', $categories, $category, ['class'=>'form-control','maxlength'=>'10']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

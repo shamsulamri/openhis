@@ -44,14 +44,39 @@ Route::group(['middleware' => 'web'], function () {
 						return "Landing page";
 				});
 		});
+		Route::resource('document_statuses', 'DocumentStatusController');
+		Route::get('/document_statuses/id/{id}', 'DocumentStatusController@searchById');
+		Route::post('/document_status/search', 'DocumentStatusController@search');
+		Route::get('/document_status/search', 'DocumentStatusController@search');
+		Route::get('/document_statuses/delete/{id}', 'DocumentStatusController@delete');
 		
+
+		Route::resource('documents', 'DocumentController');
+		Route::get('/documents/id/{id}', 'DocumentController@searchById');
+		Route::post('/document/search', 'DocumentController@search');
+		Route::get('/document/search', 'DocumentController@search');
+		Route::get('/documents/delete/{id}', 'DocumentController@delete');
+
+		Route::resource('document_types', 'DocumentTypeController');
+		Route::get('/document_types/id/{id}', 'DocumentTypeController@searchById');
+		Route::post('/document_type/search', 'DocumentTypeController@search');
+		Route::get('/document_type/search', 'DocumentTypeController@search');
+		Route::get('/document_types/delete/{id}', 'DocumentTypeController@delete');
+		
+		Route::get('/loans/ward', 'LoanController@ward');
+		Route::post('/loan/index', 'LoanController@index');
 		Route::resource('loans', 'LoanController');
 		Route::get('/loans/id/{id}', 'LoanController@searchById');
-		Route::post('/loan/search', 'LoanController@search');
 		Route::get('/loan/search', 'LoanController@search');
+		Route::post('/loan/search', 'LoanController@search');
+		Route::post('/loan/request_search', 'LoanController@request_search');
 		Route::get('/loans/delete/{id}', 'LoanController@delete');
 		Route::get('/loans/request/{id}', 'LoanController@request');
+		Route::get('/loans/request/{id}/edit', 'LoanController@requestEdit');
+		Route::post('/loans/request/{id}/edit', 'LoanController@requestUpdate');
 		Route::post('/loans/request/{id}', 'LoanController@requestSubmit');
+		Route::get('/loans/request/{id}/delete', 'LoanController@requestDelete');
+		Route::delete('/loans/request/delete/{id}', 'LoanController@requestDestroy');
 
 		Route::resource('loan_statuses', 'LoanStatusController');
 		Route::get('/loan_statuses/id/{id}', 'LoanStatusController@searchById');

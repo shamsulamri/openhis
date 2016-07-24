@@ -2,18 +2,14 @@
 
 @section('content')
 <h1>Loans</h1>
+<h3>{{ $ward->ward_name }}</h3>
 <br>
-<form class='form-inline' action='/loan/index' method='post'>
+<form class='form-inline' action='/loan/request_search' method='post'>
 	<label>Status</label>
 	{{ Form::select('loan_code', $loan_status, $loan_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Ward</label>
-	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<input type='text' class='form-control' placeholder="Item code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	{{ Form::submit('Refresh', ['class'=>'btn btn-default']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-	@if ($is_folder)
-	<input type='hidden' name='type' value='folder'>
-	@endif
 </form>
 <br>
 @if (Session::has('message'))
@@ -24,11 +20,7 @@
  <thead>
 	<tr> 
     <th>Item</th>
-	@if (!$is_folder)
-    <th>Quantity</th> 
-	@endif
-    <th>Ward</th> 
-    <th>Request</th> 
+    <th>Quantity</th>
     <th>Status</th> 
     <th>Date</th> 
 	<th></th>
@@ -38,20 +30,24 @@
 @foreach ($loans as $loan)
 	<tr>
 			<td>
-					<a href='{{ URL::to('loans/'. $loan->loan_id . '/edit') }}'>
-						{{$loan->getItemName() }}
+					@if ($loan->loan_is_folder)
+						FOLDER: 
+					@endif
+
+					@if ($loan->loan_code!='lend')
+					<a href='{{ URL::to('loans/request/'. $loan->loan_id . '/edit') }}'>
+						{{ $loan->getItemName() }}
 					</a>
+					@else
+						{{ $loan->getItemName() }}
+					@endif
 			</td>
-			@if (!$is_folder)
 			<td>
+					@if ($loan->loan_is_folder)
+						-
+					@else
 					{{$loan->loan_quantity }}
-			</td>
-			@endif
-			<td>
-					{{$loan->ward->ward_name }}
-			</td>
-			<td>
-					{{ date('d F Y', strtotime($loan->created_at )) }}
+					@endif
 			</td>
 			<td>
 					{{$loan->status->loan_name}}
@@ -60,10 +56,16 @@
 					@if ($loan->loan_code=='exchanged') 
 						{{ date('d F Y', strtotime($loan->getLoanReturn() )) }}
 					@endif
+					@if ($loan->loan_code=='exchange') 
+						{{ date('d F Y', strtotime($loan->created_at )) }}
+					@endif
 					@if ($loan->loan_code=='return')
 							@if (!empty($loan->loan_return))
 								{{ date('d F Y', strtotime($loan->getLoanReturn() )) }}
 							@endif
+					@endif
+					@if ($loan->loan_code=='request')
+						{{ date('d F Y', strtotime($loan->created_at )) }}
 					@endif
 					@if ($loan->loan_code=='lend')
 							@if (!empty($loan->loan_date_start))
@@ -75,10 +77,12 @@
 					@endif
 			</td>
 			<td align='right'>
-					@if ($loan->loan_is_folder)
-            		<a class="btn btn-default btn-xs" href="/documents?patient_mrn={{ $loan->item_code }}" role="button">View Documents</a>
+					@if ($loan->loan_code=='exchange' or $loan->loan_code=='request') 
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('loans/request/'. $loan->loan_id.'/delete') }}'>Delete</a>
 					@endif
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('loans/delete/'. $loan->loan_id) }}'>Delete</a>
+					@if ($loan->loan_code=='lend') 
+					<a class='btn btn-default btn-xs' href='{{ URL::to('loans/request/'. $loan->loan_id.'?loan=exchange') }}'>Exchange</a>
+					@endif
 			</td>
 	</tr>
 @endforeach

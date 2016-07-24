@@ -58,6 +58,21 @@
 				<a href='{{ URL::to('payments/'. $patient->patient_id) }}'>
 						Payment Collection
 				</a>
+
+				<br>
+				<br>
+					<span class='glyphicon glyphicon-duplicate' aria-hidden='true'></span>
+				<a href='{{ URL::to('documents?patient_mrn='. $patient->patient_mrn) }}'>
+					Medical Record Documents
+				</a>
+
+				<br>
+				<br>
+					<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
+				<a href='{{ URL::to('loans/request/'. $patient->patient_mrn.'?type=folder') }}'>
+					Folder Request
+				</a>
+
 				<br>
 				<br>
 					<span class='glyphicon glyphicon-print' aria-hidden='true'></span>

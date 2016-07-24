@@ -2,6 +2,7 @@
 
 @section('content')
 <h1>Bed Bookings </h1>
+<h3>{{ $ward->ward_name }}</h3>
 <br>
 <form action='/bed_booking/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

@@ -281,7 +281,18 @@
                 ];
             return items;                              
         },                                       
+		clearValue: function() {
+				      var that = this;
 
+					        $.each(this.map, function(k, v) {
+									        if(that['$'+k]) {
+													            that['$'+k].val("");
+																        }
+											      });
+
+							      this.datetime = null;
+
+								      },
         /*
          Returns current date value from combos. 
          If format not specified - `options.format` used.

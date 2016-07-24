@@ -21,7 +21,6 @@ class Loan extends Model
 				'loan_description',
 				'loan_return',
 				'loan_return_description',
-				'loan_is_folder',
 				'loan_code'];
 	
     protected $guarded = ['loan_id'];
@@ -34,9 +33,10 @@ class Loan extends Model
 				'item_code'=>'required',
 				'loan_request_by'=>'required',
 				'ward_code'=>'required',
+				'loan_quantity'=>'required',
 				'loan_date_start'=>'size:10|date_format:d/m/Y',
-				'loan_date_end'=>'size:10|date_format:d/m/Y',
-				'loan_return'=>'size:16|date_format:d/m/Y H:i',
+				'loan_date_end'=>'size:10|date_format:d/m/Y|after:loan_date_start',
+				'loan_return'=>'size:14|date_format:d/m/Y H:i|after:loan_date_start',
 				'loan_code'=>'required',
 			];
 
@@ -51,9 +51,6 @@ class Loan extends Model
 	
 	public function setLoanDateStartAttribute($value)
 	{
-		if (empty($value)) {
-				$this->attributes['loan_date_start'] = null;
-		}
 		if (DojoUtility::validateDate($value)==true) {
 			$this->attributes['loan_date_start'] = DojoUtility::dateWriteFormat($value);
 		}
@@ -65,21 +62,8 @@ class Loan extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
-	public function getLoanDateStart()
-	{
-		return Carbon::createFromFormat('d/m/Y', $this->loan_date_start);
-	}
-
-	public function getLoanDateEnd()
-	{
-		return Carbon::createFromFormat('d/m/Y', $this->loan_date_end);
-	}
-
 	public function setLoanDateEndAttribute($value)
 	{
-		if (empty($value)) {
-				$this->attributes['loan_date_end'] = null;
-		}
 		if (DojoUtility::validateDate($value)==true) {
 			$this->attributes['loan_date_end'] = DojoUtility::dateWriteFormat($value);
 		}
@@ -93,9 +77,6 @@ class Loan extends Model
 
 	public function setLoanReturnAttribute($value)
 	{
-		if (empty($value)) {
-				$this->attributes['loan_return'] = null;
-		}
 		if (DojoUtility::validateDateTime($value)==true) {
 			$this->attributes['loan_return'] = DojoUtility::dateTimeWriteFormat($value);
 		}
@@ -104,11 +85,6 @@ class Loan extends Model
 	public function getLoanReturnAttribute($value)
 	{
 		return DojoUtility::dateTimeReadFormat($value);
-	}
-
-	public function getLoanReturn()
-	{
-		return Carbon::createFromFormat('d/m/Y H:i', $this->loan_return);
 	}
 
 	public function user()
@@ -120,21 +96,4 @@ class Loan extends Model
 	{
 			return $this->belongsTo('App\Ward', 'ward_code');
 	}
-
-	public function status()
-	{
-			return $this->belongsTo('App\LoanStatus', 'loan_code');
-	}
-
-	public function getItemName()
-	{
-			$product = Product::find($this->item_code);
-			if (empty($product)) {
-					return $this->item_code;
-			} else {
-					return $product->product_name;
-			}
-
-	}	
-
 }

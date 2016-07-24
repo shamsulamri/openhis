@@ -58,14 +58,12 @@ class AdmissionTaskController extends Controller
 
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,
-					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-					'ward' => $ward_code,
+					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'category' => '',
 					'group_by' => 'order',
 					'order_ids' => $order_ids,
 					'show_all' => null,
-					'ward_model' => Ward::where('ward_code', $ward_code)->first(),
 			]);
 	}
 
@@ -188,8 +186,7 @@ class AdmissionTaskController extends Controller
 
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,
-					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'ward' => $request->cookie('ward'),
+					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
 					'category' => $request->categories,
 					'group_by' => $request->group_by,

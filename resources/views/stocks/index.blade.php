@@ -60,11 +60,7 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $stocks->appends(['search'=>$search])->render() }}
-	@else
-	{{ $stocks->render() }}
-@endif
+{{ $stocks->appends(['store_code'=>$store_code,'product_code'=>$product->product_code])->render() }}
 <br>
 @if ($stocks->total()>0)
 	{{ $stocks->total() }} records found.

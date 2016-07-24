@@ -13,6 +13,7 @@ use Session;
 use App\AppointmentService as Service;
 use Carbon\Carbon;
 use App\Patient;
+use App\Ward;
 use Auth;
 
 class AppointmentController extends Controller
@@ -24,7 +25,7 @@ class AppointmentController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 			$appointments = DB::table('appointments as a')
 					->leftJoin('patients as b', 'a.patient_id', '=', 'b.patient_id')
@@ -36,6 +37,7 @@ class AppointmentController extends Controller
 					'appointments'=>$appointments,
 					'services' => Service::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'service' => '',
+					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 			]);
 	}
 

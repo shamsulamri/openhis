@@ -145,6 +145,19 @@
 			</div>
 	</div>
 	</h5>
+<h3>Medical Record</h3>
+	<h5>
+	<div class="row">
+			<div class="col-xs-6">
+				<a href="{{ url('/documents') }}">Documents</a><br>
+			</div>
+			<div class="col-xs-6">
+			<small>
+				<a href="{{ url('/document_types') }}">Document Types</a><br>
+				<a href="{{ url('/document_statuses') }}">Document Statuses</a><br>
+			</div>
+	</div>
+	</h5>
 <h3>Maintenance</h3>
 	<h5>
 	<div class="row">

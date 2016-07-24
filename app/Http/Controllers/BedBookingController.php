@@ -28,7 +28,7 @@ class BedBookingController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 			$bed_bookings = DB::table('bed_bookings as a')
 					->select(['d.ward_code', 'book_id', 'book_date', 'a.created_at', 'bed_name', 'a.admission_id', 'patient_name', 'b.class_name', 'a.class_code','ward_name'])
@@ -46,6 +46,7 @@ class BedBookingController extends Controller
 			return view('bed_bookings.index', [
 					'bed_bookings'=>$bed_bookings,
 					'bedController' => new BedController(),
+					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 			]);
 	}
 

@@ -64,5 +64,9 @@ class AuthServiceProvider extends ServiceProvider
 		$gate->define('module-diet', function ($user) {
 				return $user->authorization->module_diet;
 		});
+
+		$gate->define('module-medical-record', function ($user) {
+				return $user->authorization->module_medical_record;
+		});
     }
 }

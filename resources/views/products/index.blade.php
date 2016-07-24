@@ -24,6 +24,9 @@
     <th>Code</th> 
     <th>Name</th>
     <th><div align='right'>On Hand</div></th> 
+	@if ($loan)
+	<th></th>
+	@endif
 	@can('system-administrator')
 	<th></th>
 	@endcan
@@ -36,15 +39,24 @@
 					{{$product->product_code}}
 			</td>
 			<td>
+			@if (!$loan)
 					<a href='{{ URL::to('products/'. $product->product_code . '/option') }}'>
 						{{$product->product_name}}
 					</a>
+			@else
+					{{$product->product_name}}
+			@endif
 			</td>
 			<td align='right'>
 				@if ($product->product_on_hand>0)
 					{{ str_replace('.00','',$product->product_on_hand) }}
 				@endif
 			</td>
+			@if ($loan)
+			<td align='right'>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('loans/request/'. $product->product_code) }}'>Loan</a>
+			</td>
+			@endif
 			@can('system-administrator')
 			<td align='right'>
 					<!--	

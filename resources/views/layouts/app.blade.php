@@ -59,11 +59,6 @@
 	<div class='container'>
 		<h6>
 		<ul class='nav nav-pills'>
-					@can('module-patient')
-					<li role="presentation"><a class='btn btn-default' href="/patients">
-							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patients</a>
-					</li>
-					@endcan
 					@can('module-support')
 					<li role="presentation"><a class='btn btn-default' href="{{ url('/order_queues') }}">
 							  <span class='glyphicon glyphicon-inbox'></span>&nbsp; Orders</a>
@@ -79,9 +74,10 @@
 					@can('module-patient')
 					<li role="presentation" class="dropdown">
 							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-menu-hamburger'></span>&nbsp; Options <span class="caret"></span>
+							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patient <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
+								<li><a href="{{ url('/patients') }}">Patient List</a></li>
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
 								<li><a href="{{ url('/queues') }}">Queues</a></li>
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li>
@@ -97,21 +93,6 @@
 							  <span class='glyphicon glyphicon-comment'></span>&nbsp; Consultation List</a>
 					</li>
 					@endcan
-					@can('module-inventory')
-					<li role="presentation" class="dropdown">
-							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Inventory <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{{ url('/products') }}">Products</a></li>
-								<li><a href="{{ url('/purchase_orders') }}">Purchase Orders</a></li>
-								<li><a href="{{ url('/suppliers') }}">Suppliers</a></li>
-								<li><a href="{{ url('/stores') }}">Stores</a></li>
-								<li><a href="{{ url('/sets') }}">Order Sets</a></li>
-								<li><a href="{{ url('/loans') }}">Loans</a></li>
-							</ul>
-					</li>
-					@endcan
 					@can('module-ward')
 					<li role="presentation" class="dropdown">
 							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -122,6 +103,37 @@
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li> 
 								<li><a href="{{ url('/bed_bookings') }}">Bed Bookings</a></li> 
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
+								<li><a href="{{ url('/loans/ward') }}">Loan List</a></li>
+							</ul>
+					</li>
+					@endcan
+					@can('module-medical-record')
+					<li role="presentation" class="dropdown">
+							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-duplicate'></span>&nbsp; Medical Record <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="{{ url('/patients') }}">Patient List</a></li>
+								<li><a href="{{ url('/loans?type=folder') }}">Loans</a></li>
+							</ul>
+					</li>
+					@endcan
+					@can('module-inventory')
+					<li role="presentation" class="dropdown">
+							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Inventory <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="{{ url('/products') }}">Products</a></li>
+								@if (Auth::user()->authorization->module_ward)
+								<li><a href="{{ url('/loans/ward') }}">Loans</a></li>
+								@else
+								<li><a href="{{ url('/purchase_orders') }}">Purchase Orders</a></li>
+								<li><a href="{{ url('/suppliers') }}">Suppliers</a></li>
+								<li><a href="{{ url('/stores') }}">Stores</a></li>
+								<li><a href="{{ url('/sets') }}">Order Sets</a></li>
+								<li><a href="{{ url('/loans') }}">Loans</a></li>
+								@endif
 							</ul>
 					</li>
 					@endcan

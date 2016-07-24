@@ -19,6 +19,7 @@ class UserAuthorization extends Model
 				'module_support',
 				'module_discharge',
 				'module_diet',
+				'module_medical_record',
 				'system_administrator',
 		];
 	
