@@ -39,6 +39,20 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('document_uuid')) has-error @endif'>
+        {{ Form::label('document_uuid', 'UUID',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+			<div class='input-group'>
+            {{ Form::label('document_uuid', $document->document_uuid, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+				<span class='input-group-btn'>
+				<a class='btn btn-default pull-right' href='{{ Config::get('host.report_server') }}/ReportServlet?report=document_label&id={{ $document->document_id }}'>
+						Print Label
+				</a>
+				</span>
+			</div>
+        </div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
             <a class="btn btn-default" href="/documents?patient_mrn={{ $patient->patient_mrn }}" role="button">Cancel</a>

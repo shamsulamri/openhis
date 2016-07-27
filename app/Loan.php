@@ -14,13 +14,14 @@ class Loan extends Model
 				'item_code',
 				'loan_request_by',
 				'ward_code',
+				'location_code',
 				'loan_quantity',
 				'loan_date_start',
 				'loan_date_end',
 				'loan_recur',
 				'loan_description',
-				'loan_return',
-				'loan_return_description',
+				'loan_closure_datetime',
+				'loan_closure_description',
 				'loan_is_folder',
 				'loan_code'];
 	
@@ -33,10 +34,11 @@ class Loan extends Model
 			$rules = [
 				'item_code'=>'required',
 				'loan_request_by'=>'required',
-				'ward_code'=>'required',
+				'ward_code'=>'required_without_all:location_code',
+				'location_code'=>'required_without_all:ward_code',
 				'loan_date_start'=>'size:10|date_format:d/m/Y',
 				'loan_date_end'=>'size:10|date_format:d/m/Y',
-				'loan_return'=>'size:16|date_format:d/m/Y H:i',
+				'loan_closure_datetime'=>'size:16|date_format:d/m/Y H:i',
 				'loan_code'=>'required',
 			];
 
@@ -91,24 +93,24 @@ class Loan extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
-	public function setLoanReturnAttribute($value)
+	public function setLoanClosureDatetimeAttribute($value)
 	{
 		if (empty($value)) {
-				$this->attributes['loan_return'] = null;
+				$this->attributes['loan_closure_datetime'] = null;
 		}
 		if (DojoUtility::validateDateTime($value)==true) {
-			$this->attributes['loan_return'] = DojoUtility::dateTimeWriteFormat($value);
+			$this->attributes['loan_closure_datetime'] = DojoUtility::dateTimeWriteFormat($value);
 		}
 	}
 
-	public function getLoanReturnAttribute($value)
+	public function getLoanClosureDatetimeAttribute($value)
 	{
 		return DojoUtility::dateTimeReadFormat($value);
 	}
 
-	public function getLoanReturn()
+	public function getLoanClosureDatetime()
 	{
-		return Carbon::createFromFormat('d/m/Y H:i', $this->loan_return);
+		return Carbon::createFromFormat('d/m/Y H:i', $this->loan_closure_datetime);
 	}
 
 	public function user()
@@ -137,4 +139,8 @@ class Loan extends Model
 
 	}	
 
+	public function location()
+	{
+			return $this->belongsTo('App\QueueLocation', 'location_code');
+	}
 }

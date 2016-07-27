@@ -23,14 +23,16 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+	@if ($is_folder)
+    <th>MRN</th>
+	@else
     <th>Item</th>
-	@if (!$is_folder)
     <th>Quantity</th> 
 	@endif
-    <th>Ward</th> 
+    <th>Source</th> 
     <th>Request</th> 
     <th>Status</th> 
-    <th>Date</th> 
+    <th>Closure</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -44,11 +46,20 @@
 			</td>
 			@if (!$is_folder)
 			<td>
+					@if ($loan->loan_quantity>0)
 					{{$loan->loan_quantity }}
+					@else
+					-
+					@endif
 			</td>
 			@endif
 			<td>
+				@if (!empty($loan->ward_code))
 					{{$loan->ward->ward_name }}
+				@endif
+				@if (!empty($loan->location_code))
+					{{$loan->location->location_name }}
+				@endif
 			</td>
 			<td>
 					{{ date('d F Y', strtotime($loan->created_at )) }}
@@ -58,11 +69,11 @@
 			</td>
 			<td>
 					@if ($loan->loan_code=='exchanged') 
-						{{ date('d F Y', strtotime($loan->getLoanReturn() )) }}
+						{{ date('d F Y', strtotime($loan->getLoanClosureDatetime() )) }}
 					@endif
 					@if ($loan->loan_code=='return')
-							@if (!empty($loan->loan_return))
-								{{ date('d F Y', strtotime($loan->getLoanReturn() )) }}
+							@if (!empty($loan->loan_closure_datetime))
+								{{ date('d F Y', strtotime($loan->getLoanClosureDatetime() )) }}
 							@endif
 					@endif
 					@if ($loan->loan_code=='lend')
@@ -75,9 +86,11 @@
 					@endif
 			</td>
 			<td align='right'>
+					<!--
 					@if ($loan->loan_is_folder)
-            		<a class="btn btn-default btn-xs" href="/documents?patient_mrn={{ $loan->item_code }}" role="button">View Documents</a>
+            		<a class="btn btn-default btn-xs" href="/documents?patient_mrn={{ $loan->item_code }}" role="button">Documents</a>
 					@endif
+					-->
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('loans/delete/'. $loan->loan_id) }}'>Delete</a>
 			</td>
 	</tr>

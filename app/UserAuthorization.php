@@ -11,7 +11,7 @@ class UserAuthorization extends Model
 {
 	protected $table = 'user_authorizations';
 	protected $fillable = [
-				'id',
+				'author_name',
 				'module_patient',
 				'module_consultation',
 				'module_inventory',
@@ -20,13 +20,20 @@ class UserAuthorization extends Model
 				'module_discharge',
 				'module_diet',
 				'module_medical_record',
-				'system_administrator',
-		];
+				'patient_list',
+				'product_list',
+				'loan_function',
+				'appointment_function',
+				'system_administrator'];
 	
+    protected $guarded = ['author_id'];
+    protected $primaryKey = 'author_id';
+    public $incrementing = true;
+    
 
 	public function validate($input, $method) {
 			$rules = [
-				'module_consultation'=>'required',
+				'author_name'=>'required',
 			];
 
 			

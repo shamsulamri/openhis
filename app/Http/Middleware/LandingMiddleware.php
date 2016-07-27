@@ -44,6 +44,13 @@ class LandingMiddleware
 				return redirect('/admissions');
 		} 		
 
+		if ($request->user()->can('module-diet')) {
+				return redirect('/diet_menus');
+		} 		
+
+		if ($request->user()->can('module-medical-record')) {
+				return redirect('/loans?type=folder');
+		} 		
         return $next($request);
     }
 }

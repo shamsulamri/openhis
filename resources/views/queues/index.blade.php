@@ -43,6 +43,7 @@
 					{{$queue->location_name}}
 			</td>
 			<td align='right'>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('loans/request/'. $queue->patient_mrn.'?type=folder') }}'>Folder Request</a>
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
 					@endcan

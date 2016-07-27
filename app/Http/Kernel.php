@@ -62,7 +62,24 @@ class Kernel extends HttpKernel
         'landing' => [
 			\App\Http\Middleware\LandingMiddleware::class,
         ],
-
+        'diet_middleware' => [
+			\App\Http\Middleware\DietMiddleware::class,
+        ],
+        'medical_record' => [
+			\App\Http\Middleware\MedicalRecordMiddleware::class,
+        ],
+        'patient_list_middleware' => [
+			\App\Http\Middleware\PatientListMiddleware::class,
+        ],
+        'product_list_middleware' => [
+			\App\Http\Middleware\ProductListMiddleware::class,
+        ],
+        'loan_function_middleware' => [
+			\App\Http\Middleware\LoanFunctionMiddleware::class,
+        ],
+        'appointment_function_middleware' => [
+			\App\Http\Middleware\AppointmentFunctionMiddleware::class,
+        ],
         'api' => [
             'throttle:60,1',
         ],

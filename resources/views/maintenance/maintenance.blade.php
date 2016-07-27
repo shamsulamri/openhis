@@ -104,7 +104,7 @@
 			<div class="col-xs-6">
 				<a href="{{ url('/admissions') }}">Admissions</a><br>
 				<a href="{{ url('/bed_bookings') }}">Bed Bookings</a><br>
-				<a href="{{ url('/admission_tasks') }}">Nurse Task</a><br>
+				<a href="{{ url('/admission_tasks') }}">Nurse Care Plan</a><br>
 			</div>
 			<div class="col-xs-6">
 			<small>
@@ -183,4 +183,16 @@
 			</div>
 	</div>
 	</h5>
+<h3>User Management</h3>
+	<h5>
+	<div class="row">
+			<div class="col-xs-6">
+				<a href="{{ url('/users') }}">Users</a><br>
+				<a href="{{ url('/user_authorizations') }}">Authorizations</a><br>
+			</div>
+	</div>
+	</h5>
+<br>
+<br>
+
 @endsection

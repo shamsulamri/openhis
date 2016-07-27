@@ -14,6 +14,7 @@ use App\DocumentType;
 use App\DocumentStatus;
 use App\Patient;
 use Auth;
+use Uuid;
 
 class DocumentController extends Controller
 {
@@ -31,9 +32,17 @@ class DocumentController extends Controller
 			$documents = Document::where('patient_mrn',$request->patient_mrn)
 					->orderBy('patient_mrn')
 					->paginate($this->paginateValue);
+
+			$loan_flag = False;
+			
+			if (empty($request->from)) {
+					$loan_flag=True;
+			}
+
 			return view('documents.index', [
 					'documents'=>$documents,
 					'patient'=>$patient,
+					'loan_flag'=>$loan_flag,
 			]);
 	}
 
@@ -57,6 +66,7 @@ class DocumentController extends Controller
 
 			if ($valid->passes()) {
 					$document = new Document($request->all());
+					$document->document_uuid = Uuid::generate();
 					$document->document_id = $request->document_id;
 					$document->save();
 					Session::flash('message', 'Record successfully created.');
@@ -121,7 +131,7 @@ class DocumentController extends Controller
 	{
 			$documents = DB::table('documents')
 					->where('patient_mrn','like','%'.$request->search.'%')
-					->orWhere('document_id', 'like','%'.$request->search.'%')
+					->orWhere('document_uuid', 'like','%'.$request->search.'%')
 					->orderBy('patient_mrn')
 					->paginate($this->paginateValue);
 

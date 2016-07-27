@@ -2,16 +2,16 @@
 
 @section('content')
 <h1>
-Delete User Authorization
+Delete User
 </h1>
 @include('common.errors')
 <br>
 <h3>
 Are you sure you want to delete the selected record ?
-{{ $user_authorization->author_name }}
-{{ Form::open(['url'=>'user_authorizations/'.$user_authorization->author_id, 'class'=>'pull-right']) }}
+{{ $user->name }}
+{{ Form::open(['url'=>'users/'.$user->id, 'class'=>'pull-right']) }}
 	{{ method_field('DELETE') }}
-	<a class="btn btn-default" href="/user_authorizations" role="button">Cancel</a>
+	<a class="btn btn-default" href="/users" role="button">Cancel</a>
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 

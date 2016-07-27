@@ -11,13 +11,13 @@
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/login') }}">
                         {!! csrf_field() !!}
 
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
                             <div class="col-md-12">
-                                <input type="text" placeholder='Username' class="form-control" name="email" value="{{ old('email') }}">
+                                <input type="text" placeholder='Username' class="form-control" name="username" value="{{ old('username') }}">
 
-                                @if ($errors->has('email'))
+                                @if ($errors->has('username'))
                                     <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
+                                        <strong>{{ $errors->first('username') }}</strong>
                                     </span>
                                 @endif
                             </div>

@@ -28,7 +28,7 @@ class QueueController extends Controller
 			$selectedLocation = $request->cookie('queue_location');
 
 			$queues = DB::table('queues as a')
-					->select('queue_id', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
+					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')

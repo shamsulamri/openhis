@@ -25,10 +25,6 @@ class WardController extends Controller
 
 	public function index(Request $request)
 	{
-			if (empty($request->cookie('ward'))) {
-					Session::flash('message', 'Ward not set. Please select your ward.');
-					return redirect('/wards');
-			}
 
 			$wards = DB::table('wards')
 					->orderBy('ward_name')
@@ -147,7 +143,8 @@ class WardController extends Controller
 			Session::flash('message', 'This terminal has been set to '.$ward->ward_name);
 
 			return redirect('/wards')
-				->withCookie(cookie('ward',$id, 2628000));
+					->withCookie(cookie('ward',$id, 2628000))
+					->withCookie(\Cookie::forget('queue_location'));
 	}
 
 	public function getWard(Request $request)

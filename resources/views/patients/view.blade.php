@@ -43,15 +43,15 @@
 				</a>
 				<br>
 				<br>
-@if ($encounter_active)
+				@if ($encounter_active)
 					<span class='glyphicon glyphicon-usd' aria-hidden='true'></span>
 				<a href='{{ URL::to('deposits/index/'. $encounter->encounter_id ) }}'>
 						Deposit Collection						
 				</a>
-@else
+				@else
 					<span class='glyphicon glyphicon-usd' aria-hidden='true'></span>
 						Deposit Collection						
-@endif
+				@endif
 				<br>
 				<br>
 					<span class='glyphicon glyphicon-book' aria-hidden='true'></span>
@@ -62,7 +62,7 @@
 				<br>
 				<br>
 					<span class='glyphicon glyphicon-duplicate' aria-hidden='true'></span>
-				<a href='{{ URL::to('documents?patient_mrn='. $patient->patient_mrn) }}'>
+				<a href='{{ URL::to('documents?patient_mrn='. $patient->patient_mrn.'&from=view') }}'>
 					Medical Record Documents
 				</a>
 

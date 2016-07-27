@@ -65,10 +65,14 @@
 					</li>
 					@endcan
 					@can('module-discharge')
-					<li role="presentation">
-						<a class='btn btn-default' href="{{ url('/discharges') }}">
-							  <span class='glyphicon glyphicon-home'></span>&nbsp; Discharges
-						</a>
+					<li role="presentation" class="dropdown">
+							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							  <span class='glyphicon glyphicon-home'></span>&nbsp; Discharges <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="{{ url('/patients') }}">Patient List</a></li>
+								<li><a href="{{ url('/discharges') }}">Discharges</a></li>
+							</ul>
 					</li>
 					@endcan
 					@can('module-patient')
@@ -102,8 +106,12 @@
 								<li><a href="{{ url('/admission_tasks') }}">Nurse Care Plan</a></li> 
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li> 
 								<li><a href="{{ url('/bed_bookings') }}">Bed Bookings</a></li> 
+								<li role="separator" class="divider"></li>
+								<li><a href="{{ url('/patients') }}">Patients</a></li>
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
-								<li><a href="{{ url('/loans/ward') }}">Loan List</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="{{ url('/products') }}">Products</a></li>
+								<li><a href="{{ url('/loans/ward') }}">Loans</a></li>
 							</ul>
 					</li>
 					@endcan
@@ -125,15 +133,12 @@
 							</a>
 							<ul class="dropdown-menu">
 								<li><a href="{{ url('/products') }}">Products</a></li>
-								@if (Auth::user()->authorization->module_ward)
-								<li><a href="{{ url('/loans/ward') }}">Loans</a></li>
-								@else
 								<li><a href="{{ url('/purchase_orders') }}">Purchase Orders</a></li>
 								<li><a href="{{ url('/suppliers') }}">Suppliers</a></li>
 								<li><a href="{{ url('/stores') }}">Stores</a></li>
 								<li><a href="{{ url('/sets') }}">Order Sets</a></li>
+								<li role="separator" class="divider"></li>
 								<li><a href="{{ url('/loans') }}">Loans</a></li>
-								@endif
 							</ul>
 					</li>
 					@endcan
@@ -149,9 +154,10 @@
 								<li><a href="{{ url('/diet_bom') }}">Diet Bill of Materials</a></li> 
 								<li><a href="{{ url('/diet_workorder') }}">Diet Work Order</a></li> 
 								<li><a href="{{ url('/diet_distribution') }}">Diet Distribution</a></li>
-				<li><a href="{{ url('/diet_complains') }}">Diet Complains</a></li>
-				<li><a href="{{ url('/diet_wastages') }}">Diet Wastages</a></li>
-				<li><a href="{{ url('/diet_qualities') }}">Diet Qualities</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="{{ url('/diet_complains') }}">Diet Complains</a></li>
+								<li><a href="{{ url('/diet_wastages') }}">Diet Wastages</a></li>
+								<li><a href="{{ url('/diet_qualities') }}">Diet Qualities</a></li>
 							</ul>
 					</li>
 					@endcan

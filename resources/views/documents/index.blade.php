@@ -3,16 +3,23 @@
 @section('content')
 @include('patients.id')
 <h1>Medical Record Documents</h1>
+<!--
 <br>
 <form action='/document/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
+	{{ Form::hidden('patient_mrn', $patient->patient_mrn) }}
 </form>
+-->
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
+@if ($loan_flag)
+<a class="btn btn-default" href="/loans?type=folder" role="button">Return</a>
+@else
 <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
+@endif
 <a href='/documents/create?patient_mrn={{ $patient->patient_mrn }}' class='btn btn-primary'>Create</a>
 <br>
 <br>

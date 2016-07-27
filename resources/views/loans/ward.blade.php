@@ -2,7 +2,9 @@
 
 @section('content')
 <h1>Loans</h1>
+@if (!empty($ward_code))
 <h3>{{ $ward->ward_name }}</h3>
+@endif
 <br>
 <form class='form-inline' action='/loan/request_search' method='post'>
 	<label>Status</label>
@@ -31,16 +33,13 @@
 	<tr>
 			<td>
 					@if ($loan->loan_is_folder)
-						FOLDER: 
+					<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
+					@else
+					<span class='glyphicon glyphicon-shopping-cart' aria-hidden='true'></span>
 					@endif
-
-					@if ($loan->loan_code!='lend')
 					<a href='{{ URL::to('loans/request/'. $loan->loan_id . '/edit') }}'>
 						{{ $loan->getItemName() }}
 					</a>
-					@else
-						{{ $loan->getItemName() }}
-					@endif
 			</td>
 			<td>
 					@if ($loan->loan_is_folder)
@@ -54,14 +53,14 @@
 			</td>
 			<td>
 					@if ($loan->loan_code=='exchanged') 
-						{{ date('d F Y', strtotime($loan->getLoanReturn() )) }}
+						{{ date('d F Y', strtotime($loan->getLoanClosureDateTime() )) }}
 					@endif
 					@if ($loan->loan_code=='exchange') 
 						{{ date('d F Y', strtotime($loan->created_at )) }}
 					@endif
 					@if ($loan->loan_code=='return')
-							@if (!empty($loan->loan_return))
-								{{ date('d F Y', strtotime($loan->getLoanReturn() )) }}
+							@if (!empty($loan->loan_closure_datetime))
+								{{ date('d F Y', strtotime($loan->getLoanClosureDateTime() )) }}
 							@endif
 					@endif
 					@if ($loan->loan_code=='request')

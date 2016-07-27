@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>User Authorization List</h1>
+<h1>User Authorization Index</h1>
 <br>
 <form action='/user_authorization/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -19,8 +19,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>module_consultation</th>
-    <th>id</th> 
+    <th>Authorization</th>
 	<th></th>
 	</tr>
   </thead>
@@ -28,15 +27,12 @@
 @foreach ($user_authorizations as $user_authorization)
 	<tr>
 			<td>
-					<a href='{{ URL::to('user_authorizations/'. $user_authorization->id . '/edit') }}'>
-						{{$user_authorization->module_consultation}}
+					<a href='{{ URL::to('user_authorizations/'. $user_authorization->author_id . '/edit') }}'>
+						{{$user_authorization->author_name}}
 					</a>
 			</td>
-			<td>
-					{{$user_authorization->id}}
-			</td>
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('user_authorizations/delete/'. $user_authorization->id) }}'>Delete</a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('user_authorizations/delete/'. $user_authorization->author_id) }}'>Delete</a>
 			</td>
 	</tr>
 @endforeach

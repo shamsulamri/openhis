@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\EncounterController;
 use App\Loan;
 use Log;
 use DB;
@@ -15,7 +16,10 @@ use App\Period;
 use Carbon\Carbon;
 use App\LoanStatus;
 use App\Product;
+use App\Encounter;
 use App\Patient;
+use App\QueueLocation;
+use App\Queue;
 use Auth;
 
 class LoanController extends Controller
@@ -27,6 +31,20 @@ class LoanController extends Controller
 			$this->middleware('auth');
 	}
 
+	public function getLocations(Request $request) 
+	{
+			$locations = DB::table('wards')->select('ward_code as location_code', 'ward_name as location_code');
+			$locations = DB::table('queue_locations')->select('location_code','location_name')
+								->where('encounter_code','outpatient')	
+								->union($locations)
+								->orderBy('location_name')
+								->lists('location_name','location_code');
+
+			//$locations = QueueLocation::where('encounter_code','outpatient')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
+
+			return $locations;
+	}
+
 	public function index(Request $request)
 	{
 			$loans=null;
@@ -34,30 +52,40 @@ class LoanController extends Controller
 			$title="Loan List";
 			$loan_status=null;
 			$type=null;
+			$search_is_empty = True;
+
 			if (!empty($request->type)) $type=$request->type;
 
-			if ($request->type=='folder') {
+			if ($type=='folder') {
 					$is_folder=True;
 					$title="Folder List";
 					$loan_status = LoanStatus::whereIn('loan_code',['request', 'lend', 'return','lost'])
 							->orderBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
 
 					$loans = Loan::where('loan_code', '<>', 'exchanged')
-							->whereNotNull('loan_is_folder');
+								->whereNotNull('loan_is_folder');
 			} else {
 					$loan_status = LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
-					$loans = Loan::where('loan_code','<>', 'return');
+					$loans = Loan::whereNull('loan_is_folder');
 			}
 
 			if (!empty($request->search)) {
 					$loans = Loan::where('item_code','like','%'.$request->search.'%');
+					$search_is_empty=False;
 			}
 
-			if (!empty($request->loan_code)) $loans=$loans->where('loan_code','=',$request->loan_code);
-			if (!empty($request->ward_code)) $loans=$loans->where('ward_code','=',$request->ward_code);
+			if (!empty($request->loan_code)) {
+					$loans=$loans->where('loan_code','=',$request->loan_code);
+					$search_is_empty=False;
+			}
+			if (!empty($request->ward_code)) {
+					$loans=$loans->where('ward_code','=',$request->ward_code);
+					$search_is_empty=False;
+			}
 
 			$loans = $loans->orderBy('created_at', 'desc')
 							->paginate($this->paginateValue);
+
 
 			return view('loans.index', [
 					'loans'=>$loans,
@@ -83,8 +111,10 @@ class LoanController extends Controller
 					'loan_status' => LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('',''),
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'loan_code' => null,
+					'ward_code'=>$request->cookie('ward'),
 			]);
 	}
+
 	public function create()
 	{
 			$loan = new Loan();
@@ -121,13 +151,22 @@ class LoanController extends Controller
 	{
 			$loan = Loan::findOrFail($id);
 
+			$product = null;
+			$patient = null;
 			$loan_status=null;
 			if ($loan->loan_is_folder) {
 					$loan_status = LoanStatus::whereIn('loan_code',['request', 'lend', 'return','lost'])
 							->orderBy('loan_name')->lists('loan_name', 'loan_code');
+					$patient = Patient::where('patient_mrn', $loan->item_code)->first();
+
 			} else {
-					$loan_status = LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code');
+					$loan_status = LoanStatus::whereIn('loan_code',['request', 'lend', 'return','lost'])
+							->orderBy('loan_name')->lists('loan_name', 'loan_code');
+					$product = Product::where('product_code', $loan->item_code)->first();
 			}
+
+			$information = "Closure Information";
+			if ($loan->loan_code=='exchange') $information = "Exchange Information";
 
 			return view('loans.edit', [
 					'loan'=>$loan,
@@ -138,6 +177,10 @@ class LoanController extends Controller
 					'minYear' => Carbon::now()->year,
 					'today' =>date('d/m/Y', strtotime(Carbon::now())),
 					'today_datetime' =>date('d/m/Y H:i', strtotime(Carbon::now())),
+					'locations' => QueueLocation::where('encounter_code','outpatient')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'information'=>$information,
+					'patient'=>$patient,
+					'product'=>$product,
 					]);
 	}
 
@@ -149,11 +192,11 @@ class LoanController extends Controller
 			$loan->loan_recur = $request->loan_recur ?: 0;
 
 			if ($loan->loan_code != 'exchange') {
-				if (!empty($loan->loan_return)) $loan->loan_code='return';
+				if (!empty($loan->loan_closure_datetime)) $loan->loan_code='return';
 			}
 
 			if ($loan->loan_code == 'exchange') {
-				if (!empty($loan->loan_return)) $loan->loan_code='exchanged';
+				if (!empty($loan->loan_closure_datetime)) $loan->loan_code='exchanged';
 			}
 			$valid = $loan->validate($request->all(), $request->_method);	
 
@@ -180,23 +223,21 @@ class LoanController extends Controller
 			]);
 
 	}
+
 	public function destroy($id)
 	{	
+			$loan = Loan::find($id);
 			Loan::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/loans');
+			if ($loan->loan_is_folder) {
+					return redirect('/loans?type=folder');
+			} else {
+					return redirect('/loans');
+			}
 	}
 	
 	public function search(Request $request)
 	{
-			$loans = DB::table('loans')
-					->where('item_code','like','%'.$request->search.'%')
-					->orWhere('loan_id', 'like','%'.$request->search.'%')
-					->orWhere('ward_code', 'like','%'.$request->ward_code.'%')
-					->orWhere('loan_code', 'like','%'.$request->loan_code.'%')
-					->orderBy('created_at')
-					->paginate($this->paginateValue);
-
 			$loans = Loan::where('item_code','like','%'.$request->search.'%');
 
 			if (!empty($request->loan_code)) $loans=$loans->where('loan_code','=',$request->loan_code);
@@ -244,7 +285,7 @@ class LoanController extends Controller
 					'search'=>$request->search,
 					'loan_status' => LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('',''),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'ward_code'=>$request->ward_code,
+					'ward_code'=>$request->cookie('ward'),
 					'loan_code'=>$request->loan_code,
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					]);
@@ -280,10 +321,28 @@ class LoanController extends Controller
 					$product = Product::find($loan->item_code);
 			}
 			if ($request->type=='folder') {
+					$encounterCtrl = new EncounterController();
+
 					$title="Folder Request";
 					$is_folder=True;
 					$patient = Patient::where('patient_mrn', $id)->first();
+					$loan->loan_is_folder=1;
+
+					$encounter = Encounter::where('encounter_id', $encounterCtrl->getActiveEncounterId($patient->patient_id))->first();
+					if ($encounter) {
+							if ($encounter->encounter_code=='outpatient') {
+									$loan->ward_code = null;
+									$loan->location_code = $encounter->queue->location_code;
+							} else {
+									$loan->location_code = null;
+							}
+					}
+
 			}
+
+			$location_code =  $request->cookie('queue_location') ?: null;
+			$ward_code =  $request->cookie('ward') ?: null;
+
 
 			return view('loans.request', [
 					'loan' => $loan,
@@ -298,6 +357,9 @@ class LoanController extends Controller
 					'title'=>$title,
 					'is_folder'=>$is_folder,
 					'patient'=>$patient,
+					'locations'=>QueueLocation::where('encounter_code','outpatient')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'location_code'=>$location_code,
+					'ward_code'=>$ward_code,
 					]);
 		
 	}
@@ -313,12 +375,19 @@ class LoanController extends Controller
 					$loan = new Loan($request->all());
 					$loan->loan_id = $request->loan_id;
 					$loan->save();
-					Session::flash('message', 'You request has been submitted.');
-					return redirect('/loans/ward');
+					return view('loans.submitted', [
+							'loan'=>$loan
+					]);
 			} else {
+					if ($loan->loan_is_folder) {
+					return redirect('/loans/request/'.$id.'?type=folder')
+							->withErrors($valid)
+							->withInput();
+					} else {
 					return redirect('/loans/request/'.$id)
 							->withErrors($valid)
 							->withInput();
+					}
 			}
 
 	}
@@ -331,6 +400,10 @@ class LoanController extends Controller
 								->orderBy('loan_name')
 								->lists('loan_name', 'loan_code');
 
+			$patient=null;
+			if ($loan->loan_is_folder) {
+					$patient = Patient::where('patient_mrn',$loan->item_code)->first();
+			}
 
 			return view('loans.request', [
 					'loan' => $loan,
@@ -343,7 +416,10 @@ class LoanController extends Controller
 					'product' => $product,
 					'url'=>'loans/request/'.$loan->loan_id.'/edit',
 					'title'=>'Edit Loan',
-					'is_folder' => null,
+					'ward_code'=>$request->cookie('ward') ?: null,
+					'location_code'=>$request->cookie('queue_location') ?: null,
+					'locations'=>QueueLocation::where('encounter_code','outpatient')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'patient'=>$patient,
 					]);
 	}
 

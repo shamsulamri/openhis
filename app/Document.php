@@ -15,6 +15,7 @@ class Document extends Model
 				'type_code',
 				'document_description',
 				'document_status',
+				'document_uuid',
 				'document_location'];
 	
     protected $guarded = ['document_id'];

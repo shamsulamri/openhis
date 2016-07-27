@@ -65,25 +65,28 @@ class EncounterController extends Controller
 				]);
 	}
 
-	public function encounterInitiated($patient_id) 
+	public function getActiveEncounterId($patient_id) 
 	{
 
-			$encounterInitiated=True;
+			$flag=True;
 			$encounter = Encounter::where('patient_id', $patient_id)
 							->leftjoin('discharges', 'discharges.encounter_id','=','encounters.encounter_id')
-							->orderBy('encounters.encounter_id','desc')
+							->orderBy('encounters.created_at','desc')
 							->first();
 
-			if ($encounter==null) $encounterInitiated=False;
+			$encounter = Encounter::where('patient_id',$patient_id)->first();
+		
+			if ($encounter==null) $flag=False;
 			if ($encounter) {
-					if ($encounter->admission==null && $encounter->queue==null) $encounterInitiated=True;
+					$flag=True;
+					if (!empty($encounter->discharge->discharge_id)) {
+						$flag=False;
+					}
 			}
 
-			if ($encounterInitiated) {
-					Log::info("1");
+			if ($flag) {
 					return $encounter->encounter_id;
 			} else {
-					Log::info("0");
 					return 0;
 			}	
 	}

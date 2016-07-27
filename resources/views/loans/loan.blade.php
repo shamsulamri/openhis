@@ -2,37 +2,71 @@
 	<div class='page-header'>
 		<h4>Request Information</h4>
 	</div>
-	<div class='form-group  @if ($errors->has('item_code')) has-error @endif'>
-        <label for='item_code' class='col-sm-2 control-label'>Item<span style='color:red;'> *</span></label>
+	@if ($product)
+	<div class='form-group'>
+		<label for='item_code' class='col-sm-2 control-label'>Product</label>
         <div class='col-sm-10'>
-            {{ Form::text('item_code', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('item_code')) <p class="help-block">{{ $errors->first('item_code') }}</p> @endif
+            {{ Form::label('item_name', $product->product_name, ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
+	@endif
+
+	@if ($patient)
+	<div class='form-group'>
+		<label for='item_code' class='col-sm-2 control-label'>Patient</label>
+        <div class='col-sm-10'>
+            {{ Form::label('item_name', $patient->patient_name, ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
+	@endif
+	<div class='form-group'>
+        <label for='item_code' class='col-sm-2 control-label'>
+		@if ($patient)
+			MRN
+		@else
+			Code
+		@endif
+		</label>
+        <div class='col-sm-10'>
+            {{ Form::label('item_code', $loan->item_code, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('loan_request_by')) has-error @endif'>
-        <label for='loan_request_by' class='col-sm-2 control-label'>Request By<span style='color:red;'> *</span></label>
+        <label for='loan_request_by' class='col-sm-2 control-label'>Request By</label>
         <div class='col-sm-10'>
-            {{ Form::text('loan_request_by', $loan->user->name, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('loan_request_by', $loan->user->name, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('loan_request_by')) <p class="help-block">{{ $errors->first('loan_request_by') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('item_code')) has-error @endif'>
-        <label for='item_code' class='col-sm-2 control-label'>Request Date<span style='color:red;'> *</span></label>
+    <div class='form-group  @if ($errors->has('created_at')) has-error @endif'>
+        <label for='created_at' class='col-sm-2 control-label'>Request Date</label>
         <div class='col-sm-10'>
             {{ Form::label('created_at',  date('d F Y, H:i', strtotime($loan->created_at)) , ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('item_code')) <p class="help-block">{{ $errors->first('item_code') }}</p> @endif
+            @if ($errors->has('created_at')) <p class="help-block">{{ $errors->first('item_code') }}</p> @endif
         </div>
     </div>
 
+	@if ($loan->ward_code)
     <div class='form-group  @if ($errors->has('ward_code')) has-error @endif'>
-        <label for='ward_code' class='col-sm-2 control-label'>Ward<span style='color:red;'> *</span></label>
+        <label for='ward_code' class='col-sm-2 control-label'>Ward</label>
         <div class='col-sm-10'>
             {{ Form::label('ward', $loan->ward->ward_name, ['class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('ward_code')) <p class="help-block">{{ $errors->first('ward_code') }}</p> @endif
         </div>
     </div>
+	@endif
+
+	@if ($loan->location_code)
+    <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
+        <label for='location_code' class='col-sm-2 control-label'>Clinic</label>
+        <div class='col-sm-10'>
+            {{ Form::label('location', $loan->location->location_name, ['class'=>'form-control','maxlength'=>'20']) }}
+            @if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
+        </div>
+    </div>
+	@endif
 
 	@if (!$loan->loan_is_folder)
     <div class='form-group  @if ($errors->has('loan_quantity')) has-error @endif'>
@@ -51,7 +85,7 @@
         </div>
     </div>
 
-	@if (!$loan->loan_is_folder && $loan->loan_code != 'exchange')
+	@if (!$loan->loan_is_folder && $loan->loan_code != 'exchange' && $loan->loan_code != 'exchanged')
     <div class='form-group  @if ($errors->has('loan_recur')) has-error @endif'>
         {{ Form::label('loan_recur', 'Recurring Daily',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
@@ -62,6 +96,7 @@
 	@endif
 	@endif
 
+	@if ($loan->loan_code<>'exchange' and $loan->loan_code<>'exchanged')
 	<div class='page-header'>
 		<h4>Loan Information</h4>
 	</div>
@@ -76,7 +111,6 @@
     </div>
 	@endif
 
-	@if ($loan->loan_code<>'exchange' and $loan->loan_code<>'exchanged')
     <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
         <label for='loan_code' class='col-sm-2 control-label'>Status<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
@@ -107,26 +141,27 @@
 
 	@endif
 	<div class='page-header'>
-		<h4>Closure Information</h4>
+		<h4>{{ $information }}</h4>
 	</div>
 
-    <div class='form-group  @if ($errors->has('loan_return')) has-error @endif'>
-        {{ Form::label('loan_return', 'Date',['class'=>'col-sm-2 control-label']) }}
+    <div class='form-group  @if ($errors->has('loan_closure_datetime')) has-error @endif'>
+        {{ Form::label('loan_closure_datetime', 'Date',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('loan_return', null, ['class'=>'form-control','placeholder'=>'',]) }}
-			<a href='javascript:set_return_date()' class='btn btn-default btn-xs'>Today</a>
+            {{ Form::text('loan_closure_datetime', null, ['class'=>'form-control','placeholder'=>'',]) }}
+			<a href='javascript:set_closure_date()' class='btn btn-default btn-xs'>Today</a>
 			<a href='javascript:clear_return_date()' class='btn btn-default btn-xs'>Clear</a>
-            @if ($errors->has('loan_return')) <p class="help-block">{{ $errors->first('loan_return') }}</p> @endif
+            @if ($errors->has('loan_closure_datetime')) <p class="help-block">{{ $errors->first('loan_closure_datetime') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('loan_return_description')) has-error @endif'>
-        {{ Form::label('loan_return_description', 'Description',['class'=>'col-sm-2 control-label']) }}
+    <div class='form-group  @if ($errors->has('loan_closure_description')) has-error @endif'>
+        {{ Form::label('loan_closure_description', 'Description',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::textarea('loan_return_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
-            @if ($errors->has('loan_return_description')) <p class="help-block">{{ $errors->first('loan_return_description') }}</p> @endif
+            {{ Form::textarea('loan_closure_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+            @if ($errors->has('loan_closure_description')) <p class="help-block">{{ $errors->first('loan_closure_description') }}</p> @endif
         </div>
     </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
 			@if ($loan->loan_is_folder)
@@ -139,7 +174,9 @@
     </div>
 
 	{{ Form::hidden('ward_code', $loan->ward_code) }}
+	{{ Form::hidden('item_code', $loan->item_code) }}
 	{{ Form::hidden('loan_request_by', $loan->loan_request_by) }}
+
 	@if ($loan->loan_code=='exchange')
 	{{ Form::hidden('loan_code', $loan->loan_code) }}
 	@endif
@@ -166,10 +203,10 @@
 				});    
 		});
 		$(function(){
-				$('#loan_return').combodate({
+				$('#loan_closure_datetime').combodate({
 						format: "DD/MM/YYYY HH:mm",
 						template: "DD MMMM YYYY     HH : mm",
-						value: '{{ $loan->loan_return }}',
+						value: '{{ $loan->loan_closure_datetime }}',
 						maxYear: '{{ $minYear+5 }}',
 						minYear: '{{ $minYear }}',
 						customClass: 'select'
@@ -195,18 +232,15 @@
 				document.getElementById('loan_date_end').value="";
 		}
 		function clear_return_date() {
-				$('#loan_return').combodate('clearValue');
-				$('#loan_return').combodate('setValue','');
-				document.getElementById('loan_return').value="";
+				$('#loan_closure_datetime').combodate('clearValue');
+				$('#loan_closure_datetime').combodate('setValue','');
+				document.getElementById('loan_closure_datetime').value="";
 		}
-		function set_return_date() {
+		function set_closure_date() {
 				@if ($loan->loan_code<>'exchange')
 				document.getElementById('loan_code').value='return';
 				@endif
-				@if ($loan->loan_code=='exchange')
-				document.getElementById('loan_code').value='exchanged';
-				@endif
-				$('#loan_return').combodate('setValue','{{ $today_datetime }}');
+				$('#loan_closure_datetime').combodate('setValue','{{ $today_datetime }}');
 		}
 
 		function statusChanged() {
@@ -215,10 +249,10 @@
 					$('#loan_date_start').combodate('setValue','{{ $today }}');
 				}
 				if ($loanCode=='return') {
-					$('#loan_return').combodate('setValue','{{ $today_datetime }}');
+					$('#loan_closure_datetime').combodate('setValue','{{ $today_datetime }}');
 				}
 				if ($loanCode=='exchanged') {
-					$('#loan_return').combodate('setValue','{{ $today_datetime }}');
+					$('#loan_closure_datetime').combodate('setValue','{{ $today_datetime }}');
 				}
 				if ($loanCode=='exchange') {
 					clear_return_date();
