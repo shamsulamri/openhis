@@ -45,12 +45,6 @@ Route::group(['middleware' => 'web'], function () {
 				});
 		});
 
-		Route::resource('users', 'UserController');
-		Route::get('/users/id/{id}', 'UserController@searchById');
-		Route::post('/user/search', 'UserController@search');
-		Route::get('/user/search', 'UserController@search');
-		Route::get('/users/delete/{id}', 'UserController@delete');
-
 		Route::get('/queue_locations/set/{id}', 'QueueLocationController@setLocation');
 		Route::get('/queue_locations/get', 'QueueLocationController@getLocation');
 		Route::resource('queue_locations', 'QueueLocationController');
@@ -60,11 +54,18 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/queue_locations/delete/{id}', 'QueueLocationController@delete');
 
 		Route::resource('admission_beds', 'AdmissionBedController');
-		Route::get('/admission_beds/id/{id}', 'AdmissionBedController@searchById');
+		Route::get('/admission_beds/{id}/{ward_code}', 'AdmissionBedController@searchById');
 		Route::post('/admission_bed/search', 'AdmissionBedController@search');
 		Route::get('/admission_bed/search', 'AdmissionBedController@search');
 		Route::get('/admission_beds/delete/{id}', 'AdmissionBedController@delete');
 		Route::get('/admission_beds/move/{admission_id}/{bed_code}', 'AdmissionBedController@move');
+
+		Route::resource('bed_bookings', 'BedBookingController',['except'=>['create']]);
+		Route::get('/bed_bookings/create/{patient_id}/{admission_id?}', 'BedBookingController@create');
+		Route::get('/bed_bookings/id/{id}', 'BedBookingController@searchById');
+		Route::post('/bed_booking/search', 'BedBookingController@index');
+		Route::get('/bed_booking/search', 'BedBookingController@search');
+		Route::get('/bed_bookings/delete/{id}', 'BedBookingController@delete');
 
 		Route::post('/order_task/status', 'OrderTaskController@status');
 		Route::get('/order_tasks/task/{consultation_id}/{location_code}', 'OrderTaskController@task');
@@ -87,6 +88,12 @@ Route::group(['middleware' => 'web'], function () {
 		Route::post('/loans/request/{id}', 'LoanController@requestSubmit');
 		Route::get('/loans/request/{id}/delete', 'LoanController@requestDelete');
 		Route::delete('/loans/request/delete/{id}', 'LoanController@requestDestroy');
+		
+		Route::resource('admissions', 'AdmissionController');
+		Route::get('/admissions/id/{id}', 'AdmissionController@searchById');
+		Route::post('/admission/search', 'AdmissionController@search');
+		Route::get('/admission/search', 'AdmissionController@search');
+		Route::get('/admissions/delete/{id}', 'AdmissionController@delete');
 
 		Route::group(['middleware' => 'diet_middleware'], function () {
 
@@ -510,18 +517,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/task_cancellation/search', 'TaskCancellationController@search');
 				Route::get('/task_cancellations/delete/{id}', 'TaskCancellationController@delete');
 		
-				Route::resource('bed_bookings', 'BedBookingController',['except'=>['create']]);
-				Route::get('/bed_bookings/create/{patient_id}/{admission_id?}', 'BedBookingController@create');
-				Route::get('/bed_bookings/id/{id}', 'BedBookingController@searchById');
-				Route::post('/bed_booking/search', 'BedBookingController@search');
-				Route::get('/bed_booking/search', 'BedBookingController@search');
-				Route::get('/bed_bookings/delete/{id}', 'BedBookingController@delete');
-
-				Route::resource('admissions', 'AdmissionController');
-				Route::get('/admissions/id/{id}', 'AdmissionController@searchById');
-				Route::post('/admission/search', 'AdmissionController@search');
-				Route::get('/admission/search', 'AdmissionController@search');
-				Route::get('/admissions/delete/{id}', 'AdmissionController@delete');
 
 				Route::post('/admission_task/status', 'AdmissionTaskController@status');
 				Route::resource('admission_tasks', 'AdmissionTaskController');
@@ -945,6 +940,13 @@ Route::group(['middleware' => 'web'], function () {
 				Route::post('/maintenance_reason/search', 'MaintenanceReasonController@search');
 				Route::get('/maintenance_reason/search', 'MaintenanceReasonController@search');
 				Route::get('/maintenance_reasons/delete/{id}', 'MaintenanceReasonController@delete');
+
+				Route::resource('users', 'UserController');
+				Route::get('/users/id/{id}', 'UserController@searchById');
+				Route::post('/user/search', 'UserController@search');
+				Route::get('/user/search', 'UserController@search');
+				Route::get('/users/delete/{id}', 'UserController@delete');
+
 		});
 
 		Route::get('auth/logout', 'Auth\AuthCOntroller@getLogout');

@@ -12,7 +12,7 @@ Move Complete
 @include('common.errors')
 <br>
 <h4>
-The patient has been successfully admitted to the following location:
+Patient has been successfully admitted to the following location:
 <br>
 <br>
 <table>

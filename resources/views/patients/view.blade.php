@@ -2,16 +2,19 @@
 
 @section('content')
 @include('patients.id')
+@if (Session::has('message'))
+    <div class="alert alert-info">{{ Session::get('message') }}</div>
+@endif
 <h1>Options</h1>
 <br>
 <h4>
 					<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
 					@if ($encounter_active)
-								@if ($encounter->admission)
-									Admitted at {{ $encounter->admission->bed->bed_name }} ({{ $encounter->admission->bed->ward->ward_name }})
-								@else
-									Queue at {{ $encounter->queue->location->location_name }}
-								@endif
+						@if ($encounter->admission)
+							Admitted at {{ $encounter->admission->bed->bed_name }} ({{ $encounter->admission->bed->ward->ward_name }})
+						@else
+							Queue at {{ $encounter->queue->location->location_name }}
+						@endif
 					@else
 						<a href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id ) }}'>
 								New Encounter

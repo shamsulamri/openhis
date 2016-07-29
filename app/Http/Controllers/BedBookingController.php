@@ -18,6 +18,7 @@ use App\Bed;
 use App\Ward;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Auth;
 
 class BedBookingController extends Controller
 {
@@ -30,8 +31,11 @@ class BedBookingController extends Controller
 
 	public function index(Request $request)
 	{
+			$is_preadmission = False;
+			if ($request->type=='preadmission') $is_preadmission = True;
+
 			$bed_bookings = DB::table('bed_bookings as a')
-					->select(['d.ward_code', 'book_id', 'book_date', 'a.created_at', 'bed_name', 'a.admission_id', 'patient_name', 'b.class_name', 'a.class_code','ward_name'])
+					->select(['d.ward_code', 'book_id', 'book_date', 'a.created_at', 'bed_name', 'a.admission_id','patient_mrn', 'patient_name', 'b.class_name', 'a.class_code','ward_name'])
 					->leftJoin('ward_classes as b', 'b.class_code','=', 'a.class_code')
 					->leftJoin('patients as c', 'c.patient_id','=', 'a.patient_id')
 					->leftJoin('wards as d', 'd.ward_code', '=', 'a.ward_code')
@@ -39,14 +43,31 @@ class BedBookingController extends Controller
 					->leftJoin('encounters as f', 'f.encounter_id', '=', 'e.encounter_id')
 					->leftJoin('discharges as g', 'g.encounter_id', '=', 'f.encounter_id')
 					->leftJoin('beds as h', 'h.bed_code', '=', 'a.bed_code')
-					->whereNull('discharge_id')
-					->orderBy('a.book_date')
-					->paginate($this->paginateValue);
+					->where('book_date','>=', Carbon::today())
+					->orderBy('a.book_date');
+
+
+			if ($is_preadmission) {
+					$bed_bookings = $bed_bookings->whereNull('f.encounter_id');
+			} else {
+					$bed_bookings = $bed_bookings->whereNull('discharge_id');
+			}
+
+			if (!empty($request->search)) {
+					$bed_bookings = $bed_bookings->where(function ($query) use ($request) {
+								$query	->where('patient_mrn','like','%'.$request->search.'%')
+										->orWhere('patient_name','like','%'.$request->search.'%');
+					});
+			}
+
+
+			$bed_bookings = $bed_bookings->paginate($this->paginateValue);
 		
 			return view('bed_bookings.index', [
 					'bed_bookings'=>$bed_bookings,
 					'bedController' => new BedController(),
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
+					'is_preadmission' => $is_preadmission,
 			]);
 	}
 
@@ -90,7 +111,12 @@ class BedBookingController extends Controller
 					$bed_booking->book_id = $request->book_id;
 					$bed_booking->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/bed_bookings');
+					if (Auth::user()->can('module-ward')) {
+							return redirect('/bed_bookings');
+					} else {
+							return redirect('/bed_bookings?type=preadmission');
+					}
+
 			} else {
 					return redirect('/bed_bookings/create/'.$request->patient_id.'/'.$request->admission_id)
 							->withErrors($valid)

@@ -38,7 +38,7 @@
 			</td>
 			<td>
 					<a href='{{ URL::to('patients/'. $patient->patient_id) }}'>
-						{{$patient->patient_name}}
+						{{ strtoupper($patient->patient_name) }}
 					</a>
 			</td>
 			<td width='10%'>

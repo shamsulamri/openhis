@@ -144,7 +144,7 @@ class QueueController extends Controller
 			$selectedLocation = $request->locations;
 
 			$queues = DB::table('queues as a')
-					->select('queue_id', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
+					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
 					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->join('queue_locations as d', 'd.location_code','=', 'a.location_code')

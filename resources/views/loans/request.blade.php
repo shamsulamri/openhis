@@ -2,6 +2,9 @@
 @extends('layouts.app')
 
 @section('content')
+@can('module-inventory')
+@include('products.id')
+@endcan
 <h1>
 Loan Request
 </h1>

@@ -16,6 +16,7 @@ use App\Store;
 use App\Product;
 use Carbon\Carbon;
 use App\DojoUtility;
+use App\StockHelper;
 
 class StockController extends Controller
 {
@@ -32,6 +33,7 @@ class StockController extends Controller
 					->where('product_code','=', $product_code)
 					->orderBy('product_code')
 					->paginate($this->paginateValue);
+
 			return view('stocks.index', [
 					'stocks'=>$stocks
 			]);
@@ -153,7 +155,6 @@ class StockController extends Controller
 					'product'=>$product,
 					'store_code'=>$request->store_code,
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					
 			]);
 	}
 
@@ -175,15 +176,15 @@ class StockController extends Controller
 					->leftJoin('stores as c', 'c.store_code', '=','a.store_code')
 					->where('product_code','=',$product_code)
 					->where('a.store_code','=',$store_code)
-					->orderBy('stock_date')
+					->orderBy('stock_date','desc')
 					->paginate($this->paginateValue);
 			$product = Product::find($product_code);
 			return view('stocks.index', [
 					'stocks'=>$stocks,
 					'product'=>$product,
 					'store_code'=>$store_code,
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					
+					'stores' => Store::all()->sortBy('store_name'),
+					'stockHelper' => new StockHelper(),
 			]);
 	}
 	

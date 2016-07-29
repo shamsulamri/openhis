@@ -1,9 +1,7 @@
 
 <div class='page-header'>
-<h2>{{ $encounter->encounterType->encounter_name }}</h2>
+<h3>Admission</h3>
 </div>
-<h4>Define admission details.</h4>
-<br>
     <div class='form-group  @if ($errors->has('admission_code')) has-error @endif'>
         {{ Form::label('admission_code', 'Admission Type',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>

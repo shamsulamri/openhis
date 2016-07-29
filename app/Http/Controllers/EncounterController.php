@@ -18,6 +18,7 @@ use App\Triage;
 use App\Relationship;
 use App\EncounterType;
 use App\Admission;
+use App\EncounterHelper;
 		
 class EncounterController extends Controller
 {
@@ -96,28 +97,23 @@ class EncounterController extends Controller
 			$encounter = new Encounter();
 			$valid = $encounter->validate($request->all(), $request->_method);
 			if ($valid->passes()) {
-					$encounter = new Encounter($request->all());
-					$encounter->encounter_id = $request->encounter_id;
-					/*
-					$initId = $this->encounterInitiated($encounter->patient_id);
-					if ($initId==0) {
+					$encounter = EncounterHelper::getActiveEncounter($request->patient_id);
+					if (empty($encounter)) {
+							$encounter = new Encounter($request->all());
+							$encounter->encounter_id = $request->encounter_id;
 							$encounter->save();
-					} else {
-							$encounter = Encounter::find($initId);
+
+							$patient = Patient::find($encounter->patient_id);
+
+							if ($patient->patient_mrn=='-') {
+									$mrn = "MSU".str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
+									$patient->patient_mrn = $mrn;
+									$patient->save();
+									Log::info($patient->patient_mrn);
+							}
+
+							Session::flash('message', 'Record successfully created.');
 					}
-					 */
-					$encounter->save();
-
-					$patient = Patient::find($encounter->patient_id);
-
-					if ($patient->patient_mrn=='-') {
-							$mrn = "MSU".str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
-							$patient->patient_mrn = $mrn;
-							$patient->save();
-							Log::info($patient->patient_mrn);
-					}
-
-					Session::flash('message', 'Record successfully created.');
 					if ($encounter->encounter_code=='outpatient') {
 							return redirect('/queues/create?encounter_id='.$encounter->encounter_id);
 					} elseif ($encounter->encounter_code=='inpatient') {

@@ -94,7 +94,11 @@ class Patient extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	
+	public function getPatientNameAttribute($value)
+	{
+			return strtoupper($value);
+	}
+
 	public function setPatientNameAttribute($value) 
 	{
 			$this->attributes['patient_name'] = strtoupper($value);
@@ -182,7 +186,7 @@ class Patient extends Model
 	public function getTitle()
 	{
 			if (!empty($this->title_code)) {
-					return $this->title->title_name;
+					return strtoupper($this->title->title_name);
 			} else {
 					return "";
 			}

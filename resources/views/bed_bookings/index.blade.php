@@ -1,12 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Bed Bookings </h1>
+@can('module-ward')
+<h1>Bed Bookings</h1>
 <h3>{{ $ward->ward_name }}</h3>
+@endcan
+@can('module-patient')
+<h1>Preadmissions</h1>
+@endcan
 <br>
 <form action='/bed_booking/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
+	{{ Form::hidden('is_preadmission', $is_preadmission) }}
 </form>
 <br>
 @include('common.notification')
@@ -15,6 +21,7 @@
  <thead>
 	<tr> 
     <th>Date</th>
+    <th>MRN</th>
     <th>Patient</th>
     <th>Ward</th>
 	<th>Class</th>
@@ -41,8 +48,11 @@
 				@endif
 			</td>
 			<td>
+					{{$bed_booking->patient_mrn }}
+			</td>
+			<td>
 					<a href='{{ URL::to('bed_bookings/'. $bed_booking->book_id . '/edit') }}'>
-						{{$bed_booking->patient_name}}
+						{{strtoupper($bed_booking->patient_name)}}
 					</a>
 			</td>
 			<td>

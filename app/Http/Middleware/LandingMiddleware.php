@@ -28,6 +28,10 @@ class LandingMiddleware
 				return redirect('/patient_lists');
 		} 		
 
+		if ($request->user()->can('module-diet')) {
+				return redirect('/diet_menus');
+		} 		
+
 		if ($request->user()->can('module-inventory')) {
 				return redirect('/products');
 		} 		
@@ -42,10 +46,6 @@ class LandingMiddleware
 
 		if ($request->user()->can('module-ward')) {
 				return redirect('/admissions');
-		} 		
-
-		if ($request->user()->can('module-diet')) {
-				return redirect('/diet_menus');
 		} 		
 
 		if ($request->user()->can('module-medical-record')) {

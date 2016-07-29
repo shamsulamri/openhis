@@ -8,14 +8,14 @@
 </ul>
 </h4>
 -->
-<h4>Define the encounter nature and billing information of the patient</h4>
 	<div class='page-header'>
-		<h4>Encounter</h4>
+		<h3>Encounter</h3>
 	</div>
 	<div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
         <label for='encounter_code' class='col-sm-2 control-label'>Encounter<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
 			{{ Form::select('encounter_code', $encounter_type, null, ['id'=>'encounter','class'=>'form-control','onchange'=>'checkTriage()']) }}
+				<small>Define the encounter nature of the patient</small>
             @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
         </div>
     </div>
@@ -24,13 +24,12 @@
         {{ Form::label('Triage', 'Triage',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::select('triage_code', $triage, null, ['id'=>'triage','class'=>'form-control','maxlength'=>'20']) }}
-			<br>
 			<small>For emergency cases only</small>
         </div>
     </div>
 
 	<div class='page-header'>
-		<h4>Billing Information</h4>
+		<h3>Billing Information</h3>
 	</div>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>

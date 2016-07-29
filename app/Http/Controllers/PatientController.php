@@ -25,6 +25,7 @@ use App\State;
 use App\PatientFlag;
 use App\PatientDependant;
 use App\Encounter;
+use App\EncounterHelper;
 
 class PatientController extends Controller
 {
@@ -103,36 +104,19 @@ class PatientController extends Controller
 							->orderBy('encounter_id')
 							->first();
 
-			/*
 			if (count($encounter)==0) $encounter_active=False;
-			if ($encounter) {
-					if ($encounter->admission==null && $encounter->queue==null) $encounter_completed=False;
+			if ($encounter_active) {
+					$encounter_completed = EncounterHelper::encounterComplete($encounter->encounter_id);
 			}
 			
 			if (!$encounter_completed) {
 					Encounter::find($encounter->encounter_id)->delete();
 					$encounter_active=false;
 			}
-			 */
-			
-			$patients = $this->getDependants($id);
-
-			for ($i=0;$i<3;$i++) {
-					foreach ($patients as $x) {
-							$patients = $patients->merge($this->getDependants($x->id));
-							Log::info($patients);
-					}
-			}
-			$patients=$patients->except([$id]);
-			$patients = Patient::select('patient_name', 'patient_id', 'patient_mrn','patient_phone_home', 'patient_phone_mobile')
-					->whereIn('patient_id', $patients->unique())
-					->orderBy('patient_name')
-					->get();
 
 			return view('patients.view', [
 					'patient'=>$patient,
 					'patientOption'=>'',
-					'patients'=>$patients,
 					'encounter'=>$encounter,
 					'encounter_active'=>$patient->hasActiveEncounter(),
 					]);

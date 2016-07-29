@@ -9,7 +9,7 @@
 		</p>
 		</h4>
 		@endif
-		@if (isset($encounter))
+		@if (!empty($encounter->discharge))
 				@if (!$encounter->encounterPaid())
 				<h4 class='text-danger'>
 					<strong>

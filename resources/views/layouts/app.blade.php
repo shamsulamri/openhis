@@ -85,7 +85,7 @@
 								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
 								<li><a href="{{ url('/queues') }}">Queues</a></li>
 								<li><a href="{{ url('/admissions') }}">Admissions</a></li>
-								<li><a href="{{ url('/bed_bookings') }}">Bed Bookings</a></li>
+								<li><a href="{{ url('/bed_bookings?type=preadmission') }}">Preadmissions</a></li>
 							</ul>
 					</li>
 					@endcan

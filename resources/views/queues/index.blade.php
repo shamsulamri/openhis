@@ -23,6 +23,7 @@
 	<tr> 
     <th>Time</th> 
     <th>Patient</th>
+    <th>MRN</th>
     <th>Location</th>
 	<th></th>
 	</tr>
@@ -38,6 +39,9 @@
 					<a href='{{ URL::to('queues/'. $queue->queue_id . '/edit') }}'>
 						{{$queue->patient_name}}
 					</a>
+			</td>
+			<td>
+					{{$queue->patient_mrn}}
 			</td>
 			<td>
 					{{$queue->location_name}}

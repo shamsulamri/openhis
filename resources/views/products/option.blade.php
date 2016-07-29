@@ -14,7 +14,7 @@
 <br>
 <span class='glyphicon glyphicon-shopping-cart' aria-hidden='true'></span>
 @if ($product->product_stocked==1)
-<a href='{{ URL::to('stocks/'. $product->product_code) }}'>Stock Movements</a>
+<a href='{{ URL::to('stocks/'. $product->product_code.'/main') }}'>Stock Movements</a>
 @else
 Stock
 @endif
