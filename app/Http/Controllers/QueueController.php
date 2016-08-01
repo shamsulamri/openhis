@@ -13,6 +13,7 @@ use Session;
 use App\QueueLocation as Location;
 use App\Encounter;
 use Auth;
+use App\DojoUtility;
 
 class QueueController extends Controller
 {
@@ -45,6 +46,7 @@ class QueueController extends Controller
 					'locations' => Location::whereNotNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location' => $location,
 					'selectedLocation' => "",
+					'dojo'=>new DojoUtility(),
 			]);
 	}
 
@@ -164,6 +166,7 @@ class QueueController extends Controller
 					'location' => $location,
 					'search' => $request->search,
 					'selectedLocation' => $selectedLocation,
+					'dojo'=>new DojoUtility(),
 				]);
 	}
 

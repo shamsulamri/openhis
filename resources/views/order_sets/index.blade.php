@@ -1,6 +1,11 @@
 @extends('layouts.app2')
 
 @section('content')
+<style>
+.pagination {
+    font-size: 60%;
+}
+</style>
 <h3>Assets</h3>
 <br>
 @if (Session::has('message'))

@@ -1,7 +1,7 @@
 
     <div class='form-group  @if ($errors->has('bom_quantity')) has-error @endif'>
-        <label for='bom_quantity' class='col-sm-2 control-label'>Product Code</label>
-        <div class='col-sm-10'>
+        <label for='bom_quantity' class='col-sm-3 control-label'>Product Code</label>
+        <div class='col-sm-9'>
 			{{ Form::label('product_name', $bill_material->product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
@@ -18,7 +18,7 @@
 	</div>
 
     <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/bill_materials/index/{{ $bill_material->product_code }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>

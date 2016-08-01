@@ -57,117 +57,128 @@
         </div>
     </nav>
 	<div class='container'>
-		<h6>
-		<ul class='nav nav-pills'>
-					@can('module-support')
-					<li role="presentation"><a class='btn btn-default' href="{{ url('/order_queues') }}">
-							  <span class='glyphicon glyphicon-inbox'></span>&nbsp; Orders</a>
-					</li>
-					@endcan
-					@can('module-discharge')
-					<li role="presentation" class="dropdown">
-							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-home'></span>&nbsp; Discharges <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{{ url('/patients') }}">Patient List</a></li>
-								<li><a href="{{ url('/discharges') }}">Discharges</a></li>
-							</ul>
-					</li>
-					@endcan
-					@can('module-patient')
-					<li role="presentation" class="dropdown">
-							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patient <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{{ url('/patients') }}">Patient List</a></li>
-								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
-								<li><a href="{{ url('/queues') }}">Queues</a></li>
-								<li><a href="{{ url('/admissions') }}">Admissions</a></li>
-								<li><a href="{{ url('/bed_bookings?type=preadmission') }}">Preadmissions</a></li>
-							</ul>
-					</li>
-					@endcan
-					@can('module-consultation')
-					<li role="presentation"><a class='btn btn-default' href="/patient_lists">
-							  <span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a>
-					</li>
-					<li role="presentation"><a class='btn btn-default' href="/consultations">
-							  <span class='glyphicon glyphicon-comment'></span>&nbsp; Consultation List</a>
-					</li>
-					@endcan
-					@can('module-ward')
-					<li role="presentation" class="dropdown">
-							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-bed'></span>&nbsp; Ward <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{{ url('/admission_tasks') }}">Nurse Care Plan</a></li> 
-								<li><a href="{{ url('/admissions') }}">Admissions</a></li> 
-								<li><a href="{{ url('/bed_bookings') }}">Bed Bookings</a></li> 
-								<li role="separator" class="divider"></li>
-								<li><a href="{{ url('/patients') }}">Patients</a></li>
-								<li><a href="{{ url('/appointments') }}">Appointments</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="{{ url('/products') }}">Products</a></li>
-								<li><a href="{{ url('/loans/ward') }}">Loans</a></li>
-							</ul>
-					</li>
-					@endcan
-					@can('module-medical-record')
-					<li role="presentation" class="dropdown">
-							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-duplicate'></span>&nbsp; Medical Record <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{{ url('/patients') }}">Patient List</a></li>
-								<li><a href="{{ url('/loans?type=folder') }}">Loans</a></li>
-							</ul>
-					</li>
-					@endcan
-					@can('module-inventory')
-					<li role="presentation" class="dropdown">
-							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Inventory <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{{ url('/products') }}">Products</a></li>
-								<li><a href="{{ url('/purchase_orders') }}">Purchase Orders</a></li>
-								<li><a href="{{ url('/suppliers') }}">Suppliers</a></li>
-								<li><a href="{{ url('/stores') }}">Stores</a></li>
-								<li><a href="{{ url('/sets') }}">Order Sets</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="{{ url('/loans') }}">Loans</a></li>
-							</ul>
-					</li>
-					@endcan
-					@can('module-diet')
-					<li role="presentation" class="dropdown">
-							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							  <span class='glyphicon glyphicon-cutlery'></span>&nbsp;&nbsp; Diet &nbsp;&nbsp;<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{{ url('/diet_menus') }}">Diet Menus</a></li> 
-								<li><a href="{{ url('/diet_orders') }}">Diet Orders</a></li> 
-								<li><a href="{{ url('/diet_cooklist') }}">Diet Cooklist</a></li> 
-								<li><a href="{{ url('/diet_bom') }}">Diet Bill of Materials</a></li> 
-								<li><a href="{{ url('/diet_workorder') }}">Diet Work Order</a></li> 
-								<li><a href="{{ url('/diet_distribution') }}">Diet Distribution</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="{{ url('/diet_complains') }}">Diet Complains</a></li>
-								<li><a href="{{ url('/diet_wastages') }}">Diet Wastages</a></li>
-								<li><a href="{{ url('/diet_qualities') }}">Diet Qualities</a></li>
-							</ul>
-					</li>
-					@endcan
-					@can('system-administrator')
-					<li><a class='btn btn-default' href="{{ url('/maintenance') }}"><span class='glyphicon glyphicon-cog'></span>&nbsp; Maintenance</a></li>
-					@endcan
-		</ul>
-		</h6>
-
-    @yield('content')
+		<br>
+		<div class='row'>
+			<div class='col-md-3'>
+				<!--
+				<div align='center'>
+					<img src='/msu_logo.png'>
+				</div>
+				<br>
+				-->
+				@can('system-administrator')
+					<h4>System Administrator</h4>
+				<div class='list-group'>
+					<a class='list-group-item' href="{{ url('/maintenance') }}"><span class='glyphicon glyphicon-cog'></span>&nbsp; Maintenance</a>
+				</div>
+				@endcan
+				@can('system-administrator')
+						<h4>Patient</h4>
+				@endcan	
+				@can('module-patient')
+				<div class='list-group'>
+						<a class='list-group-item' href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a>
+						<a class='list-group-item' href="{{ url('/appointments') }}"><span class='glyphicon glyphicon-calendar'></span>&nbsp; Appointments</a>
+						<a class='list-group-item' href="{{ url('/queues') }}"><span class='glyphicon glyphicon-th-list'></span>&nbsp; Queues</a>
+						<a class='list-group-item' href="{{ url('/admissions') }}"><span class='glyphicon glyphicon-bed'></span>&nbsp; Admissions</a>
+						<a class='list-group-item' href="{{ url('/bed_bookings?type=preadmission') }}"><span class='glyphicon glyphicon-time'></span>&nbsp; Preadmissions</a></li>
+				</div>
+				@endcan
+				@can('system-administrator')
+						<h4>Consultation</h4>
+				@endcan	
+				@can('module-consultation')
+				<div class='list-group'>
+					<a class='list-group-item' href="/patient_lists"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a>
+					<a class='list-group-item' href="/consultations"><span class='glyphicon glyphicon-comment'></span>&nbsp; Consultation List</a>
+				</div>
+				@endcan
+				@can('system-administrator')
+						<h4>Diet</h4>
+				@endcan	
+				@can('module-diet')
+				<div class='list-group'>
+								<a class='list-group-item' href="{{ url('/diet_menus') }}"><span class='glyphicon glyphicon-cutlery'></span>&nbsp; Diet Menus</a>
+								<a class='list-group-item' href="{{ url('/diet_orders') }}"><span class='glyphicon glyphicon-asterisk'></span>&nbsp; Diet Orders</a>
+								<a class='list-group-item' href="{{ url('/diet_cooklist') }}"><span class='glyphicon glyphicon-file'></span>&nbsp; Diet Cooklist</a>
+								<a class='list-group-item' href="{{ url('/diet_bom') }}"><span class='glyphicon glyphicon-th-large'></span>&nbsp; Diet Bill of Materials</a>
+								<a class='list-group-item' href="{{ url('/diet_workorder') }}"><span class='glyphicon glyphicon-ok-sign'></span>&nbsp; Diet Work Order</a>
+								<a class='list-group-item' href="{{ url('/diet_distribution') }}"><span class='glyphicon glyphicon-random'></span>&nbsp; Diet Distribution</a>
+				</div>
+				<div class='list-group'>
+								<a class='list-group-item' href="{{ url('/diet_complains') }}"><span class='glyphicon glyphicon-thumbs-down'></span>&nbsp; Diet Complains</a>
+								<a class='list-group-item' href="{{ url('/diet_wastages') }}"><span class='glyphicon glyphicon-trash'></span>&nbsp; Diet Wastages</a>
+								<a class='list-group-item' href="{{ url('/diet_qualities') }}"><span class='glyphicon glyphicon-star'></span>&nbsp; Diet Qualities</a>
+				</div>
+				@endcan
+				@can('system-administrator')
+						<h4>Inventory</h4>
+				@endcan	
+				@can('module-inventory')
+				<div class='list-group'>
+								<a class='list-group-item' href="{{ url('/products') }}"><span class='glyphicon glyphicon-glass'></span>&nbsp; Products</a>
+								<a class='list-group-item' href="{{ url('/purchase_orders') }}"><span class='glyphicon glyphicon-briefcase'></span>&nbsp; Purchase Orders</a>
+								<a class='list-group-item' href="{{ url('/suppliers') }}"><span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Suppliers</a>
+								<a class='list-group-item' href="{{ url('/stores') }}"><span class='glyphicon glyphicon-lamp'></span>&nbsp; Stores</a>
+								<a class='list-group-item' href="{{ url('/sets') }}"><span class='glyphicon glyphicon-apple'></span>&nbsp; Order Sets</a>
+				</div>
+				<div class='list-group'>
+								<a class='list-group-item' href="{{ url('/loans') }}"><span class='glyphicon glyphicon-transfer'></span>&nbsp; Loans</a>
+				</div>
+				@endcan
+				@can('system-administrator')
+						<h4>Ward</h4>
+				@endcan	
+				@can('module-ward')
+				<div class='list-group'>
+								<a class='list-group-item' href="{{ url('/admissions') }}"><span class='glyphicon glyphicon-bed'></span>&nbsp; Admissions</a>
+								<a class='list-group-item' href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Admission Tasks</a>
+								<a class='list-group-item' href="{{ url('/bed_bookings') }}"><span class='glyphicon glyphicon-bookmark'></span>&nbsp; Bed Bookings</a>
+				</div>
+				<div class='list-group'>
+								<a class='list-group-item' href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patients</a>
+								<a class='list-group-item' href="{{ url('/appointments') }}"><span class='glyphicon glyphicon-calendar'></span>&nbsp; Appointments</a>
+				</div>
+				<div class='list-group'>
+								<a class='list-group-item' href="{{ url('/products') }}"><span class='glyphicon glyphicon-glass'></span>&nbsp; Products</a>
+								<a class='list-group-item' href="{{ url('/loans/ward') }}"><span class='glyphicon glyphicon-transfer'></span>&nbsp; Loans</a>
+				</div>
+				@endcan
+				@can('system-administrator')
+						<h4>Medical Record</h4>
+				@endcan	
+				@can('module-medical-record')
+				<div class='list-group'>
+						<a class='list-group-item' href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a>
+						<a class='list-group-item' href="{{ url('/loans?type=folder') }}"><span class='glyphicon glyphicon-transfer'></span>&nbsp; Loans</a>
+				</div>
+				@endcan
+				@can('system-administrator')
+						<h4>Financial</h4>
+				@endcan	
+				@can('module-discharge')
+				<div class='list-group'>
+						<a class='list-group-item' href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a>
+						<a class='list-group-item' href="{{ url('/discharges') }}"><span class='glyphicon glyphicon-home'></span>&nbsp; Discharges</a>
+				</div>
+				@endcan
+				@can('system-administrator')
+						<h4>Support</h4>
+				@endcan	
+				@can('module-support')
+				<div class='list-group'>
+						<a class='list-group-item' href="{{ url('/order_queues') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Order Tasks</a>
+				</div>
+				@endcan
+			</div>
+			<div class='col-md-9'>
+				<div class='panel panel-default'>
+					<div class='panel-body fixed-panel'>
+						@yield('content')
+					</div>	
+				</div>	
+			</div>	
+		</div>	
 	</div>
 	<script type="text/javascript">
 		/*

@@ -9,8 +9,8 @@ New Patient Flag
 {{ Form::model($patient_flag, ['url'=>'patient_flags', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('flag_code')) has-error @endif'>
-        <label for='flag_code' class='col-sm-2 control-label'>flag_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='flag_code' class='col-sm-3 control-label'>flag_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('flag_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('flag_code')) <p class="help-block">{{ $errors->first('flag_code') }}</p> @endif
         </div>

@@ -15,24 +15,24 @@
 <br>
 
     <div class='form-group  @if ($errors->has('patient_cur_street_1')) has-error @endif'>
-        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_cur_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_cur_street_1')) <p class="help-block">{{ $errors->first('patient_cur_street_1') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('patient_cur_street_2')) has-error @endif'>
-        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_cur_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_cur_street_2')) <p class="help-block">{{ $errors->first('patient_cur_street_2') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('patient_cur_street_3')) has-error @endif'>
-        {{ Form::label('Street 3', 'Street 3',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 3', 'Street 3',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_cur_street_3', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_cur_street_3')) <p class="help-block">{{ $errors->first('patient_cur_street_3') }}</p> @endif
         </div>
@@ -139,8 +139,8 @@
 
 
     <div class='form-group  @if ($errors->has('patient_email')) has-error @endif'>
-        {{ Form::label('Email', 'Email',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Email', 'Email',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_email', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('patient_email')) <p class="help-block">{{ $errors->first('patient_email') }}</p> @endif
         </div>
@@ -149,24 +149,24 @@
 <br>
 <br>
     <div class='form-group  @if ($errors->has('patient_per_street_1')) has-error @endif'>
-        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_per_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_per_street_1')) <p class="help-block">{{ $errors->first('patient_per_street_1') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('patient_per_street_2')) has-error @endif'>
-        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_per_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_per_street_2')) <p class="help-block">{{ $errors->first('patient_per_street_2') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('patient_per_street_3')) has-error @endif'>
-        {{ Form::label('Street 3', 'Street 3',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 3', 'Street 3',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_per_street_3', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_per_street_3')) <p class="help-block">{{ $errors->first('patient_per_street_3') }}</p> @endif
         </div>
@@ -223,7 +223,7 @@
 
 
 	<div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>

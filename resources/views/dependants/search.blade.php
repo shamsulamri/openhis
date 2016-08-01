@@ -28,7 +28,7 @@
 @foreach ($patients as $patient)
 	<tr>
 			<td>
-						{{$patient->patient_name}}
+					{{ strtoupper($patient->patient_name) }}
 			</td>
 			<td>
 					{{$patient->patient_new_ic}}

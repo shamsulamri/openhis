@@ -11,7 +11,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 @if ($consultations->total()>0)
 <table class="table table-hover">
  <thead>
@@ -56,7 +55,7 @@
 					</a>
 			</td>
 			<td align='right'>
-					<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Edit Consultation</a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Edit</a>
 			</td>
 	</tr>
 @endforeach

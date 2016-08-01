@@ -2,6 +2,12 @@
 
 @section('content')
 @include('patients.id')
+<style>
+table, th, td {
+   	border: none;
+	border-bottom: none !important;
+}
+</style>
 <h1>
 @if ($moves==1)
 Admission Complete

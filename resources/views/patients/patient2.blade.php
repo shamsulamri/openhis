@@ -1,16 +1,16 @@
 
 
 	<div class='form-group  @if ($errors->has('patient_name')) has-error @endif'>
-        <label for='patient_name' class='col-sm-2 control-label'>Name<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='patient_name' class='col-sm-3 control-label'>Name<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('patient_name', null, ['class'=>'form-control input-lg','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('patient_name')) <p class="help-block">{{ $errors->first('patient_name') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('title_code')) has-error @endif'>
-        {{ Form::label('Title', 'Title',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Title', 'Title',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::select('title_code', $title,null, ['class'=>'form-control','maxlength'=>'10']) }}
             @if ($errors->has('title_code')) <p class="help-block">{{ $errors->first('title_code') }}</p> @endif
         </div>
@@ -140,8 +140,8 @@
 		<h4>Identifiation</h4>
 	</div>
 	<div class='form-group  @if ($errors->has('patient_is_unknown')) has-error @endif'>
-		<label for='unkown' class='col-sm-2 control-label'></label>
-        <div class='col-sm-10'>
+		<label for='unkown' class='col-sm-3 control-label'></label>
+        <div class='col-sm-9'>
             {{ Form::checkbox('patient_is_unknown', '1') }} <strong>Patient cannot be identified</strong>
             @if ($errors->has('patient_is_unknown')) <p class="help-block">{{ $errors->first('patient_is_unknown') }}</p> @endif
         </div>
@@ -264,8 +264,8 @@
 	</div>
 
     <div class='form-group  @if ($errors->has('patient_email')) has-error @endif'>
-        {{ Form::label('Email', 'Email',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Email', 'Email',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_email', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('patient_email')) <p class="help-block">{{ $errors->first('patient_email') }}</p> @endif
         </div>
@@ -275,16 +275,16 @@
 		<h4>Current Address</h4>
 	</div>
     <div class='form-group  @if ($errors->has('patient_cur_street_1')) has-error @endif'>
-        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_cur_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_cur_street_1')) <p class="help-block">{{ $errors->first('patient_cur_street_1') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('patient_cur_street_2')) has-error @endif'>
-        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_cur_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_cur_street_2')) <p class="help-block">{{ $errors->first('patient_cur_street_2') }}</p> @endif
         </div>
@@ -337,16 +337,16 @@
 		<h4>Permanent Address</h4>
 	</div>
     <div class='form-group  @if ($errors->has('patient_per_street_1')) has-error @endif'>
-        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_per_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_per_street_1')) <p class="help-block">{{ $errors->first('patient_per_street_1') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('patient_per_street_2')) has-error @endif'>
-        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_per_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_per_street_2')) <p class="help-block">{{ $errors->first('patient_per_street_2') }}</p> @endif
         </div>
@@ -400,16 +400,16 @@
 
     <div class='form-group'>
 	<div class='form-group  @if ($errors->has('patient_name')) has-error @endif'>
-        <label for='patient_name' class='col-sm-2 control-label'>Name<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='patient_name' class='col-sm-3 control-label'>Name<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('patient_name', null, ['class'=>'form-control input-lg','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('patient_name')) <p class="help-block">{{ $errors->first('patient_name') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('title_code')) has-error @endif'>
-        {{ Form::label('Title', 'Title',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Title', 'Title',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::select('title_code', $title,null, ['class'=>'form-control','maxlength'=>'10']) }}
             @if ($errors->has('title_code')) <p class="help-block">{{ $errors->first('title_code') }}</p> @endif
         </div>
@@ -539,8 +539,8 @@
 		<h4>Identifiation</h4>
 	</div>
 	<div class='form-group  @if ($errors->has('patient_is_unknown')) has-error @endif'>
-		<label for='unkown' class='col-sm-2 control-label'></label>
-        <div class='col-sm-10'>
+		<label for='unkown' class='col-sm-3 control-label'></label>
+        <div class='col-sm-9'>
             {{ Form::checkbox('patient_is_unknown', '1') }} <strong>Patient cannot be identified</strong>
             @if ($errors->has('patient_is_unknown')) <p class="help-block">{{ $errors->first('patient_is_unknown') }}</p> @endif
         </div>
@@ -663,8 +663,8 @@
 	</div>
 
     <div class='form-group  @if ($errors->has('patient_email')) has-error @endif'>
-        {{ Form::label('Email', 'Email',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Email', 'Email',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_email', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('patient_email')) <p class="help-block">{{ $errors->first('patient_email') }}</p> @endif
         </div>
@@ -674,16 +674,16 @@
 		<h4>Current Address</h4>
 	</div>
     <div class='form-group  @if ($errors->has('patient_cur_street_1')) has-error @endif'>
-        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_cur_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_cur_street_1')) <p class="help-block">{{ $errors->first('patient_cur_street_1') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('patient_cur_street_2')) has-error @endif'>
-        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_cur_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_cur_street_2')) <p class="help-block">{{ $errors->first('patient_cur_street_2') }}</p> @endif
         </div>
@@ -736,16 +736,16 @@
 		<h4>Permanent Address</h4>
 	</div>
     <div class='form-group  @if ($errors->has('patient_per_street_1')) has-error @endif'>
-        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_per_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_per_street_1')) <p class="help-block">{{ $errors->first('patient_per_street_1') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('patient_per_street_2')) has-error @endif'>
-        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('patient_per_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('patient_per_street_2')) <p class="help-block">{{ $errors->first('patient_per_street_2') }}</p> @endif
         </div>
@@ -798,7 +798,7 @@
 	</div>
 
     <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>

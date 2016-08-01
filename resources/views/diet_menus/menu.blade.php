@@ -1,15 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+th {
+   text-align: center;
+}
+</style>
 <h1>Diet Menu</h1>
 <br>
 <form class='form-inline' action='/diet_menus' name='myform' method='post'>
 	<label>Diet&nbsp;</label>
 	{{ Form::select('diet_code', $diets, $diet_code, ['class'=>'form-control','onchange'=>'reload()']) }}
-	<!--
-	<label>Class&nbsp;</label>
-	{{ Form::select('class_code', $diet_classes, $class_code, ['class'=>'form-control']) }}
-	-->
 	<label>Week&nbsp;</label>
 	{{ Form::select('weekOfMonth', $weeks, $weekOfMonth, ['class'=>'form-control','onchange'=>'reload()']) }}
 	<label>Day&nbsp;</label>

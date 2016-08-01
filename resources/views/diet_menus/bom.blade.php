@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+table, th, td {
+   border: none;
+}
+th {
+   text-align: center;
+}
+</style>
 <h1>Bill of Materials</h1>
 <br>
 <form class='form-inline' action='/diet_bom' method='post' name='myform'>
@@ -27,7 +35,11 @@
 		<?php $count=$dietHelper->cooklist('normal',$class->class_code, $product->period_code, $product->product_code); ?>
 		<?php $total+=$count; ?>
 		@endforeach
-		<td>{{ $total }}</td>
+		<td>
+			<div align='center'>
+				{{ $total }}
+			</div>
+		</td>
 		<?php $boms =$dietHelper->bom($product->product_code) ?> 
 		<td>
 		<table width='100%'>
@@ -36,13 +48,15 @@
 			<td>
 			{{ $bom->product->product_name }}
 			</td>
-			<td align='right'>
+			<td>
+			<div align='right'>
 			{{ $bom->bom_quantity*$total }}
 			@if (!empty($bom->product->unitMeasure->unit_shortname))
 			{{ $bom->product->unitMeasure->unit_shortname }}
 			@else
 			unit
 			@endif
+			</div>
 			</td>
 		</tr>
 		@endforeach	

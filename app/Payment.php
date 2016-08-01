@@ -39,6 +39,11 @@ class Payment extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function method()
+	{
+			return $this->belongsTo('App\PaymentMethod', 'payment_code');
+	}
+
 	public function encounter()
 	{
 			return $this->belongsTo('App\Encounter','encounter_id');

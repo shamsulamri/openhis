@@ -8,17 +8,14 @@
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <div class='row'>
-	<div class='col-md-3'>
-		<div class='list-group'>
-			<a class='list-group-item' href="/products/{{ $product->product_code }}/option">Back</a>
-		</div>
+	<div class='col-md-4'>
 		<div class='list-group'>
 		@foreach ($stores as $s)
 		<a class='list-group-item @if ($s->store_code==$store_code) {!! 'active' !!} @endif' href="/stocks/{{ $product->product_code }}/{{ $s->store_code }}">{{ $s->store_name }}<span class='badge'>{{ $stockHelper->getStockCount($product->product_code, $s->store_code) }}</span></a>
 		@endforeach
 		</div>
 	</div>
-	<div class='col-md-9'>
+	<div class='col-md-8'>
 
 		@if (!empty($store_code))
 		<a href='/stocks/create/{{ $product->product_code }}/{{ $store_code }}' class='btn btn-primary'>Create</a>

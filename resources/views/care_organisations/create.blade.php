@@ -9,8 +9,8 @@ New Care Organisation
 {{ Form::model($care_organisation, ['url'=>'care_organisations', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('organisation_code')) has-error @endif'>
-        <label for='organisation_code' class='col-sm-2 control-label'>organisation_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='organisation_code' class='col-sm-3 control-label'>organisation_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('organisation_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('organisation_code')) <p class="help-block">{{ $errors->first('organisation_code') }}</p> @endif
         </div>

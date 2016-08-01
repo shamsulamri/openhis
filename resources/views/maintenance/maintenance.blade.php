@@ -9,7 +9,7 @@
 				<a href="{{ url('/patients') }}">Patients</a><br>
 				<a href="{{ url('/encounters') }}">Encounters</a><br>
 				<a href="{{ url('/queues') }}">Location Queues</a><br>
-				<a href="{{ url('/order_queues') }}">Order Queues</a><br>
+				<a href="{{ url('/order_queues') }}">Order Tasks</a><br>
 				<a href="{{ url('/bills') }}">Bills</a><br>
 				<a href="{{ url('/payments') }}">Payments</a><br>
 				<a href="{{ url('/deposits') }}">Deposits</a><br>
@@ -104,7 +104,7 @@
 			<div class="col-xs-6">
 				<a href="{{ url('/admissions') }}">Admissions</a><br>
 				<a href="{{ url('/bed_bookings') }}">Bed Bookings</a><br>
-				<a href="{{ url('/admission_tasks') }}">Nurse Care Plan</a><br>
+				<a href="{{ url('/admission_tasks') }}">Admission Tasks</a><br>
 			</div>
 			<div class="col-xs-6">
 			<small>

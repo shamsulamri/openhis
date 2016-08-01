@@ -72,9 +72,10 @@ class Admission extends Model
 			return $this->hasMany('App\BedMovement', 'admission_id'); 
 	}
 
-	public function hasOpenConsultation($patientId)
+	public function hasOpenConsultation($patientId, $encounter_id)
 	{
 			$consultation = Consultation::where('patient_id','=',$patientId)
+					->where('encounter_id',$encounter_id)
 					->where('consultation_status',1)
 					->get();
 			

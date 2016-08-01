@@ -12,7 +12,7 @@
 {{ Form::model($admission, ['url'=>'admissions', 'class'=>'form-horizontal']) }} 
 	@include('admissions.admission')
     <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>

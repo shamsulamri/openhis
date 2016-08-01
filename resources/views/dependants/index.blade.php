@@ -20,7 +20,7 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('dependants/'. $dependant->patient_id . '/edit?patient_id='.$patient_id) }}'>
-						{{$dependant->patient_name}}
+						{{ strtoupper($dependant->patient_name) }}
 					</a>
 			</td>
 			<td>

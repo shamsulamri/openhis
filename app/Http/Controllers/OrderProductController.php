@@ -154,6 +154,7 @@ class OrderProductController extends Controller
 			} else {
 				$order_products = DB::table('products')
 					->where('product_name','like','%'.$request->search.'%')
+					->where('product_sold','1')
 					->orWhere('product_code', 'like','%'.$request->search.'%')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);

@@ -9,8 +9,8 @@ New Queue Location
 {{ Form::model($queue_location, ['url'=>'queue_locations', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('location_code')) has-error @endif'>
-        <label for='location_code' class='col-sm-2 control-label'>location_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='location_code' class='col-sm-3 control-label'>location_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('location_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20.0']) }}
             @if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
         </div>

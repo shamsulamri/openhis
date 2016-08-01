@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\QueueLocation;
+use Carbon\Carbon;
 
 class OrderQueueController extends Controller
 {
@@ -89,6 +90,8 @@ class OrderQueueController extends Controller
 					->leftjoin('beds as l', 'l.bed_code', '=', 'i.bed_code')
 					->leftjoin('queues as j', 'j.encounter_id', '=', 'c.encounter_id')
 					->leftjoin('queue_locations as k', 'k.location_code', '=', 'j.location_code')
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'a.order_id')
+					->where('investigation_date','<=', Carbon::today())
 					->where('a.location_code','=',$location_code)
 					->whereNull('cancel_id')
 					->where('order_completed', '=', 0)

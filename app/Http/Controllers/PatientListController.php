@@ -13,6 +13,7 @@ use Session;
 use App\QueueLocation as Location;
 use Auth;
 use App\Admission;
+use App\DojoUtility;
 
 class PatientListController extends Controller
 {
@@ -62,6 +63,7 @@ class PatientListController extends Controller
 					'location' => $location,
 					'inpatients' => $inpatients,
 					'admission' => new Admission(),
+					'dojo' => new DojoUtility(),
 			]);
 	}
 

@@ -151,8 +151,11 @@ class DependantController extends Controller
 	public function search(Request $request)
 	{
 			$patients = DB::table('patients')
-					->where('patient_name','like','%'.$request->search.'%')
-					->orWhere('patient_id', 'like','%'.$request->search.'%')
+					->where('patient_id','<>',$request->patient_id)
+					->where(function ($query) use ($request) {
+							$query->where('patient_name','like','%'.$request->search.'%')
+								  ->orWhere('patient_id', 'like','%'.$request->search.'%');
+					})
 					->orderBy('patient_name')
 					->paginate($this->paginateValue);
 

@@ -9,8 +9,8 @@ New Religion
 {{ Form::model($religion, ['url'=>'religions', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('religion_code')) has-error @endif'>
-        <label for='religion_code' class='col-sm-2 control-label'>religion_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='religion_code' class='col-sm-3 control-label'>religion_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('religion_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('religion_code')) <p class="help-block">{{ $errors->first('religion_code') }}</p> @endif
         </div>

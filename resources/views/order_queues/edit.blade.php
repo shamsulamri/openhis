@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-Edit Order Queue
+Edit Queue Order
 </h1>
 
 include('common.errors')

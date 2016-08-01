@@ -9,8 +9,8 @@ New Loan Status
 {{ Form::model($loan_status, ['url'=>'loan_statuses', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('loan_code')) has-error @endif'>
-        <label for='loan_code' class='col-sm-2 control-label'>loan_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='loan_code' class='col-sm-3 control-label'>loan_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('loan_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('loan_code')) <p class="help-block">{{ $errors->first('loan_code') }}</p> @endif
         </div>

@@ -7,17 +7,19 @@ Delete Payment
 </h1>
 @include('common.errors')
 <br>
-<h3>
+<h4>
 Are you sure you want to delete the selected record ?
-{{ $payment->encounter_id }}
-{{ Form::open(['url'=>'payments/'.$payment->payment_id, 'class'=>'pull-right']) }}
+<br>
+<br>
+Method: {{ $payment->method->payment_name }} <br>
+Amount: {{ $payment->payment_amount }}
+{{ Form::open(['url'=>'payments/'.$payment->payment_id]) }}
 	{{ method_field('DELETE') }}
-	<!--
-	<a class="btn btn-default" href="/bills/{{ $payment->encounter_id }}" role="button">Cancel</a>
-	-->
+	<br>
+	<br>
 	<a class="btn btn-default" href="javascript:goBack()" role="button">Cancel</a>
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 
-</h3>
+</h4>
 @endsection

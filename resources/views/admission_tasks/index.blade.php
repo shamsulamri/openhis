@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Nurse Care Plan</h1>
+<h1>Admission Tasks</h1>
 <h3>{{ $ward->ward_name }}</h3>
 <br>
 <form class='form-inline' action='/admission_task/search' method='post'>

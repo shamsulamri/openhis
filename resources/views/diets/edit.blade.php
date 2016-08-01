@@ -9,8 +9,8 @@ Edit Diet
 {{ Form::model($diet, ['route'=>['diets.update',$diet->diet_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>
-        <label for='ward_code' class='col-sm-2 control-label'>diet_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='ward_code' class='col-sm-3 control-label'>diet_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::label('diet_code', $diet->diet_code, ['class'=>'control-label']) }}
         </div>
     </div>

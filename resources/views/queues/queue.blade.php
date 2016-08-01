@@ -17,8 +17,8 @@
 			</div>
 			@endforeach
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
-		<label for='location_code' class='col-sm-2 control-label'></label>
-        <div class='col-sm-10'>
+		<label for='location_code' class='col-sm-3 control-label'></label>
+        <div class='col-sm-9'>
             @if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
         </div>
     </div>

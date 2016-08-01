@@ -7,23 +7,23 @@
 		</div>
 	</div>
     <div class='form-group  @if ($errors->has('reason_code')) has-error @endif'>
-        <label for='reason_code' class='col-sm-2 control-label'>Reason<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='reason_code' class='col-sm-3 control-label'>Reason<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::select('reason_code', $reason,null, ['class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('reason_code')) <p class="help-block">{{ $errors->first('reason_code') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('maintain_description')) has-error @endif'>
-        {{ Form::label('description', 'Description',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('description', 'Description',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::textarea('maintain_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
             @if ($errors->has('maintain_description')) <p class="help-block">{{ $errors->first('maintain_description') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/product_maintenances/{{ $product->product_code }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>

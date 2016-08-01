@@ -36,6 +36,7 @@ class DischargeController extends Controller
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('ref_discharge_types as d', 'd.type_code','=','a.type_code')
 					->leftJoin('bills as e', 'e.encounter_id', '=', 'a.encounter_id')
+					->orderBy('discharge_id','desc')
 					->paginate($this->paginateValue);
 			return view('discharges.index', [
 					'discharges'=>$discharges

@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+th, td {
+   text-align: center;
+}
+</style>
 <h1>Diet Cooklist</h1>
 <br>
 <form class='form-inline' action='/diet_cooklist' method='post' name='myform'>
@@ -22,8 +27,8 @@
 	</tr>
 	@foreach ($menu_products as $product)
 	<tr>
-		<td>{{ $product->period_name }}</td>
-		<td width='15%'>{{ $product->product_name }}</td>
+		<td><div align='left'>{{ $product->period_name }}</div></td>
+		<td width='15%'><div align='left'>{{ $product->product_name }}</div></td>
 		<?php $total=0; ?>
 		@foreach ($diet_classes as $class)
 		<?php $count=$dietHelper->cooklist('normal',$class->class_code, $product->period_code, $product->product_code); ?>

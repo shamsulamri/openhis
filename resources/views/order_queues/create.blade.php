@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-New Order Queue
+New Queue Order
 </h1>
 @include('common.errors')
 <br>

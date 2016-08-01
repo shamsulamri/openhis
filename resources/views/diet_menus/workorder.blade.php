@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+table {
+   border: none;
+}
+th,td {
+   text-align: center;
+}
+</style>
 <h1>Diet Work Order</h1>
 <br>
 <form class='form-inline' action='/diet_workorder' name='myform' method='post'>
@@ -27,7 +35,9 @@
 		@foreach ($wards as $ward)
 		<tr>
 			<td>	
+			<div align='left'>
 			{{ $ward->ward_name }}
+			</div>
 			</td>
 				<?php $total=0; ?>
 				@foreach ($diet_classes as $class)

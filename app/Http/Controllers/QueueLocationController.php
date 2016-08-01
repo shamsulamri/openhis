@@ -141,8 +141,8 @@ class QueueLocationController extends Controller
 
 			Session::flash('message', 'This terminal has been set to '.$location->location_name);
 			return redirect('/queue_locations')
-				->withCookie(cookie('queue_location',$id, 2628000))
-				->withCookie(\Cookie::forget('ward'));
+				->withCookie(cookie('queue_location',$id, 2628000));
+				//->withCookie(\Cookie::forget('ward'));
 	}
 
 	public function getLocation(Request $request)

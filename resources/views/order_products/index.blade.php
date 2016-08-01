@@ -12,20 +12,25 @@
 @else
 	<br>
 @endif
-<form action='/order_product/search' method='post'>
+<form class='form-inline' action='/order_product/search' method='post' id='form_search'>
 	<div class="row">
+
 			<div class="col-xs-12">
-            {{ Form::select('set_code', $sets,$set_value, ['class'=>'form-control','maxlength'=>'10']) }}
+			<div class='input-group'>
+					<input id='search' onkeypress='clearOrderSet()' type='text' class='form-control' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+				<span class='input-group-btn'>
+					<button class="btn btn-default" type="submit" value="Submit"><span class='glyphicon glyphicon-search'></span></button>
+				</span>
+			</div>
 			</div>
 	</div>
-	<br>
+	<br>	
 	<div class="row">
 			<div class="col-xs-12">
-				<input type='text' class='form-control' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+            {{ Form::select('set_code', $sets,$set_value, ['class'=>'form-control','maxlength'=>'10','onchange'=>'orderSet()','id'=>'orderset']) }}
 			</div>
 	</div>
 <br>
-	<button class="btn btn-default btn-xs" type="submit" value="Submit">Refresh</button>
 	<a href='/order_product/drug' class='btn btn-default btn-xs'>Drug History</a>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<input type='hidden' name='set_value' value="{{ $set_value }}">
@@ -100,5 +105,14 @@
 <script>
 	var frame = parent.document.getElementById('frameDetail');
 	frame.src = "/orders";
+
+	function orderSet() {
+			document.getElementById('search').value="";
+			document.forms['form_search'].submit();
+	}
+
+	function clearOrderSet() {
+			document.getElementById('orderset').selectedIndex=0;
+	}
 </script>
 @endsection

@@ -8,7 +8,7 @@
 	@include('queues.queue')
 	<br>
     <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/queues" role="button">Cancel</a>
             {{ Form::submit('Save', ['id'=>'save','class'=>'btn btn-primary']) }}
         </div>

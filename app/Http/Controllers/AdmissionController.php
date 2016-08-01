@@ -50,7 +50,7 @@ class AdmissionController extends Controller
 					$ward = Ward::where('ward_code', $ward_code)->first();
 			} 
 
-			$selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','d.consultation_id','a.encounter_id','a.user_id','e.discharge_id', 
+			$selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','a.encounter_id','a.user_id','e.discharge_id', 
 					'f.discharge_id as ward_discharge',
 					'a.created_at',
 					'arrival_id',	
@@ -67,7 +67,6 @@ class AdmissionController extends Controller
 					->select($selectFields)
 					->leftJoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
-					->leftJoin('consultations as d', 'd.encounter_id','=', 'a.encounter_id')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'a.encounter_id')
 					->leftJoin('ward_discharges as f', 'f.encounter_id','=', 'a.encounter_id')
 					->leftJoin('ward_arrivals as g', 'g.encounter_id', '=', 'a.encounter_id')
@@ -280,6 +279,7 @@ class AdmissionController extends Controller
 					'ward' => $request->ward,
 					'search'=>$request->search,
 					'setWard'=>$setWard,
+					'dojo' => new DojoUtility(),
 			]);
 	}
 

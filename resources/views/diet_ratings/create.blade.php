@@ -9,8 +9,8 @@ New Diet Rating
 {{ Form::model($diet_rating, ['url'=>'diet_ratings', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('rate_code')) has-error @endif'>
-        <label for='rate_code' class='col-sm-2 control-label'>rate_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='rate_code' class='col-sm-3 control-label'>rate_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('rate_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20.0']) }}
             @if ($errors->has('rate_code')) <p class="help-block">{{ $errors->first('rate_code') }}</p> @endif
         </div>

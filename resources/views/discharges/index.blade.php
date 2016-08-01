@@ -11,7 +11,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/discharges/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -39,7 +38,7 @@
 					-->
 			</td>
 			<td>
-					{{$discharge->patient_name}}
+					{{ strtoupper($discharge->patient_name) }}
 			</td>
 			<td>
 					{{$discharge->type_name}}

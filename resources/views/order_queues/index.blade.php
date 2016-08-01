@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Order Queue</h1>
+<h1>Order Tasks</h1>
 <!--
 <form action='/order_queue/search' method='post'>
 	{{ Form::select('locations', $locations, $location, ['class'=>'form-control input-lg','maxlength'=>'10']) }}
@@ -10,7 +10,7 @@
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 </form>
 -->
-<h2>{{ $location->location_name }}</h2>
+<h3>{{ $location->location_name }}</h3>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
@@ -22,7 +22,7 @@
     <th>Date</th>
     <th>MRN</th>
     <th>Patient</th>
-    <th>Encounter</th>
+    <th>Source</th>
 	<th></th>
 	</tr>
   </thead>
@@ -41,7 +41,7 @@
 					{{$order->patient_name}}
 			</td>
 			<td>
-					{{ $order->encounter_name }} ({{ $order->location_name }}{{ $order->bed_name }})
+					{{ $order->location_name }}{{ $order->bed_name }}
 			</td>
 			<td align='right'>
 					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}' class='btn btn-primary btn-xs'>

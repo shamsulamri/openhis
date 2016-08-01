@@ -2,6 +2,12 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+table, th, td {
+   	border: none;
+	border-bottom: none !important;
+}
+</style>
 @include('patients.id')
 @if ($appointment_id == null)
 <h1>Appointment</h1>

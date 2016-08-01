@@ -9,8 +9,8 @@ Edit Triage
 {{ Form::model($triage, ['route'=>['triages.update',$triage->triage_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>
-        <label for='ward_code' class='col-sm-2 control-label'>triage_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='ward_code' class='col-sm-3 control-label'>triage_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::label('triage_code', $triage->triage_code, ['class'=>'control-label']) }}
         </div>
     </div>

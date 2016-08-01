@@ -7,7 +7,7 @@
 {{ Form::model($encounter, ['url'=>'encounters', 'class'=>'form-horizontal']) }} 
 	@include('encounters.encounter')
     <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
             {{ Form::submit('Next', ['class'=>'btn btn-primary']) }}
         </div>

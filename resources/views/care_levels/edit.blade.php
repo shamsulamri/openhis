@@ -9,8 +9,8 @@ Edit Care Level
 {{ Form::model($care_level, ['route'=>['care_levels.update',$care_level->care_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>
-        <label for='ward_code' class='col-sm-2 control-label'>care_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='ward_code' class='col-sm-3 control-label'>care_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::label('care_code', $care_level->care_code, ['class'=>'control-label']) }}
         </div>
     </div>

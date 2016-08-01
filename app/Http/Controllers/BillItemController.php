@@ -15,6 +15,7 @@ use App\Product;
 use App\QueueLocation as Location;
 use App\Encounter;
 use App\DojoUtility;
+use Carbon\Carbon;
 
 class BillItemController extends Controller
 {
@@ -43,6 +44,7 @@ class BillItemController extends Controller
 						->where('encounter_id','=',$id)
 						->get();
 
+			Log::info($beds);
 			foreach ($beds as $bed) {
 					$bed_los = $bed->los;
 					if ($bed_los<=0) $bed_los=1;
@@ -76,7 +78,9 @@ class BillItemController extends Controller
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->leftjoin('order_cancellations as d', 'd.order_id', '=','a.order_id')
+					->leftjoin('order_investigations as e', 'e.order_id', '=', 'a.order_id')
 					->where('encounter_id','=', $id)
+					->where('investigation_date','<=', Carbon::today())
 					->whereNull('cancel_id')
 					->groupBy('a.product_code')
 					->orderBy('encounter_id')
@@ -121,7 +125,7 @@ class BillItemController extends Controller
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
-					->orderBy('a.product_code')
+					->orderBy('product_name')
 					->paginate($this->paginateValue);
 
 
@@ -134,7 +138,7 @@ class BillItemController extends Controller
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
-					->orderBy('a.product_code')
+					->orderBy('product_name')
 					->paginate($this->paginateValue);
 			}
 

@@ -9,8 +9,8 @@ Edit Store
 {{ Form::model($store, ['route'=>['stores.update',$store->store_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>
-        <label for='ward_code' class='col-sm-2 control-label'>store_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='ward_code' class='col-sm-3 control-label'>store_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::label('store_code', $store->store_code, ['class'=>'control-label']) }}
         </div>
     </div>

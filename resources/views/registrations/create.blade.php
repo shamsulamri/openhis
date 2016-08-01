@@ -8,8 +8,8 @@ New Registration
 <br>
 {{ Form::model($registration, ['url'=>'registrations', 'class'=>'form-horizontal']) }} 
     <div class='form-group'>
-        {{ Form::label('registration_code', 'registration_code',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('registration_code', 'registration_code',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::text('registration_code', null, ['class'=>'form-control','placeholder'=>'']) }}
         </div>
     </div>

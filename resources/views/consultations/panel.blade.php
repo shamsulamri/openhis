@@ -31,8 +31,9 @@
 </div>
 @endif
 
+
 <div class="btn-group" role="group" aria-label="...">
-    <a class="btn btn-success" href="/consultations/progress/{{ $consultation->consultation_id }}" role="button">Progress Notes</a>
+    <a class="btn btn-success" href="/consultations/progress/{{ $consultation->consultation_id }}" role="button">Progress</a>
 </div>
 <div class="btn-group" role="group" aria-label="...">
 	<a href="/consultations/{{ $consultation->consultation_id }}/edit" class="btn btn-primary">Clincal Notes</a>
@@ -40,20 +41,16 @@
 	<a href="/consultation_procedures" class="btn btn-primary">Procedures</a>
 	<a href="/orders/make" class="btn btn-primary">Orders</a>
 </div>
-<div class="btn-group" role="group" aria-label="...">
-	<a href="/medical_alerts" class="btn btn-default" title='Medical Alerts'>Medical Alerts</a>
-	@if ($consultation->encounter->encounter_code=='inpatient')
-	<a href="/diet" class='btn btn-default'>Dietary</a>
-	@endif
-	<a href="/medical_certificates/create" class='btn btn-default'>Medical Certificate</a>
-</div>
 
-<div class="dropdown pull-right">
+
+<div class="btn-group" role="group" aria-label="...">
+<div class="dropdown ">
   <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
     Discharge
     <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+	<li><a href="/medical_certificates/create">Medical Certificate</a></li>
     <li>
 		<a href="/consultations/close">Close</a>
 	</li>
@@ -65,6 +62,19 @@
 			<a href="/discharges/create" role="button">Clincal Discharge</a>
 		@endif
 	</li>
+  </ul>
+</div>
+</div>
+
+<div class="dropdown pull-right">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	<span class="glyphicon glyphicon-menu-hamburger"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+	<li><a href="/medical_alerts" title='Medical Alerts'>Medical Alerts</a></li>
+	@if ($consultation->encounter->encounter_code=='inpatient')
+	<li><a href="/diet">Dietary</a></li>
+	@endif
   </ul>
 </div>
 <br>

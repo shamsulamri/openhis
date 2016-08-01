@@ -1,48 +1,43 @@
 <div class='panel panel-default'>
 <div class='panel-heading'>
-<h4 class='panel-title'><strong>Inpatient</strong><h4>
+	<h3 class='panel-title'>Inpatient</h3>
 </div>
 <div class='panel-body'>
 @if (count($inpatients)>0)
 <table class="table table-hover">
- <thead>
-	<tr> 
-    <th>Date</th>
-    <th>MRN</th>
-    <th>Patient</th>
-    <th>Bed</th> 
-	<th></th>
-	</tr>
-  </thead>
-	<tbody>
 @foreach ($inpatients as $inpatient)
 	<?php $status='' ?>
-	@if ($admission->hasOpenConsultation($inpatient->patient_id)>0)
+	@if ($admission->hasOpenConsultation($inpatient->patient_id, $inpatient->encounter_id)>0)
 			<?php $status='warning' ?>
 	@endif
 	<tr class='{{ $status }}'>
-			<td width='15%'>
-					{{ date('d F, H:i', strtotime($inpatient->created_at)) }}
+			<td width='20%'>
+					{{ date('d F Y', strtotime($inpatient->created_at)) }}
+					<br>
+					<small>
+					<?php $ago =$dojo->diffForHumans($inpatient->created_at); ?> 
+					{{ $ago }}
+					</small>	
+			</td>
+			<td width='30%'>
+					{{ strtoupper($inpatient->patient_name) }}
+					<br>
+					<small>{{ $inpatient->patient_mrn }}</small>
 			</td>
 			<td>
-					{{ $inpatient->patient_mrn }}
-			</td>
-			<td>
-					{{ $inpatient->patient_name }}
-			</td>
-			<td>
-					{{ $inpatient->bed_name }} / {{ $inpatient->room_name }} / {{ $inpatient->ward_name }}
+					{{ $inpatient->bed_name }} / {{ $inpatient->room_name }} 
+					<br>
+					<small>{{ $inpatient->ward_name }}</small>
 			</td>
 			<td align='right'>
-				@if ($admission->hasOpenConsultation($inpatient->patient_id)==0)
-				<a class='btn btn-primary btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $inpatient->encounter_id) }}'>Start Consultation</a>
+				@if ($admission->hasOpenConsultation($inpatient->patient_id, $inpatient->encounter_id)==0)
+				<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $inpatient->encounter_id) }}'>&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;</a>
 				@else
-				<a class='btn btn-warning btn-xs' href='{{ URL::to('consultations/'. $admission->openConsultationId. '/edit') }}'>Resume Consultation</a>
+				<a class='btn btn-warning btn-xs' href='{{ URL::to('consultations/'. $admission->openConsultationId. '/edit') }}'>Resume</a>
 				@endif
 			</td>
 	</tr>
 @endforeach
-</tbody>
 </table>
 @else
 				<h4>

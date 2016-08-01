@@ -9,8 +9,8 @@ New Stock Movement
 {{ Form::model($stock_movement, ['url'=>'stock_movements', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('move_code')) has-error @endif'>
-        <label for='move_code' class='col-sm-2 control-label'>move_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='move_code' class='col-sm-3 control-label'>move_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('move_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('move_code')) <p class="help-block">{{ $errors->first('move_code') }}</p> @endif
         </div>

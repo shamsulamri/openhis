@@ -37,7 +37,9 @@
 			</td>
 			<td align='right'>
 					<a class='btn btn-default btn-xs' href='{{ URL::to('sets/'. $set->set_code) }}'>Asset</a>
+					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('sets/delete/'. $set->set_code) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

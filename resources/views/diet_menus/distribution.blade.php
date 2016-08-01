@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+table {
+   border: none;
+}
+th,td {
+   text-align: center;
+}
+</style>
 <h1>Diet Distribution</h1>
 <br>
 <form class='form-inline' action='/diet_distribution' method='post' name='myform'>
@@ -25,7 +33,11 @@
 	</tr>
 	@foreach ($menu_products as $product)
 	<tr>
-		<td width='15%'>{{ $product->product_name }}</td>
+		<td width='15%'>
+			<div align='left'>
+			{{ $product->product_name }}
+			</div>
+		</td>
 		<?php $total=0; ?>
 		@foreach ($wards as $ward)
 		<?php $count=$dietHelper->distribution($diet_code, $class_code, $product->period_code, $product->product_code, $ward->ward_code); ?>

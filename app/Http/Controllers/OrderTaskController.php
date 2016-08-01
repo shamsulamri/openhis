@@ -123,7 +123,7 @@ class OrderTaskController extends Controller
 	public function edit($id) 
 	{
 			$order_task = OrderTask::findOrFail($id);
-			$order_task->order_completed=1;
+
 			return view('order_tasks.edit', [
 					'order_task'=>$order_task,
 					'product' => $order_task->product,
@@ -150,7 +150,7 @@ class OrderTaskController extends Controller
 					$productController->updateTotalOnHand($order_task->product_code);
 					Session::flash('message', 'Record successfully updated.');
 					if ($request->user()->can('module-support')) {
-						return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->category->location_code);
+						return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->location_code);
 					} else {
 						return redirect('/admission_tasks');
 					}

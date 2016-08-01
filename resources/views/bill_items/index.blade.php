@@ -9,6 +9,7 @@ Final Bill
 Interim Bill
 @endif
 </h1>
+<br>
 @if ($bills->total()>0)
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
@@ -27,11 +28,11 @@ Interim Bill
  <thead>
 	<tr> 
     <th>Item</th> 
-    <th><div align='right'>Tax Code</div></th> 
-    <th><div align='right'>Tax Rate</div></th> 
-    <th><div align='right'>Quantity</div></th> 
+    <th><div align='right'>Tax</div></th> 
+    <th><div align='right'>Rate</div></th> 
+    <th><div align='right'>#</div></th> 
     <th><div align='right'>Unit Price</div></th> 
-    <th><div align='right'>Discount(%)</div></th> 
+    <th><div align='right'>Discount</div></th> 
     <th><div align='right'>Total</div></th> 
 	@can('system-administrator')	
 	<th></th>
@@ -55,16 +56,16 @@ Interim Bill
 							</a>
 							@endif
 					</td>
-					<td align='right' width='100'>
+					<td align='right' width='50'>
 							{{ $bill->tax_code }}
 					</td>
-					<td align='right' width='100'>
+					<td align='right' width='50'>
 							{{ str_replace('.00','',$bill->tax_rate) }}
 							<?php if ($bill->tax_rate) { ?>
 							%
 							<?php } ?>
 					</td>
-					<td align='right' width='80'>
+					<td align='right' width='50'>
 							{{$bill->bill_quantity}}
 					</td>
 					<td align='right' width='100'>
@@ -72,7 +73,7 @@ Interim Bill
 					</td>
 					<td align='right' width='100'>
 						<?php if ($bill->bill_discount>0) { ?>
-							{{ str_replace('.00','',number_format($bill->bill_discount,2)) }}
+							{{ str_replace('.00','',number_format($bill->bill_discount,2)) }} %
 						<?php } ?>
 							<?php if ($bill->bill_exempted==1) { ?>
 								Exempted
@@ -116,7 +117,7 @@ Interim Bill
 		<table class='table table-condensed'>
 		 <thead>
 			<tr> 
-			<th>GST Summary</th> 
+			<th>GST</th> 
 			<th><div align='right'>Amount (RM)</div></th> 
 			<th><div align='right'>GST (RM)</div></th> 
 			</tr>
@@ -152,7 +153,7 @@ Interim Bill
 </h4>
 @if ($payments->total()>0)
 <br>
-<table class="table table-hover">
+<table class="table table-condensed">
 	<tbody>
 @foreach ($payments as $payment)
 	<tr>
@@ -172,11 +173,11 @@ Interim Bill
 			<td align='right' width='100'>
 					{{ number_format($payment->payment_amount,2) }}
 			</td>
+			@if (!$billPosted)
 			<td align='right' width='80'>
-				@if (!$billPosted)
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('payments/delete/'. $payment->payment_id) }}'>Delete</a>
-				@endif
 			</td>
+			@endif
 	</tr>
 @endforeach
 	<tr>
@@ -190,8 +191,10 @@ Interim Bill
 			<td align='right'>
 					<strong>{{number_format($payment_total,2)}}<strong>
 			</td>
+			@if (!$billPosted)
 			<td align='right'>
 			</td>
+			@endif
 	</tr>
 </tbody>
 </table>
@@ -217,8 +220,10 @@ Interim Bill
 			<td align='right' width='100'>
 					<strong>{{number_format($deposit_total,2)}}<strong>
 			</td>
+			@if (!$billPosted)
 			<td width='90'>
 			</td>
+			@endif
 	</tr>
 	@if ($payment_total+$deposit_total-$bill_grand_total<0)
 	<tr>
@@ -232,8 +237,10 @@ Interim Bill
 			<td align='right' width='100'>
 					<strong>{{number_format($payment_total+$deposit_total-$bill_grand_total,2)}}<strong>
 			</td>
+			@if (!$billPosted)
 			<td width='90'>
 			</td>
+			@endif
 	</tr>
 	@else
 	<tr>
@@ -247,8 +254,10 @@ Interim Bill
 			<td align='right' width='100'>
 					<strong>{{number_format($payment_total+$deposit_total-$bill_grand_total,2)}}<strong>
 			</td>
+			@if (!$billPosted)
 			<td width='90'>
 			</td>
+			@endif
 	</tr>
 	@endif
 </table>
@@ -263,7 +272,7 @@ Interim Bill
 @if (!$billPosted)
 {{ Form::model($bill, ['id'=>'post_form','url'=>'bills', 'class'=>'form-horizontal']) }} 
 			<input type='checkbox' id='post_checkbox' value='1' onchange='javascript:enablePostButton()'>
-			<strong>I have confirmed that all the information above are correct. Warning this process cannot be reversed.</strong>
+			<strong>I have confirmed that all the information above are correct.</strong>
             {{ Form::hidden('encounter_id', null, ['id'=>'encounter_id','class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_grand_total', $bill_grand_total, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_payment_total', $payment_total, ['class'=>'form-control','placeholder'=>'',]) }}
@@ -271,6 +280,8 @@ Interim Bill
             {{ Form::hidden('bill_outstanding', $bill_outstanding, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_change', $bill_change, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::submit('Post Payment', ['class'=>'btn btn-primary','id'=>'button_post']) }}
+			<br>
+			<br>
 {{ Form::close() }}
 @else
 <div class='alert alert-success'>

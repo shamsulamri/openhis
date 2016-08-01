@@ -21,12 +21,13 @@
  <thead>
 	<tr> 
     <th>Date</th>
-    <th>MRN</th>
     <th>Patient</th>
     <th>Ward</th>
 	<th>Class</th>
 	<th>Bed</th>
+	@can('module-ward')
 	<th><div align='right'>Vacant</div></th>
+	@endcan
 	<th></th>
 	</tr>
   </thead>
@@ -48,12 +49,13 @@
 				@endif
 			</td>
 			<td>
-					{{$bed_booking->patient_mrn }}
-			</td>
-			<td>
 					<a href='{{ URL::to('bed_bookings/'. $bed_booking->book_id . '/edit') }}'>
 						{{strtoupper($bed_booking->patient_name)}}
 					</a>
+					<br>
+					<small>
+					{{$bed_booking->patient_mrn }}
+					</small>
 			</td>
 			<td>
 					{{$bed_booking->ward_name }}
@@ -64,9 +66,11 @@
 			<td>
 					{{$bed_booking->bed_name }}
 			</td>
+			@can('module-ward')
 			<td align='right'>
 					{{ $bedVacant }}
 			</td>
+			@endcan
 			<td align='right'>
 					
 					@can('module-ward')

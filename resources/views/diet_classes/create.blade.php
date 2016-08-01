@@ -9,8 +9,8 @@ New Diet Class
 {{ Form::model($diet_class, ['url'=>'diet_classes', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('class_code')) has-error @endif'>
-        <label for='class_code' class='col-sm-2 control-label'>class_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='class_code' class='col-sm-3 control-label'>class_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('class_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20.0']) }}
             @if ($errors->has('class_code')) <p class="help-block">{{ $errors->first('class_code') }}</p> @endif
         </div>

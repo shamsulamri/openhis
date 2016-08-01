@@ -9,8 +9,8 @@ New Urgency
 {{ Form::model($urgency, ['url'=>'urgencies', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('urgency_code')) has-error @endif'>
-        <label for='urgency_code' class='col-sm-2 control-label'>urgency_code<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
+        <label for='urgency_code' class='col-sm-3 control-label'>urgency_code<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
             {{ Form::text('urgency_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('urgency_code')) <p class="help-block">{{ $errors->first('urgency_code') }}</p> @endif
         </div>

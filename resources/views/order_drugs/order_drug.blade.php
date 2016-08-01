@@ -2,7 +2,7 @@
 	<h3>{{ $product->product_name }}</h3>
 
     <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
 			@if (empty($order->product_code))
             <a class="btn btn-default" href="/order_products" role="button">Cancel</a>
 			@else
@@ -98,8 +98,8 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('order_quantity_request')) has-error @endif'>
-						{{ Form::label('order_quantity_request', 'Total Unit',['class'=>'col-sm-2 control-label']) }}
-						<div class='col-sm-10'>
+						{{ Form::label('order_quantity_request', 'Total Unit',['class'=>'col-sm-3 control-label']) }}
+						<div class='col-sm-9'>
 							{{ Form::text('order_quantity_request', $order->order_quantity_request, ['id'=>'total','class'=>'form-control input-sm','placeholder'=>'',]) }}
 							@if ($errors->has('order_quantity_request')) <p class="help-block">{{ $errors->first('order_quantity_request') }}</p> @endif
 						</div>
@@ -138,8 +138,8 @@
 	</div>
 
     <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
-        {{ Form::label('Description', 'Description',['class'=>'col-sm-2 control-label']) }}
-        <div class='col-sm-10'>
+        {{ Form::label('Description', 'Description',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
             {{ Form::textarea('order_description', $order->order_description, ['class'=>'form-control input-sm','placeholder'=>'','rows'=>'2']) }}
             @if ($errors->has('order_description')) <p class="help-block">{{ $errors->first('order_description') }}</p> @endif
         </div>
@@ -149,7 +149,7 @@
 
 
     <div class='form-group'>
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
 			@if (empty($order->product_code))
             <a class="btn btn-default" href="/order_products" role="button">Cancel</a>
 			@else

@@ -12,7 +12,7 @@
 
 <br>
 <br>
-<span class='glyphicon glyphicon-shopping-cart' aria-hidden='true'></span>
+<span class='glyphicon glyphicon-road' aria-hidden='true'></span>
 @if ($product->product_stocked==1)
 <a href='{{ URL::to('stocks/'. $product->product_code.'/main') }}'>Stock Movements</a>
 @else
@@ -21,7 +21,7 @@ Stock
 
 <br>
 <br>
-<span class='glyphicon glyphicon-list' aria-hidden='true'></span>
+<span class='glyphicon glyphicon-th-large' aria-hidden='true'></span>
 @if ($product->product_bom==1)
 <a href='{{ URL::to('bill_materials/'. $product->product_code) }}'>Bill of Materials</a>
 @else
@@ -40,7 +40,7 @@ Build Assembly
 
 <br>
 <br>
-<span class='glyphicon glyphicon-th' aria-hidden='true'></span>
+<span class='glyphicon glyphicon-fire' aria-hidden='true'></span>
 @if ($product->category_code=='assembly')
 <a href='{{ URL::to('explode_assembly/'. $product->product_code) }}'>Explode Assembly</a>
 @else
@@ -63,7 +63,7 @@ Drug Prescription
 
 <br>
 <br>
-<span class='glyphicon glyphicon-leaf' aria-hidden='true'></span>
+<span class='glyphicon glyphicon-transfer' aria-hidden='true'></span>
 <a href='{{ URL::to('loans/request/'. $product->product_code) }}'>Loan</a>
 </h4>
 @endsection

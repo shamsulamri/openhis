@@ -23,7 +23,6 @@
 	<tr> 
     <th>Time</th> 
     <th>Patient</th>
-    <th>MRN</th>
     <th>Location</th>
 	<th></th>
 	</tr>
@@ -31,17 +30,21 @@
 	<tbody>
 @foreach ($queues as $queue)
 	<tr>
-			<td width='20%'>
+			<td>
 					{{ date('d F Y, H:i', strtotime($queue->created_at)) }}
+					<br>
+					<small>
+					<?php $ago =$dojo->diffForHumans($queue->created_at); ?> 
+					{{ $ago }}
+					</small>	
 			</td>
 			<td>
 
 					<a href='{{ URL::to('queues/'. $queue->queue_id . '/edit') }}'>
-						{{$queue->patient_name}}
+						{{strtoupper($queue->patient_name)}}
 					</a>
-			</td>
-			<td>
-					{{$queue->patient_mrn}}
+					<br>
+					<small>{{$queue->patient_mrn}}</small>
 			</td>
 			<td>
 					{{$queue->location_name}}

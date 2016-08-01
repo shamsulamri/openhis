@@ -14,14 +14,14 @@
 		</div>
 @endif
 <div class='row'>
-	<div class='col-md-3'>
+	<div class='col-md-4'>
 		<div class='list-group'>
 		@foreach ($wards2 as $ward2)
 		<a class='list-group-item @if ($ward2->ward_code==$ward_code) {!! 'active' !!} @endif' href="/admission_beds/{{ $admission->admission_id }}/{{ $ward2->ward_code }}">{{ $ward2->ward_name }}</a>
 		@endforeach
 		</div>
 	</div>
-	<div class='col-md-9'>
+	<div class='col-md-8'>
 <form action='/admission_bed/search' method='post'>
 	@can('module-patient')
     <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>

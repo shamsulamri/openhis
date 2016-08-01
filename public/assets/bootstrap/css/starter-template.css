@@ -1,5 +1,6 @@
 body {
 		padding-top: 60px;
+		background-color: #efefef;
 }
 .starter-template {
 		padding: 40px 15px;
@@ -17,14 +18,25 @@ body {
 }
 
 table, th, td {
-   font-size: medium;
+   border: none;
+	border-top: none !important;
+	border-bottom: 1pt solid;
+	border-bottom-color: #efefef;
 }
 
 th {
-		background-color: #efefef;
+		background-color: #e5e5e5;
+		border-bottom: none !important;
+}
+
+.fixed-panel {
+		min-height: 2000;
 }
 
 /*
+h1 {
+	color: #008a5f;
+}
 input
 {
 		vertical-align:bottom;

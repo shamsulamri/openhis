@@ -32,7 +32,14 @@ class BedBookingController extends Controller
 	public function index(Request $request)
 	{
 			$is_preadmission = False;
-			if ($request->type=='preadmission') $is_preadmission = True;
+			if ($request->type=='preadmission') {
+					$is_preadmission = True;
+			} else {
+					if (empty($request->cookie('ward'))) {
+							Session::flash('message', 'Ward not set. Please select your ward.');
+							return redirect('/wards');
+					}
+			}
 
 			$bed_bookings = DB::table('bed_bookings as a')
 					->select(['d.ward_code', 'book_id', 'book_date', 'a.created_at', 'bed_name', 'a.admission_id','patient_mrn', 'patient_name', 'b.class_name', 'a.class_code','ward_name'])
