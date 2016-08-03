@@ -83,6 +83,9 @@
 						<a class='list-group-item' href="{{ url('/admissions') }}"><span class='glyphicon glyphicon-bed'></span>&nbsp; Admissions</a>
 						<a class='list-group-item' href="{{ url('/bed_bookings?type=preadmission') }}"><span class='glyphicon glyphicon-time'></span>&nbsp; Preadmissions</a></li>
 				</div>
+				<div class='list-group'>
+						<a class='list-group-item' href="{{ url('/beds') }}"><span class='glyphicon glyphicon-cog'></span>&nbsp; Beds </a></li>
+				</div>
 				@endcan
 				@can('system-administrator')
 						<h4>Consultation</h4>

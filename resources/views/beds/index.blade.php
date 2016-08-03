@@ -13,9 +13,11 @@
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 <br>
+@can('system-administrator')
 <a href='/beds/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
+@endcan
 @if ($beds->total()>0)
 <table class="table table-hover">
  <thead>
@@ -23,7 +25,9 @@
     <th>Name</th>
     <th>Ward</th> 
     <th>Patient</th> 
+	@can('system-administrator')
 	<th></th>
+	@endcan
 	</tr>
   </thead>
 	<tbody>
@@ -40,9 +44,11 @@
 			<td>
 					{{ $bedHelper->occupiedBy($bed->bed_code, $bed->ward_code) }}
 			</td>
+			@can('system-administrator')
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('beds/delete/'. $bed->bed_code) }}'>Delete</a>
 			</td>
+			@endcan
 	</tr>
 @endforeach
 @endif

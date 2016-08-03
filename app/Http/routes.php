@@ -67,6 +67,12 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/bed_booking/search', 'BedBookingController@search');
 		Route::get('/bed_bookings/delete/{id}', 'BedBookingController@delete');
 
+		Route::resource('beds', 'BedController');
+		Route::get('/beds/id/{id}', 'BedController@searchById');
+		Route::post('/bed/search', 'BedController@search');
+		Route::get('/bed/search', 'BedController@search');
+		Route::get('/beds/delete/{id}', 'BedController@delete');
+
 		Route::post('/order_task/status', 'OrderTaskController@status');
 		Route::get('/order_tasks/task/{consultation_id}/{location_code}', 'OrderTaskController@task');
 		Route::resource('order_tasks', 'OrderTaskController');
@@ -808,12 +814,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::post('/room/search', 'RoomController@search');
 				Route::get('/room/search', 'RoomController@search');
 				Route::get('/rooms/delete/{id}', 'RoomController@delete');
-
-				Route::resource('beds', 'BedController');
-				Route::get('/beds/id/{id}', 'BedController@searchById');
-				Route::post('/bed/search', 'BedController@search');
-				Route::get('/bed/search', 'BedController@search');
-				Route::get('/beds/delete/{id}', 'BedController@delete');
 
 				Route::resource('bed_statuses', 'BedStatusController');
 				Route::get('/bed_statuses/id/{id}', 'BedStatusController@searchById');
