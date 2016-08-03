@@ -17,7 +17,7 @@ use App\BedStatus;
 use App\Gender;
 use App\Department;
 use App\EncounterType;
-
+use App\BedHelper;
 
 class BedController extends Controller
 {
@@ -30,11 +30,17 @@ class BedController extends Controller
 
 	public function index()
 	{
-			$beds = DB::table('beds')
+			$beds = DB::table('beds as a')
+					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
+					->orderBy('ward_name')
 					->orderBy('bed_name')
 					->paginate($this->paginateValue);
+
 			return view('beds.index', [
-					'beds'=>$beds
+					'beds'=>$beds,
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => null,
+					'bedHelper' => new BedHelper(),
 			]);
 	}
 
@@ -129,15 +135,24 @@ class BedController extends Controller
 	
 	public function search(Request $request)
 	{
-			$beds = DB::table('beds')
-					->where('bed_name','like','%'.$request->search.'%')
-					->orWhere('bed_code', 'like','%'.$request->search.'%')
-					->orderBy('bed_name')
-					->paginate($this->paginateValue);
+			$beds = DB::table('beds as a')
+					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
+					->where('a.ward_code','like', '%'.$request->ward.'%')
+					->where(function ($query) use ($request) {
+							$query->where('bed_name','like','%'.$request->search.'%')
+								  ->orWhere('bed_code', 'like','%'.$request->search.'%');
+					});
+
+			$beds = $beds->orderBy('ward_name')
+						 ->orderBy('bed_name')
+						 ->paginate($this->paginateValue);
 
 			return view('beds.index', [
 					'beds'=>$beds,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => $request->ward,
+					'bedHelper' => new BedHelper(),
 					]);
 	}
 

@@ -8,10 +8,10 @@
 @can('module-patient')
 <br>
 <form action='/admission/search' method='post'>
-	<!--
+	@can('module-patient')
 	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
 	<br>
-	-->
+	@endcan
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<br>
 	<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>

@@ -264,8 +264,13 @@ class AdmissionController extends Controller
 					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
 					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
 					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
-					->where('patient_name','like', '%'.$request->search.'%')
-					->where('h.ward_code','like', '%'.$request->ward.'%')
+					->where('patient_name','like', '%'.$request->search.'%');
+					
+			if (!empty($request->ward)) {
+					$admissions = $admissions->where('h.ward_code','=', $request->ward);
+			}
+
+			$admissions = $admissions
 					->whereNull('f.encounter_id')
 					->groupBy('b.encounter_id')
 					->orderBy('patient_name')

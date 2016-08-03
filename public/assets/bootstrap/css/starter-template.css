@@ -18,7 +18,7 @@ body {
 }
 
 table, th, td {
-   border: none;
+	border: none;
 	border-top: none !important;
 	border-bottom: 1pt solid;
 	border-bottom-color: #efefef;
