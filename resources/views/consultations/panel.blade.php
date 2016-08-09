@@ -74,7 +74,10 @@
 	<li><a href="/medical_alerts" title='Medical Alerts'>Medical Alerts</a></li>
 	@if ($consultation->encounter->encounter_code=='inpatient')
 	<li><a href="/diet">Dietary</a></li>
+	<li><a href="/obstetric">Obstetric History</a></li>
+	<li><a href="/newborns">Newborns</a></li>
 	@endif
   </ul>
 </div>
+<br>
 <br>

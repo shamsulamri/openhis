@@ -74,6 +74,16 @@ class DojoUtility
 				return date('d/m/Y H:i', strtotime(Carbon::now())); 
 		}
 
+		public static function today()
+		{
+				return date('d/m/Y', strtotime(Carbon::now())); 
+		}
+
+		public static function timenow()
+		{
+				return date('H:i', strtotime(Carbon::now())); 
+		}
+
 		public static function diffForHumans($date) 
 		{
 				return Carbon::createFromTimeStamp(strtotime($date))->diffForHumans();

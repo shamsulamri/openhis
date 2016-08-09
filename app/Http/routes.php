@@ -45,6 +45,9 @@ Route::group(['middleware' => 'web'], function () {
 				});
 		});
 
+		Route::get('/obstetric', 'ObstetricController@history');
+		Route::post('/obstetric', 'ObstetricController@update');
+
 		Route::get('/queue_locations/set/{id}', 'QueueLocationController@setLocation');
 		Route::get('/queue_locations/get', 'QueueLocationController@getLocation');
 		Route::resource('queue_locations', 'QueueLocationController');

@@ -72,11 +72,7 @@ class PatientController extends Controller
 			$valid = $patient->validate($request->all(), "demography");
 			if ($valid->passes()) {
 					$patient->save();
-					$mrn = "MSU".str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
-					$patient->patient_mrn = $mrn;
-					$patient->save();
 					Session::flash('message', 'Record successfully created.');
-					//return redirect('/patients/'.$patient->patient_id.'/edit?tab=demography');
 					return redirect('/patients/'.$patient->patient_id);
 			} else {
 					return redirect('/patients/create')
@@ -97,28 +93,11 @@ class PatientController extends Controller
 	public function show($id)
 	{
 			$patient = Patient::findOrFail($id);
-			
-			$encounter_active=True;
-			$encounter_completed=True;
-			$encounter = Encounter::where('patient_id', $id)
-							->orderBy('encounter_id')
-							->first();
-
-			if (count($encounter)==0) $encounter_active=False;
-			if ($encounter_active) {
-					$encounter_completed = EncounterHelper::encounterComplete($encounter->encounter_id);
-			}
-			
-			if (!$encounter_completed) {
-					Encounter::find($encounter->encounter_id)->delete();
-					$encounter_active=false;
-			}
 
 			return view('patients.view', [
 					'patient'=>$patient,
 					'patientOption'=>'',
-					'encounter'=>$encounter,
-					'encounter_active'=>$patient->hasActiveEncounter(),
+					'encounter'=>$patient->hasActiveEncounter(),
 					]);
 	}
 

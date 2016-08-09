@@ -227,24 +227,44 @@ class Patient extends Model
 			$encounter_active=True;
 			$encounter_completed=True;
 			$encounter = Encounter::where('patient_id', $this->patient_id)
-							->orderBy('encounter_id')
+							->orderBy('encounter_id','desc')
 							->first();
 
 			if ($encounter) {
-					if ($encounter->admission==null && $encounter->queue==null) $encounter_completed=False;
-					if ($encounter->discharge) {
+					Log::info("X");
+					if ($encounter->encounter_code=='inpatient' && $encounter->admission==null) $encounter_completed=False;
+					if ($encounter->encounter_code=='outpatient' && $encounter->queue==null) $encounter_completed=False;
+					if (!$encounter_completed) {
+							Log::info("Q");
+							//Encounter::find($encounter->encounter_id)->delete();
 							$encounter_active=False;
+					}
+					if ($encounter->discharge) {
+							if ($encounter->bill) {
+									Log::info($encounter->bill);
+									$encounter_active=False;
+							}
 					}
 			} else {
 				$encounter_active=False;
 			}
-
-			if (!$encounter_completed) {
-					Encounter::find($encounter->encounter_id)->delete();
-					$encounter_active=False;
-			}
 			
-			return $encounter_active;
+			if ($encounter_active) {
+					return $encounter;
+			} else { 
+					return null;
+			}
 	}
 
+	public static function boot()
+	{
+			parent::boot();
+
+			static::created(function($patient)
+			{
+					$mrn = "MSU".str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
+					$patient->patient_mrn = $mrn;
+					$patient->save();
+			});
+	}
 }

@@ -9,7 +9,7 @@
 <br>
 <h4>
 					<span class='glyphicon glyphicon-flag' aria-hidden='true'></span>
-					@if ($encounter_active)
+					@if ($encounter)
 						@if ($encounter->admission)
 							Admitted at {{ $encounter->admission->bed->bed_name }} ({{ $encounter->admission->bed->ward->ward_name }})
 						@else
@@ -46,7 +46,7 @@
 				</a>
 				<br>
 				<br>
-				@if ($encounter_active)
+				@if ($encounter)
 					<span class='glyphicon glyphicon-usd' aria-hidden='true'></span>
 				<a href='{{ URL::to('deposits/index/'. $encounter->encounter_id ) }}'>
 						Deposit Collection						

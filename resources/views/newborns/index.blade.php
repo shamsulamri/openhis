@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.label')
-<h2>Newborn Registration</h2>
+@include('consultations.panel')
+<h1>Newborn Registration</h1>
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
@@ -14,7 +14,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Date</th>
+    <th>Birthdate</th>
+    <th>Name</th>
     <th>Delivery Mode</th> 
 	<th></th>
 	</tr>
@@ -26,6 +27,11 @@
 					<a href='{{ URL::to('newborns/'. $newborn->newborn_id . '/edit?consultation_id='.$consultation->consultation_id) }}'>
 						{{ date('d F, H:i', strtotime($newborn->created_at)) }}
 					</a>
+			</td>
+			<td>
+					{{$newborn->patient->patient_name }}
+					<br>
+					<small>{{$newborn->patient->patient_mrn }}</small>
 			</td>
 			<td>
 					{{$newborn->deliveryMode->delivery_name }}
