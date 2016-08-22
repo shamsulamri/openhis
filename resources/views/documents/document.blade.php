@@ -53,6 +53,22 @@
         </div>
     </div>
 
+
+    <div class='form-group  @if ($errors->has('document_location')) has-error @endif'>
+        {{ Form::label('attach_file', 'Attach File',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+		<input type='file' name='file' class='inputfile' id='file' onchange='readURL(this);'>
+        </div>
+    </div>
+
+	@if (!empty($document->document_file))
+	<div class='form-group'>
+        <div class='col-sm-9 col-sm-offset-3'>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('documents/file/'. $document->document_uuid) }}'>View attached file</a>
+		</div>
+	</div>
+	@endif
+	
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/documents?patient_mrn={{ $patient->patient_mrn }}" role="button">Cancel</a>
@@ -63,3 +79,4 @@
     </div>
 
 	{{ Form::hidden('patient_mrn', $patient->patient_mrn) }}
+	{{ Form::hidden('document_uuid', $document->document_uuid) }}

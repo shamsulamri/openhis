@@ -50,7 +50,7 @@ class BedController extends Controller
 			return view('beds.create', [
 					'bed' => $bed,
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
-					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'room' => Room::all()->sortBy('room_name')->lists('room_name', 'room_code')->prepend('',''),
 					'status' => BedStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
@@ -103,16 +103,16 @@ class BedController extends Controller
 			if ($valid->passes()) {
 					$bed->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/beds/id/'.$id);
+					return redirect('/beds');
 			} else {
 					return view('beds.edit', [
 							'bed'=>$bed,
-					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
-					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'room' => Room::all()->sortBy('room_name')->lists('room_name', 'room_code')->prepend('',''),
-					'status' => BedStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
-					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
-					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+							'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+							'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+							'room' => Room::all()->sortBy('room_name')->lists('room_name', 'room_code')->prepend('',''),
+							'status' => BedStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
+							'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
+							'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

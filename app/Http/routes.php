@@ -26,6 +26,15 @@
 Route::group(['middleware' => 'web'], function () {
 		Route::auth();
 
+		Route::get('/home', function() {
+				//return view('welcome');
+				if (Auth::check()) {
+					return redirect('/landing');
+				} else {
+					return redirect('/login');
+				}
+		});
+
 		Route::get('/', function() {
 				//return view('welcome');
 				if (Auth::check()) {
@@ -47,6 +56,24 @@ Route::group(['middleware' => 'web'], function () {
 
 		Route::get('/obstetric', 'ObstetricController@history');
 		Route::post('/obstetric', 'ObstetricController@update');
+
+		Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
+		Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
+		Route::post('password/reset','Auth\PasswordController@reset');
+		Route::get('/change_password', 'UserController@changePassword');
+		Route::post('/change_password', 'UserController@updatePassword');
+		
+		//Route::get('auth/logout', 'Auth\AuthCOntroller@getLogout');
+
+		Route::get('/user_profile', 'UserController@editProfile');
+		Route::put('/user_profile', 'UserController@updateProfile');
+
+		Route::resource('documents', 'DocumentController');
+		Route::get('/documents/id/{id}', 'DocumentController@searchById');
+		Route::post('/document/search', 'DocumentController@search');
+		Route::get('/document/search', 'DocumentController@search');
+		Route::get('/documents/delete/{id}', 'DocumentController@delete');
+		Route::get('/documents/file/{id}', 'DocumentController@file');
 
 		Route::get('/queue_locations/set/{id}', 'QueueLocationController@setLocation');
 		Route::get('/queue_locations/get', 'QueueLocationController@getLocation');
@@ -151,11 +178,14 @@ Route::group(['middleware' => 'web'], function () {
 
 		Route::group(['middleware' => 'medical_record'], function () {
 
+				/*
 				Route::resource('documents', 'DocumentController');
 				Route::get('/documents/id/{id}', 'DocumentController@searchById');
 				Route::post('/document/search', 'DocumentController@search');
 				Route::get('/document/search', 'DocumentController@search');
 				Route::get('/documents/delete/{id}', 'DocumentController@delete');
+				Route::get('/documents/file/{id}', 'DocumentController@file');
+				 */
 		});
 
 		Route::group(['middleware' => 'loan_function_middleware'], function () {
@@ -950,9 +980,9 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/user/search', 'UserController@search');
 				Route::get('/users/delete/{id}', 'UserController@delete');
 
+
 		});
 
-		Route::get('auth/logout', 'Auth\AuthCOntroller@getLogout');
 		
 });
 

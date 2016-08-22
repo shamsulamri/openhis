@@ -232,11 +232,11 @@ class Patient extends Model
 
 			if ($encounter) {
 					Log::info("X");
-					if ($encounter->encounter_code=='inpatient' && $encounter->admission==null) $encounter_completed=False;
+					if ($encounter->encounter_code=='inpatient' && $encounter->admission->bed==null) $encounter_completed=False;
 					if ($encounter->encounter_code=='outpatient' && $encounter->queue==null) $encounter_completed=False;
 					if (!$encounter_completed) {
 							Log::info("Q");
-							//Encounter::find($encounter->encounter_id)->delete();
+							Encounter::find($encounter->encounter_id)->delete();
 							$encounter_active=False;
 					}
 					if ($encounter->discharge) {

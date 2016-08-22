@@ -7,7 +7,7 @@ New Document
 </h1>
 @include('common.errors')
 <br>
-{{ Form::model($document, ['url'=>'documents', 'class'=>'form-horizontal']) }} 
+{{ Form::model($document, ['url'=>'documents', 'class'=>'form-horizontal','enctype'=>'multipart/form-data']) }} 
     
 	@include('documents.document')
 {{ Form::close() }}

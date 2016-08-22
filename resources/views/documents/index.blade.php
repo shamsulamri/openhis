@@ -1,7 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+@can('module-medical-record')
 @include('patients.id')
+@else
+@include('consultations.panel')
+@endcan
 <h1>Medical Record Documents</h1>
 <!--
 <br>
@@ -15,6 +19,7 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
+@can('module-medical-record')
 @if ($loan_flag)
 <a class="btn btn-default" href="/loans?type=folder" role="button">Return</a>
 @else
@@ -23,30 +28,29 @@
 <a href='/documents/create?patient_mrn={{ $patient->patient_mrn }}' class='btn btn-primary'>Create</a>
 <br>
 <br>
+@endcan
 @if ($documents->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Id</th> 
     <th>Document</th>
     <th>Description</th>
     <th>Status</th>
-	<th>Created At</th>
-	@can('module-medical-record')
+	<th>Date</th>
 	<th></th>
-	@endcan
 	</tr>
   </thead>
 	<tbody>
 @foreach ($documents as $document)
 	<tr>
 			<td>
-					{{$document->document_id}}
-			</td>
-			<td>
+					@can('module-medical-record')
 					<a href='{{ URL::to('documents/'. $document->document_id . '/edit') }}'>
 						{{$document->document->type_name}}
 					</a>
+					@else
+						{{$document->document->type_name}}
+					@endcan
 			</td>
 			<td>
 						{{$document->document_description}}
@@ -55,13 +59,16 @@
 						{{$document->status->status_name}}
 			</td>
 			<td>
-						{{ date('d F Y, H:i', strtotime($document->created_at )) }}
+						{{ date('d F Y', strtotime($document->created_at )) }}
 			</td>
-			@can('module-medical-record')
 			<td align='right'>
+				@if (!empty($document->document_file))
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $document->document_uuid) }}'>View File</a>
+				@endif
+				@can('module-medical-record')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('documents/delete/'. $document->document_id) }}'>Delete</a>
+				@endcan
 			</td>
-			@endcan
 	</tr>
 @endforeach
 @endif

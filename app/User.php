@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Validator;
 
 class User extends Authenticatable
 {
@@ -10,13 +11,36 @@ class User extends Authenticatable
 	protected $fillable = [
 				'name',
 				'username',
-				'password'
+				'password',
+				'email',
 				];
 	
 
     protected $hidden = [
 		        'password', 'remember_token',
 			    ];
+
+	public function validate($input, $method) {
+			$rules = [
+				'email'=>'required',
+				'name'=>'required',
+			];
+
+			
+        	if ($method=='PUT') {
+
+			} else {
+        	    $rules['email'] = 'email|unique:users';
+        	    $rules['username'] = 'required';
+        	}
+        
+			
+			$messages = [
+				'required' => 'This field is required'
+			];
+			
+			return validator::make($input, $rules ,$messages);
+	}
 
 	public function authorization()
 	{

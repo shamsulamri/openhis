@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -11,6 +12,9 @@ use Log;
 use DB;
 use Session;
 use App\UserAuthorization;
+use Auth;
+use Validator;
+
 
 class UserController extends Controller
 {
@@ -42,7 +46,7 @@ class UserController extends Controller
 			$user = new User();
 			return view('users.create', [
 					'user' => $user,
-				
+					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 					]);
 	}
 
@@ -73,6 +77,35 @@ class UserController extends Controller
 					]);
 	}
 
+	
+	public function editProfile() 
+	{
+			$user = Auth::user();
+			return view('users.profile', [
+					'user'=>$user,
+					]);
+	}
+
+	public function updateProfile(Request $request) 
+	{
+			$user = Auth::user();
+			$user->fill($request->input());
+
+
+			$valid = $user->validate($request->all(), $request->_method);	
+
+			if ($valid->passes()) {
+					$user->save();
+					Session::flash('message', 'Record successfully updated.');
+					return redirect('/user_profile');
+			} else {
+					return view('users.profile', [
+							'user'=>$user,
+							])
+							->withErrors($valid);			
+			}
+	}
+
 	public function update(Request $request, $id) 
 	{
 			$user = User::findOrFail($id);
@@ -88,7 +121,7 @@ class UserController extends Controller
 			} else {
 					return view('users.edit', [
 							'user'=>$user,
-				
+							'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 							])
 							->withErrors($valid);			
 			}
@@ -132,5 +165,51 @@ class UserController extends Controller
 			return view('users.index', [
 					'users'=>$users
 			]);
+	}
+
+	public function changePassword()
+	{
+			return view('users.change_password',[
+					'user'=>Auth::user(),
+			]);
+	}
+
+	public function updatePassword(Request $request)
+	{
+			$rules = array(
+				'current_password'	=> 'required',                        
+				'new_password'      => ['required',
+										'min:6',
+										'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%]).*$/',
+										]
+										,
+				'verify_password' 	=> 'required|same:new_password'           
+			);
+
+			$validator = Validator::make($request->all(), $rules);
+
+			if ($validator->fails()) {
+					return redirect('/change_password')
+							->withErrors($validator)
+							->withInput();
+			}
+
+			$errors = null;
+			$current_password = $request->current_password;
+			if (!Hash::check($request->current_password, Auth::user()->password)) {
+					$errors['current_password']= "Current password does not match.";
+			}
+
+			if (!$errors) {
+					$user= Auth::user();
+					$user->password = bcrypt($request->new_password);
+					$user->save();
+					Session::flash('message', 'Password changed successfully.');
+					return redirect('/change_password');
+			} else {
+					return redirect('/change_password')
+							->withErrors($errors)
+							->withInput();
+			}
 	}
 }

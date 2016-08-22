@@ -17,7 +17,9 @@
     <th>Birthdate</th>
     <th>Name</th>
     <th>Delivery Mode</th> 
+	@can('system-administrator')
 	<th></th>
+	@endcan
 	</tr>
   </thead>
 	<tbody>
@@ -36,9 +38,11 @@
 			<td>
 					{{$newborn->deliveryMode->delivery_name }}
 			</td>
+			@can('system-administrator')
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('newborns/delete/'. $newborn->newborn_id) }}'>Delete</a>
 			</td>
+			@endcan
 	</tr>
 @endforeach
 @endif

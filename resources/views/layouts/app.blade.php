@@ -47,8 +47,13 @@
 
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+								<li role='separator' class='divider'></li>
+                                <li><a href="{{ url('/user_profile') }}"><i class="fa fa-btn fa-sign-out"></i>User Profile</a></li>
+                                <li><a href="{{ url('/change_password') }}"><i class="fa fa-btn fa-sign-out"></i>Change Password</a></li>
                                 <li><a href="{{ url('/queue_locations') }}"><i class="fa fa-btn"></i>Set Location</a></li>
                                 <li><a href="{{ url('/wards') }}"><i class="fa fa-btn"></i>Set Ward</a></li>
+								<li role='separator' class='divider'></li>
+                                <li><a href="{{ url('/manual.pdf') }}">Manual</a></li>
                             </ul>
                         </li>
                     @endif
@@ -66,10 +71,21 @@
 				</div>
 				<br>
 				-->
+				<ul class='list-group'>
+					<li class='list-group-item'>
+							<h5>
+							<strong>
+							{{ Auth::user()->authorization->author_name }}
+							</strong>
+							</h5>
+							
+					</li>
+				</ul>
 				@can('system-administrator')
-					<h4>System Administrator</h4>
 				<div class='list-group'>
 					<a class='list-group-item' href="{{ url('/maintenance') }}"><span class='glyphicon glyphicon-cog'></span>&nbsp; Maintenance</a>
+					<a class='list-group-item' href="{{ url('/users') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Users</a>
+					<a class='list-group-item' href="{{ url('/user_authorizations') }}"><span class='glyphicon glyphicon-flag'></span>&nbsp; Authorizations</a>
 				</div>
 				@endcan
 				@can('system-administrator')
@@ -95,6 +111,20 @@
 					<a class='list-group-item' href="/patient_lists"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a>
 					<a class='list-group-item' href="/consultations"><span class='glyphicon glyphicon-comment'></span>&nbsp; Consultation List</a>
 				</div>
+				@if (!empty($consultation) && !empty($patient))
+				<div class='list-group'>
+					<a class='list-group-item' href="/medical_alerts"><span class='glyphicon glyphicon-exclamation-sign'></span>&nbsp; Medical Alerts</a>
+					<a class='list-group-item' href="/diet"><span class='glyphicon glyphicon-cutlery'></span>&nbsp; Diet</a>
+					@if ($patient->gender_code=='P')
+					<a class='list-group-item' href="/obstetric"><span class='glyphicon glyphicon-user'></span>&nbsp; Obstetric History</a>
+					<a class='list-group-item' href="/newborns"><span class='glyphicon glyphicon-baby-formula'></span>&nbsp; Newborn</a>
+					@endif
+					<a class='list-group-item' href="/medical_certificates/create"><span class='glyphicon glyphicon-credit-card'></span>&nbsp; Medical Certificate</a>
+				</div>
+				<div class='list-group'>
+					<a class='list-group-item' href="/documents?patient_mrn={{ $patient->patient_mrn }}"><span class='glyphicon glyphicon-folder-close'></span>&nbsp; Documents</a>
+				</div>
+				@endif
 				@endcan
 				@can('system-administrator')
 						<h4>Diet</h4>

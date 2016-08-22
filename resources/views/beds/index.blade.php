@@ -7,12 +7,12 @@
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<br>
 	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
+	<br>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 @can('system-administrator')
 <a href='/beds/create' class='btn btn-primary'>Create</a>
 <br>

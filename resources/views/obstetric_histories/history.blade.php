@@ -15,20 +15,29 @@
             @if ($errors->has('patient_gravida')) <p class="help-block">{{ $errors->first('patient_gravida') }}</p> @endif
         </div>
     </div>
-	<div class='form-group  @if ($errors->has('patient_parity')) has-error @endif'>
-        <label for='patient_parity' class='col-sm-2 control-label'>Parity</label>
-        <div class='col-sm-10'>
-            {{ Form::text('patient_parity', null, ['class'=>'form-control']) }}
-            @if ($errors->has('patient_parity')) <p class="help-block">{{ $errors->first('patient_parity') }}</p> @endif
-        </div>
-    </div>
-	<div class='form-group  @if ($errors->has('patient_parity_plus')) has-error @endif'>
-        <label for='patient_parity_plus' class='col-sm-2 control-label'>Parity Plus</label>
-        <div class='col-sm-10'>
-            {{ Form::text('patient_parity_plus', null, ['class'=>'form-control']) }}
-            @if ($errors->has('patient_parity_plus')) <p class="help-block">{{ $errors->first('patient_parity_plus') }}</p> @endif
-        </div>
-    </div>
+
+
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group  @if ($errors->has('patient_parity')) has-error @endif'>
+						<label for='patient_parity' class='col-sm-6 control-label'>Parity</label>
+						<div class='col-sm-6'>
+							{{ Form::text('patient_parity', null, ['class'=>'form-control']) }}
+							@if ($errors->has('patient_parity')) <p class="help-block">{{ $errors->first('patient_parity') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group  @if ($errors->has('patient_parity_plus')) has-error @endif'>
+						<label for='patient_parity_plus' class='col-sm-2 control-label'>+</label>
+						<div class='col-sm-6'>
+							{{ Form::text('patient_parity_plus', null, ['class'=>'form-control']) }}
+							@if ($errors->has('patient_parity_plus')) <p class="help-block">{{ $errors->first('patient_parity_plus') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
+
 	<div class='form-group  @if ($errors->has('patient_lnmp')) has-error @endif'>
         <label for='patient_lnmp' class='col-sm-2 control-label'>LNMP</label>
         <div class='col-sm-10'>

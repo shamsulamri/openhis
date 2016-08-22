@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Document;
+use App\Consultation;
 use Log;
 use DB;
 use Session;
@@ -39,10 +42,12 @@ class DocumentController extends Controller
 					$loan_flag=True;
 			}
 
+			$consultation = Consultation::find(Session::get('consultation_id'));
 			return view('documents.index', [
 					'documents'=>$documents,
 					'patient'=>$patient,
 					'loan_flag'=>$loan_flag,
+					'consultation'=>$consultation,
 			]);
 	}
 
@@ -51,6 +56,7 @@ class DocumentController extends Controller
 			$patient = Patient::where('patient_mrn', $request->patient_mrn)->first();
 			$document = new Document();
 			$document->document_status=1;
+			$document->document_uuid = Uuid::generate();
 			return view('documents.create', [
 					'document' => $document,
 					'document_type' => DocumentType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
@@ -66,9 +72,17 @@ class DocumentController extends Controller
 
 			if ($valid->passes()) {
 					$document = new Document($request->all());
-					$document->document_uuid = Uuid::generate();
+					//$document->document_uuid = Uuid::generate();
 					$document->document_id = $request->document_id;
+
+					$file = $request->file('file');
+					if ($file) {
+							$filename = $document->document_uuid;
+							$document->document_file = $filename;
+					}
+
 					$document->save();
+					$this->saveFile($document,$request->file('file'));
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/documents?patient_mrn='.$request->patient_mrn);
 			} else {
@@ -100,7 +114,14 @@ class DocumentController extends Controller
 			$valid = $document->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					$file = $request->file('file');
+					if ($file) {
+							$filename = $document->document_uuid;
+							$document->document_file = $filename;
+					}
 					$document->save();
+					Log::info($document);
+					$this->saveFile($document,$request->file('file'));
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/documents?patient_mrn='.$document->patient_mrn);
 			} else {
@@ -112,9 +133,20 @@ class DocumentController extends Controller
 			}
 	}
 	
+	public function saveFile($document, $file) {
+			Log::info($file);
+			if ($file) {
+					$filename = $document->patient->patient_mrn.'/'.$document->document_uuid;
+					Log::info($filename);
+					Storage::disk('local')->put($filename, File::get($file));
+			}
+	}
+	
 	public function delete($id)
 	{
 		$document = Document::findOrFail($id);
+		$filename = $document->patient->patient_mrn.'/'.$document->document_uuid;
+		Storage::delete($filename);
 		return view('documents.destroy', [
 			'document'=>$document
 			]);
@@ -122,9 +154,10 @@ class DocumentController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$document = Document::find($id);
 			Document::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/documents');
+			return redirect('/documents?patient_mrn='.$document->patient_mrn);
 	}
 	
 	public function search(Request $request)
@@ -150,5 +183,13 @@ class DocumentController extends Controller
 			return view('documents.index', [
 					'documents'=>$documents
 			]);
+	}
+
+	public function file($uuid)
+	{
+			$document = Document::where('document_uuid',$uuid)->first();
+			$filePath = storage_path('app')."/".$document->patient->patient_mrn."/".$document->document_uuid;	
+			$filename = $document->patient->patient_mrn."_".$document->document_uuid.".pdf";
+			return response()->download($filePath, $filename, ['Content-Type' => 'application/pdf']);
 	}
 }

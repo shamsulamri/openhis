@@ -36,15 +36,14 @@
     <a class="btn btn-success" href="/consultations/progress/{{ $consultation->consultation_id }}" role="button">Progress</a>
 </div>
 <div class="btn-group" role="group" aria-label="...">
-	<a href="/consultations/{{ $consultation->consultation_id }}/edit" class="btn btn-primary">Clincal Notes</a>
+	<a href="/consultations/{{ $consultation->consultation_id }}/edit" class="btn btn-primary">Clinical Notes</a>
 	<a href="/consultation_diagnoses" class="btn btn-primary">Diagnoses</a>
 	<a href="/consultation_procedures" class="btn btn-primary">Procedures</a>
 	<a href="/orders/make" class="btn btn-primary">Orders</a>
 </div>
 
 
-<div class="btn-group" role="group" aria-label="...">
-<div class="dropdown ">
+<div class="dropdown pull-right">
   <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
     Discharge
     <span class="caret"></span>
@@ -59,13 +58,13 @@
 		@if (!empty($consultation->encounter->discharge->discharge_id))
 			<a href="/discharges/{{ $consultation->encounter->discharge->discharge_id }}/edit" role="button">Discharge</a>
 		@else
-			<a href="/discharges/create" role="button">Clincal Discharge</a>
+			<a href="/discharges/create" role="button">Clinical Discharge</a>
 		@endif
 	</li>
   </ul>
 </div>
-</div>
 
+<!--
 <div class="dropdown pull-right">
   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 	<span class="glyphicon glyphicon-menu-hamburger"></span>
@@ -76,8 +75,10 @@
 	<li><a href="/diet">Dietary</a></li>
 	<li><a href="/obstetric">Obstetric History</a></li>
 	<li><a href="/newborns">Newborns</a></li>
+	<li><a href="/documents?patient_mrn={{ $patient->patient_mrn }}">Documents</a></li>
 	@endif
   </ul>
 </div>
+-->
 <br>
 <br>

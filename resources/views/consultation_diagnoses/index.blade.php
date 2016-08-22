@@ -3,16 +3,24 @@
 @section('content')
 @include('consultations.panel')
 <h1>Diagnoses</h1>
+<br>
 @include('common.notification')
 <a href='/consultation_diagnoses/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
 @if ($consultation_diagnoses->total()>0)
 <table class="table table-hover">
+ <thead>
+	<tr> 
+    <th>Date</th>
+    <th>Diagnosis</th> 
+	<th></th>
+	</tr>
+  </thead>
 	<tbody>
 @foreach ($consultation_diagnoses as $consultation_diagnosis)
 	<tr>
-			<td class='col-xs-2'>
+			<td class='col-xs-3'>
 					{{ date('d F Y', strtotime($consultation_diagnosis->created_at)) }}
 			</td>
 			<td>
