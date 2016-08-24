@@ -13,6 +13,7 @@ class User extends Authenticatable
 				'username',
 				'password',
 				'email',
+				'employee_id',
 				];
 	
 
@@ -22,18 +23,11 @@ class User extends Authenticatable
 
 	public function validate($input, $method) {
 			$rules = [
-				'email'=>'required',
+				'email'=>'email|required|unique:users',
 				'name'=>'required',
+				'username'=>'required|unique:users',
+				'employee_id'=>'required|unique:users',
 			];
-
-			
-        	if ($method=='PUT') {
-
-			} else {
-        	    $rules['email'] = 'email|unique:users';
-        	    $rules['username'] = 'required';
-        	}
-        
 			
 			$messages = [
 				'required' => 'This field is required'

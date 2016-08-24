@@ -65,6 +65,19 @@ return [
             'strict'    => false,
         ],
 
+        'mysql2' => [
+            'driver'    => 'mysql',
+            'host'      => '192.168.1.143',
+            'database'  => 'his_integration',
+            'username'  => 'root',
+            'password'  => 'inknor',
+			'port'		=> 3306, 
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+        ],
+
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', 'localhost'),

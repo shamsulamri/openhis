@@ -44,6 +44,14 @@ Route::group(['middleware' => 'web'], function () {
 				}
 		});
 
+		Route::resource('employees', 'EmployeeController');
+		Route::get('/employees/id/{id}', 'EmployeeController@searchById');
+		Route::post('/employee/search', 'EmployeeController@search');
+		Route::get('/employee/search', 'EmployeeController@search');
+		Route::get('/employees/delete/{id}', 'EmployeeController@delete');
+		Route::get('/employees/create_user/{id}', 'EmployeeController@createUser');
+		
+
 		Route::get('/unauthorized', function() {
 				return view('common.403');
 		});
@@ -54,6 +62,9 @@ Route::group(['middleware' => 'web'], function () {
 				});
 		});
 
+
+		Route::get('/integration', 'IntegrationController@test');
+		
 		Route::get('/obstetric', 'ObstetricController@history');
 		Route::post('/obstetric', 'ObstetricController@update');
 

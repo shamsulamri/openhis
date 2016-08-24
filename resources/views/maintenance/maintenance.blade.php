@@ -189,6 +189,7 @@
 			<div class="col-xs-6">
 				<a href="{{ url('/users') }}">Users</a><br>
 				<a href="{{ url('/user_authorizations') }}">Authorizations</a><br>
+				<a href="{{ url('/employees') }}">Employees</a><br>
 			</div>
 	</div>
 	</h5>

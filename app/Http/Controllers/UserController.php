@@ -58,6 +58,7 @@ class UserController extends Controller
 			if ($valid->passes()) {
 					$user = new User($request->all());
 					$user->id = $request->id;
+					$user->password = bcrypt($user->employee_id);
 					$user->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/users/id/'.$user->id);
@@ -163,7 +164,8 @@ class UserController extends Controller
 					->paginate($this->paginateValue);
 
 			return view('users.index', [
-					'users'=>$users
+					'users'=>$users,
+					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 			]);
 	}
 

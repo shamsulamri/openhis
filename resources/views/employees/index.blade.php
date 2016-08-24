@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>User Index</h1>
+<h1>Employee Index</h1>
 <br>
-<form action='/user/search' method='post'>
+<form action='/employee/search' method='post'>
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
@@ -11,36 +11,37 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<a href='/users/create' class='btn btn-primary'>Create</a>
-<a href='/employees' class='btn btn-default pull-right'>Grab Employees</a>
+<!--
+<a href='/employees/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
-@if ($users->total()>0)
+-->
+@if ($employees->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
     <th>Name</th>
-	<th>Username</th>
+    <th>IC/Passport</th>
     <th>Employee ID</th> 
     <th></th> 
 	</tr>
   </thead>
 	<tbody>
-@foreach ($users as $user)
+@foreach ($employees as $employee)
 	<tr>
 			<td>
-					<a href='{{ URL::to('users/'. $user->id . '/edit') }}'>
-						{{$user->name}}
+					<a href='{{ URL::to('employees/'. $employee->empid . '/edit') }}'>
+						{{$employee->name}}
 					</a>
 			</td>
 			<td>
-					{{$user->username}}
+					{{$employee->ic_passport}}
 			</td>
 			<td>
-					{{$user->employee_id}}
+					{{$employee->empid}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('users/delete/'. $user->id) }}'>Delete</a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('employees/create_user/'. $employee->empid) }}'>Create User</a>
 			</td>
 	</tr>
 @endforeach
@@ -48,13 +49,13 @@
 </tbody>
 </table>
 @if (isset($search)) 
-	{{ $users->appends(['search'=>$search])->render() }}
+	{{ $employees->appends(['search'=>$search])->render() }}
 	@else
-	{{ $users->render() }}
+	{{ $employees->render() }}
 @endif
 <br>
-@if ($users->total()>0)
-	{{ $users->total() }} records found.
+@if ($employees->total()>0)
+	{{ $employees->total() }} records found.
 @else
 	No record found.
 @endif
