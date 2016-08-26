@@ -2,9 +2,11 @@
 
 @section('content')
 @can('module-medical-record')
-@include('patients.id')
+		@include('patients.id')
 @else
-@include('consultations.panel')
+		@if ($consultation)
+		@include('consultations.panel')
+		@endif
 @endcan
 <h1>Medical Record Documents</h1>
 <!--

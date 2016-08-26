@@ -3,6 +3,7 @@
         <div class=" col-sm-10">
             <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+
         </div>
     </div>
 	<br>
@@ -127,6 +128,7 @@
 					</div>
 			</div>
 	</div>
+			<input type='file' name='file' class='inputfile' id='file'>
 
 	<div class='page-header'>
 		<h4>Identification</h4>

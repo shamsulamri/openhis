@@ -6,8 +6,15 @@
 @endif
 <div class='panel panel-default'>
 	<div class='panel-heading'>
+		<div class='row'>
+			<div class='col-md-6'>
 		<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
 		<h6>{{ $patient->patient_mrn }}</h6>
+			</div>
+			<div class='col-md-6'>
+xxx
+			</div>
+		</div>
 	</div>
 	<div class='panel-body'>
 @if (count($patient->alert)>0)

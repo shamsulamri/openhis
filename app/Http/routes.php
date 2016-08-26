@@ -51,6 +51,10 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/employees/delete/{id}', 'EmployeeController@delete');
 		Route::get('/employees/create_user/{id}', 'EmployeeController@createUser');
 		
+				Route::get('/patient/image/{id}', [
+						'uses'=>'PatientController@getImage',
+						'as'=>'patient.image'
+				]);
 
 		Route::get('/unauthorized', function() {
 				return view('common.403');
@@ -62,6 +66,20 @@ Route::group(['middleware' => 'web'], function () {
 				});
 		});
 
+		Route::get('test', function ()
+		{
+				$path = storage_path('app') . '/MSU000057/MSU000057';
+
+				if(!File::exists($path)) abort(404);
+
+				$file = File::get($path);
+				$type = File::mimeType($path);
+
+				$response = Response::make($file, 200);
+				$response->header("Content-Type", $type);
+
+				return $response;
+		});
 
 		Route::get('/integration', 'IntegrationController@test');
 		

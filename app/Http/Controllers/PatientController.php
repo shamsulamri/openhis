@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Patient;
@@ -132,6 +134,7 @@ class PatientController extends Controller
 			
 			$valid = $patient->validate($request->all());	
 			if ($valid->passes()) {
+					$this->saveImage($patient,$request->file('file'));
 					$patient->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/patients/'.$id);
@@ -218,5 +221,22 @@ class PatientController extends Controller
 					'patient'=>$patient,
 					'patients'=>$patients,
 					]);
+	}
+
+	public function saveImage($patient, $file) {
+			Log::info($file);
+			if ($file) {
+					$filename = $patient->patient_mrn.'/'.$file->getClientOriginalName();
+					$filename = $patient->patient_mrn.'/'.$patient->patient_mrn;
+					Storage::disk('local')->put($filename, File::get($file));
+			}
+	}
+
+	public function getImage($id)
+	{
+			$file = Storage::disk('local')->get($id.'/'.$id);
+			if ($file) Log::info("get image....");
+
+			return new Response($file, 200);
 	}
 }
