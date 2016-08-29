@@ -3,13 +3,16 @@
 @section('content')
 <h1>Bed List</h1>
 <br>
-<form action='/bed/search' method='post'>
+<form action='/bed/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<br>
-	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
-	<br>
+	<label>Ward</label>
+	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	<label>Class</label>
+	{{ Form::select('class_code', $class, $class_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	<button class="btn btn-default" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
+<br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
@@ -24,6 +27,7 @@
 	<tr> 
     <th>Name</th>
     <th>Ward</th> 
+    <th>Class</th> 
     <th>Patient</th> 
 	@can('system-administrator')
 	<th></th>
@@ -40,6 +44,9 @@
 			</td>
 			<td>
 					{{$bed->ward_name}}
+			</td>
+			<td>
+					{{$bed->class_name}}
 			</td>
 			<td>
 					{{ $bedHelper->occupiedBy($bed->bed_code, $bed->ward_code) }}

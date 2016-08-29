@@ -17,7 +17,7 @@
 	<div class='col-md-4'>
 		<div class='list-group'>
 		@foreach ($wards2 as $ward2)
-		<a class='list-group-item @if ($ward2->ward_code==$ward_code) {!! 'active' !!} @endif' href="/admission_beds/{{ $admission->admission_id }}/{{ $ward2->ward_code }}">{{ $ward2->ward_name }}</a>
+		<a class='list-group-item @if ($ward2->ward_code==$ward_code) {!! 'active' !!} @endif' href="/admission_beds/{{ $admission->admission_id }}/{{ $ward2->ward_code }}?flag={{ $flag }}">{{ $ward2->ward_name }}</a>
 		@endforeach
 		</div>
 	</div>

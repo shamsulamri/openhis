@@ -1,9 +1,11 @@
-
     <div class='form-group'>
-        <div class=" col-sm-10">
+        <div class=" col-sm-12">
             <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
 
+			<label class='btn btn-default pull-right'>
+					Upload Photo<input type='file' name='file' style='display: none;' id='file' onchange='readURL(this);'>
+			</label>
         </div>
     </div>
 	<br>
@@ -128,7 +130,6 @@
 					</div>
 			</div>
 	</div>
-			<input type='file' name='file' class='inputfile' id='file'>
 
 	<div class='page-header'>
 		<h4>Identification</h4>
@@ -408,6 +409,7 @@
 
 			</div>
 	</div>
+
 	<script>
 		$(function(){
 				$('#patient_birthdate').combodate({
@@ -429,4 +431,17 @@
 						customClass: 'select'
 				});    
 		});
+
+		function readURL(input) {
+			if (input.files && input.files[0]) {
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						$('#show_image')
+							.attr('src', e.target.result)
+							.width(70)
+							.heigt(90);
+					};
+					reader.readAsDataURL(input.files[0]);
+			}
+		}
 	</script>

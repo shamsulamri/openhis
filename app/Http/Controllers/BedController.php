@@ -32,6 +32,7 @@ class BedController extends Controller
 	{
 			$beds = DB::table('beds as a')
 					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
+					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
 					->orderBy('ward_name')
 					->orderBy('bed_name')
 					->paginate($this->paginateValue);
@@ -39,7 +40,9 @@ class BedController extends Controller
 			return view('beds.index', [
 					'beds'=>$beds,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'ward' => null,
+					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'ward_code' => null,
+					'class_code' => null,
 					'bedHelper' => new BedHelper(),
 			]);
 	}
@@ -50,7 +53,7 @@ class BedController extends Controller
 			return view('beds.create', [
 					'bed' => $bed,
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
-					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'room' => Room::all()->sortBy('room_name')->lists('room_name', 'room_code')->prepend('',''),
 					'status' => BedStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
@@ -137,7 +140,9 @@ class BedController extends Controller
 	{
 			$beds = DB::table('beds as a')
 					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
-					->where('a.ward_code','like', '%'.$request->ward.'%')
+					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
+					->where('a.ward_code','like', '%'.$request->ward_code.'%')
+					->where('a.class_code','like', '%'.$request->class_code.'%')
 					->where(function ($query) use ($request) {
 							$query->where('bed_name','like','%'.$request->search.'%')
 								  ->orWhere('bed_code', 'like','%'.$request->search.'%');
@@ -151,7 +156,9 @@ class BedController extends Controller
 					'beds'=>$beds,
 					'search'=>$request->search,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'ward' => $request->ward,
+					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'ward_code' => $request->ward_code,
+					'class_code' => $request->class_code,
 					'bedHelper' => new BedHelper(),
 					]);
 	}

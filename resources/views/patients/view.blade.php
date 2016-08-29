@@ -23,7 +23,7 @@
 				<br>
 				<br>
 					<span class='glyphicon glyphicon-user' aria-hidden='true'></span>
-				<a href='{{ URL::to('patients/'. $patient->patient_id).'/edit' }}'>
+				<a href='{{ URL::to('patients/'. $patient->patient_id).'/edit' }}' class='edit-link'>
 						Edit Patient 
 				</a>
 				<br>
@@ -83,4 +83,7 @@
 						{{ $patient->patient_Id }}Print Label
 				</a>
 </h4>
+<script>
+	$('.edit-link').focus();
+</script>
 @endsection

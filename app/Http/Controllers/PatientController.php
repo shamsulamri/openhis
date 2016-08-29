@@ -224,9 +224,7 @@ class PatientController extends Controller
 	}
 
 	public function saveImage($patient, $file) {
-			Log::info($file);
 			if ($file) {
-					$filename = $patient->patient_mrn.'/'.$file->getClientOriginalName();
 					$filename = $patient->patient_mrn.'/'.$patient->patient_mrn;
 					Storage::disk('local')->put($filename, File::get($file));
 			}
@@ -235,8 +233,8 @@ class PatientController extends Controller
 	public function getImage($id)
 	{
 			$file = Storage::disk('local')->get($id.'/'.$id);
-			if ($file) Log::info("get image....");
-
+			ob_end_clean();
 			return new Response($file, 200);
 	}
+
 }

@@ -22,10 +22,11 @@
 						@endif
 			</div>
 			<div class='col-md-2' align='right'>
-			@if (Storage::disk('local')->has($patient->patient_mrn.'/'.$patient->patient_mrn))	
-			<img id='show_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' class='img-thumbnail' with='100%' height='100%'>
+			@if (Storage::disk('local')->has('/'.$patient->patient_mrn.'/'.$patient->patient_mrn))	
+			<img id='show_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='90' width='70'>
+			@else
+					<img id='show_image' style='border:2px solid gray' height='80' width='60'>
 			@endif
-					<img src='/profile-img.png' style='border:2px solid gray' width='60'>
 			</div>
 		</div>
 </div>
