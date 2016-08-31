@@ -67,11 +67,11 @@ return [
 
         'mysql2' => [
             'driver'    => 'mysql',
-            'host'      => '192.168.1.143',
-            'database'  => 'his_integration',
-            'username'  => 'root',
-            'password'  => 'inknor',
-			'port'		=> 3306, 
+            'host'      => env('SISO_HOST','192.168.1.143'),
+            'database'  => env('SISO_DATABASE', 'his_integration'),
+            'username'  => env('SISO_USERNAME', 'root'),
+            'password'  => env('SISO_PASSWORD', 'inknor'),
+			'port'		=> env('SISO_PORT', 3306),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
