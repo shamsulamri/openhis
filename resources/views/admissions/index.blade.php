@@ -7,14 +7,15 @@
 @endcan
 @can('module-patient')
 <br>
-<form action='/admission/search' method='post'>
-	@can('module-patient')
-	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
-	<br>
-	@endcan
+<form action='/admission/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<br>
-	<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>
+	@can('module-patient')
+	<label>Ward</label>
+	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
+	<label>Type</label>
+	{{ Form::select('admission_code', $admission_type, $admission_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	@endcan
+	<button class="btn btn-default" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 @endcan

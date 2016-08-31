@@ -92,9 +92,11 @@ class AdmissionController extends Controller
 					'admissions'=>$admissions,
 					'user'=>Auth::user(),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 					'ward' => $ward, 
 					'setWard' => $setWard, 
 					'dojo' => new DojoUtility(),
+					'admission_code'=>null,
 			]);
 	}
 
@@ -263,11 +265,20 @@ class AdmissionController extends Controller
 					->leftJoin('beds as h', 'h.bed_code', '=', 'a.bed_code')
 					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
 					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
-					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
-					->where('patient_name','like', '%'.$request->search.'%');
+					->leftJoin('users as k', 'k.id', '=', 'a.user_id');
+
+			if (!empty($request->search)) {
+					$admissions = $admissions
+									->where('patient_name','like', '%'.$request->search.'%')
+									->orWhere('patient_mrn','like', '%'.$request->search.'%');
+			}
 					
 			if (!empty($request->ward)) {
 					$admissions = $admissions->where('h.ward_code','=', $request->ward);
+			}
+
+			if (!empty($request->admission_code)) {
+					$admissions = $admissions->where('admission_code','=', $request->admission_code);
 			}
 
 			$admissions = $admissions
@@ -282,9 +293,11 @@ class AdmissionController extends Controller
 					'user'=>Auth::user(),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward' => $request->ward,
+					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 					'search'=>$request->search,
 					'setWard'=>$setWard,
 					'dojo' => new DojoUtility(),
+					'admission_code'=>$request->admission_code,
 			]);
 	}
 

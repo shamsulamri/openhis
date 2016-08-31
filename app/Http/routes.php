@@ -228,7 +228,6 @@ Route::group(['middleware' => 'web'], function () {
 
 		Route::group(['middleware' => 'discharge'], function () {
 
-				Route::get('/discharges', 'DischargeController@index');
 
 				Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
 				Route::get('/payments/{id}', 'PaymentController@index');
@@ -255,6 +254,7 @@ Route::group(['middleware' => 'web'], function () {
 		});
 
 		Route::group(['middleware' => 'patient_list_middleware'], function () {
+				Route::get('/discharges', 'DischargeController@index');
 				
 				Route::resource('patients', 'PatientController');
 				Route::get('/patients/id/{id}', 'PatientController@searchById');
@@ -361,14 +361,13 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/order_product/drug', 'OrderProductController@drugHistory');
 				Route::get('/order_products/delete/{id}', 'OrderProductController@delete');
 
+				Route::post('/discharge/search', 'DischargeController@search');
 		Route::group(['middleware' => 'consultation'], function () {
 
 				Route::get('/discharges/ward/{id}', 'DischargeController@ward');
 				Route::resource('discharges', 'DischargeController', ['except'=>['index','show']]);
 				Route::get('/discharges/create', 'DischargeController@create');
 				Route::get('/discharges/id/{id}', 'DischargeController@searchById');
-				Route::post('/discharge/search', 'DischargeController@search');
-				Route::get('/discharge/search', 'DischargeController@search');
 				Route::get('/discharges/delete/{id}', 'DischargeController@delete');
 
 				Route::resource('patient_lists', 'PatientListController');

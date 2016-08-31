@@ -3,13 +3,12 @@
 @section('content')
 <h1>Appointment List</h1>
 <br>
-<form action='/appointment/search' method='post'>
+<form action='/appointment/search' method='post' class='form-inline'>
+	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	{{ Form::select('services', $services, $service, ['class'=>'form-control']) }}
-	<br>
-	<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>
+	<button class="btn btn-default" type="submit" value="Submit">Refresh</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
@@ -31,7 +30,7 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/0/'.$appointment->service_id. '/'.$appointment->appointment_id) }}'>
-					{{ date('D, d F Y, H:i', strtotime($appointment->appointment_datetime)) }}
+					{{ date('l, d F Y, H:i', strtotime($appointment->appointment_datetime)) }}
 					</a>
 			</td>
 			<td>

@@ -438,7 +438,7 @@
 					reader.onload = function (e) {
 						$('#show_image')
 							.attr('src', e.target.result)
-							.width(70)
+							.width(75)
 							.heigt(90);
 					};
 					reader.readAsDataURL(input.files[0]);

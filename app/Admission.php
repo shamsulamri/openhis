@@ -25,6 +25,7 @@ class Admission extends Model
 				'organisation_id',
 				'texture_code',
 				'class_code',
+				'diet_description',
 				'admission_nbm'];
 	
     protected $guarded = ['admission_id'];

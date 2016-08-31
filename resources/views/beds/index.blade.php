@@ -3,6 +3,32 @@
 @section('content')
 <h1>Bed List</h1>
 <br>
+<div class="row">
+	<div class="col-md-4">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Total Bed</strong></h5>	
+				<h4><strong>{{ $bedHelper->totalBed() }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Available</strong></h5>	
+				<h4><strong>{{ $bedHelper->bedAvailable() }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Awaiting Discharge</strong></h5>	
+				<h4><strong>{{ $bedHelper->wardDischarge() }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+</div>
 <form action='/bed/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<label>Ward</label>
@@ -25,10 +51,10 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Name</th>
-    <th>Ward</th> 
+    <th>Bed</th>
     <th>Class</th> 
-    <th>Patient</th> 
+    <th>Ward</th> 
+    <th>Status</th> 
 	@can('system-administrator')
 	<th></th>
 	@endcan
@@ -43,13 +69,17 @@
 					</a>
 			</td>
 			<td>
-					{{$bed->ward_name}}
-			</td>
-			<td>
 					{{$bed->class_name}}
 			</td>
 			<td>
+					{{$bed->ward_name}}
+			</td>
+			<td>
+					@if ($bed->status_name == null)
 					{{ $bedHelper->occupiedBy($bed->bed_code, $bed->ward_code) }}
+					@else
+					{{$bed->status_name}}
+					@endif
 			</td>
 			@can('system-administrator')
 			<td align='right'>

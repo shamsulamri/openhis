@@ -93,11 +93,12 @@
 				@endcan	
 				@can('module-patient')
 				<div class='list-group'>
-						<a class='list-group-item' href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a>
+						<a class='list-group-item' href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patients</a>
 						<a class='list-group-item' href="{{ url('/appointments') }}"><span class='glyphicon glyphicon-calendar'></span>&nbsp; Appointments</a>
 						<a class='list-group-item' href="{{ url('/queues') }}"><span class='glyphicon glyphicon-th-list'></span>&nbsp; Queues</a>
 						<a class='list-group-item' href="{{ url('/admissions') }}"><span class='glyphicon glyphicon-bed'></span>&nbsp; Admissions</a>
 						<a class='list-group-item' href="{{ url('/bed_bookings?type=preadmission') }}"><span class='glyphicon glyphicon-time'></span>&nbsp; Preadmissions</a></li>
+						<a class='list-group-item' href="{{ url('/discharges') }}"><span class='glyphicon glyphicon-home'></span>&nbsp; Discharges</a>
 				</div>
 				<div class='list-group'>
 						<a class='list-group-item' href="{{ url('/beds') }}"><span class='glyphicon glyphicon-cog'></span>&nbsp; Beds </a></li>

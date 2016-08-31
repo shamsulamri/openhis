@@ -172,8 +172,10 @@ class AppointmentController extends Controller
 					->leftJoin('appointment_services as c', 'c.service_id', '=', 'a.service_id')
 					->where('appointment_datetime', '>=', Carbon::today())
 					->where('a.service_id', '=', $request->services)
-					->orderBy('appointment_id')
-					->paginate($this->paginateValue);
+					->orderBy('appointment_id');
+
+			Log::info($appointments->toSql());
+			$appointments = $appointments->paginate($this->paginateValue);
 
 			return view('appointments.index', [
 					'appointments'=>$appointments,

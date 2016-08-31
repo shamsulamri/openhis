@@ -18,6 +18,7 @@ use App\OrderPost;
 use Carbon\Carbon;
 use App\MedicalCertificate;
 use App\DojoUtility;
+use App\DischargeType;
 
 class DischargeController extends Controller
 {
@@ -31,15 +32,22 @@ class DischargeController extends Controller
 	public function index()
 	{
 			$discharges = DB::table('discharges as a')
-					->select('patient_mrn', 'patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'id')
+					->select('patient_mrn', 'patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'e.id','name','ward_name')
 					->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('ref_discharge_types as d', 'd.type_code','=','a.type_code')
 					->leftJoin('bills as e', 'e.encounter_id', '=', 'a.encounter_id')
+					->leftJoin('admissions as i', 'i.encounter_id', '=', 'b.encounter_id')
+					->leftJoin('users as f', 'f.id', '=', 'a.user_id')
+					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
+					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
 					->orderBy('discharge_id','desc')
 					->paginate($this->paginateValue);
 			return view('discharges.index', [
-					'discharges'=>$discharges
+					'discharges'=>$discharges,
+					'discharge_types' => DischargeType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'type_code'=>null,
+					'dojo' => new DojoUtility(),
 			]);
 	}
 
@@ -175,15 +183,40 @@ class DischargeController extends Controller
 	
 	public function search(Request $request)
 	{
-			$discharges = DB::table('discharges')
-					->where('type_code','like','%'.$request->search.'%')
-					->orWhere('discharge_id', 'like','%'.$request->search.'%')
-					->orderBy('type_code')
-					->paginate($this->paginateValue);
+
+			$discharges = DB::table('discharges as a')
+					->select('patient_mrn', 'patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'e.id','name','ward_name')
+					->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
+					->leftJoin('ref_discharge_types as d', 'd.type_code','=','a.type_code')
+					->leftJoin('bills as e', 'e.encounter_id', '=', 'a.encounter_id')
+					->leftJoin('admissions as i', 'i.encounter_id', '=', 'b.encounter_id')
+					->leftJoin('users as f', 'f.id', '=', 'a.user_id')
+					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
+					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
+					->orderBy('discharge_id','desc');
+			
+			if (!empty($request->search)) {
+
+					$discharges = $discharges->where(function ($query) use ($request) {
+							$query->where('patient_mrn','like','%'.$request->search.'%')
+								->orWhere('patient_name', 'like','%'.$request->search.'%');
+					});
+					//dd($discharges->toSql());
+			}
+
+			if (!empty($request->type_code)) {
+					$discharges = $discharges->where('a.type_code','=', $request->type_code);
+			}
+
+			$discharges = $discharges->paginate($this->paginateValue);
 
 			return view('discharges.index', [
 					'discharges'=>$discharges,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'discharge_types' => DischargeType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'type_code'=>$request->type_code,
+					'dojo' => new DojoUtility(),
 					]);
 	}
 

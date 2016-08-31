@@ -35,6 +35,14 @@
         </div>
     </div>
 
+   <div class='form-group  @if ($errors->has('diet_description')) has-error @endif'>
+        <label for='diet_description' class='col-sm-3 control-label'>Description</label>
+        <div class='col-sm-9'>
+            {{ Form::textarea('diet_description', null, ['class'=>'form-control','rows'=>'4',]) }}
+            @if ($errors->has('diet_description')) <p class="help-block">{{ $errors->first('diet_description') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('admission_nbm')) has-error @endif'>
         {{ Form::label('admission_nbm', 'Nil by Mouth',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

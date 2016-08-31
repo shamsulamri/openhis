@@ -231,8 +231,7 @@ class Patient extends Model
 							->first();
 
 			if ($encounter) {
-					Log::info("X");
-					if ($encounter->encounter_code=='inpatient' && $encounter->admission->bed==null) $encounter_completed=False;
+					if ($encounter->encounter_code=='inpatient' && empty($encounter->admission->bed)) $encounter_completed=False;
 					if ($encounter->encounter_code=='outpatient' && $encounter->queue==null) $encounter_completed=False;
 					if (!$encounter_completed) {
 							Log::info("Q");

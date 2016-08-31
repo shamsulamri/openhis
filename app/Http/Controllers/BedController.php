@@ -33,7 +33,9 @@ class BedController extends Controller
 			$beds = DB::table('beds as a')
 					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
 					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
+					->leftjoin('bed_statuses as d', 'd.status_code','=', 'a.status_code')
 					->orderBy('ward_name')
+					->orderBy('class_name')
 					->orderBy('bed_name')
 					->paginate($this->paginateValue);
 
@@ -141,6 +143,7 @@ class BedController extends Controller
 			$beds = DB::table('beds as a')
 					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
 					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
+					->leftjoin('bed_statuses as d', 'd.status_code','=', 'a.status_code')
 					->where('a.ward_code','like', '%'.$request->ward_code.'%')
 					->where('a.class_code','like', '%'.$request->class_code.'%')
 					->where(function ($query) use ($request) {
@@ -149,6 +152,7 @@ class BedController extends Controller
 					});
 
 			$beds = $beds->orderBy('ward_name')
+						 ->orderBy('class_name')
 						 ->orderBy('bed_name')
 						 ->paginate($this->paginateValue);
 

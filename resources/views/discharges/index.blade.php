@@ -3,8 +3,11 @@
 @section('content')
 <h1>Discharge List</h1>
 <br>
-<form action='/discharge/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+<form action='/discharge/search' method='post' class='form-inline'>
+	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<label>Discharge Type</label>
+	{{ Form::select('type_code', $discharge_types, $type_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	<button class="btn btn-default" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -18,33 +21,42 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>MRN</th>
+    <th>Date</th>
     <th>Name</th> 
-    <th>Type</th> 
-    <th>Date</th> 
+    <th>Discharge</th> 
+    <th>Physician</th> 
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($discharges as $discharge)
 	<tr>
-			<td width='10%'>
+			<td>
+					{{ date('d F Y', strtotime($discharge->created_at)) }}
+					<br>
+					<small>
+					<?php $ago =$dojo->diffForHumans($discharge->created_at); ?> 
+					{{ $ago }}
+					</small>	
 					<!--
 					<a href='{{ URL::to('discharges/'. $discharge->discharge_id . '/edit') }}'>
 					-->
-						{{$discharge->patient_mrn}}
 					<!--
 					</a>
 					-->
 			</td>
 			<td>
 					{{ strtoupper($discharge->patient_name) }}
+					<br>
+					<small>{{$discharge->patient_mrn}}</small>
 			</td>
 			<td>
 					{{$discharge->type_name}}
 			</td>
 			<td>
-					{{ date('d F Y, H:i', strtotime($discharge->created_at)) }}
+					{{$discharge->name}}
+					<br>
+					<small>{{$discharge->ward_name}}</small>
 			</td>
 			<td align='right'>
 					<?php
@@ -54,7 +66,10 @@
 						if ($discharge->id>0) $bill_label="&nbsp;&nbsp; Paid &nbsp;&nbsp;";
 					}
 					?>
+				
+					@can('module-discharge')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
+					@endcan
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
 					@endcan
