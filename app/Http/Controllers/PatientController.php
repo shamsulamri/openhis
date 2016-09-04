@@ -74,6 +74,7 @@ class PatientController extends Controller
 			$valid = $patient->validate($request->all(), "demography");
 			if ($valid->passes()) {
 					$patient->save();
+					$this->saveImage($patient,$request->file('file'));
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/patients/'.$patient->patient_id);
 			} else {
@@ -224,6 +225,7 @@ class PatientController extends Controller
 	}
 
 	public function saveImage($patient, $file) {
+			Log::info($file);
 			if ($file) {
 					$filename = $patient->patient_mrn.'/'.$patient->patient_mrn;
 					Storage::disk('local')->put($filename, File::get($file));
