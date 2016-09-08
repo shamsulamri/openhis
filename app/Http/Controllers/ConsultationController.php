@@ -29,7 +29,15 @@ class ConsultationController extends Controller
 	public function index()
 	{
 			$consultations = Consultation::where('user_id', Auth::user()->id)
-					->orderBy('created_at','desc')
+					->orderBy('created_at','desc');
+				
+
+			//dd($consultations->toSql());
+			$consultations = $consultations->paginate($this->paginateValue);
+
+			$consultations = DB::table('consultations as a')
+					->leftjoin('patients as b','b.patient_id','=', 'a.patient_id')
+					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 
 			return view('consultations.index', [

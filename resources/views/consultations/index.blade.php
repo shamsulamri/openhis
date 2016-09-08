@@ -36,7 +36,7 @@
 					</small>
 			</td>
 			<td>
-					{{$consultation->encounter->patient->patient_name}}<br>
+					{{$consultation->encounter->patient->patient_name }}<br>
 					<small>{{$consultation->encounter->patient->patient_mrn}}</small>
 			</td>
 			<td>

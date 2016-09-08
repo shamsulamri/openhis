@@ -25,7 +25,6 @@ class Bill extends Model
 				'encounter_id'=>'required',
 				'bill_grand_total'=>'required',
 				'bill_payment_total'=>'required',
-				'bill_deposit_total'=>'required',
 				'bill_outstanding'=>'required',
 				'bill_change'=>'required',
 			];

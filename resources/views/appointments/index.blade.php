@@ -9,10 +9,10 @@
 	<button class="btn btn-default" type="submit" value="Submit">Refresh</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
+<br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 @if ($appointments->total()>0)
 <table class="table table-hover">
  <thead>
