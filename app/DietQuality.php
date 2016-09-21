@@ -34,7 +34,7 @@ class DietQuality extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'qc_date'=>'size:10|date_format:d/m/Y',
+				'qc_date'=>'size:10|date_format:d/m/Y|required',
 				'period_code'=>'required',
 				'class_code'=>'required',
 			];

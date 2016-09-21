@@ -64,6 +64,6 @@ Drug Prescription
 <br>
 <br>
 <span class='glyphicon glyphicon-transfer' aria-hidden='true'></span>
-<a href='{{ URL::to('loans/request/'. $product->product_code) }}'>Loan</a>
+<a href='{{ URL::to('loans/request/'. $product->product_code) }}'>Loan Request</a>
 </h4>
 @endsection

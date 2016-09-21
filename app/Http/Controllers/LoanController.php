@@ -62,30 +62,17 @@ class LoanController extends Controller
 					$loan_status = LoanStatus::whereIn('loan_code',['request', 'lend', 'return','lost'])
 							->orderBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
 
-					$loans = Loan::where('loan_code', '<>', 'exchanged')
+					$loans = Loan::where('loan_code','<>','return')
 								->whereNotNull('loan_is_folder');
 			} else {
 					$loan_status = LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
-					$loans = Loan::whereNull('loan_is_folder');
-			}
-
-			if (!empty($request->search)) {
-					$loans = Loan::where('item_code','like','%'.$request->search.'%');
-					$search_is_empty=False;
-			}
-
-			if (!empty($request->loan_code)) {
-					$loans=$loans->where('loan_code','=',$request->loan_code);
-					$search_is_empty=False;
-			}
-			if (!empty($request->ward_code)) {
-					$loans=$loans->where('ward_code','=',$request->ward_code);
-					$search_is_empty=False;
+					$loans = Loan::whereNull('loan_is_folder')
+								->where('loan_code','<>','return')
+								->where('loan_code','<>','exchanged');
 			}
 
 			$loans = $loans->orderBy('created_at', 'desc')
 							->paginate($this->paginateValue);
-
 
 			return view('loans.index', [
 					'loans'=>$loans,
@@ -155,13 +142,27 @@ class LoanController extends Controller
 			$patient = null;
 			$loan_status=null;
 			if ($loan->loan_is_folder) {
-					$loan_status = LoanStatus::whereIn('loan_code',['request', 'lend', 'return','lost'])
-							->orderBy('loan_name')->lists('loan_name', 'loan_code');
 					$patient = Patient::where('patient_mrn', $loan->item_code)->first();
 
+			} 
+
+			if ($loan->loan_code=='lend') {
+					if ($loan->loan_is_folder) {
+						$loan_status = LoanStatus::whereIn('loan_code',['return','lost','damage'])->lists('loan_name', 'loan_code');
+					} else {
+						$loan_status = LoanStatus::whereIn('loan_code',['return','lost','damage','exchanged'])->lists('loan_name', 'loan_code');
+					}
+			} else if ($loan->loan_code=='request' || $loan->loan_code=='reject') {
+					$loan_status = LoanStatus::whereIn('loan_code',['reject','accept'])->lists('loan_name', 'loan_code');
+			} else if ($loan->loan_code=='accept') {
+					$loan_status = LoanStatus::whereIn('loan_code',['lend','reject'])->lists('loan_name', 'loan_code');
 			} else {
-					$loan_status = LoanStatus::whereIn('loan_code',['request', 'lend', 'return','lost'])
-							->orderBy('loan_name')->lists('loan_name', 'loan_code');
+					$loan_status = LoanStatus::whereIn('loan_code',['request', 'lend', 'return','lost']);
+					$loan_status = $loan_status->orderBy('loan_name')->lists('loan_name', 'loan_code');
+			}
+			$loan_status = $loan_status->prepend('','');
+
+			if (!$loan->loan_is_folder) {
 					$product = Product::where('product_code', $loan->item_code)->first();
 			}
 
@@ -198,15 +199,24 @@ class LoanController extends Controller
 			if ($loan->loan_code == 'exchange') {
 				if (!empty($loan->loan_closure_datetime)) $loan->loan_code='exchanged';
 			}
+
+			if (!empty($request->change_status)) {
+				$loan->loan_code = $request->change_status;	
+			}
+
 			$valid = $loan->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
 					$loan->save();
 					Session::flash('message', 'Record successfully updated.');
-					if ($loan->loan_is_folder) {
-							return redirect('/loans?type=folder');
-					} else {
-							return redirect('/loans');
+					if ($loan->loan_code=='accept') {
+							return redirect('/loans/'.$loan->loan_id.'/edit');
+					} else { 	
+							if ($loan->loan_is_folder) {
+									return redirect('/loans?type=folder');
+							} else {
+									return redirect('/loans');
+							}
 					}
 			} else {
 					return redirect('/loans/'.$id.'/edit')
@@ -238,24 +248,59 @@ class LoanController extends Controller
 	
 	public function search(Request $request)
 	{
-			$loans = Loan::where('item_code','like','%'.$request->search.'%');
+			$loans=null;
+			$is_folder=False;
+			$title="Loan List";
+			$loan_status=null;
+			$type=null;
+			$search_is_empty = True;
 
-			if (!empty($request->loan_code)) $loans=$loans->where('loan_code','=',$request->loan_code);
-			if (!empty($request->ward_code)) $loans=$loans->where('ward_code','=',$request->ward_code);
+			if (!empty($request->type)) $type=$request->type;
 
-			//$loans = $loans->toSql();
-			//dd($loans);			
-			$loans = $loans->orderBy('created_at','desc')
+			if ($type=='folder') {
+					$is_folder=True;
+					$title="Folder List";
+					$loan_status = LoanStatus::whereIn('loan_code',['request', 'lend', 'return','lost'])
+							->orderBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
+
+					$loans = Loan::where('loan_code', '<>', 'exchanged')
+								->whereNotNull('loan_is_folder');
+			} else {
+					$loan_status = LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
+					$loans = Loan::whereNull('loan_is_folder');
+			}
+
+			if (!empty($request->search)) {
+					$loans = Loan::where('loan_id','like','%'.$request->search.'%')
+									->orWhere('exchange_id','like','%'.$request->search.'%');
+
+					$search_is_empty=False;
+			}
+
+			if (!empty($request->loan_code)) {
+					$loans=$loans->where('loan_code','=',$request->loan_code);
+					$search_is_empty=False;
+			}
+			if (!empty($request->ward_code)) {
+					$loans=$loans->where('ward_code','=',$request->ward_code);
+					$search_is_empty=False;
+			}
+
+			$loans = $loans->orderBy('loan_code')
+							->orderBy('created_at', 'desc')
 							->paginate($this->paginateValue);
+
 
 			return view('loans.index', [
 					'loans'=>$loans,
-					'search'=>$request->search,
-					'loan_status' => LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('',''),
+					'loan_status' => $loan_status,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward_code'=>$request->ward_code,
 					'loan_code'=>$request->loan_code,
-					]);
+					'is_folder'=>$is_folder,
+					'title'=>$title,
+					'search'=>$request->search,
+			]);
 	}
 
 	public function request_search(Request $request)
@@ -308,16 +353,17 @@ class LoanController extends Controller
 			$loan->ward_code = $request->cookie('ward');
 
 			$is_folder = False;
-			$title="New Loan";
+			$title="Loan Request";
 			$patient=null;
 			$is_exchange=False;
 			if (!empty($request->loan)) {
 					$is_exchange=True;
 					$title="Exchange Request";
 					$loan = Loan::find($id);
-					$loan->loan_code = 'exchange';
+					$loan->loan_code = 'request';
 					$loan->loan_description = "";
 					$loan->loan_recur=null;
+					$loan->exchange_id = $id;
 					$product = Product::find($loan->item_code);
 			}
 			if ($request->type=='folder') {
@@ -374,6 +420,7 @@ class LoanController extends Controller
 			if ($valid->passes()) {
 					$loan = new Loan($request->all());
 					$loan->loan_id = $request->loan_id;
+					$loan->exchange_id = $request->exchange_id;
 					$loan->save();
 					return view('loans.submitted', [
 							'loan'=>$loan
@@ -458,5 +505,18 @@ class LoanController extends Controller
 			Loan::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/loans/ward');
+	}
+
+	public function requestExchange($id)
+	{
+			$loan = Loan::findOrFail($id);
+				return view('loans.exchange', [
+				'loan'=>$loan
+			]);
+	}
+
+	public function exchangePost(Request $request)
+	{
+			return $request->id;
 	}
 }

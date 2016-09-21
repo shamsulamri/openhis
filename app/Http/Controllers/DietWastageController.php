@@ -12,7 +12,7 @@ use DB;
 use Session;
 use App\Ward;
 use App\DietPeriod as Period;
-
+use Carbon\Carbon;
 
 class DietWastageController extends Controller
 {
@@ -25,7 +25,9 @@ class DietWastageController extends Controller
 
 	public function index()
 	{
-			$diet_wastages = DB::table('diet_wastages')
+			$diet_wastages = DB::table('diet_wastages as a')
+					->leftjoin('diet_periods as b','b.period_code','=', 'a.period_code')
+					->leftjoin('wards as c','c.ward_code','=', 'a.ward_code')
 					->orderBy('waste_date')
 					->paginate($this->paginateValue);
 			return view('diet_wastages.index', [
@@ -40,6 +42,7 @@ class DietWastageController extends Controller
 					'diet_wastage' => $diet_wastage,
 					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					'minYear' => Carbon::now()->year,
 					]);
 	}
 
@@ -68,6 +71,7 @@ class DietWastageController extends Controller
 					'diet_wastage'=>$diet_wastage,
 					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					'minYear' => Carbon::now()->year,
 					]);
 	}
 
@@ -110,9 +114,12 @@ class DietWastageController extends Controller
 	
 	public function search(Request $request)
 	{
-			$diet_wastages = DB::table('diet_wastages')
+			$diet_wastages = DB::table('diet_wastages as a')
+					->leftjoin('diet_periods as b','b.period_code','=', 'a.period_code')
+					->leftjoin('wards as c','c.ward_code','=', 'a.ward_code')
 					->where('waste_date','like','%'.$request->search.'%')
-					->orWhere('waste_id', 'like','%'.$request->search.'%')
+					->orWhere('period_name', 'like','%'.$request->search.'%')
+					->orWhere('ward_name', 'like','%'.$request->search.'%')
 					->orderBy('waste_date')
 					->paginate($this->paginateValue);
 
@@ -124,7 +131,9 @@ class DietWastageController extends Controller
 
 	public function searchById($id)
 	{
-			$diet_wastages = DB::table('diet_wastages')
+			$diet_wastages = DB::table('diet_wastages as a')
+					->leftjoin('diet_periods as b','b.period_code','=', 'a.period_code')
+					->leftjoin('wards as c','c.ward_code','=', 'a.ward_code')
 					->where('waste_id','=',$id)
 					->paginate($this->paginateValue);
 

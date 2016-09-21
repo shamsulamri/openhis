@@ -3,12 +3,12 @@
 @section('content')
 <h1>Loans</h1>
 <br>
-<form class='form-inline' action='/loan/index' method='post'>
+<form class='form-inline' action='/loan/search' method='post'>
 	<label>Status</label>
 	{{ Form::select('loan_code', $loan_status, $loan_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>Ward</label>
 	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<input type='text' class='form-control' placeholder="Item code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control' placeholder="Loan Id" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	{{ Form::submit('Refresh', ['class'=>'btn btn-default']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	@if ($is_folder)
@@ -23,6 +23,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Id</th>
 	@if ($is_folder)
     <th>MRN</th>
 	@else
@@ -39,6 +40,9 @@
 	<tbody>
 @foreach ($loans as $loan)
 	<tr>
+			<td>
+					{{ $loan->loan_id }}
+			</td>
 			<td>
 					<a href='{{ URL::to('loans/'. $loan->loan_id . '/edit') }}'>
 						{{$loan->getItemName() }}
@@ -66,6 +70,9 @@
 			</td>
 			<td>
 					{{$loan->status->loan_name}}
+					@if ($loan->exchange_id>0)
+						(Exchange)
+					@endif
 			</td>
 			<td>
 					@if ($loan->loan_code=='exchanged') 

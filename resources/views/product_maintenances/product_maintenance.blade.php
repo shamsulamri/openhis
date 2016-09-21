@@ -1,7 +1,7 @@
 
 	<div class='form-group  @if ($errors->has('maintain_datetime')) has-error @endif'>
-		{{ Form::label('date', 'Date',['class'=>'col-md-2 control-label']) }}
-		<div class='col-md-10'>
+		{{ Form::label('date', 'Date',['class'=>'col-md-3 control-label']) }}
+		<div class='col-md-9'>
 			<input id="maintain_datetime" name="maintain_datetime" type="text">
 			@if ($errors->has('maintain_datetime')) <p class="help-block">{{ $errors->first('maintain_datetime') }}</p> @endif
 		</div>

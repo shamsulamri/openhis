@@ -230,9 +230,22 @@ class Patient extends Model
 							->orderBy('encounter_id','desc')
 							->first();
 
-			if ($encounter) {
-					if ($encounter->encounter_code=='inpatient' && empty($encounter->admission->bed)) $encounter_completed=False;
-					if ($encounter->encounter_code=='outpatient' && $encounter->queue==null) $encounter_completed=False;
+			if (!empty($encounter)) {
+					switch ($encounter->encounter_code) {
+						case 'inpatient':
+							if (empty($encounter->admission->bed)) $encounter_completed=False;
+							break;
+						case 'daycare':
+							if (empty($encounter->admission->bed)) $encounter_completed=False;
+							break;
+						case 'emergency':
+							if ($encounter->triage_code=='green' && $encounter->queue==null) $encounter_completed=False;
+							if ($encounter->triage_code<>'green' && empty($encounter->admission->bed)) $encounter_completed=False;
+							break;
+						case 'outpatient':
+							if ($encounter->queue==null) $encounter_completed=False;
+							break;
+					}
 					if (!$encounter_completed) {
 							Log::info("Q");
 							Encounter::find($encounter->encounter_id)->delete();

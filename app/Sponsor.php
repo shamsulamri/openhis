@@ -7,26 +7,32 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class PatientType extends Model
+class Sponsor extends Model
 {
-	protected $table = 'ref_patient_types';
+	protected $table = 'sponsors';
 	protected $fillable = [
-				'type_code',
-				'type_name'];
+				'sponsor_name',
+				'sponsor_street_1',
+				'sponsor_street_2',
+				'sponsor_city',
+				'sponsor_postcode',
+				'sponsor_state',
+				'sponsor_country',
+				'sponsor_phone'];
 	
-    protected $guarded = ['type_code'];
-    protected $primaryKey = 'type_code';
+    protected $guarded = ['sponsor_code'];
+    protected $primaryKey = 'sponsor_code';
     public $incrementing = false;
     
 
 	public function validate($input, $method) {
 			$rules = [
-				'type_name'=>'required',
+				'sponsor_name'=>'required',
 			];
 
 			
         	if ($method=='') {
-        	    $rules['type_code'] = 'required|max:20|unique:ref_patient_types';
+        	    $rules['sponsor_code'] = 'required|max:20|unique:sponsors';
         	}
         
 			

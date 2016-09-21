@@ -93,7 +93,7 @@ class AssemblyController extends Controller
 				$stock->move_code='receive';
 				$stock->store_code = $request->store_code;
 				$stock->product_code = $id;
-				$stock->stock_quantity = $quantity;
+				$stock->stock_quantity = $stock->stock_quantity+$quantity;
 				$stock->stock_date = DojoUtility::now(); 
 				$stock->stock_description = "Build Assembly";
 				$stock->save();

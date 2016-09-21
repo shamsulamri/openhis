@@ -7,7 +7,6 @@
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
@@ -19,8 +18,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Name</th>
-    <th>Code</th> 
+    <th>Date</th> 
+    <th>Patient MRN</th>
+    <th>Ward</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -28,12 +28,15 @@
 @foreach ($diet_complains as $diet_complain)
 	<tr>
 			<td>
+					{{ date('d F Y', strtotime($diet_complain->complain_date)) }}
+			</td>
+			<td>
 					<a href='{{ URL::to('diet_complains/'. $diet_complain->complain_id . '/edit') }}'>
-						{{$diet_complain->complain_date}}
+						{{$diet_complain->patient_mrn}}
 					</a>
 			</td>
 			<td>
-					{{$diet_complain->complain_id}}
+					{{$diet_complain->ward_name}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('diet_complains/delete/'. $diet_complain->complain_id) }}'>Delete</a>

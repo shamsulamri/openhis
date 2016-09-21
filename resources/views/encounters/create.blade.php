@@ -9,7 +9,7 @@
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
-            {{ Form::submit('Next', ['class'=>'btn btn-primary']) }}
+            {{ Form::submit('Next', ['onclick'=>'enableInputs()','class'=>'btn btn-primary']) }}
         </div>
     </div>		
 {{ Form::close() }}

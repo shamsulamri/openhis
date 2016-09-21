@@ -2,10 +2,10 @@
 
 @section('content')
 <h1>
-Loan Request 
+Loan {{ ucwords($loan->loan_code) }} 
 </h1>
 @include('common.errors')
 <h3>
-Your loan request has been submitted.
+Your request has been submitted.
 </h3>
 @endsection

@@ -6,13 +6,13 @@
 @include('products.id')
 @endcan
 <h1>
-Loan Request
+{{ $title }}
 </h1>
 
 @include('common.errors')
 <br>
 {{ Form::model($loan, ['url'=>$url, 'class'=>'form-horizontal']) }} 
-	@if ($loan->loan_code=='lend')
+@if ($loan->loan_code=='lend')
     <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
         <label for='loan_code' class='col-sm-3 control-label'>Status<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -31,7 +31,7 @@ Loan Request
             {{ Form::label('loan_quantity', $loan->loan_quantity, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
-	@else
+@else
 	@if ($product)
 	<div class='form-group'>
 		<label for='item_code' class='col-sm-3 control-label'>Product</label>
@@ -105,7 +105,7 @@ Loan Request
         </div>
     </div>
 	@endif
-	@endif
+@endif
 
 
     <div class='form-group  @if ($errors->has('loan_description')) has-error @endif'>
@@ -129,7 +129,7 @@ Loan Request
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="javascript:goBack()" role="button">Cancel</a>
-			@if ($loan->loan_code=='request')
+			@if ($loan->loan_code=='request' or $loan->loan_code=='exchange')
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
 			@endif
         </div>
@@ -138,6 +138,7 @@ Loan Request
 	{{ Form::hidden('item_code', $loan->item_code) }}
 	{{ Form::hidden('loan_request_by', null) }}
 	{{ Form::hidden('loan_code', $loan->loan_code) }}
+	{{ Form::hidden('exchange_id', $loan->exchange_id) }}
 	@if ($loan->loan_is_folder)
 		{{ Form::hidden('loan_is_folder',1) }}
 	@endif

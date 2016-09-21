@@ -44,6 +44,12 @@ Route::group(['middleware' => 'web'], function () {
 				}
 		});
 
+		Route::resource('sponsors', 'SponsorController');
+		Route::get('/sponsors/id/{id}', 'SponsorController@searchById');
+		Route::post('/sponsor/search', 'SponsorController@search');
+		Route::get('/sponsor/search', 'SponsorController@search');
+		Route::get('/sponsors/delete/{id}', 'SponsorController@delete');
+
 		Route::resource('employees', 'EmployeeController');
 		Route::get('/employees/id/{id}', 'EmployeeController@searchById');
 		Route::post('/employee/search', 'EmployeeController@search');
@@ -140,6 +146,8 @@ Route::group(['middleware' => 'web'], function () {
 		Route::post('/loans/request/{id}', 'LoanController@requestSubmit');
 		Route::get('/loans/request/{id}/delete', 'LoanController@requestDelete');
 		Route::delete('/loans/request/delete/{id}', 'LoanController@requestDestroy');
+		Route::get('/loans/exchange/{id}', 'LoanController@requestExchange');
+		Route::post('/loans/exchange/{id}', 'LoanController@exchangePost');
 		
 		Route::resource('admissions', 'AdmissionController');
 		Route::get('/admissions/id/{id}', 'AdmissionController@searchById');

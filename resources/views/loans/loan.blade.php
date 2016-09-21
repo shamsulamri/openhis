@@ -1,7 +1,13 @@
 	
+	@if ($loan->loan_code=='accept')
+			<div class='alert alert-info'>Loan Accepted</div>
+	@endif
 	<div class='page-header'>
 		<h4>Request Information</h4>
 	</div>
+	@if ($loan->exchange_id>0)
+			<div class='alert alert-warning'>Loan Exchange</div>
+	@endif
 	@if ($product)
 	<div class='form-group'>
 		<label for='item_code' class='col-sm-3 control-label'>Product</label>
@@ -96,9 +102,11 @@
 	@endif
 	@endif
 
-	@if ($loan->loan_code<>'exchange' and $loan->loan_code<>'exchanged')
+
 	<div class='page-header'>
-		<h4>Loan Information</h4>
+		<h4>
+			Loan Request
+		</h4>
 	</div>
 
 	@if ($loan->loan_code=='exchange' or $loan->loan_code=='exchanged')
@@ -110,14 +118,16 @@
         </div>
     </div>
 	@endif
-
+	
+	@if ($loan->loan_code!='lend')
     <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
         <label for='loan_code' class='col-sm-3 control-label'>Status<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
-            {{ Form::select('loan_code', $loan_status,null, ['id'=>'loan_code','class'=>'form-control','onchange'=>'statusChanged()']) }}
+            {{ Form::select('change_status', $loan_status,$loan->loan_code, ['id'=>'loan_code','class'=>'form-control','onchange'=>'statusChanged()']) }}
             @if ($errors->has('loan_code')) <p class="help-block">{{ $errors->first('loan_code') }}</p> @endif
         </div>
     </div>
+	@endif
 
     <div class='form-group  @if ($errors->has('loan_date_start')) has-error @endif'>
         {{ Form::label('loan_date_start', 'Date Start',['class'=>'col-sm-3 control-label']) }}
@@ -139,10 +149,28 @@
         </div>
     </div>
 
-	@endif
+	@if ($loan->loan_code=='lend' || $loan->loan_code=='exchange')
 	<div class='page-header'>
 		<h4>{{ $information }}</h4>
 	</div>
+
+	@if ($loan->loan_code=='lend')
+    <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
+        <label for='loan_code' class='col-sm-3 control-label'>Status<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+            {{ Form::select('change_status', $loan_status,null, ['id'=>'loan_code','class'=>'form-control','onchange'=>'statusChanged()']) }}
+            @if ($errors->has('loan_code')) <p class="help-block">{{ $errors->first('loan_code') }}</p> @endif
+        </div>
+    </div>
+	@endif
+
+    <div class='form-group  @if ($errors->has('loan_closure_description')) has-error @endif'>
+        {{ Form::label('loan_closure_description', 'Description',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::textarea('loan_closure_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+            @if ($errors->has('loan_closure_description')) <p class="help-block">{{ $errors->first('loan_closure_description') }}</p> @endif
+        </div>
+    </div>
 
     <div class='form-group  @if ($errors->has('loan_closure_datetime')) has-error @endif'>
         {{ Form::label('loan_closure_datetime', 'Date',['class'=>'col-sm-3 control-label']) }}
@@ -153,14 +181,7 @@
             @if ($errors->has('loan_closure_datetime')) <p class="help-block">{{ $errors->first('loan_closure_datetime') }}</p> @endif
         </div>
     </div>
-
-    <div class='form-group  @if ($errors->has('loan_closure_description')) has-error @endif'>
-        {{ Form::label('loan_closure_description', 'Description',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::textarea('loan_closure_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
-            @if ($errors->has('loan_closure_description')) <p class="help-block">{{ $errors->first('loan_closure_description') }}</p> @endif
-        </div>
-    </div>
+	@endif
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
@@ -248,7 +269,7 @@
 				if ($loanCode=='lend') {
 					$('#loan_date_start').combodate('setValue','{{ $today }}');
 				}
-				if ($loanCode=='return') {
+				if ($loanCode=='return' || $loanCode=='damage' || $loanCode=='lost') {
 					$('#loan_closure_datetime').combodate('setValue','{{ $today_datetime }}');
 				}
 				if ($loanCode=='exchanged') {

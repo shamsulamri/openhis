@@ -14,7 +14,7 @@ use App\Ward;
 use App\DietPeriod as Period;
 use App\DietMeal as Meal;
 use App\DietContamination as Contamination;
-
+use Carbon\Carbon;
 
 class DietComplainController extends Controller
 {
@@ -27,9 +27,11 @@ class DietComplainController extends Controller
 
 	public function index()
 	{
-			$diet_complains = DB::table('diet_complains')
+			$diet_complains = DB::table('diet_complains as a')
+					->leftJoin('wards as b', 'b.ward_code', '=', 'a.ward_code')
 					->orderBy('complain_date')
 					->paginate($this->paginateValue);
+
 			return view('diet_complains.index', [
 					'diet_complains'=>$diet_complains
 			]);
@@ -44,6 +46,7 @@ class DietComplainController extends Controller
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'meal' => Meal::all()->sortBy('meal_name')->lists('meal_name', 'meal_code')->prepend('',''),
 					'contamination' => Contamination::all()->sortBy('contamination_name')->lists('contamination_name', 'contamination_code')->prepend('',''),
+					'minYear' => Carbon::now()->year,
 					]);
 	}
 
@@ -74,6 +77,7 @@ class DietComplainController extends Controller
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'meal' => Meal::all()->sortBy('meal_name')->lists('meal_name', 'meal_code')->prepend('',''),
 					'contamination' => Contamination::all()->sortBy('contamination_name')->lists('contamination_name', 'contamination_code')->prepend('',''),
+					'minYear' => Carbon::now()->year,
 					]);
 	}
 
@@ -133,7 +137,8 @@ class DietComplainController extends Controller
 
 	public function searchById($id)
 	{
-			$diet_complains = DB::table('diet_complains')
+			$diet_complains = DB::table('diet_complains as a')
+					->leftJoin('wards as b', 'b.ward_code', '=', 'a.ward_code')
 					->where('complain_id','=',$id)
 					->paginate($this->paginateValue);
 

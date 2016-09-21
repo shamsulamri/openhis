@@ -23,6 +23,7 @@ class Loan extends Model
 				'loan_closure_datetime',
 				'loan_closure_description',
 				'loan_is_folder',
+				'exchange_id',
 				'loan_code'];
 	
     protected $guarded = ['loan_id'];
@@ -34,15 +35,16 @@ class Loan extends Model
 			$rules = [
 				'item_code'=>'required',
 				'loan_request_by'=>'required',
-				'ward_code'=>'required_without_all:location_code',
-				'location_code'=>'required_without_all:ward_code',
 				'loan_date_start'=>'size:10|date_format:d/m/Y',
 				'loan_date_end'=>'size:10|date_format:d/m/Y',
 				'loan_closure_datetime'=>'size:16|date_format:d/m/Y H:i',
-				'loan_code'=>'required',
+				'ward_code'=>'required_without_all:location_code',
+				'location_code'=>'required_without_all:ward_code',
 			];
-
 			
+        	if ($method=='') {
+        	    $rules['loan_code'] = 'required';
+        	}
 			
 			$messages = [
 				'required' => 'This field is required'

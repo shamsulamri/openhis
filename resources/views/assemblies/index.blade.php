@@ -12,7 +12,7 @@
 <table class='table table-hover'>
 <tr>
 	<th>Components</th>
-	<th width='200'><div align='right'>Per Item Quantity</div></th>
+	<th width='200'><div align='right'>Quantity Per Item</div></th>
 	<th width='200'><div align='right'>Quantity On Hand</div></th>
 	<th width='200'><div align='right'>Quantity Needed</div></th>
 </tr>

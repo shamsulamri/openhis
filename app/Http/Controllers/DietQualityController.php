@@ -12,7 +12,8 @@ use DB;
 use Session;
 use App\DietPeriod as Period;
 use App\DietClass;
-
+use App\DietRating;
+use Carbon\Carbon;
 
 class DietQualityController extends Controller
 {
@@ -25,9 +26,11 @@ class DietQualityController extends Controller
 
 	public function index()
 	{
-			$diet_qualities = DB::table('diet_qualities')
+			$diet_qualities = DB::table('diet_qualities as a')
+					->leftjoin('diet_periods as b', 'b.period_code', '=', 'a.period_code')
 					->orderBy('qc_date')
 					->paginate($this->paginateValue);
+
 			return view('diet_qualities.index', [
 					'diet_qualities'=>$diet_qualities
 			]);
@@ -40,6 +43,8 @@ class DietQualityController extends Controller
 					'diet_quality' => $diet_quality,
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'rating' => DietRating::all()->sortBy('rate_name')->lists('rate_name', 'rate_code')->prepend('',''),
+					'minYear' => Carbon::now()->year,
 					]);
 	}
 
@@ -68,6 +73,8 @@ class DietQualityController extends Controller
 					'diet_quality'=>$diet_quality,
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'minYear' => Carbon::now()->year,
+					'rating' => DietRating::all()->sortBy('rate_name')->lists('rate_name', 'rate_code')->prepend('',''),
 					]);
 	}
 
@@ -110,11 +117,13 @@ class DietQualityController extends Controller
 	
 	public function search(Request $request)
 	{
-			$diet_qualities = DB::table('diet_qualities')
+			$diet_qualities = DB::table('diet_qualities as a')
+					->leftjoin('diet_periods as b', 'b.period_code', '=', 'a.period_code')
 					->where('qc_date','like','%'.$request->search.'%')
-					->orWhere('qc_id', 'like','%'.$request->search.'%')
-					->orderBy('qc_date')
-					->paginate($this->paginateValue);
+					->orWhere('period_name', 'like','%'.$request->search.'%')
+					->orderBy('qc_date');
+				
+			$diet_qualities = $diet_qualities->paginate($this->paginateValue);
 
 			return view('diet_qualities.index', [
 					'diet_qualities'=>$diet_qualities,
@@ -124,7 +133,8 @@ class DietQualityController extends Controller
 
 	public function searchById($id)
 	{
-			$diet_qualities = DB::table('diet_qualities')
+			$diet_qualities = DB::table('diet_qualities as a')
+					->leftjoin('diet_periods as b', 'b.period_code', '=', 'a.period_code')
 					->where('qc_id','=',$id)
 					->paginate($this->paginateValue);
 

@@ -11,7 +11,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/diet_qualities/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -19,8 +18,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>qc_date</th>
-    <th>qc_id</th> 
+    <th>Date</th>
+    <th>Period</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -29,11 +28,11 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('diet_qualities/'. $diet_quality->qc_id . '/edit') }}'>
-						{{$diet_quality->qc_date}}
+						{{ date('d F Y', strtotime($diet_quality->qc_date)) }}
 					</a>
 			</td>
 			<td>
-					{{$diet_quality->qc_id}}
+					{{$diet_quality->period_name}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('diet_qualities/delete/'. $diet_quality->qc_id) }}'>Delete</a>

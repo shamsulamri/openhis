@@ -21,6 +21,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Id</th>
     <th>Item</th>
     <th>Quantity</th>
     <th>Status</th> 
@@ -31,6 +32,9 @@
 	<tbody>
 @foreach ($loans as $loan)
 	<tr>
+			<td>
+					{{ $loan->loan_id }}
+			</td>
 			<td>
 					@if ($loan->loan_is_folder)
 					<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
@@ -45,7 +49,7 @@
 					@if ($loan->loan_is_folder)
 						-
 					@else
-					{{$loan->loan_quantity }}
+						{{$loan->loan_quantity }}
 					@endif
 			</td>
 			<td>
@@ -79,8 +83,8 @@
 					@if ($loan->loan_code=='exchange' or $loan->loan_code=='request') 
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('loans/request/'. $loan->loan_id.'/delete') }}'>Delete</a>
 					@endif
-					@if ($loan->loan_code=='lend') 
-					<a class='btn btn-default btn-xs' href='{{ URL::to('loans/request/'. $loan->loan_id.'?loan=exchange') }}'>Exchange</a>
+					@if ($loan->loan_code=='lend' && !$loan->loan_is_folder) 
+					<a class='btn btn-default btn-xs' href="{{ URL::to('loans/request/'. $loan->loan_id.'/?loan=exchange') }}">Exchange</a>
 					@endif
 			</td>
 	</tr>

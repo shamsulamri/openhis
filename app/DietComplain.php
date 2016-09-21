@@ -31,15 +31,16 @@ class DietComplain extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'ward_code'=>'required',
-				'complain_date'=>'size:10|date|date_format:d/m/Y',
+				'complain_date'=>'size:10|date_format:d/m/Y|required',
 				'period_code'=>'required',
 				'meal_code'=>'required',
 				'contamination_code'=>'required',
+				'patient_mrn'=>'required',
 			];
 
 			
         	if ($method=='') {
-        	    $rules['complain_id'] = 'required|max:nan|unique:diet_complains';
+        	    //$rules['complain_id'] = 'required|max:nan|unique:diet_complains';
         	}
         
 			
@@ -50,6 +51,10 @@ class DietComplain extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function ward()
+	{
+			$this->belongsTo('App\Ward', ward_code);
+	}
 	
 	public function setComplainDateAttribute($value)
 	{

@@ -36,7 +36,7 @@
 		@foreach ($stocks as $stock)
 			<tr>
 					<td>
-							{{ date('d F Y', strtotime($stock->stock_date)) }}
+							{{ date('d F Y H:i', strtotime($stock->stock_date)) }}
 					</td>
 					<td>
 							<a href='{{ URL::to('stocks/'. $stock->stock_id . '/edit') }}'>

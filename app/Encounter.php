@@ -23,6 +23,8 @@ class Encounter extends Model
 				'triage_code',
 				'employer_code',
 				'employee_id',
+				'sponsor_code',
+				'sponsor_id',
 				'organisation_code',
 				'organisation_id',
 				'triage_code',
@@ -37,7 +39,12 @@ class Encounter extends Model
 			$rules = [
 				'patient_id'=>'required',
 				'encounter_code'=>'required',
+				'type_code'=>'required',
+				'sponsor_code'=>'required_if:type_code,==,"sponsored"',
+				'sponsor_id'=>'required_if:type_code,==,"sponsored"'
 			];
+
+
 
 			$messages = [
 				'required' => 'This field is required'

@@ -7,7 +7,6 @@
 	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
@@ -19,8 +18,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>waste_date</th>
-    <th>waste_id</th> 
+    <th>Date</th>
+    <th>Ward</th> 
+    <th>Period</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -29,11 +29,14 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('diet_wastages/'. $diet_wastage->waste_id . '/edit') }}'>
-						{{$diet_wastage->waste_date}}
+						{{ date('d F Y', strtotime($diet_wastage->waste_date)) }}
 					</a>
 			</td>
 			<td>
-					{{$diet_wastage->waste_id}}
+					{{$diet_wastage->ward_name}}
+			</td>
+			<td>
+					{{$diet_wastage->period_name}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('diet_wastages/delete/'. $diet_wastage->waste_id) }}'>Delete</a>
