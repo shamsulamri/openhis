@@ -41,8 +41,10 @@ class DischargeController extends Controller
 					->leftJoin('users as f', 'f.id', '=', 'a.user_id')
 					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
 					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
-					->orderBy('discharge_id','desc')
-					->paginate($this->paginateValue);
+					->orderBy('discharge_id','desc');
+
+			$discharges = $discharges->paginate($this->paginateValue);
+
 			return view('discharges.index', [
 					'discharges'=>$discharges,
 					'discharge_types' => DischargeType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),

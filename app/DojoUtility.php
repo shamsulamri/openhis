@@ -88,5 +88,34 @@ class DojoUtility
 		{
 				return Carbon::createFromTimeStamp(strtotime($date))->diffForHumans();
 		}
+
+		public function getAge($sourceDate)
+		{
+				$value = "";
+				if ($sourceDate) {
+					$birthdate = DateTime::createFromFormat('Y-m-d', $sourceDate);
+					$today = new DateTime(); 
+					$diff = $today->diff($birthdate);
+					if ($diff->y>0) {
+						if ($diff->y>2) {
+							$value = $diff->y." year old";
+						} else {
+							$value = $diff->y*12+$diff->m." month old";
+						}
+					}
+					if ($diff->y==0) {
+							if ($diff->m==0) {
+								$value = $diff->d." day old";
+							} else {
+								$value = $diff->m." month old";
+							}
+					}
+
+				} else {
+						$value = "-";
+				}
+
+				return $value;
+		}
 }
 

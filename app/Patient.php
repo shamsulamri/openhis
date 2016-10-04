@@ -7,6 +7,7 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 use DB;
+use DateTime;
 use Log;
 
 class Patient extends Model
@@ -235,6 +236,9 @@ class Patient extends Model
 						case 'inpatient':
 							if (empty($encounter->admission->bed)) $encounter_completed=False;
 							break;
+						case 'mortuary':
+							if (empty($encounter->admission->bed)) $encounter_completed=False;
+							break;
 						case 'daycare':
 							if (empty($encounter->admission->bed)) $encounter_completed=False;
 							break;
@@ -279,4 +283,39 @@ class Patient extends Model
 					$patient->save();
 			});
 	}
+
+	public function patientAge()
+	{
+		$value = "";
+		if ($this->patient_birthdate) {
+			$birthdate = DateTime::createFromFormat('d/m/Y', $this->patient_birthdate);
+			$today = new DateTime(); 
+			$diff = $today->diff($birthdate);
+			if ($diff->y>0) {
+				if ($diff->y>2) {
+					$value = $diff->y." year old";
+				} else {
+					$value = $diff->y*12+$diff->m." month old";
+				}
+			}
+			if ($diff->y==0) {
+					if ($diff->m==0) {
+						$value = $diff->d." day old";
+					} else {
+						$value = $diff->m." month old";
+					}
+			}
+
+		} else {
+				$value = "-";
+		}
+
+		if ($value != '-') {
+				$value = $value.', '.$this->gender->gender_name;
+		}
+
+
+		return $value;
+	}
+
 }

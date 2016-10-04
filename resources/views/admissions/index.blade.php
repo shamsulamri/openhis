@@ -34,7 +34,9 @@
     <th>Patient</th>
     <th>Bed</th>
 	@can('module-ward')
+	@if ($ward->ward_code != 'mortuary')
     <th>Diet</th>
+	@endif
 	@endcan
 	@can('module-ward')
 	@if ($setWard == $ward->ward_code)
@@ -88,21 +90,30 @@
 			@endif
 			@endcan
 			<td>
+					<a href='{{ URL::to('admissions/'. $admission->admission_id ) }}'>
 					{{ strtoupper($admission->patient_name) }}
+					</a>
 					<br>
 					<small>{{$admission->patient_mrn}}
 					<br>
 					{{$admission->name}}</small>
 			</td>
 			<td>
-					{{$admission->bed_name}} / {{$admission->room_name}} 
+					{{$admission->bed_name}} 
+					@if ($admission->room_name) 
+						/ {{$admission->room_name}} 
+					@endif
+					@cannot('module-ward')
 					<br>
 					<small>{{$admission->ward_name}}<small>	
+					@endcannot
 			</td>
 			@can('module-ward')
+			@if ($ward->ward_code != 'mortuary')
 			<td>
 					{{$admission->diet_name}}
 			</td>
+			@endif
 			@endcan
 			@can('module-ward')
 			@if ($setWard == $ward->ward_code)

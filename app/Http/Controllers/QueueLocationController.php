@@ -12,7 +12,7 @@ use DB;
 use Session;
 use App\Department;
 use App\EncounterType as Encounter;
-
+use App\User;
 
 class QueueLocationController extends Controller
 {
@@ -28,7 +28,7 @@ class QueueLocationController extends Controller
 			$queue_locations = DB::table('queue_locations')
 					->orderBy('location_name')
 					->paginate($this->paginateValue);
-			Log::info($this->getLocation($request));
+
 			return view('queue_locations.index', [
 					'queue_locations'=>$queue_locations
 			]);
@@ -37,10 +37,16 @@ class QueueLocationController extends Controller
 	public function create()
 	{
 			$queue_location = new QueueLocation();
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('module_consultation',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
 			return view('queue_locations.create', [
 					'queue_location' => $queue_location,
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
 					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'consultants' => $consultants,
 					]);
 	}
 
@@ -65,10 +71,16 @@ class QueueLocationController extends Controller
 	public function edit(Request $request,$id) 
 	{
 			$queue_location = QueueLocation::findOrFail($id);
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('module_consultation',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
 			return view('queue_locations.edit', [
 					'queue_location'=>$queue_location,
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
 					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'consultants' => $consultants,
 					]);
 	}
 

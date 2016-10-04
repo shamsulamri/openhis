@@ -58,4 +58,14 @@ class AppointmentService extends Model
 
 			return $appointments;
 	}
+
+	public function getServiceStartAttribute($value)
+	{
+			return DojoUtility::timeReadFormat($value);
+	}
+
+	public function getServiceEndAttribute($value)
+	{
+			return DojoUtility::timeReadFormat($value);
+	}
 }

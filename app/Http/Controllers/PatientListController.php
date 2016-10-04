@@ -13,6 +13,7 @@ use Session;
 use App\QueueLocation as Location;
 use Auth;
 use App\Admission;
+use App\Ward;
 use App\DojoUtility;
 
 class PatientListController extends Controller
@@ -26,8 +27,10 @@ class PatientListController extends Controller
 
 	public function index(Request $request)
 	{
+
 			$selectedLocation = $request->cookie('queue_location');
 
+			/*
 			$outpatients = DB::table('queues as a')
 					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
@@ -41,27 +44,89 @@ class PatientListController extends Controller
 					->orderBy('discharge_id')
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
+			 */
 
 			$location = Location::find($selectedLocation);
 
+			$selectFields = ['patient_mrn', 'patient_name', 'a.created_at', 'a.encounter_id', 'b.patient_id', 'bed_name', 'ward_name', 'room_name','patient_birthdate', 'gender_name'];
+
 			$inpatients = DB::table('admissions as a')
-							->select(['patient_mrn', 'patient_name', 'a.created_at', 'a.encounter_id', 'b.patient_id', 'bed_name', 'ward_name', 'room_name'])
+							->select($selectFields)
 							->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
 							->leftJoin('discharges as c', 'c.encounter_id', '=', 'a.encounter_id')
 							->leftJoin('patients as d', 'd.patient_id', '=', 'b.patient_id')
 							->leftJoin('beds as e', 'e.bed_code', '=', 'a.bed_code')
 							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
 							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
+							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
 							->where('a.user_id', Auth::user()->id)
+							->where('b.encounter_code', 'inpatient')
 							->whereNull('discharge_id')
 							->get();
 
+			$daycare = DB::table('admissions as a')
+							->select($selectFields)
+							->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
+							->leftJoin('discharges as c', 'c.encounter_id', '=', 'a.encounter_id')
+							->leftJoin('patients as d', 'd.patient_id', '=', 'b.patient_id')
+							->leftJoin('beds as e', 'e.bed_code', '=', 'a.bed_code')
+							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
+							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
+							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
+							->where('a.user_id', Auth::user()->id)
+							->where('b.encounter_code', 'daycare')
+							->whereNull('discharge_id')
+							->get();
+
+			$observations = DB::table('admissions as a')
+							->select($selectFields)
+							->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
+							->leftJoin('discharges as c', 'c.encounter_id', '=', 'a.encounter_id')
+							->leftJoin('patients as d', 'd.patient_id', '=', 'b.patient_id')
+							->leftJoin('beds as e', 'e.bed_code', '=', 'a.bed_code')
+							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
+							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
+							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
+							->where('b.encounter_code', 'emergency')
+							->whereNull('discharge_id')
+							->get();
+
+			$mortuary = DB::table('admissions as a')
+							->select($selectFields)
+							->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
+							->leftJoin('discharges as c', 'c.encounter_id', '=', 'a.encounter_id')
+							->leftJoin('patients as d', 'd.patient_id', '=', 'b.patient_id')
+							->leftJoin('beds as e', 'e.bed_code', '=', 'a.bed_code')
+							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
+							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
+							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
+							->where('b.encounter_code', 'mortuary')
+							->whereNull('discharge_id')
+							->get();
+
+			$outpatients = DB::table('queues as a')
+					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id', 'patient_birthdate', 'gender_name')
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
+					->leftJoin('ref_genders as k', 'k.gender_code', '=', 'c.gender_code')
+					->where('a.location_code',$request->cookie('queue_location'))
+					->whereNull('discharge_id')
+					->orWhere('a.location_code','pool')
+					->orderBy('discharge_id')
+					->orderBy('a.created_at')
+					->paginate($this->paginateValue);
 
 			return view('patient_lists.index', [
 					'outpatient_lists'=>$outpatients,
 					'user_id' => Auth::user()->id,
 					'location' => $location,
 					'inpatients' => $inpatients,
+					'observations' => $observations,
+					'daycare' => $daycare,
+					'mortuary' => $mortuary,
 					'admission' => new Admission(),
 					'dojo' => new DojoUtility(),
 			]);

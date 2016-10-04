@@ -4,6 +4,7 @@
 			<div class='col-md-10'>
 						<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
 						<h6>{{ $patient->patient_mrn }}</h6>
+						<h6>{{ $patient->patientAge() }}</h6>
 						@if ($patient->outstandingBill() < 0) 
 						<h4>
 						<p class='text-warning'>

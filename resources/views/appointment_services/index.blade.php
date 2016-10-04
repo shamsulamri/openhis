@@ -11,7 +11,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/appointment_services/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -19,8 +18,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>service_name</th>
-    <th>service_id</th> 
+    <th>Service</th>
+    <th>Department</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -33,7 +32,7 @@
 					</a>
 			</td>
 			<td>
-					{{$appointment_service->service_id}}
+					{{$appointment_service->department_name}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('appointment_services/delete/'. $appointment_service->service_id) }}'>Delete</a>

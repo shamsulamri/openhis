@@ -14,6 +14,7 @@ use App\Department;
 use Carbon\Carbon;
 use App\Patient;
 use App\Appointment;
+use App\User;
 
 class AppointmentServiceController extends Controller
 {
@@ -26,20 +27,28 @@ class AppointmentServiceController extends Controller
 
 	public function index()
 	{
-			$appointment_services = DB::table('appointment_services')
+			$appointment_services = DB::table('appointment_services as a')
+					->leftjoin('departments as b', 'b.department_code','=','a.department_code')
 					->orderBy('service_name')
 					->paginate($this->paginateValue);
+
 			return view('appointment_services.index', [
-					'appointment_services'=>$appointment_services
+					'appointment_services'=>$appointment_services,
 			]);
 	}
 
 	public function create()
 	{
 			$appointment_service = new AppointmentService();
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('module_consultation',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
 			return view('appointment_services.create', [
 					'appointment_service' => $appointment_service,
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'consultants'=>$consultants,
 					]);
 	}
 
@@ -64,9 +73,15 @@ class AppointmentServiceController extends Controller
 	public function edit($id) 
 	{
 			$appointment_service = AppointmentService::findOrFail($id);
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('module_consultation',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
 			return view('appointment_services.edit', [
 					'appointment_service'=>$appointment_service,
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'consultants'=>$consultants,
 					]);
 	}
 
@@ -129,12 +144,19 @@ class AppointmentServiceController extends Controller
 
 	public function searchById($id)
 	{
-			$appointment_services = DB::table('appointment_services')
+			$appointment_services = DB::table('appointment_services as a')
+					->leftjoin('departments as b', 'b.department_code','=','a.department_code')
 					->where('service_id','=',$id)
 					->paginate($this->paginateValue);
 
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('module_consultation',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
 			return view('appointment_services.index', [
-					'appointment_services'=>$appointment_services
+					'appointment_services'=>$appointment_services,
+					'consultants'=>$consultants
 			]);
 	}
 

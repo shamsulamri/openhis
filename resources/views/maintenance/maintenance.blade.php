@@ -22,8 +22,10 @@
 				<a href="{{ url('/referrals') }}">Referral Types</a><br>
 				<a href="{{ url('/patient_types') }}">Patient Types</a><br>
 				<a href="{{ url('/encounter_types') }}">Encounter Types</a><br>
+				<!--
 				<a href="{{ url('/ward_discharges') }}">Ward Discharges</a><br>
 				<a href="{{ url('/ward_arrivals') }}">Ward Arrivals</a><br>
+				-->
 			</small>
 			</div>
 	</div>

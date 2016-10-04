@@ -8,10 +8,7 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
-<br>
+@include('common.notification')
 <a href='/wards/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -37,7 +34,9 @@
 			</td>
 			<td align='right'>
 					<a class='btn btn-warning btn-xs' href='{{ URL::to('wards/set/'. $ward->ward_code) }}'>Set Ward</a>
+					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('wards/delete/'. $ward->ward_code) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

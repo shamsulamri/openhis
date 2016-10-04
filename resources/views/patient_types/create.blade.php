@@ -9,7 +9,7 @@ New Patient Type
 {{ Form::model($patient_type, ['url'=>'patient_types', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('type_code')) has-error @endif'>
-        <label for='type_code' class='col-sm-3 control-label'>type_code<span style='color:red;'> *</span></label>
+        <label for='type_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('type_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('type_code')) <p class="help-block">{{ $errors->first('type_code') }}</p> @endif

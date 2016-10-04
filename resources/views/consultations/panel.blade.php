@@ -10,8 +10,20 @@
 @else
 	<div class='well'>
 @endif
-		<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
-		<h6>{{ $patient->patient_mrn }}</h6>
+		<div class='row'>
+			<div class='col-md-10'>
+				<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
+				<h6>{{ $patient->patient_mrn }}</h6>
+				<h6>{{ $patient->patientAge() }}</h6>
+			</div>
+			<div class='col-md-2' align='right'>
+			@if (Storage::disk('local')->has('/'.$patient->patient_mrn.'/'.$patient->patient_mrn))	
+			<img id='show_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='90' width='75'>
+			@else
+					<img id='show_image' src='/profile-img.png' style='border:2px solid gray' height='85' width='75'>
+			@endif
+			</div>
+		</div>
 	</div>
 @if (count($patient->alert)>0)
 	<div class='panel-body'>

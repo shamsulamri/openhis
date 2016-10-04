@@ -31,13 +31,18 @@ class ConsultationProcedureController extends Controller
 					->where('encounter_id','=',$consultation->encounter_id)
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
-			return view('consultation_procedures.index', [
-					'consultation_procedures'=>$consultation_procedures,
-					'consultation' => $consultation,
-					'patient'=>$consultation->encounter->patient,
-					'tab'=>'procedure',
-					'consultOption' => 'consultation',
-			]);
+
+			if ($consultation_procedures->count()==0) {
+					return $this->create();
+			} else {
+					return view('consultation_procedures.index', [
+							'consultation_procedures'=>$consultation_procedures,
+							'consultation' => $consultation,
+							'patient'=>$consultation->encounter->patient,
+							'tab'=>'procedure',
+							'consultOption' => 'consultation',
+					]);
+			}
 	}
 
 	public function create()

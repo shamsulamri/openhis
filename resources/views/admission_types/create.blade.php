@@ -9,7 +9,7 @@ New Admission Type
 {{ Form::model($admission_type, ['url'=>'admission_types', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('admission_code')) has-error @endif'>
-        <label for='admission_code' class='col-sm-3 control-label'>admission_code<span style='color:red;'> *</span></label>
+        <label for='admission_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('admission_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'10']) }}
             @if ($errors->has('admission_code')) <p class="help-block">{{ $errors->first('admission_code') }}</p> @endif

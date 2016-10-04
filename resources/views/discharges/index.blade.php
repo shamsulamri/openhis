@@ -61,14 +61,18 @@
 			<td align='right'>
 					<?php
 					$bill_label="Interim Bill";
+					$button_type="primary";
 					if ($discharge->discharge_id>0) {
 						$bill_label = "Final Bill";
-						if ($discharge->id>0) $bill_label="&nbsp;&nbsp; Paid &nbsp;&nbsp;";
+						if ($discharge->id>0) {
+								$bill_label="&nbsp;&nbsp; Paid &nbsp;&nbsp;";
+								$button_type="default";
+						}
 					}
 					?>
 				
 					@can('module-discharge')
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
+					<a class='btn btn-{{ $button_type }} btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
 					@endcan
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>

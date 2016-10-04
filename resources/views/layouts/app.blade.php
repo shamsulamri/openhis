@@ -169,10 +169,14 @@
 								<a class='list-group-item' href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Admission Tasks</a>
 								<a class='list-group-item' href="{{ url('/bed_bookings') }}"><span class='glyphicon glyphicon-bookmark'></span>&nbsp; Bed Bookings</a>
 				</div>
+				@if (!empty($ward->ward_code))
+				@if ($ward->ward_code != 'mortuary')
 				<div class='list-group'>
 								<a class='list-group-item' href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patients</a>
 								<a class='list-group-item' href="{{ url('/appointments') }}"><span class='glyphicon glyphicon-calendar'></span>&nbsp; Appointments</a>
 				</div>
+				@endif
+				@endif
 				<div class='list-group'>
 								<a class='list-group-item' href="{{ url('/products') }}"><span class='glyphicon glyphicon-glass'></span>&nbsp; Products</a>
 								<a class='list-group-item' href="{{ url('/loans/ward') }}"><span class='glyphicon glyphicon-transfer'></span>&nbsp; Loans</a>

@@ -118,7 +118,7 @@ class EncounterController extends Controller
 					}
 					if ($encounter->encounter_code=='outpatient') {
 							return redirect('/queues/create?encounter_id='.$encounter->encounter_id);
-					} elseif ($encounter->encounter_code=='inpatient') {
+					} elseif ($encounter->encounter_code=='inpatient' || $encounter->encounter_code=='mortuary') {
 							return redirect('/admissions/create?encounter_id='.$encounter->encounter_id);
 					} elseif ($encounter->encounter_code=='emergency') {
 							if ($encounter->triage_code=='green') {
@@ -239,8 +239,13 @@ class EncounterController extends Controller
 
 	public function searchById($id)
 	{
-			$encounters = DB::table('encounters')
-					->where('encounter_id','=',$id)
+			$encounters = DB::table('encounters as a')
+					->select('a.encounter_id','patient_mrn','a.encounter_code', 'patient_name', 'a.patient_id', 'encounter_name','a.created_at', 'discharge_id')
+					->join('patients as c','c.patient_id','=','a.patient_id')
+					->join('ref_encounter_types as d', 'd.encounter_code','=','a.encounter_code')
+					->leftJoin('discharges as b', 'b.encounter_id','=', 'a.encounter_id')
+					->where('a.encounter_id','=',$id)
+					->orderBy('created_at','desc')
 					->paginate($this->paginateValue);
 
 			return view('encounters.index', [

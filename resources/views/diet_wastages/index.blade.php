@@ -10,7 +10,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/diet_wastages/create' class='btn btn-primary'>Create</a>
 <br>
 <br>

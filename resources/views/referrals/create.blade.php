@@ -9,7 +9,7 @@ New Referral
 {{ Form::model($referral, ['url'=>'referrals', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('referral_code')) has-error @endif'>
-        <label for='referral_code' class='col-sm-3 control-label'>referral_code<span style='color:red;'> *</span></label>
+        <label for='referral_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('referral_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('referral_code')) <p class="help-block">{{ $errors->first('referral_code') }}</p> @endif

@@ -107,10 +107,10 @@ class AdmissionController extends Controller
 			$encounter = Encounter::findOrFail($admission->encounter_id);
 
 			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
-			->where('module_consultation',1)
-			->orderBy('name')
-			->lists('name','id')
-			->prepend('','');
+							->where('module_consultation',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
 
 			return view('admissions.create', [
 					'admission' => $admission,
@@ -144,6 +144,15 @@ class AdmissionController extends Controller
 							->withErrors($valid)
 							->withInput();
 			}
+	}
+
+	public function show($id)
+	{
+			$admission = Admission::findOrFail($id);
+			return view('admissions.view', [
+					'admission'=>$admission,
+					'patient'=>$admission->encounter->patient,
+			]);
 	}
 
 	public function edit($id) 
@@ -311,5 +320,7 @@ class AdmissionController extends Controller
 					'admissions'=>$admissions
 			]);
 	}
+
+
 
 }

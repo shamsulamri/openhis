@@ -41,5 +41,14 @@ class QueueLocation extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function department()
+	{
+			return $this->belongsTo('App\Department', 'department_code');
+	}
+
+	public function encounter()
+	{
+			return $this->belongsTo('App\EncounterType', 'encounter_code');
+	}
 	
 }

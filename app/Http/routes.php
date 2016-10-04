@@ -73,8 +73,9 @@ Route::group(['middleware' => 'web'], function () {
 		});
 
 		Route::get('/class_methods/{class_name}', 'SpyController@getMethods');
-
 		Route::get('/integration', 'IntegrationController@test');
+		Route::get('/report', 'ReportController@index');
+		Route::post('/report', 'ReportController@generate');
 		
 		Route::get('/obstetric', 'ObstetricController@history');
 		Route::post('/obstetric', 'ObstetricController@update');

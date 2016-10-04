@@ -18,6 +18,7 @@ use App\Gender;
 use App\Department;
 use App\EncounterType;
 use App\BedHelper;
+use App\Product;
 
 class BedController extends Controller
 {
@@ -73,7 +74,14 @@ class BedController extends Controller
 					$bed = new Bed($request->all());
 					$bed->bed_code = $request->bed_code;
 					$bed->save();
-					Session::flash('message', 'Record successfully created.');
+					$product = new Product();
+					$product->product_code = $bed->bed_code;
+					$product->product_name = $bed->bed_name;
+					$product->product_sold = 1;
+					$product->product_sale_price = 99;
+					$product->product_unit_charge=1;
+					$product->save();
+					Session::flash('message', 'Record successfully created. Please update the product price information.');
 					return redirect('/beds/id/'.$bed->bed_code);
 			} else {
 					return redirect('/beds/create')
@@ -107,6 +115,9 @@ class BedController extends Controller
 
 			if ($valid->passes()) {
 					$bed->save();
+					$product = Product::find($bed->bed_code);
+					$product->product_name = $bed->bed_name;
+					$product->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/beds');
 			} else {
@@ -169,12 +180,23 @@ class BedController extends Controller
 
 	public function searchById($id)
 	{
-			$beds = DB::table('beds')
+			$beds = DB::table('beds as a')
+					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
+					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
+					->leftjoin('bed_statuses as d', 'd.status_code','=', 'a.status_code')
 					->where('bed_code','=',$id)
+					->orderBy('ward_name')
+					->orderBy('class_name')
+					->orderBy('bed_name')
 					->paginate($this->paginateValue);
 
 			return view('beds.index', [
-					'beds'=>$beds
+					'beds'=>$beds,
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'ward_code' => null,
+					'class_code' => null,
+					'bedHelper' => new BedHelper(),
 			]);
 	}
 

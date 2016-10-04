@@ -8,9 +8,7 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+@include('common.notification')
 <a href='/queue_locations/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -35,7 +33,7 @@
 					{{$queue_location->location_code}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-default btn-xs' href='{{ URL::to('queue_locations/set/'. $queue_location->location_code) }}'>Set Location</a>
+					<a class='btn btn-warning btn-xs' href='{{ URL::to('queue_locations/set/'. $queue_location->location_code) }}'>Set Location</a>
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('queue_locations/delete/'. $queue_location->location_code) }}'>Delete</a>
 					@endcan
