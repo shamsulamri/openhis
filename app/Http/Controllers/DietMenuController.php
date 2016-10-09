@@ -14,6 +14,7 @@ use App\DietClass;
 use App\DietPeriod;
 use App\DietHelper;
 use App\Ward;
+use Log;
 
 class DietMenuController extends Controller
 {
@@ -49,7 +50,7 @@ class DietMenuController extends Controller
 	{
 			
 			$dt = Carbon::now();
-			if (empty($request->dayOfWeek)) {
+			if (empty($request->refresh)) {
 					$dayOfWeek = $dt->dayOfWeek;
 			} else {
 					$dayOfWeek = $request->dayOfWeek;
@@ -68,6 +69,7 @@ class DietMenuController extends Controller
 			if (!empty($request->diet_code)) $diet_code = $request->diet_code;
 			if (!empty($request->class_Code)) $class_code = $request->class_code;
 
+			Log::info($dayOfWeek);
 			return view('diet_menus.menu', [
 					'diets' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code'),
 					'diet_classes' => DietClass::where('diet_code',$diet_code)->orderBy('class_position')->get(),
@@ -104,7 +106,7 @@ class DietMenuController extends Controller
 			$class_code = "class1";
 
 			if (!empty($request->diet_code)) $diet_code = $request->diet_code;
-			if (!empty($request->class_Code)) $class_code = $request->class_code;
+			if (!empty($request->class_code)) $class_code = $request->class_code;
 					
 			$menu_products = DB::table('diet_menus as a')
 							->select('a.product_code','a.period_code','c.period_position', 'product_name','period_name','a.class_code')
@@ -189,7 +191,6 @@ class DietMenuController extends Controller
 
 	public function workorder(Request $request)
 	{
-			
 			$dt = Carbon::now();
 			if (empty($request->dayOfWeek)) {
 					$dayOfWeek = $dt->dayOfWeek;

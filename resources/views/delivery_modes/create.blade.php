@@ -9,7 +9,7 @@ New Delivery Mode
 {{ Form::model($delivery_mode, ['url'=>'delivery_modes', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('delivery_code')) has-error @endif'>
-        <label for='delivery_code' class='col-sm-3 control-label'>delivery_code<span style='color:red;'> *</span></label>
+        <label for='delivery_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('delivery_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('delivery_code')) <p class="help-block">{{ $errors->first('delivery_code') }}</p> @endif

@@ -17,12 +17,8 @@ iframe { border: 1px #C0C0C0 solid; }
 </div>
 @else
 <div class="row">
-	<div class="col-xs-2">
-	</div>
-	<div class="col-xs-8">
+	<div class="col-xs-12">
 		<iframe name='frameLine' id='frameLine' width='100%' height='800px' src='/purchase_order_lines/index/{{ $purchase_id }}'></iframe>
-	</div>
-	<div class="col-xs-2">
 	</div>
 </div>
 @endif

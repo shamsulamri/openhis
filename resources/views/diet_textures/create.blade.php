@@ -9,7 +9,7 @@ New Diet Texture
 {{ Form::model($diet_texture, ['url'=>'diet_textures', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('texture_code')) has-error @endif'>
-        <label for='texture_code' class='col-sm-3 control-label'>texture_code<span style='color:red;'> *</span></label>
+        <label for='texture_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('texture_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'10']) }}
             @if ($errors->has('texture_code')) <p class="help-block">{{ $errors->first('texture_code') }}</p> @endif

@@ -1,6 +1,6 @@
 
     <div class='form-group  @if ($errors->has('system_code')) has-error @endif'>
-        {{ Form::label('system_code', 'system_code',['class'=>'col-sm-3 control-label']) }}
+        {{ Form::label('system_code', 'System',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::select('system_code', $system,null, ['class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('system_code')) <p class="help-block">{{ $errors->first('system_code') }}</p> @endif
@@ -8,7 +8,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('category_name')) has-error @endif'>
-        <label for='category_name' class='col-sm-3 control-label'>category_name<span style='color:red;'> *</span></label>
+        <label for='category_name' class='col-sm-3 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('category_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'80']) }}
             @if ($errors->has('category_name')) <p class="help-block">{{ $errors->first('category_name') }}</p> @endif

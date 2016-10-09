@@ -37,7 +37,7 @@
         {{ Form::label('mc', 'Medical Certificate',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
 		@if ($mc)
-        		{{ Form::label('product', $mc->getMcStart()->format('d M Y'),['class'=>'control-label']) }}<br>
+        		{{ Form::label('product', $mc->getMcStart()->format('d F Y'),['class'=>'control-label']) }}<br>
 				@if (empty($mc->mc_end))
         		{{ Form::label('mc', 'End: '.$mc->mc_end,['class'=>'control-label']) }}<br>
 				@endif

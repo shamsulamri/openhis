@@ -24,8 +24,7 @@ class UserAuthorizationController extends Controller
 	public function index()
 	{
 			$user_authorizations = DB::table('user_authorizations')
-					->where('author_id','<>', 3)
-					->orderBy('author_name')
+					->orderBy('module_consultation')
 					->paginate($this->paginateValue);
 			return view('user_authorizations.index', [
 					'user_authorizations'=>$user_authorizations
@@ -48,10 +47,10 @@ class UserAuthorizationController extends Controller
 
 			if ($valid->passes()) {
 					$user_authorization = new UserAuthorization($request->all());
-					$user_authorization->author_id = $request->author_id;
+					$user_authorization->id = $request->id;
 					$user_authorization->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/user_authorizations/id/'.$user_authorization->author_id);
+					return redirect('/user_authorizations/id/'.$user_authorization->id);
 			} else {
 					return redirect('/user_authorizations/create')
 							->withErrors($valid)
@@ -73,19 +72,7 @@ class UserAuthorizationController extends Controller
 			$user_authorization = UserAuthorization::findOrFail($id);
 			$user_authorization->fill($request->input());
 
-			$user_authorization->module_patient = $request->module_patient ?: 0;
 			$user_authorization->module_consultation = $request->module_consultation ?: 0;
-			$user_authorization->module_inventory = $request->module_inventory ?: 0;
-			$user_authorization->module_ward = $request->module_ward ?: 0;
-			$user_authorization->module_support = $request->module_support ?: 0;
-			$user_authorization->module_discharge = $request->module_discharge ?: 0;
-			$user_authorization->module_diet = $request->module_diet ?: 0;
-			$user_authorization->module_medical_record = $request->module_medical_record ?: 0;
-			$user_authorization->patient_list = $request->patient_list ?: 0;
-			$user_authorization->product_list = $request->product_list ?: 0;
-			$user_authorization->loan_function = $request->loan_function ?: 0;
-			$user_authorization->appointment_function = $request->appointment_function ?: 0;
-			$user_authorization->system_administrator = $request->system_administrator ?: 0;
 
 			$valid = $user_authorization->validate($request->all(), $request->_method);	
 
@@ -120,12 +107,9 @@ class UserAuthorizationController extends Controller
 	public function search(Request $request)
 	{
 			$user_authorizations = DB::table('user_authorizations')
-					->where('author_id','<>', 3)
-					->where(function ($query) use ($request) {
-						$query->where('author_name','like','%'.$request->search.'%')
-							  ->orWhere('author_id', 'like','%'.$request->search.'%');
-					})
-					->orderBy('author_name')
+					->where('module_consultation','like','%'.$request->search.'%')
+					->orWhere('id', 'like','%'.$request->search.'%')
+					->orderBy('module_consultation')
 					->paginate($this->paginateValue);
 
 			return view('user_authorizations.index', [

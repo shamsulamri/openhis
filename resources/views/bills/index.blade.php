@@ -11,7 +11,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/bills/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -19,8 +18,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>bill_grand_total</th>
-    <th>id</th> 
+    <th>Id</th> 
+    <th>Grand Total</th>
 	<th></th>
 	</tr>
   </thead>
@@ -28,12 +27,12 @@
 @foreach ($bills as $bill)
 	<tr>
 			<td>
+					{{$bill->id}}
+			</td>
+			<td>
 					<a href='{{ URL::to('bills/'. $bill->id . '/edit') }}'>
 						{{$bill->bill_grand_total}}
 					</a>
-			</td>
-			<td>
-					{{$bill->id}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('bills/delete/'. $bill->id) }}'>Delete</a>

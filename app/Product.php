@@ -3,12 +3,16 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
 class Product extends Model
 {
+	use SoftDeletes;
+	protected $dates = ['deleted_at'];
+
 	protected $table = 'products';
 	protected $fillable = [
 				'product_name',
@@ -83,4 +87,12 @@ class Product extends Model
 			return str_replace('.00','',$value);
 	}
 
+	public function getUnitShortname()
+	{
+			if ($this->unitMeasure) {
+					return $this->unitMeasure->unit_shortname;
+			} else {
+					return "unit";
+			}
+	}
 }

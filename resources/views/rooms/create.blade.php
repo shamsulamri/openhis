@@ -9,7 +9,7 @@ New Room
 {{ Form::model($room, ['url'=>'rooms', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('room_code')) has-error @endif'>
-        <label for='room_code' class='col-sm-3 control-label'>room_code<span style='color:red;'> *</span></label>
+        <label for='room_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('room_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'10']) }}
             @if ($errors->has('room_code')) <p class="help-block">{{ $errors->first('room_code') }}</p> @endif

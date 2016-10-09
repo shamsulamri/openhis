@@ -9,7 +9,7 @@ New Diet Contamination
 {{ Form::model($diet_contamination, ['url'=>'diet_contaminations', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('contamination_code')) has-error @endif'>
-        <label for='contamination_code' class='col-sm-3 control-label'>contamination_code<span style='color:red;'> *</span></label>
+        <label for='contamination_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('contamination_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('contamination_code')) <p class="help-block">{{ $errors->first('contamination_code') }}</p> @endif

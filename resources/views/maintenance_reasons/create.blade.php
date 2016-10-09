@@ -9,7 +9,7 @@ New Maintenance Reason
 {{ Form::model($maintenance_reason, ['url'=>'maintenance_reasons', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('reason_code')) has-error @endif'>
-        <label for='reason_code' class='col-sm-3 control-label'>reason_code<span style='color:red;'> *</span></label>
+        <label for='reason_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('reason_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('reason_code')) <p class="help-block">{{ $errors->first('reason_code') }}</p> @endif

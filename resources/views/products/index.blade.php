@@ -16,7 +16,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 @if ($products->total()>0)
 <table class="table table-hover">
  <thead>
@@ -38,6 +37,9 @@
 			<td>
 					<a href='{{ URL::to('products/'. $product->product_code . '/option') }}'>
 						{{$product->product_name}}
+						@if ($product->product_bom==1)
+							*
+						@endif
 					</a>
 			</td>
 			<td align='right'>

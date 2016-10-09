@@ -10,7 +10,8 @@ use App\Sponsor;
 use Log;
 use DB;
 use Session;
-
+use App\State;
+use App\Nation;
 
 class SponsorController extends Controller
 {
@@ -36,7 +37,8 @@ class SponsorController extends Controller
 			$sponsor = new Sponsor();
 			return view('sponsors.create', [
 					'sponsor' => $sponsor,
-				
+					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
+					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
 					]);
 	}
 
@@ -63,7 +65,8 @@ class SponsorController extends Controller
 			$sponsor = Sponsor::findOrFail($id);
 			return view('sponsors.edit', [
 					'sponsor'=>$sponsor,
-				
+					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
+					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
 					]);
 	}
 

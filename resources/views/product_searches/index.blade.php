@@ -20,6 +20,7 @@
 	<input type='hidden' name="day" value="{{ $day }}">
 	<input type='hidden' name="return_id" value="{{ $return_id }}">
 </form>
+<br>
 @if (Session::has('message'))
 	<br>
     <div class="alert alert-info">{{ Session::get('message') }}</div>
@@ -38,9 +39,7 @@
 			</td>
 			<td align='right'>
 				@if ($reason=='purchase_order')
-					@if ($purchase_order->purchase_posted==0)
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/add/'. $purchase_id . '/' . $product_search->product_code) }}'>+</a>
-					@endif
 				@endif
 				@if ($reason=='bom')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/bom/'. $product_code . '/' . $product_search->product_code) }}'>+</a>

@@ -30,16 +30,16 @@
 					{{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 			</td>
 			<td>
-					{{ $encounter->patient_mrn }}
+					{{ $encounter->patient->patient_mrn }}
 			</td>
 			<td>
 
 					<a href='{{ URL::to('encounters/'. $encounter->encounter_id . '/edit') }}'>
-						{{$encounter->patient_name}}
+						{{$encounter->patient->patient_name}}
 					</a>
 			</td>
 			<td>
-					{{$encounter->encounter_name}}
+					{{$encounter->encounterType->encounter_name}}
 			</td>
 			<td align='right'>
 					@can('system-administrator')

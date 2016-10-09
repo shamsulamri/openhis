@@ -9,7 +9,7 @@ Edit State
 {{ Form::model($state, ['route'=>['states.update',$state->state_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>
-        <label for='ward_code' class='col-sm-3 control-label'>state_code<span style='color:red;'> *</span></label>
+        <label for='ward_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::label('state_code', $state->state_code, ['class'=>'control-label']) }}
         </div>

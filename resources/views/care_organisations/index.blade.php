@@ -11,7 +11,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/care_organisations/create' class='btn btn-primary'>Create</a>
 <br>
 <br>

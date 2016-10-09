@@ -115,7 +115,9 @@
 				@if (!empty($consultation) && !empty($patient))
 				<div class='list-group'>
 					<a class='list-group-item' href="/medical_alerts"><span class='glyphicon glyphicon-exclamation-sign'></span>&nbsp; Medical Alerts</a>
+					@if ($consultation->encounter->encounter_code=='inpatient')
 					<a class='list-group-item' href="/diet"><span class='glyphicon glyphicon-cutlery'></span>&nbsp; Diet</a>
+					@endif
 					@if ($patient->gender_code=='P')
 					<a class='list-group-item' href="/obstetric"><span class='glyphicon glyphicon-user'></span>&nbsp; Obstetric History</a>
 					<a class='list-group-item' href="/newborns"><span class='glyphicon glyphicon-baby-formula'></span>&nbsp; Newborn</a>

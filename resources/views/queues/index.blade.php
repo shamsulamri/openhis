@@ -40,9 +40,13 @@
 			</td>
 			<td>
 
-					<a href='{{ URL::to('queues/'. $queue->queue_id . '/edit') }}'>
-						{{strtoupper($queue->patient_name)}}
-					</a>
+					@if ($queue->consultation_id==null)
+							<a href='{{ URL::to('queues/'. $queue->queue_id . '/edit') }}'>
+								{{strtoupper($queue->patient_name)}}
+							</a>
+					@else
+								{{strtoupper($queue->patient_name)}}
+					@endif
 					<br>
 					<small>{{$queue->patient_mrn}}</small>
 			</td>
@@ -51,9 +55,9 @@
 			</td>
 			<td align='right'>
 					<a class='btn btn-default btn-xs' href='{{ URL::to('loans/request/'. $queue->patient_mrn.'?type=folder') }}'>Folder Request</a>
-					@can('system-administrator')
+					@if ($queue->consultation_id==null)
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
-					@endcan
+					@endif
 			</td>
 	</tr>
 @endforeach

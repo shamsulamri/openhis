@@ -19,6 +19,9 @@ use App\PurchaseOrderLine;
 use App\Stock;
 use App\Http\Controllers\ProductController;
 use App\Product;
+use App\DietClass;
+use App\DietHelper;
+use App\Diet;
 
 class PurchaseOrderController extends Controller
 {
@@ -132,6 +135,7 @@ class PurchaseOrderController extends Controller
 					$stock->product_code = $item->product_code;
 					$stock->stock_date = DojoUtility::now();
 					$stock->stock_quantity = ($item->line_quantity_received + $item->line_quantity_received_2)*$product->product_conversion_unit;
+					$stock->stock_description = "Purchase id: ".$purchase_id;
 					$stock->save();
 
 					$product = new ProductController();
@@ -157,7 +161,8 @@ class PurchaseOrderController extends Controller
 	
 	public function search(Request $request)
 	{
-			$purchase_orders = DB::table('purchase_orders')
+			$purchase_orders = DB::table('purchase_orders as a')
+					->leftJoin('suppliers as b', 'b.supplier_code','=','a.supplier_code')
 					->where('purchase_date','like','%'.$request->search.'%')
 					->orWhere('purchase_id', 'like','%'.$request->search.'%')
 					->orderBy('purchase_date')
@@ -199,5 +204,79 @@ class PurchaseOrderController extends Controller
 		$purchase_order->save();
 
 		return redirect('/purchase_order_lines/index/'.$request->purchase_id);
+	}
+
+	public function diet($id)
+	{
+			Log::info("------------------------");
+			$dietHelper = new DietHelper();
+			$dt = Carbon::now();
+			if (empty($request->dayOfWeek)) {
+					$dayOfWeek = $dt->dayOfWeek;
+			} else {
+					$dayOfWeek = $request->dayOfWeek;
+			}
+			if (empty($request->weekOfMonth)) {
+					$weekOfMonth = $dt->weekOfMonth;
+			} else {
+					$weekOfMonth = $request->weekOfMonth;
+			}
+
+			if ($weekOfMonth>4) $weekOfMonth=1;
+					
+			$diets = Diet::all();
+
+			$po = [];
+			foreach($diets as $diet) {
+					Log::info("--".$diet->diet_code);
+					$diet_classes = DietClass::where('diet_code', $diet->diet_code)->get();
+					$products = DB::table('diet_menus as a')
+									->select('a.product_code','a.period_code','c.period_position', 'product_name','period_name','a.class_code')
+									->leftjoin('diet_classes as b', 'b.class_code','=','a.class_code')
+									->leftjoin('diet_periods as c', 'c.period_code','=','a.period_code')
+									->leftjoin('products as d', 'd.product_code','=','a.product_code')
+									->where('b.diet_code','=', $diet->diet_code)
+									->where('week_index','=', $weekOfMonth)
+									->where('day_index','=', $dayOfWeek)
+									->where('product_bom', '=', 1)
+									->groupBy('a.product_code')
+									->orderBy('period_position')
+									->orderBy('product_name')
+									->get();
+
+					foreach ($products as $product) {
+						$total=0;
+						foreach ($diet_classes as $class) {
+							$count=$dietHelper->cooklist($diet->diet_code,$class->class_code, $product->period_code, $product->product_code);
+							$total+=$count;
+						}
+						$boms =$dietHelper->bom($product->product_code);
+						
+						foreach ($boms as $bom) {
+							Log::info($bom->product->product_name);
+							Log::info($bom->bom_quantity*$total);
+							$value=0;
+							if (!empty($po[$bom->product->product_code])) {
+									$value = $po[$bom->product->product_code];
+							}
+							$po[$bom->product->product_code]=$bom->bom_quantity*$total + $value;
+						}
+					}
+			}
+
+			foreach($po as $key=>$value) {
+					Log::info($key."==".$value);
+					$product = Product::find($key);
+					$purchase_order_line = new PurchaseOrderLine();
+					$purchase_order_line->purchase_id = $id;
+					$purchase_order_line->line_quantity_ordered = $value;
+					$purchase_order_line->line_quantity_received = $value;
+					$purchase_order_line->line_total = $value*$product->product_purchase_price;
+					$purchase_order_line->product_code = $key;
+					$purchase_order_line->line_price = $product->product_purchase_price;
+					$purchase_order_line->save();
+			}
+
+		return redirect('/purchase_order_lines/index/'.$id);
 	}
 }

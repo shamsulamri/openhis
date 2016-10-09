@@ -1,6 +1,6 @@
 
     <div class='form-group  @if ($errors->has('dosage_name')) has-error @endif'>
-        <label for='dosage_name' class='col-sm-3 control-label'>dosage_name<span style='color:red;'> *</span></label>
+        <label for='dosage_name' class='col-sm-3 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('dosage_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('dosage_name')) <p class="help-block">{{ $errors->first('dosage_name') }}</p> @endif
@@ -8,7 +8,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('dosage_label')) has-error @endif'>
-        {{ Form::label('dosage_label', 'dosage_label',['class'=>'col-sm-3 control-label']) }}
+        {{ Form::label('dosage_label', 'Label',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::text('dosage_label', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('dosage_label')) <p class="help-block">{{ $errors->first('dosage_label') }}</p> @endif

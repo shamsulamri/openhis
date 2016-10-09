@@ -1,6 +1,6 @@
 
     <div class='form-group  @if ($errors->has('type_name')) has-error @endif'>
-        <label for='type_name' class='col-sm-3 control-label'>type_name<span style='color:red;'> *</span></label>
+        <label for='type_name' class='col-sm-3 control-label'>Discharge Type<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('type_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('type_name')) <p class="help-block">{{ $errors->first('type_name') }}</p> @endif

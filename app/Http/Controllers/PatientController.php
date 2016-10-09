@@ -28,6 +28,7 @@ use App\PatientFlag;
 use App\PatientDependant;
 use App\Encounter;
 use App\EncounterHelper;
+use Carbon\Carbon;
 
 class PatientController extends Controller
 {
@@ -40,8 +41,8 @@ class PatientController extends Controller
 
 	public function index()
 	{
-			$patients = DB::table('patients')
-					->orderBy('patient_id','desc')
+
+			$patients = Patient::orderBy('patient_id','desc')
 					->paginate($this->paginateValue);
 			return view('patients.index', [
 					'patients'=>$patients,
@@ -163,8 +164,7 @@ class PatientController extends Controller
 	
 	public function search(Request $request)
 	{
-			$patients = DB::table('patients')
-					->where('patient_name','like','%'.$request->search.'%')
+			$patients = Patient::where('patient_name','like','%'.$request->search.'%')
 					->orWhere('patient_mrn', 'like','%'.$request->search.'%')
 					->orWhere('patient_new_ic', 'like','%'.$request->search.'%')
 					->orderBy('patient_name')

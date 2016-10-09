@@ -1,6 +1,6 @@
 
     <div class='form-group  @if ($errors->has('form_name')) has-error @endif'>
-        <label for='form_name' class='col-sm-3 control-label'>form_name<span style='color:red;'> *</span></label>
+        <label for='form_name' class='col-sm-3 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('form_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('form_name')) <p class="help-block">{{ $errors->first('form_name') }}</p> @endif

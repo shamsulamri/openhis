@@ -44,6 +44,13 @@ Route::group(['middleware' => 'web'], function () {
 				}
 		});
 
+		Route::resource('product_authorizations', 'ProductAuthorizationController');
+		Route::get('/product_authorizations/id/{id}', 'ProductAuthorizationController@searchById');
+		Route::post('/product_authorization/search', 'ProductAuthorizationController@search');
+		Route::get('/product_authorization/search', 'ProductAuthorizationController@search');
+		Route::get('/product_authorizations/delete/{id}', 'ProductAuthorizationController@delete');
+		
+
 		Route::resource('sponsors', 'SponsorController');
 		Route::get('/sponsors/id/{id}', 'SponsorController@searchById');
 		Route::post('/sponsor/search', 'SponsorController@search');
@@ -198,6 +205,8 @@ Route::group(['middleware' => 'web'], function () {
 				Route::post('/diet_quality/search', 'DietQualityController@search');
 				Route::get('/diet_quality/search', 'DietQualityController@search');
 				Route::get('/diet_qualities/delete/{id}', 'DietQualityController@delete');
+
+				Route::get('/diet_po', 'PurchaseOrderController@diet');
 				
 		});
 
@@ -239,7 +248,7 @@ Route::group(['middleware' => 'web'], function () {
 
 
 				Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
-				Route::get('/payments/{id}', 'PaymentController@index');
+				Route::get('/payments/{id?}', 'PaymentController@index');
 				Route::get('/payments/create/{patient_id?}/{encounter_id?}', 'PaymentController@create');
 				Route::get('/payments/id/{id}', 'PaymentController@searchById');
 				Route::post('/payment/search', 'PaymentController@search');
@@ -530,6 +539,7 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/purchase_order/post', 'PurchaseOrderController@post');
 				Route::post('/purchase_order/verify', 'PurchaseOrderController@postVerify');
 				Route::get('/purchase_orders/delete/{id}', 'PurchaseOrderController@delete');
+				Route::get('/purchase_order/diet/{id}', 'PurchaseOrderController@diet');
 
 				Route::resource('drug_prescriptions', 'DrugPrescriptionController');
 				Route::get('/drug_prescriptions/id/{id}', 'DrugPrescriptionController@searchById');

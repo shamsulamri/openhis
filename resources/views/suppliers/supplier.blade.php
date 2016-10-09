@@ -32,8 +32,8 @@
 	<div class="row">
 			<div class="col-xs-6">
 				<div class='form-group  @if ($errors->has('supplier_city')) has-error @endif'>
-						{{ Form::label('City', 'City',['class'=>'col-md-4 control-label']) }}
-						<div class='col-md-8'>
+						{{ Form::label('City', 'City',['class'=>'col-md-6 control-label']) }}
+						<div class='col-md-6'>
 							{{ Form::text('supplier_city', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
 							@if ($errors->has('supplier_city')) <p class="help-block">{{ $errors->first('supplier_city') }}</p> @endif
 						</div>
@@ -41,8 +41,8 @@
 			</div>
 			<div class="col-xs-6">
 				<div class='form-group  @if ($errors->has('supplier_postcode')) has-error @endif'>
-						{{ Form::label('Postcode', 'Postcode',['class'=>'col-md-4 control-label']) }}
-						<div class='col-md-8'>
+						{{ Form::label('Postcode', 'Postcode',['class'=>'col-md-6 control-label']) }}
+						<div class='col-md-6'>
 							{{ Form::text('supplier_postcode', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'5']) }}
 							@if ($errors->has('supplier_postcode')) <p class="help-block">{{ $errors->first('supplier_postcode') }}</p> @endif
 						</div>
@@ -53,8 +53,8 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('supplier_state')) has-error @endif'>
-						{{ Form::label('State', 'State',['class'=>'col-md-4 control-label']) }}
-						<div class='col-md-8'>
+						{{ Form::label('State', 'State',['class'=>'col-md-6 control-label']) }}
+						<div class='col-md-6'>
 							{{ Form::select('supplier_state', $state, null, ['class'=>'form-control','maxlength'=>'10']) }}
 							@if ($errors->has('supplier_state')) <p class="help-block">{{ $errors->first('supplier_state') }}</p> @endif
 						</div>
@@ -62,8 +62,8 @@
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('supplier_country')) has-error @endif'>
-						{{ Form::label('Country', 'Country',['class'=>'col-md-4 control-label']) }}
-						<div class='col-md-8'>
+						{{ Form::label('Country', 'Country',['class'=>'col-md-6 control-label']) }}
+						<div class='col-md-6'>
 							{{ Form::select('supplier_country', $nation,null, ['class'=>'form-control','maxlength'=>'10']) }}
 							@if ($errors->has('supplier_country')) <p class="help-block">{{ $errors->first('supplier_country') }}</p> @endif
 						</div>

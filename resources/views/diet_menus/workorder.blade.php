@@ -43,7 +43,7 @@ th,td {
 				@foreach ($diet_classes as $class)
 				<td>	
 					<?php 
-						$count=$dietHelper->workorder('normal',$class->class_code, $product->period_code, $product->product_code, $ward->ward_code); 
+						$count=$dietHelper->workorder($diet_code,$class->class_code, $product->period_code, $product->product_code, $ward->ward_code); 
 						$total+=$count;
 						$grand_total += $count;
 					?>

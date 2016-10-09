@@ -34,7 +34,13 @@
 					<div class='form-group  @if ($errors->has('line_quantity_ordered')) has-error @endif'>
 						{{ Form::label('line_quantity_ordered', 'Quantity',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
+						@if ($purchase_order_line->line_quantity_ordered==0)
+						<label for="line_price" class="form-control">
+							{{ str_replace('.00','',$purchase_order_line->line_quantity_ordered) }}
+						</label>
+						@else
 							{{ Form::label('line_quantity_ordered', str_replace('.00','',$purchase_order_line->line_quantity_ordered), ['class'=>'form-control']) }}
+						@endif
 							@if ($errors->has('line_quantity_ordered')) <p class="help-block">{{ $errors->first('line_quantity_ordered') }}</p> @endif
 						</div>
 					</div>

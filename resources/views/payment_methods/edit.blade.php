@@ -9,7 +9,7 @@ Edit Payment Method
 {{ Form::model($payment_method, ['route'=>['payment_methods.update',$payment_method->payment_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>
-        <label for='ward_code' class='col-sm-3 control-label'>payment_code<span style='color:red;'> *</span></label>
+        <label for='ward_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::label('payment_code', $payment_method->payment_code, ['class'=>'control-label']) }}
         </div>

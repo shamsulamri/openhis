@@ -11,7 +11,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/maintenance_reasons/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -19,8 +18,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>reason_code</th>
-    <th>reason_code</th> 
+    <th>Code</th>
+    <th>Reason</th> 
 	<th></th>
 	</tr>
   </thead>

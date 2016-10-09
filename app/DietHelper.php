@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use App\DietMenu;
 use DB;
 use App\BillMaterial;
+use Log;
 
 class DietHelper 
 {
@@ -46,8 +47,13 @@ class DietHelper
 								->where('a.class_code','=', $class)
 								->where('ward_code','=', $ward_code)
 								->where('a.admission_nbm','=',0)
-								->whereNull('discharge_id')
-								->count();
+								->whereNull('discharge_id');
+				Log::info($diet);
+				Log::info($class);
+				Log::info($ward_code);
+				//dd($patient_count->toSql());
+
+				$patient_count=$patient_count->count();
 			}
 
 			return $patient_count;
@@ -109,8 +115,13 @@ class DietHelper
 								->where('diet_code','=', $diet)
 								->where('class_code','=', $class)
 								->where('a.admission_nbm','=',0)
-								->whereNull('discharge_id')
-								->count();
+								->whereNull('discharge_id');
+
+				//Log::info($diet);
+				//Log::info($class);
+				//dd($patient_count->toSql());
+
+				$patient_count=$patient_count->count();
 			}
 
 			return $patient_count;
@@ -179,8 +190,14 @@ class DietHelper
 								->where('a.class_code','=', $class)
 								->where('ward_code','=', $ward_code)
 								->where('a.admission_nbm','=',0)
-								->whereNull('discharge_id')
-								->count();
+								->whereNull('discharge_id');
+
+				Log::info($diet);
+				Log::info($class);
+				Log::info($ward_code);
+				//dd($patient_count->toSql());
+
+				$patient_count=$patient_count->count();
 			}
 
 			return $patient_count;

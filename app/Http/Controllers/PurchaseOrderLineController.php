@@ -24,13 +24,27 @@ class PurchaseOrderLineController extends Controller
 
 	public function index($purchase_id)
 	{
+			/*
 			$purchase_order_lines = DB::table('purchase_order_lines as a')
 					->leftJoin('products as b', 'b.product_code','=','a.product_code')
 					->where('purchase_id','=',$purchase_id)
 					->orderBy('purchase_id')
 					->paginate($this->paginateValue);
+			 */
 
 			$purchase_order = PurchaseOrder::find($purchase_id);
+
+			if ($purchase_order->purchase_received==1) {
+				$purchase_order_lines = PurchaseOrderLine::orderBy('purchase_id')
+					->where('purchase_id','=',$purchase_id)
+					->paginate($this->paginateValue);
+			} else {
+				$purchase_order_lines = PurchaseOrderLine::withTrashed()
+					->orderBy('purchase_id')
+					->where('purchase_id','=',$purchase_id)
+					->paginate($this->paginateValue);
+			}
+
 
 			return view('purchase_order_lines.index', [
 					'purchase_order_lines'=>$purchase_order_lines,
@@ -127,7 +141,11 @@ class PurchaseOrderLineController extends Controller
 	public function destroy($id)
 	{	
 			$purchase_order_line = PurchaseOrderLine::findOrFail($id);
-			PurchaseOrderLine::find($id)->delete();
+			if ($purchase_order_line->purchaseOrder->purchase_posted==0) {
+					PurchaseOrderLine::find($id)->forceDelete();
+			} else {
+					PurchaseOrderLine::find($id)->delete();
+			}
 			Session::flash('message', 'Record deleted.');
 			return redirect('/purchase_order_lines/index/'.$purchase_order_line->purchase_id);
 	}

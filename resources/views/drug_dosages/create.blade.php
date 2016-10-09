@@ -9,7 +9,7 @@ New Drug Dosage
 {{ Form::model($drug_dosage, ['url'=>'drug_dosages', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('dosage_code')) has-error @endif'>
-        <label for='dosage_code' class='col-sm-3 control-label'>dosage_code<span style='color:red;'> *</span></label>
+        <label for='dosage_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('dosage_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('dosage_code')) <p class="help-block">{{ $errors->first('dosage_code') }}</p> @endif

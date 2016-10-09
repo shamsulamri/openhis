@@ -46,5 +46,9 @@ class Supplier extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function state()
+	{
+			return $this->belongsTo('App\State', 'supplier_state', 'state_code');
+	}
 	
 }

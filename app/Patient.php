@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
@@ -12,6 +13,8 @@ use Log;
 
 class Patient extends Model
 {
+	use SoftDeletes;
+	protected $dates = ['deleted_at'];
 	protected $table = 'patients';
 	protected $fillable = [
 				'tourist_code',
@@ -278,7 +281,9 @@ class Patient extends Model
 
 			static::created(function($patient)
 			{
-					$mrn = "MSU".str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
+					//$prefix = date('Ymd', strtotime(Carbon::now()));  
+					$prefix = config('host.mrn_prefix');
+					$mrn = $prefix.str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
 					$patient->patient_mrn = $mrn;
 					$patient->save();
 			});

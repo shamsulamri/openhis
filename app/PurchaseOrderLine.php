@@ -3,12 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
 class PurchaseOrderLine extends Model
 {
+	use SoftDeletes;
+	protected $dates = ['deleted_at'];
 	protected $table = 'purchase_order_lines';
 	protected $fillable = [
 				'purchase_id',
@@ -60,4 +63,8 @@ class PurchaseOrderLine extends Model
 		return $this->belongsTo('App\PurchaseOrder','purchase_id');
 	}
 
+	public function product()
+	{
+		return $this->belongsTo('App\Product','product_code');
+	}
 }

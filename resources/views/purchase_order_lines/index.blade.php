@@ -27,9 +27,9 @@
 		@if (!Session::has('message'))
 				<br>
 		@endif
-		<a href='/purchase_order/post?purchase_id={{ $purchase_id }}' class='btn btn-default'>Post Purchase Order</a>
+		<a href='/purchase_order/diet/{{ $purchase_id }}' class='btn btn-default'>Diet BOM</a>
 @endif
-	<a href='#' class='btn btn-default'><span class='glyphicon glyphicon-print'></span> Print</a>
+		<a class="btn btn-default pull-right" target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=purchase_order&id={{ $purchase_id }}" role="button">Print</a> 
 	<br>
 	<br>
 <h5>
@@ -44,7 +44,9 @@
 <br>
 {{ $purchase_order->supplier->supplier_postcode }} {{ $purchase_order->supplier->supplier_city }}
 <br>
-{{ $purchase_order->supplier->supplier_state }}
+@if (!empty($pruchase_order->supplier->sate))
+{{ $purchase_order->supplier->state->state_name }}
+@endif
 </small>
 <br>
 <br>
@@ -65,7 +67,7 @@ $count=0;
     <th><div align='right'>Quantity</div></th> 
     <th><div align='right'>Price/Unit</div></th> 
     <th><div align='right'>Total</div></th> 
-	@if ($purchase_order->purchase_posted==0)
+	@if ($purchase_order->purchase_received==0)
 	<th></th>
 	@endif
 	</tr>
@@ -73,7 +75,9 @@ $count=0;
 	<tbody>
 @foreach ($purchase_order_lines as $purchase_order_line)
 	<?php 
-		$grandTotal += $purchase_order_line->line_total;
+		if (empty($purchase_order_line->deleted_at)) {
+			$grandTotal += $purchase_order_line->line_total;
+		}
 		$count += 1;
 	?>
 	<tr>
@@ -81,16 +85,23 @@ $count=0;
 					{{ $count }}	
 			</td>
 			<td>
+			@if (empty($purchase_order_line->deleted_at))
 					@if ($purchase_order->purchase_received==1)
-						{{$purchase_order_line->product_name}}
+						{{$purchase_order_line->product->product_name}}
 					@else
 					<a href='{{ URL::to('purchase_order_lines/'. $purchase_order_line->line_id . '/edit') }}'>
-						{{$purchase_order_line->product_name}}
+						{{$purchase_order_line->product->product_name}}
 					</a>
 					@endif
+			@else
+					<s>
+						{{$purchase_order_line->product->product_name}}
+					</s>
+			@endif
 			</td>
 			<td width='100' align='right'>
-					{{ $purchase_order_line->line_quantity_received+$purchase_order_line->line_quantity_received_2 }}
+					{{ $purchase_order_line->line_quantity_received+$purchase_order_line->line_quantity_received_2 }} 
+					{{ $purchase_order_line->product->getUnitShortname() }}
 			</td>
 			<td width='50' align='right'>
 					{{ number_format($purchase_order_line->line_price,2) }}
@@ -98,13 +109,13 @@ $count=0;
 			<td width='10' align='right'>
 					{{ number_format($purchase_order_line->line_total,2) }}
 			</td>
-			@if ($purchase_order->purchase_posted==0)
 			<td align='right' width='20'>
 					@if ($purchase_order->purchase_received==0)
+					@if (empty($purchase_order_line->deleted_at))
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('purchase_order_lines/delete/'. $purchase_order_line->line_id) }}'>-</a>
 					@endif
+					@endif
 			</td>
-			@endif
 	</tr>
 @endforeach
 @endif
@@ -122,7 +133,21 @@ $count=0;
 @endif
 </tbody>
 </table>
-
+@if ($grandTotal>0 && $purchase_order->purchase_posted==0)
+		<a href='/purchase_order/post?purchase_id={{ $purchase_id }}' class='btn btn-default'>Post Purchase Order</a>
+@endif
+@if ($purchase_order->purchase_received==1)
+<h5>
+<strong>
+Invoice number: {{ $purchase_order->invoice_number }}
+</strong>
+</h5>
+<h5>
+<strong>
+Date Receive: {{ date('d F Y', strtotime(str_replace('/','-',$purchase_order->receive_datetime))) }}
+</strong>
+</h5>
+@endif
 @if (isset($search)) 
 	{{ $purchase_order_lines->appends(['search'=>$search])->render() }}
 	@else

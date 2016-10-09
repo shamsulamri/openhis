@@ -36,6 +36,7 @@ class QueueController extends Controller
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
 					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
 					->whereNull('discharge_id')
+					->whereNull('a.deleted_at')
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 

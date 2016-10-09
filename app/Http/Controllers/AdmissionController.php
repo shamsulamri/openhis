@@ -21,6 +21,7 @@ use App\Consultation;
 use App\User;
 use Auth;
 use App\Ward;
+use App\WardHelper;
 use App\EncounterHelper;
 use App\DojoUtility;
 
@@ -87,6 +88,8 @@ class AdmissionController extends Controller
 
 			$admissions = $admissions->paginate($this->paginateValue);
 
+			$wardHelper = null;
+			if ($ward) $wardHelper = new WardHelper($ward->ward_code);
 
 			return view('admissions.index', [
 					'admissions'=>$admissions,
@@ -97,6 +100,7 @@ class AdmissionController extends Controller
 					'setWard' => $setWard, 
 					'dojo' => new DojoUtility(),
 					'admission_code'=>null,
+					'wardHelper'=> $wardHelper,
 			]);
 	}
 
@@ -149,6 +153,7 @@ class AdmissionController extends Controller
 	public function show($id)
 	{
 			$admission = Admission::findOrFail($id);
+
 			return view('admissions.view', [
 					'admission'=>$admission,
 					'patient'=>$admission->encounter->patient,
@@ -197,7 +202,11 @@ class AdmissionController extends Controller
 							$admission->save();
 							//Session::flash('message', 'Record successfully updated.');
 							//return redirect('/admissions');
-							return redirect('/admission_beds?admission_id='.$admission->admission_id);
+							if ($admission->bed) {
+								return redirect('/admissions');
+							} else {
+								return redirect('/admission_beds?admission_id='.$admission->admission_id);
+							}
 					} else {
 							return view('admissions.edit', [
 									'admission'=>$admission,
@@ -294,8 +303,15 @@ class AdmissionController extends Controller
 					->whereNull('f.encounter_id')
 					->groupBy('b.encounter_id')
 					->orderBy('patient_name')
-					->orderBy('a.bed_code')
-					->paginate($this->paginateValue);
+					->orderBy('a.bed_code');
+					
+			//dd($admissions->toSql());
+
+			$admissions = $admissions->paginate($this->paginateValue);
+
+			$wardHelper = null;
+			$ward_code = $request->cookie('ward');
+			if ($ward) $wardHelper = new WardHelper($ward_code);
 
 			return view('admissions.index', [
 					'admissions'=>$admissions,
@@ -307,6 +323,7 @@ class AdmissionController extends Controller
 					'setWard'=>$setWard,
 					'dojo' => new DojoUtility(),
 					'admission_code'=>$request->admission_code,
+					'wardHelper'=>$wardHelper,
 			]);
 	}
 

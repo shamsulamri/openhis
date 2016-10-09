@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
@@ -13,6 +14,8 @@ use Log;
 
 class Encounter extends Model
 {
+	use SoftDeletes;
+	protected $dates = ['deleted_at'];
 	protected $table = 'encounters';
 	protected $fillable = [
 				'patient_id',
@@ -86,6 +89,16 @@ class Encounter extends Model
 	public function encounterType() 
 	{
 			return $this->belongsTo('App\EncounterType', 'encounter_code');
+	}
+
+	public function wardArrival()
+	{
+			return $this->hasOne('App\WardArrival', 'encounter_id');
+	}
+
+	public function sponsor()
+	{
+			return $this->belongsTo('App\Sponsor', 'sponsor_code');
 	}
 
 	public static function boot()

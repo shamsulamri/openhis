@@ -15,6 +15,7 @@ th {
 	{{ Form::select('weekOfMonth', $weeks, $weekOfMonth, ['class'=>'form-control','onchange'=>'reload()']) }}
 	<label>Day&nbsp;</label>
 	{{ Form::select('dayOfWeek', $days, $dayOfWeek, ['class'=>'form-control','onchange'=>'reload()']) }}
+	{{ Form::hidden('refresh','1') }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">	
 </form>
 

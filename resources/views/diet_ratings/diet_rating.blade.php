@@ -1,6 +1,6 @@
 
     <div class='form-group  @if ($errors->has('rate_name')) has-error @endif'>
-        <label for='rate_name' class='col-sm-3 control-label'>rate_name<span style='color:red;'> *</span></label>
+        <label for='rate_name' class='col-sm-3 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('rate_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
             @if ($errors->has('rate_name')) <p class="help-block">{{ $errors->first('rate_name') }}</p> @endif
@@ -8,7 +8,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('rate_position')) has-error @endif'>
-        {{ Form::label('rate_position', 'rate_position',['class'=>'col-sm-3 control-label']) }}
+        {{ Form::label('rate_position', 'Position',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::text('rate_position', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('rate_position')) <p class="help-block">{{ $errors->first('rate_position') }}</p> @endif

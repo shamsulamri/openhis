@@ -28,6 +28,10 @@ class PatientListController extends Controller
 	public function index(Request $request)
 	{
 
+			if (empty($request->cookie('queue_location'))) {
+					Session::flash('message', 'Location not set. Please select your location or room.');
+					return redirect('/queue_locations');
+			}
 			$selectedLocation = $request->cookie('queue_location');
 
 			/*
@@ -114,6 +118,7 @@ class PatientListController extends Controller
 					->leftJoin('ref_genders as k', 'k.gender_code', '=', 'c.gender_code')
 					->where('a.location_code',$request->cookie('queue_location'))
 					->whereNull('discharge_id')
+					->whereNull('a.deleted_at')
 					->orWhere('a.location_code','pool')
 					->orderBy('discharge_id')
 					->orderBy('a.created_at')

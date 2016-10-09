@@ -11,7 +11,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a href='/purchase_orders/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -29,9 +28,7 @@
 @foreach ($purchase_orders as $purchase_order)
 	<tr>
 			<td>
-					<a href='{{ URL::to('purchase_orders/'. $purchase_order->purchase_id . '/edit') }}'>
-						{{ date('d F Y', strtotime($purchase_order->purchase_date)) }}
-					</a>
+					{{ date('d F Y', strtotime($purchase_order->purchase_date)) }}
 			</td>
 			<td>
 					{{$purchase_order->supplier_name}}

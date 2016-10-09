@@ -146,6 +146,15 @@ Interim Bill
 @endif
 <!-- Payments -->
 <div class='well'>
+@if ($encounter->sponsor)
+	<h4>Sponsor</h4>
+	<h4>
+	<strong>
+	{{ $encounter->sponsor->sponsor_name }}
+	</strong>
+	</h4>
+	<hr>
+@endif
 <h4>Payments
 @if (!$billPosted)
 <a href='/payments/create/{{ $patient->patient_id }}/{{ $bill->encounter_id }}' class='btn btn-primary pull-right'>New Payment</a>
@@ -210,8 +219,7 @@ Interim Bill
 @endif
 <table width='100%'>
 	<tr>
-			<td>
-			</td>
+			<td></td>
 			<td>
 				<div class='pull-right'>
 					<strong>Deposits</strong>

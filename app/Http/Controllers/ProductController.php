@@ -24,6 +24,7 @@ use App\TaxCode;
 use Gate;
 use App\Order;
 use Auth;
+use App\ProductAuthorization;
 
 class ProductController extends Controller
 {
@@ -47,11 +48,24 @@ class ProductController extends Controller
 			if (Auth::user()->authorization->author_id==7) {
 					$loan=True;
 			}
+			/*
 			$products = DB::table('products')
 					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
+			 */
 			
+			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+
+			$products = Product::orderBy('product_name')
+					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code');
+
+
+			if (!$product_authorization->get()->isEmpty()) {
+					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
+			}
+					
+			$products = $products->paginate($this->paginateValue);
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,
@@ -64,9 +78,17 @@ class ProductController extends Controller
 			$product->order_form=1;
 			$product->status_code='active';
 			$product->form_code='generic';
+
+			$categories = Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');
+
+			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+			if ($product_authorization) {
+					$categories = Category::whereIn('category_code',$product_authorization->pluck('category_code'))->orderBy('category_name')->lists('category_name', 'category_code')->prepend('','');
+			}
+
 			return view('products.create', [
 					'product' => $product,
-					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'category' => $categories,
 					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
@@ -188,12 +210,33 @@ class ProductController extends Controller
 			if (Auth::user()->authorization->author_id==7) {
 					$loan=True;
 			}
+
+			/**
 			$products = DB::table('products as a')
 					->leftjoin('product_categories as b', 'b.category_code','=', 'a.category_code')
 					->where('product_name','like','%'.$request->search.'%')
 					->orWhere('product_code', 'like','%'.$request->search.'%')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
+
+			$products = Product::orderBy('product_name')
+					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code')
+					->where('product_name','like','%'.$request->search.'%')
+					->orWhere('product_code', 'like','%'.$request->search.'%')
+					->paginate($this->paginateValue);
+			**/
+
+			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+
+			$products = Product::orderBy('product_name')
+					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code');
+
+			if (!$product_authorization->get()->isEmpty()) {
+					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
+			}
+
+			$products = $products->where('product_name','like','%'.$request->search.'%');
+			$products = $products->paginate($this->paginateValue);
 
 			return view('products.index', [
 					'products'=>$products,

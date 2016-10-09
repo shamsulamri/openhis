@@ -9,7 +9,7 @@ New Order Form
 {{ Form::model($order_form, ['url'=>'order_forms', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('form_code')) has-error @endif'>
-        <label for='form_code' class='col-sm-3 control-label'>form_code<span style='color:red;'> *</span></label>
+        <label for='form_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::text('form_code', null, ['class'=>'form-control','placeholder'=>'', 'maxlength'=>'20']) }}
             @if ($errors->has('form_code')) <p class="help-block">{{ $errors->first('form_code') }}</p> @endif

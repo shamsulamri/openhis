@@ -32,7 +32,7 @@ th {
 		<td width='15%'>{{ $product->product_name }}</td>
 		<?php $total=0; ?>
 		@foreach ($diet_classes as $class)
-		<?php $count=$dietHelper->cooklist('normal',$class->class_code, $product->period_code, $product->product_code); ?>
+		<?php $count=$dietHelper->cooklist($diet_code,$class->class_code, $product->period_code, $product->product_code); ?>
 		<?php $total+=$count; ?>
 		@endforeach
 		<td>

@@ -32,6 +32,7 @@ class EncounterController extends Controller
 
 	public function index()
 	{
+			/*
 			$encounters = DB::table('encounters as a')
 					->select('a.encounter_id','patient_mrn','a.encounter_code', 'patient_name', 'a.patient_id', 'encounter_name','a.created_at', 'discharge_id')
 					->join('patients as c','c.patient_id','=','a.patient_id')
@@ -39,6 +40,10 @@ class EncounterController extends Controller
 					->leftJoin('discharges as b', 'b.encounter_id','=', 'a.encounter_id')
 					->orderBy('created_at','desc')
 					->paginate($this->paginateValue);
+			 */
+
+			$encounters = Encounter::orderBy('created_at','desc')
+								->paginate($this->paginateValue);
 
 			return view('encounters.index', [
 					'encounters'=>$encounters
@@ -225,11 +230,18 @@ class EncounterController extends Controller
 	
 	public function search(Request $request)
 	{
+			/*
 			$encounters = DB::table('encounters')
 					->where('encounter_code','like','%'.$request->search.'%')
 					->orWhere('encounter_id', 'like','%'.$request->search.'%')
 					->orderBy('encounter_code')
 					->paginate($this->paginateValue);
+			 */
+
+			$encounters = Encounter::orderBy('encounter_code')
+							->where('encounter_code','like','%'.$request->search.'%')
+							->orWhere('encounter_id', 'like','%'.$request->search.'%')
+							->paginate($this->paginateValue);
 
 			return view('encounters.index', [
 					'encounters'=>$encounters,
@@ -239,6 +251,7 @@ class EncounterController extends Controller
 
 	public function searchById($id)
 	{
+			/*
 			$encounters = DB::table('encounters as a')
 					->select('a.encounter_id','patient_mrn','a.encounter_code', 'patient_name', 'a.patient_id', 'encounter_name','a.created_at', 'discharge_id')
 					->join('patients as c','c.patient_id','=','a.patient_id')
@@ -247,6 +260,11 @@ class EncounterController extends Controller
 					->where('a.encounter_id','=',$id)
 					->orderBy('created_at','desc')
 					->paginate($this->paginateValue);
+			 */
+
+			$encounters = Encounter::orderBy('encounter_code')
+								->where('encounter_id','=',$id)
+								->paginate($this->paginateValue);
 
 			return view('encounters.index', [
 					'encounters'=>$encounters
