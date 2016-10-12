@@ -36,6 +36,7 @@ class PurchaseOrderController extends Controller
 	{
 			$purchase_orders = DB::table('purchase_orders as a')
 					->leftJoin('suppliers as b', 'b.supplier_code','=','a.supplier_code')
+					->where('author_id', '=', Auth::user()->author_id)
 					->orderBy('purchase_date','desc')
 					->paginate($this->paginateValue);
 			return view('purchase_orders.index', [
@@ -67,6 +68,7 @@ class PurchaseOrderController extends Controller
 			if ($valid->passes()) {
 					$purchase_order = new PurchaseOrder($request->all());
 					$purchase_order->purchase_id = $request->purchase_id;
+					$purchase_order->author_id = Auth::user()->author_id;
 					$purchase_order->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/purchase_orders/id/'.$purchase_order->purchase_id);
@@ -95,7 +97,6 @@ class PurchaseOrderController extends Controller
 
 	public function update(Request $request, $id) 
 	{
-			
 			$purchase_order = PurchaseOrder::findOrFail($id);
 			$purchase_order->fill($request->input());
 
@@ -125,21 +126,28 @@ class PurchaseOrderController extends Controller
 
 			foreach ($line_items as $item) {
 					$product = Product::find($item->product_code);
+					$source = Product::find($item->product_code);
 					if (!empty($product->product_conversion_code)) {
-							$product = Product::find($item->$product_conversion_code);
+							$conversion_code = $product->product_conversion_code;
+							$product = Product::find($conversion_code);
 					}
 					$stock = new Stock();
 					$stock->line_id = $item->line_id;
 					$stock->store_code = $purchase_order->store_code;
 					$stock->move_code = 'receive';
-					$stock->product_code = $item->product_code;
+					$stock->product_code = $product->product_code;
 					$stock->stock_date = DojoUtility::now();
-					$stock->stock_quantity = ($item->line_quantity_received + $item->line_quantity_received_2)*$product->product_conversion_unit;
-					$stock->stock_description = "Purchase id: ".$purchase_id;
+					$stock->stock_quantity = ($item->line_quantity_received + $item->line_quantity_received_2);
+					if ($source->product_conversion_unit>0) {
+						$stock->stock_quantity = ($item->line_quantity_received + $item->line_quantity_received_2)*$source->product_conversion_unit;
+					}
+					$stock->stock_description = "Purchase id: ".$purchase_order->purchase_id;
 					$stock->save();
+					Log::info('---'.$item->product_code);
+					Log::info('-------'.$item->product_conversion_unit);
 
-					$product = new ProductController();
-					$product->updateTotalOnHand($item->product_code);
+					$productController = new ProductController();
+					$productController->updateTotalOnHand($product->product_code);
 			}
 			return $line_items;
 	}
@@ -163,8 +171,11 @@ class PurchaseOrderController extends Controller
 	{
 			$purchase_orders = DB::table('purchase_orders as a')
 					->leftJoin('suppliers as b', 'b.supplier_code','=','a.supplier_code')
-					->where('purchase_date','like','%'.$request->search.'%')
-					->orWhere('purchase_id', 'like','%'.$request->search.'%')
+					->where('author_id', '=', Auth::user()->author_id)
+					->where(function ($query) use($request) {
+							$query->where('purchase_date','like','%'.$request->search.'%')
+								->orWhere('purchase_id', 'like','%'.$request->search.'%');
+					})
 					->orderBy('purchase_date')
 					->paginate($this->paginateValue);
 
@@ -267,14 +278,16 @@ class PurchaseOrderController extends Controller
 			foreach($po as $key=>$value) {
 					Log::info($key."==".$value);
 					$product = Product::find($key);
-					$purchase_order_line = new PurchaseOrderLine();
-					$purchase_order_line->purchase_id = $id;
-					$purchase_order_line->line_quantity_ordered = $value;
-					$purchase_order_line->line_quantity_received = $value;
-					$purchase_order_line->line_total = $value*$product->product_purchase_price;
-					$purchase_order_line->product_code = $key;
-					$purchase_order_line->line_price = $product->product_purchase_price;
-					$purchase_order_line->save();
+					if ($product->product_purchased==1) {
+							$purchase_order_line = new PurchaseOrderLine();
+							$purchase_order_line->purchase_id = $id;
+							$purchase_order_line->line_quantity_ordered = $value;
+							$purchase_order_line->line_quantity_received = $value;
+							$purchase_order_line->line_total = $value*$product->product_purchase_price;
+							$purchase_order_line->product_code = $key;
+							$purchase_order_line->line_price = $product->product_purchase_price;
+							$purchase_order_line->save();
+					}
 			}
 
 		return redirect('/purchase_order_lines/index/'.$id);

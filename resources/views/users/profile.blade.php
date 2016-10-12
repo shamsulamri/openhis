@@ -24,6 +24,7 @@ User Profile
             @if ($errors->has('email')) <p class="help-block">{{ $errors->first('email') }}</p> @endif
         </div>
     </div>
+	{{  Form::hidden('username', $user->username) }}
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}

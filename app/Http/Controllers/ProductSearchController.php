@@ -49,7 +49,6 @@ class ProductSearchController extends Controller
 					$product_searches = $product_searches->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 			}
 
-			$product_searches = $product_searches->paginate($this->paginateValue);
 
 			$purchase_order = PurchaseOrder::find($request->purchase_id);
 
@@ -58,6 +57,8 @@ class ProductSearchController extends Controller
 
 			switch ($reason) {
 					case "purchase_order":
+							$product_searches = $product_searches->where('product_purchased','=',1);
+							//dd($product_searches->toSql());
 							$return_id = $request->purchase_id;
 							break;
 					case "bom":
@@ -68,6 +69,7 @@ class ProductSearchController extends Controller
 							break;
 			}
 
+			$product_searches = $product_searches->paginate($this->paginateValue);
 
 			return view('product_searches.index', [
 					'product_searches'=>$product_searches,
@@ -229,14 +231,13 @@ class ProductSearchController extends Controller
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 			switch ($reason) {
 					case "bom":
-							$product_searches = DB::table('products')
+							$product_searches = Product::orderBy('product_name')
 									->where('product_code','!=', $request->product_code)
 									->where('product_bom','!=',1)
 									->where(function ($query) use($search) {
 											$query->where('product_name','like','%'.$search.'%')
 												  ->orWhere('product_code', 'like','%'.$search.'%');
-									})
-									->orderBy('product_name');
+									});
 							
 							if (!$product_authorization->get()->isEmpty()) {
 									$product_searches = $product_searches->whereIn('products.category_code',$product_authorization->pluck('category_code'));
@@ -244,19 +245,25 @@ class ProductSearchController extends Controller
 							$product_searches = $product_searches->paginate($this->paginateValue);
 							break;
 					default:
-							$product_searches = DB::table('products')
-									->where('product_name','like','%'.$request->search.'%')
-									->orWhere('product_code', 'like','%'.$request->search.'%')
+							$product_searches = Product::orderBy('product_name')
+									->where(function ($query) use($search) {
+											$query->where('product_name','like','%'.$search.'%')
+												  ->orWhere('product_code', 'like','%'.$search.'%');
+									})
 									->orderBy('product_name');
 
 							if (!$product_authorization->get()->isEmpty()) {
-									$product_searches = DB::table('products')
+									$product_searches = Product::orderBy('product_name')
 											->whereIn('products.category_code',$product_authorization->pluck('category_code'))
 											->where(function ($query) use($search) {
 													$query->where('product_name','like','%'.$search.'%')
 														  ->orWhere('product_code', 'like','%'.$search.'%');
 											})
 									->orderBy('product_name');
+							}
+
+							if ($reason=='purchase_order') {
+								$product_searches = $product_searches->where('product_purchased','=',1);
 							}
 
 							$product_searches = $product_searches->paginate($this->paginateValue);

@@ -9,7 +9,6 @@
 <h1><a href='/products'>Product List</a> / New Product</h1>
 @include('common.errors')
 <br>
-<br>
 {{ Form::model($product, ['url'=>'products', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('product_code')) has-error @endif'>

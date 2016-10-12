@@ -47,10 +47,9 @@ class UserAuthorizationController extends Controller
 
 			if ($valid->passes()) {
 					$user_authorization = new UserAuthorization($request->all());
-					$user_authorization->id = $request->id;
 					$user_authorization->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/user_authorizations/id/'.$user_authorization->id);
+					return redirect('/user_authorizations');
 			} else {
 					return redirect('/user_authorizations/create')
 							->withErrors($valid)

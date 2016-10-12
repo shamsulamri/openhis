@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Validator;
+use Log;
 
 class User extends Authenticatable
 {
@@ -14,9 +15,9 @@ class User extends Authenticatable
 				'password',
 				'email',
 				'employee_id',
+				'author_id',
 				];
 	
-
     protected $hidden = [
 		        'password', 'remember_token',
 			    ];
@@ -28,7 +29,13 @@ class User extends Authenticatable
 				'username'=>'required|unique:users',
 				'employee_id'=>'required|unique:users',
 			];
-			
+
+        	if ($method=='PUT') {
+					$rules = [
+						'name'=>'required',
+					];
+        	}
+
 			$messages = [
 				'required' => 'This field is required'
 			];

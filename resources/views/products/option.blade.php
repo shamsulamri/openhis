@@ -32,7 +32,7 @@ Bill of Materials
 <br>
 <br>
 <span class='glyphicon glyphicon-cog' aria-hidden='true'></span>
-@if ($product->category_code=='assembly')
+@if ($product->product_bom==1)
 <a href='{{ URL::to('build_assembly/'. $product->product_code) }}'>Build Assembly</a>
 @else
 Build Assembly
@@ -41,7 +41,7 @@ Build Assembly
 <br>
 <br>
 <span class='glyphicon glyphicon-fire' aria-hidden='true'></span>
-@if ($product->category_code=='assembly')
+@if ($product->product_bom==1)
 <a href='{{ URL::to('explode_assembly/'. $product->product_code) }}'>Explode Assembly</a>
 @else
 Explode Assembly

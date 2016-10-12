@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\ProductCategory as Category;
+use App\UserAuthorization;
 
 
 class ProductAuthorizationController extends Controller
@@ -24,8 +25,7 @@ class ProductAuthorizationController extends Controller
 
 	public function index()
 	{
-			$product_authorizations = DB::table('product_authorizations')
-					->orderBy('author_id')
+			$product_authorizations = ProductAuthorization::orderBy('author_id')
 					->paginate($this->paginateValue);
 			return view('product_authorizations.index', [
 					'product_authorizations'=>$product_authorizations
@@ -38,6 +38,7 @@ class ProductAuthorizationController extends Controller
 			return view('product_authorizations.create', [
 					'product_authorization' => $product_authorization,
 					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id')->prepend('',''),
 					]);
 	}
 
@@ -65,6 +66,7 @@ class ProductAuthorizationController extends Controller
 			return view('product_authorizations.edit', [
 					'product_authorization'=>$product_authorization,
 					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id')->prepend('',''),
 					]);
 	}
 
@@ -106,10 +108,11 @@ class ProductAuthorizationController extends Controller
 	
 	public function search(Request $request)
 	{
-			$product_authorizations = DB::table('product_authorizations')
-					->where('author_id','like','%'.$request->search.'%')
-					->orWhere('id', 'like','%'.$request->search.'%')
-					->orderBy('author_id')
+			$product_authorizations = ProductAuthorization::orderBy('author_name')
+					->leftjoin('user_authorizations as a', 'a.author_id', '=', 'product_authorizations.author_id')
+					->leftjoin('product_categories as b', 'b.category_code', '=', 'product_authorizations.category_code')
+					->where('author_name','like','%'.$request->search.'%')
+					->orWhere('category_name','like','%'.$request->search.'%')
 					->paginate($this->paginateValue);
 
 			return view('product_authorizations.index', [
@@ -120,8 +123,7 @@ class ProductAuthorizationController extends Controller
 
 	public function searchById($id)
 	{
-			$product_authorizations = DB::table('product_authorizations')
-					->where('id','=',$id)
+			$product_authorizations = ProductAuthorization::where('id','=',$id)
 					->paginate($this->paginateValue);
 
 			return view('product_authorizations.index', [

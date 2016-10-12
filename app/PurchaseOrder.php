@@ -13,7 +13,7 @@ class PurchaseOrder extends Model
 	protected $table = 'purchase_orders';
 	protected $fillable = [
 				'purchase_id',
-				'user_id',
+				'author_id',
 				'supplier_code',
 				'purchase_date',
 				'purchase_posted',

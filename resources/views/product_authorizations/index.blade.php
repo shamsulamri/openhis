@@ -10,8 +10,8 @@
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
+	<br>
 @endif
-<br>
 <a href='/product_authorizations/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
@@ -19,8 +19,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>author_id</th>
-    <th>id</th> 
+    <th>Authorization</th>
+    <th>Category</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -29,11 +29,11 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('product_authorizations/'. $product_authorization->id . '/edit') }}'>
-						{{$product_authorization->author_id}}
+						{{$product_authorization->authorization->author_name}}
 					</a>
 			</td>
 			<td>
-					{{$product_authorization->category_code}}
+					{{$product_authorization->category->category_name}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('product_authorizations/delete/'. $product_authorization->id) }}'>Delete</a>

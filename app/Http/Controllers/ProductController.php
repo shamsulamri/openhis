@@ -82,9 +82,11 @@ class ProductController extends Controller
 			$categories = Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');
 
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+			/*
 			if ($product_authorization) {
 					$categories = Category::whereIn('category_code',$product_authorization->pluck('category_code'))->orderBy('category_name')->lists('category_name', 'category_code')->prepend('','');
 			}
+			 */
 
 			return view('products.create', [
 					'product' => $product,

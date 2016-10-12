@@ -4,7 +4,7 @@
 <style>
 iframe { border: 1px #C0C0C0 solid; }
 </style>
-<h1><a href='/purchase_orders'>Purchase Orders</a> / Line Items</h1>
+<h1>Purchase Orders / Line Items</h1>
 <br>
 @if ($purchase_order->purchase_received==0)
 <div class="row">

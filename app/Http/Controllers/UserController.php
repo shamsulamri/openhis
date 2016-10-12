@@ -89,9 +89,8 @@ class UserController extends Controller
 
 	public function updateProfile(Request $request) 
 	{
-			$user = Auth::user();
+			$user = User::where('username','=',$request->username)->first();
 			$user->fill($request->input());
-
 
 			$valid = $user->validate($request->all(), $request->_method);	
 
@@ -111,7 +110,6 @@ class UserController extends Controller
 	{
 			$user = User::findOrFail($id);
 			$user->fill($request->input());
-
 
 			$valid = $user->validate($request->all(), $request->_method);	
 

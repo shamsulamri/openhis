@@ -31,4 +31,13 @@ class ProductAuthorization extends Model
 	}
 
 	
+	public function authorization()
+	{
+		return $this->hasOne('App\UserAuthorization', 'author_id','author_id');
+	}
+
+	public function category()
+	{
+			return $this->belongsTo('App\ProductCategory','category_code');
+	}
 }

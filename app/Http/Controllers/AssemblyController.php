@@ -15,6 +15,7 @@ use DB;
 use Session;
 use Gate;
 use App\DojoUtility;
+use App\Loan;
 
 class AssemblyController extends Controller
 {
@@ -29,15 +30,23 @@ class AssemblyController extends Controller
 	{
 
 			$bom = BillMaterial::where('product_code',$id)->pluck('bom_product_code');
+			/*
 			$products = Product::whereIn('products.product_code', $bom)
 							->leftjoin('bill_materials', 'bom_product_code','=','products.product_code')
 							->get();
+			 */
 
+			$boms = BillMaterial::where('product_code', '=', $id)->get();
 			$product = Product::findOrFail($id);
+
+			$quantity = Loan::where('item_code', $id)
+							->where('loan_code','request')
+							->sum('loan_quantity');
+
 			return view('assemblies.index', [
 					'product'=>$product,
-					'products'=>$products,
-					'quantity'=>0,
+					'boms'=>$boms,
+					'quantity'=>$quantity,
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'store_code'=>'main',
 			]);
@@ -47,9 +56,13 @@ class AssemblyController extends Controller
 	public function build(Request $request, $id)
 	{
 			$bom = BillMaterial::where('product_code',$id)->pluck('bom_product_code');
-			$products = Product::whereIn('products.product_code', $bom)
+			/*
+			$boms = Product::whereIn('products.product_code', $bom)
 							->leftjoin('bill_materials', 'bom_product_code','=','products.product_code')
 							->get();
+			 */
+
+			$boms = BillMaterial::where('product_code', '=', $id)->get();
 
 			$flag=True;
 			$quantity = $request->quantity;
@@ -57,8 +70,8 @@ class AssemblyController extends Controller
 			$max = $request->max;
 			$msg="";
 
-			foreach($products as $product) {
-					if ($product->product_on_hand<$product->bom_quantity*$quantity) $flag=False;
+			foreach($boms as $bom) {
+					if ($bom->product->product_on_hand<$bom->bom_quantity*$quantity) $flag=False;
 			}
 
 			if (empty($request->store_code)) {
@@ -75,12 +88,12 @@ class AssemblyController extends Controller
 					$msg = "Build cannot be greater than ".$max;
 			}
 			if ($flag) {
-				foreach($products as $product) {
+				foreach($boms as $bom) {
 						$stock = new Stock();
 						$stock->move_code='adjust';
 						$stock->store_code = $request->store_code;
-						$stock->product_code = $product->bom_product_code;
-						$stock->stock_quantity = -1*$quantity*$product->bom_quantity;
+						$stock->product_code = $bom->bom_product_code;
+						$stock->stock_quantity = -1*$quantity*$bom->bom_quantity;
 						$stock->stock_date = DojoUtility::now(); 
 						$stock->stock_description = "Build Assembly: ".$id;
 						$stock->save();
@@ -111,7 +124,7 @@ class AssemblyController extends Controller
 					$product = Product::findOrFail($id);
 					return view('assemblies.index', [
 							'product'=>$product,
-							'products'=>$products,
+							'boms'=>$boms,
 							'quantity'=>$request->quantity,
 							'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 							'store_code'=>$request->store_code,
