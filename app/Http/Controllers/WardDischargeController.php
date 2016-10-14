@@ -51,13 +51,16 @@ class WardDischargeController extends Controller
 			$mc = MedicalCertificate::where('encounter_id', $encounter_id)->get();
 
 			$bill = Bill::where('encounter_id', $encounter_id)->get();
-			$appointments = Appointment::where('admission_id', $admission_id)->get();
+
+			$appointments = Appointment::where('admission_id', $admission_id)
+					->whereDate('appointment_datetime','>',$encounter->created_at)
+					->get();
 			
 			$service_id = $admission->user_id;
 
 			return view('ward_discharges.create', [
 					'ward_discharge' => $ward_discharge,
-					'mc'=>$mc[0],
+					'mc'=>$mc,
 					'discharge_orders'=>$orders,	
 					'patient'=>$encounter->patient,
 					'encounter'=>$encounter,

@@ -2,10 +2,10 @@
 
 @section('content')
 <h1>Patient List</h1>
+<br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 @if ($location->encounter_code !='mortuary')
 @include('patient_lists.outpatient')
 @endif

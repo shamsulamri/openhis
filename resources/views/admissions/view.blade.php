@@ -6,11 +6,13 @@
 <h1>Options</h1>
 <br>
 <h4>
+		@if (is_null($admission->encounter->discharge))
 		<span class='glyphicon glyphicon-user' aria-hidden='true'></span>
 		<a href='{{ URL::to('admissions/'. $admission->admission_id . '/edit') }}'>Edit Admission</a>
 		</a>
 		<br>
 		<br>
+		@endif
 
 		@if (is_null($admission->encounter->wardArrival)) 
 		<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
@@ -20,7 +22,7 @@
 		<br>
 		@elseif (!is_null($admission->encounter->discharge))
 		<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
-		<a href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}'>Discharge</a>
+		<a href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}'>Ward Discharge</a>
 		</a>
 		<br>
 		<br>

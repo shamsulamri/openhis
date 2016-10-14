@@ -6,7 +6,7 @@
         		{{ Form::label('payment', 'Paid',['class'=>'control-label']) }}<br>
 			@else
 				<p class='text-danger'>
-				Not Paid
+				{{ Form::label('mc', 'Not Paid',['class'=>'control-label']) }}
 				</p>
 			@endif
         </div>
@@ -16,7 +16,7 @@
     <div class='form-group'>
         {{ Form::label('mc', 'Medical Certificate',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-		@if ($mc)
+		@if (count($mc)>0)
         		{{ Form::label('product', $mc->getMcStart()->format('d M Y'),['class'=>'control-label']) }}<br>
 				@if (empty($mc->mc_end))
         		{{ Form::label('mc', 'End: '.$mc->mc_end,['class'=>'control-label']) }}<br>
@@ -33,7 +33,7 @@
         <div class='col-sm-9'>
 			@if (count($appointments)>0)
 					@foreach ($appointments as $appointment)
-						<label>
+						<label class='control-label'>
 						{{ date('d F Y, H:i', strtotime($appointment->appointment_datetime)) }} with 
 						{{ $appointment->service->service_name }}
 						</label>
