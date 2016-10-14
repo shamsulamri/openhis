@@ -170,6 +170,10 @@ class BillItemController extends Controller
 					->where('encounter_id','=', $id)
 					->sum('payment_amount');
 
+			if (empty($payment_total)) {
+					$payment_total=0;
+			}
+
 			$deposit_total = DB::table('deposits')
 					->where('encounter_id','=', $id)
 					->sum('deposit_amount');

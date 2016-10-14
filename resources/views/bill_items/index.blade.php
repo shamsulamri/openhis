@@ -155,7 +155,7 @@ Interim Bill
 	</h4>
 	<hr>
 @endif
-<h4>Payments
+<h4><strong>Payments</strong>
 @if (!$billPosted)
 <a href='/payments/create/{{ $patient->patient_id }}/{{ $bill->encounter_id }}' class='btn btn-primary pull-right'>New Payment</a>
 @endif
@@ -243,7 +243,7 @@ Interim Bill
 				</div>
 			</td>
 			<td align='right' width='100'>
-					<strong>{{number_format($payment_total+$deposit_total-$bill_grand_total,2)}}<strong>
+					<strong>{{number_format($bill_grand_total-$payment_total+$deposit_total,2)}}<strong>
 			</td>
 			@if (!$billPosted)
 			<td width='90'>

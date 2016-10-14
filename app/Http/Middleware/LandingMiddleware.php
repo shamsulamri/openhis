@@ -29,7 +29,7 @@ class LandingMiddleware
 		} 		
 
 		if ($request->user()->can('module-diet')) {
-				return redirect('/diet_menus');
+				return redirect('/diet_orders');
 		} 		
 
 		if ($request->user()->can('module-inventory')) {

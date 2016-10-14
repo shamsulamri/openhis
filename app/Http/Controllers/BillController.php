@@ -37,7 +37,6 @@ class BillController extends Controller
 			$bill = new Bill();
 			return view('bills.create', [
 					'bill' => $bill,
-				
 					]);
 	}
 
@@ -45,6 +44,7 @@ class BillController extends Controller
 	{
 			$bill = new Bill();
 			$valid = $bill->validate($request->all(), $request->_method);
+
 
 			if ($valid->passes()) {
 					$bill = new Bill($request->all());

@@ -14,6 +14,7 @@ use DB;
 use Session;
 use Auth;
 use App\Encounter;
+use App\BillHelper;
 
 class PaymentController extends Controller
 {
@@ -67,6 +68,9 @@ class PaymentController extends Controller
 					'payment_methods' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
 					'patient' => $patient,
 					'encounter' => $encounter,
+					'billHelper' => new BillHelper(),
+					'encounter_id' => $encounter->encounter_id,
+
 					]);
 	}
 
@@ -86,7 +90,8 @@ class PaymentController extends Controller
 							return redirect('/payments/'.$payment->patient_id);
 					}
 			} else {
-					return redirect('/payments/create')
+					$payment = new Payment($request->all());
+					return redirect('/payments/create/'.$payment->patient_id.'/'.$payment->encounter_id)
 							->withErrors($valid)
 							->withInput();
 			}
@@ -100,6 +105,8 @@ class PaymentController extends Controller
 					'payment'=>$payment,
 					'payment_methods' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
 					'patient' => $patient,
+					'billHelper' => new BillHelper(),
+					'encounter_id' => $payment->encounter_id,
 					]);
 	}
 

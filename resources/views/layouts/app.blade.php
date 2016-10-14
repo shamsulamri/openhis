@@ -134,8 +134,8 @@
 				@endcan	
 				@can('module-diet')
 				<div class='list-group'>
-								<a class='list-group-item' href="{{ url('/diet_menus') }}"><span class='glyphicon glyphicon-cutlery'></span>&nbsp; Diet Menus</a>
 								<a class='list-group-item' href="{{ url('/diet_orders') }}"><span class='glyphicon glyphicon-asterisk'></span>&nbsp; Diet Orders</a>
+								<a class='list-group-item' href="{{ url('/diet_menus') }}"><span class='glyphicon glyphicon-cutlery'></span>&nbsp; Diet Menus</a>
 								<a class='list-group-item' href="{{ url('/diet_cooklist') }}"><span class='glyphicon glyphicon-file'></span>&nbsp; Diet Cooklist</a>
 								<a class='list-group-item' href="{{ url('/diet_bom') }}"><span class='glyphicon glyphicon-th-large'></span>&nbsp; Diet Bill of Materials</a>
 								<a class='list-group-item' href="{{ url('/diet_workorder') }}"><span class='glyphicon glyphicon-ok-sign'></span>&nbsp; Diet Work Order</a>

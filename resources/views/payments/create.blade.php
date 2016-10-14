@@ -5,8 +5,8 @@
 <h1>
 New Payment 
 </h1>
-@include('common.errors')
 <br>
+@include('common.errors')
 {{ Form::model($payment, ['url'=>'payments', 'class'=>'form-horizontal']) }} 
     
 	@include('payments.payment')

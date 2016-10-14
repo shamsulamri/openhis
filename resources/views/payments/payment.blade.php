@@ -1,5 +1,10 @@
 
-
+    <div class='form-group  @if ($errors->has('payment_outstanding')) has-error @endif'>
+        <label class='col-sm-3 control-label'><br>Balance</label>
+        <div class='col-sm-9'>
+        	<h1>{{ $billHelper->paymentOutstanding($encounter_id) }}</h1>
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('payment_amount')) has-error @endif'>
         <label for='payment_amount' class='col-sm-3 control-label'>Amount<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
