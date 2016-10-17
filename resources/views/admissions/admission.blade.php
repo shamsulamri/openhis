@@ -23,6 +23,7 @@
         <div class='col-sm-9'>
             {{ Form::select('user_id', $consultant,null, ['class'=>'form-control']) }}
             @if ($errors->has('user_id')) <p class="help-block">{{ $errors->first('user_id') }}</p> @endif
+			<small>Not required for death cases</small>
         </div>
     </div>
 

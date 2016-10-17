@@ -169,7 +169,7 @@
 				<div class='list-group'>
 								<a class='list-group-item' href="{{ url('/admissions') }}"><span class='glyphicon glyphicon-bed'></span>&nbsp; Admissions</a>
 								<a class='list-group-item' href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Admission Tasks</a>
-								<a class='list-group-item' href="{{ url('/bed_bookings') }}"><span class='glyphicon glyphicon-bookmark'></span>&nbsp; Bed Bookings</a>
+								<a class='list-group-item' href="{{ url('/bed_bookings') }}"><span class='glyphicon glyphicon-bookmark'></span>&nbsp; Bed Reservations</a>
 				</div>
 				@if (!empty($ward->ward_code))
 				@if ($ward->ward_code != 'mortuary')
@@ -208,6 +208,7 @@
 				@can('module-support')
 				<div class='list-group'>
 						<a class='list-group-item' href="{{ url('/order_queues') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Order Tasks</a>
+						<a class='list-group-item' href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Admission Tasks</a>
 				</div>
 				@endcan
 			</div>

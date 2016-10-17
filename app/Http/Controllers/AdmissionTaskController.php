@@ -15,6 +15,7 @@ use App\QueueLocation as Location;
 use App\Ward;
 use App\ProductCategory;
 use App\Order;
+use App\QueueLocation;
 use Auth;
 
 class AdmissionTaskController extends Controller
@@ -33,10 +34,15 @@ class AdmissionTaskController extends Controller
 					return redirect('/wards');
 			}
 
-			$ward_code = $request->cookie('ward');
+			if (Auth::user()->authorization->module_support==1) { 
+					$ward_code = $request->ward_code; 
+			} else {
+					$ward_code=$request->cookie('ward');
+			}
+			$location_code = $request->cookie('queue_location');
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name')
+					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name','ward_name','a.encounter_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -47,10 +53,15 @@ class AdmissionTaskController extends Controller
 					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('order_completed','=',0)
-					->where('f.ward_code', '=', $ward_code)
 					->whereNull('cancel_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');
+
+			if (Auth::user()->authorization->module_support==1) {
+					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
+			} else {
+					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
+			}
 
 			$order_ids = $admission_tasks->implode('order_id',',');
 			
@@ -59,11 +70,16 @@ class AdmissionTaskController extends Controller
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,
 					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
+					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'category' => '',
 					'group_by' => 'order',
 					'order_ids' => $order_ids,
 					'show_all' => null,
+					'ward_code'=>$ward_code,
+					'location_code'=>$location_code,
+					'location'=>Location::find($location_code),
 			]);
 	}
 
@@ -147,10 +163,15 @@ class AdmissionTaskController extends Controller
 	
 	public function search(Request $request)
 	{
-			$ward=$request->cookie('ward');
+			if (Auth::user()->authorization->module_support==1) { 
+					$ward_code = $request->ward_code; 
+			} else {
+					$ward_code=$request->cookie('ward');
+			}
+			$location_code = $request->cookie('queue_location');
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name')
+					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -161,9 +182,17 @@ class AdmissionTaskController extends Controller
 					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
 					->leftjoin('order_cancellations as j', 'j.order_id', '=', 'a.order_id')
 					->where('b.encounter_code','<>', 'outpatient')
-					->where('f.ward_code','=',$ward)
 					->where('d.category_code','like', '%'.$request->categories.'%')
 					->whereNull('cancel_id');
+
+			if (Auth::user()->authorization->module_support==1) {
+					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
+					if (!empty($ward_code)) { 
+						$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
+					}
+			} else {
+					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
+			}
 
 			if (empty($request->show_all)) {
 					$admission_tasks = $admission_tasks->where('order_completed','=',0);
@@ -187,11 +216,16 @@ class AdmissionTaskController extends Controller
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'category' => $request->categories,
 					'group_by' => $request->group_by,
 					'order_ids' => $order_ids,
 					'show_all' => $request->show_all,
+					'ward_code'=>$ward_code,
+					'location_code'=>$location_code,
+					'location'=>Location::find($location_code),
 			]);
 	}
 

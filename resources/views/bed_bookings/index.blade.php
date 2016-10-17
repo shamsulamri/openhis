@@ -2,7 +2,7 @@
 
 @section('content')
 @can('module-ward')
-<h1>Bed Bookings</h1>
+<h1>Bed Reservations</h1>
 <h3>{{ $ward->ward_name }}</h3>
 @endcan
 @can('module-patient')
@@ -22,9 +22,7 @@
 	<tr> 
     <th>Date</th>
     <th>Patient</th>
-    <th>Ward</th>
-	<th>Class</th>
-	<th>Bed</th>
+    <th>Reservation</th>
 	@can('module-ward')
 	<th><div align='right'>Vacant</div></th>
 	@endcan
@@ -59,12 +57,10 @@
 			</td>
 			<td>
 					{{$bed_booking->ward_name }}
-			</td>
-			<td>
-					{{$bed_booking->class_name }}
-			</td>
-			<td>
-					{{$bed_booking->bed_name }}
+					<br>
+					<small>
+					{{$bed_booking->class_name }} ({{$bed_booking->bed_name }})
+					</small>
 			</td>
 			@can('module-ward')
 			<td align='right'>
@@ -75,7 +71,7 @@
 					
 					@can('module-ward')
 					@if ($bedVacant>0)
-					<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?flag=1&admission_id='.$bed_booking->admission_id.'&book_id='.$bed_booking->book_id) }}'>&nbsp; Move &nbsp;</a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?move=1&flag=1&admission_id='.$bed_booking->admission_id.'&book_id='.$bed_booking->book_id) }}'>&nbsp; Move &nbsp;</a>
 					@endif
 					@endcan
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('bed_bookings/delete/'. $bed_booking->book_id) }}'>Delete</a>

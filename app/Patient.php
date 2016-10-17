@@ -222,6 +222,13 @@ class Patient extends Model
 			$value = 0;
 
 			if ($amount) $value = $amount[0]->outstanding;
+
+			$deposit_total = DB::table('deposits as a')
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->where('patient_id','=', $this->patient_id)
+					->sum('deposit_amount');
+
+			$value = $value + $deposit_total;
 			return $value;
 	}
 

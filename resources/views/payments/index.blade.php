@@ -38,9 +38,16 @@
 			<td>
 					{{$payment->payment_description}}
 			</td>
+			@if ($payment->encounter_id==0)
+			<td align='right'>
+					<a class="btn btn-default btn-xs pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=receipt&id={{ $payment->payment_id }}" role="button">Print Receipt</a> 
+			</td>
+			@endif
+			@can('system-administrator')
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('payments/delete/'. $payment->payment_id) }}'>Delete</a>
 			</td>
+			@endcan
 	</tr>
 @endforeach
 @endif

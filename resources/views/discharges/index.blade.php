@@ -59,6 +59,8 @@
 					<small>{{$discharge->ward_name}}</small>
 			</td>
 			<td align='right'>
+			@if ($dischargeHelper->drugCompleted($discharge->encounter_id))
+
 					<?php
 					$bill_label="Interim Bill";
 					$button_type="primary";
@@ -77,6 +79,11 @@
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
 					@endcan
+			@else
+					<span class="label label-warning">
+					Preparing drug...
+					</span>
+			@endif
 			</td>
 	</tr>
 @endforeach

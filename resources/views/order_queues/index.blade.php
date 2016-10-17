@@ -5,6 +5,7 @@
 <!--
 <form action='/order_queue/search' method='post'>
 	{{ Form::select('locations', $locations, $location, ['class'=>'form-control input-lg','maxlength'=>'10']) }}
+	{{ Form::select('encounter_code', $encounters, $encounter_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<br>
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
@@ -20,7 +21,6 @@
  <thead>
 	<tr> 
     <th>Date</th>
-    <th>MRN</th>
     <th>Patient</th>
     <th>Source</th>
 	<th></th>
@@ -31,14 +31,23 @@
 
 	<tr>
 			<td>
-					{{ $order->cancel_id }}
 					{{ date('d F, H:i', strtotime($order->created_at)) }}
-			</td>
-			<td>
-					{{ $order->patient_mrn }}
+					<br>
+			@if (empty($order->bill_id))
+					<span class="label label-danger">
+					Not paid
+					</span>
+			@else
+					<span class="label label-success">
+					&nbsp;Paid&nbsp;
+					</span>
+			@endif
+			<br>
 			</td>
 			<td>
 					{{$order->patient_name}}
+					<br>
+					<small>{{ $order->patient_mrn }}</small>
 			</td>
 			<td>
 					{{ $order->location_name }}{{ $order->bed_name }}

@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\QueueLocation;
+use App\EncounterType;
 use Carbon\Carbon;
 
 class OrderQueueController extends Controller
@@ -77,7 +78,9 @@ class OrderQueueController extends Controller
 					'a.created_at',
 					'bed_name',
 					'k.location_name',
+					'o.id as bill_id',
 					];
+
 			$order_queues = DB::table('orders as a')
 					->select($fields)
 					->join('consultations as b', 'b.consultation_id', '=', 'a.consultation_id')
@@ -91,11 +94,14 @@ class OrderQueueController extends Controller
 					->leftjoin('queues as j', 'j.encounter_id', '=', 'c.encounter_id')
 					->leftjoin('queue_locations as k', 'k.location_code', '=', 'j.location_code')
 					->leftjoin('order_investigations as m', 'm.order_id', '=', 'a.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
+					->leftjoin('bills as o','o.encounter_id', '=', 'c.encounter_id')
 					->where('investigation_date','<=', Carbon::today())
 					->where('a.location_code','=',$location_code)
 					->whereNull('cancel_id')
 					->where('order_completed', '=', 0)
 					->where('c.encounter_code', '!=', 'inpatient')
+					->whereNotNull('n.post_id')
 					->groupBy('a.encounter_id')
 					->paginate($this->paginateValue);
 
@@ -106,7 +112,9 @@ class OrderQueueController extends Controller
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,
 					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'location'=>$location,
+					'encounter_code'=>null,
 					]);
 	}
 
@@ -184,7 +192,8 @@ class OrderQueueController extends Controller
 	
 	public function search(Request $request)
 	{
-			$location = $request->locations;
+			$location_code = $request->cookie('queue_location');
+			$location = QueueLocation::find($location_code);
 
 			$fields = ['a.order_id',
 					'patient_name', 
@@ -196,8 +205,8 @@ class OrderQueueController extends Controller
 					'a.created_at',
 					'bed_name',
 					'k.location_name',
+					'o.id as bill_id',
 					];
-
 
 			$order_queues = DB::table('orders as a')
 					->select($fields)
@@ -211,17 +220,28 @@ class OrderQueueController extends Controller
 					->leftjoin('beds as l', 'l.bed_code', '=', 'i.bed_code')
 					->leftjoin('queues as j', 'j.encounter_id', '=', 'c.encounter_id')
 					->leftjoin('queue_locations as k', 'k.location_code', '=', 'j.location_code')
-					->where('a.location_code','=',$location)
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'a.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
+					->leftjoin('bills as o','o.encounter_id', '=', 'c.encounter_id')
+					->where('investigation_date','<=', Carbon::today())
+					->where('a.location_code','=',$location_code)
 					->whereNull('cancel_id')
 					->where('order_completed', '=', 0)
-					->groupBy('a.encounter_id')
-					->paginate($this->paginateValue);
+					->whereNotNull('n.post_id')
+					->groupBy('a.encounter_id');
+
+			if (!empty($request->encounter_code)) {
+				$order_queues = $order_queues->where('c.encounter_code','=', $request->encounter_code);
+			}
+			$order_queues = $order_queues->paginate($this->paginateValue);
 
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,
 					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location'=>$location,
+					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'encounter_code'=>$request->encounter_code,
 					])
 				->withCookie(cookie('queue_location',$location));
 	}

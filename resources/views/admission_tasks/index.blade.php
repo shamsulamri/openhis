@@ -2,12 +2,24 @@
 
 @section('content')
 <h1>Admission Tasks</h1>
+@if (Auth::user()->authorization->module_support!=1)
 <h3>{{ $ward->ward_name }}</h3>
+@else
+<h3>{{ $location->location_name }}</h3>
+@endif
 <br>
 <form class='form-inline' action='/admission_task/search' method='post'>
+	@if (Auth::user()->authorization->module_support==1)
+	<!--
+	<label>Location&nbsp;</label>
+	{{ Form::select('location_code', $locations, $location_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	-->
+	<label>Ward&nbsp;</label>
+	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	@else
 	<label>Type&nbsp;</label>
 	{{ Form::select('categories', $categories, $category, ['class'=>'form-control','maxlength'=>'10']) }}
-	<input type='hidden' name="_token" value="{{ csrf_token() }}">
+	@endif
 	<label>Group by&nbsp;</label>
 
 	{{ Form::select('group_by', array('order'=>'Order','patient'=>'Patient'),$group_by, ['class'=>'form-control']) }}
@@ -18,8 +30,10 @@
 	Show All
 	</label>
 
+	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 
 </form>
+<br>
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
@@ -77,8 +91,15 @@ $header_count=0;
 			<?php $header_count=0; ?>
 			<tr>
 					<th colspan=4>
-						{{$admission_task->bed_name}} : 
+						<h5>
+						<strong>
 						{{$admission_task->patient_name}} ({{$admission_task->patient_mrn}})
+						</strong>
+						<br>
+						<small>
+						{{$admission_task->bed_name}}, {{ $admission_task->ward_name }}
+						</small>
+						</h5>
 					</th>
 			</tr>
 			@endif
@@ -90,6 +111,12 @@ $header_count=0;
 			@if ($group_by=='order')
 			<td width='150'>
 					{{$admission_task->bed_name}}
+					@if (Auth::user()->authorization->module_support==1)
+					<br>
+					<small>
+					{{$admission_task->ward_name}}
+					</small>
+					@endif
 			</td>
 			<td width='30'>
 					{{$admission_task->patient_mrn}}
@@ -109,12 +136,18 @@ $header_count=0;
 					{{$admission_task->name }},	{{ date('d M, H:i', strtotime($admission_task->updated_at)) }}
 				@endif
 			</td>
-			<td width='100' align='right'>
+			<td align='right'>
+				@if (Auth::user()->authorization->module_support==1)
+					<a href='{{ URL::to('order_tasks/task/'. $admission_task->encounter_id) .'/'. $location_code }}' class='btn btn-primary btn-xs'>
+						Open	
+					</a>
+				@else
 					@if ($admission_task->order_completed==0)
-					<a href='{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}' class='btn btn-warning btn-xs'>
+					<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
 					Cancel
 					</a>
 					@endif
+				@endif
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('admission_tasks/delete/'. $admission_task->order_id) }}'>Delete</a>
 					@endcan

@@ -2,7 +2,7 @@
 
 @section('content')
 @include('consultations.panel')
-<h1>Clincal Discharge</h1>
+<h1>Discharge</h1>
 <br>
 @include('common.errors')
 

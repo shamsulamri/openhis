@@ -136,11 +136,15 @@ class AdmissionController extends Controller
 			$valid = $admission->validate($request->all(), $request->_method);
 
 			$ward = Ward::all()->first();
+
 			if ($valid->passes()) {
 					$admission = new Admission($request->all());
 					$admission->diet_code='normal';
 					$admission->admission_id = $request->admission_id;
 					$admission->save();
+					if ($admission->encounter->encounter_code=='daycare') {
+							$ward = Ward::where('ward_code','=','daycare')->first();
+					}
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/admission_beds/'.$admission->admission_id.'/'.$ward->ward_code);
 			} else {

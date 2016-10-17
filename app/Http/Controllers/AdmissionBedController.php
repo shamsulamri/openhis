@@ -95,6 +95,7 @@ class AdmissionBedController extends Controller
 					'encounter' => $encounter,
 					'book_id' => $book_id,
 					'book' => $book,
+					'move' => $request->move,
 					'ward_classes' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 			]);
 	}

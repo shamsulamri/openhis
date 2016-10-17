@@ -69,7 +69,7 @@ class PaymentController extends Controller
 					'patient' => $patient,
 					'encounter' => $encounter,
 					'billHelper' => new BillHelper(),
-					'encounter_id' => $encounter->encounter_id,
+					'encounter_id' => $encounter_id,
 
 					]);
 	}

@@ -56,11 +56,9 @@
 		@endforeach
 </table>
 @else
-				<h4>
-				<span class="label label-success">
+				<p>
 				No case
-				</span>
-				</h4>
+				</p>
 @endif
 </div>
 </div>

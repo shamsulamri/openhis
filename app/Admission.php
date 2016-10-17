@@ -7,6 +7,7 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 use App\Consultation;
+use App\Encounter;
 use Log;
 use DB;
 
@@ -44,10 +45,19 @@ class Admission extends Model
 					];
 					break;
 			default:
-					$rules = [
-						'encounter_id'=>'required',
-						'user_id'=>'required',
-					];
+					
+					$encounter = Encounter::find($input['encounter_id']);
+					Log::info($encounter->encounter_code);
+					if ($encounter->encounter_code=='mortuary') {
+							$rules = [
+								'encounter_id'=>'required',
+							];
+					} else {
+							$rules = [
+								'encounter_id'=>'required',
+								'user_id'=>'required',
+							];
+					}
 			}
 			
 			

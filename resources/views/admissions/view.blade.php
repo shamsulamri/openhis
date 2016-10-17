@@ -40,14 +40,15 @@
 		<br>
 		<br>
 
+		<!--
 		<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
-		<a href='{{ URL::to('bed_bookings/create/'. $admission->patient_id.'/'.$admission->admission_id) }}'>Bed Booking</a>
+		<a href='{{ URL::to('bed_bookings/create/'. $patient->patient_id.'/'.$admission->admission_id) }}'>Bed Booking</a>
 		</a>
 		<br>
 		<br>
+		-->
 
 		@endif
-
 
 
 </h4>

@@ -62,17 +62,15 @@
   </button>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 	<li><a href="/medical_certificates/create">Medical Certificate</a></li>
+	@if (empty($consultation->encounter->discharge->discharge_id))
     <li>
 		<a href="/consultations/close">Close</a>
 	</li>
     <li role="separator" class="divider"></li>
 	<li>
-		@if (!empty($consultation->encounter->discharge->discharge_id))
-			<a href="/discharges/{{ $consultation->encounter->discharge->discharge_id }}/edit" role="button">Discharge</a>
-		@else
-			<a href="/discharges/create" role="button">Clinical Discharge</a>
-		@endif
+			<a href="/discharges/create" role="button">Discharge</a>
 	</li>
+	@endif
   </ul>
 </div>
 

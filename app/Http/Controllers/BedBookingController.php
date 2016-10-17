@@ -67,9 +67,8 @@ class BedBookingController extends Controller
 					});
 			}
 
-
 			$bed_bookings = $bed_bookings->paginate($this->paginateValue);
-		
+			
 			return view('bed_bookings.index', [
 					'bed_bookings'=>$bed_bookings,
 					'bedController' => new BedController(),
@@ -88,7 +87,7 @@ class BedBookingController extends Controller
 			$bed_booking->class_code = $request->class_code;
 			$bed_booking->bed_code = $request->bed_code;
 
-			$title = "Bed Request";
+			$title = "Bed Reservation";
 			if ($request->book=='preadmission') $title = "Preadmission";
 			if ($admission_id != null) {
 					$admission = Admission::find($admission_id);

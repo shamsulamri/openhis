@@ -37,7 +37,7 @@ class ConsultationController extends Controller
 
 			$consultations = DB::table('consultations as a')
 					->leftjoin('patients as b','b.patient_id','=', 'a.patient_id')
-					->orderBy('a.created_at')
+					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
 			return view('consultations.index', [

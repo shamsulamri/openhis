@@ -19,6 +19,7 @@ use Carbon\Carbon;
 use App\MedicalCertificate;
 use App\DojoUtility;
 use App\DischargeType;
+use App\DischargeHelper;
 
 class DischargeController extends Controller
 {
@@ -41,6 +42,7 @@ class DischargeController extends Controller
 					->leftJoin('users as f', 'f.id', '=', 'a.user_id')
 					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
 					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
+					->orderBy('e.id')
 					->orderBy('discharge_id','desc');
 
 			$discharges = $discharges->paginate($this->paginateValue);
@@ -50,6 +52,7 @@ class DischargeController extends Controller
 					'discharge_types' => DischargeType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'type_code'=>null,
 					'dojo' => new DojoUtility(),
+					'dischargeHelper' => new DischargeHelper(),
 			]);
 	}
 
@@ -129,6 +132,8 @@ class DischargeController extends Controller
 			$discharge = Discharge::findOrFail($id);
 			$consultation = $discharge->consultation;
 
+			$mc = $consultation->medical_certificate;
+
 			$discharge_orders = DB::table('orders as a')
 					->select(['a.product_code', 'product_name'])
 					->leftJoin('products as b', 'b.product_code','=','a.product_code')
@@ -144,6 +149,8 @@ class DischargeController extends Controller
 					'consultation' => $consultation,
 					'patient' => $consultation->encounter->patient,
 					'consultOption' => 'consultation',
+					'mc' => $consultation->medical_certificate,
+					'minYear' => Carbon::now()->year,
 					]);
 	}
 

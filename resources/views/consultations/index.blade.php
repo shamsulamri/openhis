@@ -40,11 +40,13 @@
 					<small>{{$consultation->encounter->patient->patient_mrn}}</small>
 			</td>
 			<td>
-					@if ($consultation->encounter->encounter_code=='inpatient')
+					@if ($consultation->encounter->encounter_code=='inpatient' || $consultation->encounter->encounter_code=='daycare')
 						{{ $consultation->encounter->admission->bed->bed_name }} <br>
 						<small>{{ $consultation->encounter->admission->bed->ward->ward_name }}</small> 
 					@else
+						@if (!empty($consultation->ecounter->queue))
 						{{ $consultation->encounter->queue->location->location_name }}
+						@endif
 					@endif
 			</td>
 			<td>

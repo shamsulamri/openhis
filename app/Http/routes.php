@@ -50,6 +50,19 @@ Route::group(['middleware' => 'web'], function () {
 		Route::get('/product_authorization/search', 'ProductAuthorizationController@search');
 		Route::get('/product_authorizations/delete/{id}', 'ProductAuthorizationController@delete');
 		
+		Route::post('/admission_task/status', 'AdmissionTaskController@status');
+		Route::resource('admission_tasks', 'AdmissionTaskController');
+		Route::get('/admission_tasks/id/{id}', 'AdmissionTaskController@searchById');
+		Route::post('/admission_task/search', 'AdmissionTaskController@search');
+		Route::get('/admission_task/search', 'AdmissionTaskController@search');
+		Route::get('/admission_tasks/delete/{id}', 'AdmissionTaskController@delete');
+
+		Route::resource('task_cancellations', 'TaskCancellationController',['except'=>['create']]);
+		Route::get('/task_cancellations/create/{id}', 'TaskCancellationController@create');
+		Route::get('/task_cancellations/id/{id}', 'TaskCancellationController@searchById');
+		Route::post('/task_cancellation/search', 'TaskCancellationController@search');
+		Route::get('/task_cancellation/search', 'TaskCancellationController@search');
+		Route::get('/task_cancellations/delete/{id}', 'TaskCancellationController@delete');
 
 		Route::resource('sponsors', 'SponsorController');
 		Route::get('/sponsors/id/{id}', 'SponsorController@searchById');
@@ -246,6 +259,13 @@ Route::group(['middleware' => 'web'], function () {
 
 		Route::group(['middleware' => 'discharge'], function () {
 
+				Route::resource('deposits', 'DepositController',['except'=>['create','index']]);
+				Route::get('/deposits/index/{id}', 'DepositController@index');
+				Route::get('/deposits/create/{id}', 'DepositController@create');
+				Route::get('/deposits/id/{id}', 'DepositController@searchById');
+				Route::post('/deposit/search', 'DepositController@search');
+				Route::get('/deposit/search', 'DepositController@search');
+				Route::get('/deposits/delete/{id}', 'DepositController@delete');
 
 				Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
 				Route::get('/payments/{id?}', 'PaymentController@index');
@@ -334,6 +354,7 @@ Route::group(['middleware' => 'web'], function () {
 				Route::get('/queues/delete/{id}', 'QueueController@delete');
 
 
+				/*
 				Route::resource('deposits', 'DepositController',['except'=>['create','index']]);
 				Route::get('/deposits/index/{id}', 'DepositController@index');
 				Route::get('/deposits/create/{id}', 'DepositController@create');
@@ -341,6 +362,7 @@ Route::group(['middleware' => 'web'], function () {
 				Route::post('/deposit/search', 'DepositController@search');
 				Route::get('/deposit/search', 'DepositController@search');
 				Route::get('/deposits/delete/{id}', 'DepositController@delete');
+				 */
 		
 				//Route::resource('deposits', 'DepositController');
 				//Route::get('/deposits/id/{id}', 'DepositController@searchById');
@@ -583,21 +605,7 @@ Route::group(['middleware' => 'web'], function () {
 		
 				Route::get('/admission/dietUpdate', 'AdmissionController@dietUpdate');
 
-				Route::resource('task_cancellations', 'TaskCancellationController',['except'=>['create']]);
-				Route::get('/task_cancellations/create/{id}', 'TaskCancellationController@create');
-				Route::get('/task_cancellations/id/{id}', 'TaskCancellationController@searchById');
-				Route::post('/task_cancellation/search', 'TaskCancellationController@search');
-				Route::get('/task_cancellation/search', 'TaskCancellationController@search');
-				Route::get('/task_cancellations/delete/{id}', 'TaskCancellationController@delete');
 		
-
-				Route::post('/admission_task/status', 'AdmissionTaskController@status');
-				Route::resource('admission_tasks', 'AdmissionTaskController');
-				Route::get('/admission_tasks/id/{id}', 'AdmissionTaskController@searchById');
-				Route::post('/admission_task/search', 'AdmissionTaskController@search');
-				Route::get('/admission_task/search', 'AdmissionTaskController@search');
-				Route::get('/admission_tasks/delete/{id}', 'AdmissionTaskController@delete');
-
 				Route::get('/ward_arrivals/create/{id}', 'WardArrivalController@create');
 				Route::resource('ward_arrivals', 'WardArrivalController', ['except'=>['create']]);
 				Route::get('/ward_arrivals/id/{id}', 'WardArrivalController@searchById');
