@@ -29,7 +29,9 @@
 			<th>Date</th> 
 			<th>Movement</th>
 			<th>Quantity</th>
+			@can('system-administrator')
 			<th></th>
+			@endcan
 			</tr>
 		  </thead>
 			<tbody>
@@ -46,10 +48,12 @@
 					<td>
 							{{ str_replace('.00','',number_format($stock->stock_quantity,2)) }}
 					</td>
+					@can('system-administrator')
 					<td align='right'>
 							<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $stock->stock_id . '/edit') }}'>Edit</a>
 							<a class='btn btn-danger btn-xs' href='{{ URL::to('stocks/delete/'. $stock->stock_id) }}'>Delete</a>
 					</td>
+					@endcan
 			</tr>
 		@endforeach
 		@endif

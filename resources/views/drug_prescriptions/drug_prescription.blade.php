@@ -2,8 +2,8 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('drug_strength')) has-error @endif'>
-						{{ Form::label('drug_strength', 'Strength',['class'=>'col-md-4 control-label']) }}
-						<div class='col-md-8'>
+						{{ Form::label('drug_strength', 'Strength',['class'=>'col-md-6 control-label']) }}
+						<div class='col-md-6'>
 							{{ Form::text('drug_strength', null, ['class'=>'form-control','placeholder'=>'',]) }}
 							@if ($errors->has('drug_strength')) <p class="help-block">{{ $errors->first('drug_strength') }}</p> @endif
 						</div>
@@ -21,8 +21,8 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('drug_dosage')) has-error @endif'>
-						{{ Form::label('drug_dosage', 'Dosage',['class'=>'col-md-4 control-label']) }}
-						<div class='col-md-8'>
+						{{ Form::label('drug_dosage', 'Dosage',['class'=>'col-md-6 control-label']) }}
+						<div class='col-md-6'>
 							{{ Form::text('drug_dosage', null, ['class'=>'form-control','placeholder'=>'',]) }}
 							@if ($errors->has('drug_dosage')) <p class="help-block">{{ $errors->first('drug_dosage') }}</p> @endif
 						</div>
@@ -57,8 +57,8 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('drug_duration')) has-error @endif'>
-						{{ Form::label('drug_duration', 'Period',['class'=>'col-md-4 control-label']) }}
-						<div class='col-md-8'>
+						{{ Form::label('drug_duration', 'Period',['class'=>'col-md-6 control-label']) }}
+						<div class='col-md-6'>
 							{{ Form::text('drug_duration', null, ['class'=>'form-control','placeholder'=>'',]) }}
 							@if ($errors->has('drug_duration')) <p class="help-block">{{ $errors->first('drug_duration') }}</p> @endif
 						</div>

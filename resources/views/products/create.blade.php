@@ -6,7 +6,7 @@
 			alert("X");
 	}	
 </script>
-<h1><a href='/products'>Product List</a> / New Product</h1>
+<h1>New Product</h1>
 @include('common.errors')
 <br>
 {{ Form::model($product, ['url'=>'products', 'class'=>'form-horizontal']) }} 

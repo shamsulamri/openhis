@@ -27,7 +27,9 @@
 		@if (!Session::has('message'))
 				<br>
 		@endif
+		@can('module-diet')
 		<a href='/purchase_order/diet/{{ $purchase_id }}' class='btn btn-default'>Diet BOM</a>
+		@endcan
 @endif
 		<a class="btn btn-default pull-right" target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=purchase_order&id={{ $purchase_id }}" role="button">Print</a> 
 	<br>

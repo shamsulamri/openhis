@@ -129,6 +129,7 @@
     </div>
 	@endif
 
+	@if ($loan->loan_code=='accept')
     <div class='form-group  @if ($errors->has('loan_date_start')) has-error @endif'>
         {{ Form::label('loan_date_start', 'Date Start',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -148,6 +149,27 @@
             @if ($errors->has('loan_date_end')) <p class="help-block">{{ $errors->first('loan_date_end') }}</p> @endif
         </div>
     </div>
+	@endif
+
+	@if ($loan->loan_code=='lend')
+    <div class='form-group  @if ($errors->has('loan_date_start')) has-error @endif'>
+        {{ Form::label('loan_date_start', 'Date Start',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::label('date_start',  date('d F Y, H:i', strtotime($loan->getLoanDateStart())) , ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('loan_date_end')) has-error @endif'>
+        {{ Form::label('loan_date_end', 'Date End',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+			@if ($loan->loan_date_end)
+            {{ Form::label('date_start',  date('d F Y, H:i', strtotime($loan->getLoanDateEnd())) , ['class'=>'form-control','placeholder'=>'',]) }}
+			@else
+            {{ Form::label('date_end', '-', ['class'=>'form-control','placeholder'=>'',]) }}
+			@endif
+        </div>
+    </div>
+	@endif
 
 	@if ($loan->loan_code=='lend' || $loan->loan_code=='exchange')
 	<div class='page-header'>

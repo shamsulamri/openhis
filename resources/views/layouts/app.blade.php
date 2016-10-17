@@ -157,6 +157,7 @@
 								<a class='list-group-item' href="{{ url('/suppliers') }}"><span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Suppliers</a>
 								<a class='list-group-item' href="{{ url('/stores') }}"><span class='glyphicon glyphicon-lamp'></span>&nbsp; Stores</a>
 								<a class='list-group-item' href="{{ url('/sets') }}"><span class='glyphicon glyphicon-apple'></span>&nbsp; Order Sets</a>
+								<a class='list-group-item' href="{{ url('/product_authorizations') }}"><span class='glyphicon glyphicon-barcode'></span>&nbsp; Product Authorizations</a>
 				</div>
 				<div class='list-group'>
 								<a class='list-group-item' href="{{ url('/loans') }}"><span class='glyphicon glyphicon-transfer'></span>&nbsp; Loans</a>
