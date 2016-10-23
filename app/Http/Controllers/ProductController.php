@@ -281,6 +281,7 @@ class ProductController extends Controller
 							->where('product_code','=',$product_code)
 							->where('store_code','=',$store_code)
 							->orderBy('stock_date', 'desc')
+							->orderBy('stock_id', 'desc')
 							->first();
 
 			$stock_on_hand=0;

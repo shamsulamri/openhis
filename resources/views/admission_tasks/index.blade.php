@@ -106,7 +106,9 @@ $header_count=0;
 	@endif
 	<tr>
 			<td width='10'>
+					@if (!$admission_task->updated_by)
 					{{ Form::checkbox($admission_task->order_id, 1, $admission_task->order_completed) }}
+					@endif
 			</td>
 			@if ($group_by=='order')
 			<td width='150'>

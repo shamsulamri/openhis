@@ -17,6 +17,7 @@ use App\Product;
 use Carbon\Carbon;
 use App\DojoUtility;
 use App\StockHelper;
+use Auth;
 
 class StockController extends Controller
 {
@@ -29,8 +30,7 @@ class StockController extends Controller
 
 	public function index()
 	{
-			$stocks = DB::table('stocks')
-					->where('product_code','=', $product_code)
+			$stocks = Stocks::where('product_code','=', $product_code)
 					->orderBy('product_code')
 					->paginate($this->paginateValue);
 
@@ -62,6 +62,7 @@ class StockController extends Controller
 
 			if ($valid->passes()) {
 					$stock = new Stock($request->all());
+					$stock->username = Auth::user()->username;
 					$stock->stock_id = $request->stock_id;
 					$stock->save();
 					
@@ -171,13 +172,14 @@ class StockController extends Controller
 
 	public function show($product_code, $store_code=null)
 	{
-			$stocks = DB::table('stocks as a')
-					->leftJoin('stock_movements as b', 'b.move_code', '=','a.move_code')
-					->leftJoin('stores as c', 'c.store_code', '=','a.store_code')
+			$stocks = Stock::orderBy('stock_date','desc')
+					->leftJoin('stock_movements as b', 'b.move_code', '=','stocks.move_code')
+					->leftJoin('stores as c', 'c.store_code', '=','stocks.store_code')
 					->where('product_code','=',$product_code)
-					->where('a.store_code','=',$store_code)
-					->orderBy('stock_date','desc')
+					->where('stocks.store_code','=',$store_code)
+					->orderBy('stock_id','desc')
 					->paginate($this->paginateValue);
+
 			$product = Product::find($product_code);
 			return view('stocks.index', [
 					'stocks'=>$stocks,

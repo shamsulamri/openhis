@@ -7,6 +7,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('supplier_company_number')) has-error @endif'>
+        <label for='supplier_company_number' class='col-sm-3 control-label'>Company Number<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+            {{ Form::text('supplier_company_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+            @if ($errors->has('supplier_company_number')) <p class="help-block">{{ $errors->first('supplier_company_number') }}</p> @endif
+        </div>
+    </div>
+
 	<div class='page-header'>
 		<h4>Address</h4>
 	</div>

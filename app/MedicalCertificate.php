@@ -28,7 +28,7 @@ class MedicalCertificate extends Model
 				'encounter_id'=>'required',
 				'consultation_id'=>'required',
 				'mc_start'=>'required|size:10|date_format:d/m/Y',
-				'mc_end'=>'size:10|date_format:d/m/Y|after:mc_start',
+				'mc_end'=>'size:19|date_format:d/m/Y|after:mc_start',
 				'mc_identification'=>'required',
 			];
 

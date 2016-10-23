@@ -28,7 +28,7 @@
 			<tr> 
 			<th>Date</th> 
 			<th>Movement</th>
-			<th>Quantity</th>
+			<th><div align='right'>Quantity</div></th>
 			@can('system-administrator')
 			<th></th>
 			@endcan
@@ -38,14 +38,20 @@
 		@foreach ($stocks as $stock)
 			<tr>
 					<td>
-							{{ date('d F Y H:i', strtotime($stock->stock_date)) }}
+							{{ date('d F Y H:i', strtotime($stock->getStockDate())) }}
+							<br>
+							<small>by {{ $stock->user->name }}</small>
 					</td>
 					<td>
 							<a href='{{ URL::to('stocks/'. $stock->stock_id . '/edit') }}'>
 								{{$stock->move_name}}
 							</a>
+							@if (!empty($stock->stock_description))
+								<br>
+								<small>{{ $stock->stock_description }}</small>
+							@endif
 					</td>
-					<td>
+					<td align='right'>
 							{{ str_replace('.00','',number_format($stock->stock_quantity,2)) }}
 					</td>
 					@can('system-administrator')

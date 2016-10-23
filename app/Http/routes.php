@@ -489,6 +489,17 @@ Route::group(['middleware' => 'web'], function () {
 				Route::post('/product/search', 'ProductController@search');
 				Route::get('/product/search', 'ProductController@search');
 				Route::get('/products/delete/{id}', 'ProductController@delete');
+
+				Route::get('/stocks/total/{product_code}', 'StockController@updateTotalOnHand');
+				Route::get('/stocks/delete/{id}', 'StockController@delete');
+				Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);
+				Route::get('/stocks/{product_code}/{store_code?}', 'StockController@show');
+				Route::get('/stocks/onhand/{product_code}/{store_code}', 'StockController@onHand');
+				Route::get('/stocks/create/{product_code}/{store_code}', 'StockController@create');
+				Route::get('/stocks/id/{id}', 'StockController@searchById');
+				Route::post('/stock/search', 'StockController@search');
+				Route::get('/stock/search', 'StockController@search');
+				
 		});
 
 		Route::group(['middleware' => 'inventory'], function () {
@@ -506,16 +517,6 @@ Route::group(['middleware' => 'web'], function () {
 				Route::post('/bill_material/search', 'BillMaterialController@search');
 				Route::get('/bill_material/search', 'BillMaterialController@search');
 				Route::get('/bill_materials/delete/{id}', 'BillMaterialController@delete');
-				
-				Route::get('/stocks/total/{product_code}', 'StockController@updateTotalOnHand');
-				Route::get('/stocks/delete/{id}', 'StockController@delete');
-				Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);
-				Route::get('/stocks/{product_code}/{store_code?}', 'StockController@show');
-				Route::get('/stocks/onhand/{product_code}/{store_code}', 'StockController@onHand');
-				Route::get('/stocks/create/{product_code}/{store_code}', 'StockController@create');
-				Route::get('/stocks/id/{id}', 'StockController@searchById');
-				Route::post('/stock/search', 'StockController@search');
-				Route::get('/stock/search', 'StockController@search');
 				
 				Route::resource('stock_movements', 'StockMovementController');
 				Route::get('/stock_movements/id/{id}', 'StockMovementController@searchById');

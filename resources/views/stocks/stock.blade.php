@@ -54,8 +54,9 @@
 						template: "DD MMMM YYYY     HH : mm",
 						value: '{{ $stock->stock_date }}',
 						maxYear: {{ $maxYear }},
-						minYear: 1900,
-						customClass: 'select'
+						minYear: {{ $maxYear-5 }},
+						customClass: 'select',
+						minuteStep: 1,
 				});    
 		});
 	</script>

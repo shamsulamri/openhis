@@ -13,6 +13,7 @@ class Supplier extends Model
 	protected $fillable = [
 				'supplier_code',
 				'supplier_name',
+				'supplier_company_number',
 				'supplier_street_1',
 				'supplier_street_2',
 				'supplier_city',
@@ -31,6 +32,7 @@ class Supplier extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'supplier_name'=>'required',
+				'supplier_company_number'=>'required',
 			];
 
 			

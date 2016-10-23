@@ -22,6 +22,8 @@
 @if ($purchase_order->purchase_posted==1)
 	@if ($purchase_order->purchase_received==0)
 	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-default'>Stock Receive</a>
+	@else
+	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-default'>Update</a>
 	@endif
 @else
 		@if (!Session::has('message'))

@@ -12,6 +12,7 @@ use DB;
 use Session;
 use App\Consultation;
 use Carbon\Carbon;
+use App\DojoUtility;
 
 class MedicalCertificateController extends Controller
 {
@@ -43,8 +44,8 @@ class MedicalCertificateController extends Controller
 
 			$medical_certificate = new MedicalCertificate();
 			$medical_certificate->encounter_id = $consultation->encounter->encounter_id;
-
 			$today = date('d/m/Y', strtotime(Carbon::now()));  
+
 			$medical_certificate->mc_start = $today;
 
 			return view('medical_certificates.create', [

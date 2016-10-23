@@ -18,6 +18,7 @@ class Stock extends Model
 				'stock_date',
 				'stock_quantity',
 				'stock_description',
+				'username',
 				];
 	
     protected $guarded = ['stock_id'];
@@ -60,5 +61,15 @@ class Stock extends Model
 	public function product()
 	{
 		return $this->belongsTo('App\Product', 'product_code');
+	}
+
+	public function user()
+	{
+		return $this->belongsTo('App\User', 'username','username');
+	}
+
+	public function getStockDate()
+	{
+		return Carbon::createFromFormat('d/m/Y H:i', $this->stock_date);
 	}
 }

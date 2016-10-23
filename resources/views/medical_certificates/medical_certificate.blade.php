@@ -48,7 +48,8 @@
 						value: '{{ $medical_certificate->mc_start }}',
 						maxYear: '{{ $minYear+5 }}',
 						minYear: '{{ $minYear }}',
-						customClass: 'select'
+						customClass: 'select',
+						minuteStep: 1,
 				});    
 		});
 

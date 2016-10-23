@@ -54,17 +54,26 @@
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
         {{ Form::label('store_code', 'Receiving Store',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::select('store_code', $store,null, ['class'=>'form-control','maxlength'=>'20']) }}
-            @if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
+			@if ($purchase_order->purchase_received==0)
+					{{ Form::select('store_code', $store,null, ['class'=>'form-control','maxlength'=>'20']) }}
+					@if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
+			@else
+            		{{ Form::label('store_code', $purchase_order->store->store_name, ['class'=>'form-control']) }}
+			@endif
         </div>
     </div>
-
 
     <div class='form-group  @if ($errors->has('receive_datetime')) has-error @endif'>
         {{ Form::label('receive_datetime', 'Date/Time',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-			<input id="receive_datetime" name="receive_datetime" type="text">
-            @if ($errors->has('receive_datetime')) <p class="help-block">{{ $errors->first('receive_datetime') }}</p> @endif
+			@if ($purchase_order->purchase_received==0)
+					<input id="receive_datetime" name="receive_datetime" type="text">
+					@if ($errors->has('receive_datetime')) <p class="help-block">{{ $errors->first('receive_datetime') }}</p> @endif
+			@else
+					<label class='form-control'>
+					{{ date('d F Y, H:i', strtotime($purchase_order->getReceiveDatetime())) }}
+					</label>
+			@endif
         </div>
     </div>
 
@@ -91,6 +100,9 @@
 	{{ Form::hidden('supplier_code', $purchase_order->supplier_code) }}
 	{{ Form::hidden('purchase_received','1') }}
 
+	@if ($purchase_order->purchase_received==1)
+			{{ Form::hidden('store_code',$purchase_order->store_code) }}
+	@endif
 	<br>
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">

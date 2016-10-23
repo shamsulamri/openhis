@@ -59,7 +59,10 @@
 					{{$bed_booking->ward_name }}
 					<br>
 					<small>
-					{{$bed_booking->class_name }} ({{$bed_booking->bed_name }})
+					{{$bed_booking->class_name }} 
+					@if ($bed_booking->bed_name)
+						({{$bed_booking->bed_name }})
+					@endif
 					</small>
 			</td>
 			@can('module-ward')
@@ -70,7 +73,7 @@
 			<td align='right'>
 					
 					@can('module-ward')
-					@if ($bedVacant>0)
+					@if ($bedVacant>0 && !empty($bed_booking->admission_id))
 					<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?move=1&flag=1&admission_id='.$bed_booking->admission_id.'&book_id='.$bed_booking->book_id) }}'>&nbsp; Move &nbsp;</a>
 					@endif
 					@endcan

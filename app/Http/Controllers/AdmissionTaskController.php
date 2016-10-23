@@ -42,7 +42,7 @@ class AdmissionTaskController extends Controller
 			$location_code = $request->cookie('queue_location');
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name','ward_name','a.encounter_id')
+					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name','ward_name','a.encounter_id','a.updated_by')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -51,9 +51,11 @@ class AdmissionTaskController extends Controller
 					->leftjoin('wards as g', 'g.ward_code', '=', 'f.ward_code')
 					->leftjoin('order_cancellations as h', 'h.order_id', '=', 'a.order_id')
 					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
+					->leftjoin('discharges as j', 'j.encounter_id','=','b.encounter_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('order_completed','=',0)
 					->whereNull('cancel_id')
+					->whereNull('discharge_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');
 
@@ -171,7 +173,7 @@ class AdmissionTaskController extends Controller
 			$location_code = $request->cookie('queue_location');
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id')
+					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -181,9 +183,11 @@ class AdmissionTaskController extends Controller
 					->leftjoin('order_drugs as h', 'h.order_id', '=', 'a.order_id')
 					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
 					->leftjoin('order_cancellations as j', 'j.order_id', '=', 'a.order_id')
+					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('d.category_code','like', '%'.$request->categories.'%')
-					->whereNull('cancel_id');
+					->whereNull('cancel_id')
+					->whereNull('discharge_id');
 
 			if (Auth::user()->authorization->module_support==1) {
 					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
@@ -246,16 +250,22 @@ class AdmissionTaskController extends Controller
 			$ids = explode(",",$request->completed_ids);
 
 			foreach($ids as $id) {
-					$order = Order::find($id);
-					if ($request->$id==1) {
-							$order->order_completed=1;
-							$order->updated_by = Auth::user()->id;
-					} else {
+					$order = Order::find($id)
+								->whereNull('updated_by')
+								->first();
+					if (!empty($order)) {
+							if ($request->$id==1) {
+									$order->order_completed=1;
+									$order->updated_by = Auth::user()->id;
+									$order->save();
+							} 
+					}
+					/*
+					else {
 							if ($order->order_completed==1) $order->updated_by = Auth::user()->id;
 							$order->order_completed=0;
 					}
-					$order->save();
-					Log::info($request->$id);
+					 */
 			}
 			Session::flash('message', 'Record updated.');
 			return redirect('/admission_tasks');

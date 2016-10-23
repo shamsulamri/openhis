@@ -83,7 +83,9 @@ class PurchaseOrderController extends Controller
 	{
 			$purchase_order = PurchaseOrder::findOrFail($id);
 			if ($purchase_order->purchase_posted==1) {
-					$purchase_order->receive_datetime = date('d/m/Y H:i', strtotime(Carbon::now())); 
+					if ($purchase_order->purchase_received==0) {
+						$purchase_order->receive_datetime = date('d/m/Y H:i', strtotime(Carbon::now())); 
+					}
 					//$purchase_order->receive_datetime = '03/03/2016 10:33';
 					//return $purchase_order->receive_datetime;
 			}
@@ -104,7 +106,9 @@ class PurchaseOrderController extends Controller
 
 			if ($valid->passes()) {
 					$purchase_order->save();
-					$this->stockReceive($id);
+					if ($purchase_order->purchase_received==0) {
+						$this->stockReceive($id);
+					}
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/purchase_order_lines/index/'.$id);
 			} else {

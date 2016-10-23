@@ -33,7 +33,7 @@ class PurchaseOrder extends Model
 			$rules = [
 				'supplier_code'=>'required',
 				'purchase_date'=>'required|date_format:d/m/Y|size:10',
-				'invoice_date'=>'date|date_format:d/m/Y|size:10',
+				'invoice_date'=>'date_format:d/m/Y|size:10',
 				'receive_datetime'=>'size:16|date_format:d/m/Y H:i',
 			];
 
@@ -49,6 +49,11 @@ class PurchaseOrder extends Model
 	}
 
 	
+	public function getReceiveDatetime()
+	{
+		return Carbon::createFromFormat('d/m/Y H:i', $this->receive_datetime);
+	}
+
 	public function setPurchaseDateAttribute($value)
 	{
 		if (DojoUtility::validateDate($value)==true) {
