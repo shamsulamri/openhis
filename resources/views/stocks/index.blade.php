@@ -39,8 +39,10 @@
 			<tr>
 					<td>
 							{{ date('d F Y H:i', strtotime($stock->getStockDate())) }}
+							@if ($stock->user)
 							<br>
 							<small>by {{ $stock->user->name }}</small>
+							@endif
 					</td>
 					<td>
 							<a href='{{ URL::to('stocks/'. $stock->stock_id . '/edit') }}'>

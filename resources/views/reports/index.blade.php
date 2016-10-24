@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Report</h1>
-
-{{ Form::model($report, ['url'=>'report', 'class'=>'form-horizontal']) }} 
+<h1>Reports</h1>
+<br>
+{{ Form::model($report, ['url'=>'reports', 'class'=>'form-horizontal']) }} 
     <div class='form-group  @if ($errors->has('report')) has-error @endif'>
         <label for='report' class='col-sm-3 control-label'>Report</label>
         <div class='col-sm-9'>
@@ -15,6 +15,20 @@
         <label for='report' class='col-sm-3 control-label'>Encounter</label>
         <div class='col-sm-9'>
 			{{ Form::select('encounter', $encounters,null, ['class'=>'form-control','maxlength'=>'10']) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('report')) has-error @endif'>
+        <label for='report' class='col-sm-3 control-label'>Ward</label>
+        <div class='col-sm-9'>
+			{{ Form::select('ward_code', $wards,null, ['class'=>'form-control','maxlength'=>'10']) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('report')) has-error @endif'>
+        <label for='report' class='col-sm-3 control-label'>Service</label>
+        <div class='col-sm-9'>
+			{{ Form::select('service_id', $services,null, ['class'=>'form-control','maxlength'=>'10']) }}
         </div>
     </div>
 
@@ -61,7 +75,7 @@
 				$('#date_end').combodate({
 						format: "DD/MM/YYYY",
 						template: "DD MMMM YYYY",
-						value: '{{ $today }}',
+						value: '{{ $tomorrow }}',
 						maxYear: '{{ $minYear+5 }}',
 						minYear: '{{ $minYear }}',
 						customClass: 'select'

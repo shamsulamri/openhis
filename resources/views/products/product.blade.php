@@ -107,6 +107,19 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-5">
+					<div class='form-group  @if ($errors->has('product_dismantle_material')) has-error @endif'>
+						{{ Form::label('product_dismantle_material', 'Dismantle Material',['class'=>'col-sm-5 control-label']) }}
+						<div class='col-sm-7'>
+							{{ Form::checkbox('product_dismantle_material', '1') }}
+							@if ($errors->has('product_dismantle_material')) <p class="help-block">{{ $errors->first('product_dismantle_material') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-7">
+			</div>
+	</div>
 	<!-- Purchase -->
 	<div class="row">
 			<div class="col-xs-5">

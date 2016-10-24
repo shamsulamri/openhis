@@ -79,6 +79,12 @@ class DojoUtility
 				return date('d/m/Y', strtotime(Carbon::now())); 
 		}
 
+		public static function tomorrow()
+		{
+				$dt = Carbon::now();
+				return date('d/m/Y', strtotime($dt->addDay())); 
+		}
+
 		public static function timenow()
 		{
 				return date('H:i', strtotime(Carbon::now())); 

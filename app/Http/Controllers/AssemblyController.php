@@ -16,6 +16,7 @@ use Session;
 use Gate;
 use App\DojoUtility;
 use App\Loan;
+use Auth;
 
 class AssemblyController extends Controller
 {
@@ -96,6 +97,7 @@ class AssemblyController extends Controller
 						$stock->stock_quantity = -1*$quantity*$bom->bom_quantity;
 						$stock->stock_date = DojoUtility::now(); 
 						$stock->stock_description = "Build Assembly: ".$id;
+						$stock->username = Auth::user()->username;
 						$stock->save();
 
 						$product_controller->updateTotalOnHand($stock->product_code);
@@ -146,7 +148,10 @@ class AssemblyController extends Controller
 	{
 			$product_controller = new ProductController();
 			$quantity = $request->quantity;
-			$bom_products = BillMaterial::where('product_code',$id)->get();
+			$bom_products = BillMaterial::where('bill_materials.product_code',$id)
+					->leftjoin('products as b','b.product_code', '=', 'bill_materials.bom_product_code')
+					->where('product_dismantle_material','=',1)
+					->get();
 			$product = Product::find($id);
 
 			if ($quantity>$product->product_on_hand) {
@@ -166,6 +171,7 @@ class AssemblyController extends Controller
 						$stock->stock_quantity = $quantity*$bom_product->bom_quantity;
 						$stock->stock_date = DojoUtility::now(); 
 						$stock->stock_description = "Dismantle Assembly: ".$id;
+						$stock->username = Auth::user()->username;
 						$stock->save();
 
 						$product_controller->updateTotalOnHand($stock->product_code);

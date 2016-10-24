@@ -212,6 +212,9 @@
 						<a class='list-group-item' href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Admission Tasks</a>
 				</div>
 				@endcan
+				<div class='list-group'>
+						<a class='list-group-item' href="{{ url('/reports') }}"><span class='glyphicon glyphicon-bullhorn'></span>&nbsp; Reports</a>
+				</div>
 			</div>
 			<div class='col-md-9'>
 				<div class='panel panel-default'>
