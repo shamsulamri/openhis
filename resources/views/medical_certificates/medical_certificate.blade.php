@@ -15,6 +15,22 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('mc_time_start')) has-error @endif'>
+        <label for='mc_time_start' class='col-sm-3 control-label'>Time Start</label>
+        <div class='col-sm-9'>
+			<input id="mc_time_start" name="mc_time_start" type="text">
+            @if ($errors->has('mc_time_start')) <p class="help-block">{{ $errors->first('mc_time_start') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('mc_time_end')) has-error @endif'>
+        <label for='mc_time_end' class='col-sm-3 control-label'>Time End</label>
+        <div class='col-sm-9'>
+			<input id="mc_time_end" name="mc_time_end" type="text">
+            @if ($errors->has('mc_time_end')) <p class="help-block">{{ $errors->first('mc_time_end') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('mc_identification')) has-error @endif'>
         <label for='mc_identification' class='col-sm-3 control-label'>Serial Number<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -60,6 +76,26 @@
 						value: '{{ $medical_certificate->mc_end }}',
 						maxYear: '{{ $minYear+5 }}',
 						minYear: '{{ $minYear }}',
+						customClass: 'select'
+				});    
+		});
+
+		$(function(){
+				$('#mc_time_start').combodate({
+						format: "HH:mm",
+						template: "HH : mm",
+						value: '{{ $medical_certificate->mc_time_start }}',
+						minuteStep: 1,
+						customClass: 'select'
+				});    
+		});
+
+		$(function(){
+				$('#mc_time_end').combodate({
+						format: "HH:mm",
+						template: "HH : mm",
+						value: '{{ $medical_certificate->mc_time_end }}',
+						minuteStep: 1,
 						customClass: 'select'
 				});    
 		});

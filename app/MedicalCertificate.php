@@ -15,6 +15,8 @@ class MedicalCertificate extends Model
 				'consultation_id',
 				'mc_start',
 				'mc_end',
+				'mc_time_start',
+				'mc_time_end',
 				'mc_identification',
 				'mc_notes'];
 	
@@ -28,8 +30,9 @@ class MedicalCertificate extends Model
 				'encounter_id'=>'required',
 				'consultation_id'=>'required',
 				'mc_start'=>'required|size:10|date_format:d/m/Y',
-				'mc_end'=>'size:19|date_format:d/m/Y|after:mc_start',
+				'mc_end'=>'size:10|date_format:d/m/Y|after:mc_start',
 				'mc_identification'=>'required',
+				'mc_time_end'=>'after:mc_time_start',
 			];
 
 			
@@ -77,4 +80,13 @@ class MedicalCertificate extends Model
 		return $this->hasOne('App\Consultation', 'consultation_id', 'consultation_id');
 	}
 
+	public function getMcTimeStartAttribute($value)
+	{
+			return DojoUtility::timeReadFormat($value);
+	}
+
+	public function getMcTimeEndAttribute($value)
+	{
+			return DojoUtility::timeReadFormat($value);
+	}
 }
