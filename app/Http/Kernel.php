@@ -80,6 +80,9 @@ class Kernel extends HttpKernel
         'appointment_function_middleware' => [
 			\App\Http\Middleware\AppointmentFunctionMiddleware::class,
         ],
+        'input_sanitizer_middleware' => [
+			\App\Http\Middleware\InputSanitizerMiddleware::class,
+        ],
         'api' => [
             'throttle:60,1',
         ],

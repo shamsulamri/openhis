@@ -12,7 +12,6 @@ use App\Patient;
 use Log;
 use DB;
 use Session;
-use App\Tourist;
 use App\Gender;
 use App\Religion;
 use App\Title;
@@ -20,8 +19,6 @@ use App\MaritalStatus as Marital;
 use App\Nation;
 use App\Race;
 use App\Occupation;
-use App\Registration;
-use App\Employer;
 use App\Relationship;
 use App\State;
 use App\PatientFlag;
@@ -54,7 +51,6 @@ class PatientController extends Controller
 			$patient = new Patient();
 			return view('patients.create', [
 					'patient' => $patient,
-					'tourist' => Tourist::all()->sortBy('tourist_name')->lists('tourist_name', 'tourist_code')->prepend('',''),
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
 					'religion' => Religion::all()->sortBy('religion_name')->lists('religion_name', 'religion_code')->prepend('',''),
 					'title' => Title::all()->sortBy('title_name')->lists('title_name', 'title_code')->prepend('',''),
@@ -62,7 +58,6 @@ class PatientController extends Controller
 					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
 					'race' => Race::all()->sortBy('race_name')->lists('race_name', 'race_code')->prepend('',''),
 					'occupation' => Occupation::all()->sortBy('occupation_name')->lists('occupation_name', 'occupation_code')->prepend('',''),
-					'registration' => Registration::all()->sortBy('registration_name')->lists('registration_name', 'registration_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
 					'flag' => PatientFlag::all()->sortBy('flag_name')->lists('flag_name', 'flag_code')->prepend('',''),
@@ -111,7 +106,6 @@ class PatientController extends Controller
 		
 			return view('patients.demography', [
 					'patient'=>$patient,
-					'tourist' => Tourist::all()->sortBy('tourist_name')->lists('tourist_name', 'tourist_code')->prepend('',''),
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
 					'religion' => Religion::all()->sortBy('religion_name')->lists('religion_name', 'religion_code')->prepend('',''),
 					'title' => Title::all()->sortBy('title_name')->lists('title_name', 'title_code')->prepend('',''),
@@ -119,7 +113,6 @@ class PatientController extends Controller
 					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
 					'race' => Race::all()->sortBy('race_name')->lists('race_name', 'race_code')->prepend('',''),
 					'occupation' => Occupation::all()->sortBy('occupation_name')->lists('occupation_name', 'occupation_code')->prepend('',''),
-					'registration' => Registration::all()->sortBy('registration_name')->lists('registration_name', 'registration_code')->prepend('',''),
 					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),

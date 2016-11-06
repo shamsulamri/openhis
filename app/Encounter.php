@@ -21,15 +21,9 @@ class Encounter extends Model
 				'patient_id',
 				'encounter_code',
 				'type_code',
-				'relation_code',
-				'related_mrn',
 				'triage_code',
-				'employer_code',
-				'employee_id',
 				'sponsor_code',
 				'sponsor_id',
-				'organisation_code',
-				'organisation_id',
 				'triage_code',
 		];
 	

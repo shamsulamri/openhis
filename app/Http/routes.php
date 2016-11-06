@@ -23,7 +23,7 @@
 */
 
 
-Route::group(['middleware' => 'web'], function () {
+Route::group(['middleware' => ['web','input_sanitizer_middleware']], function () {
 		Route::auth();
 
 		Route::get('/home', function() {

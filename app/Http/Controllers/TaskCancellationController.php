@@ -72,7 +72,6 @@ class TaskCancellationController extends Controller
 			$task_cancellation = TaskCancellation::findOrFail($id);
 			return view('task_cancellations.edit', [
 					'task_cancellation'=>$task_cancellation,
-				
 					]);
 	}
 

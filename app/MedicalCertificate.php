@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
 class MedicalCertificate extends Model
 {
@@ -35,10 +36,14 @@ class MedicalCertificate extends Model
 				'mc_time_end'=>'after:mc_time_start',
 			];
 
-			
+			if (!is_null($this->attributes['mc_time_start'])) {
+					$rules['mc_time_end']='required|after:mc_time_start';
+			}
 			
 			$messages = [
-				'required' => 'This field is required'
+					'required' => 'This field is required',
+					'mc_time_end.required' => 'Time end required',
+					'mc_time_end.after' => 'Time end cannot be less than start',
 			];
 			
 			return validator::make($input, $rules ,$messages);
@@ -63,8 +68,17 @@ class MedicalCertificate extends Model
 			return $dt;
 	}
 
+	public function getMcEnd() 
+	{
+			$dt = Carbon::createFromFormat('Y-m-d', $this->attributes['mc_end']);
+			return $dt;
+	}
+
 	public function setMcEndAttribute($value)
 	{
+		if (empty($value)) {
+				$this->attributes['mc_end'] = null;
+		}
 		if (DojoUtility::validateDate($value)==true) {
 			$this->attributes['mc_end'] = DojoUtility::dateWriteFormat($value);
 		}

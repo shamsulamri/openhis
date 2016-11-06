@@ -29,8 +29,12 @@ class OrderSetController extends Controller
 					->where('a.set_code','=',$set_code)
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
+
+			$set = Set::find($set_code);
+
 			return view('order_sets.index', [
-					'order_sets'=>$order_sets
+					'order_sets'=>$order_sets,
+					'set'=>$set,
 			]);
 	}
 

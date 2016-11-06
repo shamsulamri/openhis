@@ -10,10 +10,8 @@ use App\Encounter;
 use Log;
 use DB;
 use Session;
-use App\Employer;
 use App\Patient;
 use App\PatientType;
-use App\CareOrganisation;
 use App\Triage;
 use App\Relationship;
 use App\EncounterType;
@@ -61,11 +59,9 @@ class EncounterController extends Controller
 
 			return view('encounters.create', [
 					'encounter' => $encounter,
-					'employer' => Employer::all()->sortBy('employer_name')->lists('employer_name', 'employer_code')->prepend('',''),
 					'patient' => $patient,
 					'patient_type' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code'),
 					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
-					'organisation' => CareOrganisation::all()->sortBy('organisation_name')->lists('organisation_name', 'organisation_code')->prepend('',''),
 					'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
@@ -153,11 +149,8 @@ class EncounterController extends Controller
 			$encounter = Encounter::findOrFail($id);
 			return view('encounters.edit', [
 					'encounter'	=> $encounter,
-					'employer' 	=> Employer::all()->sortBy('employer_name')->lists('employer_name', 'employer_code')->prepend('',''),
 					'patient'	=> $encounter->patient,
 					'patient_type' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
-					'employer' => Employer::all()->sortBy('employer_name')->lists('employer_name', 'employer_code')->prepend('',''),
-					'organisation' => CareOrganisation::all()->sortBy('organisation_name')->lists('organisation_name', 'organisation_code')->prepend('',''),
 					'triage' => Triage::all()->sortBy('triage_name')->lists('triage_name', 'triage_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
@@ -206,7 +199,6 @@ class EncounterController extends Controller
 			} else {
 					return view('encounters.edit', [
 							'encounter'=>$encounter,
-							'employer' => Employer::all()->sortBy('employer_name')->lists('employer_name', 'employer_code')->prepend('',''),
 							'patient_type' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 							])
 							->withErrors($valid);			

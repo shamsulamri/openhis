@@ -40,10 +40,14 @@
         {{ Form::label('mc', 'Medical Certificate',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
 		@if ($mc)
-        		{{ Form::label('product', $mc->getMcStart()->format('d F Y'),['class'=>'control-label']) }}<br>
-				@if (empty($mc->mc_end))
-        		{{ Form::label('mc', 'End: '.$mc->mc_end,['class'=>'control-label']) }}<br>
+        		{{ Form::label('product', $mc->getMcStart()->format('d F Y'),['class'=>'control-label']) }}
+				@if (!empty($mc->mc_end))
+        		{{ Form::label('mc', ' - '.$mc->getMcEnd()->format('d F Y'),['class'=>'control-label']) }}
 				@endif
+				<br>
+        		{{ Form::label('mc', 'Time: '.$mc->mc_time_start,['class'=>'control-label']) }} - 
+        		{{ Form::label('mc', $mc->mc_time_end,['class'=>'control-label']) }}
+				<br>
         		{{ Form::label('mc', 'Serial Number: '.$mc->mc_identification,['class'=>'control-label']) }}
 				@else
         		{{ Form::label('mc', 'None',['class'=>'control-label']) }}

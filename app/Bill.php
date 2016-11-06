@@ -24,9 +24,6 @@ class Bill extends Model
 			$rules = [
 				'encounter_id'=>'required',
 				'bill_grand_total'=>'required',
-				'bill_payment_total'=>'required',
-				'bill_outstanding'=>'required',
-				'bill_change'=>'required',
 			];
 
 			

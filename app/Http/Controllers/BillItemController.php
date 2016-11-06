@@ -69,6 +69,7 @@ class BillItemController extends Controller
 	public function compileBill($id) 
 	{
 
+			Log::info("QQQQQ");
 			$bill_existing = DB::table('bill_items')
 								->where('encounter_id','=',$id);
 			
@@ -125,9 +126,9 @@ class BillItemController extends Controller
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
-					->orderBy('product_name')
-					->paginate($this->paginateValue);
+					->orderBy('product_name');
 
+			$bills = $bills->paginate($this->paginateValue);
 
 
 			if ($bills->total()==0) {
@@ -178,6 +179,10 @@ class BillItemController extends Controller
 					->where('encounter_id','=', $id)
 					->sum('deposit_amount');
 			
+			if (empty($deposit_total)) {
+					$deposit_total=0;
+			}
+
 			$bill_change=0;
 			$bill_outstanding=0;
 			

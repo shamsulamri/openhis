@@ -83,7 +83,7 @@ class DependantController extends Controller
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/dependants?patient_id='.$request->patient_id);
 			} else {
-					return redirect('/dependants/create')
+					return redirect('/dependants/create/'.$request->patient_id)
 							->withErrors($valid)
 							->withInput();
 			}
@@ -189,6 +189,7 @@ class DependantController extends Controller
 			$patientDependant->patient_id = $dependant_id;
 			$patientDependant->dependant_id = $patient_id;
 			$patientDependant->save();
+
 			return redirect('/dependant/search?patient_id='.$patient_id);
 	}
 

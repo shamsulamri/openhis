@@ -98,7 +98,7 @@
     </div>
 	{{ Form::hidden('purchase_date', $purchase_order->purchase_date) }}
 	{{ Form::hidden('supplier_code', $purchase_order->supplier_code) }}
-	{{ Form::hidden('purchase_received','1') }}
+	{{ Form::hidden('purchase_received',$purchase_order->purchase_received) }}
 
 	@if ($purchase_order->purchase_received==1)
 			{{ Form::hidden('store_code',$purchase_order->store_code) }}

@@ -106,7 +106,7 @@ $header_count=0;
 	@endif
 	<tr>
 			<td width='10'>
-					@if (!$admission_task->updated_by)
+					@if (!$admission_task->updated_by && empty($admission_task->cancel_id))
 					{{ Form::checkbox($admission_task->order_id, 1, $admission_task->order_completed) }}
 					@endif
 			</td>
@@ -145,9 +145,11 @@ $header_count=0;
 					</a>
 				@else
 					@if ($admission_task->order_completed==0)
-					<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
-					Cancel
-					</a>
+						@if (empty($admission_task->cancel_id))
+							<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
+							Cancel
+							</a>
+						@endif
 					@endif
 				@endif
 					@can('system-administrator')

@@ -108,10 +108,16 @@ class PurchaseOrderController extends Controller
 					$purchase_order->save();
 					if ($purchase_order->purchase_received==0) {
 						$this->stockReceive($id);
+						$purchase_order->purchase_received=1;
+						$purchase_order->save();
 					}
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/purchase_order_lines/index/'.$id);
 			} else {
+					return redirect('/purchase_orders/'.$id.'/edit')
+							->withErrors($valid)
+							->withInput();
+					return "X";
 					return view('purchase_orders.edit', [
 							'purchase_order'=>$purchase_order,
 							'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),

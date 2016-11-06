@@ -55,9 +55,10 @@ class AdmissionTaskController extends Controller
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('order_completed','=',0)
 					->whereNull('cancel_id')
-					->whereNull('discharge_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');
+
+					//->whereNull('discharge_id')
 
 			if (Auth::user()->authorization->module_support==1) {
 					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
@@ -67,6 +68,7 @@ class AdmissionTaskController extends Controller
 
 			$order_ids = $admission_tasks->implode('order_id',',');
 			
+			//return $admission_tasks->toSql();
 			$admission_tasks = $admission_tasks->paginate($this->paginateValue);
 
 			return view('admission_tasks.index', [
@@ -173,7 +175,7 @@ class AdmissionTaskController extends Controller
 			$location_code = $request->cookie('queue_location');
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by')
+					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by','cancel_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -186,8 +188,7 @@ class AdmissionTaskController extends Controller
 					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('d.category_code','like', '%'.$request->categories.'%')
-					->whereNull('cancel_id')
-					->whereNull('discharge_id');
+					->whereNull('cancel_id');
 
 			if (Auth::user()->authorization->module_support==1) {
 					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
@@ -250,9 +251,10 @@ class AdmissionTaskController extends Controller
 			$ids = explode(",",$request->completed_ids);
 
 			foreach($ids as $id) {
-					$order = Order::find($id)
+					$order = Order::where('order_id','=',$id)
 								->whereNull('updated_by')
 								->first();
+
 					if (!empty($order)) {
 							if ($request->$id==1) {
 									$order->order_completed=1;

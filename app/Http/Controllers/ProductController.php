@@ -65,7 +65,9 @@ class ProductController extends Controller
 					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 			}
 					
-			$products = $products->paginate($this->paginateValue);
+
+			$products = $products->orderBy('products.created_at','desc')
+							->paginate($this->paginateValue);
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,

@@ -6,7 +6,7 @@
     font-size: 60%;
 }
 </style>
-<h3>Assets</h3>
+<h3>{{ $set->set_name }}</h3>
 <br>
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>

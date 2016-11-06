@@ -6,7 +6,6 @@
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<br>
 <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
 <a href='/deposits/create/{{ $encounter->encounter_id }}' class='btn btn-primary'>Create</a>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=deposit&id={{ $encounter->encounter_id }}" role="button">Print Deposit</a> 

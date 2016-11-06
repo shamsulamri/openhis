@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Auth;
+use Log;
 
 class PatientMiddleware
 {
@@ -23,6 +24,7 @@ class PatientMiddleware
 		} else {
 				return redirect('/login');
 		}	
+
         return $next($request);
     }
 }

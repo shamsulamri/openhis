@@ -208,8 +208,8 @@
 				@endcan	
 				@can('module-support')
 				<div class='list-group'>
-						<a class='list-group-item' href="{{ url('/order_queues') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Order Tasks</a>
-						<a class='list-group-item' href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Admission Tasks</a>
+						<a class='list-group-item' href="{{ url('/order_queues') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Outpatient Tasks</a>
+						<a class='list-group-item' href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Inpatient Tasks</a>
 				</div>
 				@endcan
 				<div class='list-group'>
