@@ -143,9 +143,9 @@
 						@if (is_null($admission->arrival_id)) 
 							<a class='btn btn-default btn-xs' href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}' title='Log arrival'><span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
 </a>
-						@elseif (!is_null($admission->discharge_id))
-							
-							<a href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}' title='Ward discharge'><span class='glyphicon glyphicon-bed' aria-hidden='true'></span></a>
+						@endif
+						@if (!empty($admission->discharge_id))
+							<a class='btn btn-default btn-xs' href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}' title='Ward discharge'><span class='glyphicon glyphicon-bed' aria-hidden='true'></span></a>
 						@endif
 						@if (!is_null($admission->arrival_id)) 
 						<a class='btn btn-default btn-xs' href="{{ URL::to('loans/request/'. $admission->patient_mrn.'?type=folder') }}" title='Folder request'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
