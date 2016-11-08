@@ -18,6 +18,15 @@ use App\EncounterType;
 use App\Admission;
 use App\EncounterHelper;
 use App\Sponsor;
+use App\QueueLocation as Location;
+use App\Ward;
+use App\Bed;
+use App\User;
+use App\Referral;
+use App\AdmissionType;
+use App\Queue;
+use App\BedMovement;
+
 		
 class EncounterController extends Controller
 {
@@ -57,6 +66,13 @@ class EncounterController extends Controller
 
 			$encounter = new Encounter();
 
+			$locations = Location::whereNotNull('encounter_code')->get();
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('module_consultation',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
+
 			return view('encounters.create', [
 					'encounter' => $encounter,
 					'patient' => $patient,
@@ -66,6 +82,12 @@ class EncounterController extends Controller
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'patientOption' => 'encounter',
+					'locations' => $locations,
+					'consultants' => $consultants,
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'beds' => Bed::get(),
+					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
+					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 				]);
 	}
 
@@ -95,7 +117,61 @@ class EncounterController extends Controller
 			}	
 	}
 
-	public function store(Request $request) 
+	public function store(Request $request)
+	{
+			$encounter = new Encounter($request->all());
+			$valid = $encounter->validate($request->all(), $request->_method);
+
+			if ($valid->passes()) {
+					$encounter->save();
+
+					$queueFlag = False;
+					if ($encounter->encounter_code == 'outpatient') $queueFlag=True;
+					if ($encounter->encounter_code == 'emergency' && $encounter->triage_code=='green') $queueFlag=True;
+					
+					if ($queueFlag) {
+							$queue = new Queue();
+							$queue->location_code = $request->location_code;
+							$queue->encounter_id = $encounter->encounter_id;
+							$queue->save();
+							Log::info($queue);
+							Session::flash('message', 'Record successfully created.');
+							return redirect('/queues');
+					}
+
+					if (!$queueFlag) {
+							$admission = new Admission();
+							$admission->bed_code = $request->bed_code;
+							$admission->admission_code = $request->admission_code;
+							$admission->referral_code = $request->referral_code;
+							$admission->user_id = $request->user_id;
+							$admission->encounter_id = $request->encounter_id;
+							$admission->diet_code='normal';
+							$admission->encounter_id = $encounter->encounter_id;
+							$admission->save();
+							Log::info($admission);
+
+							$bed_movement = new BedMovement();
+							$bed_movement->admission_id = $admission->admission_id;
+							$bed_movement->encounter_id = $encounter->encounter_id;
+							$bed_movement->move_from = $admission->bed_code;
+							$bed_movement->move_to = $admission->bed_code;
+							$bed_movement->move_date = date('d/m/Y');
+							$bed_movement->save();
+
+							Session::flash('message', 'Record successfully created.');
+							return redirect('/admissions');
+					}
+
+			} else {
+					return redirect('/encounters/create?patient_id='.$request->patient_id)
+							->withErrors($valid)
+							->withInput();
+			}
+
+	}
+
+	public function store2(Request $request) 
 	{
 			$encounter = new Encounter();
 			$valid = $encounter->validate($request->all(), $request->_method);
