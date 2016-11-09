@@ -27,7 +27,6 @@
     <th>Identification</th>
     <th></th>
     <th></th>
-    <th></th>
 	@can('system-administrator')	
 	<th></th>
 	@endcan

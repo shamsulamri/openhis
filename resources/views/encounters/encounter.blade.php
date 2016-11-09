@@ -8,6 +8,7 @@
 </ul>
 </h4>
 -->
+
 	<div class="row">
 		<div class="col-xs-6">
 
@@ -73,6 +74,7 @@
         </div>
     </div>
 
+<div class="target">
 	<div class='page-header'>
 		<h3>Admission</h3>
 	</div>
@@ -190,6 +192,7 @@
 			triage = document.getElementById('triage');
 			encounter = document.getElementById('encounter').value;
 			if (encounter=='emergency') {
+					hide(document.querySelectorAll('.target'));
 						triage.disabled=false;
 			} else {
 						triage.value = '';
@@ -197,10 +200,12 @@
 			}
 
 			if (encounterCode == 'outpatient') {
+					hide(document.querySelectorAll('.target'));
 					document.getElementById('location_code').disabled = false;
 			} 
 			
 			if (encounterCode=='mortuary') {
+					show(document.querySelectorAll('.target'));
 					document.getElementById('ward_code').disabled = false;
 					document.getElementById('bed_code').disabled = false;
 					var wardSelect = document.getElementById('ward_code');
@@ -211,6 +216,7 @@
 			}
 
 			if (encounterCode=='daycare') {
+					show(document.querySelectorAll('.target'));
 					document.getElementById('referral_code').disabled = false;
 					document.getElementById('user_id').disabled = false;
 					document.getElementById('ward_code').value = 'daycare';
@@ -225,6 +231,7 @@
 			}
 
 			if (encounterCode=='inpatient') {
+					show(document.querySelectorAll('.target'));
 					document.getElementById('admission_code').disabled = false;
 					document.getElementById('referral_code').disabled = false;
 					document.getElementById('user_id').disabled = false;
@@ -239,8 +246,10 @@
 					document.getElementById('ward_code').value = '';
 					document.getElementById('bed_code').value = '';
 					if (document.getElementById('triage').value == 'green') {
+						hide(document.querySelectorAll('.target'));
 						document.getElementById('location_code').disabled = false;
 					} else {
+							show(document.querySelectorAll('.target'));
 							if (document.getElementById('triage').value != '') {
 								document.getElementById('ward_code').value = 'observation';
 								document.getElementById('bed_code').disabled = false;
@@ -307,5 +316,31 @@
 	function postForm() {
 			disableInputs(false);
 			document.getElementById('myForm').submit();
+	}
+
+
+	hide(document.querySelectorAll('.target'));
+
+	function hide (elements) {
+			  elements = elements.length ? elements : [elements];
+			    for (var index = 0; index < elements.length; index++) {
+						    elements[index].style.display = 'none';
+							  }
+	}
+
+	function show (elements, specifiedDisplay) {
+			  var computedDisplay, element, index;
+
+			    elements = elements.length ? elements : [elements];
+			    for (index = 0; index < elements.length; index++) {
+						    element = elements[index];
+
+							    element.style.display = '';
+							    computedDisplay = window.getComputedStyle(element, null).getPropertyValue('display');
+
+								    if (computedDisplay === 'none') {
+											        element.style.display = specifiedDisplay || 'block';
+													    }
+								  }
 	}
 </script>
