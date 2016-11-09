@@ -8,12 +8,15 @@
 </ul>
 </h4>
 -->
+	<div class="row">
+		<div class="col-xs-6">
+
 	<div class='page-header'>
 		<h3>Encounter</h3>
 	</div>
 	<div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
-        <label for='encounter_code' class='col-sm-3 control-label'>Encounter<span style='color:red;'> *</span></label>
-        <div class='col-sm-9'>
+        <label for='encounter_code' class='col-sm-4 control-label'>Encounter<span style='color:red;'> *</span></label>
+        <div class='col-sm-8'>
 			{{ Form::select('encounter_code', $encounter_type, null, ['id'=>'encounter','class'=>'form-control','onchange'=>'checkTriage()']) }}
 				<small>Define the encounter nature of the patient</small>
             @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
@@ -21,17 +24,52 @@
     </div>
 
 	 <div class='form-group  @if ($errors->has('triage_code')) has-error @endif'>
-        {{ Form::label('Triage', 'Triage',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
+        {{ Form::label('Triage', 'Triage',['class'=>'col-sm-4 control-label']) }}
+        <div class='col-sm-8'>
             {{ Form::select('triage_code', $triage, null, ['id'=>'triage','onchange'=>'checkTriage()','class'=>'form-control','maxlength'=>'20']) }}
 			<small>For emergency cases only</small>
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
-        {{ Form::label('Queue Location', 'Queue Location',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
+        {{ Form::label('Location', 'Location',['class'=>'col-sm-4 control-label']) }}
+        <div class='col-sm-8'>
             {{ Form::select('location_code', [], null, ['id'=>'location_code','onchange'=>'','class'=>'form-control']) }}
+        </div>
+    </div>
+
+
+        </div>
+        <div class='col-xs-6'>
+
+	<div class='page-header'>
+		<h3>Billing Information</h3>
+	</div>
+
+    <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
+        {{ Form::label('Type', 'Type',['class'=>'col-sm-4 control-label']) }}
+        <div class='col-sm-8'>
+            {{ Form::select('type_code', $patient_type, null, ['id'=>'type_code','onchange'=>'checkPatientType()','class'=>'form-control','maxlength'=>'20']) }}
+        </div>
+    </div>
+    <div class='form-group  @if ($errors->has('sponsor_code')) has-error @endif'>
+        {{ Form::label('sponsor_code', 'Sponsor',['class'=>'col-sm-4 control-label']) }}
+        <div class='col-sm-8'>
+            {{ Form::select('sponsor_code', $sponsor, null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('sponsor_code')) <p class="help-block">{{ $errors->first('sponsor_code') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('sponsor_id')) has-error @endif'>
+        <label for='encounter_id' class='col-sm-4 control-label'>Membership</label>
+        <div class='col-sm-8'>
+            {{ Form::text('sponsor_id', null, ['id'=>'sponsor_id','class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('sponsor_id')) <p class="help-block">{{ $errors->first('sponsor_id') }}</p> @endif
+			<small>Employee, insurance or third party payor identification stated above</small>
+        </div>
+    </div>
+
+
         </div>
     </div>
 
@@ -41,6 +79,7 @@
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         {{ Form::label('Ward', 'Ward',['class'=>'col-sm-3 control-label']) }}
+		
         <div class='col-sm-9'>
             {{ Form::select('ward_code', $wards, null, ['id'=>'ward_code','onchange'=>'wardChanged()','class'=>'form-control']) }}
         </div>
@@ -75,32 +114,6 @@
             {{ Form::select('user_id', $consultants,null, ['id'=>'user_id','class'=>'form-control']) }}
             @if ($errors->has('user_id')) <p class="help-block">{{ $errors->first('user_id') }}</p> @endif
 			<small>Not required for death cases</small>
-        </div>
-    </div>
-	<div class='page-header'>
-		<h3>Billing Information</h3>
-	</div>
-
-    <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
-        {{ Form::label('Patient Type', 'Patient Type',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::select('type_code', $patient_type, null, ['id'=>'type_code','onchange'=>'checkPatientType()','class'=>'form-control','maxlength'=>'20']) }}
-        </div>
-    </div>
-    <div class='form-group  @if ($errors->has('sponsor_code')) has-error @endif'>
-        {{ Form::label('sponsor_code', 'Sponsor',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::select('sponsor_code', $sponsor, null, ['class'=>'form-control','maxlength'=>'10']) }}
-            @if ($errors->has('sponsor_code')) <p class="help-block">{{ $errors->first('sponsor_code') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('sponsor_id')) has-error @endif'>
-        <label for='encounter_id' class='col-sm-3 control-label'>Membership ID</label>
-        <div class='col-sm-9'>
-            {{ Form::text('sponsor_id', null, ['id'=>'sponsor_id','class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('sponsor_id')) <p class="help-block">{{ $errors->first('sponsor_id') }}</p> @endif
-			<small>Employee, insurance or third party payor identification stated above<small>
         </div>
     </div>
 

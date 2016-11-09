@@ -217,6 +217,7 @@ class Patient extends Model
 							group by patient_id
 						) as c on (c.patient_id = b.patient_id)
 						where b.patient_id=".$this->patient_id." group by b.patient_id";
+			Log::info($sql);
 			$amount = DB::select($sql);
 
 			$value = 0;
@@ -279,6 +280,25 @@ class Patient extends Model
 					return $encounter;
 			} else { 
 					return null;
+			}
+	}
+
+	public function getCurrentEncounter()
+	{
+			$encounter = Encounter::where('patient_id', $this->patient_id)
+							->orderBy('encounter_id','desc')
+							->first();
+			
+			if ($encounter) {
+					if ($encounter) {
+						if ($encounter->admission) {
+							return $encounter->admission->bed->bed_name." (".$encounter->admission->bed->ward->ward_name.")";
+						} else {
+								return "Queue at ".$encounter->queue->location->location_name;
+						}
+					}
+			} else {
+				return "";
 			}
 	}
 

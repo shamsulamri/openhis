@@ -25,9 +25,11 @@
     <th>MRN</th> 
     <th>Name</th>
     <th>Identification</th>
+    <th></th>
 	@can('system-administrator')	
 	<th></th>
 	@endcan
+    <th></th>
 	</tr>
   </thead>
 	<tbody>
@@ -37,7 +39,10 @@
 					{{$patient->patient_mrn}}
 			</td>
 			<td>
-					<a href='{{ URL::to('patients/'. $patient->patient_id) }}'>
+					<a href='{{ URL::to('patients/'. $patient->patient_id.'/edit') }}'>
+						@if ($patient->title)
+						{{ strtoupper($patient->title->title_name) }}
+						@endif
 						{{ strtoupper($patient->patient_name) }}
 					</a>
 			</td>
@@ -49,6 +54,20 @@
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('patients/delete/'. $patient->patient_id) }}'>Delete</a>
 			</td>
 					@endcan
+			<td>
+					@if ($patient->outstandingBill()<0)
+						<span class='label label-danger'>Outstanding bill</span>
+					@else
+						<span class='label label-primary'>No outstanding</span>
+					@endif
+			</td>
+			<td>
+					@if (!empty($patient->getCurrentEncounter()))
+							<label class='pull-right'>{{ $patient->getCurrentEncounter() }}</label>
+					@else
+					<a class='btn btn-default btn-xs pull-right' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'><span class='glyphicon glyphicon-flag' aria-hidden='true'></span></a>
+					@endif
+			</td>
 	</tr>
 @endforeach
 @endif

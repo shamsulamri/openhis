@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id')
 <h1>
-Edit Patient
+Patient Demography
 </h1>
 <br>
 @include('common.errors')
