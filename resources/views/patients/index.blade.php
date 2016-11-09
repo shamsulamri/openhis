@@ -26,10 +26,11 @@
     <th>Name</th>
     <th>Identification</th>
     <th></th>
+    <th></th>
+    <th></th>
 	@can('system-administrator')	
 	<th></th>
 	@endcan
-    <th></th>
 	</tr>
   </thead>
 	<tbody>
@@ -45,29 +46,32 @@
 						@endif
 						{{ strtoupper($patient->patient_name) }}
 					</a>
+					@if (!empty($patient->getCurrentEncounter()))
+							<br>{{ $patient->getCurrentEncounter() }}
+					@endif
 			</td>
 			<td width='10%'>
 					{{ $patient->patient_new_ic }}
 			</td>
-					@can('system-administrator')
-			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('patients/delete/'. $patient->patient_id) }}'>Delete</a>
+			<td width='20'>
+			@if ($patient->outstandingBill()<0)
+				<span class='glyphicon glyphicon-warning-sign'></span>
+			@else
+				<!--
+				<span class='glyphicon glyphicon-ok'></span>
+				-->
+			@endif
 			</td>
-					@endcan
-			<td>
-					@if ($patient->outstandingBill()<0)
-						<span class='label label-danger'>Outstanding bill</span>
-					@else
-						<span class='label label-primary'>No outstanding</span>
-					@endif
-			</td>
-			<td>
-					@if (!empty($patient->getCurrentEncounter()))
-							<label class='pull-right'>{{ $patient->getCurrentEncounter() }}</label>
-					@else
+			<td width='20'>
+					@if (empty($patient->getCurrentEncounter()))
 					<a class='btn btn-default btn-xs pull-right' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'><span class='glyphicon glyphicon-flag' aria-hidden='true'></span></a>
 					@endif
 			</td>
+			@can('system-administrator')
+			<td align='right'>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('patients/delete/'. $patient->patient_id) }}'>Delete</a>
+			</td>
+			@endcan
 	</tr>
 @endforeach
 @endif

@@ -132,7 +132,7 @@ class PatientController extends Controller
 					$this->saveImage($patient,$request->file('file'));
 					$patient->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/patients/'.$id);
+					return redirect('/patients/'.$id.'/edit');
 			} else {
 					return redirect('/patients/'.$id.'/edit')
 						->withErrors($valid)

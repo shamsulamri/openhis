@@ -208,7 +208,7 @@ class Patient extends Model
 						->where('b.patient_id','=',$this->patient_id)
 						->sum('bill_outstanding');
 
-			$sql = "select (sum(bill_payment_total-bill_change-bill_grand_total) + IFNULL(nonenc_payment,0)) as outstanding
+			$sql = "select (sum(bill_payment_total-IFNULL(bill_change,0)-bill_grand_total) + IFNULL(nonenc_payment,0)) as outstanding
 						from bills as a
 						left join encounters b on (a.encounter_id=b.encounter_id)
 						left join (
@@ -290,12 +290,12 @@ class Patient extends Model
 							->first();
 			
 			if ($encounter) {
-					if ($encounter) {
-						if ($encounter->admission) {
-							return $encounter->admission->bed->bed_name." (".$encounter->admission->bed->ward->ward_name.")";
-						} else {
-								return "Queue at ".$encounter->queue->location->location_name;
-						}
+					if (!$encounter->discharge) { 
+							if ($encounter->admission) {
+								return $encounter->admission->bed->bed_name." (".$encounter->admission->bed->ward->ward_name.")";
+							} else {
+									return $encounter->queue->location->location_name;
+							}
 					}
 			} else {
 				return "";
