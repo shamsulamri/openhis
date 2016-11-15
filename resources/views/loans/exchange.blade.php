@@ -4,7 +4,7 @@
 <h1>
 Loan Exchange
 </h1>
-@include('common.errors')
+
 <h3>
 Are you sure you want to request exchange for the selected product ?
 <br>

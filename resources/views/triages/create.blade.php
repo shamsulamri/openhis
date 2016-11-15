@@ -4,7 +4,7 @@
 <h1>
 New Triage
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($triage, ['url'=>'triages', 'class'=>'form-horizontal']) }} 
     

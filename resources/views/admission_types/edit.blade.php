@@ -4,7 +4,7 @@
 <h1>
 Edit Admission Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($admission_type, ['route'=>['admission_types.update',$admission_type->admission_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 Edit Document Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($document_status, ['route'=>['document_statuses.update',$document_status->status_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

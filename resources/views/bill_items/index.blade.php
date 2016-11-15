@@ -11,9 +11,7 @@ Interim Bill
 </h1>
 <br>
 @if ($bills->total()>0)
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 <a class="btn btn-default" href="/discharges" role="button">Back</a>
 @if (!$billPosted)
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>

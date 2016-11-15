@@ -4,7 +4,7 @@
 <h1>
 New Room
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($room, ['url'=>'rooms', 'class'=>'form-horizontal']) }} 
     

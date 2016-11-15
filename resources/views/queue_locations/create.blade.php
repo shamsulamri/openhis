@@ -4,7 +4,7 @@
 <h1>
 New Queue Location
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($queue_location, ['url'=>'queue_locations', 'class'=>'form-horizontal']) }} 
     

@@ -2,16 +2,11 @@
 
 @section('content')
 @include('patients.id')
-<h1>Dependant List</h1>
-<br>
-<a href='{{ URL::to('patients/'. $patient->patient_id) }}' class='btn btn-default'>
-		Return
-</a>
+<h1>Dependant List
+</h1>
 <a href='{{ URL::to('patients/dependants/'. $patient->patient_id) }}' class='btn btn-primary'>
-		Create
+Create
 </a>
-<br>
-<br>
 @if (count($patients)>0)
 
 <table class="table table-hover">
@@ -40,7 +35,7 @@
 			{{ $p->patient_phone_mobile }}
 		</td>
 		<td>
-			<a class='btn btn-default btn-xs pull-right' href='/patients/{{ $p->patient_id }}'>View</a>
+			<a class='btn btn-default btn-xs pull-right' href='/patients/{{ $p->patient_id }}/edit'>Swap</a>
 		</td>
 	</tr>
 @endforeach

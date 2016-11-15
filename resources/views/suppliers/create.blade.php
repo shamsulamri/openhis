@@ -4,7 +4,7 @@
 <h1>
 New Supplier
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($supplier, ['url'=>'suppliers', 'class'=>'form-horizontal']) }} 
     

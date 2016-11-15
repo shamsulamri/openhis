@@ -3,20 +3,15 @@
 @section('content')
 <h1>Queue List</h1>
 <br>
-<form action='/queue/search' method='post'>
+<form action='/queue/search' method='post' name='myform'>
 	<!--
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<br>
 	-->
-	{{ Form::select('locations', $locations, $selectedLocation, ['class'=>'form-control','maxlength'=>'10']) }}
-	<br>
-    {{ Form::submit('Search', ['class'=>'btn btn-primary']) }}
+	{{ Form::select('locations', $locations, $selectedLocation, ['class'=>'form-control','maxlength'=>'10','onchange'=>'reload()']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
 @if ($queues->total()>0)
 <table class="table table-hover">
  <thead>
@@ -75,4 +70,9 @@
 @else
 	No record found.
 @endif
+<script>
+	function reload() {
+			document.myform.submit();
+	}
+</script>
 @endsection

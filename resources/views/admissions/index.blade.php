@@ -60,9 +60,7 @@
 </form>
 <br>
 @endcan
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 @if ($admissions->total()>0)
 <table class="table table-hover">
  <thead>

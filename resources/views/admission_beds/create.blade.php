@@ -4,7 +4,7 @@
 <h1>
 New Admission Bed
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($admission_bed, ['url'=>'admission_beds', 'class'=>'form-horizontal']) }} 
     

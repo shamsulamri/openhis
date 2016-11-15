@@ -4,9 +4,7 @@
 @include('products.id')
 <h1>Stock Movements</h1>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 <div class='row'>
 	<div class='col-md-4'>
 		<div class='list-group'>

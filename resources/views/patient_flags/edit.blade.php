@@ -4,7 +4,7 @@
 <h1>
 Edit Patient Flag
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($patient_flag, ['route'=>['patient_flags.update',$patient_flag->flag_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

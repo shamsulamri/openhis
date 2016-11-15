@@ -4,7 +4,7 @@
 <h1>
 New Order Set
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($set, ['url'=>'sets', 'class'=>'form-horizontal']) }} 
     

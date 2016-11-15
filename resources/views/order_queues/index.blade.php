@@ -4,7 +4,7 @@
 <h1>Order Tasks</h1>
 <!--
 <form action='/order_queue/search' method='post'>
-	{{ Form::select('locations', $locations, $location, ['class'=>'form-control input-lg','maxlength'=>'10']) }}
+	{{ Form::select('locations', $locations, $location, ['class'=>'form-control','maxlength'=>'10']) }}
 	{{ Form::select('encounter_code', $encounters, $encounter_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<br>
@@ -12,9 +12,7 @@
 </form>
 -->
 <h3>{{ $location->location_name }}</h3>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 <br>
 @if ($order_queues->total()>0)
 <table class="table table-hover">

@@ -5,7 +5,7 @@
 <h2>
 New Appointment
 </h2>
-@include('common.errors')
+
 <br>
 {{ Form::model($appointment, ['url'=>'appointments', 'class'=>'form-horizontal']) }} 
     

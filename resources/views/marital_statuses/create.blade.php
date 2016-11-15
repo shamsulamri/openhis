@@ -4,7 +4,7 @@
 <h1>
 New Marital Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($marital_status, ['url'=>'marital_statuses', 'class'=>'form-horizontal']) }} 
     

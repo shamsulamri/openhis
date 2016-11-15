@@ -3,9 +3,7 @@
 @section('content')
 <h3>{{ $product->product_name }}</h3>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 @if ($bill_materials->total()>0)
 <table class="table table-hover">
  <thead>

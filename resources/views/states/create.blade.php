@@ -4,7 +4,7 @@
 <h1>
 New State
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($state, ['url'=>'states', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 Edit Maintenance Reason
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($maintenance_reason, ['route'=>['maintenance_reasons.update',$maintenance_reason->reason_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

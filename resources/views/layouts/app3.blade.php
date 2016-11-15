@@ -6,56 +6,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 	    <title>{{ Config::get('host.application_name') }}</title>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/bootstrap.min.css">
-		<link href="/assets/bootstrap/css/starter-template.css" rel="stylesheet">
+		<link href="/assets/inspinia/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/assets/inspinia/font-awesome/css/font-awesome.css" rel="stylesheet">
+		<link href="/assets/inspinia/css/animate.css" rel="stylesheet">
+		<link href="/assets/inspinia/css/style.css" rel="stylesheet">
 		<script src="/assets/js/moment.min.2.5.0.js"></script>
 		<script src="/assets/js/combodate.js"></script>
 </head>
-<body id="app-layout" background=''>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+<body class='top-navigation'>
+<div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom white-bg">
+    	<nav class="navbar navbar-static-top" role='navigation'>
             <div class="navbar-header">
-
-                <!-- Collapsed Hamburger -->
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#spark-navbar-collapse">
-                    <span class="sr-only">Toggle Navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
+				<button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                    <i class="fa fa-reorder"></i>
                 </button>
-
-                <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
 					{{ Config::get('host.application_name') }}
                 </a>
             </div>
 
-            <div class="collapse navbar-collapse" id="spark-navbar-collapse">
+			<div class="navbar-collapse collapse" id="navbar">
+                <!-- Left Side Of Navbar -->
+                <ul class="nav navbar-nav">
+                </ul>
+
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
-                    <li><a href="{{ url('/register') }}">Register</a></li>
+                        <li><a href="{{ url('/register') }}">Register</a></li>
                 </ul>
             </div>
-        </div>
-    </nav>
-	<div class='container'>
-    @yield('content')
-	</div>
-	<script type="text/javascript">
-		$(document).ready(function () {
-		 
-				window.setTimeout(function() {
-					$(".alert-info").fadeTo(1500, 0).slideUp(500, function(){
-						$(this).remove(); 
-					});
-				}, 2000);
+   		 </nav>
+		</div>
+		@yield('content')
+</div>
 
-				 
-		});
 
-	
-	</script>
+    <!-- Mainly scripts -->
+    <script src="/assets/inspinia/js/jquery-2.1.1.js"></script>
+    <script src="/assets/inspinia/js/bootstrap.min.js"></script>
+    <script src="/assets/inspinia/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/assets/inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="/assets/inspinia/js/inspinia.js"></script>
+    <script src="/assets/inspinia/js/plugins/pace/pace.min.js"></script>
+
+    <!-- Flot -->
+    <script src="/assets/inspinia/js/plugins/flot/jquery.flot.js"></script>
+    <script src="/assets/inspinia/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="/assets/inspinia/js/plugins/flot/jquery.flot.resize.js"></script>
+
+    <!-- ChartJS-->
+    <script src="/assets/inspinia/js/plugins/chartJs/Chart.min.js"></script>
+
+    <!-- Peity -->
+    <script src="/assets/inspinia/js/plugins/peity/jquery.peity.min.js"></script>
+    <!-- Peity demo -->
+    <script src="/assets/inspinia/js/demo/peity-demo.js"></script>
 </body>
+</html>

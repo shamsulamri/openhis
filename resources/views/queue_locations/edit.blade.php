@@ -4,7 +4,7 @@
 <h1>
 Edit Queue Location
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($queue_location, ['route'=>['queue_locations.update',$queue_location->location_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

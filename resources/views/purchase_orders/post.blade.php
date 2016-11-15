@@ -4,7 +4,7 @@
 <h3>
 Post Purchase Order
 </h3>
-@include('common.errors')
+
 <br>
 <h4>
 Are you sure you want to post the selected purchase order ?

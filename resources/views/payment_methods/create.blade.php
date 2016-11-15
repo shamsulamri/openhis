@@ -4,7 +4,7 @@
 <h1>
 New Payment Method
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($payment_method, ['url'=>'payment_methods', 'class'=>'form-horizontal']) }} 
     

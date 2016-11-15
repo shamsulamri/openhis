@@ -4,7 +4,7 @@
 <h1>
 New Patient
 </h1>
-@include('common.errors')
+
 <h3>
 Enter minimal patient information
 </h3>

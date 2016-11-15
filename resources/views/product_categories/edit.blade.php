@@ -4,7 +4,7 @@
 <h1>
 Edit Product Category
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($product_category, ['route'=>['product_categories.update',$product_category->category_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

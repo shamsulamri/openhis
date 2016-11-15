@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id')
 <h1>New Encounter</h1>
-@include('common.errors')
+
 {{ Form::model($queue, ['url'=>'queues', 'class'=>'form-horizontal']) }} 
 	@include('queues.queue')
 	<br>

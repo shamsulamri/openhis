@@ -5,7 +5,7 @@
 Delete Line Item
 </h1>
 <br>
-@include('common.errors')
+
 <h4>
 Are you sure you want to delete the selected record ?
 <br>

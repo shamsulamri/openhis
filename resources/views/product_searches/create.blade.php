@@ -4,7 +4,7 @@
 <h1>
 New Product Search
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($product_search, ['url'=>'product_searches', 'class'=>'form-horizontal']) }} 
     

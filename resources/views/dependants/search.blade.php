@@ -1,19 +1,16 @@
 @extends('layouts.app2')
 
 @section('content')
-<br>
 <form action='/dependant/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Enter patients name or identification" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<div class='input-group'>
+		<input type='text' class='form-control' placeholder="Enter patients name or identification" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+		<span class='input-group-btn'>
+			<a href='/dependants/create/{{ $patient_id }}' class='btn btn-primary' target='frameDetail'><span class='fa fa-user-plus'></span></a>
+		</span>
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<input type='hidden' name="patient_id" value="{{ $patient_id }}">
-	
 </form>
-<br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
-<a href='/dependants/create/{{ $patient_id }}' class='btn btn-primary' target='frameDetail'>Create</a>
-<br>
 <br>
 @if ($patients->total()>0)
 <table class="table table-hover">
@@ -34,7 +31,7 @@
 					{{$patient->patient_new_ic}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-primary btn-xs' href='/dependants/add/{{ $patient->patient_id }}/{{ $patient_id }}'>+</a>
+					<a class='btn btn-primary btn-xs' href='/dependants/add/{{ $patient->patient_id }}/{{ $patient_id }}'><span class='fa fa-chevron-right'></span></a>
 			</td>
 	</tr>
 @endforeach

@@ -4,7 +4,7 @@
 <h1>
 New Birth Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($birth_type, ['url'=>'birth_types', 'class'=>'form-horizontal']) }} 
     

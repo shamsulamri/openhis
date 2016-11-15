@@ -4,7 +4,7 @@
 <h1>
 New Encounter Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($encounter_type, ['url'=>'encounter_types', 'class'=>'form-horizontal']) }} 
     

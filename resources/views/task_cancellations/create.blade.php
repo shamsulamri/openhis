@@ -6,7 +6,7 @@
 Cancel Task 
 </h1>
 <br>
-@include('common.errors')
+
 
 {{ Form::model($task_cancellation, ['url'=>'task_cancellations', 'class'=>'form-horizontal']) }} 
 	@include('task_cancellations.task_cancellation')

@@ -4,7 +4,7 @@
 <h1>
 New Form Position
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($form_position, ['url'=>'form_positions', 'class'=>'form-horizontal']) }} 
     

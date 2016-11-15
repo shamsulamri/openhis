@@ -4,7 +4,7 @@
 <h1>
 New Patient Flag
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($patient_flag, ['url'=>'patient_flags', 'class'=>'form-horizontal']) }} 
     

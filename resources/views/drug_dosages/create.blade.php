@@ -4,7 +4,7 @@
 <h1>
 New Drug Dosage
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($drug_dosage, ['url'=>'drug_dosages', 'class'=>'form-horizontal']) }} 
     

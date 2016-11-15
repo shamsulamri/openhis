@@ -4,7 +4,7 @@
 <h1>
 Edit Diet Contamination
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diet_contamination, ['route'=>['diet_contaminations.update',$diet_contamination->contamination_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

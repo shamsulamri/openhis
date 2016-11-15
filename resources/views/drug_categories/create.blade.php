@@ -4,7 +4,7 @@
 <h1>
 New Drug Category
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($drug_category, ['url'=>'drug_categories', 'class'=>'form-horizontal']) }} 
     

@@ -5,7 +5,7 @@
 <h1>
 Delete Payment
 </h1>
-@include('common.errors')
+
 <br>
 <h4>
 Are you sure you want to delete the selected record ?

@@ -5,7 +5,7 @@
 <h1>
 Delete Stock
 </h1>
-@include('common.errors')
+
 <h3>
 Are you sure you want to delete the selected record ?
 {{ $stock->product_code }}

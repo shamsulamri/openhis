@@ -4,7 +4,7 @@
 <h1>
 Edit Supplier
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($supplier, ['route'=>['suppliers.update',$supplier->supplier_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 Edit Set
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($set, ['route'=>['sets.update',$set->set_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

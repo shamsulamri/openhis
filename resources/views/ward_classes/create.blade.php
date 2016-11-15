@@ -4,7 +4,7 @@
 <h1>
 New Ward Class
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($ward_class, ['url'=>'ward_classes', 'class'=>'form-horizontal']) }} 
     

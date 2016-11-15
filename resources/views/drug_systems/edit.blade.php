@@ -4,7 +4,7 @@
 <h1>
 Edit Drug System
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($drug_system, ['route'=>['drug_systems.update',$drug_system->system_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

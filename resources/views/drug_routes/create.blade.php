@@ -4,7 +4,7 @@
 <h1>
 New Drug Route
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($drug_route, ['url'=>'drug_routes', 'class'=>'form-horizontal']) }} 
     

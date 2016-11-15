@@ -4,7 +4,7 @@
 <h1>
 Delete Ward Arrival
 </h1>
-@include('common.errors')
+
 <br>
 <h3>
 Are you sure you want to delete the selected record ?

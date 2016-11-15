@@ -5,7 +5,7 @@
 <h1>
 Delete Procedure
 </h1>
-@include('common.errors')
+
 <h4>
 Are you sure you want to delete the selected record ?
 {{ $consultation_procedure->procedure_description }}

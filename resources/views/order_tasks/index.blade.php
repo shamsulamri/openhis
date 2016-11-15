@@ -18,9 +18,7 @@
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 @if ($order_tasks->total()>0)
 <table class="table table-hover">
  <thead>

@@ -4,7 +4,7 @@
 <h1>
 Edit Bed Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($bed_status, ['route'=>['bed_statuses.update',$bed_status->status_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

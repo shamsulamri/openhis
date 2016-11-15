@@ -4,7 +4,7 @@
 <h1>
 New Sponsor
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($sponsor, ['url'=>'sponsors', 'class'=>'form-horizontal']) }} 
     

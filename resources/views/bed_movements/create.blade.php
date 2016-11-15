@@ -4,7 +4,7 @@
 <h1>
 New Bed Movement
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($bed_movement, ['url'=>'bed_movements', 'class'=>'form-horizontal']) }} 
     

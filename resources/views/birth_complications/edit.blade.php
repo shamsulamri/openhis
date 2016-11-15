@@ -4,7 +4,7 @@
 <h1>
 Edit Birth Complication
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($birth_complication, ['route'=>['birth_complications.update',$birth_complication->complication_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

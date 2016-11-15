@@ -4,7 +4,7 @@
 <h1>
 New Discharge Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($discharge_type, ['url'=>'discharge_types', 'class'=>'form-horizontal']) }} 
     

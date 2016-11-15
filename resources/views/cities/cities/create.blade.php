@@ -4,7 +4,7 @@
 <h1>
 New City
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($city, ['url'=>'cities', 'class'=>'form-horizontal']) }} 
     

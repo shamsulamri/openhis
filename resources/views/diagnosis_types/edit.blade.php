@@ -4,7 +4,7 @@
 <h1>
 Edit Diagnosis Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diagnosis_type, ['route'=>['diagnosis_types.update',$diagnosis_type->type_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

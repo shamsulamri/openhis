@@ -4,7 +4,7 @@
 <h1>
 New Bed Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($bed_status, ['url'=>'bed_statuses', 'class'=>'form-horizontal']) }} 
     

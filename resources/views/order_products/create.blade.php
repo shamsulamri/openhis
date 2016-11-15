@@ -4,7 +4,7 @@
 <h1>
 New Order Product
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($order_product, ['url'=>'order_products', 'class'=>'form-horizontal']) }} 
     

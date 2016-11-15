@@ -49,6 +49,7 @@ class PatientController extends Controller
 	public function create()
 	{
 			$patient = new Patient();
+			$patient->patient_is_unknown=0;
 			return view('patients.create', [
 					'patient' => $patient,
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
@@ -72,7 +73,7 @@ class PatientController extends Controller
 					$patient->save();
 					$this->saveImage($patient,$request->file('file'));
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/patients/'.$patient->patient_id);
+					return redirect('/patients/'.$patient->patient_id.'/edit');
 			} else {
 					return redirect('/patients/create')
 							->withErrors($valid)

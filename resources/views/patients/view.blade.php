@@ -2,9 +2,7 @@
 
 @section('content')
 @include('patients.id')
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 <h1>Options</h1>
 <br>
 <h4>

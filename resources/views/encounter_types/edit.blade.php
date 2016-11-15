@@ -4,7 +4,7 @@
 <h1>
 Edit Encounter Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($encounter_type, ['route'=>['encounter_types.update',$encounter_type->encounter_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 New Gender
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($gender, ['url'=>'genders', 'class'=>'form-horizontal']) }} 
     

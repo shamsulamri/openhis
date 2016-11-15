@@ -4,7 +4,7 @@
 <h1>
 Edit Room
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($room, ['route'=>['rooms.update',$room->room_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

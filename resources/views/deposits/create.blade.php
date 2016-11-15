@@ -5,7 +5,7 @@
 <h1>
 New Deposit
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($deposit, ['url'=>'deposits', 'class'=>'form-horizontal']) }} 
     

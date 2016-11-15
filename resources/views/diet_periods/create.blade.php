@@ -4,7 +4,7 @@
 <h1>
 New Diet Period
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diet_period, ['url'=>'diet_periods', 'class'=>'form-horizontal']) }} 
     

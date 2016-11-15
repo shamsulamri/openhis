@@ -4,7 +4,7 @@
 <h1>
 New Nation
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($nation, ['url'=>'nations', 'class'=>'form-horizontal']) }} 
     

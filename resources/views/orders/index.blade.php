@@ -2,9 +2,7 @@
 
 @section('content')	
 <h3>Order List</h3>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 
 <br>
 @if ($orders->total()>0)

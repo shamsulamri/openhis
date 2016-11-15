@@ -4,7 +4,7 @@
 <h1>
 New Diet Rating
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diet_rating, ['url'=>'diet_ratings', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 Edit Race
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($race, ['route'=>['races.update',$race->race_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

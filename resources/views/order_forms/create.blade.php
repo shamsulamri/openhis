@@ -4,7 +4,7 @@
 <h1>
 New Order Form
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($order_form, ['url'=>'order_forms', 'class'=>'form-horizontal']) }} 
     

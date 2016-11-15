@@ -4,7 +4,7 @@
 <h1>
 New Period
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($period, ['url'=>'periods', 'class'=>'form-horizontal']) }} 
     

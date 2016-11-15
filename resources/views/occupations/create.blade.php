@@ -4,7 +4,7 @@
 <h1>
 New Occupation
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($occupation, ['url'=>'occupations', 'class'=>'form-horizontal']) }} 
     

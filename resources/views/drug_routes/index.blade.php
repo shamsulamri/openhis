@@ -4,13 +4,11 @@
 <h1>Drug Route List</h1>
 <br>
 <form action='/drug_route/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 <a href='/drug_routes/create' class='btn btn-primary'>Create</a>
 <br>
 <br>

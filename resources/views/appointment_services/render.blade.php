@@ -11,31 +11,22 @@ table, th, td {
 @include('patients.id')
 @if ($appointment_id == null)
 <h1>Appointment</h1>
-<br>
-@can('module-patient')
-<a href='/patients/{{ $patient->patient_id }}' class='btn btn-default'>Return</a>
-@endcan
 @can('module-ward')
 <a href='/ward_discharges/create/{{ $admission_id }}' class='btn btn-default'>Return</a>
+<br>
 @endcan
-<br>
-<br>
-<form action='/appointment_services/{{ $patient->patient_id }}/0?admission_id={{ $admission_id }}' method='post'>
-	{{ Form::select('services', $menu_services, $service, ['class'=>'form-control']) }}
-	<br>
-	<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>
+<form action='/appointment_services/{{ $patient->patient_id }}/0?admission_id={{ $admission_id }}' method='post' name='myform'>
+	{{ Form::select('services', $menu_services, $service, ['class'=>'form-control','onchange'=>'reload()']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
 @else
 <h2>Edit Appointment</h2>
-<br>
 <h4>
 Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appointment_datetime )) }}
 </h4>
-<br>
 @endif
 @if ($services != null) 
+	<br>
 		<table width='100%'> 
 			<tr>
 			<td width='30%' >
@@ -155,4 +146,9 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 @endforeach
 <br>
 @endif
+<script>
+	function reload() {
+			document.myform.submit();
+	}
+</script>
 @endsection

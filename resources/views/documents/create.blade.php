@@ -5,7 +5,7 @@
 <h1>
 New Document
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($document, ['url'=>'documents', 'class'=>'form-horizontal','enctype'=>'multipart/form-data']) }} 
     

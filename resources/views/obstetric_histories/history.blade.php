@@ -5,7 +5,7 @@
 <h1>Obstetric History</h1>
 <br>
 @include('common.notification')
-@include('common.errors')
+
 {{ Form::model($patient, ['url'=>'obstetric', 'class'=>'form-horizontal']) }} 
 
 	<div class='form-group  @if ($errors->has('patient_gravida')) has-error @endif'>

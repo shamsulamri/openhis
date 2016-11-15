@@ -4,7 +4,7 @@
 <h1>
 New Relationship
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($relationship, ['url'=>'relationships', 'class'=>'form-horizontal']) }} 
     

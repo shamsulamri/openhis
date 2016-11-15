@@ -4,7 +4,7 @@
 <h1>
 Edit Tax Code
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($tax_code, ['route'=>['tax_codes.update',$tax_code->tax_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

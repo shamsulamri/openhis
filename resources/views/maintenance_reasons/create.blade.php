@@ -4,7 +4,7 @@
 <h1>
 New Maintenance Reason
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($maintenance_reason, ['url'=>'maintenance_reasons', 'class'=>'form-horizontal']) }} 
     

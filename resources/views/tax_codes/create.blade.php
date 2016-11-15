@@ -4,7 +4,7 @@
 <h1>
 New Tax Code
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($tax_code, ['url'=>'tax_codes', 'class'=>'form-horizontal']) }} 
     

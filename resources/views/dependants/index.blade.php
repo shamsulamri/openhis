@@ -2,10 +2,6 @@
 
 @section('content')
 <h3>Relationships</h3>
-<br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
 @if ($dependants->total()>0)
 <table class="table table-hover">
  <thead>
@@ -27,7 +23,7 @@
 					{{$dependant->relation_name}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='patient_dependants/delete/{{ $dependant->id }}'>-</a>
+					<a class='btn btn-danger btn-xs' href='patient_dependants/delete/{{ $dependant->id }}'><span class='fa fa-minus'></span></a>
 			</td>
 	</tr>
 @endforeach

@@ -4,7 +4,7 @@
 <h1>
 New Patient Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($patient_type, ['url'=>'patient_types', 'class'=>'form-horizontal']) }} 
     

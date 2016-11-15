@@ -4,7 +4,7 @@
 <h1>
 Edit Gender
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($gender, ['route'=>['genders.update',$gender->gender_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

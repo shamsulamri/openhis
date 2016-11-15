@@ -5,11 +5,14 @@
 @can('module-inventory')
 @include('products.id')
 @endcan
+@if ($patient)
+		@include('patients.id')
+@endif
 <h1>
 {{ $title }}
 </h1>
 
-@include('common.errors')
+
 <br>
 {{ Form::model($loan, ['url'=>$url, 'class'=>'form-horizontal']) }} 
 @if ($loan->loan_code=='lend')
@@ -128,7 +131,6 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-default" href="javascript:goBack()" role="button">Cancel</a>
 			@if ($loan->loan_code=='request' or $loan->loan_code=='exchange')
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
 			@endif

@@ -4,7 +4,7 @@
 <h1>
 New Document Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($document_status, ['url'=>'document_statuses', 'class'=>'form-horizontal']) }} 
     

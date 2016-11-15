@@ -4,7 +4,7 @@
 <h1>
 Edit Marital Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($marital_status, ['route'=>['marital_statuses.update',$marital_status->marital_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

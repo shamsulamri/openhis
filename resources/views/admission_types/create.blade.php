@@ -4,7 +4,7 @@
 <h1>
 New Admission Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($admission_type, ['url'=>'admission_types', 'class'=>'form-horizontal']) }} 
     

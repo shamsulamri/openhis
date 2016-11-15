@@ -4,7 +4,7 @@
 <h1>
 Edit Unit Measure
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($unit_measure, ['route'=>['unit_measures.update',$unit_measure->unit_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

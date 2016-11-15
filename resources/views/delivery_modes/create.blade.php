@@ -4,7 +4,7 @@
 <h1>
 New Delivery Mode
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($delivery_mode, ['url'=>'delivery_modes', 'class'=>'form-horizontal']) }} 
     

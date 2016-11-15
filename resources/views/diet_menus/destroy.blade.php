@@ -4,7 +4,7 @@
 <h3>
 Delete Menu Item
 </h3>
-@include('common.errors')
+
 <br>
 <h4>
 Are you sure you want to delete the selected record ?

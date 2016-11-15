@@ -1,23 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Patient List<a href='/patients/create' class='btn btn-primary pull-right'>New Patient</a></h1>
-<br>
+<h1>Patient List
+</h1>
 <form action='/patient/search' method='post'>
 	<div class='input-group'>
-			<input type='text' class='form-control input-lg' placeholder="Enter name, identification or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+			<input type='text' class='form-control' placeholder="Enter name, identification or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 		<span class='input-group-btn'>
-			<button class="btn btn-default btn-lg" type="submit" value="Submit">Search</button>
+			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
 		</span>
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
+<a href='/patients/create' class='btn btn-primary'>Create</a>
+<br>
+<br>
 @if (Session::has('message'))
 		<div class="alert alert-info">{{ Session::get('message') }}</div>
 @else
 @endif
-<br>
 @if ($patients->total()>0)
 <table class="table table-hover">
  <thead>
@@ -25,6 +27,7 @@
     <th>MRN</th> 
     <th>Name</th>
     <th>Identification</th>
+    <th>Encounter</th>
     <th></th>
     <th></th>
 	@can('system-administrator')	
@@ -45,26 +48,34 @@
 						@endif
 						{{ strtoupper($patient->patient_name) }}
 					</a>
-					@if (!empty($patient->getCurrentEncounter()))
-							<br>{{ $patient->getCurrentEncounter() }}
-					@endif
 			</td>
-			<td width='10%'>
+			<td>
 					{{ $patient->patient_new_ic }}
 			</td>
-			<td width='20'>
-			@if ($patient->outstandingBill()<0)
-				<span class='glyphicon glyphicon-warning-sign'></span>
-			@else
-				<!--
-				<span class='glyphicon glyphicon-ok'></span>
-				-->
-			@endif
+			<td>
+					@if (!empty($patient->getCurrentEncounter()))
+							{{ $patient->getCurrentEncounter() }}
+					@endif
 			</td>
 			<td width='20'>
-					@if (empty($patient->getCurrentEncounter()))
-					<a class='btn btn-default btn-xs pull-right' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'><span class='glyphicon glyphicon-flag' aria-hidden='true'></span></a>
+				<div class="tooltip-demo">
+					@if ($patient->outstandingBill()<0)
+						<i class="fa fa-exclamation-triangle" data-toggle="tooltip" data-placement="left" title="Outstanding bill"></i>
+					@else
+						<!--
+						<span class='glyphicon glyphicon-ok'></span>
+						-->
 					@endif
+				</div>
+			</td>
+			<td width='20'>
+				<div class="tooltip-demo">
+					@if (empty($patient->getCurrentEncounter()))
+					<a class='btn btn-default btn-xs pull-right' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
+						<i class="fa fa-stethoscope"></i>
+					</a>
+					@endif
+				</div>
 			</td>
 			@can('system-administrator')
 			<td align='right'>

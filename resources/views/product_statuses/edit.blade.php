@@ -4,7 +4,7 @@
 <h1>
 Edit Product Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($product_status, ['route'=>['product_statuses.update',$product_status->status_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

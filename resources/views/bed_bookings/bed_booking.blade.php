@@ -39,9 +39,6 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-			@can('module-patient')
-            <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
-			@endcan
 			@can('module-ward')
             <a class="btn btn-default" href="/admissions" role="button">Cancel</a>
 			@endcan

@@ -4,7 +4,7 @@
 @include('patients.id')
 <h1>Log Ward Arrival</h1>
 <br>
-@include('common.errors')
+
 
 {{ Form::model($ward_arrival, ['url'=>'ward_arrivals', 'class'=>'form-horizontal']) }} 
     

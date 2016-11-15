@@ -5,10 +5,8 @@
 @include('consultations.panel')
 <h1>Dietary</h1>
 <br>
-@include('common.errors')
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
+
 {{ Form::model($admission, ['route'=>['admissions.update',$admission->admission_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 
     <div class='form-group  @if ($errors->has('diet_code')) has-error @endif'>

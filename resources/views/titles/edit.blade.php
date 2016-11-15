@@ -4,7 +4,7 @@
 <h1>
 Edit Title
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($title, ['route'=>['titles.update',$title->title_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

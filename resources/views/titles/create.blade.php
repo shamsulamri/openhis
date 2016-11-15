@@ -4,7 +4,7 @@
 <h1>
 New Title
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($title, ['url'=>'titles', 'class'=>'form-horizontal']) }} 
     

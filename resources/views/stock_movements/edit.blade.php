@@ -4,7 +4,7 @@
 <h1>
 Edit Stock Movement
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($stock_movement, ['route'=>['stock_movements.update',$stock_movement->move_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

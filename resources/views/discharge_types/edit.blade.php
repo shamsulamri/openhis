@@ -4,7 +4,7 @@
 <h1>
 Edit Discharge Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($discharge_type, ['route'=>['discharge_types.update',$discharge_type->type_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

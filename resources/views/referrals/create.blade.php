@@ -4,7 +4,7 @@
 <h1>
 New Referral
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($referral, ['url'=>'referrals', 'class'=>'form-horizontal']) }} 
     

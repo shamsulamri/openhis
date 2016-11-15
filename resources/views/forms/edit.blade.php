@@ -4,7 +4,7 @@
 <h1>
 Edit Form
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($form, ['route'=>['forms.update',$form->form_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

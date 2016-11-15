@@ -6,13 +6,10 @@
 <form action='/appointment/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	{{ Form::select('services', $services, $service, ['class'=>'form-control']) }}
-	<button class="btn btn-default" type="submit" value="Submit">Refresh</button>
+	<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
 @if ($appointments->total()>0)
 <table class="table table-hover">
  <thead>
@@ -37,7 +34,7 @@
 					{{$appointment->service_name}}
 			</td>
 			<td>
-					<a href='{{ URL::to('patients/'. $appointment->patient_id) }}'>
+					<a href='{{ URL::to('patients/'. $appointment->patient_id.'/edit') }}'>
 						{{$appointment->patient_name}}
 					</a>
 					<br>

@@ -4,7 +4,7 @@
 <h1>
 Edit Relationship
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($relationship, ['route'=>['relationships.update',$relationship->relation_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 New Frequency
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($frequency, ['url'=>'frequencies', 'class'=>'form-horizontal']) }} 
     

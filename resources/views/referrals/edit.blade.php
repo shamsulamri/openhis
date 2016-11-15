@@ -4,7 +4,7 @@
 <h1>
 Edit Referral
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($referral, ['route'=>['referrals.update',$referral->referral_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

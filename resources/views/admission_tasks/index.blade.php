@@ -35,9 +35,7 @@
 </form>
 <br>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 @if ($admission_tasks->total()>0)
 <form action='/admission_task/status' method='post'>
 @if ($admission_tasks->total()>0)

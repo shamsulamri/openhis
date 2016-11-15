@@ -4,7 +4,7 @@
 <h1>
 Edit Diet Rating
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diet_rating, ['route'=>['diet_ratings.update',$diet_rating->rate_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

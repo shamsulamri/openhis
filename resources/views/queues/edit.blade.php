@@ -2,7 +2,7 @@
 @section('content')
 @include('patients.id')
 <h1>Edit Queue</h1>
-@include('common.errors')
+
 
 {{ Form::model($queue, ['route'=>['queues.update',$queue->queue_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 	@include('queues.queue')

@@ -4,7 +4,7 @@
 <h1>
 Edit Department
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($department, ['route'=>['departments.update',$department->department_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

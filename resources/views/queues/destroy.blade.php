@@ -4,7 +4,7 @@
 <h1>
 Delete Queue
 </h1>
-@include('common.errors')
+
 <br>
 <h4>
 Are you sure you want to delete the selected record ?

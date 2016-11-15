@@ -4,9 +4,7 @@
 @include('consultations.panel')
 <h1>Newborn Registration</h1>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 <a href='/newborns/create?id={{ $consultation->consultation_id }}' class='btn btn-primary'>Create</a>
 <br>
 @if ($newborns->total()>0)

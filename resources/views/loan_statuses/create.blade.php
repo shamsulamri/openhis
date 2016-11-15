@@ -4,7 +4,7 @@
 <h1>
 New Loan Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($loan_status, ['url'=>'loan_statuses', 'class'=>'form-horizontal']) }} 
     

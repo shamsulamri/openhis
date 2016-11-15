@@ -4,7 +4,7 @@
 <h1>
 New Block Date
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($block_date, ['url'=>'block_dates', 'class'=>'form-horizontal']) }} 
     

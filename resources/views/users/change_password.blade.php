@@ -3,7 +3,7 @@
 @section('content')
 <h1>Change Password</h1>
 <br>
-@include('common.errors')
+
 @include('common.notification')
 {{ Form::model($user->user_id, ['url'=>'change_password', 'class'=>'form-horizontal']) }} 
 

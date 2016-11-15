@@ -4,7 +4,7 @@
 <h1>
 Edit Ward Class
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($ward_class, ['route'=>['ward_classes.update',$ward_class->class_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

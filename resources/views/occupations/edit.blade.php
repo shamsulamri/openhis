@@ -4,7 +4,7 @@
 <h1>
 Edit Occupation
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($occupation, ['route'=>['occupations.update',$occupation->occupation_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

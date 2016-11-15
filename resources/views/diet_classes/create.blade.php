@@ -4,7 +4,7 @@
 <h1>
 New Diet Class
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diet_class, ['url'=>'diet_classes', 'class'=>'form-horizontal']) }} 
     

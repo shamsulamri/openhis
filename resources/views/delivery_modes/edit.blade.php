@@ -4,7 +4,7 @@
 <h1>
 Edit Delivery Mode
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($delivery_mode, ['route'=>['delivery_modes.update',$delivery_mode->delivery_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

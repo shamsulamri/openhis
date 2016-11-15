@@ -12,15 +12,13 @@
 <!--
 <br>
 <form action='/document/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	{{ Form::hidden('patient_mrn', $patient->patient_mrn) }}
 </form>
 -->
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 @can('module-medical-record')
 @if ($loan_flag)
 <a class="btn btn-default" href="/loans?type=folder" role="button">Return</a>

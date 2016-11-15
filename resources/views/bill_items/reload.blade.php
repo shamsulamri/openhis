@@ -5,7 +5,7 @@
 <h1>
 Reload Billing Information
 </h1>
-@include('common.errors')
+
 <br>
 <h3>
 Are you sure you want to reload the billing information ? 

@@ -5,7 +5,7 @@
 <br>
 <form action='/product/search' method='post'>
 	<div class='input-group'>
-	<input type='text' class='form-control input-lg' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 		<span class='input-group-btn'>
 			<button class="btn btn-default btn-lg" type="submit" value="Submit">Search</button>
 		</span>
@@ -13,9 +13,7 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 @if ($products->total()>0)
 <table class="table table-hover">
  <thead>

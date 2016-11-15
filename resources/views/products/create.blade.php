@@ -7,7 +7,7 @@
 	}	
 </script>
 <h1>New Product</h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($product, ['url'=>'products', 'class'=>'form-horizontal']) }} 
     

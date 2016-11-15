@@ -10,12 +10,11 @@
 @endcan
 <br>
 <form action='/bed_booking/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	{{ Form::hidden('is_preadmission', $is_preadmission) }}
 </form>
 <br>
-@include('common.notification')
 @if ($bed_bookings->total()>0)
 <table class="table table-hover">
  <thead>

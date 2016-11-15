@@ -4,7 +4,7 @@
 <h1>
 Edit Block Date
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($block_date, ['route'=>['block_dates.update',$block_date->block_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

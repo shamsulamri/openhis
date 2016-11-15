@@ -4,7 +4,7 @@
 <h1>
 Edit Diet
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diet, ['route'=>['diets.update',$diet->diet_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 Edit Document Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($document_type, ['route'=>['document_types.update',$document_type->type_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

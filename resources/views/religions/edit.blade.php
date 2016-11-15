@@ -4,7 +4,7 @@
 <h1>
 Edit Religion
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($religion, ['route'=>['religions.update',$religion->religion_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

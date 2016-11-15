@@ -4,7 +4,7 @@
 <h1>
 New Employee
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($employee, ['url'=>'employees', 'class'=>'form-horizontal']) }} 
     

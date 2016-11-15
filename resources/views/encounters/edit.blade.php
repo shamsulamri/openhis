@@ -2,7 +2,7 @@
 
 @section('content')
 @include('patients.id')
-@include('common.errors')
+
 
 <h1>Edit Encounter</h1>
 <br>

@@ -4,7 +4,7 @@
 <h1>
 Edit City
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($city, ['route'=>['cities.update',$city->city_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

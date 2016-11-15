@@ -8,9 +8,7 @@
 </style>
 <h3>{{ $set->set_name }}</h3>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 @if ($order_sets->total()>0)
 <table class="table table-condensed">
  <thead>

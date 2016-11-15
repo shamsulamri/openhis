@@ -5,7 +5,7 @@
 @else
 		@include('patients.id')
 @endif
-@include('common.errors')
+
 
 {{ Form::model($order_cancellation, ['route'=>['order_cancellations.update',$order_cancellation->cancel_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 

@@ -15,7 +15,7 @@ Admission Complete
 Move Complete
 @endif
 </h1>
-@include('common.errors')
+
 <br>
 <h4>
 Patient has been successfully admitted to the following location:

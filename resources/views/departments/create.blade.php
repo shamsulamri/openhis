@@ -4,7 +4,7 @@
 <h1>
 New Department
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($department, ['url'=>'departments', 'class'=>'form-horizontal']) }} 
     

@@ -5,7 +5,7 @@
 <h1>Medical Certificate</h1>
 <br>
 @if (count($errors) > 0)
-	@include('common.errors')
+	
 @else
 	@include('common.notification')
 @endif

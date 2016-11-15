@@ -4,7 +4,7 @@
 <h2>
 Delete Order
 </h2>
-@include('common.errors')
+
 <br>
 <h4>
 {{ Form::open(['url'=>'orders/'.$order->order_id]) }}

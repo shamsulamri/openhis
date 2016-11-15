@@ -4,7 +4,7 @@
 <h1>
 New Product Category
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($product_category, ['url'=>'product_categories', 'class'=>'form-horizontal']) }} 
     

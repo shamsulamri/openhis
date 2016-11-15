@@ -1,64 +1,30 @@
 @extends('layouts.app3')
 
 @section('content')
-<div class="container">
-	<br>
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <div class="panel panel-default">
-                <div class="panel-heading"><h6>Login</h6></div>
-                <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/login') }}">
-                        {!! csrf_field() !!}
+	<div align='center'>
+		<h1 class="logo-name">MSUMC</h1>
+	</div>
 
-                        <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
-                            <div class="col-md-12">
-                                <input type="text" placeholder='Username' class="form-control" name="username" value="{{ old('username') }}">
-
-                                @if ($errors->has('username'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('username') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <div class="col-md-12">
-                                <input type="password" placeholder='Password' class="form-control" name="password">
-
-                                @if ($errors->has('password'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 ">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="remember"> Remember Me
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 ">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-sign-in"></i>Login
-                                </button>
-								<br>
-								<br>
-                                <a href="{{ url('/password/reset') }}">Forgot Your Password?</a>
-                            </div>
-                        </div>
-                    </form>
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+        <div>
+            <p>Enter your username and password to login</p>
+            <form class="m-t" role="form" method="POST" action="{{ url('/login') }}">
+                        {{ csrf_field() }}
+                <div class="form-group">
+                        <input type="text" placeholder='Username' class="form-control" name="username" value="{{ old('username') }}">
                 </div>
-            </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Password" name="password">
+                </div>
+                <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+
+                <a href="{{ url('/password/reset') }}">Forgot password</a>
+
+            </form>
+					
+            <p class="m-t"> <small>{{ Config::get('host.application_name') }} &copy; 2016</small> </p>
+
         </div>
     </div>
-</div>
+
 @endsection

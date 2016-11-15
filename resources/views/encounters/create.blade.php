@@ -3,7 +3,6 @@
 @section('content')
 @include('patients.id_only')
 <h1>New Encounter</h1>
-@include('common.errors')
 {{ Form::model($encounter, ['id'=>'myForm','url'=>'encounters', 'class'=>'form-horizontal']) }} 
 	@include('encounters.encounter')
     <div class='form-group'>

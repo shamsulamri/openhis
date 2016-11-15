@@ -16,7 +16,7 @@
 <a class="btn btn-default" href="/products/{{ $product->product_code }}/option" role="button">Back</a>
 <br>
 <br>
-@include('common.errors')
+
 {{ Form::model($product, ['route'=>['products.update',$product->product_code],'method'=>'PUT', 'class'=>'form-horizontal', 'name'=>'product_form']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>

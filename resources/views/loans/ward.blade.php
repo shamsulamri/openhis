@@ -14,9 +14,7 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 @if ($loans->total()>0)
 <table class="table table-hover">
  <thead>

@@ -4,7 +4,7 @@
 <h1>
 New Religion
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($religion, ['url'=>'religions', 'class'=>'form-horizontal']) }} 
     

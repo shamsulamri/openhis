@@ -4,7 +4,7 @@
 <h1>
 Edit Diet Texture
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diet_texture, ['route'=>['diet_textures.update',$diet_texture->texture_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

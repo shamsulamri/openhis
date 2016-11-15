@@ -4,7 +4,7 @@
 <h3>
 {{ $product_search->product_name }}
 </h3>
-@include('common.errors')
+
 <br>
 {{ Form::model($product_search, ['route'=>['product_searches.update',$product_search->product_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

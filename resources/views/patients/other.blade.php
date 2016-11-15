@@ -2,7 +2,7 @@
 
 @section('content')
 @include('patients.id')
-@include('common.errors')
+
 <ul class="nav nav-tabs">
   <li role="presentation"><a href="?tab=demography">Demography</a></li>
   <li role="presentation"><a href="?tab=contact">Contact</a></li>

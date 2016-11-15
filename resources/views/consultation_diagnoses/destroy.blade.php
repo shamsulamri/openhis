@@ -2,7 +2,7 @@
 
 @section('content')
 @include('consultations.panel')
-@include('common.errors')
+
 <h1>Delete Diagnosis</h1>
 <br>
 <h4>

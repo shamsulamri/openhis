@@ -4,7 +4,7 @@
 <h3>
 New Dependant
 </h3>
-@include('common.errors')
+
 <br>
 {{ Form::model($dependant, ['url'=>'dependants', 'class'=>'form-horizontal']) }} 
     

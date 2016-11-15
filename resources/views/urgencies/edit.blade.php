@@ -4,7 +4,7 @@
 <h1>
 Edit Urgency
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($urgency, ['route'=>['urgencies.update',$urgency->urgency_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

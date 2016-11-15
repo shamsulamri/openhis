@@ -4,7 +4,7 @@
 <h1>
 New Stock Movement
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($stock_movement, ['url'=>'stock_movements', 'class'=>'form-horizontal']) }} 
     

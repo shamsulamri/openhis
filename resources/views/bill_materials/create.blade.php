@@ -4,7 +4,7 @@
 <h1>
 New Bill Material
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($bill_material, ['url'=>'bill_materials', 'class'=>'form-horizontal']) }} 
     

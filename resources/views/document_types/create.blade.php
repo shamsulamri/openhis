@@ -4,7 +4,7 @@
 <h1>
 New Document Type
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($document_type, ['url'=>'document_types', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 Edit Nation
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($nation, ['route'=>['nations.update',$nation->nation_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

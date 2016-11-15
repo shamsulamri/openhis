@@ -4,7 +4,7 @@
 <h1>
 New Birth Complication
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($birth_complication, ['url'=>'birth_complications', 'class'=>'form-horizontal']) }} 
     

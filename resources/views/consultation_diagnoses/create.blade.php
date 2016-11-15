@@ -2,7 +2,7 @@
 
 @section('content')
 @include('consultations.panel')
-@include('common.errors')
+
 
 {{ Form::model($consultation_diagnosis, ['url'=>'consultation_diagnoses', 'class'=>'form-horizontal']) }} 
     

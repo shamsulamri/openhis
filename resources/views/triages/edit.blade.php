@@ -4,7 +4,7 @@
 <h1>
 Edit Triage
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($triage, ['route'=>['triages.update',$triage->triage_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

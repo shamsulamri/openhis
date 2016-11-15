@@ -4,7 +4,7 @@
 <h1>
 New Diet Texture
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diet_texture, ['url'=>'diet_textures', 'class'=>'form-horizontal']) }} 
     

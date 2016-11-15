@@ -4,7 +4,7 @@
 <h1>
 Edit Store
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($store, ['route'=>['stores.update',$store->store_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 New Race
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($race, ['url'=>'races', 'class'=>'form-horizontal']) }} 
     

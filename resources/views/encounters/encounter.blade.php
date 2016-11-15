@@ -12,9 +12,8 @@
 	<div class="row">
 		<div class="col-xs-6">
 
-	<div class='page-header'>
-		<h3>Encounter</h3>
-	</div>
+	<h3>Encounter</h3>
+	<hr>
 	<div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
         <label for='encounter_code' class='col-sm-4 control-label'>Encounter<span style='color:red;'> *</span></label>
         <div class='col-sm-8'>
@@ -42,10 +41,9 @@
 
         </div>
         <div class='col-xs-6'>
-
-	<div class='page-header'>
 		<h3>Billing Information</h3>
-	</div>
+
+	<hr>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         {{ Form::label('Type', 'Type',['class'=>'col-sm-4 control-label']) }}
@@ -75,9 +73,9 @@
     </div>
 
 <div class="target">
-	<div class='page-header'>
+	<br>
 		<h3>Admission</h3>
-	</div>
+	<hr>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         {{ Form::label('Ward', 'Ward',['class'=>'col-sm-3 control-label']) }}
@@ -119,6 +117,7 @@
         </div>
     </div>
 
+</div>
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
 
 <script>

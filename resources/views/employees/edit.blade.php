@@ -4,7 +4,7 @@
 <h1>
 View Employee
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($employee, ['route'=>['employees.update',$employee->empid],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

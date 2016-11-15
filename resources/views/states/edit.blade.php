@@ -4,7 +4,7 @@
 <h1>
 Edit State
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($state, ['route'=>['states.update',$state->state_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

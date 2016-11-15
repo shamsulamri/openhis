@@ -4,7 +4,7 @@
 <h1>
 New Unit Measure
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($unit_measure, ['url'=>'unit_measures', 'class'=>'form-horizontal']) }} 
     

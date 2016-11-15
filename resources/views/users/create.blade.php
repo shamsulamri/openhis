@@ -4,7 +4,7 @@
 <h1>
 New User
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($user, ['url'=>'users', 'class'=>'form-horizontal']) }} 
     

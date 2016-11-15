@@ -4,7 +4,7 @@
 <h1>
 Edit Payment Method
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($payment_method, ['route'=>['payment_methods.update',$payment_method->payment_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

@@ -4,7 +4,7 @@
 <h1>
 Edit Loan Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($loan_status, ['route'=>['loan_statuses.update',$loan_status->loan_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     

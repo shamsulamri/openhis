@@ -4,7 +4,7 @@
 <h1>Product Authorization List</h1>
 <br>
 <form action='/product_authorization/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>

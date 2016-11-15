@@ -4,7 +4,7 @@
 <h1>
 New Diet Contamination
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($diet_contamination, ['url'=>'diet_contaminations', 'class'=>'form-horizontal']) }} 
     

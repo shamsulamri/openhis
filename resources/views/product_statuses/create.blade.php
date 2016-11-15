@@ -4,7 +4,7 @@
 <h1>
 New Product Status
 </h1>
-@include('common.errors')
+
 <br>
 {{ Form::model($product_status, ['url'=>'product_statuses', 'class'=>'form-horizontal']) }} 
     

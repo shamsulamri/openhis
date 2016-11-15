@@ -5,7 +5,7 @@
 User Profile
 </h1>
 <br>
-@include('common.errors')
+
 @include('common.notification')
 {{ Form::model($user, ['url'=>'user_profile','route'=>[$user->id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 
