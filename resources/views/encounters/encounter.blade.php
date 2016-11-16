@@ -254,10 +254,13 @@
 								document.getElementById('bed_code').disabled = false;
 								wardChanged();
 							}
+						checkPatientType();
 						return;
 					}
 
 			}
+
+			checkPatientType();
 
 			var locationSelect = document.getElementById('location_code');
 			clearList(locationSelect);

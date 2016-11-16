@@ -10,7 +10,7 @@
         </div>
     </div>		
 	<div class='pull-right'>
-            <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Cancel</a>
+            <a class="btn btn-default" href="/patients/{{ $patient->patient_id }}/edit" role="button">Cancel</a>
 			<!--
             <a class="btn btn-primary" href="javascript:postForm()" role="button">Save</a>
 			-->

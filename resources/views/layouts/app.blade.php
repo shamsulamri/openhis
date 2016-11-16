@@ -116,6 +116,15 @@
                        MSU 
                     </div>
                 </li>
+				@can('system-administrator')
+					<li><a href="{{ url('/maintenance') }}"><span class='glyphicon glyphicon-cog'></span>&nbsp; Maintenance</a></li>
+					<li><a href="{{ url('/users') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Users</a></li>
+					<li><a href="{{ url('/user_authorizations') }}"><span class='glyphicon glyphicon-flag'></span>&nbsp; Authorizations</a></li>
+				@endcan
+				<!-- Patient Module -->
+				@can('system-administrator')
+						<h4>&nbsp;Patient</h4>
+				@endcan
 				@can('module-patient')
 				<li><a href="{{ url('/patients') }}"><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
 				<li><a href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
@@ -123,7 +132,109 @@
 				<li><a href="{{ url('/admissions') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Admissions</span></a></li>
 				<li><a href="{{ url('/bed_bookings?type=preadmission') }}"><i class="glyphicon glyphicon-time"></i><span class='nav-label'>Preadmissions</span></a></li>
 				<li><a href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
+				<li><a href="{{ url('/beds') }}"><i class="fa fa-bed"></i><span class='nav-label'>Beds</span></a></li>
 				@endcan
+				@can('system-administrator')
+						<h4>&nbsp;Consultation</h4>
+				@endcan	
+				<!-- Consultation Module -->
+				@can('module-consultation')
+				<li><a href="/patient_lists"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a></li>
+				<li><a href="/consultations"><span class='glyphicon glyphicon-comment'></span>&nbsp; Consultation List</a></li>
+				@if (!empty($consultation) && !empty($patient))
+					<li><a class='list-group-item' href="/medical_alerts"><span class='glyphicon glyphicon-exclamation-sign'></span>&nbsp; Medical Alerts</a>
+					@if ($consultation->encounter->encounter_code=='inpatient')
+					<li><a href="/diet"><span class='glyphicon glyphicon-cutlery'></span>&nbsp; Diet</a></li>
+					@endif
+					@if ($patient->gender_code=='P')
+					<li><a href="/obstetric"><span class='glyphicon glyphicon-user'></span>&nbsp; Obstetric History</a></li>
+					<li><a href="/newborns"><span class='glyphicon glyphicon-baby-formula'></span>&nbsp; Newborn</a></li>
+					@endif
+					<li><a href="/medical_certificates/create"><span class='glyphicon glyphicon-credit-card'></span>&nbsp; Medical Certificate</a></li>
+					<li><a href="/documents?patient_mrn={{ $patient->patient_mrn }}"><span class='glyphicon glyphicon-folder-close'></span>&nbsp; Documents</a></li>
+				@endif
+				@endcan
+
+				<!-- Diet Module -->
+				@can('system-administrator')
+						<h4>&nbsp;Diet</h4>
+				@endcan	
+				@can('module-diet')
+				<li><a href="{{ url('/diet_orders') }}"><span class='glyphicon glyphicon-asterisk'></span>&nbsp; Diet Orders</a></li>
+				<li><a href="{{ url('/diet_menus') }}"><span class='glyphicon glyphicon-cutlery'></span>&nbsp; Diet Menus</a></li>
+				<li><a href="{{ url('/diet_cooklist') }}"><span class='glyphicon glyphicon-file'></span>&nbsp; Diet Cooklist</a></li>
+				<li><a href="{{ url('/diet_bom') }}"><span class='glyphicon glyphicon-th-large'></span>&nbsp; Diet Bill of Materials</a></li>
+				<li><a href="{{ url('/diet_workorder') }}"><span class='glyphicon glyphicon-ok-sign'></span>&nbsp; Diet Work Order</a></li>
+				<li><a href="{{ url('/diet_distribution') }}"><span class='glyphicon glyphicon-random'></span>&nbsp; Diet Distribution</a></li>
+				<h4>&nbsp;</h4>
+				<li><a href="{{ url('/diet_complains') }}"><span class='glyphicon glyphicon-thumbs-down'></span>&nbsp; Diet Complains</a></li>
+				<li><a href="{{ url('/diet_wastages') }}"><span class='glyphicon glyphicon-trash'></span>&nbsp; Diet Wastages</a></li>
+				<li><a href="{{ url('/diet_qualities') }}"><span class='glyphicon glyphicon-star'></span>&nbsp; Diet Qualities</a></li>
+				<h4>&nbsp;</h4>
+				@endcan
+
+				<!-- Inventory Module -->
+				@can('system-administrator')
+						<h4>&nbsp;Inventory</h4>
+				@endcan	
+				@can('module-inventory')
+				<li><a href="{{ url('/products') }}"><span class='glyphicon glyphicon-glass'></span>&nbsp; Products</a></li>
+				<li><a href="{{ url('/purchase_orders') }}"><span class='glyphicon glyphicon-briefcase'></span>&nbsp; Purchase Orders</a></li>
+				<li><a href="{{ url('/suppliers') }}"><span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Suppliers</a></li>
+				<li><a href="{{ url('/stores') }}"><span class='glyphicon glyphicon-lamp'></span>&nbsp; Stores</a></li>
+				<li><a href="{{ url('/sets') }}"><span class='glyphicon glyphicon-apple'></span>&nbsp; Order Sets</a></li>
+				<li><a href="{{ url('/product_authorizations') }}"><span class='glyphicon glyphicon-barcode'></span>&nbsp; Product Authorizations</a></li>
+				<li><a href="{{ url('/loans') }}"><span class='glyphicon glyphicon-transfer'></span>&nbsp; Loans</a></li>
+				@endcan
+
+				<!-- Ward Module -->
+				@can('system-administrator')
+						<h4>&nbsp;Ward</h4>
+				@endcan	
+				@can('module-ward')
+				<li><a href="{{ url('/admissions') }}"><span class='glyphicon glyphicon-bed'></span>&nbsp; Admissions</a></li>
+				<li><a href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Admission Tasks</a></li>
+				<li><a href="{{ url('/bed_bookings') }}"><span class='glyphicon glyphicon-bookmark'></span>&nbsp; Bed Reservations</a></li>
+				@if (!empty($ward->ward_code))
+						@if ($ward->ward_code != 'mortuary')
+						<li><a href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patients</a></li>
+						<li><a href="{{ url('/appointments') }}"><span class='glyphicon glyphicon-calendar'></span>&nbsp; Appointments</a></li>
+						@endif
+				@endif
+				<h4>&nbsp;</h4>
+				<li><a href="{{ url('/products') }}"><span class='glyphicon glyphicon-glass'></span>&nbsp; Products</a></li>
+				<li><a href="{{ url('/loans/ward') }}"><span class='glyphicon glyphicon-transfer'></span>&nbsp; Loans</a></li>
+				@endcan
+
+				<!-- Medical Record -->
+				@can('system-administrator')
+						<h4>&nbsp;Medical Record</h4>
+				@endcan	
+				@can('module-medical-record')
+				<li><a href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a></li>
+				<li><a href="{{ url('/loans?type=folder') }}"><span class='glyphicon glyphicon-transfer'></span>&nbsp; Loans</a></li>
+				@endcan
+
+				<!-- Financial Module -->
+				@can('system-administrator')
+						<h4>&nbsp;Financial</h4>
+				@endcan	
+				@can('module-discharge')
+				<li><a href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a></li>
+				<li><a href="{{ url('/discharges') }}"><span class='glyphicon glyphicon-home'></span>&nbsp; Discharges</a></li>
+				@endcan
+
+				<!-- Support -->
+				@can('system-administrator')
+						<h4>&nbsp;Support</h4>
+				@endcan	
+				@can('module-support')
+				<li><a href="{{ url('/order_queues') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Outpatient Tasks</a></li>
+				<li><a href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Inpatient Tasks</a></li>
+				@endcan
+
+				<!-- Report -->
+				<li><a href="{{ url('/reports') }}"><span class='glyphicon glyphicon-bullhorn'></span>&nbsp; Reports</a></li>
             </ul>
 
         </div>
