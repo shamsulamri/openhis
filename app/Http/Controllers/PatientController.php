@@ -21,10 +21,12 @@ use App\Race;
 use App\Occupation;
 use App\Relationship;
 use App\State;
+use App\City;
 use App\PatientFlag;
 use App\PatientDependant;
 use App\Encounter;
 use App\EncounterHelper;
+use App\Postcode;
 use Carbon\Carbon;
 
 class PatientController extends Controller
@@ -50,6 +52,8 @@ class PatientController extends Controller
 	{
 			$patient = new Patient();
 			$patient->patient_is_unknown=0;
+			$patient->patient_cur_country='my';
+			$patient->patient_per_country='my';
 			return view('patients.create', [
 					'patient' => $patient,
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
@@ -61,7 +65,9 @@ class PatientController extends Controller
 					'occupation' => Occupation::all()->sortBy('occupation_name')->lists('occupation_name', 'occupation_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
+					'city' => City::all()->sortBy('city_name')->lists('city_name', 'city_code')->prepend('',''),
 					'flag' => PatientFlag::all()->sortBy('flag_name')->lists('flag_name', 'flag_code')->prepend('',''),
+					'postcodes'=>Postcode::all(),
 					]);
 	}
 
@@ -119,6 +125,8 @@ class PatientController extends Controller
 					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
 					'flag' => PatientFlag::all()->sortBy('flag_name')->lists('flag_name', 'flag_code')->prepend('',''),
 					'patientOption' => 'demography',
+					'postcodes'=>Postcode::all(),
+					'city' => City::all()->sortBy('city_name')->lists('city_name', 'city_code')->prepend('',''),
 					]);
 	}
 

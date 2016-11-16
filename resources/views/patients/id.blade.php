@@ -24,9 +24,9 @@
 			<div class='col-md-2' align='right'>
 					<h2>
 					@if (Storage::disk('local')->has('/'.$patient->patient_mrn.'/'.$patient->patient_mrn))	
-					<img id='show_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='80' width='70'>
+					<img id='current_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='80' width='70'>
 					@else
-							<img id='show_image' src='/profile-img.png' style='border:2px solid gray' height='80' width='70'>
+							<img id='current_image' src='/profile-img.png' style='border:2px solid gray' height='80' width='70'>
 					@endif
 					</h2>
 			</div>
@@ -75,9 +75,11 @@
 <br>
 &nbsp;&nbsp;Label&nbsp;&nbsp;
 </a>
+@If (!$patient->hasActiveEncounter())
 <a class='btn btn-primary pull-right' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
 <span class='fa fa-stethoscope' aria-hidden='true'></span>
 <br>
 Encounter
 </a>
+@endif
 @endif
