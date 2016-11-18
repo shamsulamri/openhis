@@ -9,8 +9,6 @@
 @if (Session::has('message'))
 	<br>
     <div class="alert alert-info">{{ Session::get('message') }}</div>
-@else
-	<br>
 @endif
 <form class='form-inline' action='/order_product/search' method='post' id='form_search'>
 	<div class="row">
@@ -30,8 +28,10 @@
             {{ Form::select('set_code', $sets,$set_value, ['class'=>'form-control','maxlength'=>'10','onchange'=>'orderSet()','id'=>'orderset']) }}
 			</div>
 	</div>
+<!--
 <br>
 	<a href='/order_product/drug' class='btn btn-default btn-xs'>Drug History</a>
+-->
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<input type='hidden' name='set_value' value="{{ $set_value }}">
 </form>

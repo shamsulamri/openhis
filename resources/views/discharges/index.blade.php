@@ -7,13 +7,14 @@
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<label>Discharge Type</label>
 	{{ Form::select('type_code', $discharge_types, $type_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<button class="btn btn-default" type="submit" value="Submit">Search</button>
+	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-
+@can('system-administrator')
 <a href='/discharges/create' class='btn btn-primary'>Create</a>
 <br>
+@endcan
 <br>
 @if ($discharges->total()>0)
 <table class="table table-hover">

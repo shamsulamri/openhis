@@ -2,8 +2,6 @@
 
 @section('content')	
 <h3>Order List</h3>
-
-
 <br>
 @if ($orders->total()>0)
 <table class="table table-condensed">
@@ -18,6 +16,7 @@
 	@if ($order->order_completed==1) 
 			<?php $status='success' ?>
 	@endif
+	<!--
 	@if ($ago!=$dojo->diffForHumans($order->created_at))
 	<tr class='info'>
 		<td colspan=2>
@@ -28,6 +27,7 @@
 		</td>
 	</tr>
 	@endif
+	-->
 	<tr>
 			<td>
 			@if (isset($order->cancel_id)) 

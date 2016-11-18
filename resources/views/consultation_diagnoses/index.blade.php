@@ -3,7 +3,7 @@
 @section('content')
 @include('consultations.panel')
 <h1>Diagnoses</h1>
-@include('common.notification')
+<br>
 <a href='/consultation_diagnoses/create' class='btn btn-primary'>Create</a>
 <br>
 <br>

@@ -1,10 +1,13 @@
-<div class='panel panel-default'>
-<div class='panel-heading'>
-	<h3 class='panel-title'>Outpatient</h3>
-</div>
-<div class='panel-body'>
 @if ($outpatient_lists->total()>0)
 <table class="table table-hover">
+		<thead>
+		<tr>
+			<th>Date</th>
+			<th>Patient</th>
+			<th>Room</th>
+		</tr>
+ 		</thead>
+		<tbody>
 		@foreach ($outpatient_lists as $list)
 			@if ($user_id==$list->user_id || empty($list->user_id))
 			<?php $status='' ?>
@@ -36,6 +39,9 @@
 						<br>
 						<small>{{ $list->patient_mrn }}</small>
 					</td>
+					<td>
+						{{ $list->location_name }}
+					</td>
 					<td align='right'>
 							@if (empty($list->discharge_id))
 								@if ($list->consultation_status==1)
@@ -54,11 +60,10 @@
 			</tr>
 			@endif
 		@endforeach
+		</tbody>
 </table>
 @else
 				<p>
 				No case
 				</p>
 @endif
-</div>
-</div>

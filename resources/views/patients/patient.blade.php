@@ -32,18 +32,36 @@
 							<div class="col-xs-6">
 									<div class='form-group  @if ($errors->has('patient_birthdate')) has-error @endif'>
 										{{ Form::label('Birthdate', 'Birthdate',['class'=>'col-md-4 control-label']) }}
+										
+										<div class='col-md-8'>
+											<div class="input-group date">
+												<input data-mask="99/99/9999" name="patient_birthdate" id="patient_birthdate" type="text" class="form-control" value="{{ $patient->patient_birthdate }}">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+											</div>
+										</div>
+										<!--
 										<div class='col-md-8'>
 											<input id="patient_birthdate" name="patient_birthdate" type="text">
 											@if ($errors->has('patient_birthdate')) <p class="help-block">{{ $errors->first('patient_birthdate') }}</p> @endif
 										</div>
+										-->
 									</div>
 							</div>
 							<div class="col-xs-6">
 									<div class='form-group  @if ($errors->has('patient_birthtime')) has-error @endif'>
 										{{ Form::label('Birthtime', 'Birthtime',['class'=>'col-md-4 control-label']) }}
 										<div class='col-md-8'>
+											<!--
 											<input id="patient_birthtime" name="patient_birthtime" type="text">
 											@if ($errors->has('patient_birthtime')) <p class="help-block">{{ $errors->first('patient_birthtime') }}</p> @endif
+											-->
+												<div id="patient_birthtime" name="patient_birthtime" class="input-group clockpicker" data-autoclose="true">
+														{{ Form::text('patient_birthtime', null, ['class'=>'form-control','data-mask'=>'99:99']) }}
+														<span class="input-group-addon">
+															<span class="fa fa-clock-o"></span>
+														</span>
+												</div>
+
 										</div>
 									</div>
 							</div>
@@ -431,6 +449,15 @@
 	</div>
 
 <script>
+		$('#patient_birthdate').datepicker({
+						format: "dd/mm/yyyy",
+						todayBtn: "linked",
+						keyboardNavigation: false,
+						forceParse: false,
+						calendarWeeks: true,
+						autoclose: true
+				});
+		/**
 		$(function(){
 				$('#patient_birthdate').combodate({
 				format: "DD/MM/YYYY",
@@ -451,6 +478,7 @@
 				customClass: 'select'
 				});    
 		});
+		**/
 
 		function readURL(input) {
 			if (input.files && input.files[0]) {
@@ -502,4 +530,7 @@
 			city.value = values[0]; 
 			state.value = values[1]; 
 		}
+
+		$('.clockpicker').clockpicker();
+
 </script>

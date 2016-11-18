@@ -4,7 +4,6 @@
 @include('consultations.panel')
 <h1>Medical Alerts</h1>
 <br>
-@include('common.notification')
 <a href='/medical_alerts/create' class='btn btn-primary'>Create</a>
 <br>
 <br>

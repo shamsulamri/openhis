@@ -8,9 +8,10 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-
+@can('system-administrator')
 <a href='/ward_discharges/create' class='btn btn-primary'>Create</a>
 <br>
+@endcan
 <br>
 @if ($ward_discharges->total()>0)
 <table class="table table-hover">

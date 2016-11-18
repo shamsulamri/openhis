@@ -1,48 +1,43 @@
 
+
 @if (!empty($consultation->encounter->discharge->discharge_id))
-<div class='alert alert-warning' role='warning'>
-<strong>Warning ! </strong>Editting discharged case.
+<div class="row gray-bg">
+			<div class='col-sm-10'>
+					<h3 class="text-danger"><i class="fa fa-warning"></i>Warning you are editting discharged cases.</h3>
+			</div>
 </div>
 @endif
-@if (count($patient->alert)>0)
-<div class='panel panel-default'>
-	<div class='panel-heading'>
-@else
-	<div class='well'>
-@endif
-		<div class='row'>
-			<div class='col-md-10'>
-				<h4>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h4>
-				<h6>{{ $patient->patient_mrn }}</h6>
-				<h6>{{ $patient->patientAge() }}</h6>
+<div class="row border-bottom gray-bg">
+			<div class='col-sm-10'>
+						<h2>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h2>
+						<h6>{{ $patient->patient_mrn }}</h6>
+						<h6>{{ $patient->patientAge() }}</h6>
 			</div>
 			<div class='col-md-2' align='right'>
-			@if (Storage::disk('local')->has('/'.$patient->patient_mrn.'/'.$patient->patient_mrn))	
-			<img id='show_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='90' width='75'>
-			@else
-					<img id='show_image' src='/profile-img.png' style='border:2px solid gray' height='85' width='75'>
-			@endif
+					<h2>
+					@if (Storage::disk('local')->has('/'.$patient->patient_mrn.'/'.$patient->patient_mrn))	
+					<img id='current_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='80' width='70'>
+					@else
+							<img id='current_image' src='/profile-img.png' style='border:2px solid gray' height='80' width='70'>
+					@endif
+					</h2>
 			</div>
-		</div>
-	</div>
+</div>
+
 @if (count($patient->alert)>0)
-	<div class='panel-body'>
-	<h4 class='text-danger'>
-	<strong>
+	<br>
+	<div class='alert alert-danger' role='alert'>
+	<p>
 	@foreach ($patient->alert as $alert)
 		{{ $alert->alert_description }}
 		@if ($alert != end($patient->alert))
-			<br>
 		@endif
 	@endforeach
-	</strong>
-	</h4>
+	</p>
 	</div>
+@else
+	<br>
 @endif
-@if (count($patient->alert)>0)
-</div>
-@endif
-
 
 <div class="btn-group" role="group" aria-label="...">
     <a class="btn btn-success" href="/consultations/progress/{{ $consultation->consultation_id }}" role="button">Progress</a>
@@ -90,5 +85,4 @@
   </ul>
 </div>
 -->
-<br>
 <br>

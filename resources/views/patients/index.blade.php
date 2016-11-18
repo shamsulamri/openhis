@@ -2,6 +2,7 @@
 
 @section('content')
 <h1>Patient List
+<a href='/patients/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/patient/search' method='post'>
 	<div class='input-group'>
@@ -12,9 +13,6 @@
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
-<a href='/patients/create' class='btn btn-primary'>Create</a>
-<br>
 <br>
 @if (Session::has('message'))
 		<div class="alert alert-info">{{ Session::get('message') }}</div>

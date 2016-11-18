@@ -5,7 +5,14 @@
 					<div class='form-group  @if ($errors->has('investigation_date')) has-error @endif'>
 						<label for='investigation_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
 						<div class='col-sm-9'>
+							{{ $order->investigation_date }}
+							<div class="input-group date">
+								<input data-mask="99/99/9999" name="investigation_date" id="investigation_date" type="text" class="form-control" value="{{ $order_investigation->investigation_date }}">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
+							<!--
 							<input id="investigation_date" name="investigation_date" type="text">
+							-->
 							@if ($errors->has('investigation_date')) <p class="help-block">{{ $errors->first('investigation_date') }}</p> @endif
 						</div>
 					</div>
@@ -100,6 +107,7 @@
     {{ Form::hidden('product_code', $product[0]->product_code, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
 	<script>
 		$(function(){
+				/*
 				$('#investigation_date').combodate({
 						format: "DD/MM/YYYY",
 						template: "DD MM YYYY",
@@ -108,5 +116,14 @@
 						minYear: 1900,
 						customClass: 'select'
 				});    
+				 */
+				$('#investigation_date').datepicker({
+						format: "dd/mm/yyyy",
+						todayBtn: "linked",
+						keyboardNavigation: false,
+						forceParse: false,
+						calendarWeeks: true,
+						autoclose: true
+				});
 		});
 	</script>

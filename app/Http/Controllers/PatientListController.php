@@ -109,7 +109,7 @@ class PatientListController extends Controller
 							->get();
 
 			$outpatients = DB::table('queues as a')
-					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id', 'patient_birthdate', 'gender_name')
+					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id', 'patient_birthdate', 'gender_name','location_name')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
@@ -130,6 +130,7 @@ class PatientListController extends Controller
 					'location' => $location,
 					'inpatients' => $inpatients,
 					'observations' => $observations,
+					'outpatients'=>$outpatients,
 					'daycare' => $daycare,
 					'mortuary' => $mortuary,
 					'admission' => new Admission(),

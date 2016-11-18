@@ -14,6 +14,9 @@
 <link href="/assets/inspinia/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
 <link href="/assets/inspinia/css/plugins/codemirror/codemirror.css" rel="stylesheet">
 <link href="/assets/inspinia/css/style.css" rel="stylesheet">
+<link href="/assets/inspinia/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+<link href="/assets/inspinia/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+
 
 <!-- Mainly scripts -->
 <script src="/assets/inspinia/js/jquery-2.1.1.js"></script>
@@ -23,10 +26,13 @@
 
 <!-- Custom and plugin javascript -->
 <script src="/assets/inspinia/js/inspinia.js"></script>
+<script src="/assets/inspinia/js/plugins/pace/pace.min.js"></script>
 
 <!-- Data picker -->
 <script src="/assets/inspinia/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 
+<!-- Clock picker -->
+<script src="/assets/inspinia/js/plugins/clockpicker/clockpicker.js"></script>
 
 <!-- Flot -->
 <script src="/assets/inspinia/js/plugins/flot/jquery.flot.js"></script>
@@ -62,6 +68,8 @@
 <link href="/assets/inspinia/css/plugins/toastr/toastr.min.css" rel="stylesheet">
 <script src="/assets/inspinia/js/plugins/toastr/toastr.min.js"></script>
 
+		<script src="/assets/js/moment.min.2.5.0.js"></script>
+		<script src="/assets/js/combodate.js"></script>
 <style>
 		#toast-container > .toast {
 			background-image: none !important;

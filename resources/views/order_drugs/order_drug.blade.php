@@ -1,6 +1,7 @@
 
 	<h3>{{ $product->product_name }}</h3>
 
+	<!--
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
 			@if (empty($order->product_code))
@@ -11,6 +12,7 @@
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+	-->
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('drug_strength')) has-error @endif'>

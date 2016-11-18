@@ -1,10 +1,12 @@
-<div class='panel panel-default'>
-<div class='panel-heading'>
-	<h3 class='panel-title'>{{ $title }}</h3>
-</div>
-<div class='panel-body'>
 @if (count($patients)>0)
 <table class="table table-hover">
+		<thead>
+		<tr>
+			<th>Date</th>
+			<th>Patient</th>
+			<th>Location</th>
+		</tr>
+ 		</thead>
 @foreach ($patients as $patient)
 	<?php $status='' ?>
 	@if ($admission->hasOpenConsultation($patient->patient_id, $patient->encounter_id)>0)
@@ -54,5 +56,3 @@
 				No case
 				</p>
 @endif
-</div>
-</div>

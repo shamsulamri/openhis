@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.id_only')
+@include('patients.id')
 <h1>New Encounter</h1>
 {{ Form::model($encounter, ['id'=>'myForm','url'=>'encounters', 'class'=>'form-horizontal']) }} 
 	@include('encounters.encounter')

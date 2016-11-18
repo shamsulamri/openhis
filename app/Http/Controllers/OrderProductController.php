@@ -140,6 +140,9 @@ class OrderProductController extends Controller
 	
 	public function search(Request $request)
 	{
+			if ($request->set_code=='drug_history') {
+				return redirect('/order_product/drug');
+			}
 			if (!empty($request->set_code)) {
 				
 				$orderSets = DB::table('order_sets')
@@ -169,7 +172,7 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
-					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('',''),
+					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('-------------------','-')->prepend('Drug History','drug_history'),
 					'set_value' => $request->set_code,
 					'page' => $request->page,
 					]);
@@ -203,7 +206,7 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'drug',
 					'consultOption' => 'consultation',
-					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('',''),
+					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('-------------------','-')->prepend('Drug History','drug_history'),
 					'set_value' => $request->set_code,
 					'page' => $request->page,
 					'dojo' => new DojoUtility(),

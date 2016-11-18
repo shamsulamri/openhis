@@ -32,54 +32,56 @@
 			</div>
 			&nbsp;
 </div>
-<br>
-<a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
-						<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography
-</a>
-<a class='btn btn-default' href='{{ URL::to('patients/dependant_list/'. $patient->patient_id) }}'>
-		<span class='fa fa-users' aria-hidden='true'></span>
-		<br>
-		Dependants
-</a>
+@endif
 @can('module-patient')
-<a class='btn btn-default' href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
-						<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span><br>Appointment
-</a>
-<a class='btn btn-default'  href='{{ URL::to('preadmissions/create/'. $patient->patient_id.'?book=preadmission') }}'>
-		<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
 		<br>
-		Preadmission 
-</a>
-@endcan
-@can('module-discharge')
-<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
-		<span class='glyphicon glyphicon-book' aria-hidden='true'></span>
+		<a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
+								<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography
+		</a>
+		<a class='btn btn-default' href='{{ URL::to('patients/dependant_list/'. $patient->patient_id) }}'>
+				<span class='fa fa-users' aria-hidden='true'></span>
+				<br>
+				Dependants
+		</a>
+		@can('module-patient')
+		<a class='btn btn-default' href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
+								<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span><br>Appointment
+		</a>
+		<a class='btn btn-default'  href='{{ URL::to('preadmissions/create/'. $patient->patient_id.'?book=preadmission') }}'>
+				<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
+				<br>
+				Preadmission 
+		</a>
+		@endcan
+		@can('module-discharge')
+		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
+				<span class='glyphicon glyphicon-book' aria-hidden='true'></span>
+				<br>
+				Payment 
+		</a>
+		@endcan
+		@can('module-medical-record')
+		<a class='btn btn-default'  href='{{ URL::to('documents?patient_mrn='. $patient->patient_mrn.'&from=view') }}'>
+				<span class='glyphicon glyphicon-duplicate' aria-hidden='true'></span>
+				<br>
+			Medical Record 
+		</a>
+		@endcan
+		<a class='btn btn-default'  href='{{ URL::to('loans/request/'. $patient->patient_mrn.'?type=folder') }}'>
+		<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
 		<br>
-		Payment 
-</a>
-@endcan
-@can('module-medical-record')
-<a class='btn btn-default'  href='{{ URL::to('documents?patient_mrn='. $patient->patient_mrn.'&from=view') }}'>
-		<span class='glyphicon glyphicon-duplicate' aria-hidden='true'></span>
+			&nbsp;&nbsp;Folder&nbsp;&nbsp;
+		</a>
+		<a class='btn btn-default'  href='{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}'>
+		<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
 		<br>
-	Medical Record 
-</a>
+		&nbsp;&nbsp;Label&nbsp;&nbsp;
+		</a>
+		@If (!$patient->hasActiveEncounter())
+		<a class='btn btn-primary pull-right' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
+		<span class='fa fa-stethoscope' aria-hidden='true'></span>
+		<br>
+		Encounter
+		</a>
+		@endif
 @endcan
-<a class='btn btn-default'  href='{{ URL::to('loans/request/'. $patient->patient_mrn.'?type=folder') }}'>
-<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
-<br>
-	&nbsp;&nbsp;Folder&nbsp;&nbsp;
-</a>
-<a class='btn btn-default'  href='{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}'>
-<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
-<br>
-&nbsp;&nbsp;Label&nbsp;&nbsp;
-</a>
-@If (!$patient->hasActiveEncounter())
-<a class='btn btn-primary pull-right' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
-<span class='fa fa-stethoscope' aria-hidden='true'></span>
-<br>
-Encounter
-</a>
-@endif
-@endif

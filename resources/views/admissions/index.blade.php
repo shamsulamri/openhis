@@ -55,7 +55,7 @@
 	<label>Type</label>
 	{{ Form::select('admission_code', $admission_type, $admission_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	@endcan
-	<button class="btn btn-default" type="submit" value="Submit">Search</button>
+	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>

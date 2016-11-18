@@ -3,7 +3,7 @@
 @section('content')
 @include('consultations.panel')
 <h1>Procedures</h1>
-@include('common.notification')
+<br>
 <a href='/consultation_procedures/create' class='btn btn-primary'>Create</a>
 <br>
 <br>

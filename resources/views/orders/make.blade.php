@@ -2,7 +2,7 @@
 
 @section('content')	
 <style>
-iframe { border: 1px #C0C0C0 solid; }
+iframe { border: 1px #e5e5e5 solid; }
 </style>
 @can('module-consultation')
 		@include('consultations.panel')		

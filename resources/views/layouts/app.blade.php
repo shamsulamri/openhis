@@ -14,6 +14,9 @@
 <link href="/assets/inspinia/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
 <link href="/assets/inspinia/css/plugins/codemirror/codemirror.css" rel="stylesheet">
 <link href="/assets/inspinia/css/style.css" rel="stylesheet">
+<link href="/assets/inspinia/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+<link href="/assets/inspinia/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+
 
 <!-- Mainly scripts -->
 <script src="/assets/inspinia/js/jquery-2.1.1.js"></script>
@@ -23,10 +26,13 @@
 
 <!-- Custom and plugin javascript -->
 <script src="/assets/inspinia/js/inspinia.js"></script>
+<script src="/assets/inspinia/js/plugins/pace/pace.min.js"></script>
 
 <!-- Data picker -->
 <script src="/assets/inspinia/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 
+<!-- Clock picker -->
+<script src="/assets/inspinia/js/plugins/clockpicker/clockpicker.js"></script>
 
 <!-- Flot -->
 <script src="/assets/inspinia/js/plugins/flot/jquery.flot.js"></script>
@@ -139,19 +145,20 @@
 				@endcan	
 				<!-- Consultation Module -->
 				@can('module-consultation')
-				<li><a href="/patient_lists"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a></li>
-				<li><a href="/consultations"><span class='glyphicon glyphicon-comment'></span>&nbsp; Consultation List</a></li>
+				<li><a href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
+				<li><a href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
+				<h4>&nbsp;</h4>
 				@if (!empty($consultation) && !empty($patient))
-					<li><a class='list-group-item' href="/medical_alerts"><span class='glyphicon glyphicon-exclamation-sign'></span>&nbsp; Medical Alerts</a>
+					<li><a href="/medical_alerts"><i class="fa fa-exclamation-circle"></i><span class='nav-label'>Medical Alerts</span></a></li>
 					@if ($consultation->encounter->encounter_code=='inpatient')
-					<li><a href="/diet"><span class='glyphicon glyphicon-cutlery'></span>&nbsp; Diet</a></li>
+					<li><a href="/diet"><i class="fa fa-cutlery"></i><span class='nav-label'>Diet</a></li>
 					@endif
 					@if ($patient->gender_code=='P')
-					<li><a href="/obstetric"><span class='glyphicon glyphicon-user'></span>&nbsp; Obstetric History</a></li>
-					<li><a href="/newborns"><span class='glyphicon glyphicon-baby-formula'></span>&nbsp; Newborn</a></li>
+					<li><a href="/obstetric"><i class="fa fa-user"></i><span class='nav-label'>Obstetric History</span></a></li>
+					<li><a href="/newborns"><i class="glyphicon glyphicon-baby-formula"></i><span class='nav-label'>Newborn</span></a></li>
 					@endif
-					<li><a href="/medical_certificates/create"><span class='glyphicon glyphicon-credit-card'></span>&nbsp; Medical Certificate</a></li>
-					<li><a href="/documents?patient_mrn={{ $patient->patient_mrn }}"><span class='glyphicon glyphicon-folder-close'></span>&nbsp; Documents</a></li>
+					<li><a href="/medical_certificates/create"><i class="fa fa-certificate"></i><span class='nav-label'>Medical Certificate</span></a></li>
+					<li><a href="/documents?patient_mrn={{ $patient->patient_mrn }}"><i class="fa fa-files-o"></i><span class='nav-label'>Documents</span></a></li>
 				@endif
 				@endcan
 
@@ -234,7 +241,7 @@
 				@endcan
 
 				<!-- Report -->
-				<li><a href="{{ url('/reports') }}"><span class='glyphicon glyphicon-bullhorn'></span>&nbsp; Reports</a></li>
+				<li><a href="{{ url('/reports') }}"><i class="fa fa-bar-chart"></i><span class='nav-label'>Reports</span></a></li>
             </ul>
 
         </div>
