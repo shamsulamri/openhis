@@ -134,6 +134,12 @@ class NewbornController extends Controller
 
 			if ($valid->passes()) {
 					$newborn->save();
+					$patient = Patient::find($newborn->patient_id);
+					$patient->patient_birthdate = $request->patient_birthdate;
+					$patient->patient_birthtime = $request->patient_birthtime;
+					$patient->gender_code = $request->gender_code;
+					$patient->save();
+
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/newborns?id='.$request->consultation_id);
 			} else {

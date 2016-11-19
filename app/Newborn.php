@@ -72,6 +72,21 @@ class Newborn extends Model
 			return $this->belongsTo('App\DeliveryMode','delivery_code');
 	}
 	
+	public function getNewbornLengthAttribute($value)
+	{
+			return DojoUtility::removeTrailingZeros($value);
+	}
+
+	public function getNewbornWeightAttribute($value)
+	{
+			return DojoUtility::removeTrailingZeros($value);
+	}
+
+	public function getNewbornHeadCircumferanceAttribute($value)
+	{
+			return DojoUtility::removeTrailingZeros($value);
+	}
+
 	public function setNewbornG6pdAttribute($value)
 	{
 		if (DojoUtility::validateDate($value)==true) {

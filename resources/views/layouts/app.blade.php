@@ -70,6 +70,7 @@
 
 		<script src="/assets/js/moment.min.2.5.0.js"></script>
 		<script src="/assets/js/combodate.js"></script>
+		<script src="/assets/js/js.cookie.js"></script>
 <style>
 		#toast-container > .toast {
 			background-image: none !important;
@@ -101,8 +102,16 @@
 </style>
 </head>
 
+<?php
+if (!isset($_COOKIE['his-navbar'])) {
+	setcookie('his-navbar',1,time()+(86400*7));
+}
+if ($_COOKIE['his-navbar']==1) {
+?>
+<body class="mini-navbar full-height-layout">
+<?php } else { ?>
 <body class="full-height-layout">
-
+<?php } ?>
     <div id="wrapper">
 
     <nav class="navbar-default navbar-static-side" role="navigation">
@@ -132,7 +141,7 @@
 						<h4>&nbsp;Patient</h4>
 				@endcan
 				@can('module-patient')
-				<li><a href="{{ url('/patients') }}"><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
+				<li><a href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
 				<li><a href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 				<li><a href="{{ url('/queues') }}"><i class="fa fa-th-list"></i><span class='nav-label'>Queues</span></a></li>
 				<li><a href="{{ url('/admissions') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Admissions</span></a></li>
@@ -251,7 +260,7 @@
         <div class="row border-bottom">
         <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
-            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#" onclick='setBarState()'><i class="fa fa-bars"></i> </a>
         </div>
             <ul class="nav navbar-top-links navbar-right">
                         <li class="dropdown">
@@ -276,6 +285,9 @@
             <div class="row full-height">
                     <div class="full-height-scroll white-bg border-left">
 						<div class="col-lg-12">
+								<!--
+								{{ $_COOKIE['his-navbar'] }}
+								-->
 								@yield('content')
 						</div>
 					</div>
@@ -298,5 +310,13 @@
 		@if (count($errors) > 0)
 				toastr.error(toastr.options,'Please correct the errors highlighted below.')
 		@endif
+
+		function setBarState() {
+				if (Cookies.get('his-navbar')==1) {
+					Cookies.set('his-navbar',0, { expires: 7});
+				} else {
+					Cookies.set('his-navbar',1, { expires: 7});
+				}
+		}
 		</script>
 </body>

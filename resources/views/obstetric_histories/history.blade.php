@@ -4,44 +4,43 @@
 @include('consultations.panel')
 <h1>Obstetric History</h1>
 <br>
-@include('common.notification')
 
 {{ Form::model($patient, ['url'=>'obstetric', 'class'=>'form-horizontal']) }} 
 
 	<div class='form-group  @if ($errors->has('patient_gravida')) has-error @endif'>
         <label for='patient_gravida' class='col-sm-2 control-label'>Gravida</label>
-        <div class='col-sm-10'>
-            {{ Form::text('patient_gravida', null, ['class'=>'form-control']) }}
+        <div class='col-sm-2'>
+            {{ Form::text('patient_gravida', null, ['class'=>'form-control','data-mask'=>'9*']) }}
             @if ($errors->has('patient_gravida')) <p class="help-block">{{ $errors->first('patient_gravida') }}</p> @endif
         </div>
     </div>
 
 
-	<div class="row">
-			<div class="col-xs-4">
-					<div class='form-group  @if ($errors->has('patient_parity')) has-error @endif'>
-						<label for='patient_parity' class='col-sm-6 control-label'>Parity</label>
-						<div class='col-sm-6'>
-							{{ Form::text('patient_parity', null, ['class'=>'form-control']) }}
-							@if ($errors->has('patient_parity')) <p class="help-block">{{ $errors->first('patient_parity') }}</p> @endif
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-4">
-					<div class='form-group  @if ($errors->has('patient_parity_plus')) has-error @endif'>
-						<label for='patient_parity_plus' class='col-sm-2 control-label'>+</label>
-						<div class='col-sm-6'>
-							{{ Form::text('patient_parity_plus', null, ['class'=>'form-control']) }}
-							@if ($errors->has('patient_parity_plus')) <p class="help-block">{{ $errors->first('patient_parity_plus') }}</p> @endif
-						</div>
-					</div>
-			</div>
+	<div class='form-group  @if ($errors->has('patient_parity')) has-error @endif'>
+		<label for='patient_parity' class='col-sm-2 control-label'>Parity</label>
+		<div class='col-sm-2'>
+			{{ Form::text('patient_parity', null, ['class'=>'form-control', 'data-mask'=>'9*']) }}
+			@if ($errors->has('patient_parity')) <p class="help-block">{{ $errors->first('patient_parity') }}</p> @endif
+		</div>
+		<div class='col-sm-2'>
+			{{ Form::text('patient_parity_plus', null, ['class'=>'form-control', 'data-mask'=>'9']) }}
+			@if ($errors->has('patient_parity_plus')) <p class="help-block">{{ $errors->first('patient_parity_plus') }}</p> @endif
+		</div>
 	</div>
 
 	<div class='form-group  @if ($errors->has('patient_lnmp')) has-error @endif'>
         <label for='patient_lnmp' class='col-sm-2 control-label'>LNMP</label>
-        <div class='col-sm-10'>
+        <div class='col-sm-4'>
+			<div class="input-group date">
+				{{ Form::text('patient_lnmp', null, ['class'=>'form-control','data-mask'=>'99/99/9999', 'id'=>'patient_lnmp']) }}
+				<!--
+				<input data-mask="99/99/9999" name="patient_birthdate" id="patient_birthdate" type="text" class="form-control" value="{{ $patient->patient_birthdate }}">
+				-->
+				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			</div>
+			<!--
 			<input id="patient_lnmp" name="patient_lnmp" type="text">
+			-->
             @if ($errors->has('patient_lnmp')) <p class="help-block">{{ $errors->first('patient_lnmp') }}</p> @endif
         </div>
     </div>
@@ -54,6 +53,7 @@
 {{ Form::close() }}
 
 	<script>
+		/*
 		$(function(){
 				$('#patient_lnmp').combodate({
 						format: "DD/MM/YYYY",
@@ -63,6 +63,16 @@
 						minYear: 1900,
 						customClass: 'select'
 				});    
+		});
+		*/
+		
+		$('#patient_lnmp').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
 		});
 
 	</script>

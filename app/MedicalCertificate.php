@@ -32,18 +32,20 @@ class MedicalCertificate extends Model
 				'consultation_id'=>'required',
 				'mc_start'=>'required|size:10|date_format:d/m/Y',
 				'mc_end'=>'size:10|date_format:d/m/Y|after:mc_start',
-				'mc_identification'=>'required',
 				'mc_time_end'=>'after:mc_time_start',
 			];
 
-			if (!is_null($this->attributes['mc_time_start'])) {
-					$rules['mc_time_end']='required|after:mc_time_start';
+			if(!empty($this->attributes['mc_time_start'])) {
+					if (!is_null($this->attributes['mc_time_start'])) {
+							$rules['mc_time_end']='required|after:mc_time_start';
+					}
 			}
 			
 			$messages = [
 					'required' => 'This field is required',
 					'mc_time_end.required' => 'Time end required',
 					'mc_time_end.after' => 'Time end cannot be less than start',
+					'mc_end.after' => 'Date end cannbot be greater than start',
 			];
 			
 			return validator::make($input, $rules ,$messages);

@@ -95,6 +95,11 @@ class DojoUtility
 				return Carbon::createFromTimeStamp(strtotime($date))->diffForHumans();
 		}
 
+		public static function removeTrailingZeros($value) 
+		{
+				return str_replace(".00","",$value);
+		}
+
 		public function getAge($sourceDate)
 		{
 				$value = "";
