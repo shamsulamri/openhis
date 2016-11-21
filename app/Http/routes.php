@@ -39,7 +39,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
-		Route::get('/', function() {
+		Route::get('/', function(Request $request) {
 				//return view('welcome');
 				if (Auth::check()) {
 					return redirect('/landing');
