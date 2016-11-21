@@ -108,10 +108,14 @@
 </head>
 
 <?php
+/*
 if (!isset($_COOKIE['his-navbar'])) {
 	setcookie('his-navbar',1,time()+(86400*7));
+	$_COOKIE['his-navbar']==1;
 }
-if ($_COOKIE['his-navbar']==1) {
+ */
+$his_navbar = (isset($_COOKIE['his-navbar']) ? $_COOKIE['his-navbar'] : 1);
+if ($his_navbar==1) {
 ?>
 <body class="mini-navbar full-height-layout">
 <?php } else { ?>
