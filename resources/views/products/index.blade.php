@@ -45,6 +45,7 @@
 					{{ str_replace('.00','',$product->product_on_hand) }}
 				@endif
 			</td>
+			@can('system-administrator')
 			<td align='right'>
 				<!--
 					@if ($product->product_bom==1)
@@ -61,10 +62,9 @@
 					<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $product->product_code) }}'><span class='glyphicon glyphicon-road' aria-hidden='true'></span></a>
 					@endif
 				-->
-			@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('products/delete/'. $product->product_code) }}'>Delete</a>
-			@endcan
 			</td>
+			@endcan
 	</tr>
 @endforeach
 @endif

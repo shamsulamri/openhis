@@ -166,7 +166,7 @@
 					<div class="row">
 							<div class="col-xs-6">
 									<div class='form-group  @if ($errors->has('patient_new_ic')) has-error @endif'>
-										{{ Form::label('New Identification', 'New Identification',['class'=>'col-md-4 control-label']) }}
+										{{ Form::label('New Identification', 'Identification',['class'=>'col-md-4 control-label']) }}
 										<div class='col-md-8'>
 											{{ Form::text('patient_new_ic', null, ['class'=>'form-control','data-mask'=>'999999-99-9999', 'placeholder'=>'MyKad number','maxlength'=>'20']) }}
 											@if ($errors->has('patient_new_ic')) <p class="help-block">{{ $errors->first('patient_new_ic') }}</p> @endif

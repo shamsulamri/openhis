@@ -134,9 +134,16 @@ if ($_COOKIE['his-navbar']==1) {
                     </div>
 					<div class="logo-element">
 						<?php
-							 $initials = explode(' ', trim(str_replace('Dr.','',Auth::user()->name)));
+							$name = Auth::user()->name;
+							$name = strtolower($name);
+							$name = str_replace(" bin ", "", $name);
+							$name = str_replace("dr.", "", $name);
+							$name = strtoupper(trim($name));
+							$initials = explode(' ', $name);
+							$initials[0] = trim(substr($initials[0],0,1));
+							if(!empty($initials[1])) { $initials[1] = substr(trim($initials[1]),0,1); }
 						?>
-						{{ substr(trim($initials[0]),0,1) }}@if (!empty($initials[1])) {{ substr(trim($initials[1]),0,1) }} @endif
+						{{ $initials[0] }}{{ $initials[1] }}
                     </div>
                 </li>
 				@can('system-administrator')
