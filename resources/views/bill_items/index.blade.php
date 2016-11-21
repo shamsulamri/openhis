@@ -12,7 +12,7 @@ Interim Bill
 <br>
 @if ($bills->total()>0)
 
-<a class="btn btn-default" href="/discharges" role="button">Back</a>
+<a class="btn btn-default" href="/discharges" role="button">Cancel</a>
 @if (!$billPosted)
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
 <p class='pull-right'>&nbsp;</p>
@@ -109,7 +109,6 @@ Interim Bill
 </tbody>
 </table>
 <!-- GST Summary -->
-	@if (count($gst_total)>0)
 		<div class='row'>
 			<div class='col-md-5'>
 		<table class='table table-condensed'>
@@ -120,6 +119,7 @@ Interim Bill
 			<th><div align='right'>GST (RM)</div></th> 
 			</tr>
 		</thead>
+	@if (count($gst_total)>0)
 		@foreach ($gst_total as $gst)
 			@if ($gst->gst_sum>0)
 			<tr>
@@ -137,13 +137,18 @@ Interim Bill
 			</tr>
 			@endif
 		@endforeach
+	@endif
 		</table>
 			</div>
 		</div>
-	@endif
+@endif
+@if (count($gst_total)==0)
+	<h4>No GST detail</h4>
+	<br>
 @endif
 <!-- Payments -->
-<div class='well'>
+<div class="widget style1 gray-bg">
+
 @if ($encounter->sponsor)
 	<h4>Sponsor</h4>
 	<h4>
@@ -153,9 +158,9 @@ Interim Bill
 	</h4>
 	<hr>
 @endif
-<h4><strong>Payments</strong>
+<h4>Payments
 @if (!$billPosted)
-<a href='/payments/create/{{ $patient->patient_id }}/{{ $bill->encounter_id }}' class='btn btn-primary pull-right'>New Payment</a>
+<a href='/payments/create/{{ $patient->patient_id }}/{{ $bill->encounter_id }}' class='btn btn-primary btn-sm pull-right'>New Payment</a>
 @endif
 </h4>
 @if ($payments->total()>0)
@@ -275,17 +280,19 @@ Interim Bill
 </div>
 @endif
 -->
+<div class="widget style1 gray-bg">
 @if (!$billPosted)
+<h4>Post Bill</h4>
 {{ Form::model($bill, ['id'=>'post_form','url'=>'bills', 'class'=>'form-horizontal']) }} 
 			<input type='checkbox' id='post_checkbox' value='1' onchange='javascript:enablePostButton()'>
-			<strong>I have confirmed that all the information above are correct.</strong>
+			I have confirmed that all the information above are correct.
             {{ Form::hidden('encounter_id', null, ['id'=>'encounter_id','class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_grand_total', $bill_grand_total, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_payment_total', $payment_total, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_deposit_total', $deposit_total, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_outstanding', $bill_outstanding, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_change', $bill_change, ['class'=>'form-control','placeholder'=>'',]) }}
-            {{ Form::submit('Post Payment', ['class'=>'btn btn-primary','id'=>'button_post']) }}
+            {{ Form::submit('Submit', ['class'=>'btn btn-primary btn-sm pull-right','id'=>'button_post']) }}
 			<br>
 			<br>
 {{ Form::close() }}
@@ -294,6 +301,7 @@ Interim Bill
 This bill has been posted.
 </div>
 @endif
+</div>
 <script>
 	function disablePostButton() {
 			postForm = document.getElementById('post_form');

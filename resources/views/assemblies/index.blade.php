@@ -19,9 +19,9 @@
 <?php $max=99999; ?>
 @foreach ($boms as $bom)
 <?php
-
+if ($bom->product->product_on_hand>0) {
 	if ($bom->product->product_on_hand/$bom->bom_quantity<$max) $max = $bom->product->product_on_hand/$bom->bom_quantity;
-	
+}	
 ?>
 <tr>
 	<td>	
@@ -46,6 +46,7 @@
 </tr>
 @endforeach
 </table>
+@if ($max!=99999)
 <h4>The maximum number of build is <strong>{{ round($max) }}</strong></h4>
 <br>
 <form class='form-inline' action='/build_assembly/{{ $bom->product_code }}' method='post'>
@@ -57,4 +58,7 @@
 	{{ Form::submit('Build', ['class'=>'btn btn-default']) }}
 	{{ Form::hidden('max', round($max)) }}
 </form>
+@else
+<h4>Build not possible</h4>
+@endif
 @endsection

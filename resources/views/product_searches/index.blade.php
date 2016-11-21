@@ -3,10 +3,9 @@
 @section('content')
 <style>
 .pagination {
-    font-size: 60%;
+    font-size: 80%;
 }
 </style>
-<br>
 <form action='/product_search/search' method='post'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

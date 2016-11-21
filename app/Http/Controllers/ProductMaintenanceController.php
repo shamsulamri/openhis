@@ -51,7 +51,7 @@ class ProductMaintenanceController extends Controller
 			$product = Product::find($request->product_code);
 			$product_maintenance = new ProductMaintenance();
 			$today = date('d/m/Y H:i', strtotime(Carbon::now())); 
-			$product_maintenance->maintain_datetime = date('d/m/Y H:i', strtotime(Carbon::now())); 
+			$product_maintenance->maintain_date = date('d/m/Y', strtotime(Carbon::now())); 
 
 			return view('product_maintenances.create', [
 					'product_maintenance' => $product_maintenance,

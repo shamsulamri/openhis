@@ -14,7 +14,8 @@ class ProductMaintenance extends Model
 				'product_code',
 				'reason_code',
 				'maintain_description',
-				'maintain_datetime',
+				'maintain_date',
+				'maintain_time',
 				'user_id'];
 	
     protected $guarded = ['maintain_id'];
@@ -37,16 +38,16 @@ class ProductMaintenance extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	public function setMaintainDatetimeAttribute($value)
+	public function setMaintainDateAttribute($value)
 	{
-		if (DojoUtility::validateDateTime($value)==true) {
-			$this->attributes['maintain_datetime'] = DojoUtility::dateTimeWriteFormat($value);
+		if (DojoUtility::validateDate($value)==true) {
+			$this->attributes['maintain_date'] = DojoUtility::dateWriteFormat($value);
 		}
 	}
 
-	public function getMaintainDatetimeAttribute($value)
+	public function getMaintainDateAttribute($value)
 	{
-		return DojoUtility::dateTimeReadFormat($value);
+		return DojoUtility::dateReadFormat($value);
 	}
 	
 }

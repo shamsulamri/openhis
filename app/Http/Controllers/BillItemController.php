@@ -159,6 +159,7 @@ class BillItemController extends Controller
 			$gst_total = DB::table('bill_items as a')
 					->selectRaw('sum(bill_quantity*bill_gst_unit) as gst_sum, sum(bill_quantity*(bill_unit_price-bill_gst_unit)) as gst_amount, tax_code')
 					->where('encounter_id','=', $id)
+					->whereNotNull('tax_code')
 					->groupBy('tax_code')
 					->get();
 

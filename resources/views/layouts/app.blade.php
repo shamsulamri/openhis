@@ -16,6 +16,7 @@
 <link href="/assets/inspinia/css/style.css" rel="stylesheet">
 <link href="/assets/inspinia/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 <link href="/assets/inspinia/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+<link href="/assets/inspinia/css/plugins/iCheck/custom.css" rel="stylesheet">
 
 
 <!-- Mainly scripts -->
@@ -67,6 +68,10 @@
 <!-- Toastr -->
 <link href="/assets/inspinia/css/plugins/toastr/toastr.min.css" rel="stylesheet">
 <script src="/assets/inspinia/js/plugins/toastr/toastr.min.js"></script>
+
+<!-- iCheck -->
+
+<script src="/assets/inspinia/js/plugins/iCheck/icheck.min.js"></script>
 
 		<script src="/assets/js/moment.min.2.5.0.js"></script>
 		<script src="/assets/js/combodate.js"></script>
@@ -128,7 +133,10 @@ if ($_COOKIE['his-navbar']==1) {
 								{{ Auth::user()->authorization->author_name }}
                     </div>
 					<div class="logo-element">
-                       MSU 
+						<?php
+							 $initials = explode(' ', trim(str_replace('Dr.','',Auth::user()->name)));
+						?>
+						{{ substr(trim($initials[0]),0,1) }}@if (!empty($initials[1])) {{ substr(trim($initials[1]),0,1) }} @endif
                     </div>
                 </li>
 				@can('system-administrator')
@@ -144,10 +152,10 @@ if ($_COOKIE['his-navbar']==1) {
 				<li><a href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
 				<li><a href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 				<li><a href="{{ url('/queues') }}"><i class="fa fa-th-list"></i><span class='nav-label'>Queues</span></a></li>
-				<li><a href="{{ url('/admissions') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Admissions</span></a></li>
+				<li><a href="{{ url('/admissions') }}"><i class="fa fa-hospital-o"></i><span class='nav-label'>Admissions</span></a></li>
 				<li><a href="{{ url('/bed_bookings?type=preadmission') }}"><i class="glyphicon glyphicon-time"></i><span class='nav-label'>Preadmissions</span></a></li>
 				<li><a href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
-				<li><a href="{{ url('/beds') }}"><i class="fa fa-bed"></i><span class='nav-label'>Beds</span></a></li>
+				<li><a href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
 				@endcan
 				@can('system-administrator')
 						<h4>&nbsp;Consultation</h4>
@@ -194,13 +202,13 @@ if ($_COOKIE['his-navbar']==1) {
 						<h4>&nbsp;Inventory</h4>
 				@endcan	
 				@can('module-inventory')
-				<li><a href="{{ url('/products') }}"><span class='glyphicon glyphicon-glass'></span>&nbsp; Products</a></li>
-				<li><a href="{{ url('/purchase_orders') }}"><span class='glyphicon glyphicon-briefcase'></span>&nbsp; Purchase Orders</a></li>
-				<li><a href="{{ url('/suppliers') }}"><span class='glyphicon glyphicon-shopping-cart'></span>&nbsp; Suppliers</a></li>
-				<li><a href="{{ url('/stores') }}"><span class='glyphicon glyphicon-lamp'></span>&nbsp; Stores</a></li>
-				<li><a href="{{ url('/sets') }}"><span class='glyphicon glyphicon-apple'></span>&nbsp; Order Sets</a></li>
-				<li><a href="{{ url('/product_authorizations') }}"><span class='glyphicon glyphicon-barcode'></span>&nbsp; Product Authorizations</a></li>
-				<li><a href="{{ url('/loans') }}"><span class='glyphicon glyphicon-transfer'></span>&nbsp; Loans</a></li>
+				<li><a title='Products' href="{{ url('/products') }}"><i class='fa fa-glass'></i><span class='nav-label'>Products</span></a></li>
+				<li><a title='Purchase Orders' href="{{ url('/purchase_orders') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchase Orders</span></a></li>
+				<li><a title='Suppliers' href="{{ url('/suppliers') }}"><i class='fa fa-truck' aria-hidden='true'></i><span class='nav-label'>Suppliers</span></a></li>
+				<li><a title='Stores' href="{{ url('/stores') }}"><i class='fa fa-th-large'></i><span class='nav-label'>Stores</span></a></li>
+				<li><a title='Order Sets' href="{{ url('/sets') }}"><i class='fa fa-medkit'></i><span class='nav-label'>Order Sets</span></a></li>
+				<li><a title='Product Authorizations' href="{{ url('/product_authorizations') }}"><i class='fa fa-barcode'></i><span class='nav-label'>Product Authorizations</span></a></li>
+				<li><a title='Loans' href="{{ url('/loans') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'><span class='nav-label'>Loans</span></a></li>
 				@endcan
 
 				<!-- Ward Module -->
@@ -236,8 +244,8 @@ if ($_COOKIE['his-navbar']==1) {
 						<h4>&nbsp;Financial</h4>
 				@endcan	
 				@can('module-discharge')
-				<li><a href="{{ url('/patients') }}"><span class='glyphicon glyphicon-user'></span>&nbsp; Patient List</a></li>
-				<li><a href="{{ url('/discharges') }}"><span class='glyphicon glyphicon-home'></span>&nbsp; Discharges</a></li>
+				<li><a title='Patient List' href="{{ url('/patients') }}"><i class='fa fa-stethoscope'></i><span class='nav-label'>Patient List</span></a></li>
+				<li><a title='Discharges' href="{{ url('/discharges') }}"><i class='fa fa-home'></i><span class='nav-label'>Discharges</span></a></li>
 				@endcan
 
 				<!-- Support -->
@@ -245,8 +253,8 @@ if ($_COOKIE['his-navbar']==1) {
 						<h4>&nbsp;Support</h4>
 				@endcan	
 				@can('module-support')
-				<li><a href="{{ url('/order_queues') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Outpatient Tasks</a></li>
-				<li><a href="{{ url('/admission_tasks') }}"><span class='glyphicon glyphicon-tasks'></span>&nbsp; Inpatient Tasks</a></li>
+				<li><a href="{{ url('/order_queues') }}"><i class='fa fa-check-square'></i><span class='nav-label'>Outpatient Tasks</span></a></li>
+				<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-check-square-o'></i><span class='nav-label'>Inpatient Tasks<span></a></li>
 				@endcan
 
 				<!-- Report -->
@@ -318,5 +326,10 @@ if ($_COOKIE['his-navbar']==1) {
 					Cookies.set('his-navbar',1, { expires: 7});
 				}
 		}
+
+		$('.i-checks').iCheck({
+			checkboxClass: 'icheckbox_square-green',
+			radioClass: 'iradio_square-green'
+		});
 		</script>
 </body>

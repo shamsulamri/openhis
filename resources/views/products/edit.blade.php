@@ -13,8 +13,6 @@
 </script>
 @include('products.id')
 <h1>Edit Product</h1>
-<a class="btn btn-default" href="/products/{{ $product->product_code }}/option" role="button">Back</a>
-<br>
 <br>
 
 {{ Form::model($product, ['route'=>['products.update',$product->product_code],'method'=>'PUT', 'class'=>'form-horizontal', 'name'=>'product_form']) }} 

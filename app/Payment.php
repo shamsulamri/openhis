@@ -26,7 +26,7 @@ class Payment extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
-				'payment_amount'=>'required',
+				'payment_amount'=>'required|numeric',
 				'payment_code'=>'required',
 			];
 

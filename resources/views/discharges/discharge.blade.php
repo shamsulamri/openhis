@@ -1,11 +1,4 @@
 
-    <div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
-        <label for='discharge_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
-        <div class='col-sm-9'>
-			<input id="discharge_date" name="discharge_date" type="text">
-            @if ($errors->has('discharge_date')) <p class="help-block">{{ $errors->first('discharge_date') }}</p> @endif
-        </div>
-    </div>
 
 	@if ($consultation->encounter->encounter_code != 'mortuary')
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
@@ -34,6 +27,17 @@
         </div>
     </div>
 	@endif
+
+    <div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
+        <label for='discharge_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+			<div class="input-group date">
+				<input data-mask="99/99/9999" name="discharge_date" id="discharge_date" type="text" class="form-control" value="{{ $discharge->discharge_date }}">
+				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			</div>
+            @if ($errors->has('discharge_date')) <p class="help-block">{{ $errors->first('discharge_date') }}</p> @endif
+        </div>
+    </div>
 
 	@if ($consultation->encounter->encounter_code != 'mortuary')
     <div class='form-group'>
@@ -88,14 +92,12 @@
 	@endif
 
 	<script>
-		$(function(){
-				$('#discharge_date').combodate({
-						format: "DD/MM/YYYY",
-						template: "DD MMMM YYYY",
-						value: '{{ $discharge->discharge_date }}',
-						maxYear: '{{ $minYear+5 }}',
-						minYear: '{{ $minYear }}',
-						customClass: 'select'
-				});    
+		$('#discharge_date').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
 		});
 	</script>

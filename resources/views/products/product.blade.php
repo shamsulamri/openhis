@@ -83,44 +83,40 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_dismantle_material')) has-error @endif'>
+						{{ Form::label('product_dismantle_material', 'Dismantle Material',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('product_dismantle_material', '1',['class'=>'control-label']) }} Item return to pool when exploded.
+							@if ($errors->has('product_dismantle_material')) <p class="help-block">{{ $errors->first('product_dismantle_material') }}</p> @endif
+						</div>
+					</div>
 
 			</div>
 	</div>
 
 	<div class="row">
-			<div class="col-xs-5">
+			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_stocked')) has-error @endif'>
-						{{ Form::label('product_stocked', 'Stocked',['class'=>'col-sm-5 control-label']) }}
-						<div class='col-sm-7'>
-							{{ Form::checkbox('product_stocked', '1') }}
+						{{ Form::label('product_stocked', 'Stocked',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('product_stocked', '1',['class'=>'control-label']) }}
 							@if ($errors->has('product_stocked')) <p class="help-block">{{ $errors->first('product_stocked') }}</p> @endif
 						</div>
 					</div>
 			</div>
-			<div class="col-xs-7">
+			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_bom')) has-error @endif'>
-						{{ Form::label('product_bom', 'Bill of Materials',['class'=>'col-sm-5 control-label']) }}
-						<div class='col-sm-7'>
-							{{ Form::checkbox('product_bom', '1') }}
+						{{ Form::label('product_bom', 'Bill of Materials',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('product_bom', '1',['class'=>'control-label']) }}
 							@if ($errors->has('product_bom')) <p class="help-block">{{ $errors->first('product_bom') }}</p> @endif
 						</div>
 					</div>
 			</div>
 	</div>
-	<div class="row">
-			<div class="col-xs-5">
-					<div class='form-group  @if ($errors->has('product_dismantle_material')) has-error @endif'>
-						{{ Form::label('product_dismantle_material', 'Dismantle Material',['class'=>'col-sm-5 control-label']) }}
-						<div class='col-sm-7'>
-							{{ Form::checkbox('product_dismantle_material', '1') }}
-							@if ($errors->has('product_dismantle_material')) <p class="help-block">{{ $errors->first('product_dismantle_material') }}</p> @endif
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-7">
-			</div>
-	</div>
+
 	<!-- Purchase -->
+	<hr>
 	<div class="row">
 			<div class="col-xs-5">
 					<div class='form-group  @if ($errors->has('product_purchased')) has-error @endif'>
@@ -132,6 +128,11 @@
 					</div>
 			</div>
 			<div class="col-xs-7">
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-5">
 					<div class='form-group  @if ($errors->has('product_purchase_price')) has-error @endif'>
 						{{ Form::label('product_purchase_price', 'Purchase Price',['class'=>'col-sm-5 control-label']) }}
 						<div class='col-sm-7'>
@@ -142,11 +143,6 @@
 							</div>
 						</div>
 					</div>
-			</div>
-	</div>
-
-	<div class="row">
-			<div class="col-xs-5">
 			</div>
 			<div class="col-xs-7">
 					<div class='form-group  @if ($errors->has('product_reorder')) has-error @endif'>
@@ -161,8 +157,6 @@
 
 	<div class="row">
 			<div class="col-xs-5">
-			</div>
-			<div class="col-xs-7">
 					<div class='form-group  @if ($errors->has('product_conversion_unit')) has-error @endif'>
 						{{ Form::label('product_conversion_unit', 'Conversion Unit',['class'=>'col-sm-5 control-label']) }}
 						<div class='col-sm-7'>
@@ -170,10 +164,6 @@
 							@if ($errors->has('product_conversion_unit')) <p class="help-block">{{ $errors->first('product_conversion_unit') }}</p> @endif
 						</div>
 					</div>
-			</div>
-	</div>
-	<div class="row">
-			<div class="col-xs-5">
 			</div>
 			<div class="col-xs-7">
 					<div class='form-group  @if ($errors->has('product_conversion_code')) has-error @endif'>
@@ -185,7 +175,9 @@
 					</div>
 			</div>
 	</div>
+
 	<!-- Sale -->
+	<hr>
 	<div class="row">
 			<div class="col-xs-5">
 					<div class='form-group  @if ($errors->has('product_sold')) has-error @endif'>
@@ -197,6 +189,11 @@
 					</div>
 			</div>
 			<div class="col-xs-7">
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-5">
 					<div class='form-group  @if ($errors->has('product_sale_margin')) has-error @endif'>
 						{{ Form::label('product_sale_margin', 'Profit Margin',['class'=>'col-sm-5 control-label']) }}
 						<div class='col-sm-7'>
@@ -208,15 +205,10 @@
 						</div>
 					</div>
 			</div>
-	</div>
-
-	<div class="row">
-			<div class="col-xs-6">
-			</div>
-			<div class="col-xs-6">
+			<div class="col-xs-7">
 					<div class='form-group  @if ($errors->has('product_sale_price')) has-error @endif'>
-						{{ Form::label('product_sale_price', 'Sale Price',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
+						{{ Form::label('product_sale_price', 'Sale Price',['class'=>'col-sm-5 control-label']) }}
+						<div class='col-sm-7'>
 							<div class='input-group'>
 								<div class='input-group-addon'>RM</div>
 							{{ Form::text('product_sale_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
@@ -231,17 +223,17 @@
 			<div class="col-xs-6">
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('tax_code')) has-error @endif'>
-						{{ Form::label('tax_code', 'Tax Code',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-							{{ Form::select('tax_code', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
-							@if ($errors->has('tax_code')) <p class="help-block">{{ $errors->first('tax_code') }}</p> @endif
-						</div>
-					</div>
 			</div>
 	</div>
 	<div class="row">
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('tax_code')) has-error @endif'>
+						{{ Form::label('tax_code', 'Tax Code',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-6'>
+							{{ Form::select('tax_code', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
+							@if ($errors->has('tax_code')) <p class="help-block">{{ $errors->first('tax_code') }}</p> @endif
+						</div>
+					</div>
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_unit_charge')) has-error @endif'>

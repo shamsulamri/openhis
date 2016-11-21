@@ -8,7 +8,6 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@include('common.notification')
 <a href='/queue_locations/create' class='btn btn-primary'>Create</a>
 <br>
 <br>

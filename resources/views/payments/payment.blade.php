@@ -34,7 +34,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-default" href="javascript:goBack()" role="button">Cancel</a>
+            <a class="btn btn-default" href="/bill_items/{{ $payment->encounter_id }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

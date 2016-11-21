@@ -8,7 +8,9 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<button class="btn btn-primary" type="submit" value="Submit">Update Status</button>
+					<!--
 					<a class='btn btn-primary' href='/orders/make'>Edit Orders</a>
+					-->
 			</div>
 			<div align="right" class="col-xs-6">
 			@if ($location->location_code == 'pharmacy')
@@ -44,7 +46,7 @@
 	<tr class='{{ $status }}'>
 			<td width='10'>
 					@if (!isset($order->cancel_id))
-					{{ Form::checkbox($order->order_id, 1, $order->order_completed) }}
+					{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
 					@endif
 			</td>
 			<td>

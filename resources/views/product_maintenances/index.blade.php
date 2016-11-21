@@ -25,7 +25,7 @@
 @foreach ($product_maintenances as $product_maintenance)
 	<tr>
 			<td width='200'>
-					{{ date('d F Y, H:i', strtotime($product_maintenance->maintain_datetime)) }}
+					{{ date('d F Y', strtotime($product_maintenance->maintain_date)) }}
 			</td>
 			<td>
 					<a href='{{ URL::to('product_maintenances/'. $product_maintenance->maintain_id . '/edit') }}'>

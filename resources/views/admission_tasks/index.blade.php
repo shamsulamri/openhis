@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Admission Tasks</h1>
+<h1>Inpatient Tasks</h1>
 @if (Auth::user()->authorization->module_support!=1)
 <h3>{{ $ward->ward_name }}</h3>
 @else
