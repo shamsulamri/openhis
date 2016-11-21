@@ -21,7 +21,7 @@
 	@if ($purchase_order_line->purchaseOrder->purchase_posted==0)
 
 					<div class='form-group  @if ($errors->has('line_quantity_ordered')) has-error @endif'>
-						{{ Form::label('line_quantity_ordered', 'Quantity',['class'=>'col-sm-3 control-label']) }}
+						{{ Form::label('line_quantity_ordered', 'Order Quantity',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
 							{{ Form::text('line_quantity_ordered', null, ['class'=>'form-control','placeholder'=>'',]) }}
 							@if ($errors->has('line_quantity_ordered')) <p class="help-block">{{ $errors->first('line_quantity_ordered') }}</p> @endif
@@ -32,7 +32,7 @@
 
 	@else
 					<div class='form-group  @if ($errors->has('line_quantity_ordered')) has-error @endif'>
-						{{ Form::label('line_quantity_ordered', 'Quantity',['class'=>'col-sm-3 control-label']) }}
+						{{ Form::label('line_quantity_ordered', 'Order Quantity',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
 						@if ($purchase_order_line->line_quantity_ordered==0)
 						<label for="line_price" class="form-control">
@@ -64,7 +64,10 @@
 					<div class='form-group  @if ($errors->has('line_expiry_date')) has-error @endif'>
 						<label for='line_expiry_date' class='col-sm-3 control-label'>Expiry Date</label>
 						<div class='col-sm-9'>
-							<input id="line_expiry_date" name="line_expiry_date" type="text">
+							<div class="input-group date">
+								<input data-mask="99/99/9999" name="line_expiry_date" id="line_expiry_date" type="text" class="form-control" value="{{ $purchase_order_line->line_expiry_date }}">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
 							@if ($errors->has('line_expiry_date')) <p class="help-block">{{ $errors->first('line_expiry_date') }}</p> @endif
 						</div>
 					</div>
@@ -105,6 +108,7 @@
 
 	{{ Form::hidden('purchase_id',null) }}
 	<script>
+		/*
 		$(function(){
 				$('#line_expiry_date').combodate({
 						format: "DD/MM/YYYY",
@@ -114,5 +118,15 @@
 						minYear: 2016,
 						customClass: 'select'
 				});    
+		});
+		*/
+
+		$('#line_expiry_date').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
 		});
 	</script>

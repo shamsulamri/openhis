@@ -2,7 +2,6 @@
 
 @section('content')
 <h1>Product List<a href='/products/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></a></h1>
-<br>
 <form action='/product/search' method='post'>
 	<div class='input-group'>
 	<input type='text' class='form-control' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

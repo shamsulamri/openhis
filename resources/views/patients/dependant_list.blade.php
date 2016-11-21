@@ -2,8 +2,7 @@
 
 @section('content')
 @include('patients.id')
-<h1>Dependant List
-</h1>
+<h1>Dependant List</h1>
 <a href='{{ URL::to('patients/dependants/'. $patient->patient_id) }}' class='btn btn-primary'>
 Manage
 </a>

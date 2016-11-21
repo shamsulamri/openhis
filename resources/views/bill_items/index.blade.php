@@ -280,8 +280,8 @@ Interim Bill
 </div>
 @endif
 -->
-<div class="widget style1 gray-bg">
 @if (!$billPosted)
+<div class="widget style1 gray-bg">
 <h4>Post Bill</h4>
 {{ Form::model($bill, ['id'=>'post_form','url'=>'bills', 'class'=>'form-horizontal']) }} 
 			<input type='checkbox' id='post_checkbox' value='1' onchange='javascript:enablePostButton()'>
@@ -296,12 +296,15 @@ Interim Bill
 			<br>
 			<br>
 {{ Form::close() }}
+</h4>
+</div>
 @else
-<div class='alert alert-success'>
+<div class="widget style1 blue-bg">
+<h4>
 This bill has been posted.
+</h4>
 </div>
 @endif
-</div>
 <script>
 	function disablePostButton() {
 			postForm = document.getElementById('post_form');

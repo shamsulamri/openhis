@@ -196,6 +196,16 @@ class Patient extends Model
 			}
 	}
 
+	public function getTitleName()
+	{
+		if ($this->title) {
+				Log::info($this->title->title_name);
+			return strtoupper($this->title->title_name.' '.$this->patient_name);
+		} else {
+			return strtoupper($this->patient_name); 
+		}
+	}
+
 	public function alert()
 	{
 			return $this->hasMany('App\MedicalAlert', 'patient_id', 'patient_id');
@@ -217,7 +227,7 @@ class Patient extends Model
 							group by patient_id
 						) as c on (c.patient_id = b.patient_id)
 						where b.patient_id=".$this->patient_id." group by b.patient_id";
-			Log::info($sql);
+
 			$amount = DB::select($sql);
 
 			$value = 0;
@@ -262,7 +272,6 @@ class Patient extends Model
 							break;
 					}
 					if (!$encounter_completed) {
-							Log::info("Q");
 							Encounter::find($encounter->encounter_id)->delete();
 							$encounter_active=False;
 					}
@@ -290,17 +299,23 @@ class Patient extends Model
 							->first();
 			
 			if ($encounter) {
-					if (!$encounter->discharge) { 
+					Log::info('--->'.$encounter);
+					if ($encounter->discharge) { 
+							if (!$encounter->bill) { 
+									return "Clinically Discharge";
+							}
+					} else {
 							if ($encounter->admission) {
-								return $encounter->admission->bed->bed_name." (".$encounter->admission->bed->ward->ward_name.")";
+									return $encounter->admission->bed->bed_name." (".$encounter->admission->bed->ward->ward_name.")";
 							} else {
 									return $encounter->queue->location->location_name;
 							}
 					}
 			} else {
-				return "";
+				return null;
 			}
 	}
+
 
 	public static function boot()
 	{

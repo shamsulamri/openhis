@@ -3,7 +3,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('maintain_date')) has-error @endif'>
 						{{ Form::label('date', 'Date',['class'=>'col-md-6 control-label']) }}
-						<div class='col-md-5'>
+						<div class='col-md-6'>
 							<div class="input-group date">
 								<input data-mask="99/99/9999" name="maintain_date" id="maintain_date" type="text" class="form-control" value="{{ $product_maintenance->maintain_date }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>

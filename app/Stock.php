@@ -15,7 +15,7 @@ class Stock extends Model
 				'move_code',
 				'store_code',
 				'product_code',
-				'stock_date',
+				'stock_datetime',
 				'stock_quantity',
 				'stock_description',
 				'username',
@@ -32,23 +32,24 @@ class Stock extends Model
 				'store_code'=>'required',
 				'product_code'=>'required',
 				'stock_quantity'=>'required',
-				'stock_date'=>'required|size:16|date_format:d/m/Y H:i',
+				'stock_datetime'=>'required|size:16|date_format:d/m/Y H:i',
 			];
 
 			
 			
 			$messages = [
-				'required' => 'This field is required'
+				'required' => 'This field is required',
+				'stock_datetime.date_format' => 'Invalid date or format'
 			];
 			
 			return validator::make($input, $rules ,$messages);
 	}
 
 	
-	public function setStockDateAttribute($value)
+	public function setStockDatetimeAttribute($value)
 	{
 		if (DojoUtility::validateDateTime($value)==true) {
-			$this->attributes['stock_date'] = DojoUtility::dateTimeWriteFormat($value);
+			$this->attributes['stock_datetime'] = DojoUtility::dateTimeWriteFormat($value);
 		}
 	}
 
@@ -67,9 +68,11 @@ class Stock extends Model
 	{
 		return $this->belongsTo('App\User', 'username','username');
 	}
-
-	public function getStockDate()
+	
+	/*
+	public function getStockDateTime()
 	{
-		return Carbon::createFromFormat('d/m/Y H:i', $this->stock_date);
+		return Carbon::createFromFormat('d/m/Y H:i', $this->stock_datetime);
 	}
+	 */
 }

@@ -35,40 +35,38 @@
   </thead>
 	<tbody>
 @foreach ($patients as $patient)
+	<?php $current_encounter = $patient->getCurrentEncounter(); ?>
 	<tr>
 			<td width='10%'>
 					{{$patient->patient_mrn}}
 			</td>
 			<td>
 					<a href='{{ URL::to('patients/'. $patient->patient_id.'/edit') }}'>
-						@if ($patient->title)
-						{{ strtoupper($patient->title->title_name) }}
-						@endif
-						{{ strtoupper($patient->patient_name) }}
+						{{ $patient->getTitleName() }}
 					</a>
 			</td>
 			<td>
 					{{ $patient->patient_new_ic }}
 			</td>
 			<td>
-					@if (!empty($patient->getCurrentEncounter()))
-							{{ $patient->getCurrentEncounter() }}
+					@if (!empty($current_encounter))
+						<span class='label label-primary'>
+							{{ $current_encounter }}
+						</span>
 					@endif
 			</td>
 			<td width='20'>
 				<div class="tooltip-demo">
 					@if ($patient->outstandingBill()<0)
+						<span class='label label-danger'>
 						<i class="fa fa-exclamation-triangle" data-toggle="tooltip" data-placement="left" title="Outstanding bill"></i>
-					@else
-						<!--
-						<span class='glyphicon glyphicon-ok'></span>
-						-->
+						</span>
 					@endif
 				</div>
 			</td>
 			<td width='20'>
 				<div class="tooltip-demo">
-					@if (empty($patient->getCurrentEncounter()))
+					@if (empty($current_encounter))
 					<a class='btn btn-default btn-xs pull-right' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
 						<i class="fa fa-stethoscope"></i>
 					</a>

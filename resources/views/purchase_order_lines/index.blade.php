@@ -1,14 +1,11 @@
 @extends('layouts.app2')
 
 @section('content')
-@if (Session::has('message'))
-	<br>
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+<?php 
+$grandTotal=0.0; 
+$count=0;
+?>
 @if ($purchase_order->purchase_posted==1)
-		@if (!Session::has('message'))
-		<br>
-		@endif
 		@if ($purchase_order->purchase_received==1)
 				<div class='alert alert-success'>
 				Stock receive on <strong>{{ date('d F Y', strtotime(str_replace('/','-',$purchase_order->receive_datetime))) }}</strong> at <strong>{{ $purchase_order->store->store_name }}</strong>
@@ -21,47 +18,63 @@
 @endif
 @if ($purchase_order->purchase_posted==1)
 	@if ($purchase_order->purchase_received==0)
-	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-default'>Stock Receive</a>
+	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-primary'>Stock Receive</a>
 	@else
-	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-default'>Update</a>
+	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-primary'>Update Purchase Order</a>
 	@endif
 @else
-		@if (!Session::has('message'))
-				<br>
-		@endif
 		@can('module-diet')
-		<a href='/purchase_order/diet/{{ $purchase_id }}' class='btn btn-default'>Diet BOM</a>
+		<a href='/purchase_order/diet/{{ $purchase_id }}' class='btn btn-primary'>Diet BOM</a>
 		@endcan
 @endif
-		<a class="btn btn-default pull-right" target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=purchase_order&id={{ $purchase_id }}" role="button">Print</a> 
-	<br>
-	<br>
-<h5>
-<strong>{{ $purchase_order->supplier->supplier_name }}</strong>
-<br>
-<small>
-{{ $purchase_order->supplier->supplier_street_1 }}
-<br>
-{{ $purchase_order->supplier->supplier_street_2 }}
-<br>
-{{ $purchase_order->supplier->supplier_city }}
-<br>
-{{ $purchase_order->supplier->supplier_postcode }} {{ $purchase_order->supplier->supplier_city }}
-<br>
-@if (!empty($pruchase_order->supplier->sate))
-{{ $purchase_order->supplier->state->state_name }}
+@foreach ($purchase_order_lines as $purchase_order_line)
+	<?php 
+		if (empty($purchase_order_line->deleted_at)) {
+			$grandTotal += $purchase_order_line->line_total;
+		}
+	?>
+@endforeach
+@if ($grandTotal>0 && $purchase_order->purchase_posted==0)
+		<a href='/purchase_order/post?purchase_id={{ $purchase_id }}' class='btn btn-primary'>Post Purchase Order</a>
 @endif
-</small>
+		<a class="btn btn-warning pull-right" target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=purchase_order&id={{ $purchase_id }}" role="button">Print</a> 
+	<br>
+	<br>
+	<div class="row">
+			<div class="col-xs-6">
+				<h4>
+				From:
+				</h4>
+				<address>
+				<strong>{{ $purchase_order->supplier->supplier_name }}</strong><br>
+				{{ $purchase_order->supplier->supplier_street_1 }}
+				<br>
+				{{ $purchase_order->supplier->supplier_street_2 }}
+				<br>
+				{{ $purchase_order->supplier->supplier_city }}
+				<br>
+				{{ $purchase_order->supplier->supplier_postcode }} {{ $purchase_order->supplier->supplier_city }}
+				<br>
+				@if (!empty($pruchase_order->supplier->sate))
+				{{ $purchase_order->supplier->state->state_name }}
+				@endif
+				</address>
+			</div>
+			<div class="col-xs-6">
+				@if ($purchase_order->purchase_received==1)
+				<div class='text-right'>
+						<h4>Invoice No.</h4>
+						<h4 class='text-navy'>{{ $purchase_order->invoice_number }}</h4>
+						<span><strong>Invoice Date:</strong> {{ date('d F Y', strtotime(str_replace('/','-',$purchase_order->invoice_date))) }}</span><br>
+						</strong>
+				</div>
+				@endif
+			</div>
+	</div>
+
+<strong>Purchase Date:</strong> {{ date('d F Y', strtotime(str_replace('/','-',$purchase_order->purchase_date))) }}
 <br>
 <br>
-<br>
-<strong>Date: {{ date('d F Y', strtotime(str_replace('/','-',$purchase_order->purchase_date))) }}</strong>
-</h5>
-<br>
-<?php 
-$grandTotal=0.0; 
-$count=0;
-?>
 @if ($purchase_order_lines->total()>0)
 <table class="table table-condensed">
  <thead>
@@ -79,9 +92,6 @@ $count=0;
 	<tbody>
 @foreach ($purchase_order_lines as $purchase_order_line)
 	<?php 
-		if (empty($purchase_order_line->deleted_at)) {
-			$grandTotal += $purchase_order_line->line_total;
-		}
 		$count += 1;
 	?>
 	<tr>
@@ -137,21 +147,6 @@ $count=0;
 @endif
 </tbody>
 </table>
-@if ($grandTotal>0 && $purchase_order->purchase_posted==0)
-		<a href='/purchase_order/post?purchase_id={{ $purchase_id }}' class='btn btn-default'>Post Purchase Order</a>
-@endif
-@if ($purchase_order->purchase_received==1)
-<h5>
-<strong>
-Invoice number: {{ $purchase_order->invoice_number }}
-</strong>
-</h5>
-<h5>
-<strong>
-Date Receive: {{ date('d F Y', strtotime(str_replace('/','-',$purchase_order->receive_datetime))) }}
-</strong>
-</h5>
-@endif
 @if (isset($search)) 
 	{{ $purchase_order_lines->appends(['search'=>$search])->render() }}
 	@else

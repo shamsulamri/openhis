@@ -142,9 +142,12 @@ if ($_COOKIE['his-navbar']==1) {
 							$name = strtoupper(trim($name));
 							$initials = explode(' ', $name);
 							$initials[0] = trim(substr($initials[0],0,1));
-							if(!empty($initials[1])) { $initials[1] = substr(trim($initials[1]),0,1); }
+							$initial2="";
+							if(!empty($initials[1])) { 
+									$initial2 = substr(trim($initials[1]),0,1); 
+							}
 						?>
-						{{ $initials[0] }}{{ $initials[1] }}
+						<div title='{{ Auth::user()->name }}'>{{ $initials[0] }}{{ $initial2 }}</div>
                     </div>
                 </li>
 				@can('system-administrator')
@@ -301,9 +304,6 @@ if ($_COOKIE['his-navbar']==1) {
             <div class="row full-height">
                     <div class="full-height-scroll white-bg border-left">
 						<div class="col-lg-12">
-								<!--
-								{{ $_COOKIE['his-navbar'] }}
-								-->
 								@yield('content')
 						</div>
 					</div>

@@ -1,7 +1,7 @@
 @if (!empty($patient))
 <div class="row border-bottom gray-bg">
 			<div class='col-sm-10'>
-						<h2>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h2>
+						<h2>{{ $patient->getTitleName() }}</h2>
 						<h6>{{ $patient->patient_mrn }}</h6>
 						<h6>{{ $patient->patientAge() }}</h6>
 						@if ($patient->outstandingBill() < 0) 

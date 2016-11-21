@@ -36,7 +36,7 @@
 		@foreach ($stocks as $stock)
 			<tr>
 					<td>
-							{{ date('d F Y H:i', strtotime($stock->getStockDate())) }}
+							{{ date('d F Y H:i', strtotime($stock->stock_datetime)) }}
 							@if ($stock->user)
 							<br>
 							<small>by {{ $stock->user->name }}</small>

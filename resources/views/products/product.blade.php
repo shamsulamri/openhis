@@ -84,7 +84,7 @@
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_dismantle_material')) has-error @endif'>
-						{{ Form::label('product_dismantle_material', 'Dismantle Material',['class'=>'col-sm-4 control-label']) }}
+						{{ Form::label('product_dismantle_material', 'Assembly',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
 							{{ Form::checkbox('product_dismantle_material', '1',['class'=>'control-label']) }} Item return to pool when exploded.
 							@if ($errors->has('product_dismantle_material')) <p class="help-block">{{ $errors->first('product_dismantle_material') }}</p> @endif

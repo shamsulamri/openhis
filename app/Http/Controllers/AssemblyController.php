@@ -95,7 +95,7 @@ class AssemblyController extends Controller
 						$stock->store_code = $request->store_code;
 						$stock->product_code = $bom->bom_product_code;
 						$stock->stock_quantity = -1*$quantity*$bom->bom_quantity;
-						$stock->stock_date = DojoUtility::now(); 
+						$stock->stock_datetime = DojoUtility::now(); 
 						$stock->stock_description = "Build Assembly: ".$id;
 						$stock->username = Auth::user()->username;
 						$stock->save();
@@ -109,7 +109,7 @@ class AssemblyController extends Controller
 				$stock->store_code = $request->store_code;
 				$stock->product_code = $id;
 				$stock->stock_quantity = $stock->stock_quantity+$quantity;
-				$stock->stock_date = DojoUtility::now(); 
+				$stock->stock_datetime = DojoUtility::now(); 
 				$stock->stock_description = "Build Assembly";
 				$stock->save();
 
@@ -169,7 +169,7 @@ class AssemblyController extends Controller
 						$stock->store_code = 'main';
 						$stock->product_code = $bom_product->bom_product_code;
 						$stock->stock_quantity = $quantity*$bom_product->bom_quantity;
-						$stock->stock_date = DojoUtility::now(); 
+						$stock->stock_datetime = DojoUtility::now(); 
 						$stock->stock_description = "Dismantle Assembly: ".$id;
 						$stock->username = Auth::user()->username;
 						$stock->save();
@@ -182,7 +182,7 @@ class AssemblyController extends Controller
 				$stock->store_code = 'main';
 				$stock->product_code = $id;
 				$stock->stock_quantity = -1*$quantity;
-				$stock->stock_date = DojoUtility::now(); 
+				$stock->stock_datetime = DojoUtility::now(); 
 				$stock->stock_description = "Dismantle Assembly: ".$quantity;
 				$stock->save();
 

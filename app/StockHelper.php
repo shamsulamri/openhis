@@ -14,20 +14,20 @@ class StockHelper
 
 	public function storeOnHand($product_code, $store_code) 
 	{
-			$stock_take = Stock::select('stock_date', 'stock_quantity')
+			$stock_take = Stock::select('stock_datetime', 'stock_quantity')
 							->where('move_code','=','take')
 							->where('product_code','=',$product_code)
 							->where('store_code','=',$store_code)
-							->orderBy('stock_date', 'desc')
+							->orderBy('stock_datetime', 'desc')
 							->first();
 
 			$stock_on_hand=0;
 			if (!empty($stock_take)) {
 					$stock_value = $stock_take->stock_quantity; 
 
-					$take_date = Carbon::createFromFormat('d/m/Y H:i',$stock_take->stock_date);
+					$take_date = Carbon::createFromFormat('d/m/Y H:i',$stock_take->stock_datetime);
 
-					$stocks = Stock::where('stock_date','>=',$take_date)
+					$stocks = Stock::where('stock_datetime','>=',$take_date)
 									->where('product_code','=',$product_code)
 									->where('store_code','=',$store_code)
 									->where('move_code','<>', 'take')

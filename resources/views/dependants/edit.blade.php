@@ -1,9 +1,9 @@
 @extends('layouts.app2')
 
 @section('content')
-<h1>
+<h3>
 Edit Dependant
-</h1>
+</h3>
 
 <br>
 {{ Form::model($dependant, ['route'=>['dependants.update',$dependant->patient_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 

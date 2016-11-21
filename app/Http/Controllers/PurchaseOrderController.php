@@ -47,8 +47,7 @@ class PurchaseOrderController extends Controller
 	public function create()
 	{
 			$purchase_order = new PurchaseOrder();
-			$today = date('d/m/Y', strtotime(Carbon::now()));  
-			$purchase_order->purchase_date = $today;
+			$purchase_order->purchase_date = DojoUtility::today();
 
 			return view('purchase_orders.create', [
 					'purchase_order' => $purchase_order,
@@ -84,16 +83,20 @@ class PurchaseOrderController extends Controller
 			$purchase_order = PurchaseOrder::findOrFail($id);
 			if ($purchase_order->purchase_posted==1) {
 					if ($purchase_order->purchase_received==0) {
-						$purchase_order->receive_datetime = date('d/m/Y H:i', strtotime(Carbon::now())); 
+						//$purchase_order->receive_datetime = date('d/m/Y H:i', strtotime(Carbon::now())); 
+						$purchase_order->receive_datetime = DojoUtility::now();
 					}
-					//$purchase_order->receive_datetime = '03/03/2016 10:33';
-					//return $purchase_order->receive_datetime;
+					$receive_datetime = Carbon::createFromFormat('d/m/Y H:i', $purchase_order->receive_datetime);
+					//$purchase_order->receive_datetime = date('d/m/Y H:i', strtotime('03/11/2016'));
+					//return gettype($purchase_order->receive_datetime);
 			}
+
 			return view('purchase_orders.edit', [
 					'purchase_order'=>$purchase_order,
 					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'maxYear' => Carbon::now()->year,
+					'receive_datetime' => $receive_datetime,
 					]);
 	}
 
@@ -146,7 +149,7 @@ class PurchaseOrderController extends Controller
 					$stock->store_code = $purchase_order->store_code;
 					$stock->move_code = 'receive';
 					$stock->product_code = $product->product_code;
-					$stock->stock_date = DojoUtility::now();
+					$stock->stock_datetime = DojoUtility::now();
 					$stock->stock_quantity = ($item->line_quantity_received + $item->line_quantity_received_2);
 					if ($source->product_conversion_unit>0) {
 						$stock->stock_quantity = ($item->line_quantity_received + $item->line_quantity_received_2)*$source->product_conversion_unit;

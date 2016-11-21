@@ -43,7 +43,7 @@ class StockController extends Controller
 	{
 			$stock = new Stock();
 			$stock->product_code = $product_code;
-			$stock->stock_date = DojoUtility::now();
+			$stock->stock_datetime = DojoUtility::now();
 			$store = Store::find($store_code);
 			return view('stocks.create', [
 					'stock' => $stock,
@@ -57,7 +57,15 @@ class StockController extends Controller
 
 	public function store(Request $request) 
 	{
+
 			$stock = new Stock();
+
+			if (DojoUtility::validateDateTime($request->stock_datetime)==true) {
+				$stock_datetime = Carbon::createFromFormat('d/m/Y H:i', $request->stock_datetime);
+				$stock_datetime = $stock_datetime->format('Y/m/d H:i');
+				$request->stock_datetime = $stock_datetime;
+			}
+
 			$valid = $stock->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
@@ -87,6 +95,7 @@ class StockController extends Controller
 	public function edit($id) 
 	{
 			$stock = Stock::findOrFail($id);
+			$stock->stock_date =  date('d/m/Y', strtotime($stock->stock_datetime));
 			$store = Store::find($stock->store_code);
 			return view('stocks.edit', [
 					'stock'=>$stock,
@@ -148,7 +157,7 @@ class StockController extends Controller
 					->leftJoin('stores as c', 'c.store_code', '=','a.store_code')
 					->where('product_code','=',$request->product_code)
 					->where('a.store_code','=',$request->store_code)
-					->orderBy('stock_date', 'desc')
+					->orderBy('stock_datetime', 'desc')
 					->paginate($this->paginateValue);
 			$product = Product::find($request->product_code);
 			return view('stocks.index', [
@@ -172,7 +181,7 @@ class StockController extends Controller
 
 	public function show($product_code, $store_code=null)
 	{
-			$stocks = Stock::orderBy('stock_date','desc')
+			$stocks = Stock::orderBy('stock_datetime','desc')
 					->leftJoin('stock_movements as b', 'b.move_code', '=','stocks.move_code')
 					->leftJoin('stores as c', 'c.store_code', '=','stocks.store_code')
 					->where('product_code','=',$product_code)
