@@ -57,6 +57,11 @@ class Consultation extends Model
 			return $this->hasOne('App\User','id','user_id');
 	}
 
+ 	public function bill()
+	{
+			return $this->hasOne('App\Bill','encounter_id','encounter_id');
+	}
+
 	public function orders() 
 	{
 			return $this->hasMany('App\Order', 'consultation_id');

@@ -27,6 +27,7 @@
 	?>
 	<tr>
 			<td>
+			
 					{{ date('d F, H:i', strtotime($consultation->created_at)) }}
 					<br>
 					<small>
@@ -55,7 +56,9 @@
 					</a>
 			</td>
 			<td align='right'>
-					<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Edit</a>
+					@if (empty($consultation->bill))
+							<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Edit</a>
+					@endif
 			</td>
 	</tr>
 @endforeach
