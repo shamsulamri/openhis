@@ -18,6 +18,7 @@ use App\Consultation;
 use App\Set;
 use App\OrderSet;
 use App\DojoUtility;
+use App\ProductCategory;
 
 class OrderProductController extends Controller
 {
@@ -140,11 +141,23 @@ class OrderProductController extends Controller
 	
 	public function search(Request $request)
 	{
+			/*
 			if ($request->set_code=='drug_history') {
 				return redirect('/order_product/drug');
 			}
-			if (!empty($request->set_code)) {
-				
+			 */
+			if (!empty($request->search)) {
+				$order_products = DB::table('products')
+					->where('product_name','like','%'.$request->search.'%')
+					->where('product_sold','1')
+					->orderBy('product_name');
+					
+				if (!empty($request->categories)) {
+					$order_products = $order_products->where('category_code',$request->categories);
+				}
+
+				$order_products = $order_products->paginate($this->paginateValue);
+			} else {
 				$orderSets = DB::table('order_sets')
 							->select('product_code')
 							->where('set_code','=',$request->set_code)
@@ -152,13 +165,6 @@ class OrderProductController extends Controller
 
 				$order_products = DB::table('products')
 					->whereIn('product_code', $orderSets)
-					->orderBy('product_name')
-					->paginate($this->paginateValue);
-			} else {
-				$order_products = DB::table('products')
-					->where('product_name','like','%'.$request->search.'%')
-					->where('product_sold','1')
-					->orWhere('product_code', 'like','%'.$request->search.'%')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
 			}
@@ -175,6 +181,8 @@ class OrderProductController extends Controller
 					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history'),
 					'set_value' => $request->set_code,
 					'page' => $request->page,
+					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'category_code'=> $request->categories,
 					]);
 	}
 
@@ -207,6 +215,8 @@ class OrderProductController extends Controller
 					'tab'=>'drug',
 					'consultOption' => 'consultation',
 					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history'),
+					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'category_code'=> null,
 					'set_value' => $request->set_code,
 					'page' => $request->page,
 					'dojo' => new DojoUtility(),

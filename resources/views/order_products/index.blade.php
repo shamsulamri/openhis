@@ -19,6 +19,7 @@
 				<span class='input-group-btn'>
 					<button class="btn btn-default" type="submit" value="Submit"><span class='glyphicon glyphicon-search'></span></button>
 				</span>
+	{{ Form::select('categories', $categories, $category_code, ['class'=>'form-control']) }}
 			</div>
 			</div>
 	</div>
