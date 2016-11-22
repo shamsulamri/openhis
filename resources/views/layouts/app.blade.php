@@ -114,9 +114,10 @@ if (!isset($_COOKIE['his-navbar'])) {
 }
 if ($_COOKIE['his-navbar']==1) {
 ?>
-<body class="mini-navbar full-height-layout">
+<body class="mini-navbar">
 <?php } else { ?>
-<body class="full-height-layout">
+<body>
+<!-- full-height-layout -->
 <?php } ?>
     <div id="wrapper">
 
@@ -160,33 +161,33 @@ if ($_COOKIE['his-navbar']==1) {
 						<h4>&nbsp;Patient</h4>
 				@endcan
 				@can('module-patient')
-				<li><a href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
-				<li><a href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
-				<li><a href="{{ url('/queues') }}"><i class="fa fa-th-list"></i><span class='nav-label'>Queues</span></a></li>
-				<li><a href="{{ url('/admissions') }}"><i class="fa fa-hospital-o"></i><span class='nav-label'>Admissions</span></a></li>
-				<li><a href="{{ url('/bed_bookings?type=preadmission') }}"><i class="glyphicon glyphicon-time"></i><span class='nav-label'>Preadmissions</span></a></li>
-				<li><a href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
-				<li><a href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
+				<li><a title='Patient List' href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
+				<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
+				<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-th-list"></i><span class='nav-label'>Queues</span></a></li>
+				<li><a title='Admissions' href="{{ url('/admissions') }}"><i class="fa fa-hospital-o"></i><span class='nav-label'>Admissions</span></a></li>
+				<li><a title='Preadmissions' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="glyphicon glyphicon-time"></i><span class='nav-label'>Preadmissions</span></a></li>
+				<li><a title='Discharges' href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
+				<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
 				@endcan
 				@can('system-administrator')
 						<h4>&nbsp;Consultation</h4>
 				@endcan	
 				<!-- Consultation Module -->
 				@can('module-consultation')
-				<li><a href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
-				<li><a href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
+				<li><a title='Patient List' href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
+				<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
 				<h4>&nbsp;</h4>
 				@if (!empty($consultation) && !empty($patient))
-					<li><a href="/medical_alerts"><i class="fa fa-exclamation-circle"></i><span class='nav-label'>Medical Alerts</span></a></li>
+					<li><a title='Medical Alerts' href="/medical_alerts"><i class="fa fa-exclamation-circle"></i><span class='nav-label'>Medical Alerts</span></a></li>
 					@if ($consultation->encounter->encounter_code=='inpatient')
-					<li><a href="/diet"><i class="fa fa-cutlery"></i><span class='nav-label'>Diet</a></li>
+					<li><a title='Diet' href="/diet"><i class="fa fa-cutlery"></i><span class='nav-label'>Diet</a></li>
 					@endif
 					@if ($patient->gender_code=='P')
-					<li><a href="/obstetric"><i class="fa fa-user"></i><span class='nav-label'>Obstetric History</span></a></li>
-					<li><a href="/newborns"><i class="glyphicon glyphicon-baby-formula"></i><span class='nav-label'>Newborn</span></a></li>
+					<li><a title='Obstetic History' href="/obstetric"><i class="fa fa-user"></i><span class='nav-label'>Obstetric History</span></a></li>
+					<li><a title='Newborn Details' href="/newborns"><i class="glyphicon glyphicon-baby-formula"></i><span class='nav-label'>Newborn Details</span></a></li>
 					@endif
-					<li><a href="/medical_certificates/create"><i class="fa fa-certificate"></i><span class='nav-label'>Medical Certificate</span></a></li>
-					<li><a href="/documents?patient_mrn={{ $patient->patient_mrn }}"><i class="fa fa-files-o"></i><span class='nav-label'>Documents</span></a></li>
+					<li><a title='Medical Certificate' href="/medical_certificates/create"><i class="fa fa-certificate"></i><span class='nav-label'>Medical Certificate</span></a></li>
+					<li><a title='Medical Documents' href="/documents?patient_mrn={{ $patient->patient_mrn }}"><i class="fa fa-files-o"></i><span class='nav-label'>Documents</span></a></li>
 				@endif
 				@endcan
 

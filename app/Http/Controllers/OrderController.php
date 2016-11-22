@@ -73,13 +73,16 @@ class OrderController extends Controller
 					'order_is_discharge',
 					'order_completed',
 					'order_report',
+					'category_name',
 					];
 			$orders = DB::table('orders as a')
 					->select($fields)
 					->join('products as b','a.product_code','=','b.product_code')
 					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
 					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
+					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
 					->where('a.encounter_id','=',Session::get('encounter_id'))
+					->orderBy('b.category_code')
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
@@ -95,7 +98,6 @@ class OrderController extends Controller
 
 	public function create($product_code)
 	{
-			Log::info("X");
 			$consultation_id = Session::get('consultation_id');
 			$product=Product::find($product_code);
 			$order = new Order();

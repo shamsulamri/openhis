@@ -42,6 +42,7 @@ class PatientController extends Controller
 	{
 
 			$patients = Patient::orderBy('patient_id','desc')
+					->where('patient_mrn','=','999')
 					->paginate($this->paginateValue);
 			return view('patients.index', [
 					'patients'=>$patients,

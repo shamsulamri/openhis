@@ -25,6 +25,7 @@
     <th>MRN</th> 
     <th>Name</th>
     <th>Identification</th>
+    <th>Registration Date</th>
     <th>Encounter</th>
     <th></th>
     <th></th>
@@ -47,6 +48,9 @@
 			</td>
 			<td>
 					{{ $patient->patient_new_ic }}
+			</td>
+			<td>
+					{{ date('d F Y', strtotime($patient->created_at)) }}
 			</td>
 			<td>
 					@if (!empty($current_encounter))

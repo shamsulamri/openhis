@@ -27,11 +27,13 @@ class ConsultationDiagnosisController extends Controller
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 			
 			$consultation_diagnoses = DB::table('consultation_diagnoses as a')
-					->select('id', 'a.created_at', 'diagnosis_clinical','diagnosis_type')
+					->select('id', 'a.created_at', 'diagnosis_clinical','diagnosis_type','diagnosis_is_principal')
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
 					->where('encounter_id','=',$consultation->encounter_id)
+					->orderBy('diagnosis_is_principal', 'desc')
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
+
 
 			if ($consultation_diagnoses->count()==0) {
 					return $this->create();
@@ -70,6 +72,9 @@ class ConsultationDiagnosisController extends Controller
 			if ($valid->passes()) {
 					$consultation_diagnosis = new ConsultationDiagnosis($request->all());
 					$consultation_diagnosis->id = $request->id;
+					if ($consultation_diagnosis->diagnosis_is_principal) {
+							$this->changeAllDiagnosisToSecondary();
+					}
 					$consultation_diagnosis->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/consultation_diagnoses/');
@@ -103,6 +108,9 @@ class ConsultationDiagnosisController extends Controller
 			$valid = $consultation_diagnosis->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					if ($consultation_diagnosis->diagnosis_is_principal) {
+							$this->changeAllDiagnosisToSecondary();
+					}
 					$consultation_diagnosis->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/consultation_diagnoses');
@@ -116,6 +124,22 @@ class ConsultationDiagnosisController extends Controller
 			}
 	}
 	
+	public function changeAllDiagnosisToSecondary() 
+	{
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+			$diagnoses = DB::table('consultation_diagnoses as a')
+					->select('id')
+					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
+					->where('encounter_id','=',$consultation->encounter_id)
+					->get();
+
+			foreach ($diagnoses as $diagnosis) {
+					DB::table('consultation_diagnoses')
+							->where('id',$diagnosis->id)
+							->update(['diagnosis_is_principal'=>'0']);
+			}
+
+	}
 	public function delete($id)
 	{
 		$consultation = Consultation::findOrFail(Session::get('consultation_id'));

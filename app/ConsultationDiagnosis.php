@@ -13,6 +13,7 @@ class ConsultationDiagnosis extends Model
 	protected $fillable = [
 				'consultation_id',
 				'diagnosis_type',
+				'diagnosis_is_principal',
 				'diagnosis_clinical'];
 
 	public function validate($input, $method) {
@@ -28,5 +29,11 @@ class ConsultationDiagnosis extends Model
 			
 			return validator::make($input, $rules ,$messages);
 	}
+
+	public function diagnosisType()
+	{
+			return $this->belongsTo('App\DiagnosisType', 'diagnosis_type','type_code');
+	}
+
 
 }

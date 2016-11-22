@@ -1,12 +1,5 @@
 
 
-@if (!empty($consultation->encounter->discharge->discharge_id))
-<div class="row gray-bg">
-			<div class='col-sm-10'>
-					<h3 class="text-danger"><i class="fa fa-warning"></i>Warning you are editting discharged cases.</h3>
-			</div>
-</div>
-@endif
 <div class="row border-bottom gray-bg">
 			<div class='col-sm-10'>
 						<h2>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h2>
@@ -24,6 +17,14 @@
 			</div>
 </div>
 
+@if (!empty($consultation->encounter->discharge->discharge_id))
+<div class="row white-bg">
+			<br>
+			<div class='col-sm-10'>
+					<h3 class="text-danger"><i class="fa fa-warning"></i>Warning you are editting discharged cases.</h3>
+			</div>
+</div>
+@endif
 @if (count($patient->alert)>0)
 	<br>
 	<div class='alert alert-danger' role='alert'>
@@ -41,8 +42,6 @@
 
 <div class="btn-group" role="group" aria-label="...">
     <a class="btn btn-success" href="/consultations/progress/{{ $consultation->consultation_id }}" role="button">Progress</a>
-</div>
-<div class="btn-group" role="group" aria-label="...">
 	<a href="/consultations/{{ $consultation->consultation_id }}/edit" class="btn btn-primary">Clinical Notes</a>
 	<a href="/consultation_diagnoses" class="btn btn-primary">Diagnoses</a>
 	<a href="/consultation_procedures" class="btn btn-primary">Procedures</a>

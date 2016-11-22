@@ -9,5 +9,4 @@ Patient Demography
 {{ Form::model($patient, ['route'=>['patients.update',$patient->patient_id],'method'=>'PUT', 'class'=>'form-horizontal','enctype'=>'multipart/form-data']) }} 
 	@include('patients.patient')
 {{ Form::close() }}
-
 @endsection

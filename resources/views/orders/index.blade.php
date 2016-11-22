@@ -6,7 +6,10 @@
 @if ($orders->total()>0)
 <table class="table table-condensed">
 	<tbody>
-<?php $ago='';?>
+<?php 
+$ago='';
+$category='';
+?>
 @foreach ($orders as $order)
 	<?php $status='';?>
 
@@ -28,7 +31,16 @@
 	</tr>
 	@endif
 	-->
+	@if ($category != $order->category_name)
+	<tr bgcolor='#efefef'>
+			<td colspan=2>
+			{{ $order->category_name }}
+			</td>
+	</tr>
+		<?php $category=$order->category_name; ?>	
+	@endif
 	<tr>
+			
 			<td>
 			@if (isset($order->cancel_id)) 
 					<a href='{{ URL::to('order_cancellations/'. $order->cancel_id) }}'>

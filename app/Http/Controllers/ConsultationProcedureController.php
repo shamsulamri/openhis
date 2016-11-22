@@ -26,9 +26,10 @@ class ConsultationProcedureController extends Controller
 			$consultation = Consultation::find(Session::get('consultation_id'));
 
 			$consultation_procedures = DB::table('consultation_procedures as a')
-					->select('id', 'a.created_at', 'procedure_description')
+					->select('id', 'a.created_at', 'procedure_description','procedure_is_principal')
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
 					->where('encounter_id','=',$consultation->encounter_id)
+					->orderBy('procedure_is_principal', 'desc')
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
@@ -72,6 +73,9 @@ class ConsultationProcedureController extends Controller
 			if ($valid->passes()) {
 					$consultation_procedure = new ConsultationProcedure($request->all());
 					$consultation_procedure->id = $request->id;
+					if ($consultation_procedure->procedure_is_principal) {
+							$this->changeAllProcedureToSecondary();
+					}
 					$consultation_procedure->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/consultation_procedures/');
@@ -106,6 +110,9 @@ class ConsultationProcedureController extends Controller
 			$valid = $consultation_procedure->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					if ($consultation_procedure->procedure_is_principal) {
+							$this->changeAllProcedureToSecondary();
+					}
 					$consultation_procedure->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/consultation_procedures');
@@ -117,6 +124,25 @@ class ConsultationProcedureController extends Controller
 							])
 							->withErrors($valid);			
 			}
+	}
+
+	public function changeAllProcedureToSecondary() 
+	{
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+			$procedures = DB::table('consultation_procedures as a')
+					->select('id')
+					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
+					->where('encounter_id','=',$consultation->encounter_id)
+					->get();
+
+			Log::info($procedures);
+
+			foreach ($procedures as $procedure) {
+					DB::table('consultation_procedures')
+							->where('id',$procedure->id)
+							->update(['procedure_is_principal'=>'0']);
+			}
+
 	}
 	
 	public function delete($id)

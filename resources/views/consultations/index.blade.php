@@ -16,7 +16,7 @@
     <th>Date</th>
     <th>Name</th> 
     <th>Room/Bed</th> 
-	<th>Complain</th>
+	<th>Clinical Notes</th>
 	<th></th>
 	</tr>
   </thead>

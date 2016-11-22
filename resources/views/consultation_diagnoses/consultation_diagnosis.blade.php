@@ -9,11 +9,20 @@
         </div>
     </div>
 
+	<!--
     <div class='form-group  @if ($errors->has('diagnosis_type')) has-error @endif'>
         {{ Form::label('diagnosis_type', 'Type',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
      		{{ Form::select('diagnosis_type', $diagnosis_type,null, ['class'=>'form-control','maxlength'=>'1']) }}
             @if ($errors->has('diagnosis_type')) <p class="help-block">{{ $errors->first('diagnosis_type') }}</p> @endif
+        </div>
+    </div>
+	-->
+    <div class='form-group  @if ($errors->has('diagnosis_is_principal')) has-error @endif'>
+        {{ Form::label('diagnosis_is_principal', '&nbsp;',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::checkbox('diagnosis_is_principal', '1') }} Principal diagnosis
+            @if ($errors->has('diagnosis_is_principal')) <p class="help-block">{{ $errors->first('diagnosis_is_principal') }}</p> @endif
         </div>
     </div>
 

@@ -25,6 +25,7 @@
 	<br>	
 	<div class="row">
 			<div class="col-xs-12">
+			<h4>Order Sets</h4>
             {{ Form::select('set_code', $sets,$set_value, ['class'=>'form-control','maxlength'=>'10','onchange'=>'orderSet()','id'=>'orderset']) }}
 			</div>
 	</div>

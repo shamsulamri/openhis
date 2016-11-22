@@ -7,6 +7,7 @@
 		<ul class="nav nav-tabs">
 				<li class="active"><a data-toggle="tab" href="#tab-1">Demography</a></li>
 				<li class=""><a data-toggle="tab" href="#tab-3">Contact Information</a></li>
+				<li class=""><a data-toggle="tab" href="#tab-4">Work Information</a></li>
 				<li class=""><a data-toggle="tab" href="#tab-5">Photo</a></li>
 		</ul>
 		<div class="tab-content">
@@ -247,23 +248,32 @@
 									<h4>Current Address</h4>
 									<hr>
 									<div class='form-group  @if ($errors->has('patient_cur_street_1')) has-error @endif'>
-										{{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
-										<div class='col-sm-10'>
+										{{ Form::label('Street 1', 'Address 1',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
 											{{ Form::text('patient_cur_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 											@if ($errors->has('patient_cur_street_1')) <p class="help-block">{{ $errors->first('patient_cur_street_1') }}</p> @endif
 										</div>
 									</div>
 
 									<div class='form-group  @if ($errors->has('patient_cur_street_2')) has-error @endif'>
-										{{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-2 control-label']) }}
-										<div class='col-sm-10'>
+										{{ Form::label('Street 2', 'Address 2',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
 											{{ Form::text('patient_cur_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 											@if ($errors->has('patient_cur_street_2')) <p class="help-block">{{ $errors->first('patient_cur_street_2') }}</p> @endif
 										</div>
 									</div>
 
 									<div class="row">
-											<div class="col-xs-8">
+											<div class="col-xs-6">
+												<div class='form-group  @if ($errors->has('patient_cur_postcode')) has-error @endif'>
+														{{ Form::label('Postcode', 'Postcode',['class'=>'col-md-6 control-label']) }}
+														<div class='col-md-6'>
+															{{ Form::text('patient_cur_postcode', null, ['class'=>'form-control','data-mask'=>'99999','placeholder'=>'','maxlength'=>'5','onblur'=>'current_postcode_change()','id'=>'patient_cur_postcode']) }}
+															@if ($errors->has('patient_cur_postcode')) <p class="help-block">{{ $errors->first('patient_cur_postcode') }}</p> @endif
+														</div>
+												</div>
+											</div>
+											<div class="col-xs-6">
 												<div class='form-group  @if ($errors->has('patient_cur_city')) has-error @endif'>
 														{{ Form::label('City', 'City',['class'=>'col-md-3 control-label']) }}
 														<div class='col-md-9'>
@@ -272,27 +282,18 @@
 														</div>
 												</div>
 											</div>
-											<div class="col-xs-4">
-												<div class='form-group  @if ($errors->has('patient_cur_postcode')) has-error @endif'>
-														{{ Form::label('Postcode', 'Postcode',['class'=>'col-md-5 control-label']) }}
-														<div class='col-md-7'>
-															{{ Form::text('patient_cur_postcode', null, ['class'=>'form-control','data-mask'=>'99999','placeholder'=>'','maxlength'=>'5','onblur'=>'current_postcode_change()','id'=>'patient_cur_postcode']) }}
-															@if ($errors->has('patient_cur_postcode')) <p class="help-block">{{ $errors->first('patient_cur_postcode') }}</p> @endif
-														</div>
-												</div>
-											</div>
 									</div>
 
 									<div class='form-group  @if ($errors->has('patient_cur_state')) has-error @endif'>
-										{{ Form::label('State', 'State',['class'=>'col-md-2 control-label']) }}
-										<div class='col-md-10'>
+										{{ Form::label('State', 'State',['class'=>'col-md-3 control-label']) }}
+										<div class='col-md-9'>
 											{{ Form::select('patient_cur_state', $state, null, ['class'=>'form-control','maxlength'=>'10','id'=>'patient_cur_state']) }}
 											@if ($errors->has('patient_cur_state')) <p class="help-block">{{ $errors->first('patient_cur_state') }}</p> @endif
 										</div>
 									</div>
 									<div class='form-group  @if ($errors->has('patient_cur_country')) has-error @endif'>
-										{{ Form::label('Country', 'Country',['class'=>'col-md-2 control-label']) }}
-										<div class='col-md-10'>
+										{{ Form::label('Country', 'Country',['class'=>'col-md-3 control-label']) }}
+										<div class='col-md-9'>
 											{{ Form::select('patient_cur_country', $nation,null, ['class'=>'form-control','maxlength'=>'10']) }}
 											@if ($errors->has('patient_cur_country')) <p class="help-block">{{ $errors->first('patient_cur_country') }}</p> @endif
 										</div>
@@ -303,23 +304,32 @@
 									<h4>Permanent Address</h4>
 									<hr>
 									<div class='form-group  @if ($errors->has('patient_per_street_1')) has-error @endif'>
-										{{ Form::label('Street 1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
-										<div class='col-sm-10'>
+										{{ Form::label('Address 1', 'Address 1',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
 											{{ Form::text('patient_per_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 											@if ($errors->has('patient_per_street_1')) <p class="help-block">{{ $errors->first('patient_per_street_1') }}</p> @endif
 										</div>
 									</div>
 
 									<div class='form-group  @if ($errors->has('patient_per_street_2')) has-error @endif'>
-										{{ Form::label('Street 2', 'Street 2',['class'=>'col-sm-2 control-label']) }}
-										<div class='col-sm-10'>
+										{{ Form::label('Address 2', 'Address 2',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
 											{{ Form::text('patient_per_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 											@if ($errors->has('patient_per_street_2')) <p class="help-block">{{ $errors->first('patient_per_street_2') }}</p> @endif
 										</div>
 									</div>
 
 									<div class="row">
-											<div class="col-xs-8">
+											<div class="col-xs-6">
+													<div class='form-group  @if ($errors->has('patient_per_postcode')) has-error @endif'>
+														{{ Form::label('Postcode', 'Postcode',['class'=>'col-md-6 control-label']) }}
+														<div class='col-md-6'>
+															{{ Form::text('patient_per_postcode', null, ['class'=>'form-control','data-mask'=>'99999','placeholder'=>'','maxlength'=>'5','id'=>'patient_per_postcode','onblur'=>'permanent_postcode_change()']) }}
+															@if ($errors->has('patient_per_postcode')) <p class="help-block">{{ $errors->first('patient_per_postcode') }}</p> @endif
+														</div>
+													</div>
+											</div>
+											<div class="col-xs-6">
 													 <div class='form-group  @if ($errors->has('patient_per_city')) has-error @endif'>
 														{{ Form::label('City', 'City',['class'=>'col-md-3 control-label']) }}
 														<div class='col-md-9'>
@@ -328,27 +338,18 @@
 														</div>
 													</div>
 											</div>
-											<div class="col-xs-4">
-													<div class='form-group  @if ($errors->has('patient_per_postcode')) has-error @endif'>
-														{{ Form::label('Postcode', 'Postcode',['class'=>'col-md-5 control-label']) }}
-														<div class='col-md-7'>
-															{{ Form::text('patient_per_postcode', null, ['class'=>'form-control','data-mask'=>'99999','placeholder'=>'','maxlength'=>'5','id'=>'patient_per_postcode','onblur'=>'permanent_postcode_change()']) }}
-															@if ($errors->has('patient_per_postcode')) <p class="help-block">{{ $errors->first('patient_per_postcode') }}</p> @endif
-														</div>
-													</div>
-											</div>
 									</div>
 								   
 									<div class='form-group  @if ($errors->has('patient_per_state')) has-error @endif'>
-										{{ Form::label('State', 'State',['class'=>'col-md-2 control-label']) }}
-										<div class='col-md-10'>
+										{{ Form::label('State', 'State',['class'=>'col-md-3 control-label']) }}
+										<div class='col-md-9'>
 											{{ Form::select('patient_per_state', $state, null, ['class'=>'form-control','maxlength'=>'10','id'=>'patient_per_state']) }}
 											@if ($errors->has('patient_per_state')) <p class="help-block">{{ $errors->first('patient_per_state') }}</p> @endif
 										</div>
 									</div>
 									<div class='form-group  @if ($errors->has('patient_per_country')) has-error @endif'>
-										{{ Form::label('Country', 'Country',['class'=>'col-md-2 control-label']) }}
-										<div class='col-md-10'>
+										{{ Form::label('Country', 'Country',['class'=>'col-md-3 control-label']) }}
+										<div class='col-md-9'>
 											{{ Form::select('patient_per_country', $nation,null, ['class'=>'form-control','maxlength'=>'10']) }}
 											@if ($errors->has('patient_per_country')) <p class="help-block">{{ $errors->first('patient_per_country') }}</p> @endif
 										</div>
@@ -447,7 +448,6 @@
 				<div>	
 			<div>
 	</div>
-
 <script>
 		$('#patient_birthdate').datepicker({
 						format: "dd/mm/yyyy",
@@ -532,5 +532,4 @@
 		}
 
 		$('.clockpicker').clockpicker();
-
 </script>
