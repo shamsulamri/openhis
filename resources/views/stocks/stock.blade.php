@@ -86,4 +86,15 @@
 		});
 
 		$('.clockpicker').clockpicker();
-	</script>
+
+         $(document).ready(function(){
+             $("#form").validate({
+                 rules: {
+                    stock_quantity: {
+							 number: true,
+					},
+				 }
+             });
+        });
+
+    </script>

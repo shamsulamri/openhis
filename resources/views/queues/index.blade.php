@@ -2,7 +2,6 @@
 
 @section('content')
 <h1>Queue List</h1>
-<br>
 <form action='/queue/search' method='post' name='myform'>
 	<!--
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

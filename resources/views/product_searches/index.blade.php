@@ -20,12 +20,6 @@
 	<input type='hidden' name="return_id" value="{{ $return_id }}">
 </form>
 <br>
-@if (Session::has('message'))
-	<br>
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@else
-	<br>
-@endif
 @if ($product_searches->total()>0)
 <table class="table table-condensed">
 	<tbody>
@@ -71,7 +65,7 @@
 <script>
 	var frameLine = parent.document.getElementById('frameLine');
 	@if ($reason=='purchase_order')
-	frameLine.src='/purchase_order_lines/index/{{ $purchase_id }}';
+	frameLine.src='/purchase_order_lines/{{ $line_id }}/edit';
 	@endif
 	@if ($reason=='bom')
 	frameLine.src='/bill_materials/index/{{ $product_code }}';

@@ -157,6 +157,10 @@ class OrderDrugController extends Controller
 
 			if ($valid->passes()) {
 					$order_drug->save();
+
+					$order = Order::find($order_drug->order_id);
+					$order->post_id=0;
+					$order->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/orders');
 			} else {

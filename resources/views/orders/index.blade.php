@@ -47,11 +47,7 @@ $category='';
 					<strike>	{{ ucfirst(strtoupper($order->product_name)) }}</strike>
 					</a>
 			@elseif ($order->order_completed==0) 
-					@if ($order->post_id>0)
-						<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>
-					@elseif ($order->post_id==0)
-						<a href='{{ URL::to('orders/'. $order->order_id . '/edit') }}'>
-					@endif
+					<a href='{{ URL::to('orders/'. $order->order_id . '/edit') }}'>
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>
 			@else

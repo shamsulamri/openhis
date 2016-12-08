@@ -28,6 +28,8 @@ use App\Encounter;
 use App\EncounterHelper;
 use App\Postcode;
 use Carbon\Carbon;
+use App\AMQPHelper as Amqp;
+
 
 class PatientController extends Controller
 {
@@ -41,6 +43,8 @@ class PatientController extends Controller
 	public function index()
 	{
 
+			//Amqp::pushMessage('lab','This is a new message');
+
 			$patients = Patient::orderBy('patient_id','desc')
 					->where('patient_mrn','=','999')
 					->paginate($this->paginateValue);
@@ -51,10 +55,12 @@ class PatientController extends Controller
 
 	public function create()
 	{
+
 			$patient = new Patient();
 			$patient->patient_is_unknown=0;
 			$patient->patient_cur_country='my';
 			$patient->patient_per_country='my';
+
 			return view('patients.create', [
 					'patient' => $patient,
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),

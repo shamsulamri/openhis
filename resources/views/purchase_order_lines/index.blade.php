@@ -20,7 +20,7 @@ $count=0;
 	@if ($purchase_order->purchase_received==0)
 	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-primary'>Stock Receive</a>
 	@else
-	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-primary'>Update Purchase Order</a>
+	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-default'>Update Invoice Information</a>
 	@endif
 @else
 		@can('module-diet')
@@ -42,9 +42,7 @@ $count=0;
 	<br>
 	<div class="row">
 			<div class="col-xs-6">
-				<h4>
 				From:
-				</h4>
 				<address>
 				<strong>{{ $purchase_order->supplier->supplier_name }}</strong><br>
 				{{ $purchase_order->supplier->supplier_street_1 }}
@@ -61,18 +59,19 @@ $count=0;
 				</address>
 			</div>
 			<div class="col-xs-6">
-				@if ($purchase_order->purchase_received==1)
 				<div class='text-right'>
+				@if ($purchase_order->purchase_received==1)
 						<h4>Invoice No.</h4>
 						<h4 class='text-navy'>{{ $purchase_order->invoice_number }}</h4>
-						<span><strong>Invoice Date:</strong> {{ date('d F Y', strtotime(str_replace('/','-',$purchase_order->invoice_date))) }}</span><br>
-						</strong>
-				</div>
+						<span><strong>Invoice Date:</strong> {{ date('d/m/Y', strtotime(str_replace('/','-',$purchase_order->invoice_date))) }}</span><br>
+				@else	
+				<strong>Purchase ID:</strong> {{ $purchase_order->purchase_id }}<br>
+				<strong>Purchase Date:</strong> {{ date('d/m/Y', strtotime(str_replace('/','-',$purchase_order->purchase_date))) }}
 				@endif
+				</div>
 			</div>
 	</div>
 
-<strong>Purchase Date:</strong> {{ date('d F Y', strtotime(str_replace('/','-',$purchase_order->purchase_date))) }}
 <br>
 <br>
 @if ($purchase_order_lines->total()>0)
@@ -135,14 +134,9 @@ $count=0;
 @endif
 @if ($grandTotal>0)
 	<tr>
-		<td></td>
-		<td></td>
-		<td width='50' align='right'></td>
-		<td width='10' align='right'><br><strong>Total</strong></td>
+		<td colspan='4' align='right'><br><strong>Grand Total</strong></td>
 		<td width='20' align='right'><br>{{ number_format($grandTotal,2) }}</td>
-		@if ($purchase_order->purchase_posted==0)
 		<td></td>
-		@endif
 	</tr>
 @endif
 </tbody>

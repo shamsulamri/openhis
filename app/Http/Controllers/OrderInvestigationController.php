@@ -134,6 +134,9 @@ class OrderInvestigationController extends Controller
 			if ($valid->passes() && $valid2->passes()) {
 					$order_investigation->save();
 					
+					$order = Order::find($order_investigation->order_id);
+					$order->post_id=0;
+					$order->save();
 
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/orders');

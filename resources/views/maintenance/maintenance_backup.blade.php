@@ -9,10 +9,12 @@
 				<a href="{{ url('/patients') }}">Patients</a><br>
 				<a href="{{ url('/encounters') }}">Encounters</a><br>
 				<a href="{{ url('/queues') }}">Location Queues</a><br>
-				<a href="{{ url('/order_queues') }}">Order Tasks</a><br>
+				<a href="{{ url('/order_queues') }}">Outpatient Tasks</a><br>
+				<!--
 				<a href="{{ url('/bills') }}">Bills</a><br>
 				<a href="{{ url('/payments') }}">Payments</a><br>
 				<a href="{{ url('/deposits') }}">Deposits</a><br>
+				-->
 				<a href="{{ url('/sponsors') }}">Sponsors</a><br>
 			</div>
 			<div class="col-xs-6">
@@ -22,8 +24,10 @@
 				<a href="{{ url('/referrals') }}">Referral Types</a><br>
 				<a href="{{ url('/patient_types') }}">Patient Types</a><br>
 				<a href="{{ url('/encounter_types') }}">Encounter Types</a><br>
+				<!--
 				<a href="{{ url('/ward_discharges') }}">Ward Discharges</a><br>
 				<a href="{{ url('/ward_arrivals') }}">Ward Arrivals</a><br>
+				-->
 			</small>
 			</div>
 	</div>
@@ -171,8 +175,6 @@
 				<a href="{{ url('/occupations') }}">Occupations</a><br>
 				<a href="{{ url('/marital_statuses') }}">Marital Statuses</a><br>
 				<a href="{{ url('/titles') }}">Titles</a><br>
-				<a href="{{ url('/employers') }}">Employers</a><br>
-				<a href="{{ url('/care_organisations') }}">Care Organisations</a><br>
 				<a href="{{ url('/unit_measures') }}">Unit Measures</a><br>
 				<a href="{{ url('/periods') }}">Periods</a><br>
 				<a href="{{ url('/frequencies') }}">Frequencies</a><br>

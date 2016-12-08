@@ -43,8 +43,6 @@
 		</div>
 	</div>
 </div>
-@else
-<br>
 @endcan
 @can('module-patient')
 <form action='/admission/search' method='post' class='form-inline'>

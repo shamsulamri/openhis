@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use App\Order;
+use Log;
+use App\AMQPHelper as Amqp;
+use App\DiagnosticOrder;
 
 class OrderInvestigation extends Model
 {
@@ -49,4 +53,16 @@ class OrderInvestigation extends Model
 	public function order() {
 		return $this->belongsTo('App\Order','order_id');
 	}	
+
+	public function save(array $options = array())
+	{
+			$changed = $this->isDirty() ? $this->getDirty() : false;
+
+			parent::save();
+
+			if ($changed) 
+			{
+					Log::info("Order investigation updated");
+			}	
+	}
 }

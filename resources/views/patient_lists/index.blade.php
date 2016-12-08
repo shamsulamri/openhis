@@ -21,26 +21,30 @@
 					</a>
 				</li>
 				<li>
-					<a data-toggle="tab" href="#tab-2">Daycare
+					<a data-toggle="tab" href="#tab-3">Daycare
 						@if (count($daycare)>0)
 							 <label class="label label-primary">{{ count($daycare) }}</label>
 						@endif
 					</a>
 				</li>
+				@if ($location->encounter_code =='emergency')
 				<li>
-					<a data-toggle="tab" href="#tab-2">Observations
+					<a data-toggle="tab" href="#tab-4">Observations
 						@if (count($observations)>0)
 							 <label class="label label-primary">{{ count($observations) }}</label>
 						@endif
 					</a>
 				</li>
+				@endif
+				@if ($location->encounter_code =='mortuary')
 				<li>
-					<a data-toggle="tab" href="#tab-2">Mortuary
+					<a data-toggle="tab" href="#tab-5">Mortuary
 						@if (count($mortuary)>0 && $location->encounter_code=='mortuary')
 							 <label class="label label-primary">{{ count($mortuary) }}</label>
 						@endif
 					</a>
 				</li>
+				@endif
 		</ul>
 		<div class="tab-content">
 			<div id="tab-1" class="tab-pane active">
@@ -68,28 +72,28 @@
 						@include('patient_lists.patients')
 				</div>
 			</div>
+			@if ($location->encounter_code =='emergency')
 			<div id="tab-4" class="tab-pane">
 				<div class="panel-body">
-						@if ($location->encounter_code =='emergency')
 						<?php 
 						$patients = $observations;
 						$title = "Observation";
 						?>
 						@include('patient_lists.patients')
-						@endif
 				</div>
 			</div>
+			@endif
+			@if ($location->encounter_code =='mortuary')
 			<div id="tab-5" class="tab-pane">
 				<div class="panel-body">
-						@if ($location->encounter_code =='mortuary')
 						<?php 
 						$patients = $mortuary;
 						$title = "Mortuary";
 						?>
 						@include('patient_lists.patients')
-						@endif
 				</div>
 			</div>
+			@endif
 		</div>
 </div>
 @endsection

@@ -381,4 +381,5 @@ class OrderController extends Controller
 					'consultOption' => 'consultation',
 			]);
 	}
+
 }

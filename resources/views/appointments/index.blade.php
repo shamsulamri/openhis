@@ -2,7 +2,6 @@
 
 @section('content')
 <h1>Appointment List</h1>
-<br>
 <form action='/appointment/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	{{ Form::select('services', $services, $service, ['class'=>'form-control']) }}

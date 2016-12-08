@@ -158,7 +158,7 @@
 							<h4>Identification</h4>
 							<hr>
 							<h4>
-							{{ Form::checkbox('patient_is_unknown', '1',['class'=>'i-checks']) }} No personal identification can be obtained
+							{{ Form::checkbox('patient_is_unknown', '1',['class'=>'checkbox']) }} No personal identification can be obtained
 							</h4>
 							<br>
 						</div>
@@ -235,11 +235,106 @@
 				<div class="panel-body">
 				</div>
 			</div>
+			<!-- Work information -->
 			<div id="tab-4" class="tab-pane">
 				<div class="panel-body">
+					<div class='row'>
+								<div class="col-xs-6">
+									<h4>Company Detail</h4>
+									<hr>
+									<div class='form-group  @if ($errors->has('patient_work_company')) has-error @endif'>
+										{{ Form::label('Company Name', 'Company Name',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
+											{{ Form::text('patient_work_company', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+											@if ($errors->has('patient_work_company')) <p class="help-block">{{ $errors->first('patient_work_company') }}</p> @endif
+										</div>
+									</div>
 
+									<div class='form-group  @if ($errors->has('patient_work_rn')) has-error @endif'>
+										{{ Form::label('Registration Number', 'Registration Number',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
+											{{ Form::text('patient_work_rn', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+											@if ($errors->has('patient_work_rn')) <p class="help-block">{{ $errors->first('patient_work_rn') }}</p> @endif
+										</div>
+									</div>
+
+									<div class='form-group  @if ($errors->has('patient_work_number')) has-error @endif'>
+										{{ Form::label('Contact Number', 'Contact Number',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
+											{{ Form::text('patient_work_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+											@if ($errors->has('patient_work_number')) <p class="help-block">{{ $errors->first('patient_work_number') }}</p> @endif
+										</div>
+									</div>
+
+									<div class='form-group  @if ($errors->has('patient_work_person')) has-error @endif'>
+										{{ Form::label('Contact Person', 'Contact Person',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
+											{{ Form::text('patient_work_person', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+											@if ($errors->has('patient_work_person')) <p class="help-block">{{ $errors->first('patient_work_person') }}</p> @endif
+										</div>
+									</div>
+
+								</div>
+								<div class="col-xs-6">
+									<h4>Company Address</h4>
+									<hr>
+									<div class='form-group  @if ($errors->has('patient_work_street_1')) has-error @endif'>
+										{{ Form::label('Street 1', 'Address 1',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
+											{{ Form::text('patient_work_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+											@if ($errors->has('patient_work_street_1')) <p class="help-block">{{ $errors->first('patient_work_street_1') }}</p> @endif
+										</div>
+									</div>
+
+									<div class='form-group  @if ($errors->has('patient_work_street_2')) has-error @endif'>
+										{{ Form::label('Street 2', 'Address 2',['class'=>'col-sm-3 control-label']) }}
+										<div class='col-sm-9'>
+											{{ Form::text('patient_work_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+											@if ($errors->has('patient_work_street_2')) <p class="help-block">{{ $errors->first('patient_work_street_2') }}</p> @endif
+										</div>
+									</div>
+
+									<div class="row">
+											<div class="col-xs-6">
+												<div class='form-group  @if ($errors->has('patient_work_postcode')) has-error @endif'>
+														{{ Form::label('Postcode', 'Postcode',['class'=>'col-md-6 control-label']) }}
+														<div class='col-md-6'>
+															{{ Form::text('patient_work_postcode', null, ['class'=>'form-control','data-mask'=>'99999','placeholder'=>'','maxlength'=>'5','onblur'=>'work_postcode_change()','id'=>'patient_work_postcode']) }}
+															@if ($errors->has('patient_work_postcode')) <p class="help-block">{{ $errors->first('patient_work_postcode') }}</p> @endif
+														</div>
+												</div>
+											</div>
+											<div class="col-xs-6">
+												<div class='form-group  @if ($errors->has('patient_work_city')) has-error @endif'>
+														{{ Form::label('City', 'City',['class'=>'col-md-3 control-label']) }}
+														<div class='col-md-9'>
+															{{ Form::select('patient_work_city',$city, null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50','id'=>'patient_work_city']) }}
+															@if ($errors->has('patient_work_city')) <p class="help-block">{{ $errors->first('patient_work_city') }}</p> @endif
+														</div>
+												</div>
+											</div>
+									</div>
+
+									<div class='form-group  @if ($errors->has('patient_work_state')) has-error @endif'>
+										{{ Form::label('State', 'State',['class'=>'col-md-3 control-label']) }}
+										<div class='col-md-9'>
+											{{ Form::select('patient_work_state', $state, null, ['class'=>'form-control','maxlength'=>'10','id'=>'patient_work_state']) }}
+											@if ($errors->has('patient_work_state')) <p class="help-block">{{ $errors->first('patient_work_state') }}</p> @endif
+										</div>
+									</div>
+									<div class='form-group  @if ($errors->has('patient_work_country')) has-error @endif'>
+										{{ Form::label('Country', 'Country',['class'=>'col-md-3 control-label']) }}
+										<div class='col-md-9'>
+											{{ Form::select('patient_work_country', $nation,null, ['class'=>'form-control','maxlength'=>'10']) }}
+											@if ($errors->has('patient_work_country')) <p class="help-block">{{ $errors->first('patient_work_country') }}</p> @endif
+										</div>
+									</div>
+
+								</div>
+				</div>
 				</div>
 			</div>
+			<!-- Contact information -->
 			<div id="tab-3" class="tab-pane">
 				<div class="panel-body">
 					<!-- section -->
@@ -531,5 +626,22 @@
 			state.value = values[1]; 
 		}
 
+		function work_postcode_change() {
+			postcodes = {
+					@foreach($postcodes as $postcode)
+							'{{$postcode->postcode}}':'{{$postcode->city_code}}:{{$postcode->state_code}}',
+					@endforeach
+			}
+			postcode = $('#patient_work_postcode').val();
+
+			
+			var city = document.getElementById('patient_work_city');
+			var state = document.getElementById('patient_work_state');
+
+			value = postcodes[postcode];
+			values = value.split(":")
+			city.value = values[0]; 
+			state.value = values[1]; 
+		}
 		$('.clockpicker').clockpicker();
 </script>

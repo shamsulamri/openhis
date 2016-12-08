@@ -5,7 +5,7 @@
 <h1>New Stock Movement</h1>
 
 <br>
-{{ Form::model($stock, ['url'=>'stocks', 'class'=>'form-horizontal']) }} 
+{{ Form::model($stock, ['id'=>'form','url'=>'stocks', 'class'=>'form-horizontal']) }} 
     
 	@include('stocks.stock')
 {{ Form::close() }}

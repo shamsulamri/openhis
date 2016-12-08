@@ -9,7 +9,7 @@
 
 {{ Form::model($order_cancellation, ['route'=>['order_cancellations.update',$order_cancellation->cancel_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 
-	<h1>Order Cancellation</h1>
+	<h3>Order Cancellation</h3>
 	<br>
     <div class='form-group'>
         <label for='order' class='col-sm-3 control-label'>Order</span></label>

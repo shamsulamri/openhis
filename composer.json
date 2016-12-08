@@ -8,7 +8,9 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "laravelcollective/html": "5.*",
-        "webpatser/laravel-uuid": "2.*"
+        "webpatser/laravel-uuid": "2.*",
+        "php-amqplib/php-amqplib": "2.6.*",
+	"bschmitt/laravel-amqp": "1.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

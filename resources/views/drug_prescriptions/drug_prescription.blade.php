@@ -114,3 +114,28 @@
     </div>
 
 	{{ Form::hidden('drug_code', null) }}
+
+
+	<script>
+
+         $(document).ready(function(){
+             $("#form").validate({
+                 rules: {
+                     drug_strength: {
+                         number: true
+                     },
+                     drug_dosage: {
+                         number: true
+                     },
+                     drug_duration: {
+                         number: true
+                     },
+                     drug_total_unit: {
+                         number: true
+                     },
+                 }
+             });
+        });
+
+    </script>
+

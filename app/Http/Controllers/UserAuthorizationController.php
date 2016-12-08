@@ -107,7 +107,6 @@ class UserAuthorizationController extends Controller
 	{
 			$user_authorizations = DB::table('user_authorizations')
 					->where('module_consultation','like','%'.$request->search.'%')
-					->orWhere('id', 'like','%'.$request->search.'%')
 					->orderBy('module_consultation')
 					->paginate($this->paginateValue);
 

@@ -6,7 +6,10 @@
     font-size: 60%;
 }
 </style>
+<!--
 <h3>{{ $set->set_name }}</h3>
+-->
+<h3>Assets</h3>
 <br>
 
 @if ($order_sets->total()>0)

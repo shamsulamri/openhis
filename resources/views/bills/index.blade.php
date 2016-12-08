@@ -2,7 +2,6 @@
 
 @section('content')
 <h1>Bill Index</h1>
-<br>
 <form action='/bill/search' method='post'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

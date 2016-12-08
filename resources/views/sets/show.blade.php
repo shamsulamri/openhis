@@ -3,9 +3,10 @@
 
 @section('content')
 <style>
-iframe { border: 1px #C0C0C0 solid; }
+iframe { border: 1px #e5e5e5 solid; }
 </style>
-<h1>Order Set Assets</h1>
+				
+<h1><a href='{{ URL::to('sets') }}'>Order Set List</a> > {{ $set->set_name }}</h1>
 <br>
 <div class="row">
 	<div class="col-xs-6">

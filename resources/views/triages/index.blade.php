@@ -1,15 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Triage List</h1>
-<br>
+<h1>Triage List
+<a href='/triages/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+</h1>
 <form action='/triage/search' method='post'>
-	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<div class='input-group'>
+		<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+		<span class='input-group-btn'>
+			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
+		</span>
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
-<a href='/triages/create' class='btn btn-primary'>Create</a>
-<br>
 <br>
 @if ($triages->total()>0)
 <table class="table table-hover">

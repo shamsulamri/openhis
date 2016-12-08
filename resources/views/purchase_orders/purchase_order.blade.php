@@ -66,6 +66,7 @@
         </div>
     </div>
 
+	@if ($purchase_order->purchase_received != 1)
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('receive_datetime')) has-error @endif'>
@@ -94,6 +95,14 @@
 					</div>
 			</div>
 	</div>
+	@else
+    <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
+        {{ Form::label('date_receive', 'Date Received',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+				{{ Form::label('date_receive', $purchase_order->receive_datetime, ['class'=>'form-control']) }}
+        </div>
+    </div>
+	@endif
 
 	<div class='page-header'>
 		<h4>Invoice</h4>

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\DojoUtility;
 use Log;
 
+
 class Order extends Model
 {
 	protected $table = 'orders';
@@ -130,7 +131,8 @@ class Order extends Model
 
 			if ($changed) 
 			{
-				Log::info($this->product_code);
+				Log::info("Push to rabbit");
 			}	
 	}
+
 }

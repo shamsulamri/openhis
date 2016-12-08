@@ -74,6 +74,7 @@ class ProductSearchController extends Controller
 			return view('product_searches.index', [
 					'product_searches'=>$product_searches,
 					'purchase_id'=>$request->purchase_id,
+					'line_id'=>$request->line_id,
 					'product_code'=>$request->product_code,
 					'set_code'=>$request->set_code,
 					'reason'=>$request->reason,
@@ -125,8 +126,8 @@ class ProductSearchController extends Controller
 			$purchase_order_line->product_code = $id;
 			$purchase_order_line->line_price = $product->product_purchase_price;
 			$purchase_order_line->save();
-			Session::flash('message', 'Record successfully created.');
-			return redirect('/product_searches?reason=purchase_order&purchase_id='.$purchase_id);
+			Session::flash('message', 'Enter order quantity.');
+			return redirect('/product_searches?reason=purchase_order&purchase_id='.$purchase_id.'&line_id='.$purchase_order_line->line_id);
 	}
 
 	public function bom($product_code, $bom_product_code) 

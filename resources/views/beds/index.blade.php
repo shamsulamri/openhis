@@ -31,9 +31,9 @@
 </div>
 <form action='/bed/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<label>Ward</label>
+	<label>&nbsp;Ward</label>
 	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Class</label>
+	<label>&nbsp;Class</label>
 	{{ Form::select('class_code', $class, $class_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

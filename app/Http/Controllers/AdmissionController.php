@@ -169,10 +169,16 @@ class AdmissionController extends Controller
 			$admission = Admission::findOrFail($id);
 			$encounter = Encounter::findOrFail($admission->encounter_id);
 
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('module_consultation',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
+
 			return view('admissions.edit', [
 					'admission'=>$admission,
 					'patient'=>$encounter->patient,
-					'consultant' => User::orderBy('name')->lists('name', 'id')->prepend('',''),
+					'consultant' => $consultants,
 					'bed' => Bed::where('encounter_code',$encounter->encounter_code)->orderBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
 					'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
 					'texture' => DietTexture::all()->sortBy('texture_name')->lists('texture_name', 'texture_code')->prepend('',''),

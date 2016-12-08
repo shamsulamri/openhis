@@ -1,15 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<script>
-	function UpdateSalePrice() {
-			alert("X");
-	}	
-</script>
 <h1>New Product</h1>
-
 <br>
-{{ Form::model($product, ['url'=>'products', 'class'=>'form-horizontal']) }} 
+{{ Form::model($product, ['id'=>'product_form', 'url'=>'products', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('product_code')) has-error @endif'>
         <label for='product_code' class='col-sm-2 control-label'>Code<span style='color:red;'> *</span></label>

@@ -7,7 +7,7 @@ Edit Stock Movement
 </h1>
 
 <br>
-{{ Form::model($stock, ['route'=>['stocks.update',$stock->stock_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
+{{ Form::model($stock, ['id'=>'form','route'=>['stocks.update',$stock->stock_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
 	@include('stocks.stock')
 {{ Form::close() }}

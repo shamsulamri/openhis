@@ -156,6 +156,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+		Bschmitt\Amqp\AmqpServiceProvider::class,
     ],
 
     /*
@@ -204,6 +205,7 @@ return [
 		'Form'		=> Collective\Html\FormFacade::class,
 		'Html'		=> Collective\Html\HtmlFacade::class,
 		'Uuid' 		=> Webpatser\Uuid\Uuid::class,
+		'Amqp' 		=> Bschmitt\Amqp\Facades\Amqp::class,
     ],
 
 ];

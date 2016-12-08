@@ -179,7 +179,7 @@ class ProductController extends Controller
 			if ($valid->passes()) {
 					$product->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/products/id/'.$id);
+					return redirect('/products/'.$id.'/edit');
 			} else {
 					return view('products.edit', [
 							'product'=>$product,

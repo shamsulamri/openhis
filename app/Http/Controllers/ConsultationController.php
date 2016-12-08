@@ -16,6 +16,8 @@ use App\Order;
 use App\OrderPost;
 use App\Encounter;
 use App\DojoUtility;
+use App\DiagnosticOrder;
+use App\AMQPHelper as Amqp;
 
 class ConsultationController extends Controller
 {
@@ -142,6 +144,8 @@ class ConsultationController extends Controller
 			$post->consultation_id = $id;
 			$post->save();
 
+			$this->postDiagnosticOrder($consultation);
+
 			Order::where('consultation_id','=',$id)
 					->where('post_id','=',0)
 					->update(['post_id'=>$post->post_id]);
@@ -151,6 +155,50 @@ class ConsultationController extends Controller
 			} else {
 					return redirect('/order_queues');
 			}
+	}
+
+	public function postDiagnosticOrder($consultation)
+	{
+			Log::info('AMQP');
+			$id = Session::get('consultation_id');
+			$orders = Order::where('consultation_id','=',$id)
+					->where('post_id','=',0)
+					->get();
+
+			if (count($orders)==0) return;
+
+			$items = [];
+			foreach ($orders as $order) {
+				$status = 'requested';
+				if (!empty($order->orderCancel->cancel_id)) {
+					$status='cancelled';
+				}
+
+				$item = ['code'=>$order->product_code];
+				//array_push($items, $item);
+
+				$subject = ['reference'=>'Patient/'.$consultation->encounter->patient->patient_mrn];
+				$orderer = ['reference'=>'Practitioner/'.$consultation->user->username,
+							'display'=>$consultation->user->name
+						];
+				$encounter = ['id'=>$consultation->encounter->encounter_id,
+						'class'=>$consultation->encounter->encounterType->encounter_name
+				];
+
+				$diagnostic = new DiagnosticOrder();
+				$diagnostic->subject = $subject;
+				$diagnostic->orderer = $orderer;
+				$diagnostic->identifier = $order->order_id;
+				$diagnostic->item = $item;
+				$diagnostic->priority = $order->orderInvestigation->urgency_code;
+				$diagnostic->encounter = $encounter;
+				$diagnostic->note = $order->order_description;
+				$diagnostic->status = $status;
+
+				Log::info($order->product->location_code);
+				Amqp::pushMessage($order->product->location_code,json_encode($diagnostic,JSON_UNESCAPED_SLASHES));
+			}
+
 	}
 
 	public function edit($id) 
