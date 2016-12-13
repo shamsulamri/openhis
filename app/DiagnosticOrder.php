@@ -12,6 +12,7 @@ class DiagnosticOrder
 	public $priority = null;
 	public $item = null;
 	public $note = null;
+	public $event = null;
 
 	public function __construct()
 	{

@@ -184,6 +184,7 @@ class ConsultationController extends Controller
 				$encounter = ['id'=>$consultation->encounter->encounter_id,
 						'class'=>$consultation->encounter->encounterType->encounter_name
 				];
+				$event = ['status'=>'requested', 'dateTime'=>date('d/m/Y, H:i', strtotime($order->created_at)) ];
 
 				$diagnostic = new DiagnosticOrder();
 				$diagnostic->subject = $subject;
@@ -194,8 +195,7 @@ class ConsultationController extends Controller
 				$diagnostic->encounter = $encounter;
 				$diagnostic->note = $order->order_description;
 				$diagnostic->status = $status;
-
-				Log::info($order->product->location_code);
+				$diagnostic->event = $event;
 				Amqp::pushMessage($order->product->location_code,json_encode($diagnostic,JSON_UNESCAPED_SLASHES));
 			}
 

@@ -47,6 +47,35 @@ class OrderController extends Controller
 			$product = Product::find($order->product_code);
 			$consultation = Consultation::findOrFail($order->consultation_id);
 			$current_id = Consultation::orderBy('created_at','desc')->limit(1)->get()[0]->consultation_id;
+
+			$diagnostic = json_decode($order->order_diagnostic_report,true);
+			//$code = json_encode($diagnostic['code']);
+
+			if ($diagnostic['contained']) {
+					foreach ($diagnostic['contained'] as $row) {
+							$diagnostic_name = $row['code']['text'];
+							$diagnostic_value = $row['valueQuantity']['value'] . $row['valueQuantity']['unit'];
+							$diagnostic_low = null;
+							$diagnostic_high = null;
+							if (!empty($row['referenceRange'][0])) {
+								if (!empty($row['referenceRange'][0]['high'])) {
+									$diagnostic_high = $row['referenceRange'][0]['high']['value'];
+								}
+								if (!empty($row['referenceRange'][0]['low'])) {
+									$diagnostic_low = $row['referenceRange'][0]['low']['value'];
+								}
+							}
+							$diagnostic_interpretation = null;
+							if (!empty($row['interpretation'])) {
+									$diagnostic_interpretation = $row['interpretation']['coding'][0]['code'];
+							}
+
+							Log::info("$diagnostic_name $diagnostic_value $diagnostic_low-$diagnostic_high $diagnostic_interpretation");
+					}
+					Log::info($diagnostic['text']['status']);
+			}
+			//return ($diagnostic['contained']);
+
 			return view('orders.show', [
 				'order'=>$order,
 				'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
@@ -57,6 +86,7 @@ class OrderController extends Controller
 				'product'=>$product,
 				'current_id'=>$current_id,
 				'consultOption' => 'consultation',
+				'diagnostic' => $diagnostic,
 			]);
 	}
 
@@ -146,6 +176,14 @@ class OrderController extends Controller
 							->withErrors($valid)
 							->withInput();
 			}
+	}
+
+	public function updateDiagnosticReport(Request $request, $id) 
+	{
+			Log::info($request);
+			$order = Order::find($id);
+			$order->order_diagnostic_report = $request->report;
+			$order->save();
 	}
 
 	public function edit($id) 

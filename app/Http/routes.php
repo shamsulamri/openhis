@@ -396,6 +396,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/order/search', 'OrderController@search');
 				Route::get('/order/search', 'OrderController@search');
 				Route::get('/orders/delete/{id}', 'OrderController@delete');
+				Route::post('/orders/diagnostic_report/{id}', 'OrderController@updateDiagnosticReport');
 
 				Route::resource('order_products', 'OrderProductController');
 				Route::get('/order_products/{id}', 'OrderProductController@index');

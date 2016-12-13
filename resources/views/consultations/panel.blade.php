@@ -1,5 +1,3 @@
-
-
 <div class="row border-bottom gray-bg">
 			<div class='col-sm-10'>
 						<h2>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h2>
