@@ -10,6 +10,12 @@
             {{ Form::label('user', $order_task->user->name, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
+    <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
+        <label for='user' class='col-sm-3 control-label'>Execution Date</label>
+        <div class='col-sm-9'>
+            {{ Form::label('execute', $order_task->orderInvestigation->investigation_date, ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
         {{ Form::label('order_quantity_supply', 'Quantity Supply',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

@@ -70,6 +70,8 @@
 					{{ $order->name }}
 			</td>
 			<td>
+					{{ $order->investigation_date }}
+
 					{{ date('d F, H:i', strtotime($order->created_at)) }}
 			</td>
 			<td align='right'>

@@ -19,6 +19,9 @@ use App\Set;
 use App\OrderSet;
 use App\DojoUtility;
 use App\ProductCategory;
+use App\Product;
+use App\ProductAuthorization;
+use Auth;
 
 class OrderProductController extends Controller
 {
@@ -147,13 +150,18 @@ class OrderProductController extends Controller
 			}
 			 */
 			if (!empty($request->search)) {
-				$order_products = DB::table('products')
+				$order_products = Product::orderBy('product_name')
 					->where('product_name','like','%'.$request->search.'%')
-					->where('product_sold','1')
-					->orderBy('product_name');
+					->where('product_sold','1');
 					
 				if (!empty($request->categories)) {
 					$order_products = $order_products->where('category_code',$request->categories);
+				}
+
+				$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+
+				if (!$product_authorization->get()->isEmpty()) {
+						$order_products = $order_products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 				}
 
 				$order_products = $order_products->paginate($this->paginateValue);

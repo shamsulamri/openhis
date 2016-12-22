@@ -27,6 +27,9 @@ class AppointmentController extends Controller
 
 	public function index(Request $request)
 	{
+			/*
+					->select('appointment_datetime', 'b.patient_id','c.service_id','appointment_id','service_name','patient_name','patient_mrn','patient_phone_home','patient_phone_mobile')
+			 */
 			$appointments = DB::table('appointments as a')
 					->leftJoin('patients as b', 'a.patient_id', '=', 'b.patient_id')
 					->leftJoin('appointment_services as c', 'c.service_id', '=', 'a.service_id')

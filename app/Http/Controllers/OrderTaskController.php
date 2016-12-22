@@ -17,6 +17,7 @@ use App\Consultation;
 use App\Http\Controllers\ProductController;
 use App\Store;
 use App\Order;
+use Carbon\Carbon;
 
 class OrderTaskController extends Controller
 {
@@ -35,6 +36,7 @@ class OrderTaskController extends Controller
 					'j.created_at',
 					'k.name',
 					'order_completed',
+					'investigation_date',
 					];
 			$order_tasks = DB::table('orders as a')
 					->select($fields)
@@ -42,6 +44,7 @@ class OrderTaskController extends Controller
 					->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->join('patients as d', 'd.patient_id','=', 'c.patient_id')
 					->join('products as e','e.product_code','=','a.product_code')
+					->join('order_investigations as f','f.order_id','=','a.order_id')
 					->leftjoin('order_cancellations as f', 'f.order_id', '=', 'a.order_id')
 					->leftjoin('product_categories as g', 'g.category_code', '=', 'e.category_code')
 					->leftjoin('queues as h', 'h.encounter_id', '=', 'c.encounter_id')
@@ -51,6 +54,7 @@ class OrderTaskController extends Controller
 					->where('a.post_id','>',0)
 					->where('c.encounter_id','=', $encounter_id)
 					->whereNull('cancel_id')
+					->where('investigation_date','<', Carbon::now())
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
 					->orderBy('order_is_discharge','desc')
@@ -83,6 +87,7 @@ class OrderTaskController extends Controller
 					'k.name',
 					'order_completed',
 					'name',
+					'investigation_date',
 					];
 			$order_tasks = DB::table('orders as a')
 					->select($fields)
@@ -90,6 +95,7 @@ class OrderTaskController extends Controller
 					->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->join('patients as d', 'd.patient_id','=', 'c.patient_id')
 					->join('products as e','e.product_code','=','a.product_code')
+					->join('order_investigations as l','l.order_id','=','a.order_id')
 					->leftjoin('order_cancellations as f', 'f.order_id', '=', 'a.order_id')
 					->leftjoin('product_categories as g', 'g.category_code', '=', 'e.category_code')
 					->leftjoin('queues as h', 'h.encounter_id', '=', 'c.encounter_id')
@@ -98,6 +104,7 @@ class OrderTaskController extends Controller
 					->leftjoin('users as k','k.id','=', 'a.user_id')
 					->where('c.encounter_id','=', $encounter_id)
 					->where('a.location_code','=',$location_code)
+					->where('investigation_date','<', Carbon::now())
 					->orderBy('cancel_id')
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')

@@ -184,7 +184,9 @@ class ConsultationController extends Controller
 				$encounter = ['id'=>$consultation->encounter->encounter_id,
 						'class'=>$consultation->encounter->encounterType->encounter_name
 				];
-				$event = ['status'=>'requested', 'dateTime'=>date('d/m/Y, H:i', strtotime($order->created_at)) ];
+				$event = ['status'=>'requested', 'dateTime'=>$order->orderInvestigation->investigation_date ];
+				Log::info("-----");
+				Log::info($order->orderInvestigation->investigation_date);
 
 				$diagnostic = new DiagnosticOrder();
 				$diagnostic->subject = $subject;
