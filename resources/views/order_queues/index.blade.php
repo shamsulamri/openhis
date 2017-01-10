@@ -1,7 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+@if ($is_discharge)
+<h1>Discharge Orders</h1>
+@else
 <h1>Outpatient Tasks</h1>
+@endif
 <!--
 <form action='/order_queue/search' method='post'>
 	{{ Form::select('locations', $locations, $location, ['class'=>'form-control','maxlength'=>'10']) }}
@@ -29,7 +33,12 @@
 
 	<tr>
 			<td>
+			@if ($is_discharge)
+					{{ date('d F Y', strtotime($order->investigation_date)) }}
+			@else
 					{{ date('d F, H:i', strtotime($order->created_at)) }}
+			@endif
+			<!--
 					<br>
 			@if (empty($order->bill_id))
 					<span class="label label-danger">
@@ -41,6 +50,7 @@
 					</span>
 			@endif
 			<br>
+			-->
 			</td>
 			<td>
 					{{$order->patient_name}}

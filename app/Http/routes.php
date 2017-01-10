@@ -48,6 +48,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::get('/futures', 'FutureController@index');
+
 		Route::resource('product_authorizations', 'ProductAuthorizationController');
 		Route::get('/product_authorizations/id/{id}', 'ProductAuthorizationController@searchById');
 		Route::post('/product_authorization/search', 'ProductAuthorizationController@search');

@@ -69,12 +69,8 @@ class BillItemController extends Controller
 	public function compileBill($id) 
 	{
 
-			Log::info("QQQQQ");
-			$bill_existing = DB::table('bill_items')
-								->where('encounter_id','=',$id);
-			
-			$fields = 'encounter_id, a.order_id,b.tax_code, tax_rate, order_discount, a.product_code, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price, order_gst_unit, order_completed';
-			$orders = DB::table('orders as a')
+			$fields = 'a.encounter_id, a.order_id,b.tax_code, c.tax_rate, order_discount, a.product_code, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price, order_gst_unit, order_completed';
+			$order_current = DB::table('orders as a')
 					->selectRaw($fields)
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
@@ -84,12 +80,27 @@ class BillItemController extends Controller
 					->where('investigation_date','<=', Carbon::today())
 					->whereNull('cancel_id')
 					->groupBy('a.product_code')
+					->orderBy('encounter_id');
+
+			$orders = DB::table('orders as a')
+					->selectRaw($fields)
+					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
+					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
+					->leftjoin('order_cancellations as d', 'd.order_id', '=','a.order_id')
+					->leftjoin('order_investigations as e', 'e.order_id', '=', 'a.order_id')
+					->leftjoin('bill_items as f', 'f.order_id', '=', 'a.order_id') 
+					->where('order_completed','=','1')
+					->whereNull('bill_id')
+					->whereNull('cancel_id')
+					->groupBy('a.product_code')
 					->orderBy('encounter_id')
+					->union($order_current)
 					->get();
 
+			Log::info($orders);
 			foreach ($orders as $order) {
 					$item = new BillItem();
-					$item->encounter_id = $order->encounter_id;
+					$item->encounter_id = $id;
 					$item->order_id = $order->order_id;
 					$item->product_code = $order->product_code;
 					$item->tax_code = $order->tax_code;

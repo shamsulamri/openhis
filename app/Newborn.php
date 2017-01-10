@@ -28,6 +28,11 @@ class Newborn extends Model
 				'apgar_grimace',
 				'apgar_activity',
 				'apgar_appearance',
+				'apgar_heart_rate_5',
+				'apgar_breathing_5',
+				'apgar_grimace_5',
+				'apgar_activity_5',
+				'apgar_appearance_5',
 				'newborn_gestational_weeks',
 				'newborn_gestational_days',
 				'complication_code',
@@ -42,6 +47,7 @@ class Newborn extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
+				'gender_code'=>'required',
 				'delivery_code'=>'required',
 				'newborn_weight'=>'required',
 				'newborn_length'=>'required',

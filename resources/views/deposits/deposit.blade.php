@@ -25,7 +25,9 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
+			<!--
             <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
+			-->
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

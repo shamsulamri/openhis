@@ -169,6 +169,7 @@ if ($_COOKIE['his-navbar']==1) {
 						</div>
 						<li><a title='Patient List' href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
 						<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
+						<li><a title='Future Orders' href="{{ url('/futures') }}"><i class="fa fa-user-md"></i><span class='nav-label'>Future Orders</span></a></li>
 						<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-th-list"></i><span class='nav-label'>Queues</span></a></li>
 						<li><a title='Admissions' href="{{ url('/admissions') }}"><i class="fa fa-hospital-o"></i><span class='nav-label'>Admissions</span></a></li>
 						<li><a title='Preadmissions' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="glyphicon glyphicon-time"></i><span class='nav-label'>Preadmissions</span></a></li>
@@ -234,11 +235,11 @@ if ($_COOKIE['his-navbar']==1) {
 								<h4>&nbsp;Ward</h4>
 						</div>
 						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='glyphicon glyphicon-bed'></i><span class='nav-label'>Admissions</a></li>
-						<li><a title="Inpatient Tasks" href="{{ url('/admission_tasks') }}"><i class='glyphicon glyphicon-tasks'></i><span class='nav-label'>Admission Tasks</a></li>
+						<li><a title="Inpatient Tasks" href="{{ url('/admission_tasks') }}"><i class='fa fa-user-circle'></i><span class='nav-label'>Admission Tasks</a></li>
 						<li><a title="Bed Reservations" href="{{ url('/bed_bookings') }}"><i class='glyphicon glyphicon-bookmark'></i><span class='nav-label'>Bed Reservations</a></li>
 						@if (!empty($ward->ward_code))
 								@if ($ward->ward_code != 'mortuary')
-								<li><a title="Patients" href="{{ url('/patients') }}"><i class='glyphicon glyphicon-user'></i><span class='nav-label'>Patients</a></li>
+								<li><a title="Patients" href="{{ url('/patients') }}"><i class='fa fa-user'></i><span class='nav-label'>Patient List</a></li>
 								<li><a title="Appointments" href="{{ url('/appointments') }}"><i class='fa fa-calendar'></i><span class='nav-label'>Appointments</a></li>
 								@endif
 						@endif
@@ -252,7 +253,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<div class="dropdown profile-element"> 
 								<h4>&nbsp;Medical Record</h4>
 						</div>
-						<li><a title="Patient List" href="{{ url('/patients') }}"><i class='glyphicon glyphicon-user'></i><span class='nav-label'>Patient List</a></li>
+						<li><a title="Patient List" href="{{ url('/patients') }}"><i class='fa fa-user'></i><span class='nav-label'>Patient List</a></li>
 						<li><a title="Loans" href="{{ url('/loans?type=folder') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'>Loans</a></li>
 						@endcan
 
@@ -261,7 +262,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<div class="dropdown profile-element"> 
 								<h4>&nbsp;Financial</h4>
 						</div>
-						<li><a title='Patient List' href="{{ url('/patients') }}"><i class='fa fa-stethoscope'></i><span class='nav-label'>Patient List</span></a></li>
+						<li><a title='Patient List' href="{{ url('/patients') }}"><i class='fa fa-user'></i><span class='nav-label'>Patients</span></a></li>
 						<li><a title='Discharges' href="{{ url('/discharges') }}"><i class='fa fa-home'></i><span class='nav-label'>Discharges</span></a></li>
 						@endcan
 
@@ -270,8 +271,9 @@ if ($_COOKIE['his-navbar']==1) {
 						<div class="dropdown profile-element"> 
 								<h4>&nbsp;Support</h4>
 						</div>
-						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-check-square'></i><span class='nav-label'>Outpatient Tasks</span></a></li>
-						<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-check-square-o'></i><span class='nav-label'>Inpatient Tasks<span></a></li>
+						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-user-o'></i><span class='nav-label'>Outpatient Tasks</span></a></li>
+						<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-user-circle'></i><span class='nav-label'>Inpatient Tasks<span></a></li>
+						<li><a href="{{ url('/order_queues?discharge=true') }}"><i class='fa fa-user-md'></i><span class='nav-label'>Future Orders<span></a></li>
 						@endcan
 
 						<!-- Report -->

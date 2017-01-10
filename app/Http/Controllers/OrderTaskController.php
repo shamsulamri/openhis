@@ -104,7 +104,6 @@ class OrderTaskController extends Controller
 					->leftjoin('users as k','k.id','=', 'a.user_id')
 					->where('c.encounter_id','=', $encounter_id)
 					->where('a.location_code','=',$location_code)
-					->where('investigation_date','<', Carbon::now())
 					->orderBy('cancel_id')
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
@@ -112,6 +111,9 @@ class OrderTaskController extends Controller
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 			
+			//->where('investigation_date','<', Carbon::now())
+			
+				
 			$ids='';
 			foreach ($order_tasks as $task) {
 					$ids .= (string)$task->order_id.",";

@@ -71,7 +71,7 @@
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('newborn_weight')) has-error @endif'>
-						{{ Form::label('newborn_weight', 'Weight',['class'=>'col-sm-6 control-label']) }}
+						<label class='col-sm-6 control-label'>Weight<span style='color:red;'> *</span></label>
 						<div class='col-sm-6'>
 							{{ Form::text('newborn_weight', null, ['class'=>'form-control','placeholder'=>'kg',]) }} 
 							@if ($errors->has('newborn_weight')) <p class="help-block">{{ $errors->first('newborn_weight') }}</p> @endif
@@ -84,7 +84,7 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('newborn_length')) has-error @endif'>
-						{{ Form::label('newborn_length', 'Length',['class'=>'col-sm-6 control-label']) }}
+						<label class='col-sm-6 control-label'>Length<span style='color:red;'> *</span></label>
 						<div class='col-sm-6'>
 							{{ Form::text('newborn_length', null, ['class'=>'form-control','placeholder'=>'cm',]) }}
 							@if ($errors->has('newborn_length')) <p class="help-block">{{ $errors->first('newborn_length') }}</p> @endif
@@ -93,7 +93,7 @@
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('newborn_head_circumferance')) has-error @endif'>
-						{{ Form::label('newborn_head_circumferance', 'Head Circumferance',['class'=>'col-sm-6 control-label']) }}
+						<label class='col-sm-6 control-label'>Head Circumference<span style='color:red;'> *</span></label>
 						<div class='col-sm-6'>
 							{{ Form::text('newborn_head_circumferance', null, ['class'=>'form-control','placeholder'=>'cm',]) }}
 							@if ($errors->has('newborn_head_circumferance')) <p class="help-block">{{ $errors->first('newborn_head_circumferance') }}</p> @endif
@@ -125,14 +125,14 @@
 	</div>
 
    <div class='form-group  @if ($errors->has('delivery_code')) has-error @endif'>
-		{{ Form::label('delivery_code', 'Delivery Mode',['class'=>'col-sm-3 control-label']) }}
+		<label class='col-sm-3 control-label'>Delivery Mode<span style='color:red;'> *</span></label>
 		<div class='col-sm-9'>
 			{{ Form::select('delivery_code', $delivery,null, ['class'=>'form-control','maxlength'=>'20']) }}
 			@if ($errors->has('delivery_code')) <p class="help-block">{{ $errors->first('delivery_code') }}</p> @endif
 		</div>
 	</div>
 
-	<h3>Apgar Score</h3>
+	<h3>Apgar Score at 1'</h3>
 	<hr>
 
 	<div class="row">
@@ -198,6 +198,72 @@
 			</div>
 	</div>
 
+
+	<h3>Apgar Score at 5'</h3>
+	<hr>
+
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('apgar_heart_rate_5')) has-error @endif'>
+						{{ Form::label('apgar_heart_rate_5', 'Heart Rate',['class'=>'col-sm-6 control-label']) }}
+						<div class='col-sm-6'>
+            				{{ Form::select('apgar_heart_rate_5', $apgar_values,null, ['id'=>'apgar_heart_rate_5','class'=>'form-control','onchange'=>'apgarChanged5()']) }}
+							@if ($errors->has('apgar_heart_rate_5')) <p class="help-block">{{ $errors->first('apgar_heart_rate_5') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('apgar_breathing_5')) has-error @endif'>
+						{{ Form::label('apgar_breathing_5', 'Breathing',['class'=>'col-sm-6 control-label']) }}
+						<div class='col-sm-6'>
+            				{{ Form::select('apgar_breathing_5', $apgar_values,null, ['id'=>'apgar_breathing_5','class'=>'form-control','onchange'=>'apgarChanged5()']) }}
+							@if ($errors->has('apgar_breathing_5')) <p class="help-block">{{ $errors->first('apgar_breathing_5') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('apgar_grimace_5')) has-error @endif'>
+						{{ Form::label('apgar_grimace_5', 'Grimace',['class'=>'col-sm-6 control-label']) }}
+						<div class='col-sm-6'>
+            				{{ Form::select('apgar_grimace_5', $apgar_values,null, ['id'=>'apgar_grimace_5','class'=>'form-control','onchange'=>'apgarChanged5()']) }}
+							@if ($errors->has('apgar_grimace_5')) <p class="help-block">{{ $errors->first('apgar_grimace_5') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('apgar_activity_5')) has-error @endif'>
+						{{ Form::label('apgar_activity_5', 'Activity',['class'=>'col-sm-6 control-label']) }}
+						<div class='col-sm-6'>
+            				{{ Form::select('apgar_activity_5', $apgar_values,null, ['id'=>'apgar_activity_5','class'=>'form-control','onchange'=>'apgarChanged5()']) }}
+							@if ($errors->has('apgar_activity_5')) <p class="help-block">{{ $errors->first('apgar_activity_5') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('apgar_appearance_5')) has-error @endif'>
+						{{ Form::label('apgar_appearance_5', 'Appearance',['class'=>'col-sm-6 control-label']) }}
+						<div class='col-sm-6'>
+							{{ Form::select('apgar_appearance_5', $apgar_values,null, ['id'=>'apgar_appearance_5','class'=>'form-control','onchange'=>'apgarChanged5()']) }}
+							@if ($errors->has('apgar_appearance_5')) <p class="help-block">{{ $errors->first('apgar_appearance_5') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('newborn_apgar_5')) has-error @endif'>
+						{{ Form::label('newborn_apgar_5', 'Apgar Score',['class'=>'col-sm-6 control-label']) }}
+						<div class='col-sm-6'>
+							{{ Form::text('newborn_apgar_5', null, ['id'=>'newborn_apgar_5','class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('newborn_apgar_5')) <p class="help-block">{{ $errors->first('newborn_apgar_5') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 
 	<h3>Procedure</h3>
 	<hr>
@@ -354,6 +420,23 @@
 				document.getElementById('newborn_apgar').value = score;
 		}
 
+		function apgarChanged5() {
+				var score=0;
+				var apgar = document.getElementById('apgar_heart_rate_5');
+				score += parseInt(apgar.options[apgar.selectedIndex].value);
+				var apgar = document.getElementById('apgar_breathing_5');
+				score += parseInt(apgar.options[apgar.selectedIndex].value);
+				var apgar = document.getElementById('apgar_grimace_5');
+				score += parseInt(apgar.options[apgar.selectedIndex].value);
+				var apgar = document.getElementById('apgar_activity_5');
+				score += parseInt(apgar.options[apgar.selectedIndex].value);
+				var apgar = document.getElementById('apgar_appearance_5');
+				score += parseInt(apgar.options[apgar.selectedIndex].value);
+				document.getElementById('newborn_apgar_5').value = score;
+		}
+
 		document.getElementById('newborn_apgar').disabled = true;
+		document.getElementById('newborn_apgar_5').disabled = true;
 		apgarChanged();
+		apgarChanged5();
 	</script>

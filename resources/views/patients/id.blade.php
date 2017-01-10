@@ -33,7 +33,6 @@
 			&nbsp;
 </div>
 @endif
-@can('module-patient')
 		<br>
 		<a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
 								<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography
@@ -54,11 +53,18 @@
 		</a>
 		@endcan
 		@can('module-discharge')
-		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
-				<span class='glyphicon glyphicon-book' aria-hidden='true'></span>
-				<br>
-				Payment 
-		</a>
+				@if (!empty($patient->hasActiveEncounter()))
+				<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
+						<span class='fa fa-money' aria-hidden='true'></span>
+						<br>
+						Payment 
+				</a>
+				<a class='btn btn-default'  href='{{ URL::to('deposits/index/'. $patient->hasActiveEncounter()->encounter_id) }}'>
+						<span class='fa fa-money' aria-hidden='true'></span>
+						<br>
+						Deposit 
+				</a>
+				@endif
 		@endcan
 		@can('module-medical-record')
 		<a class='btn btn-default'  href='{{ URL::to('documents?patient_mrn='. $patient->patient_mrn.'&from=view') }}'>
@@ -84,4 +90,3 @@
 		Encounter
 		</a>
 		@endif
-@endcan

@@ -5,7 +5,6 @@
 <h1>
 New Payment 
 </h1>
-<br>
 
 {{ Form::model($payment, ['url'=>'payments', 'class'=>'form-horizontal']) }} 
     

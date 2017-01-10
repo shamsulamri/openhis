@@ -70,9 +70,7 @@
 					{{ $order->name }}
 			</td>
 			<td>
-					{{ $order->investigation_date }}
-
-					{{ date('d F, H:i', strtotime($order->created_at)) }}
+					{{ date('d F Y', strtotime($order->investigation_date)) }}
 			</td>
 			<td align='right'>
 					@if (!isset($order->cancel_id))

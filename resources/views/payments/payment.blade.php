@@ -34,7 +34,9 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
+			@if ($payment->encounter_id>0)
             <a class="btn btn-default" href="/bill_items/{{ $payment->encounter_id }}" role="button">Cancel</a>
+			@endif
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

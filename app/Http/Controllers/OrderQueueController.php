@@ -79,6 +79,7 @@ class OrderQueueController extends Controller
 					'bed_name',
 					'k.location_name',
 					'o.id as bill_id',
+					'investigation_date',
 					];
 
 			$order_queues = DB::table('orders as a')
@@ -105,6 +106,33 @@ class OrderQueueController extends Controller
 					->groupBy('a.encounter_id')
 					->paginate($this->paginateValue);
 
+			if ($request->discharge) {
+					$order_queues = DB::table('orders as a')
+							->select($fields)
+							->join('consultations as b', 'b.consultation_id', '=', 'a.consultation_id')
+							->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+							->join('patients as d', 'd.patient_id','=', 'c.patient_id')
+							->leftjoin('order_cancellations as e', 'e.order_id', '=', 'a.order_id')
+							->leftjoin('queue_locations as g', 'g.location_code', '=', 'a.location_code')
+							->leftjoin('ref_encounter_types as h', 'h.encounter_code', '=', 'c.encounter_code')
+							->leftjoin('admissions as i', 'i.encounter_id', '=', 'c.encounter_id')
+							->leftjoin('beds as l', 'l.bed_code', '=', 'i.bed_code')
+							->leftjoin('queues as j', 'j.encounter_id', '=', 'c.encounter_id')
+							->leftjoin('queue_locations as k', 'k.location_code', '=', 'j.location_code')
+							->leftjoin('order_investigations as m', 'm.order_id', '=', 'a.order_id')
+							->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
+							->leftjoin('bills as o','o.encounter_id', '=', 'c.encounter_id')
+							->where('investigation_date','>=', Carbon::today())
+							->where('a.location_code','=',$location_code)
+							->whereNull('cancel_id')
+							->where('order_completed', '=', 0)
+							->where('order_is_discharge', '=', 1)
+							->where('c.encounter_code', '!=', 'inpatient')
+							->whereNotNull('n.post_id')
+							->groupBy('a.encounter_id')
+							->paginate($this->paginateValue);
+			}
+
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
 			//return $locations;
 			
@@ -115,6 +143,7 @@ class OrderQueueController extends Controller
 					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'location'=>$location,
 					'encounter_code'=>null,
+					'is_discharge'=>$request->discharge,
 					]);
 	}
 

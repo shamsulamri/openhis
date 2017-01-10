@@ -334,8 +334,9 @@ class Patient extends Model
 			static::created(function($patient)
 			{
 					//$prefix = date('Ymd', strtotime(Carbon::now()));  
-					$prefix = config('host.mrn_prefix');
-					$mrn = $prefix.str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
+					$prefix = config('host.mrn_prefix') . date('Ymd', strtotime(Carbon::now()));
+					Log::info(Patient::where('created_at','>=', Carbon::today())->count());
+					$mrn = $prefix.str_pad(Patient::where('created_at','>=', Carbon::today())->count(), 6, '0', STR_PAD_LEFT);
 					$patient->patient_mrn = $mrn;
 					$patient->save();
 			});
