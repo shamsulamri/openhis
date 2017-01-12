@@ -40,10 +40,19 @@ class FutureController extends Controller
 
 	public function search(Request $request)
 	{
-			$futures = DB::table('orders')
-					->where('race_name','like','%'.$request->search.'%')
-					->orWhere('race_code', 'like','%'.$request->search.'%')
-					->orderBy('race_name')
+			$futures = Order::orderBy('orders.order_id')
+					->leftjoin('order_investigations as a', 'orders.order_id','=','a.order_id')
+					->leftjoin('encounters as b', 'orders.encounter_id','=','b.encounter_id')
+					->leftjoin('patients as c', 'c.patient_id','=','b.patient_id')
+					->where('investigation_date', '>=', Carbon::today())
+					->where('order_completed', '=', 0)
+					->where('order_is_discharge','=',1)
+					->where(function ($query) use ($request) {
+							$query->where('patient_name','like','%'.$request->search.'%')
+									->orWhere('patient_mrn', 'like','%'.$request->search.'%')
+									->orWhere('patient_new_ic', 'like','%'.$request->search.'%');
+					})
+					->orderBy('investigation_date')
 					->paginate($this->paginateValue);
 
 			return view('futures.index', [
@@ -52,14 +61,4 @@ class FutureController extends Controller
 					]);
 	}
 
-	public function searchById($id)
-	{
-			$futures = DB::table('orders')
-					->where('race_code','=',$id)
-					->paginate($this->paginateValue);
-
-			return view('futures.index', [
-					'futures'=>$futures
-			]);
-	}
 }
