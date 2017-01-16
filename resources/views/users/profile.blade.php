@@ -24,6 +24,13 @@ User Profile
             @if ($errors->has('email')) <p class="help-block">{{ $errors->first('email') }}</p> @endif
         </div>
     </div>
+    <div class='form-group  @if ($errors->has('consultation_fee')) has-error @endif'>
+        <label for='consultation_fee' class='col-sm-3 control-label'>Consulation Fee</label>
+        <div class='col-sm-9'>
+            {{ Form::text('consultation_fee', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'255']) }}
+            @if ($errors->has('consultation_fee')) <p class="help-block">{{ $errors->first('consultation_fee') }}</p> @endif
+        </div>
+    </div>
 	{{  Form::hidden('username', $user->username) }}
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">

@@ -42,7 +42,6 @@
 				<br>
 				Dependants
 		</a>
-		@can('module-patient')
 		<a class='btn btn-default' href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
 								<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span><br>Appointment
 		</a>
@@ -51,7 +50,6 @@
 				<br>
 				Preadmission 
 		</a>
-		@endcan
 		@can('module-discharge')
 				@if (!empty($patient->hasActiveEncounter()))
 				<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>

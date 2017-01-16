@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Auth;
 use App\Http\Controllers\Controller;
 use App\Bed;
 use Log;
@@ -29,7 +30,7 @@ class BedController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 			$beds = DB::table('beds as a')
 					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
@@ -37,8 +38,16 @@ class BedController extends Controller
 					->leftjoin('bed_statuses as d', 'd.status_code','=', 'a.status_code')
 					->orderBy('ward_name')
 					->orderBy('class_name')
-					->orderBy('bed_name')
-					->paginate($this->paginateValue);
+					->orderBy('bed_name');
+
+			if (Auth::user()->can('module-ward')) {
+					$ward_code = $request->cookie('ward');
+					if ($ward_code) {
+							$beds = $beds->where('a.ward_code','=', $ward_code);
+					}
+			}
+
+			$beds = $beds->paginate($this->paginateValue);
 
 			return view('beds.index', [
 					'beds'=>$beds,

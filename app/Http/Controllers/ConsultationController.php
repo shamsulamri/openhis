@@ -92,6 +92,19 @@ class ConsultationController extends Controller
 					$consultation->patient_id = $encounter->patient_id;
 					$consultation->consultation_status=1;
 					$consultation->save();
+
+					$order = new Order();
+					$order->consultation_id = $consultation->consultation_id;
+					$order->encounter_id = $consultation->encounter_id;
+					$order->product_code = "consultation_fee";
+					$order->order_quantity_request=1;
+					$order->order_completed=1;
+					$order->order_total = Auth::user()->consultation_fee;
+					$order->order_unit_price = Auth::user()->consultation_fee;
+					$order->order_sale_price = Auth::user()->consultation_fee;
+					$order->user_id = Auth::user()->id;
+					$order->save();
+					Log::info($order);
 					Session::set('consultation_id', $consultation->consultation_id);
 					Session::set('encounter_id', $encounter->encounter_id);
 					return view('consultations.edit', [
@@ -120,6 +133,8 @@ class ConsultationController extends Controller
 					$consultation = new Consultation($request->all());
 					$consultation->consultation_id = $request->consultation_id;
 					$consultation->save();
+
+
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/consultations/id/'.$consultation->consultation_id);
 			} else {
@@ -184,21 +199,23 @@ class ConsultationController extends Controller
 				$encounter = ['id'=>$consultation->encounter->encounter_id,
 						'class'=>$consultation->encounter->encounterType->encounter_name
 				];
-				$event = ['status'=>'requested', 'dateTime'=>$order->orderInvestigation->investigation_date ];
-				Log::info("-----");
-				Log::info($order->orderInvestigation->investigation_date);
+				if ($order->orderInvestigation) {
+						$event = ['status'=>'requested', 'dateTime'=>$order->orderInvestigation->investigation_date ];
+						Log::info("-----");
+						Log::info($order->orderInvestigation->investigation_date);
 
-				$diagnostic = new DiagnosticOrder();
-				$diagnostic->subject = $subject;
-				$diagnostic->orderer = $orderer;
-				$diagnostic->identifier = $order->order_id;
-				$diagnostic->item = $item;
-				$diagnostic->priority = $order->orderInvestigation->urgency_code;
-				$diagnostic->encounter = $encounter;
-				$diagnostic->note = $order->order_description;
-				$diagnostic->status = $status;
-				$diagnostic->event = $event;
-				Amqp::pushMessage($order->product->location_code,json_encode($diagnostic,JSON_UNESCAPED_SLASHES));
+						$diagnostic = new DiagnosticOrder();
+						$diagnostic->subject = $subject;
+						$diagnostic->orderer = $orderer;
+						$diagnostic->identifier = $order->order_id;
+						$diagnostic->item = $item;
+						$diagnostic->priority = $order->orderInvestigation->urgency_code;
+						$diagnostic->encounter = $encounter;
+						$diagnostic->note = $order->order_description;
+						$diagnostic->status = $status;
+						$diagnostic->event = $event;
+						Amqp::pushMessage($order->product->location_code,json_encode($diagnostic,JSON_UNESCAPED_SLASHES));
+				}
 			}
 
 	}

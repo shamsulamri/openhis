@@ -85,7 +85,7 @@ class EncounterController extends Controller
 					'locations' => $locations,
 					'consultants' => $consultants,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'beds' => Bed::get(),
+					'beds' => Bed::where('status_code','<>','02')->get(),
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 				]);

@@ -51,6 +51,7 @@
 			</td>
 			<td>
 					{{$discharge->type_name}}
+
 			</td>
 			<td>
 					{{$discharge->name}}
@@ -58,30 +59,36 @@
 					<small>{{$discharge->ward_name}}</small>
 			</td>
 			<td align='right'>
-			@if ($dischargeHelper->drugCompleted($discharge->encounter_id))
-
-					<?php
-					$bill_label="Interim Bill";
-					$button_type="primary";
-					if ($discharge->discharge_id>0) {
-						$bill_label = "Final Bill";
-						if ($discharge->id>0) {
-								$bill_label="&nbsp;&nbsp; Paid &nbsp;&nbsp;";
-								$button_type="default";
-						}
-					}
-					?>
-				
+			<?php
+			$bill_label="Interim Bill";
+			$button_type="primary";
+			if ($discharge->discharge_id>0) {
+				$bill_label = "Final Bill";
+				if ($discharge->id>0) {
+						$bill_label="&nbsp;&nbsp; Paid &nbsp;&nbsp;";
+						$button_type="default";
+				}
+			}
+			?>
+			@if ($discharge->encounter_code=='inpatient')
 					@can('module-discharge')
 					<a class='btn btn-{{ $button_type }} btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
 					@endcan
-					@can('system-administrator')
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
-					@endcan
 			@else
-					<span class="label label-warning">
-					Preparing drug...
-					</span>
+					@if ($dischargeHelper->drugCompleted($discharge->encounter_id))
+
+						
+							@can('module-discharge')
+							<a class='btn btn-{{ $button_type }} btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
+							@endcan
+							@can('system-administrator')
+							<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
+							@endcan
+					@else
+							<span class="label label-warning">
+							Preparing drug...
+							</span>
+					@endif
 			@endif
 			</td>
 	</tr>

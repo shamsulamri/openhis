@@ -6,8 +6,9 @@
 <a href='{{ URL::to('patients/dependants/'. $patient->patient_id) }}' class='btn btn-primary'>
 Manage
 </a>
+<br>
+<br>
 @if (count($patients)>0)
-
 <table class="table table-hover">
  <thead>
 	<tr> 
@@ -34,7 +35,9 @@ Manage
 			{{ $p->patient_phone_mobile }}
 		</td>
 		<td>
+			@can('module-patient')
 			<a class='btn btn-default btn-xs pull-right' href='/patients/{{ $p->patient_id }}/edit'>Swap</a>
+			@endcan
 		</td>
 	</tr>
 @endforeach

@@ -33,7 +33,7 @@ class DischargeController extends Controller
 	public function index()
 	{
 			$discharges = DB::table('discharges as a')
-					->select('patient_mrn', 'patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'e.id','name','ward_name')
+					->select('patient_mrn', 'b.encounter_code','patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'e.id','name','ward_name')
 					->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('ref_discharge_types as d', 'd.type_code','=','a.type_code')
@@ -64,6 +64,7 @@ class DischargeController extends Controller
 			$discharge->encounter_id = $consultation->encounter_id;
 			$discharge->consultation_id = $id;
 			$discharge->discharge_date = date("d/m/Y");
+			$discharge->discharge_time = date("H:i");
 			$discharge->user_id = Auth::user()->id;
 			$discharge->type_code = 'home';
 
@@ -80,6 +81,7 @@ class DischargeController extends Controller
 					->leftJoin('encounters as d', 'd.encounter_id','=','c.encounter_id')
 					->where('order_is_discharge',1)
 					->where('d.encounter_id', $consultation->encounter_id)
+					->where('a.product_code','<>','consultation_fee')
 					->get();
 
 			$mc = $consultation->medical_certificate;

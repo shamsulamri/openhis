@@ -14,6 +14,7 @@ class User extends Authenticatable
 				'username',
 				'password',
 				'email',
+				'consultation_fee',
 				'employee_id',
 				'author_id',
 				];

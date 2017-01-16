@@ -33,9 +33,12 @@
 					{{$appointment->service_name}}
 			</td>
 			<td>
+					<!--
 					<a href='{{ URL::to('patients/'. $appointment->patient_id.'/edit') }}'>
 						{{$appointment->patient_name}}
 					</a>
+					-->
+						{{$appointment->patient_name}}
 					<br>
 					<small>{{$appointment->patient_mrn}}</small>
 			</td>

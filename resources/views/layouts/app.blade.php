@@ -236,14 +236,17 @@ if ($_COOKIE['his-navbar']==1) {
 						</div>
 						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='glyphicon glyphicon-bed'></i><span class='nav-label'>Admissions</a></li>
 						<li><a title="Inpatient Tasks" href="{{ url('/admission_tasks') }}"><i class='fa fa-user-circle'></i><span class='nav-label'>Admission Tasks</a></li>
-						<li><a title="Bed Reservations" href="{{ url('/bed_bookings') }}"><i class='glyphicon glyphicon-bookmark'></i><span class='nav-label'>Bed Reservations</a></li>
 						@if (!empty($ward->ward_code))
 								@if ($ward->ward_code != 'mortuary')
+								<!--
 								<li><a title="Patients" href="{{ url('/patients') }}"><i class='fa fa-user'></i><span class='nav-label'>Patient List</a></li>
 								<li><a title="Appointments" href="{{ url('/appointments') }}"><i class='fa fa-calendar'></i><span class='nav-label'>Appointments</a></li>
+								-->
 								@endif
 						@endif
-						<h4>&nbsp;</h4>
+						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
+						<li><a title="Bed Reservations" href="{{ url('/bed_bookings') }}"><i class='glyphicon glyphicon-bookmark'></i><span class='nav-label'>Bed Reservations</a></li>
+						<li><a title="Appointments" href="{{ url('/appointments') }}"><i class='fa fa-calendar'></i><span class='nav-label'>Appointments</a></li>
 						<li><a title="Products" href="{{ url('/products') }}"><i class='glyphicon glyphicon-glass'></i><span class='nav-label'>Products</a></li>
 						<li><a title="Loans" href="{{ url('/loans/ward') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'>Loans</a></li>
 						@endcan
@@ -264,6 +267,7 @@ if ($_COOKIE['his-navbar']==1) {
 						</div>
 						<li><a title='Patient List' href="{{ url('/patients') }}"><i class='fa fa-user'></i><span class='nav-label'>Patients</span></a></li>
 						<li><a title='Discharges' href="{{ url('/discharges') }}"><i class='fa fa-home'></i><span class='nav-label'>Discharges</span></a></li>
+						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='glyphicon glyphicon-bed'></i><span class='nav-label'>Admissions</a></li>
 						@endcan
 
 						<!-- Support -->

@@ -99,15 +99,9 @@
 					</small>	
 			</td>
 			<td>
-					@can('module-ward')
-					<a href='{{ URL::to('admissions/'. $admission->admission_id ) }}'>
-					{{ strtoupper($admission->patient_name) }}
-					</a>
-					@else
 					<a href='{{ URL::to('admissions/'. $admission->admission_id.'/edit' ) }}'>
 					{{ strtoupper($admission->patient_name) }}
 					</a>
-					@endcan
 					<br>
 					<small>{{$admission->patient_mrn}}
 					<br>
@@ -142,16 +136,24 @@
 						@endif
 						@if (!empty($admission->discharge_id))
 							<a class='btn btn-default btn-xs' href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}' title='Ward discharge'><span class='glyphicon glyphicon-bed' aria-hidden='true'></span></a>
-						@endif
-						@if (!is_null($admission->arrival_id)) 
-						<a class='btn btn-default btn-xs' href="{{ URL::to('loans/request/'. $admission->patient_mrn.'?type=folder') }}" title='Folder request'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
-</a>
-						<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'><span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
-</a>
+						@else
+								@if (!is_null($admission->arrival_id)) 
+								<a class='btn btn-default btn-xs' href="{{ URL::to('loans/request/'. $admission->patient_mrn.'?type=folder') }}" title='Folder request'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
+		</a>
+								<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'><span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
+		</a>
+								@endif
 						@endif
 			</td>
-			@endcan
 			@endif
+			@endcan
+			@can('module-discharge')
+					@if (!$admission->discharge_id)
+					<td align='right'>
+							<a class='btn btn-primary btn-xs' href='{{ URL::to('bill_items/'. $admission->encounter_id) }}'>Interim Bill</a>
+					</td>
+					@endif
+			@endcan
 	</tr>
 @endforeach
 @endif

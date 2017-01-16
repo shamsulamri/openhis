@@ -1,4 +1,5 @@
 
+	<!--
     <div class='form-group  @if ($errors->has('discharge_description')) has-error @endif'>
         {{ Form::label('discharge_description', 'Payment',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -11,7 +12,36 @@
 			@endif
         </div>
     </div>
+	-->
 
+    <div class='form-group'>
+        {{ Form::label('mc', 'Next Appointment',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+			@if (count($appointments)>0)
+					@foreach ($appointments as $appointment)
+						<label class='control-label'>
+						<!--
+						<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/0/'.$appointment->service_id. '/'.$appointment->appointment_id) }}?admission_id={{ $admission_id }}'>
+						-->	
+						{{ date('d F Y, H:i', strtotime($appointment->appointment_datetime)) }} with 
+						{{ $appointment->service->service_name }}
+						<!--
+						</a>
+						-->
+						</label>
+						<br>
+					@endforeach
+			@else
+				{{ Form::label('mc', 'None',['class'=>'control-label']) }}
+				<br>
+			@endif
+			<!--
+			<a href='/appointment_services/{{ $patient->patient_id }}/0/{{ $service_id }}?admission_id={{ $admission_id }}' class='btn btn-default'>
+				New Appointment
+			</a>
+			-->
+        </div>
+    </div>
 
     <div class='form-group'>
         {{ Form::label('mc', 'Medical Certificate',['class'=>'col-sm-3 control-label']) }}
@@ -25,25 +55,6 @@
 		@else
 				{{ Form::label('mc', 'None',['class'=>'control-label']) }}
 		@endif
-        </div>
-    </div>
-
-    <div class='form-group'>
-        {{ Form::label('mc', 'Next Appointment',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-			@if (count($appointments)>0)
-					@foreach ($appointments as $appointment)
-						<label class='control-label'>
-						{{ date('d F Y, H:i', strtotime($appointment->appointment_datetime)) }} with 
-						{{ $appointment->service->service_name }}
-						</label>
-						<br>
-					@endforeach
-			<br>
-			@endif
-			<a href='/appointment_services/{{ $patient->patient_id }}/0/{{ $service_id }}?admission_id={{ $admission_id }}' class='btn btn-default'>
-				New Appointment
-			</a>
         </div>
     </div>
 
@@ -71,6 +82,7 @@
         </div>
     </div>
 
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/admissions" role="button">Cancel</a>
@@ -78,3 +90,4 @@
         </div>
     </div>
             {{ Form::hidden('encounter_id', $ward_discharge->encounter_id)  }}
+            {{ Form::hidden('admission_id', $admission_id)  }}

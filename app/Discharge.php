@@ -15,6 +15,7 @@ class Discharge extends Model
 				'encounter_id',
 				'type_code',
 				'discharge_date',
+				'discharge_time',
 				'discharge_diagnosis',
 				'discharge_summary',
 				'user_id'];

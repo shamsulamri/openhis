@@ -29,6 +29,7 @@
 		</div>
 	</div>
 </div>
+@cannot('module-ward')
 <form action='/bed/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<label>&nbsp;Ward</label>
@@ -39,6 +40,7 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
+@endcan
 
 @can('system-administrator')
 <a href='/beds/create' class='btn btn-primary'>Create</a>

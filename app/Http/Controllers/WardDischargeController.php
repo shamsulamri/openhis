@@ -16,6 +16,7 @@ use App\Encounter;
 use App\Bill;
 use App\Admission;
 use App\Appointment;
+use App\Bed;
 
 class WardDischargeController extends Controller
 {
@@ -46,17 +47,24 @@ class WardDischargeController extends Controller
 
 			$orders = Order::where('encounter_id',$encounter_id)
 						->where('order_is_discharge',1)
+						->where('product_code','<>','consultation_fee')
 						->get();
 
 			$mc = MedicalCertificate::where('encounter_id', $encounter_id)->get();
 
 			$bill = Bill::where('encounter_id', $encounter_id)->get();
 
+			/**
 			$appointments = Appointment::where('admission_id', $admission_id)
 					->whereDate('appointment_datetime','>',$encounter->created_at)
 					->get();
+			**/
 			
+			$appointments = Appointment::whereDate('appointment_datetime','>',$encounter->created_at)->get();
+
 			$service_id = $admission->user_id;
+
+			
 
 			return view('ward_discharges.create', [
 					'ward_discharge' => $ward_discharge,
@@ -73,6 +81,7 @@ class WardDischargeController extends Controller
 
 	public function store(Request $request) 
 	{
+			$admission = Admission::find($request->admission_id);
 			$ward_discharge = new WardDischarge();
 			$ward_discharge->encounter_id = $request->encounter_id;
 			$valid = $ward_discharge->validate($request->all(), $request->_method);
@@ -82,6 +91,11 @@ class WardDischargeController extends Controller
 					$ward_discharge->discharge_id = $request->discharge_id;
 					$ward_discharge->encounter_id = $request->encounter_id;
 					$ward_discharge->save();
+
+					$bed = Bed::find($admission->bed_code);
+					$bed->status_code = "02";
+					$bed->save();
+
 					Session::flash('message', 'Patient has been physically discharged.');
 					return redirect('admissions');
 			} else {

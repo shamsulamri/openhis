@@ -28,16 +28,35 @@
     </div>
 	@endif
 
-    <div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
-        <label for='discharge_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
-        <div class='col-sm-9'>
-			<div class="input-group date">
-				<input data-mask="99/99/9999" name="discharge_date" id="discharge_date" type="text" class="form-control" value="{{ $discharge->discharge_date }}">
-				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('discharge_date')) has-error @endif'>
+						<label for='discharge_date' class='col-sm-6 control-label'>Date<span style='color:red;'> *</span></label>
+						<div class='col-sm-6'>
+							<div class="input-group date">
+								<input data-mask="99/99/9999" name="discharge_date" id="discharge_date" type="text" class="form-control" value="{{ $discharge->discharge_date }}">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
+							@if ($errors->has('discharge_date')) <p class="help-block">{{ $errors->first('discharge_date') }}</p> @endif
+						</div>
+					</div>
 			</div>
-            @if ($errors->has('discharge_date')) <p class="help-block">{{ $errors->first('discharge_date') }}</p> @endif
-        </div>
-    </div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('discharge_time')) has-error @endif'>
+						<label for='discharge_time' class='col-sm-6 control-label'>Time End</label>
+						<div class='col-sm-6'>
+							<div id="discharge_time" name="discharge_time" class="input-group clockpicker" data-autoclose="true">
+								{{ Form::text('discharge_time', null, ['class'=>'form-control','data-mask'=>'99:99']) }}
+								<span class="input-group-addon">
+									<span class="fa fa-clock-o"></span>
+								</span>
+							</div>
+							@if ($errors->has('discharge_time')) <p class="help-block">{{ $errors->first('discharge_time') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 
 	@if ($consultation->encounter->encounter_code != 'mortuary')
     <div class='form-group'>
@@ -99,5 +118,16 @@
 				forceParse: false,
 				calendarWeeks: true,
 				autoclose: true
+		});
+		$('.clockpicker').clockpicker();
+
+		$(function(){
+				$('#discharge_time').combodate({
+						format: "HH:mm",
+						template: "HH : mm",
+						value: '{{ $discharge->discharge_time }}',
+						minuteStep: 1,
+						customClass: 'select'
+				});    
 		});
 	</script>
