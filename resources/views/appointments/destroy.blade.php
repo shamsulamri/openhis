@@ -10,13 +10,16 @@ Delete Appointment
 	{{ method_field('DELETE') }}
 			<div class='form-group  @if ($errors->has('appointment_cancel')) has-error @endif'>
 				<div class='col-sm-10'>
-					<h3>
-					Reason for cancellation
-					</h3>
+						<h4>
+						{{ $appointment->patient->patient_name }} ({{ $appointment->patient->patient_mrn }})
+						current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appointment_datetime )) }}
+						</h4>
+						<br>
+						Reason for cancellation
 				</div>
 			</div>
 			<div class='form-group  @if ($errors->has('appointment_cancel')) has-error @endif'>
-				<div class='col-sm-10'>
+				<div class='col-sm-12'>
 					{{ Form::textarea('appointment_cancel', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
 				</div>
 			</div>
