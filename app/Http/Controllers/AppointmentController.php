@@ -164,8 +164,12 @@ class AppointmentController extends Controller
 			]);
 
 	}
-	public function destroy($id)
+	public function destroy(Request $request, $id)
 	{	
+			$appointment = Appointment::find($id);
+			$appointment->appointment_cancel =$request->appointment_cancel;
+			$appointment->save();
+
 			Appointment::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/appointments');

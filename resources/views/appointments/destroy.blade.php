@@ -6,14 +6,26 @@ Delete Appointment
 </h1>
 
 <br>
-<h3>
-Are you sure you want to delete the selected record ?
-{{ $appointment->patient_id }}
-{{ Form::open(['url'=>'appointments/'.$appointment->appointment_id, 'class'=>'pull-right']) }}
+{{ Form::open(['url'=>'appointments/'.$appointment->appointment_id, 'class'=>'form-horizontal']) }}
 	{{ method_field('DELETE') }}
-	<a class="btn btn-default" href="/appointments" role="button">Cancel</a>
-	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
+			<div class='form-group  @if ($errors->has('appointment_cancel')) has-error @endif'>
+				<div class='col-sm-10'>
+					<h3>
+					Reason for cancellation
+					</h3>
+				</div>
+			</div>
+			<div class='form-group  @if ($errors->has('appointment_cancel')) has-error @endif'>
+				<div class='col-sm-10'>
+					{{ Form::textarea('appointment_cancel', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+				</div>
+			</div>
+			<div class='form-group'>
+				<div class="col-sm-10">
+					<a class="btn btn-default" href="/appointments" role="button">Cancel</a>
+					{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
+				</div>
+			</div>
 {{ Form::close() }}
 
-</h3>
 @endsection
