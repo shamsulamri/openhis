@@ -12,6 +12,7 @@ use Log;
 use DB;
 use Session;
 use App\UserAuthorization;
+use App\AppointmentService;
 use Auth;
 use Validator;
 
@@ -47,6 +48,7 @@ class UserController extends Controller
 			return view('users.create', [
 					'user' => $user,
 					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
+					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					]);
 	}
 
@@ -75,6 +77,8 @@ class UserController extends Controller
 			return view('users.edit', [
 					'user'=>$user,
 					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
+					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+
 					]);
 	}
 
@@ -84,6 +88,7 @@ class UserController extends Controller
 			$user = Auth::user();
 			return view('users.profile', [
 					'user'=>$user,
+					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					]);
 	}
 
@@ -99,10 +104,9 @@ class UserController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/user_profile');
 			} else {
-					return view('users.profile', [
-							'user'=>$user,
-							])
-							->withErrors($valid);			
+					return redirect('/user_profile')
+							->withErrors($valid)
+							->withInput();
 			}
 	}
 

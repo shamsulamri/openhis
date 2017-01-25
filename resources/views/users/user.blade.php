@@ -39,6 +39,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('service_id')) has-error @endif'>
+        <label for='service_id' class='col-sm-3 control-label'>Appointment Book</label>
+        <div class='col-sm-9'>
+            {{ Form::select('service_id', $services,null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('service_id')) <p class="help-block">{{ $errors->first('service_id') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/users" role="button">Cancel</a>

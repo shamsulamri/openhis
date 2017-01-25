@@ -183,6 +183,7 @@ if ($_COOKIE['his-navbar']==1) {
 						</div>
 						<li><a title='Patient List' href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
 						<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
+						<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 						<h4>&nbsp;</h4>
 						@if (!empty($consultation) && !empty($patient))
 							<li><a title='Medical Alerts' href="/medical_alerts"><i class="fa fa-exclamation-circle"></i><span class='nav-label'>Medical Alerts</span></a></li>

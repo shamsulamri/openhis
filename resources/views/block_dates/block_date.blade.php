@@ -10,34 +10,43 @@
     <div class='form-group  @if ($errors->has('block_date')) has-error @endif'>
         <label for='block_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
-			<input id="block_date" name="block_date" type="text">
+			<div class="input-group date">
+				<input data-mask="99/99/9999" name="block_date" id="block_date" type="text" class="form-control" value="{{ $block_date->block_date }}">
+				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			</div>
             @if ($errors->has('block_date')) <p class="help-block">{{ $errors->first('block_date') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('block_recur_annually')) has-error @endif'>
-        {{ Form::label('block_recur_annually', 'Recur Annually',['class'=>'col-sm-3 control-label']) }}
+    <div class='form-group  @if ($errors->has('block_recur_weekly')) has-error @endif'>
+        {{ Form::label('block_recur_weekly', 'Recurring',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::checkbox('block_recur_annually', '1') }}
-            @if ($errors->has('block_recur_annually')) <p class="help-block">{{ $errors->first('block_recur_annually') }}</p> @endif
+			{{ Form::radio('block_recur',0, $block_date->block_recur==0) }} 
+			<label>None</label><br>
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('block_recur_weekly')) has-error @endif'>
-        {{ Form::label('block_recur_weekly', 'Recur Weekly',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::checkbox('block_recur_weekly', '1') }}
-            @if ($errors->has('block_recur_weekly')) <p class="help-block">{{ $errors->first('block_recur_weekly') }}</p> @endif
+    <div class='form-group  @if ($errors->has('block_recur_annually')) has-error @endif'>
+        <div class='col-sm-9 col-md-offset-3'>
+			{{ Form::radio('block_recur',1, $block_date->block_recur==1) }}
+			<label>Annually</label>
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('block_recur_monthly')) has-error @endif'>
-        {{ Form::label('block_recur_monthly', 'Recur Monthly',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::checkbox('block_recur_monthly', '1') }}
-            @if ($errors->has('block_recur_monthly')) <p class="help-block">{{ $errors->first('block_recur_monthly') }}</p> @endif
+        <div class='col-sm-9 col-md-offset-3'>
+			{{ Form::radio('block_recur',2, $block_date->block_recur==2) }}
+			<label>Monthly</label>
         </div>
     </div>
+
+    <div class='form-group  @if ($errors->has('block_recur_weekly')) has-error @endif'>
+        <div class='col-sm-9 col-md-offset-3'>
+			{{ Form::radio('block_recur',3, $block_date->block_recur==3) }}
+			<label>Weekly</label>
+        </div>
+    </div>
+
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
@@ -47,14 +56,12 @@
     </div>
 
 	<script>
-		$(function(){
-				$('#block_date').combodate({
-						format: "DD/MM/YYYY",
-						template: "DD MMMM YYYY",
-						value: '{{ $block_date->block_date }}',
-						maxYear: {{ $minYear+5 }},
-						minYear: {{ $minYear }},
-						customClass: 'select'
-				});    
-		});
+				$('#block_date').datepicker({
+						format: "dd/mm/yyyy",
+						todayBtn: "linked",
+						keyboardNavigation: false,
+						forceParse: false,
+						calendarWeeks: true,
+						autoclose: true
+				});
 	</script>

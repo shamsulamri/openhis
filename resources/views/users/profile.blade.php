@@ -24,6 +24,14 @@ User Profile
             @if ($errors->has('email')) <p class="help-block">{{ $errors->first('email') }}</p> @endif
         </div>
     </div>
+	<hr>
+    <div class='form-group  @if ($errors->has('service_id')) has-error @endif'>
+        <label for='service_id' class='col-sm-3 control-label'>Appointment Book</label>
+        <div class='col-sm-9'>
+            {{ Form::select('service_id', $services,null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('service_id')) <p class="help-block">{{ $errors->first('service_id') }}</p> @endif
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('consultation_fee')) has-error @endif'>
         <label for='consultation_fee' class='col-sm-3 control-label'>Consulation Fee</label>
         <div class='col-sm-9'>

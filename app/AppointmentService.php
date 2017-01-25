@@ -23,7 +23,6 @@ class AppointmentService extends Model
 				'service_friday',
 				'service_saturday',
 				'service_sunday',
-				'user_id',
 				'service_block_dates',
 				'service_status'];
 	

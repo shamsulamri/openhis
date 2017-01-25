@@ -3,12 +3,16 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
 class Appointment extends Model
 {
+	use SoftDeletes;
+	protected $dates = ['deleted_at'];
+
 	protected $table = 'appointments';
 	protected $fillable = [
 				'patient_id',

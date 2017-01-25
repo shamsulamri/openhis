@@ -5,6 +5,10 @@
 <form action='/appointment/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	{{ Form::select('services', $services, $service, ['class'=>'form-control']) }}
+	<div class="input-group date">
+		<input data-mask="99/99/9999" name="date_start" id="date_start" type="text" class="form-control" value="{{ $date_start }}">
+		<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	</div>
 	<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
@@ -30,7 +34,7 @@
 					</a>
 			</td>
 			<td>
-					{{$appointment->service_name}}
+					{{$appointment->service->service_name}}
 			</td>
 			<td>
 					<!--
@@ -38,15 +42,15 @@
 						{{$appointment->patient_name}}
 					</a>
 					-->
-						{{$appointment->patient_name}}
+						{{$appointment->patient->patient_name}}
 					<br>
-					<small>{{$appointment->patient_mrn}}</small>
+					<small>{{$appointment->patient->patient_mrn}}</small>
 			</td>
 			<td>
-				{{ $appointment->patient_phone_home }}
+				{{ $appointment->patient->patient_phone_home }}
 			</td>
 			<td>
-				{{ $appointment->patient_phone_mobile }}
+				{{ $appointment->patient->patient_phone_mobile }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('appointments/delete/'. $appointment->appointment_id) }}'>Delete</a>
@@ -67,4 +71,14 @@
 @else
 	No record found.
 @endif
+	<script>
+		$('#date_start').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
+		});
+	</script>
 @endsection

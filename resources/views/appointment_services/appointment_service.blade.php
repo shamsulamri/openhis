@@ -15,14 +15,6 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('user_id')) has-error @endif'>
-        {{ Form::label('user_id', 'Consultants',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::select('user_id', $consultants,null, ['class'=>'form-control']) }}
-            @if ($errors->has('user_id')) <p class="help-block">{{ $errors->first('user_id') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group  @if ($errors->has('service_start')) has-error @endif'>
         <label for='service_start' class='col-sm-3 control-label'>Time Start<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>

@@ -17,6 +17,7 @@ class User extends Authenticatable
 				'consultation_fee',
 				'employee_id',
 				'author_id',
+				'service_id',
 				];
 	
     protected $hidden = [
@@ -34,6 +35,7 @@ class User extends Authenticatable
         	if ($method=='PUT') {
 					$rules = [
 						'name'=>'required',
+						'email'=>'required',
 					];
         	}
 

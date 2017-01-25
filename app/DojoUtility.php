@@ -85,6 +85,18 @@ class DojoUtility
 				return date('d/m/Y', strtotime($dt->addDay())); 
 		}
 
+		public static function addDays($value, $days)
+		{
+				$value = Carbon::createFromFormat('d/m/Y', $value);
+				return $value->addDays($days);
+		}
+
+		public static function dateFormat($format_from, $format_to,$value)
+		{
+				$value = Carbon::createFromFormat($format_from, $value);
+				return date($format_to, strtotime($value)); 
+		}
+
 		public static function timenow()
 		{
 				return date('H:i', strtotime(Carbon::now())); 

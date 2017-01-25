@@ -83,6 +83,7 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 		$slot_end = new DateTime('today');
 		$slot_end->setTime($end_time[0],$end_time[1],0);
 		$duration=$service->service_duration;
+		$block_day = False;
 
 		while ($slot_time<$slot_end) {
 				if ($slot_time>=$slot_end) {
@@ -95,6 +96,8 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 				</td>
 				@foreach ($week as $day)
 					<?php 
+						$block_day = False;
+						$block_label = "";
 						$btn_class="";
 						$showDay=false;
 						$dayWeek = $day->format('D');
@@ -109,7 +112,25 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 						$index = array_search($slot, array_column($appointments, 'appointment_slot'));
 					?>
 					<td align='middle' width='80' height='33'>
-					@if ($day>=$today && $showDay==true)
+					@foreach ($block_dates as $block_date)
+							@if ( date('d M Y',strtotime($block_date->getBlockDate())) == $day->format('d M Y') && $block_date->block_recur==0)
+									<?php $block_day = True; ?>
+									{{ $block_date->block_name }}
+							@endif
+							@if ( date('d M',strtotime($block_date->getBlockDate())) == $day->format('d M') && $block_date->block_recur==1)
+									<?php $block_day = True; ?>
+									{{ $block_date->block_name }}
+							@endif
+							@if ( date('d',strtotime($block_date->getBlockDate())) == $day->format('d') && $block_date->block_recur==2)
+									<?php $block_day = True; ?>
+									{{ $block_date->block_name }}
+							@endif
+							@if ( date('D',strtotime($block_date->getBlockDate())) == $day->format('D') && $block_date->block_recur==3)
+									<?php $block_day = True; ?>
+									{{ $block_date->block_name }}
+							@endif
+					@endforeach
+					@if ($day>=$today && $showDay==true && !$block_day)
 						@if ($index===FALSE)
 							@if ($day==$today)
 								<a href='#' class='btn btn-default btn-sm disabled'>{{ $slot_time->format('h:i a') }}</a>
@@ -126,6 +147,7 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 						@endif
 					@else
 							@if ($day<$today && $showDay==true)
+								@if (!$block_day)
 								<?php
 								if ($index===FALSE) {
 									$btn_class = 'btn btn-default btn-sm disabled';
@@ -134,8 +156,11 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 								}
 								?>
 								<a href='#' class='{{ $btn_class }}'>{{ $slot_time->format('h:i a') }}</a>
+								@endif
 							@else
+								@if (!$block_day)
 								-	
+								@endif
 							@endif
 					@endif
 					</td>

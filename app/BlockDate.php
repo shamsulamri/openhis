@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
 class BlockDate extends Model
 {
@@ -13,9 +14,8 @@ class BlockDate extends Model
 	protected $fillable = [
 				'block_name',
 				'block_date',
-				'block_recur_annually',
-				'block_recur_weekly',
-				'block_recur_monthly'];
+				'block_recur',
+		];
 	
     protected $guarded = ['block_code'];
     protected $primaryKey = 'block_code';
@@ -30,6 +30,7 @@ class BlockDate extends Model
 			
         	if ($method=='') {
         	    $rules['block_code'] = 'required|max:20.0|unique:appointment_block_dates';
+        	    $rules['block_date'] = 'required|date_format:d/m/Y';
         	}
         
 			
@@ -52,6 +53,12 @@ class BlockDate extends Model
 	public function getBlockDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
+	}
+
+	public function getBlockDate() 
+	{
+		Log::info(gettype($this->attributes['block_date']));
+		return $this->attributes['block_date'];
 	}
 
 }

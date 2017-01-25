@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use App\Patient;
 use App\Appointment;
 use App\User;
+use App\BlockDate;
 
 class AppointmentServiceController extends Controller
 {
@@ -40,15 +41,10 @@ class AppointmentServiceController extends Controller
 	public function create()
 	{
 			$appointment_service = new AppointmentService();
-			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
-							->where('module_consultation',1)
-							->orderBy('name')
-							->lists('name','id')
-							->prepend('','');
+
 			return view('appointment_services.create', [
 					'appointment_service' => $appointment_service,
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
-					'consultants'=>$consultants,
 					]);
 	}
 
@@ -73,15 +69,10 @@ class AppointmentServiceController extends Controller
 	public function edit($id) 
 	{
 			$appointment_service = AppointmentService::findOrFail($id);
-			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
-							->where('module_consultation',1)
-							->orderBy('name')
-							->lists('name','id')
-							->prepend('','');
+			
 			return view('appointment_services.edit', [
 					'appointment_service'=>$appointment_service,
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
-					'consultants'=>$consultants,
 					]);
 	}
 
@@ -226,6 +217,7 @@ class AppointmentServiceController extends Controller
 					'appointment_id'=>$appointment_id, 
 					'appointment'=>$appointment, 
 					'admission_id'=>$admission_id, 
+					'block_dates'=> BlockDate::all()->sortBy('block_date'),
 					]);
 
 	}

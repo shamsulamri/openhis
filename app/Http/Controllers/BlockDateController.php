@@ -34,6 +34,7 @@ class BlockDateController extends Controller
 	public function create()
 	{
 			$block_date = new BlockDate();
+			$block_date->block_recur=0;
 			return view('block_dates.create', [
 					'block_date' => $block_date,
 					'minYear' => Carbon::now()->year,
@@ -72,12 +73,9 @@ class BlockDateController extends Controller
 			$block_date = BlockDate::findOrFail($id);
 			$block_date->fill($request->input());
 
-			$block_date->block_recur_annually = $request->block_recur_annually ?: 0;
-			$block_date->block_recur_weekly = $request->block_recur_weekly ?: 0;
-			$block_date->block_recur_monthly = $request->block_recur_monthly ?: 0;
-
 			$valid = $block_date->validate($request->all(), $request->_method);	
 
+			Log::info($request->block_recur);
 			if ($valid->passes()) {
 					$block_date->save();
 					Session::flash('message', 'Record successfully updated.');

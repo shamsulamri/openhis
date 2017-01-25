@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use App\Patient;
 use App\Ward;
 use Auth;
+use App\DojoUtility;
 
 class AppointmentController extends Controller
 {
@@ -27,20 +28,22 @@ class AppointmentController extends Controller
 
 	public function index(Request $request)
 	{
-			/*
-					->select('appointment_datetime', 'b.patient_id','c.service_id','appointment_id','service_name','patient_name','patient_mrn','patient_phone_home','patient_phone_mobile')
-			 */
-			$appointments = DB::table('appointments as a')
-					->leftJoin('patients as b', 'a.patient_id', '=', 'b.patient_id')
-					->leftJoin('appointment_services as c', 'c.service_id', '=', 'a.service_id')
-					->where('appointment_datetime', '>=', Carbon::today())
-					->orderBy('appointment_id')
-					->paginate($this->paginateValue);
+
+			$appointments = Appointment::orderBy('appointment_id')
+					->where('appointment_datetime', '>=', Carbon::today());
+
+			if (!empty(Auth::user()->service_id)) {
+				$appointments = $appointments->where('service_id', '=', Auth::user()->service_id);
+			}
+					
+			$appointments = $appointments->paginate($this->paginateValue);
+
 			return view('appointments.index', [
 					'appointments'=>$appointments,
 					'services' => Service::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
-					'service' => '',
+					'service' => Auth::user()->service_id,
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
+					'date_start'=>null,
 			]);
 	}
 
@@ -170,20 +173,36 @@ class AppointmentController extends Controller
 	
 	public function search(Request $request)
 	{
-			$appointments = DB::table('appointments as a')
-					->leftJoin('patients as b', 'a.patient_id', '=', 'b.patient_id')
-					->leftJoin('appointment_services as c', 'c.service_id', '=', 'a.service_id')
-					->where('appointment_datetime', '>=', Carbon::today())
-					->where('a.service_id', '=', $request->services)
-					->orderBy('appointment_id');
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+
+			$appointments = Appointment::orderBy('appointment_id')
+					->leftJoin('patients as b', 'appointments.patient_id', '=', 'b.patient_id');
+
+
+			if (!empty($request->search)) {
+				$appointments=$appointments->where('patient_name', 'like','%'.$request->search.'%');
+			}
+			if (!empty($request->services)) {
+				$appointments = $appointments->where('service_id', '=', $request->services);
+			}
+
+			if (!empty($request->date_start)) {
+				$date_offset = DojoUtility::addDays($request->date_start,1);
+				$appointments = $appointments->whereBetween('appointment_datetime', array($date_start, $date_offset));
+			} else {
+				$appointments = $appointments->where('appointment_datetime', '>=', Carbon::today());
+			}
 
 			Log::info($appointments->toSql());
-			$appointments = $appointments->paginate($this->paginateValue);
+			$appointments = $appointments->orderBy('appointment_id')
+					->paginate($this->paginateValue);
 
 			return view('appointments.index', [
 					'appointments'=>$appointments,
 					'services' => Service::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'service' => $request->services,
+					'search' => $request->search,
+					'date_start'=>DojoUtility::dateReadFormat($date_start),
 					]);
 	}
 
