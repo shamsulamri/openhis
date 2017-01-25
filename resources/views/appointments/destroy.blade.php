@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@include('patients.id_only')
 <h1>
 Delete Appointment
 </h1>
@@ -11,8 +12,7 @@ Delete Appointment
 			<div class='form-group  @if ($errors->has('appointment_cancel')) has-error @endif'>
 				<div class='col-sm-10'>
 						<h4>
-						{{ $appointment->patient->patient_name }} ({{ $appointment->patient->patient_mrn }})
-						current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appointment_datetime )) }}
+						Appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appointment_datetime )) }}
 						</h4>
 						<br>
 						Reason for cancellation

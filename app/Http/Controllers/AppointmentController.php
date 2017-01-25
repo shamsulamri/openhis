@@ -160,7 +160,8 @@ class AppointmentController extends Controller
 	{
 		$appointment = Appointment::findOrFail($id);
 		return view('appointments.destroy', [
-			'appointment'=>$appointment
+			'appointment'=>$appointment,
+			'patient'=>$appointment->patient,
 			]);
 
 	}
