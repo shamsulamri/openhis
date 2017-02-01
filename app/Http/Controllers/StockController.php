@@ -142,6 +142,7 @@ class StockController extends Controller
 					'move' => Move::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
 					'product' => $stock->product, 
 					'store' => $store,
+					'stores' => Store::where('store_code','<>',$stock->store_code)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'maxYear' => Carbon::now()->year,
 					]);
 	}
@@ -237,11 +238,24 @@ class StockController extends Controller
 
 			$product = Product::find($product_code);
 			$store = Store::find($store_code);
+
+			$stores = Store::orderBy('store_name')
+							->select('stores.store_code', 'stock_stores.stock_quantity')
+							->leftjoin('stock_stores', function ($query) use($product_code) {
+									$query->where('stock_stores.product_code','=', $product_code);
+									$query->where('stock_stores.store_code','=', 'stores.store_code');
+							});
+
+			$sql = sprintf("select a.store_code, store_name,  stock_quantity from stores a 
+						left join stock_stores b on (b.product_code = '%s' and b.store_code = a.store_code)", $product_code);
+
+			$stores = DB::select($sql);
+
 			return view('stocks.index', [
 					'stocks'=>$stocks,
 					'product'=>$product,
 					'store_code'=>$store_code,
-					'stores' => Store::all()->sortBy('store_name'),
+					'stores' => $stores,
 					'stockHelper' => new StockHelper(),
 					'store'=>$store,
 			]);

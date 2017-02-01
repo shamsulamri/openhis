@@ -322,10 +322,11 @@ class ProductController extends Controller
 							->first();
 
 			$stock_on_hand=0;
+
 			if (!empty($stock_take)) {
 					$stock_value = $stock_take->stock_quantity; 
 
-					$take_date = Carbon::createFromFormat('d/m/Y H:i',$stock_take->stock_datetime);
+					$take_date = $stock_take->stock_datetime; 
 
 					$stocks = Stock::where('stock_datetime','>=',$take_date)
 									->where('product_code','=',$product_code)

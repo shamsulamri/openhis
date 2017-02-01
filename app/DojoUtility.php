@@ -9,9 +9,6 @@ class DojoUtility
 {
 		public static function dateWriteFormat($value)
 		{
-				Log::info("---->");
-				Log::info($value);
-				Log::info(DojoUtility::validateDate($value));
 				if (!empty($value)) { 
 					return Carbon::createFromFormat('d/m/Y', $value)->format('Y/m/d');
 				} else {
