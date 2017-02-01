@@ -14,9 +14,11 @@
 </form>
 <br>
 @if ($appointments->total()>0)
+<form action='/appointments/multiple_delete' method='post'>
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th width='10'></th>
     <th>Slot</th>
     <th>Service</th>
     <th>Patient</th>
@@ -28,6 +30,9 @@
 	<tbody>
 @foreach ($appointments as $appointment)
 	<tr>
+			<td>
+					{{ Form::checkbox($appointment->appointment_id, 1, null) }}
+			</td>
 			<td>
 					<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/0/'.$appointment->service_id. '/'.$appointment->appointment_id) }}'>
 					{{ date('l, d F Y, H:i', strtotime($appointment->appointment_datetime)) }}
@@ -60,6 +65,14 @@
 @endif
 </tbody>
 </table>
+			@if ($appointments->total()>0)
+			{{ Form::submit('Delete Selection', ['class'=>'btn btn-warning btn-xs']) }}
+			<input type='hidden' name="_token" value="{{ csrf_token() }}">
+			@endif
+			<!--
+			<input type='hidden' name="_ids" value="{{ $appointments->pluck('appointment_id') }}">
+			-->
+</form>
 @if (isset($search)) 
 	{{ $appointments->appends(['search'=>$search])->render() }}
 	@else

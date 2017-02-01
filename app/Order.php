@@ -15,6 +15,7 @@ class Order extends Model
 	protected $fillable = [
 				'consultation_id',
 				'user_id',
+				'admission_id',
 				'product_code',
 				'order_quantity_request',
 				'order_description',

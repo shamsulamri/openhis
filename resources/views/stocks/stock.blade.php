@@ -27,12 +27,6 @@
 					</div>
 			</div>
 	</div>
-    <div class='form-group  @if ($errors->has('move_code')) has-error @endif'>
-        <label for='move_code' class='col-sm-3 control-label'>Store</label>
-        <div class='col-sm-9'>
-            {{ Form::label('store_code', $store->store_name, ['class'=>'form-control']) }}
-        </div>
-    </div>
 
     <div class='form-group  @if ($errors->has('move_code')) has-error @endif'>
         <label for='move_code' class='col-sm-3 control-label'>Movement Type<span style='color:red;'> *</span></label>
@@ -47,6 +41,20 @@
         <div class='col-sm-9'>
             {{ Form::text('stock_quantity', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('stock_quantity')) <p class="help-block">{{ $errors->first('stock_quantity') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('move_code')) has-error @endif'>
+        <label for='move_code' class='col-sm-3 control-label'>Store</label>
+        <div class='col-sm-9'>
+            {{ Form::label('store_code', $store->store_name, ['class'=>'form-control']) }}
+        </div>
+    </div>
+    <div class='form-group  @if ($errors->has('store_code_transfer')) has-error @endif'>
+        <label for='store_code_transfer' class='col-sm-3 control-label'>Transfer Store</label>
+        <div class='col-sm-9'>
+            {{ Form::select('store_code_transfer', $stores,null, ['class'=>'form-control','maxlength'=>'20']) }}
+            @if ($errors->has('store_code_transfer')) <p class="help-block">{{ $errors->first('store_code_transfer') }}</p> @endif
         </div>
     </div>
 

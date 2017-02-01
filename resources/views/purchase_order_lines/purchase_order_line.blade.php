@@ -46,9 +46,6 @@
 					</div>
 			</div>
 	</div>
-	<div class='page-header'>
-		<h4>Receiving Details</h4>
-	</div>
 
 	<div class="row">
 			<div class="col-xs-6">
@@ -74,11 +71,12 @@
 			</div>
 	</div>
 
-
+		<h4>Receiving #1</h4>
+	<hr>
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('line_quantity_received')) has-error @endif'>
-						{{ Form::label('line_quantity_received', 'Quantity Received #1',['class'=>'col-sm-3 control-label']) }}
+						{{ Form::label('line_quantity_received', 'Quantity',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
 							{{ Form::text('line_quantity_received', null, ['class'=>'form-control','placeholder'=>'',]) }}
 							@if ($errors->has('line_quantity_received')) <p class="help-block">{{ $errors->first('line_quantity_received') }}</p> @endif
@@ -86,16 +84,44 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('line_receive_date_1')) has-error @endif'>
+						<label for='line_receive_date_1' class='col-sm-3 control-label'>Date</label>
+						<div class='col-sm-9'>
+							<div class="input-group date">
+								<input data-mask="99/99/9999" name="line_receive_date_1" id="line_receive_date_1" type="text" class="form-control" value="{{ $purchase_order_line->line_receive_date_1 }}">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
+							@if ($errors->has('line_receive_date_1')) <p class="help-block">{{ $errors->first('line_receive_date_1') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
+
+	<h4>Receiving #2</h4>
+	<hr>
+	<div class="row">
+			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('line_quantity_received_2')) has-error @endif'>
-						{{ Form::label('line_quantity_received_2', 'Quantity Received #2',['class'=>'col-sm-3 control-label']) }}
+						{{ Form::label('line_quantity_received_2', 'Quantity',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
 							{{ Form::text('line_quantity_received_2', null, ['class'=>'form-control','placeholder'=>'',]) }}
 							@if ($errors->has('line_quantity_received_2')) <p class="help-block">{{ $errors->first('line_quantity_received_2') }}</p> @endif
 						</div>
 					</div>
 			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('line_receive_date_2')) has-error @endif'>
+						<label for='line_receive_date_2' class='col-sm-3 control-label'>Date</label>
+						<div class='col-sm-9'>
+							<div class="input-group date">
+								<input data-mask="99/99/9999" name="line_receive_date_2" id="line_receive_date_2" type="text" class="form-control" value="{{ $purchase_order_line->line_receive_date_2 }}">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
+							@if ($errors->has('line_receive_date_2')) <p class="help-block">{{ $errors->first('line_receive_date_2') }}</p> @endif
+						</div>
+					</div>
+			</div>
 	</div>
-
 
 	@endif
 	<br>
@@ -122,6 +148,23 @@
 		*/
 
 		$('#line_expiry_date').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
+		});
+
+		$('#line_receive_date_1').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
+		});
+		$('#line_receive_date_2').datepicker({
 				format: "dd/mm/yyyy",
 				todayBtn: "linked",
 				keyboardNavigation: false,

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
@@ -10,6 +11,9 @@ use Log;
 
 class PurchaseOrder extends Model
 {
+	use SoftDeletes;
+	protected $dates = ['deleted_at'];
+
 	protected $table = 'purchase_orders';
 	protected $fillable = [
 				'purchase_id',

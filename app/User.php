@@ -53,6 +53,7 @@ class User extends Authenticatable
 
 	public function appointment()
 	{
-		return $this->hasOne('App\AppointmentService', 'user_id', 'id');
+		//return $this->hasOne('App\AppointmentService', 'user_id', 'id');
+		return $this->hasOne('App\AppointmentService', 'service_id', 'service_id');
 	}	
 }

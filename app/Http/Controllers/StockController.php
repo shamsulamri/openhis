@@ -17,6 +17,7 @@ use App\Product;
 use Carbon\Carbon;
 use App\DojoUtility;
 use App\StockHelper;
+use App\Ward;
 use Auth;
 
 class StockController extends Controller
@@ -48,7 +49,7 @@ class StockController extends Controller
 			return view('stocks.create', [
 					'stock' => $stock,
 					'move' => Move::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'stores' => Store::where('store_code','<>',$store_code)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'product' => Product::find($product_code),
 					'store' => $store,
 					'maxYear' => Carbon::now()->year,
@@ -57,13 +58,14 @@ class StockController extends Controller
 
 	public function store(Request $request) 
 	{
-
 			$stock = new Stock();
 
+
+			$origin_date = $request->stock_datetime;
 			if (DojoUtility::validateDateTime($request->stock_datetime)==true) {
-				$stock_datetime = Carbon::createFromFormat('d/m/Y H:i', $request->stock_datetime);
-				$stock_datetime = $stock_datetime->format('Y/m/d H:i');
-				$request->stock_datetime = $stock_datetime;
+					$stock_datetime = Carbon::createFromFormat('d/m/Y H:i', $request->stock_datetime);
+					$stock_datetime = $stock_datetime->format('Y/m/d H:i');
+					$request->stock_datetime = $stock_datetime;
 			}
 
 			$valid = $stock->validate($request->all(), $request->_method);
@@ -72,7 +74,45 @@ class StockController extends Controller
 					$stock = new Stock($request->all());
 					$stock->username = Auth::user()->username;
 					$stock->stock_id = $request->stock_id;
-					$stock->save();
+
+					switch($request->move_code) {
+							case "receive":
+									$stock->stock_quantity = abs($stock->stock_quantity);
+									$stock->save();
+									break;
+							case "dispose":
+									$stock->stock_quantity = abs($stock->stock_quantity);
+									$stock->stock_quantity = -($stock->stock_quantity);
+									$stock->save();
+									break;
+							case "return":
+									$stock->stock_quantity = abs($stock->stock_quantity);
+									$stock->stock_quantity = -($stock->stock_quantity);
+									$stock->save();
+									break;
+							case "transfer":
+									$stock->stock_quantity = abs($stock->stock_quantity);
+									$stock->stock_quantity = ($stock->stock_quantity)*-1;
+									$stock->stock_description = "Transfer out";
+									$stock->save();
+
+									$transfer = new Stock();
+									$transfer->product_code = $stock->product_code;
+									$transfer->username = $stock->username;
+									$transfer->stock_datetime = $origin_date;
+									$transfer->move_code = $stock->move_code;
+									$transfer->store_code_transfer = $stock->store_code;
+									$transfer->store_code = $stock->store_code_transfer;
+									$transfer->stock_quantity = abs($stock->stock_quantity);
+									$transfer->stock_tag = $stock->stock_id;
+									$transfer->stock_description = "Transfer in";
+									$transfer->save();
+									break;
+							default:
+									$stock->save();
+
+					}
+
 					
 					$product = new ProductController();
 					$product->updateTotalOnHand($stock->product_code);
@@ -179,8 +219,14 @@ class StockController extends Controller
 			]);
 	}
 
-	public function show($product_code, $store_code=null)
+	public function show(Request $request, $product_code, $store_code=null)
 	{
+			if (Auth::user()->cannot('module-inventory')) {
+					$ward_code = $request->cookie('ward');
+					$ward = Ward::where('ward_code', $ward_code)->first();
+					$store_code = $ward->store_code;
+			}
+
 			$stocks = Stock::orderBy('stock_datetime','desc')
 					->leftJoin('stock_movements as b', 'b.move_code', '=','stocks.move_code')
 					->leftJoin('stores as c', 'c.store_code', '=','stocks.store_code')
@@ -190,12 +236,14 @@ class StockController extends Controller
 					->paginate($this->paginateValue);
 
 			$product = Product::find($product_code);
+			$store = Store::find($store_code);
 			return view('stocks.index', [
 					'stocks'=>$stocks,
 					'product'=>$product,
 					'store_code'=>$store_code,
 					'stores' => Store::all()->sortBy('store_name'),
 					'stockHelper' => new StockHelper(),
+					'store'=>$store,
 			]);
 	}
 	

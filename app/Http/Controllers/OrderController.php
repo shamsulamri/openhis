@@ -19,6 +19,7 @@ use App\OrderInvestigation;
 use App\OrderDrug;
 use App\DrugPrescription;
 use App\DojoUtility;
+use App\EncounterHelper;
 
 class OrderController extends Controller
 {
@@ -299,7 +300,6 @@ class OrderController extends Controller
 
 	public function multiple(Request $request) 
 	{
-
 			foreach ($request->all() as $product_code=>$value) {
 					switch ($product_code) {
 							case '_token':
@@ -331,10 +331,15 @@ class OrderController extends Controller
 
 	public function orderItem($product) 
 	{
+			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 			$order = new Order();
 			$order->consultation_id = Session::get('consultation_id');
 			$order->encounter_id = Session::get('encounter_id');
 			$order->user_id = Auth::user()->id;
+			if ($admission) {
+				$order->admission_id = $admission->admission_id;
+			}
+
 			$order->product_code = $product->product_code;
 			$order->order_quantity_request = 1;
 			$order->order_unit_price = $product->product_sale_price; 

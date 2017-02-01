@@ -14,10 +14,12 @@ class Stock extends Model
 				'line_id',
 				'move_code',
 				'store_code',
+				'store_code_transfer',
 				'product_code',
 				'stock_datetime',
 				'stock_quantity',
 				'stock_description',
+				'stock_tag',
 				'username',
 				];
 	

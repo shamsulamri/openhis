@@ -83,10 +83,9 @@ class SupplierController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/suppliers/id/'.$id);
 			} else {
-					return view('suppliers.edit', [
-							'supplier'=>$supplier,
-					])
-					->withErrors($valid);			
+					return redirect('/suppliers/'.$id.'/edit')
+						->withErrors($valid)
+						->withInput();
 			}
 	}
 	

@@ -110,57 +110,64 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 						if ($service->service_sunday==1 && $dayWeek=='Sun') $showDay=true;
 						$slot=$day->format('Ymd').''.$slot_time->format('Hi');
 						$index = array_search($slot, array_column($appointments, 'appointment_slot'));
+						$cease_date = DateTime::createFromFormat('d/m/Y', $service->service_cease);
+						$cease = False
 					?>
+					@if ($day>=$cease_date && !empty($cease_date))
+						<?php $cease = True; ?>
+					@endif
 					<td align='middle' width='80' height='33'>
-					@foreach ($block_dates as $block_date)
-							@if ( date('d M Y',strtotime($block_date->getBlockDate())) == $day->format('d M Y') && $block_date->block_recur==0)
-									<?php $block_day = True; ?>
-									{{ $block_date->block_name }}
-							@endif
-							@if ( date('d M',strtotime($block_date->getBlockDate())) == $day->format('d M') && $block_date->block_recur==1)
-									<?php $block_day = True; ?>
-									{{ $block_date->block_name }}
-							@endif
-							@if ( date('d',strtotime($block_date->getBlockDate())) == $day->format('d') && $block_date->block_recur==2)
-									<?php $block_day = True; ?>
-									{{ $block_date->block_name }}
-							@endif
-							@if ( date('D',strtotime($block_date->getBlockDate())) == $day->format('D') && $block_date->block_recur==3)
-									<?php $block_day = True; ?>
-									{{ $block_date->block_name }}
-							@endif
-					@endforeach
-					@if ($day>=$today && $showDay==true && !$block_day)
-						@if ($index===FALSE)
-							@if ($day==$today)
-								<a href='#' class='btn btn-default btn-sm disabled'>{{ $slot_time->format('h:i a') }}</a>
-							@else
-								@if ($appointment_id == null)
-								<a href='/appointments/create/{{ $patient->patient_id }}/{{ $service->service_id }}/{{ $slot }}/{{ $admission_id }}' class='btn btn-default btn-sm'>{{ $slot_time->format('h:i a') }}</a>
+					@if (!$cease)
+							@foreach ($block_dates as $block_date)
+									@if ( date('d M Y',strtotime($block_date->getBlockDate())) == $day->format('d M Y') && $block_date->block_recur==0)
+											<?php $block_day = True; ?>
+											{{ $block_date->block_name }}
+									@endif
+									@if ( date('d M',strtotime($block_date->getBlockDate())) == $day->format('d M') && $block_date->block_recur==1)
+											<?php $block_day = True; ?>
+											{{ $block_date->block_name }}
+									@endif
+									@if ( date('d',strtotime($block_date->getBlockDate())) == $day->format('d') && $block_date->block_recur==2)
+											<?php $block_day = True; ?>
+											{{ $block_date->block_name }}
+									@endif
+									@if ( date('D',strtotime($block_date->getBlockDate())) == $day->format('D') && $block_date->block_recur==3)
+											<?php $block_day = True; ?>
+											{{ $block_date->block_name }}
+									@endif
+							@endforeach
+							@if ($day>=$today && $showDay==true && !$block_day)
+								@if ($index===FALSE)
+									@if ($day==$today)
+										<a href='#' class='btn btn-default btn-sm disabled'>{{ $slot_time->format('h:i a') }}</a>
+									@else
+										@if ($appointment_id == null)
+										<a href='/appointments/create/{{ $patient->patient_id }}/{{ $service->service_id }}/{{ $slot }}/{{ $admission_id }}' class='btn btn-default btn-sm'>{{ $slot_time->format('h:i a') }}</a>
+										@else
+										<a href='/appointments/{{ $appointment_id }}/edit/{{ $slot }}' class='btn btn-default btn-sm'>{{ $slot_time->format('h:i a') }}</a>
+										@endif
+									@endif
 								@else
-								<a href='/appointments/{{ $appointment_id }}/edit/{{ $slot }}' class='btn btn-default btn-sm'>{{ $slot_time->format('h:i a') }}</a>
-								@endif
-							@endif
-						@else
-						<a href='#' class='btn btn-success btn-sm disabled'>{{ $slot_time->format('h:i a') }}</a>
-						{{ Log::info( $appointments[$index]['appointment_id'] ) }}
-						@endif
-					@else
-							@if ($day<$today && $showDay==true)
-								@if (!$block_day)
-								<?php
-								if ($index===FALSE) {
-									$btn_class = 'btn btn-default btn-sm disabled';
-								} else {
-									$btn_class='btn btn-success btn-sm disabled';
-								}
-								?>
-								<a href='#' class='{{ $btn_class }}'>{{ $slot_time->format('h:i a') }}</a>
+								<a href='#' class='btn btn-success btn-sm disabled'>{{ $slot_time->format('h:i a') }}</a>
+								{{ Log::info( $appointments[$index]['appointment_id'] ) }}
 								@endif
 							@else
-								@if (!$block_day)
-								-	
-								@endif
+									@if ($day<$today && $showDay==true)
+										@if (!$block_day)
+										<?php
+										if ($index===FALSE) {
+											$btn_class = 'btn btn-default btn-sm disabled';
+										} else {
+											$btn_class='btn btn-success btn-sm disabled';
+										}
+										?>
+										<a href='#' class='{{ $btn_class }}'>{{ $slot_time->format('h:i a') }}</a>
+										@endif
+									@else
+										@if (!$block_day)
+										-	
+										@endif
+									@endif
 							@endif
 					@endif
 					</td>

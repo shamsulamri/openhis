@@ -2,13 +2,14 @@
 
 @section('content')
 <h1>Product List<a href='/products/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></a></h1>
-<form action='/product/search' method='post'>
-	<div class='input-group'>
-	<input type='text' class='form-control' placeholder="Enter product name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-		<span class='input-group-btn'>
-			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
-		</span>
-	</div>
+<form action='/product/search' method='post' class='form-inline'>
+	<label>Product</label>
+	<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	@can('module-inventory')
+	<label>Store</label>
+	{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	@endcan
+	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -40,8 +41,12 @@
 					</a>
 			</td>
 			<td align='right'>
-				@if ($product->product_on_hand>0)
-					{{ str_replace('.00','',$product->product_on_hand) }}
+				@if (!empty($store_code))
+							{{ str_replace('.00','',$product->stock_quantity) }}
+				@else
+						@if ($product->product_on_hand>0)
+							{{ str_replace('.00','',$product->product_on_hand) }}
+						@endif
 				@endif
 			</td>
 			@can('system-administrator')

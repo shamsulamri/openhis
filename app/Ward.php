@@ -15,6 +15,7 @@ class Ward extends Model
 				'encounter_code',
 				'gender_code',
 				'department_code',
+				'store_code',
 				'ward_name'];
 	
     protected $guarded = ['ward_code'];

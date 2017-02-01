@@ -33,6 +33,16 @@ class EncounterHelper
 
 			return $encounter;
 		}
+
+		public static function getCurrentAdmission($encounter_id)
+		{
+				$admission = Admission::where('encounter_id',$encounter_id)
+							->orderBy('encounter_id','desc')
+							->first();
+
+				return $admission;
+
+		}
 }
 
 ?>

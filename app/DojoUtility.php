@@ -9,8 +9,11 @@ class DojoUtility
 {
 		public static function dateWriteFormat($value)
 		{
+				Log::info("---->");
+				Log::info($value);
+				Log::info(DojoUtility::validateDate($value));
 				if (!empty($value)) { 
-					return Carbon::createFromFormat('d/m/Y', $value);
+					return Carbon::createFromFormat('d/m/Y', $value)->format('Y/m/d');
 				} else {
 					return null;
 				}	
@@ -89,6 +92,11 @@ class DojoUtility
 		{
 				$value = Carbon::createFromFormat('d/m/Y', $value);
 				return $value->addDays($days);
+		}
+
+		public static function dateObject($value)
+		{
+				return date('Y-m-d', strtotime($value)); 
 		}
 
 		public static function dateFormat($format_from, $format_to,$value)

@@ -16,6 +16,7 @@ class QueueLocation extends Model
 				'location_is_pool',
 				'department_code',
 				'encounter_code',
+				'store_code',
 				'user_id'];
 	
     protected $guarded = ['location_code'];

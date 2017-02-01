@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
 class PurchaseOrderLine extends Model
 {
@@ -18,10 +19,12 @@ class PurchaseOrderLine extends Model
 				'product_code',
 				'line_quantity_ordered',
 				'line_quantity_received',
+				'line_receive_date_1',
 				'line_price',
 				'line_batch_number',
 				'line_expiry_date',
 				'line_total',
+				'line_receive_date_2',
 				'line_quantity_received_2'];
 	
     protected $guarded = ['line_id'];
@@ -47,13 +50,39 @@ class PurchaseOrderLine extends Model
 	
 	public function setLineExpiryDateAttribute($value)
 	{
+		$this->attributes['line_expiry_date'] = null;
 		if (DojoUtility::validateDate($value)==true) {
 			$this->attributes['line_expiry_date'] = DojoUtility::dateWriteFormat($value);
 		}
 	}
 
-
 	public function getLineExpiryDateAttribute($value)
+	{
+		return DojoUtility::dateReadFormat($value);
+	}
+
+	public function setLineReceiveDate1Attribute($value)
+	{
+		$this->attributes['line_receive_date_1'] = null;
+		if (DojoUtility::validateDate($value)==true) {
+			$this->attributes['line_receive_date_1'] = DojoUtility::dateWriteFormat($value);
+		}
+	}
+
+	public function getLineReceiveDate1Attribute($value)
+	{
+		return DojoUtility::dateReadFormat($value);
+	}
+
+	public function setLineReceiveDate2Attribute($value)
+	{
+		$this->attributes['line_receive_date_2'] = null;
+		if (DojoUtility::validateDate($value)==true) {
+			$this->attributes['line_receive_date_2'] = DojoUtility::dateWriteFormat($value);
+		}
+	}
+
+	public function getLineReceiveDate2Attribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}

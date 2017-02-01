@@ -83,19 +83,26 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_dismantle_material')) has-error @endif'>
-						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_stocked', '1') }} <label>Physical Stock</label><br> Check for product you want to manage stock level for.
-							@if ($errors->has('product_stocked')) <p class="help-block">{{ $errors->first('product_stocked') }}</p> @endif
-						</div>
-					</div>
 
 			</div>
 	</div>
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_stocked')) has-error @endif'>
+					<div class='form-group  @if ($errors->has('product_dismantle_material')) has-error @endif'>
+						<div class='col-sm-offset-4 col-sm-8'>
+							{{ Form::checkbox('product_stocked', '1') }} <label>Physical Stock</label><br> Check for product you want to manage stock level for.
+							@if ($errors->has('product_stocked')) <p class="help-block">{{ $errors->first('product_stocked') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_bom')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
 							{{ Form::checkbox('product_bom', '1') }} <label>Bill of Materials</label><br>
 							This product contains parts to make end product.
@@ -112,6 +119,7 @@
 					</div>
 			</div>
 	</div>
+
 
 	<!-- Purchase -->
 	<hr>

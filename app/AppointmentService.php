@@ -15,6 +15,7 @@ class AppointmentService extends Model
 				'department_code',
 				'service_start',
 				'service_end',
+				'service_cease',
 				'service_duration',
 				'service_monday',
 				'service_tuesday',
@@ -66,5 +67,23 @@ class AppointmentService extends Model
 	public function getServiceEndAttribute($value)
 	{
 			return DojoUtility::timeReadFormat($value);
+	}
+
+	public function setServiceCeaseAttribute($value)
+	{
+		if (DojoUtility::validateDate($value)==true) {
+			$this->attributes['service_cease'] = DojoUtility::dateWriteFormat($value);
+		}
+	}
+
+	public function getCeaseDate() 
+	{
+			return DojoUtility::dateTimeReadFormat($this->attributes['service_cease']);
+	}
+
+
+	public function getServiceCeaseAttribute($value)
+	{
+		return DojoUtility::dateReadFormat($value);
 	}
 }

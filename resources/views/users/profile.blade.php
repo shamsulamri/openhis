@@ -25,6 +25,14 @@ User Profile
         </div>
     </div>
 	<hr>
+    <div class='form-group  @if ($errors->has('consultation_fee')) has-error @endif'>
+        <label for='consultation_fee' class='col-sm-3 control-label'>Consulation Fee</label>
+        <div class='col-sm-9'>
+            {{ Form::text('consultation_fee', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'255']) }}
+            @if ($errors->has('consultation_fee')) <p class="help-block">{{ $errors->first('consultation_fee') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('service_id')) has-error @endif'>
         <label for='service_id' class='col-sm-3 control-label'>Appointment Book</label>
         <div class='col-sm-9'>
@@ -32,11 +40,11 @@ User Profile
             @if ($errors->has('service_id')) <p class="help-block">{{ $errors->first('service_id') }}</p> @endif
         </div>
     </div>
-    <div class='form-group  @if ($errors->has('consultation_fee')) has-error @endif'>
-        <label for='consultation_fee' class='col-sm-3 control-label'>Consulation Fee</label>
-        <div class='col-sm-9'>
-            {{ Form::text('consultation_fee', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'255']) }}
-            @if ($errors->has('consultation_fee')) <p class="help-block">{{ $errors->first('consultation_fee') }}</p> @endif
+    <div class='form-group  @if ($errors->has('service_id')) has-error @endif'>
+        <div class='col-md-offset-3 col-sm-9'>
+					<a class='btn btn-default' href="{{ URL::to('appointment_services/'. $user->service_id . '/edit?type=user') }}">
+						Edit Appointment Book
+					</a>
         </div>
     </div>
 	{{  Form::hidden('username', $user->username) }}

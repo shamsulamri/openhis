@@ -22,10 +22,12 @@ use App\Product;
 use App\DietClass;
 use App\DietHelper;
 use App\Diet;
+use App\PurchaseOrderHelper;
 
 class PurchaseOrderController extends Controller
 {
 	public $paginateValue=10;
+	public $statuses = array(''=>'','open'=>'Open','posted'=>'Posted');
 
 	public function __construct()
 	{
@@ -34,13 +36,26 @@ class PurchaseOrderController extends Controller
 
 	public function index()
 	{
+			/*
 			$purchase_orders = DB::table('purchase_orders as a')
 					->leftJoin('suppliers as b', 'b.supplier_code','=','a.supplier_code')
 					->where('author_id', '=', Auth::user()->author_id)
 					->orderBy('purchase_date','desc')
 					->paginate($this->paginateValue);
+			 */
+
+			$purchase_orders = PurchaseOrder::orderBy('purchase_date','desc')
+					->leftJoin('suppliers as b', 'b.supplier_code','=','purchase_orders.supplier_code')
+					->paginate($this->paginateValue);
+
 			return view('purchase_orders.index', [
-					'purchase_orders'=>$purchase_orders
+					'purchase_orders'=>$purchase_orders,
+					'statuses'=>$this->statuses,
+					'status'=>null,
+					'date_search'=>null,
+					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
+					'supplier_code' => null,
+					'poHelper'=> new PurchaseOrderHelper(),
 			]);
 	}
 
@@ -182,6 +197,7 @@ class PurchaseOrderController extends Controller
 	
 	public function search(Request $request)
 	{
+			/**
 			$purchase_orders = DB::table('purchase_orders as a')
 					->leftJoin('suppliers as b', 'b.supplier_code','=','a.supplier_code')
 					->where('author_id', '=', Auth::user()->author_id)
@@ -190,11 +206,45 @@ class PurchaseOrderController extends Controller
 								->orWhere('purchase_id', 'like','%'.$request->search.'%');
 					})
 					->orderBy('purchase_date')
-					->paginate($this->paginateValue);
+					->paginate($this->this->paginateValue);
+			**/
+
+			$date_search = DojoUtility::dateWriteFormat($request->date_search);
+
+			$purchase_orders = PurchaseOrder::orderBy('purchase_date','desc')
+					->leftJoin('suppliers as b', 'b.supplier_code','=','purchase_orders.supplier_code');
+
+			if (!empty($request->search)) {
+				$purchase_orders = $purchase_orders->where('purchase_id', 'like','%'.$request->search.'%');
+			}
+
+			if (!empty($request->date_search)) {
+				$purchase_orders = $purchase_orders->where('purchase_date','=', $date_search);
+			}
+
+			if (!empty($request->supplier_code)) {
+				$purchase_orders = $purchase_orders->where('purchase_orders.supplier_code','=', $request->supplier_code);
+			}
+
+			if ($request->status != '') {
+				$selected_status=array(''=>'','open'=>0, 'posted'=>1);
+				$purchase_orders = $purchase_orders->where('purchase_posted','=', $selected_status[$request->status]);
+			}
+
+			$purchase_orders = $purchase_orders->orderBy('purchase_date')
+									->paginate($this->paginateValue);
+
+			$status = (empty($request->status)) ? '':$request->status;
 
 			return view('purchase_orders.index', [
 					'purchase_orders'=>$purchase_orders,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'statuses'=>$this->statuses,
+					'status'=>$status, 
+					'date_search'=>DojoUtility::dateReadFormat($date_search),
+					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
+					'supplier_code'=>$request->supplier_code,
+					'poHelper'=> new PurchaseOrderHelper(),
 					]);
 	}
 
@@ -209,6 +259,11 @@ class PurchaseOrderController extends Controller
 			return view('purchase_orders.index', [
 					'purchase_orders'=>$purchase_orders,
 					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
+					'poHelper'=> new PurchaseOrderHelper(),
+					'statuses'=>$this->statuses,
+					'status'=>null, 
+					'supplier_code'=>null, 
+					'date_search'=>null,
 			]);
 	}
 
@@ -304,5 +359,22 @@ class PurchaseOrderController extends Controller
 			}
 
 		return redirect('/purchase_order_lines/index/'.$id);
+	}
+
+	public function posts(Request $request)
+	{
+			foreach ($request->all() as $id=>$value) {
+					switch ($id) {
+							case '_token':
+									break;
+							default:
+								$purchase_order = PurchaseOrder::find($id);
+								$purchase_order->purchase_posted=1;
+								$purchase_order->save();
+					}
+			}
+
+			Session::flash('message', 'Record posted.');
+			return redirect('/purchase_orders');
 	}
 }

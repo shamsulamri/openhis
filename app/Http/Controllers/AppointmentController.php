@@ -95,7 +95,8 @@ class AppointmentController extends Controller
 					if (Auth::user()->can('module-ward')) {
 						return redirect('/ward_discharges/create/'.$appointment->admission_id);
 					} else {
-						return redirect('/appointments/id/'.$appointment->appointment_id);
+						//return redirect('/appointments/id/'.$appointment->appointment_id);
+						return redirect('/appointments');
 					}
 			} else {
 					return redirect('/appointments/create/'.$request->patient_id.'/'.$request->service_id.'/'.$request->appointment_slot)
@@ -125,6 +126,7 @@ class AppointmentController extends Controller
 					'patient' => Patient::find($appointment->patient_id),
 					'appointment_datetime' => $appointment->appointment_datetime,
 					'admission_id'=>null,
+					'date_start'=>null,
 					]);
 	}
 
@@ -146,7 +148,8 @@ class AppointmentController extends Controller
 					$appointment->appointment_datetime = $appointment_datetime;
 					$appointment->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/appointments/id/'.$id);
+					//return redirect('/appointments/id/'.$id);
+					return redirect('/appointments');
 			} else {
 					return view('appointments.edit', [
 							'appointment'=>$appointment,
@@ -178,7 +181,7 @@ class AppointmentController extends Controller
 	
 	public function search(Request $request)
 	{
-			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_start = DojoUtility::dateTimeWriteFormat($request->date_start.' 00:00');
 
 			$appointments = Appointment::orderBy('appointment_id')
 					->leftJoin('patients as b', 'appointments.patient_id', '=', 'b.patient_id');
@@ -193,12 +196,15 @@ class AppointmentController extends Controller
 
 			if (!empty($request->date_start)) {
 				$date_offset = DojoUtility::addDays($request->date_start,1);
+				$date_offset = DojoUtility::dateTimeWriteFormat($request->date_start.' 23:59');
 				$appointments = $appointments->whereBetween('appointment_datetime', array($date_start, $date_offset));
 			} else {
 				$appointments = $appointments->where('appointment_datetime', '>=', Carbon::today());
 			}
 
 			Log::info($appointments->toSql());
+			Log::info($date_start);
+			Log::info($date_offset);
 			$appointments = $appointments->orderBy('appointment_id')
 					->paginate($this->paginateValue);
 
@@ -224,6 +230,22 @@ class AppointmentController extends Controller
 					'appointments'=>$appointments,
 					'services' => Service::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'service' => '',
+					'date_start'=>null,
 			]);
+	}
+
+	public function bulkDelete(Request $request)
+	{
+			foreach ($request->all() as $id=>$value) {
+					switch ($id) {
+							case '_token':
+									break;
+							default:
+									Appointment::find($id)->delete();
+					}
+			}
+
+			Session::flash('message', 'Record deleted.');
+			return redirect('/appointments');
 	}
 }

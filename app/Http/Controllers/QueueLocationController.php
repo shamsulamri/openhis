@@ -13,6 +13,7 @@ use Session;
 use App\Department;
 use App\EncounterType as Encounter;
 use App\User;
+use App\Store;
 
 class QueueLocationController extends Controller
 {
@@ -47,6 +48,7 @@ class QueueLocationController extends Controller
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
 					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'consultants' => $consultants,
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 
@@ -81,6 +83,7 @@ class QueueLocationController extends Controller
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
 					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'consultants' => $consultants,
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 

@@ -204,13 +204,22 @@ class OrderTaskController extends Controller
 
 	public function status(Request $request)
 	{
+			$store_code = "main";
+			$location_code = $request->cookie('queue_location');
+			$location = Location::find($location_code);
+			$store_code = $location->store_code;
+
 			$values = explode(',',$request->ids);
 
 			foreach ($values as $orderId) {
 					$value = $request->$orderId ?: 0;
 					if ($orderId>0) {
-							OrderTask::where('order_id', $orderId)
-								->update(['order_completed'=>$value]);				
+							OrderTask::where('order_id', $orderId)->update(['order_completed'=>$value]);				
+							if ($value=='1') {
+								OrderTask::where('order_id', $orderId)->update(['store_code'=>$store_code]);				
+							} else {
+								OrderTask::where('order_id', $orderId)->update(['store_code'=>null]);				
+							}
 							$order = OrderTask::find($orderId);
 							$productController = new ProductController();
 							$productController->updateTotalOnHand($order->product_code);

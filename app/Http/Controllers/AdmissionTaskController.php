@@ -16,6 +16,7 @@ use App\Ward;
 use App\ProductCategory;
 use App\Order;
 use App\QueueLocation;
+use App\Store;
 use Auth;
 
 class AdmissionTaskController extends Controller
@@ -52,9 +53,13 @@ class AdmissionTaskController extends Controller
 					->leftjoin('order_cancellations as h', 'h.order_id', '=', 'a.order_id')
 					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
 					->leftjoin('discharges as j', 'j.encounter_id','=','b.encounter_id')
+					->leftjoin('consultations as k', 'k.consultation_id', '=', 'a.consultation_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'k.consultation_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('order_completed','=',0)
+					->where('a.product_code','<>','consultation_fee')
 					->whereNull('cancel_id')
+					->whereNotNull('n.post_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');
 
@@ -188,6 +193,7 @@ class AdmissionTaskController extends Controller
 					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('d.category_code','like', '%'.$request->categories.'%')
+					->where('a.product_code','<>','consultation_fee')
 					->whereNull('cancel_id');
 
 			if (Auth::user()->authorization->module_support==1) {
@@ -247,7 +253,19 @@ class AdmissionTaskController extends Controller
 
 	public function status(Request $request)
 	{
-			
+			$store_code = "main";
+			if (Auth::user()->authorization->module_support==1) { 
+					$location_code = $request->cookie('queue_location');
+					$location = Location::find($location_code);
+					$store_code = $location->store_code;
+			} else {
+					$ward_code=$request->cookie('ward');
+					$ward = Ward::find($ward_code);
+					if (!empty($ward->store_code)) {
+							$store_code = $ward->store_code;
+					}
+			}
+
 			$ids = explode(",",$request->completed_ids);
 
 			foreach($ids as $id) {
@@ -259,6 +277,7 @@ class AdmissionTaskController extends Controller
 							if ($request->$id==1) {
 									$order->order_completed=1;
 									$order->updated_by = Auth::user()->id;
+									$order->store_code = $store_code;
 									$order->save();
 							} 
 					}

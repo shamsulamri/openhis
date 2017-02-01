@@ -337,6 +337,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/appointment/search', 'AppointmentController@search');
 				Route::get('/appointment/search', 'AppointmentController@search');
 				Route::get('/appointments/delete/{id}', 'AppointmentController@delete');
+				Route::post('/appointments/multiple_delete', 'AppointmentController@bulkDelete');
 
 				Route::resource('appointment_services', 'AppointmentServiceController', ['except'=>['show']]);
 				Route::get('/appointment_services/id/{id}', 'AppointmentServiceController@searchById');
@@ -569,6 +570,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/purchase_order/search', 'PurchaseOrderController@search');
 				Route::get('/purchase_order/search', 'PurchaseOrderController@search');
 				Route::get('/purchase_order/post', 'PurchaseOrderController@post');
+				Route::post('/purchase_order/posts', 'PurchaseOrderController@posts');
 				Route::post('/purchase_order/verify', 'PurchaseOrderController@postVerify');
 				Route::get('/purchase_orders/delete/{id}', 'PurchaseOrderController@delete');
 				Route::get('/purchase_order/diet/{id}', 'PurchaseOrderController@diet');

@@ -19,6 +19,7 @@ use App\OrderForm;
 use App\ProductStatus;
 use App\Store;
 use App\Stock;
+use App\StockStore;
 use Carbon\Carbon;
 use App\TaxCode;
 use Gate;
@@ -68,9 +69,12 @@ class ProductController extends Controller
 
 			$products = $products->orderBy('products.created_at','desc')
 							->paginate($this->paginateValue);
+
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store_code'=>null,
 			]);
 	}
 
@@ -240,13 +244,41 @@ class ProductController extends Controller
 					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 			}
 
+
+			if (!empty($request->store)) {
+					/**
+					$products = DB::table('stocks as a')
+									->leftjoin('products as b', 'b.product_code', '=', 'a.product_code')
+									->leftjoin('stock_stores as c', function($join)
+									{
+											$join->on('c.product_code','=', 'a.product_code')
+												->on('c.store_code','=','a.store_code');
+									})
+									->where('a.store_code','=',$request->store);
+					**/
+
+					$products = DB::table('stock_stores as a')
+									->leftjoin('products as b', 'b.product_code', '=', 'a.product_code')
+									->where('store_code','=', $request->store);
+								
+			}
+
 			$products = $products->where('product_name','like','%'.$request->search.'%');
+
+			/** Product Authorization **/
+			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+			if (!$product_authorization->get()->isEmpty()) {
+					$products = $products->whereIn('b.category_code',$product_authorization->pluck('category_code'));
+			}
+
 			$products = $products->paginate($this->paginateValue);
 
 			return view('products.index', [
 					'products'=>$products,
 					'search'=>$request->search,
 					'loan'=>$loan,
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store_code'=>$request->store,
 					]);
 	}
 
@@ -263,6 +295,7 @@ class ProductController extends Controller
 
 	public function updateTotalOnHand($product_code)
 	{
+			StockStore::where('product_code','=', $product_code)->delete();
 			$stores = Store::all();
 			$total=0;
 			foreach ($stores as $store) {
@@ -279,6 +312,7 @@ class ProductController extends Controller
 
 	public function storeOnHand($product_code, $store_code) 
 	{
+
 			$stock_take = Stock::select('stock_datetime', 'stock_quantity')
 							->where('move_code','=','take')
 							->where('product_code','=',$product_code)
@@ -317,6 +351,15 @@ class ProductController extends Controller
 					Log::info($used);
 					$stock_on_hand=$stocks - $used;
 			}
+
+			if ($stock_on_hand>0) {
+					$stock_store = new StockStore();
+					$stock_store->product_code = $product_code;
+					$stock_store->store_code = $store_code;
+					$stock_store->stock_quantity = $stock_on_hand;
+					$stock_store->save();
+			}
+
 
 			return $stock_on_hand;
 	}

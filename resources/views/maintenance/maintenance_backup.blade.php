@@ -98,6 +98,7 @@
 				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
 				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
 				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
+				<a href="{{ url('/product_authorizations') }}">Product Authorizations</a><br>
 			</small>
 			</div>
 	</div>

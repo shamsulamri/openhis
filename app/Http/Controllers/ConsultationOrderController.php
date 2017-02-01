@@ -97,12 +97,10 @@ class ConsultationOrderController extends Controller
 			$valid = $consultation_order->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
-					Log::info("XXXXX");
 					$consultation_order->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/consultation_orders/'.$consultation_order->consultation_id);
 			} else {
-					Log::info("XXXXX");
 					return view('consultation_orders.edit', [
 							'consultation_order'=>$consultation_order,
 							'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),

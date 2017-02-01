@@ -16,6 +16,7 @@ use App\Patient;
 use App\Appointment;
 use App\User;
 use App\BlockDate;
+use App\DojoUtility;
 
 class AppointmentServiceController extends Controller
 {
@@ -66,13 +67,14 @@ class AppointmentServiceController extends Controller
 			}
 	}
 
-	public function edit($id) 
+	public function edit(Request $request, $id) 
 	{
 			$appointment_service = AppointmentService::findOrFail($id);
 			
 			return view('appointment_services.edit', [
 					'appointment_service'=>$appointment_service,
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'type'=> $request->type,
 					]);
 	}
 
@@ -94,7 +96,11 @@ class AppointmentServiceController extends Controller
 			if ($valid->passes()) {
 					$appointment_service->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/appointment_services/id/'.$id);
+					if ($request->type=='user') {
+							return redirect('/user_profile');
+					} else {
+							return redirect('/appointment_services/id/'.$id);
+					}
 			} else {
 					return view('appointment_services.edit', [
 							'appointment_service'=>$appointment_service,

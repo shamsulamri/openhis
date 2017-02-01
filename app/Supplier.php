@@ -14,6 +14,7 @@ class Supplier extends Model
 				'supplier_code',
 				'supplier_name',
 				'supplier_company_number',
+				'supplier_gst_number',
 				'supplier_street_1',
 				'supplier_street_2',
 				'supplier_city',

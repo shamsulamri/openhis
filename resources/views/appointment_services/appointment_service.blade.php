@@ -31,6 +31,16 @@
         </div>
     </div>
 
+	<div class='form-group  @if ($errors->has('service_cease')) has-error @endif'>
+		{{ Form::label('Cease Date', 'Cease Date',['class'=>'col-md-3 control-label']) }}
+		<div class='col-md-9'>
+			<div class="input-group date">
+				<input data-mask="99/99/9999" name="service_cease" id="service_cease" type="text" class="form-control" value="{{ $appointment_service->service_cease }}"> 
+				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			</div>
+		</div>
+	</div>
+
     <div class='form-group  @if ($errors->has('service_duration')) has-error @endif'>
         {{ Form::label('service_duration', 'Duration',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -116,11 +126,17 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
+			@if ($type=='user') 
+            <a class="btn btn-default" href="/user_profile" role="button">Cancel</a>
+			@else
             <a class="btn btn-default" href="/appointment_services" role="button">Cancel</a>
+			@endif
+
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
 
+	{{ Form::hidden('type', $type) }}
 	<script>
 
 		$(function(){
@@ -142,4 +158,13 @@
 						customClass: 'select'
 				});    
 		});
+
+		$('#service_cease').datepicker({
+						format: "dd/mm/yyyy",
+						todayBtn: "linked",
+						keyboardNavigation: false,
+						forceParse: false,
+						calendarWeeks: true,
+						autoclose: true
+				});
 	</script>

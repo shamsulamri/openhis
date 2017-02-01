@@ -3,9 +3,12 @@
 @section('content')
 @include('products.id')
 <h1>Stock Movements</h1>
+@cannot('module-inventory')
+<h2>{{ $store->store_name }}</h2>
+@endcannot
 <br>
-
 <div class='row'>
+	@can('module-inventory')
 	<div class='col-md-4'>
 		<div class='list-group'>
 		@foreach ($stores as $s)
@@ -13,7 +16,12 @@
 		@endforeach
 		</div>
 	</div>
+	@endcan
+	@can('module-inventory')
 	<div class='col-md-8'>
+	@else
+	<div class='col-md-12'>
+	@endcan
 
 		@if (!empty($store_code))
 		<a href='/stocks/create/{{ $product->product_code }}/{{ $store_code }}' class='btn btn-primary'>Create</a>
