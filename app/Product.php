@@ -85,7 +85,7 @@ class Product extends Model
 
 	public function getProductOnHandAttribute($value) 
 	{
-			return str_replace('.00','',$value);
+			return floatval($value);
 	}
 
 	public function getUnitShortname()

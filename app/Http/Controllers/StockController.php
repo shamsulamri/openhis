@@ -19,6 +19,7 @@ use App\DojoUtility;
 use App\StockHelper;
 use App\Ward;
 use Auth;
+use App\StoreAuthorization;
 
 class StockController extends Controller
 {
@@ -52,6 +53,7 @@ class StockController extends Controller
 					'stores' => Store::where('store_code','<>',$store_code)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'product' => Product::find($product_code),
 					'store' => $store,
+					'store_code'=>$store_code,
 					'maxYear' => Carbon::now()->year,
 					]);
 	}
@@ -60,6 +62,7 @@ class StockController extends Controller
 	{
 			$stock = new Stock();
 
+			$product = Product::find($request->product_code);
 
 			$origin_date = $request->stock_datetime;
 			if (DojoUtility::validateDateTime($request->stock_datetime)==true) {
@@ -70,7 +73,15 @@ class StockController extends Controller
 
 			$valid = $stock->validate($request->all(), $request->_method);
 
-			if ($valid->passes()) {
+			$validQuantity=True;
+			$quantityControls = array('adjust','transfer','dispose','return');
+			if (in_array($request->move_code,$quantityControls)) {
+					if (abs($request->stock_quantity)>$product->product_on_hand) {
+							$validQuantity=False;
+					}
+			}
+
+			if ($valid->passes() && $validQuantity) {
 					$stock = new Stock($request->all());
 					$stock->username = Auth::user()->username;
 					$stock->stock_id = $request->stock_id;
@@ -114,11 +125,14 @@ class StockController extends Controller
 					}
 
 					
-					$product = new ProductController();
-					$product->updateTotalOnHand($stock->product_code);
+					$productController = new ProductController();
+					$productController->updateTotalOnHand($stock->product_code);
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/stocks/'.$stock->product_code.'/'.$stock->store_code);
 			} else {
+					if (!$validQuantity) {
+						$valid->getMessageBag()->add('stock_quantity','Amount greater than item on hand.');
+					}
 					return redirect('/stocks/create/'.$request->product_code.'/'.$request->store_code)
 							->withErrors($valid)
 							->withInput();
@@ -222,12 +236,6 @@ class StockController extends Controller
 
 	public function show(Request $request, $product_code, $store_code=null)
 	{
-			if (Auth::user()->cannot('module-inventory')) {
-					$ward_code = $request->cookie('ward');
-					$ward = Ward::where('ward_code', $ward_code)->first();
-					$store_code = $ward->store_code;
-			}
-
 			$stocks = Stock::orderBy('stock_datetime','desc')
 					->leftJoin('stock_movements as b', 'b.move_code', '=','stocks.move_code')
 					->leftJoin('stores as c', 'c.store_code', '=','stocks.store_code')
@@ -237,7 +245,6 @@ class StockController extends Controller
 					->paginate($this->paginateValue);
 
 			$product = Product::find($product_code);
-			$store = Store::find($store_code);
 
 			$stores = Store::orderBy('store_name')
 							->select('stores.store_code', 'stock_stores.stock_quantity')
@@ -246,11 +253,27 @@ class StockController extends Controller
 									$query->where('stock_stores.store_code','=', 'stores.store_code');
 							});
 
-			$sql = sprintf("select a.store_code, store_name,  stock_quantity from stores a 
-						left join stock_stores b on (b.product_code = '%s' and b.store_code = a.store_code)", $product_code);
+			$sql = sprintf("select a.store_code, store_name,  stock_quantity from store_authorizations a 
+						left join stores c on (c.store_code = a.store_code)
+						left join stock_stores b on (b.product_code = '%s' and b.store_code = a.store_code)
+						where author_id = %d", $product_code, Auth::user()->authorization->author_id);
 
 			$stores = DB::select($sql);
 
+
+			$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)
+							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
+							->orderBy('store_name')
+							->get();
+
+			if ($store_code == null) {
+					$store_code = $this->getDefaultStore($request);
+			} 
+			$store = Store::find($store_code);
+
+			//$stores = $stores->lists('store_name', 'b.store_code')
+							//->prepend('','');
+							//
 			return view('stocks.index', [
 					'stocks'=>$stocks,
 					'product'=>$product,
@@ -261,4 +284,21 @@ class StockController extends Controller
 			]);
 	}
 	
+	public function getDefaultStore(Request $request) 
+	{
+			$default_store = null;
+			if (Auth::user()->authorization->store_code) {
+				$default_store = Auth::user()->authorization->store_code;
+			}
+
+			if (Auth::user()->cannot('module-inventory')) {
+					$ward_code = $request->cookie('ward');
+					$ward = Ward::find($ward_code);
+					if ($ward) {
+						$default_store = $ward->store_code;
+					} 
+			} 		
+
+			return $default_store;
+	}
 }

@@ -2,16 +2,13 @@
 @extends('layouts.app')
 
 @section('content')
-@can('module-inventory')
 @include('products.id')
-@endcan
 @if ($patient)
 		@include('patients.id')
 @endif
 <h1>
 {{ $title }}
 </h1>
-
 
 <br>
 {{ Form::model($loan, ['url'=>$url, 'class'=>'form-horizontal']) }} 

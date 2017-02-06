@@ -8,7 +8,6 @@
 @endcannot
 <br>
 <div class='row'>
-	@can('module-inventory')
 	<div class='col-md-4'>
 		<div class='list-group'>
 		@foreach ($stores as $s)
@@ -16,12 +15,7 @@
 		@endforeach
 		</div>
 	</div>
-	@endcan
-	@can('module-inventory')
 	<div class='col-md-8'>
-	@else
-	<div class='col-md-12'>
-	@endcan
 
 		@if (!empty($store_code))
 		<a href='/stocks/create/{{ $product->product_code }}/{{ $store_code }}' class='btn btn-primary'>Create</a>
@@ -60,7 +54,7 @@
 							@endif
 					</td>
 					<td align='right'>
-							{{ str_replace('.00','',number_format($stock->stock_quantity,2)) }}
+							{{ floatval($stock->stock_quantity) }}
 					</td>
 					@can('system-administrator')
 					<td align='right'>

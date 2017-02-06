@@ -10,7 +10,7 @@ use App\UserAuthorization;
 use Log;
 use DB;
 use Session;
-
+use App\Store;
 
 class UserAuthorizationController extends Controller
 {
@@ -36,7 +36,7 @@ class UserAuthorizationController extends Controller
 			$user_authorization = new UserAuthorization();
 			return view('user_authorizations.create', [
 					'user_authorization' => $user_authorization,
-				
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 
@@ -62,7 +62,7 @@ class UserAuthorizationController extends Controller
 			$user_authorization = UserAuthorization::findOrFail($id);
 			return view('user_authorizations.edit', [
 					'user_authorization'=>$user_authorization,
-				
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 

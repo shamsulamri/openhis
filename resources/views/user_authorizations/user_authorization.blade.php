@@ -119,6 +119,16 @@
         </div>
     </div>
 
+	<div class='page-header'>
+		<h4>Default Store</h4>
+	</div>
+    <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
+        {{ Form::label('store_code', 'Store',['class'=>'col-sm-4 control-label']) }}
+		<div class='col-sm-8'>
+			{{ Form::select('store_code', $store, null, ['class'=>'form-control','maxlength'=>'10']) }}
+			@if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
+		</div>
+    </div>
 	<br>
 
     <div class='form-group'>

@@ -17,6 +17,7 @@ use Gate;
 use App\DojoUtility;
 use App\Loan;
 use Auth;
+use App\StockHelper;
 
 class AssemblyController extends Controller
 {
@@ -29,7 +30,6 @@ class AssemblyController extends Controller
 
 	public function index($id)
 	{
-
 			$bom = BillMaterial::where('product_code',$id)->pluck('bom_product_code');
 			/*
 			$products = Product::whereIn('products.product_code', $bom)
@@ -49,7 +49,8 @@ class AssemblyController extends Controller
 					'boms'=>$boms,
 					'quantity'=>$quantity,
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					'store_code'=>'main',
+					'store_code'=>Auth::user()->authorization->store_code,
+					'stock_helper'=>new StockHelper(),
 			]);
 
 	}
@@ -115,7 +116,7 @@ class AssemblyController extends Controller
 
 				$product_controller->updateTotalOnHand($id);
 				Session::flash('message', 'Product built.');
-				return redirect('/products/id/'.$id);
+				return redirect('/build_assembly/'.$id);
 			} else {
 					if (empty($request->store_code)) {
 						Session::flash('message', 'Store not defined.');
@@ -130,6 +131,7 @@ class AssemblyController extends Controller
 							'quantity'=>$request->quantity,
 							'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 							'store_code'=>$request->store_code,
+							'stock_helper'=>new StockHelper(),
 					]);
 			}
 				
@@ -141,6 +143,8 @@ class AssemblyController extends Controller
 
 			return view('assemblies.explode', [
 					'product'=>$product,
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store_code'=>Auth::user()->authorization->store_code,
 			]);
 	}
 
@@ -166,7 +170,7 @@ class AssemblyController extends Controller
 
 						$stock = new Stock();
 						$stock->move_code='adjust';
-						$stock->store_code = 'main';
+						$stock->store_code = $request->store_code;
 						$stock->product_code = $bom_product->bom_product_code;
 						$stock->stock_quantity = $quantity*$bom_product->bom_quantity;
 						$stock->stock_datetime = DojoUtility::now(); 
@@ -179,7 +183,7 @@ class AssemblyController extends Controller
 
 				$stock = new Stock();
 				$stock->move_code='adjust';
-				$stock->store_code = 'main';
+				$stock->store_code = $request->store_code;
 				$stock->product_code = $id;
 				$stock->stock_quantity = -1*$quantity;
 				$stock->stock_datetime = DojoUtility::now(); 
@@ -188,6 +192,6 @@ class AssemblyController extends Controller
 
 				$product_controller->updateTotalOnHand($id);
 			Session::flash('message', 'Product exploded.');
-			return redirect('/products/id/'.$id);
+			return redirect('/explode_assembly/'.$id);
 	}
 }

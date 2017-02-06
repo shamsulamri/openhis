@@ -176,15 +176,17 @@ class PatientController extends Controller
 	
 	public function search(Request $request)
 	{
-			$patients = Patient::where('patient_name','like','%'.$request->search.'%')
-					->orWhere('patient_mrn', 'like','%'.$request->search.'%')
-					->orWhere('patient_new_ic', 'like','%'.$request->search.'%')
+			$search = $request->search;
+			$search = str_replace('-','',$search);
+			$patients = Patient::where('patient_name','like','%'.$search.'%')
+					->orWhere('patient_mrn', 'like','%'.$search.'%')
+					->orWhere('patient_new_ic', 'like','%'.$search.'%')
 					->orderBy('patient_name')
 					->paginate($this->paginateValue);
 
 			return view('patients.index', [
 					'patients'=>$patients,
-					'search'=>$request->search
+					'search'=>$search,
 					]);
 	}
 

@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use DB;
 use App\Encounter;
 use Log;
+use Auth;
 
 class PurchaseOrderHelper 
 {
@@ -17,7 +18,7 @@ class PurchaseOrderHelper
 	public function open()
 	{
 
-			$sql = "select count(*) as total from purchase_orders where purchase_posted=0 and deleted_at is null";
+			$sql = "select count(*) as total from purchase_orders where purchase_posted=0 and deleted_at is null and author_id=".Auth::user()->author_id;
 
 			$results = DB::select($sql);
 			
@@ -28,7 +29,7 @@ class PurchaseOrderHelper
 	public function posted()
 	{
 
-			$sql = "select count(*) as total from purchase_orders where purchase_posted=1 and deleted_at is null";
+			$sql = "select count(*) as total from purchase_orders where purchase_posted=1 and deleted_at is null and author_id=".Auth::user()->author_id;
 
 			$results = DB::select($sql);
 			

@@ -58,7 +58,7 @@ Interim Bill
 							{{ $bill->tax_code }}
 					</td>
 					<td align='right' width='50'>
-							{{ str_replace('.00','',$bill->tax_rate) }}
+							{{ floatval($bill->tax_rate) }}
 							<?php if ($bill->tax_rate) { ?>
 							%
 							<?php } ?>
@@ -71,7 +71,7 @@ Interim Bill
 					</td>
 					<td align='right' width='100'>
 						<?php if ($bill->bill_discount>0) { ?>
-							{{ str_replace('.00','',number_format($bill->bill_discount,2)) }} %
+							{{ floatval($bill->bill_discount) }} %
 						<?php } ?>
 							<?php if ($bill->bill_exempted==1) { ?>
 								Exempted

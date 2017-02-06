@@ -5,7 +5,7 @@
 		@include('patients.id')
 @else
 		@if ($consultation)
-		@include('consultations.panel')
+			@include('consultations.panel')
 		@endif
 @endcan
 <h1>Medical Record Documents</h1>
@@ -20,57 +20,57 @@
 <br>
 
 @can('module-medical-record')
-@if ($loan_flag)
-<a class="btn btn-default" href="/loans?type=folder" role="button">Return</a>
-@else
-<a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
-@endif
-<a href='/documents/create?patient_mrn={{ $patient->patient_mrn }}' class='btn btn-primary'>Create</a>
-<br>
-<br>
+		@if ($loan_flag)
+		<a class="btn btn-default" href="/loans?type=folder" role="button">Return</a>
+		@else
+		<a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
+		@endif
+		<a href='/documents/create?patient_mrn={{ $patient->patient_mrn }}' class='btn btn-primary'>Create</a>
+		<br>
+		<br>
 @endcan
 @if ($documents->total()>0)
-<table class="table table-hover">
- <thead>
-	<tr> 
-    <th>Document</th>
-    <th>Description</th>
-    <th>Status</th>
-	<th>Date</th>
-	<th></th>
-	</tr>
-  </thead>
-	<tbody>
-@foreach ($documents as $document)
-	<tr>
-			<td>
-					@can('module-medical-record')
-					<a href='{{ URL::to('documents/'. $document->document_id . '/edit') }}'>
-						{{$document->document->type_name}}
-					</a>
-					@else
-						{{$document->document->type_name}}
-					@endcan
-			</td>
-			<td>
-						{{$document->document_description}}
-			</td>
-			<td>
-						{{$document->status->status_name}}
-			</td>
-			<td>
-						{{ date('d F Y', strtotime($document->created_at )) }}
-			</td>
-			<td align='right'>
-				@if (!empty($document->document_file))
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $document->document_uuid) }}'>View File</a>
-				@endif
-				@can('module-medical-record')
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('documents/delete/'. $document->document_id) }}'>Delete</a>
-				@endcan
-			</td>
-	</tr>
-@endforeach
+		<table class="table table-hover">
+		 <thead>
+			<tr> 
+			<th>Document</th>
+			<th>Description</th>
+			<th>Status</th>
+			<th>Date</th>
+			<th></th>
+			</tr>
+		  </thead>
+			<tbody>
+		@foreach ($documents as $document)
+			<tr>
+					<td>
+							@can('module-medical-record')
+							<a href='{{ URL::to('documents/'. $document->document_id . '/edit') }}'>
+								{{$document->document->type_name}}
+							</a>
+							@else
+								{{$document->document->type_name}}
+							@endcan
+					</td>
+					<td>
+								{{$document->document_description}}
+					</td>
+					<td>
+								{{$document->status->status_name}}
+					</td>
+					<td>
+								{{ date('d F Y', strtotime($document->created_at )) }}
+					</td>
+					<td align='right'>
+						@if (!empty($document->document_file))
+							<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $document->document_uuid) }}'>View File</a>
+						@endif
+						@can('module-medical-record')
+							<a class='btn btn-danger btn-xs' href='{{ URL::to('documents/delete/'. $document->document_id) }}'>Delete</a>
+						@endcan
+					</td>
+			</tr>
+		@endforeach
 @endif
 </tbody>
 </table>

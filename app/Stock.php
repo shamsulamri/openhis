@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
 class Stock extends Model
 {
@@ -27,7 +28,6 @@ class Stock extends Model
     protected $primaryKey = 'stock_id';
     public $incrementing = true;
     
-
 	public function validate($input, $method) {
 			$rules = [
 				'move_code'=>'required',
@@ -35,10 +35,9 @@ class Stock extends Model
 				'product_code'=>'required',
 				'stock_quantity'=>'required',
 				'stock_datetime'=>'required|size:16|date_format:d/m/Y H:i',
+				'store_code_transfer'=>'required_if:move_code,==,transfer',
 			];
 
-			
-			
 			$messages = [
 				'required' => 'This field is required',
 				'stock_datetime.date_format' => 'Invalid date or format'

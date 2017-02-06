@@ -36,10 +36,10 @@
 						<div class='col-sm-9'>
 						@if ($purchase_order_line->line_quantity_ordered==0)
 						<label for="line_price" class="form-control">
-							{{ str_replace('.00','',$purchase_order_line->line_quantity_ordered) }}
+							{{ floatval($purchase_order_line->line_quantity_ordered) }}
 						</label>
 						@else
-							{{ Form::label('line_quantity_ordered', str_replace('.00','',$purchase_order_line->line_quantity_ordered), ['class'=>'form-control']) }}
+							{{ Form::label('line_quantity_ordered', floatval($purchase_order_line->line_quantity_ordered), ['class'=>'form-control']) }}
 						@endif
 							@if ($errors->has('line_quantity_ordered')) <p class="help-block">{{ $errors->first('line_quantity_ordered') }}</p> @endif
 						</div>

@@ -25,6 +25,15 @@ class DojoUtility
 				}
 		}
 
+		public static function dateLongFormat($value)
+		{
+				if (!empty($value)) {
+					return Carbon::createFromFormat('d/m/Y', $value)->format('d F Y');
+				} else {
+					return null;
+				}
+		}
+
 		public static function validateDate($date)
 		{
 				$d = DateTime::createFromFormat('d/m/Y', $date);

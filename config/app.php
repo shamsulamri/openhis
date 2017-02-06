@@ -206,6 +206,7 @@ return [
 		'Html'		=> Collective\Html\HtmlFacade::class,
 		'Uuid' 		=> Webpatser\Uuid\Uuid::class,
 		'Amqp' 		=> Bschmitt\Amqp\Facades\Amqp::class,
+		'DojoUtility'=> App\DojoUtility::class,
     ],
 
 ];

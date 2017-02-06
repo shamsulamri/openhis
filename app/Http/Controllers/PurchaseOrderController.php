@@ -46,6 +46,8 @@ class PurchaseOrderController extends Controller
 
 			$purchase_orders = PurchaseOrder::orderBy('purchase_date','desc')
 					->leftJoin('suppliers as b', 'b.supplier_code','=','purchase_orders.supplier_code')
+					->where('author_id', '=', Auth::user()->author_id)
+					->orderBy('purchase_date','desc')
 					->paginate($this->paginateValue);
 
 			return view('purchase_orders.index', [

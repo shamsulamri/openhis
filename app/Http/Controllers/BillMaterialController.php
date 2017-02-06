@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\Product;
+use App\ProductAuthorization;
 
 class BillMaterialController extends Controller
 {
@@ -21,7 +22,7 @@ class BillMaterialController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function show($product_code)
+	public function show(Request $request, $product_code)
 	{
 			$product = Product::find($product_code);
 			return view('bill_materials.show', [

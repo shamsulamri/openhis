@@ -5,10 +5,8 @@
 <form action='/product/search' method='post' class='form-inline'>
 	<label>Product</label>
 	<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	@can('module-inventory')
 	<label>Store</label>
 	{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	@endcan
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
@@ -41,13 +39,11 @@
 					</a>
 			</td>
 			<td align='right'>
-				@if (!empty($store_code))
-							{{ str_replace('.00','',$product->stock_quantity) }}
-				@else
-						@if ($product->product_on_hand>0)
-							{{ str_replace('.00','',$product->product_on_hand) }}
-						@endif
-				@endif
+			@if	($product->product_stocked==1)
+				{{ $stock_helper->getStockCountByStore($product->product_code, $store_code) }}
+			@else
+					-
+			@endif
 			</td>
 			@can('system-administrator')
 			<td align='right'>

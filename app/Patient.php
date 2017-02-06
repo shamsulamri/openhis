@@ -162,6 +162,16 @@ class Patient extends Model
 			}
 	}
 
+	public function getMRN()
+	{
+			$mrn = $this->patient_mrn;
+			if (is_null($mrn)) {
+					return "-";
+			} else {
+					return substr($mrn,0,2).'-'.substr($mrn,2,8).'-'.substr($mrn,10,4);
+			}
+	}
+
 	public function getPatientBirthtimeAttribute($value)
 	{
 			return DojoUtility::timeReadFormat($value);
@@ -333,10 +343,9 @@ class Patient extends Model
 
 			static::created(function($patient)
 			{
-					//$prefix = date('Ymd', strtotime(Carbon::now()));  
 					$prefix = config('host.mrn_prefix') . date('Ymd', strtotime(Carbon::now()));
 					Log::info(Patient::where('created_at','>=', Carbon::today())->count());
-					$mrn = $prefix.str_pad(Patient::where('created_at','>=', Carbon::today())->count(), 6, '0', STR_PAD_LEFT);
+					$mrn = $prefix.str_pad(Patient::where('created_at','>=', Carbon::today())->count(), 4, '0', STR_PAD_LEFT);
 					$patient->patient_mrn = $mrn;
 					$patient->save();
 			});

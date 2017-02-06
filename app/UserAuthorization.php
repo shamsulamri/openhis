@@ -23,6 +23,7 @@ class UserAuthorization extends Model
 				'patient_list',
 				'product_list',
 				'loan_function',
+				'store_code',
 				'appointment_function',
 				'system_administrator'];
 	

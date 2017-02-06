@@ -43,6 +43,7 @@ class DocumentController extends Controller
 			}
 
 			$consultation = Consultation::find(Session::get('consultation_id'));
+
 			return view('documents.index', [
 					'documents'=>$documents,
 					'patient'=>$patient,

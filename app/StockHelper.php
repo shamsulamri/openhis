@@ -3,6 +3,8 @@
 namespace App;
 use DB;
 use Carbon\Carbon;
+use App\StockStore;
+use Log;
 
 class StockHelper 
 {
@@ -10,6 +12,20 @@ class StockHelper
    	{
 
 			return $this->storeOnHand($product_code, $store_code);
+	}
+
+	public function getStockCountByStore($product_code, $store_code) 
+	{
+			$value = StockStore::where('product_code',$product_code);
+				
+			if (!empty($store_code)) {
+					$value = $value->where('store_code', $store_code);
+			}
+
+			$value = $value->sum('stock_quantity');
+			
+			return floatval($value);
+
 	}
 
 	public function storeOnHand($product_code, $store_code) 

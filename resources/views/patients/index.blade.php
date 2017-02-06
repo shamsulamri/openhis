@@ -39,7 +39,7 @@
 	<?php $current_encounter = $patient->getCurrentEncounter(); ?>
 	<tr>
 			<td width='10%'>
-					{{$patient->patient_mrn}}
+					{{ $patient->getMRN() }}
 			</td>
 			<td>
 					<a href='{{ URL::to('patients/'. $patient->patient_id.'/edit') }}'>

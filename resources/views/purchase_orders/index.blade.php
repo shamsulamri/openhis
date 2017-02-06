@@ -54,7 +54,9 @@
 				@endif
 			</td>
 			<td>
+					{{ DojoUtility::dateLongFormat($purchase_order->purchase_date) }}
 					{{ date('d F Y', strtotime($purchase_order->purchase_date)) }}
+					{{ $purchase_order->purchase_date }}
 			</td>
 			<td>
 					{{$purchase_order->supplier_name}}

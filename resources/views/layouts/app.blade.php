@@ -161,8 +161,18 @@ if ($_COOKIE['his-navbar']==1) {
 						<div class="dropdown profile-element"> 
 							<br>
 						</div>
-				<!-- Patient Module -->
 				@cannot('system-administrator')
+						<!-- Support -->
+						@can('module-support')
+						<div class="dropdown profile-element"> 
+								<h4>&nbsp;Support</h4>
+						</div>
+						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-user-o'></i><span class='nav-label'>Outpatient Tasks</span></a></li>
+						<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-user-circle'></i><span class='nav-label'>Inpatient Tasks<span></a></li>
+						<li><a href="{{ url('/order_queues?discharge=true') }}"><i class='fa fa-user-md'></i><span class='nav-label'>Future Orders<span></a></li>
+
+						<!-- Patient Module -->
+						@endcan
 						@can('module-patient')
 						<div class="dropdown profile-element"> 
 								<h4>&nbsp;Patient</h4>
@@ -248,7 +258,6 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
 						<li><a title="Bed Reservations" href="{{ url('/bed_bookings') }}"><i class='glyphicon glyphicon-bookmark'></i><span class='nav-label'>Bed Reservations</a></li>
 						<li><a title="Appointments" href="{{ url('/appointments') }}"><i class='fa fa-calendar'></i><span class='nav-label'>Appointments</a></li>
-						<li><a title="Products" href="{{ url('/products') }}"><i class='glyphicon glyphicon-glass'></i><span class='nav-label'>Products</a></li>
 						<li><a title="Loans" href="{{ url('/loans/ward') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'>Loans</a></li>
 						@endcan
 
@@ -271,14 +280,11 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='glyphicon glyphicon-bed'></i><span class='nav-label'>Admissions</a></li>
 						@endcan
 
-						<!-- Support -->
-						@can('module-support')
-						<div class="dropdown profile-element"> 
-								<h4>&nbsp;Support</h4>
-						</div>
-						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-user-o'></i><span class='nav-label'>Outpatient Tasks</span></a></li>
-						<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-user-circle'></i><span class='nav-label'>Inpatient Tasks<span></a></li>
-						<li><a href="{{ url('/order_queues?discharge=true') }}"><i class='fa fa-user-md'></i><span class='nav-label'>Future Orders<span></a></li>
+						<!-- Product List -->
+						@can('product_list')
+								@cannot('module-inventory')
+								<li><a title="Products" href="{{ url('/products') }}"><i class='glyphicon glyphicon-glass'></i><span class='nav-label'>Products</a></li>
+								@endcannot
 						@endcan
 
 						<!-- Report -->

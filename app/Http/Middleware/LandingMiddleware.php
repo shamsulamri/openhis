@@ -32,12 +32,12 @@ class LandingMiddleware
 				return redirect('/diet_orders');
 		} 		
 
-		if ($request->user()->can('module-inventory')) {
-				return redirect('/products');
-		} 		
-
 		if ($request->user()->can('module-support')) {
 				return redirect('/order_queues');
+		} 		
+
+		if ($request->user()->can('module-inventory')) {
+				return redirect('/products');
 		} 		
 
 		if ($request->user()->can('module-discharge')) {

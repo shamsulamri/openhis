@@ -26,6 +26,9 @@ use Gate;
 use App\Order;
 use Auth;
 use App\ProductAuthorization;
+use App\StockHelper;
+use App\Ward;
+use App\StoreAuthorization;
 
 class ProductController extends Controller
 {
@@ -36,7 +39,7 @@ class ProductController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 			//$this->authorize('module-inventory');
 			/*
@@ -70,12 +73,40 @@ class ProductController extends Controller
 			$products = $products->orderBy('products.created_at','desc')
 							->paginate($this->paginateValue);
 
+			$store_code = null;
+			$store = StoreAuthorization::where('author_id', Auth::user()->author_id)
+							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
+							->orderBy('store_name')
+							->lists('store_name', 'b.store_code');
+			//				->prepend('','');
+
+
+			//'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					'store_code'=>null,
+					'store'=>$store,
+					'stock_helper'=> new StockHelper(),
+					'store_code'=>$this->getDefaultStore($request),
 			]);
+	}
+
+	public function getDefaultStore(Request $request) 
+	{
+			$default_store=null;
+			if (Auth::user()->authorization->store_code) {
+				$default_store = Auth::user()->authorization->store_code;
+			}
+
+			if (Auth::user()->cannot('module-inventory')) {
+					$ward_code = $request->cookie('ward');
+					$ward = Ward::find($ward_code);
+					if ($ward) {
+						$default_store = $ward->store_code;
+					} 
+			} 		
+
+			return $default_store;
 	}
 
 	public function create()
@@ -153,7 +184,12 @@ class ProductController extends Controller
 	public function edit($id) 
 	{
 			$product = Product::findOrFail($id);
-			Log::info($product->product_name);
+
+			$store_code = 'main';
+			if (Auth::user()->authorization->store_code) {
+				$store_code = Auth::user()->authorization->store_code;
+			}
+
 			return view('products.edit', [
 					'product'=>$product,
 					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
@@ -163,6 +199,7 @@ class ProductController extends Controller
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
+					'store_code'=>$store_code,
 					]);
 	}
 
@@ -257,9 +294,11 @@ class ProductController extends Controller
 									->where('a.store_code','=',$request->store);
 					**/
 
+					/**
 					$products = DB::table('stock_stores as a')
 									->leftjoin('products as b', 'b.product_code', '=', 'a.product_code')
 									->where('store_code','=', $request->store);
+					**/
 								
 			}
 
@@ -273,23 +312,34 @@ class ProductController extends Controller
 
 			$products = $products->paginate($this->paginateValue);
 
+			$store = StoreAuthorization::where('author_id', Auth::user()->author_id)
+							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
+							->orderBy('store_name')
+							->lists('store_name', 'b.store_code')
+							->prepend('','');
+
 			return view('products.index', [
 					'products'=>$products,
 					'search'=>$request->search,
 					'loan'=>$loan,
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store' => $store,
 					'store_code'=>$request->store,
+					'stock_helper'=> new StockHelper(),
 					]);
 	}
 
-	public function searchById($id)
+	public function searchById(Request $request, $id)
 	{
 			$products = DB::table('products')
 					->where('product_code','=',$id)
 					->paginate($this->paginateValue);
 
 			return view('products.index', [
-					'products'=>$products
+					'products'=>$products,
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store_code'=>null,
+					'stock_helper'=>new StockHelper(),
+					'default_store'=>$this->getDefaultStore($request),
 			]);
 	}
 
@@ -306,7 +356,6 @@ class ProductController extends Controller
 			$product->product_on_hand = $total;
 			$product->save();		
 
-			Log::info($total);
 			return $total;
 	}
 
@@ -349,7 +398,7 @@ class ProductController extends Controller
 								->where('order_completed','=',1)
 								->where('store_code', '=', $store_code)
 								->sum('order_quantity_supply');
-					Log::info($used);
+
 					$stock_on_hand=$stocks - $used;
 			}
 
@@ -362,6 +411,7 @@ class ProductController extends Controller
 			}
 
 
+			Log::info($store_code.':'.$stock_on_hand);
 			return $stock_on_hand;
 	}
 
