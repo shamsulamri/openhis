@@ -31,7 +31,7 @@
 @foreach ($discharges as $discharge)
 	<tr>
 			<td>
-					{{ date('d F Y', strtotime($discharge->created_at)) }}
+					{{ (DojoUtility::dateLongFormat($discharge->created_at)) }}
 					<br>
 					<small>
 					<?php $ago =$dojo->diffForHumans($discharge->created_at); ?> 

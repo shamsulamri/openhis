@@ -28,7 +28,28 @@ class DojoUtility
 		public static function dateLongFormat($value)
 		{
 				if (!empty($value)) {
-					return Carbon::createFromFormat('d/m/Y', $value)->format('d F Y');
+					if (strlen($value)>10) {
+						return Carbon::parse($value)->format('d F Y H:i');
+					} else {
+						if (self::validateDate($value)==true) {
+							return Carbon::createFromFormat('d/m/Y', $value)->format('d F Y');
+						} else {
+							return Carbon::parse($value)->format('d F Y');
+						}
+					}
+				} else {
+					return null;
+				}
+		}
+
+		public static function dateOnlyFormat($value)
+		{
+				if (!empty($value)) {
+					if (strlen($value)>10) {
+						return Carbon::parse($value)->format('d F Y');
+					} else {
+						return Carbon::createFromFormat('d/m/Y', $value)->format('d F Y');
+					}
 				} else {
 					return null;
 				}

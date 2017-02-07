@@ -34,7 +34,7 @@
 	<tr>
 			<td>
 			@if ($is_discharge)
-					{{ date('d F Y', strtotime($order->investigation_date)) }}
+					{{ (DojoUtility::dateLongFormat($order->investigation_date)) }}
 			@else
 					{{ date('d F, H:i', strtotime($order->created_at)) }}
 			@endif

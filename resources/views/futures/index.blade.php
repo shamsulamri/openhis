@@ -28,7 +28,7 @@
 @foreach ($futures as $future)
 	<tr>
 			<td>
-					{{ date('d F Y', strtotime($future->orderInvestigation->investigation_date)) }}
+					{{ (DojoUtility::dateLongFormat($future->orderInvestigation->investigation_date)) }}
 			</td>
 			<td>
 					{{$future->consultation->encounter->patient->patient_name}}

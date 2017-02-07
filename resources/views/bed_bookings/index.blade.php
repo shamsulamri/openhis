@@ -40,7 +40,7 @@
 	<tr class='{{ $status }}'>
 			<td>
 				@if ($bed_booking->admission_id==0)
-					{{ date('d F Y', strtotime($bed_booking->book_date)) }}
+					{{ (DojoUtility::dateLongFormat($bed_booking->book_date)) }}
 				@else
 					{{ date('d F, H:i', strtotime($bed_booking->book_date)) }}
 				@endif

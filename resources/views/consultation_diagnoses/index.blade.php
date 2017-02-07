@@ -39,7 +39,7 @@
 					</a>
 			</td>
 			<td class='col-xs-3'>
-					{{ date('d F Y', strtotime($consultation_diagnosis->created_at)) }}
+					{{ (DojoUtility::dateLongFormat($consultation_diagnosis->created_at)) }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('consultation_diagnoses/delete/'. $consultation_diagnosis->id) }}'>Delete</a>

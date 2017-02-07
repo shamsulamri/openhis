@@ -64,7 +64,7 @@
 				@endif
 			</td>
 			<td>
-					{{ date('d F Y', strtotime($loan->created_at )) }}
+					{{ (DojoUtility::dateLongFormat($loan->created_at )) }}
 			</td>
 			<td>
 					{{$loan->status->loan_name}}
@@ -74,19 +74,19 @@
 			</td>
 			<td>
 					@if ($loan->loan_code=='exchanged') 
-						{{ date('d F Y', strtotime($loan->getLoanClosureDatetime() )) }}
+						{{ (DojoUtility::dateLongFormat($loan->getLoanClosureDatetime() )) }}
 					@endif
 					@if ($loan->loan_code=='return')
 							@if (!empty($loan->loan_closure_datetime))
-								{{ date('d F Y', strtotime($loan->getLoanClosureDatetime() )) }}
+								{{ (DojoUtility::dateLongFormat($loan->getLoanClosureDatetime() )) }}
 							@endif
 					@endif
 					@if ($loan->loan_code=='lend')
 							@if (!empty($loan->loan_date_start))
-							{{ date('d F Y', strtotime($loan->getLoanDateStart() )) }}
+							{{ (DojoUtility::dateLongFormat($loan->getLoanDateStart() )) }}
 							@endif
 							@if (!empty($loan->loan_date_end))
-							- {{ date('d F Y', strtotime($loan->getLoanDateEnd() )) }}
+							- {{ (DojoUtility::dateLongFormat($loan->getLoanDateEnd() )) }}
 							@endif
 					@endif
 			</td>

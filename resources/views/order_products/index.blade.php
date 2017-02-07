@@ -54,7 +54,7 @@
 											<!--
 											<p class='pull-right'>
 												{{ $dojo->diffForHumans($order_product->created_at) }}
-												{{ date('d F Y', strtotime($order_product->created_at)) }}
+												{{ (DojoUtility::dateLongFormat($order_product->created_at)) }}
 											</p>
 											-->
 											<br>

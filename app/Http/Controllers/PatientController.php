@@ -78,7 +78,7 @@ class PatientController extends Controller
 					'city' => City::all()->sortBy('city_name')->lists('city_name', 'city_code')->prepend('',''),
 					'flag' => PatientFlag::all()->sortBy('flag_name')->lists('flag_name', 'flag_code')->prepend('',''),
 					'postcodes'=>Postcode::all(),
-					]);
+			]);
 	}
 
 	public function store(Request $request) 
@@ -235,7 +235,7 @@ class PatientController extends Controller
 			return view('patients.dependant_list', [
 					'patient'=>$patient,
 					'patients'=>$patients,
-					]);
+]);
 	}
 
 	public function saveImage($patient, $file) {

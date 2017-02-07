@@ -59,7 +59,7 @@
 								{{$document->status->status_name}}
 					</td>
 					<td>
-								{{ date('d F Y', strtotime($document->created_at )) }}
+								{{ (DojoUtility::dateLongFormat($document->created_at )) }}
 					</td>
 					<td align='right'>
 						@if (!empty($document->document_file))

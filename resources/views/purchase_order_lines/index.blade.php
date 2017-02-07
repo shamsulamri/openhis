@@ -8,7 +8,7 @@ $count=0;
 @if ($purchase_order->purchase_posted==1)
 		@if ($purchase_order->purchase_received==1)
 				<div class='alert alert-success'>
-				Stock receive on <strong>{{ date('d F Y', strtotime(str_replace('/','-',$purchase_order->receive_datetime))) }}</strong> at <strong>{{ $purchase_order->store->store_name }}</strong>
+				Stock receive on <strong>{{ (DojoUtility::dateLongFormat(str_replace('/','-',$purchase_order->receive_datetime))) }}</strong> at <strong>{{ $purchase_order->store->store_name }}</strong>
 				</div>
 		@else
 				<div class='alert alert-warning'>

@@ -14,7 +14,7 @@
 	@endif
 	<tr class='{{ $status }}'>
 			<td width='20%'>
-					{{ date('d F Y', strtotime($patient->created_at)) }}
+					{{ (DojoUtility::dateLongFormat($patient->created_at)) }}
 					<br>
 					<small>
 					<?php $ago =$dojo->diffForHumans($patient->created_at); ?> 

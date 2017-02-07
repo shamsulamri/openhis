@@ -70,7 +70,7 @@
 					{{ $order->name }}
 			</td>
 			<td>
-					{{ date('d F Y', strtotime($order->investigation_date)) }}
+					{{ (DojoUtility::dateLongFormat($order->investigation_date)) }}
 			</td>
 			<td align='right'>
 					@if (!isset($order->cancel_id))

@@ -10,7 +10,7 @@ Delete Booking
 Are you sure you want to delete the selected record ?
 <br>
 <br>
-Booked on {{ date('d F Y', strtotime($bed_booking->created_at)) }}
+Booked on {{ (DojoUtility::dateLongFormat($bed_booking->created_at)) }}
 {{ Form::open(['url'=>'bed_bookings/'.$bed_booking->book_id, 'class'=>'pull-right']) }}
 	{{ method_field('DELETE') }}
 	<a class="btn btn-default" href="/bed_bookings" role="button">Cancel</a>

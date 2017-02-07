@@ -50,7 +50,7 @@
 					{{ $patient->patient_new_ic }}
 			</td>
 			<td>
-					{{ date('d F Y', strtotime($patient->created_at)) }}
+					{{ DojoUtility::dateOnlyFormat($patient->created_at) }}
 			</td>
 			<td>
 					@if (!empty($current_encounter))

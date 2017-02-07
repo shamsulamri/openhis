@@ -26,7 +26,7 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('diet_qualities/'. $diet_quality->qc_id . '/edit') }}'>
-						{{ date('d F Y', strtotime($diet_quality->qc_date)) }}
+						{{ (DojoUtility::dateLongFormat($diet_quality->qc_date)) }}
 					</a>
 			</td>
 			<td>

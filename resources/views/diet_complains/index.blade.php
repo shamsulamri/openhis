@@ -26,7 +26,7 @@
 @foreach ($diet_complains as $diet_complain)
 	<tr>
 			<td>
-					{{ date('d F Y', strtotime($diet_complain->complain_date)) }}
+					{{ (DojoUtility::dateLongFormat($diet_complain->complain_date)) }}
 			</td>
 			<td>
 					<a href='{{ URL::to('diet_complains/'. $diet_complain->complain_id . '/edit') }}'>

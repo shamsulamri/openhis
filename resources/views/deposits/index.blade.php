@@ -23,7 +23,7 @@
 @foreach ($deposits as $deposit)
 	<tr>
 			<td>
-					{{ date('d F Y', strtotime($deposit->created_at)) }}
+					{{ (DojoUtility::dateLongFormat($deposit->created_at)) }}
 			</td>
 			<td>
 					<a href='{{ URL::to('deposits/'. $deposit->deposit_id . '/edit') }}'>

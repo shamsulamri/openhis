@@ -39,6 +39,7 @@
  <thead>
 	<tr> 
     <th width='10'></th>
+    <th>Id</th>
     <th>Date</th>
     <th>Supplier</th> 
     <th>Status</th> 
@@ -54,9 +55,10 @@
 				@endif
 			</td>
 			<td>
-					{{ DojoUtility::dateLongFormat($purchase_order->purchase_date) }}
-					{{ date('d F Y', strtotime($purchase_order->purchase_date)) }}
-					{{ $purchase_order->purchase_date }}
+					{{ $purchase_order->purchase_id }}
+			</td>
+			<td>
+					{{ DojoUtility::dateOnlyFormat($purchase_order->purchase_date) }}
 			</td>
 			<td>
 					{{$purchase_order->supplier_name}}

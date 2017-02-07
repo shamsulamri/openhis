@@ -47,6 +47,7 @@ class OrderInvestigation extends Model
 
 	public function getInvestigationDateAttribute($value)
 	{
+		Log::info("XXXXXXX");
 		return DojoUtility::dateReadFormat($value);
 	}
 

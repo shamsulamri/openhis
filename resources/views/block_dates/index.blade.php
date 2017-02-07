@@ -37,7 +37,7 @@
 					{{$block_date->block_code}}
 			</td>
 			<td>
-					{{ date('d F Y', strtotime($block_date->block_date)) }}
+					{{ (DojoUtility::dateLongFormat($block_date->block_date)) }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('block_dates/delete/'. $block_date->block_code) }}'>Delete</a>

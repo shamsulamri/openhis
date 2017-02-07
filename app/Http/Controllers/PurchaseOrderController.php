@@ -47,7 +47,7 @@ class PurchaseOrderController extends Controller
 			$purchase_orders = PurchaseOrder::orderBy('purchase_date','desc')
 					->leftJoin('suppliers as b', 'b.supplier_code','=','purchase_orders.supplier_code')
 					->where('author_id', '=', Auth::user()->author_id)
-					->orderBy('purchase_date','desc')
+					->orderBy('purchase_id','desc')
 					->paginate($this->paginateValue);
 
 			return view('purchase_orders.index', [
@@ -233,7 +233,8 @@ class PurchaseOrderController extends Controller
 				$purchase_orders = $purchase_orders->where('purchase_posted','=', $selected_status[$request->status]);
 			}
 
-			$purchase_orders = $purchase_orders->orderBy('purchase_date')
+			$purchase_orders = $purchase_orders->where('author_id', '=', Auth::user()->author_id);
+			$purchase_orders = $purchase_orders->orderBy('purchase_id','desc')
 									->paginate($this->paginateValue);
 
 			$status = (empty($request->status)) ? '':$request->status;
