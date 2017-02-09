@@ -65,11 +65,12 @@ class PurchaseOrder extends Model
 		}
 	}
 
-
+	/**
 	public function getPurchaseDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setInvoiceDateAttribute($value)
 	{
@@ -79,10 +80,12 @@ class PurchaseOrder extends Model
 	}
 
 
+	/**
 	public function getInvoiceDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setReceiveDatetimeAttribute($value)
 	{

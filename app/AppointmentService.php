@@ -81,9 +81,10 @@ class AppointmentService extends Model
 			return DojoUtility::dateTimeReadFormat($this->attributes['service_cease']);
 	}
 
-
+	/**
 	public function getServiceCeaseAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 }

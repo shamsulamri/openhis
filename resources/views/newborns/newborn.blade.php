@@ -8,7 +8,7 @@
 						
 						<div class='col-md-6'>
 							<div class="input-group date">
-								{{ Form::text('patient_birthdate', $patient_newborn->patient_birthdate, ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'patient_birthdate',]) }}
+								{{ Form::text('patient_birthdate', DojoUtility::dateReadFormat($patient_newborn->patient_birthdate), ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'patient_birthdate',]) }}
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 						</div>
@@ -274,7 +274,8 @@
 						{{ Form::label('newborn_g6pd', 'G6PD',['class'=>'col-sm-6 control-label']) }}
 						<div class='col-sm-6'>
 							<div class="input-group date">
-								{{ Form::text('newborn_g6pd', $patient_newborn->newborn_g6pd, ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_g6pd',]) }}
+								{{ Form::text('newborn_g6pd', DojoUtility::dateReadFormat($newborn->newborn_g6pd), ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_g6pd',]) }}
+
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('newborn_g6pd')) <p class="help-block">{{ $errors->first('newborn_g6pd') }}</p> @endif
@@ -286,7 +287,7 @@
 						{{ Form::label('newborn_hepatitis_b', 'Hepatitis B',['class'=>'col-sm-6 control-label']) }}
 						<div class='col-sm-6'>
 							<div class="input-group date">
-								{{ Form::text('newborn_hepatitis_b', $patient_newborn->newborn_hepatitis_b, ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_hepatitis_b',]) }}
+								{{ Form::text('newborn_hepatitis_b', DojoUtility::dateReadFormat($newborn->newborn_hepatitis_b), ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_hepatitis_b',]) }}
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('newborn_hepatitis_b')) <p class="help-block">{{ $errors->first('newborn_hepatitis_b') }}</p> @endif
@@ -302,7 +303,7 @@
 						{{ Form::label('newborn_bcg', 'BCG',['class'=>'col-sm-6 control-label']) }}
 						<div class='col-sm-6'>
 							<div class="input-group date">
-								{{ Form::text('newborn_bcg', $patient_newborn->newborn_bcg, ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_bcg',]) }}
+								{{ Form::text('newborn_bcg', DojoUtility::dateReadFormat($newborn->newborn_bcg), ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_bcg',]) }}
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('newborn_bcg')) <p class="help-block">{{ $errors->first('newborn_bcg') }}</p> @endif
@@ -314,7 +315,7 @@
 						{{ Form::label('newborn_vitamin_k', 'Vitamin K',['class'=>'col-sm-6 control-label']) }}
 						<div class='col-sm-6'>
 							<div class="input-group date">
-								{{ Form::text('newborn_vitamin_k', $patient_newborn->newborn_vitamin_k, ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_vitamin_k',]) }}
+								{{ Form::text('newborn_vitamin_k', DojoUtility::dateReadFormat($newborn->newborn_vitamin_k), ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_vitamin_k',]) }}
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('newborn_vitamin_k')) <p class="help-block">{{ $errors->first('newborn_vitamin_k') }}</p> @endif
@@ -328,7 +329,7 @@
         {{ Form::label('newborn_thyroid', 'Thyroid Screening',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-3'>
 			<div class="input-group date">
-				{{ Form::text('newborn_thyroid', $patient_newborn->newborn_thyroid, ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_thyroid',]) }}
+				{{ Form::text('newborn_thyroid', DojoUtility::dateReadFormat($newborn->newborn_thyroid), ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'newborn_thyroid',]) }}
 				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 			</div>
             @if ($errors->has('newborn_thyroid')) <p class="help-block">{{ $errors->first('newborn_thyroid') }}</p> @endif

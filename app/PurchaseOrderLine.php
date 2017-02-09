@@ -56,10 +56,12 @@ class PurchaseOrderLine extends Model
 		}
 	}
 
+	/**
 	public function getLineExpiryDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setLineReceiveDate1Attribute($value)
 	{
@@ -69,10 +71,12 @@ class PurchaseOrderLine extends Model
 		}
 	}
 
+	/**
 	public function getLineReceiveDate1Attribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setLineReceiveDate2Attribute($value)
 	{
@@ -82,10 +86,12 @@ class PurchaseOrderLine extends Model
 		}
 	}
 
+	/**
 	public function getLineReceiveDate2Attribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function purchaseOrder()
 	{

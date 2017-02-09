@@ -56,10 +56,11 @@ class DietQuality extends Model
 		}
 	}
 
-
+	/**
 	public function getQcDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 }

@@ -63,10 +63,11 @@ class DietComplain extends Model
 		}
 	}
 
-
+	/**
 	public function getComplainDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 }

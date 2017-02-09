@@ -99,6 +99,7 @@
 				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
 				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
 				<a href="{{ url('/product_authorizations') }}">Product Authorizations</a><br>
+				<a href="{{ url('/store_authorizations') }}">Store Authorizations</a><br>
 			</small>
 			</div>
 	</div>

@@ -51,10 +51,12 @@ class Discharge extends Model
 		}
 	}
 
+	/**
 	public function getDischargeDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function consultation()
 	{

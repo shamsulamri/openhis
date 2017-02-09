@@ -19,6 +19,7 @@ class ConsultationProcedure extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'consultation_id'=>'required',
+				'procedure_description'=>'required',
 			];
 
 			

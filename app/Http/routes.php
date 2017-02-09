@@ -58,6 +58,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/product_authorization/search', 'ProductAuthorizationController@search');
 		Route::get('/product_authorizations/delete/{id}', 'ProductAuthorizationController@delete');
 		
+		Route::resource('store_authorizations', 'StoreAuthorizationController');
+		Route::get('/store_authorizations/id/{id}', 'StoreAuthorizationController@searchById');
+		Route::post('/store_authorization/search', 'StoreAuthorizationController@search');
+		Route::get('/store_authorization/search', 'StoreAuthorizationController@search');
+		Route::get('/store_authorizations/delete/{id}', 'StoreAuthorizationController@delete');
+
 		Route::post('/admission_task/status', 'AdmissionTaskController@status');
 		Route::resource('admission_tasks', 'AdmissionTaskController');
 		Route::get('/admission_tasks/id/{id}', 'AdmissionTaskController@searchById');
@@ -535,6 +541,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/stock_movements/delete/{id}', 'StockMovementController@delete');
 
 				Route::get('/build_assembly/{id}', 'AssemblyController@index');
+				Route::post('/build_assembly/refresh/{id}', 'AssemblyController@index');
 				Route::post('/build_assembly/{id}', 'AssemblyController@build');
 				Route::get('/explode_assembly/{id}', 'AssemblyController@explode');
 				Route::post('/explode_assembly/{id}', 'AssemblyController@destroy');

@@ -55,10 +55,12 @@ class Stock extends Model
 	}
 
 
+	/**
 	public function getStockDateAttribute($value)
 	{
 		return DojoUtility::dateTimeReadFormat($value);
 	}
+	**/
 
 	public function product()
 	{

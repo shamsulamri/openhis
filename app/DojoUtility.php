@@ -29,26 +29,22 @@ class DojoUtility
 		{
 				if (!empty($value)) {
 					if (strlen($value)>10) {
-						return Carbon::parse($value)->format('d F Y H:i');
+						return Carbon::parse($value)->format('d F Y, H:i');
 					} else {
-						if (self::validateDate($value)==true) {
-							return Carbon::createFromFormat('d/m/Y', $value)->format('d F Y');
-						} else {
-							return Carbon::parse($value)->format('d F Y');
-						}
+						return Carbon::parse($value)->format('d F Y');
 					}
 				} else {
 					return null;
 				}
 		}
 
-		public static function dateOnlyFormat($value)
+		public static function dateDMYOnly($value)
 		{
 				if (!empty($value)) {
 					if (strlen($value)>10) {
 						return Carbon::parse($value)->format('d F Y');
 					} else {
-						return Carbon::createFromFormat('d/m/Y', $value)->format('d F Y');
+						return Carbon::parse($value)->format('d F Y');
 					}
 				} else {
 					return null;
@@ -147,7 +143,7 @@ class DojoUtility
 				return str_replace(".00","",$value);
 		}
 
-		public function getAge($sourceDate)
+		public static function getAge($sourceDate)
 		{
 				$value = "";
 				if ($sourceDate) {

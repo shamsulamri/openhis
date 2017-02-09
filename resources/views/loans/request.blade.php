@@ -2,7 +2,9 @@
 @extends('layouts.app')
 
 @section('content')
+@if (!$is_folder)
 @include('products.id')
+@endif
 @if ($patient)
 		@include('patients.id')
 @endif

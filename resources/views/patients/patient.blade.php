@@ -36,7 +36,7 @@
 										
 										<div class='col-md-8'>
 											<div class="input-group date">
-												<input data-mask="99/99/9999" name="patient_birthdate" id="patient_birthdate" type="text" class="form-control" value="{{ $patient->patient_birthdate }}">
+												<input data-mask="99/99/9999" name="patient_birthdate" id="patient_birthdate" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($patient->patient_birthdate) }}">
 												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 											</div>
 										</div>

@@ -64,10 +64,12 @@ class Loan extends Model
 	}
 
 
+	/**
 	public function getLoanDateStartAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function getLoanDateStart()
 	{
@@ -89,11 +91,12 @@ class Loan extends Model
 		}
 	}
 
-
+	/**
 	public function getLoanDateEndAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setLoanClosureDatetimeAttribute($value)
 	{

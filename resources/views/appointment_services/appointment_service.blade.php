@@ -17,25 +17,35 @@
 
     <div class='form-group  @if ($errors->has('service_start')) has-error @endif'>
         <label for='service_start' class='col-sm-3 control-label'>Time Start<span style='color:red;'> *</span></label>
-        <div class='col-sm-9'>
-			<input id="service_start" name="service_start" type="text">
-            @if ($errors->has('service_start')) <p class="help-block">{{ $errors->first('service_start') }}</p> @endif
+        <div class='col-sm-3'>
+			<div id="service_start" name="service_start" class="input-group clockpicker" data-autoclose="true">
+				{{ Form::text('service_start', null, ['class'=>'form-control','data-mask'=>'99:99']) }}
+				<span class="input-group-addon">
+					<span class="fa fa-clock-o"></span>
+				</span>
+			</div>
+			@if ($errors->has('service_start')) <p class="help-block">{{ $errors->first('service_start') }}</p> @endif
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('service_end')) has-error @endif'>
         <label for='service_end' class='col-sm-3 control-label'>Time End<span style='color:red;'> *</span></label>
-        <div class='col-sm-9'>
-			<input id="service_end" name="service_end" type="text">
-            @if ($errors->has('service_end')) <p class="help-block">{{ $errors->first('service_end') }}</p> @endif
+        <div class='col-sm-3'>
+			<div id="service_end" name="service_end" class="input-group clockpicker" data-autoclose="true">
+				{{ Form::text('service_end', null, ['class'=>'form-control','data-mask'=>'99:99']) }}
+				<span class="input-group-addon">
+					<span class="fa fa-clock-o"></span>
+				</span>
+			</div>
+			@if ($errors->has('service_end')) <p class="help-block">{{ $errors->first('service_end') }}</p> @endif
         </div>
     </div>
 
 	<div class='form-group  @if ($errors->has('service_cease')) has-error @endif'>
 		{{ Form::label('Cease Date', 'Cease Date',['class'=>'col-md-3 control-label']) }}
-		<div class='col-md-9'>
+		<div class='col-md-3'>
 			<div class="input-group date">
-				<input data-mask="99/99/9999" name="service_cease" id="service_cease" type="text" class="form-control" value="{{ $appointment_service->service_cease }}"> 
+				<input data-mask="99/99/9999" name="service_cease" id="service_cease" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($appointment_service->service_cease) }}"> 
 				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 			</div>
 		</div>
@@ -159,6 +169,7 @@
 				});    
 		});
 
+		$('.clockpicker').clockpicker();
 		$('#service_cease').datepicker({
 						format: "dd/mm/yyyy",
 						todayBtn: "linked",

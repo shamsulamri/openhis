@@ -35,7 +35,7 @@
 			</td>
 			<td>
 					<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/0/'.$appointment->service_id. '/'.$appointment->appointment_id) }}'>
-					{{ date('l, d F Y, H:i', strtotime($appointment->appointment_datetime)) }}
+					{{ DojoUtility::dateLongFormat($appointment->appointment_datetime) }}
 					</a>
 			</td>
 			<td>

@@ -62,7 +62,7 @@
 						<label for='line_expiry_date' class='col-sm-3 control-label'>Expiry Date</label>
 						<div class='col-sm-9'>
 							<div class="input-group date">
-								<input data-mask="99/99/9999" name="line_expiry_date" id="line_expiry_date" type="text" class="form-control" value="{{ $purchase_order_line->line_expiry_date }}">
+								<input data-mask="99/99/9999" name="line_expiry_date" id="line_expiry_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($purchase_order_line->line_expiry_date) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('line_expiry_date')) <p class="help-block">{{ $errors->first('line_expiry_date') }}</p> @endif
@@ -88,7 +88,7 @@
 						<label for='line_receive_date_1' class='col-sm-3 control-label'>Date</label>
 						<div class='col-sm-9'>
 							<div class="input-group date">
-								<input data-mask="99/99/9999" name="line_receive_date_1" id="line_receive_date_1" type="text" class="form-control" value="{{ $purchase_order_line->line_receive_date_1 }}">
+								<input data-mask="99/99/9999" name="line_receive_date_1" id="line_receive_date_1" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($purchase_order_line->line_receive_date_1) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('line_receive_date_1')) <p class="help-block">{{ $errors->first('line_receive_date_1') }}</p> @endif
@@ -114,7 +114,7 @@
 						<label for='line_receive_date_2' class='col-sm-3 control-label'>Date</label>
 						<div class='col-sm-9'>
 							<div class="input-group date">
-								<input data-mask="99/99/9999" name="line_receive_date_2" id="line_receive_date_2" type="text" class="form-control" value="{{ $purchase_order_line->line_receive_date_2 }}">
+								<input data-mask="99/99/9999" name="line_receive_date_2" id="line_receive_date_2" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($purchase_order_line->line_receive_date_2) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('line_receive_date_2')) <p class="help-block">{{ $errors->first('line_receive_date_2') }}</p> @endif

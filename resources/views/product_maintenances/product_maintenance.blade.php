@@ -5,7 +5,7 @@
 						{{ Form::label('date', 'Date',['class'=>'col-md-6 control-label']) }}
 						<div class='col-md-6'>
 							<div class="input-group date">
-								<input data-mask="99/99/9999" name="maintain_date" id="maintain_date" type="text" class="form-control" value="{{ $product_maintenance->maintain_date }}">
+								<input data-mask="99/99/9999" name="maintain_date" id="maintain_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($product_maintenance->maintain_date) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('maintain_date')) <p class="help-block">{{ $errors->first('maintain_date') }}</p> @endif

@@ -58,7 +58,7 @@
 					{{ $purchase_order->purchase_id }}
 			</td>
 			<td>
-					{{ DojoUtility::dateOnlyFormat($purchase_order->purchase_date) }}
+					{{ DojoUtility::dateLongFormat($purchase_order->purchase_date) }}
 			</td>
 			<td>
 					{{$purchase_order->supplier_name}}

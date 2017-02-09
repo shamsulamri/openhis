@@ -18,6 +18,7 @@ use App\DojoUtility;
 use App\Loan;
 use Auth;
 use App\StockHelper;
+use App\StoreAuthorization;
 
 class AssemblyController extends Controller
 {
@@ -28,7 +29,7 @@ class AssemblyController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index($id)
+	public function index(Request $request, $id)
 	{
 			$bom = BillMaterial::where('product_code',$id)->pluck('bom_product_code');
 			/*
@@ -44,12 +45,19 @@ class AssemblyController extends Controller
 							->where('loan_code','request')
 							->sum('loan_quantity');
 
+			$store_code = ($request->store_code) ? $request->store_code : Auth::user()->authorization->store_code;
+
+			$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)
+					->select('store_name', 'store_authorizations.store_code')
+					->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
+					->orderBy('store_name')
+					->lists('store_name', 'store_code');
 			return view('assemblies.index', [
 					'product'=>$product,
 					'boms'=>$boms,
 					'quantity'=>$quantity,
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					'store_code'=>Auth::user()->authorization->store_code,
+					'store' => $stores,
+					'store_code'=>$store_code,
 					'stock_helper'=>new StockHelper(),
 			]);
 
@@ -125,11 +133,18 @@ class AssemblyController extends Controller
 					}
 					Session::flash('message', $msg);
 					$product = Product::findOrFail($id);
+
+					$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)
+							->select('store_name', 'store_authorizations.store_code')
+							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
+							->orderBy('store_name')
+							->lists('store_name', 'store_code');
+
 					return view('assemblies.index', [
 							'product'=>$product,
 							'boms'=>$boms,
 							'quantity'=>$request->quantity,
-							'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+							'store' => $stores,
 							'store_code'=>$request->store_code,
 							'stock_helper'=>new StockHelper(),
 					]);
@@ -141,10 +156,17 @@ class AssemblyController extends Controller
 	{
 			$product = Product::find($id);
 
+			$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)
+					->select('store_name', 'store_authorizations.store_code')
+					->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
+					->orderBy('store_name')
+					->lists('store_name', 'store_code');
+
 			return view('assemblies.explode', [
 					'product'=>$product,
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store' => $stores,
 					'store_code'=>Auth::user()->authorization->store_code,
+					'stock_helper'=>new StockHelper(),
 			]);
 	}
 
@@ -158,11 +180,12 @@ class AssemblyController extends Controller
 					->get();
 			$product = Product::find($id);
 
-			if ($quantity>$product->product_on_hand) {
+			$stock_helper = new StockHelper();
+			$on_hand = $stock_helper->getStockCountByStore($product->product_code, $request->store_code);
+			if ($quantity>$on_hand) {
 					Session::flash('message', 'Quantity more than on hand.');
-					return view('assemblies.explode', [
-							'product'=>$product,
-					]);
+					return redirect('/explode_assembly/'.$id)
+							->withInput();
 			}
 
 

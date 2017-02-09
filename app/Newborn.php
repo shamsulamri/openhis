@@ -100,10 +100,12 @@ class Newborn extends Model
 		}
 	}
 
+	/**
 	public function getNewbornG6pdAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setNewbornHepatitisBAttribute($value)
 	{
@@ -112,10 +114,12 @@ class Newborn extends Model
 		}
 	}
 
+	/**
 	public function getNewbornHepatitisBAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setNewbornBcgAttribute($value)
 	{
@@ -124,10 +128,12 @@ class Newborn extends Model
 		}
 	}
 
+	/**
 	public function getNewbornBcgAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setNewbornVitaminKAttribute($value)
 	{
@@ -136,10 +142,13 @@ class Newborn extends Model
 		}
 	}
 
+
+	/**
 	public function getNewbornVitaminKAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setNewbornThyroidAttribute($value)
 	{
@@ -148,10 +157,12 @@ class Newborn extends Model
 		}
 	}
 
+	/**
 	public function getNewbornThyroidAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public static function boot()
 	{

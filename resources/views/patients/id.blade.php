@@ -34,7 +34,7 @@
 </div>
 @endif
 <br>
-@can('module-patient')
+@if (Gate::check('module-patient'))
 <a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
 						<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography
 </a>
@@ -52,7 +52,7 @@
 		Preadmission 
 </a>
 @can('module-discharge')
-		@if (!empty($patient->hasActiveEncounter()))
+		@if ($patient->hasActiveEncounter()) 
 		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
 				<span class='fa fa-money' aria-hidden='true'></span>
 				<br>
@@ -75,7 +75,8 @@
 <br>
 &nbsp;&nbsp;Label&nbsp;&nbsp;
 </a>
-@endcan
+@endif
+
 
 @can('module-medical-record')
 <a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>

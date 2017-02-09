@@ -16,11 +16,14 @@
     </div>
 
     <div class='form-group  @if ($errors->has('complain_date')) has-error @endif'>
-        <label for='complain_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
-        <div class='col-sm-9'>
-			<input id="complain_date" name="complain_date" type="text">
-            @if ($errors->has('complain_date')) <p class="help-block">{{ $errors->first('complain_date') }}</p> @endif
-        </div>
+				<label for='complain_date' class='col-sm-3 control-label'>Date</label>
+				<div class='col-sm-3'>
+					<div class="input-group date">
+						<input data-mask="99/99/9999" name="complain_date" id="complain_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($diet_complain->complain_date) }}">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+					@if ($errors->has('complain_date')) <p class="help-block">{{ $errors->first('complain_date') }}</p> @endif
+				</div>
     </div>
 
     <div class='form-group  @if ($errors->has('period_code')) has-error @endif'>
@@ -97,14 +100,12 @@
         </div>
     </div>
 	<script>
-		$(function(){
-				$('#complain_date').combodate({
-						format: "DD/MM/YYYY",
-						template: "DD MMMM YYYY",
-						value: '{{ $diet_complain->complain_date }}',
-						maxYear: '{{ $minYear+5 }}',
-						minYear: '{{ $minYear }}',
-						customClass: 'select'
-				});    
+		$('#complain_date').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
 		});
 	</script>

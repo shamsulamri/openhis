@@ -46,10 +46,11 @@ class DietWastage extends Model
 		}
 	}
 
-
+	/**
 	public function getWasteDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 }

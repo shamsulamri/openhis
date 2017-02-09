@@ -111,7 +111,7 @@ class PurchaseOrderController extends Controller
 			return view('purchase_orders.edit', [
 					'purchase_order'=>$purchase_order,
 					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store' => Store::where('store_receiving','=',1)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'maxYear' => Carbon::now()->year,
 					'receive_datetime' => $receive_datetime,
 					]);
@@ -141,7 +141,7 @@ class PurchaseOrderController extends Controller
 					return view('purchase_orders.edit', [
 							'purchase_order'=>$purchase_order,
 							'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
-							'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+							'store' => Store::where('store_receiving','=',1)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 							'maxYear' => Carbon::now()->year,
 							])
 							->withErrors($valid);			
@@ -173,6 +173,7 @@ class PurchaseOrderController extends Controller
 					}
 					$stock->stock_description = "Purchase id: ".$purchase_order->purchase_id;
 					$stock->save();
+
 					Log::info('---'.$item->product_code);
 					Log::info('-------'.$item->product_conversion_unit);
 

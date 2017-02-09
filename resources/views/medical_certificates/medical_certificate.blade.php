@@ -6,7 +6,7 @@
 						<label for='mc_start' class='col-sm-4 control-label'>Date Start<span style='color:red;'> *</span></label>
 						<div class='col-sm-7'>
 							<div class="input-group date">
-								<input data-mask="99/99/9999" name="mc_start" id="mc_start" type="text" class="form-control" value="{{ $medical_certificate->mc_start }}">
+								<input data-mask="99/99/9999" name="mc_start" id="mc_start" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($medical_certificate->mc_start) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('mc_start')) <p class="help-block">{{ $errors->first('mc_start') }}</p> @endif
@@ -18,7 +18,7 @@
 						<label for='mc_end' class='col-sm-5 control-label'>Date End</label>
 						<div class='col-sm-7'>
 							<div class="input-group date">
-								<input data-mask="99/99/9999" name="mc_end" id="mc_end" type="text" class="form-control" value="{{ $medical_certificate->mc_end }}">
+								<input data-mask="99/99/9999" name="mc_end" id="mc_end" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($medical_certificate->mc_end) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('mc_end')) <p class="help-block">{{ $errors->first('mc_end') }}</p> @endif
@@ -123,5 +123,3 @@
 						minuteStep: 1,
 						customClass: 'select'
 				});    
-		});
-	</script>

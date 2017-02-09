@@ -50,10 +50,12 @@ class BlockDate extends Model
 	}
 
 
+	/**
 	public function getBlockDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function getBlockDate() 
 	{

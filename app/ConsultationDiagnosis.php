@@ -19,6 +19,7 @@ class ConsultationDiagnosis extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'consultation_id'=>'required',
+				'diagnosis_clinical'=>'required',
 			];
 
 			

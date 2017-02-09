@@ -9,9 +9,9 @@
 
     <div class='form-group  @if ($errors->has('block_date')) has-error @endif'>
         <label for='block_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
-        <div class='col-sm-9'>
+        <div class='col-sm-3'>
 			<div class="input-group date">
-				<input data-mask="99/99/9999" name="block_date" id="block_date" type="text" class="form-control" value="{{ $block_date->block_date }}">
+				<input data-mask="99/99/9999" name="block_date" id="block_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($block_date->block_date) }}">
 				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 			</div>
             @if ($errors->has('block_date')) <p class="help-block">{{ $errors->first('block_date') }}</p> @endif

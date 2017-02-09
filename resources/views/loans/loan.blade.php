@@ -155,7 +155,7 @@
     <div class='form-group  @if ($errors->has('loan_date_start')) has-error @endif'>
         {{ Form::label('loan_date_start', 'Date Start',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::label('date_start',  date('d F Y, H:i', strtotime($loan->getLoanDateStart())) , ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('date_start',  date('d F Y', strtotime($loan->loan_date_start)) , ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
 
@@ -163,7 +163,7 @@
         {{ Form::label('loan_date_end', 'Date End',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
 			@if ($loan->loan_date_end)
-            {{ Form::label('date_start',  date('d F Y, H:i', strtotime($loan->getLoanDateEnd())) , ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('date_start',  date('d F Y', strtotime($loan->loan_date_end)) , ['class'=>'form-control','placeholder'=>'',]) }}
 			@else
             {{ Form::label('date_end', '-', ['class'=>'form-control','placeholder'=>'',]) }}
 			@endif
@@ -205,6 +205,37 @@
     </div>
 	@endif
 
+	<!--
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('closure_date')) has-error @endif'>
+						{{ Form::label('Closure Date', 'Closure Date',['class'=>'col-md-4 control-label']) }}
+						
+						<div class='col-md-8'>
+							<div class="input-group date">
+								<input data-mask="99/99/9999" name="closure_date" id="closure_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($loan->loan_closure_datetime) }}">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('closure_time')) has-error @endif'>
+						{{ Form::label('Closure Time', 'Closure Time',['class'=>'col-md-4 control-label']) }}
+						<div class='col-md-8'>
+								<div id="closure_time" name="closure_time" class="input-group clockpicker" data-autoclose="true">
+										{{ Form::text('closure_time', null, ['class'=>'form-control','data-mask'=>'99:99']) }}
+										<span class="input-group-addon">
+											<span class="fa fa-clock-o"></span>
+										</span>
+								</div>
+
+						</div>
+					</div>
+			</div>
+	</div>
+	-->
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
 			@if ($loan->loan_is_folder)
@@ -224,6 +255,16 @@
 	{{ Form::hidden('loan_code', $loan->loan_code) }}
 	@endif
 	<script>
+		$('#closure_date').datepicker({
+						format: "dd/mm/yyyy",
+						todayBtn: "linked",
+						keyboardNavigation: false,
+						forceParse: false,
+						calendarWeeks: true,
+						autoclose: true
+		});
+		$('.clockpicker').clockpicker();
+
 		$(function(){
 				$('#loan_date_start').combodate({
 						format: "DD/MM/YYYY",

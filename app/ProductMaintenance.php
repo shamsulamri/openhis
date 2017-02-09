@@ -45,9 +45,11 @@ class ProductMaintenance extends Model
 		}
 	}
 
+	/**
 	public function getMaintainDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 	
 }

@@ -6,6 +6,15 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
+        <label for='store_code' class='col-sm-3 control-label'>On Hand</label>
+        <div class='col-sm-9'>
+<?php
+$on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_code);
+?>
+            {{ Form::label('on_hand', $on_hand, ['class'=>'form-control']) }}
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('move_code')) has-error @endif'>
         <label for='move_code' class='col-sm-3 control-label'>Movement Type<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>

@@ -6,7 +6,7 @@
         <label for='purchase_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
 			<div class="input-group date">
-				{{ Form::text('purchase_date',null, ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'purchase_date']) }}
+				{{ Form::text('purchase_date',DojoUtility::dateReadFormat($purchase_order->purchase_date), ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'purchase_date']) }}
 				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 			</div>
 			@if ($errors->has('purchase_date')) <p class="help-block">{{ $errors->first('purchase_date') }}</p> @endif
@@ -99,7 +99,7 @@
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
         {{ Form::label('date_receive', 'Date Received',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-				{{ Form::label('date_receive', $purchase_order->receive_datetime, ['class'=>'form-control']) }}
+				{{ Form::label('date_receive', DojoUtility::dateTimeReadFormat($purchase_order->receive_datetime), ['class'=>'form-control']) }}
         </div>
     </div>
 	@endif
@@ -125,7 +125,7 @@
             @if ($errors->has('invoice_date')) <p class="help-block">{{ $errors->first('invoice_date') }}</p> @endif
         </div>
     </div>
-	{{ Form::hidden('purchase_date', $purchase_order->purchase_date) }}
+	{{ Form::hidden('purchase_date', DojoUtility::dateReadFormat($purchase_order->purchase_date)) }}
 	{{ Form::hidden('supplier_code', $purchase_order->supplier_code) }}
 	{{ Form::hidden('purchase_received',$purchase_order->purchase_received) }}
 	{{ Form::hidden('receive_datetime', null, ['id'=>'receive_datetime']) }}

@@ -7,8 +7,11 @@
 @if (Session::has('message'))
     <div class="alert alert-danger">{{ Session::get('message') }}</div>
 @endif
-@if ($product->product_on_hand>0)
-<h4>The maximum number of dismantle is <strong>{{ $product->product_on_hand }}</strong></h4>
+<?php
+$on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_code);
+?>
+@if ($on_hand>0)
+<h4>The maximum number of dismantle is <strong>{{ $on_hand }}</strong></h4>
 <br>
 <form class='form-inline' action='/explode_assembly/{{ $product->product_code }}' method='post'>
 	<label>Store</label>

@@ -1,10 +1,13 @@
 
     <div class='form-group  @if ($errors->has('waste_date')) has-error @endif'>
         <label for='waste_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
-        <div class='col-sm-9'>
-			<input id="waste_date" name="waste_date" type="text">
-            @if ($errors->has('waste_date')) <p class="help-block">{{ $errors->first('waste_date') }}</p> @endif
-        </div>
+		<div class='col-sm-3'>
+			<div class="input-group date">
+				<input data-mask="99/99/9999" name="waste_date" id="waste_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($diet_wastage->waste_date) }}">
+				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			</div>
+			@if ($errors->has('waste_date')) <p class="help-block">{{ $errors->first('waste_date') }}</p> @endif
+		</div>
     </div>
 
     <div class='form-group  @if ($errors->has('ward_code')) has-error @endif'>
@@ -46,14 +49,12 @@
         </div>
     </div>
 	<script>
-		$(function(){
-				$('#waste_date').combodate({
-						format: "DD/MM/YYYY",
-						template: "DD MMMM YYYY",
-						value: '{{ $diet_wastage->waste_date }}',
-						maxYear: '{{ $minYear+5 }}',
-						minYear: '{{ $minYear }}',
-						customClass: 'select'
-				});    
+		$('#waste_date').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
 		});
 	</script>

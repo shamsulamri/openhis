@@ -55,6 +55,7 @@ class StockController extends Controller
 					'store' => $store,
 					'store_code'=>$store_code,
 					'maxYear' => Carbon::now()->year,
+					'stock_helper' => new StockHelper(),
 					]);
 	}
 
@@ -236,6 +237,10 @@ class StockController extends Controller
 
 	public function show(Request $request, $product_code, $store_code=null)
 	{
+			if ($store_code == null) {
+					$store_code = $this->getDefaultStore($request);
+			} 
+
 			$stocks = Stock::orderBy('stock_datetime','desc')
 					->leftJoin('stock_movements as b', 'b.move_code', '=','stocks.move_code')
 					->leftJoin('stores as c', 'c.store_code', '=','stocks.store_code')
@@ -261,19 +266,19 @@ class StockController extends Controller
 			$stores = DB::select($sql);
 
 
+			/**
 			$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)
 							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
 							->orderBy('store_name')
 							->get();
+			**/
 
-			if ($store_code == null) {
-					$store_code = $this->getDefaultStore($request);
-			} 
 			$store = Store::find($store_code);
 
 			//$stores = $stores->lists('store_name', 'b.store_code')
 							//->prepend('','');
 							//
+			//return $stores;
 			return view('stocks.index', [
 					'stocks'=>$stocks,
 					'product'=>$product,

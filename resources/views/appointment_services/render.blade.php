@@ -110,7 +110,7 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 						if ($service->service_sunday==1 && $dayWeek=='Sun') $showDay=true;
 						$slot=$day->format('Ymd').''.$slot_time->format('Hi');
 						$index = array_search($slot, array_column($appointments, 'appointment_slot'));
-						$cease_date = DateTime::createFromFormat('d/m/Y', $service->service_cease);
+						$cease_date = $service->service_cease;
 						$cease = False
 					?>
 					@if ($day>=$cease_date && !empty($cease_date))

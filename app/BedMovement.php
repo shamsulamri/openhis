@@ -45,11 +45,12 @@ class BedMovement extends Model
 		}
 	}
 
-
+	/**
 	public function getMoveDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function bed() 
 	{

@@ -59,23 +59,6 @@ class MedicalCertificate extends Model
 		}
 	}
 
-	public function getMcStartAttribute($value)
-	{
-		return DojoUtility::dateReadFormat($value);
-	}
-
-	public function getMcStart() 
-	{
-			$dt = Carbon::createFromFormat('Y-m-d', $this->attributes['mc_start']);
-			return $dt;
-	}
-
-	public function getMcEnd() 
-	{
-			$dt = Carbon::createFromFormat('Y-m-d', $this->attributes['mc_end']);
-			return $dt;
-	}
-
 	public function setMcEndAttribute($value)
 	{
 		if (empty($value)) {
@@ -86,16 +69,19 @@ class MedicalCertificate extends Model
 		}
 	}
 
+	/**
 	public function getMcEndAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function consultation()
 	{
 		return $this->hasOne('App\Consultation', 'consultation_id', 'consultation_id');
 	}
 
+	/**
 	public function getMcTimeStartAttribute($value)
 	{
 			return DojoUtility::timeReadFormat($value);
@@ -105,4 +91,5 @@ class MedicalCertificate extends Model
 	{
 			return DojoUtility::timeReadFormat($value);
 	}
+	**/
 }

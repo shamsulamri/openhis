@@ -7,7 +7,7 @@
 						<div class='col-sm-9'>
 							{{ $order->investigation_date }}
 							<div class="input-group date">
-								<input data-mask="99/99/9999" name="investigation_date" id="investigation_date" type="text" class="form-control" value="{{ $order_investigation->investigation_date }}">
+								<input data-mask="99/99/9999" name="investigation_date" id="investigation_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($order_investigation->investigation_date) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							<!--
@@ -39,9 +39,6 @@
 					</div>
 			</div>
 	</div>
-
-
-
 
 	<div class="row">
 			<div class="col-xs-6">

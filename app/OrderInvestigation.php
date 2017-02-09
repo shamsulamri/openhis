@@ -45,11 +45,12 @@ class OrderInvestigation extends Model
 	}
 
 
+	/**
 	public function getInvestigationDateAttribute($value)
 	{
-		Log::info("XXXXXXX");
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function order() {
 		return $this->belongsTo('App\Order','order_id');

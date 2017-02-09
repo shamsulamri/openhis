@@ -35,7 +35,7 @@
 						<label for='discharge_date' class='col-sm-6 control-label'>Date<span style='color:red;'> *</span></label>
 						<div class='col-sm-6'>
 							<div class="input-group date">
-								<input data-mask="99/99/9999" name="discharge_date" id="discharge_date" type="text" class="form-control" value="{{ $discharge->discharge_date }}">
+								<input data-mask="99/99/9999" name="discharge_date" id="discharge_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($discharge->discharge_date) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
 							@if ($errors->has('discharge_date')) <p class="help-block">{{ $errors->first('discharge_date') }}</p> @endif
@@ -63,13 +63,15 @@
         {{ Form::label('mc', 'Medical Certificate',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
 		@if ($mc)
-        		{{ Form::label('product', $mc->getMcStart()->format('d F Y'),['class'=>'control-label']) }}
+        		{{ Form::label('product', DojoUtility::dateLongFormat($mc->mc_start),['class'=>'control-label']) }}
 				@if (!empty($mc->mc_end))
-        		{{ Form::label('mc', ' - '.$mc->getMcEnd()->format('d F Y'),['class'=>'control-label']) }}
+        		{{ Form::label('mc', ' - '.DojoUtility::dateLongFormat($mc->mc_end),['class'=>'control-label']) }}
 				@endif
+				@if (!empty($mc->mc_time_start))
 				<br>
         		{{ Form::label('mc', 'Time: '.$mc->mc_time_start,['class'=>'control-label']) }} - 
         		{{ Form::label('mc', $mc->mc_time_end,['class'=>'control-label']) }}
+				@endif
 				<br>
         		{{ Form::label('mc', 'Serial Number: '.$mc->mc_identification,['class'=>'control-label']) }}
 				@else

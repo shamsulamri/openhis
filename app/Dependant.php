@@ -85,10 +85,12 @@ class Dependant extends Model
 	}
 
 
+	/**
 	public function getPatientBirthdateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 	public function setPatientLnmpAttribute($value)
 	{
@@ -98,9 +100,11 @@ class Dependant extends Model
 	}
 
 
+	/**
 	public function getPatientLnmpAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
+	**/
 
 }
