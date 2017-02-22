@@ -34,7 +34,7 @@
 		@endif
 		</label>
         <div class='col-sm-9'>
-            {{ Form::label('item_code', $loan->item_code, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('item_code', $loan->getItemName(), ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
 

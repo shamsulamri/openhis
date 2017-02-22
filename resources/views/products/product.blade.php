@@ -83,6 +83,13 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_sku')) has-error @endif'>
+						{{ Form::label('product_sku', 'SKU',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('product_sku', null, ['class'=>'form-control','placeholder'=>'Store Keeping Unit','maxlength'=>'100']) }}
+							@if ($errors->has('product_sku')) <p class="help-block">{{ $errors->first('product_sku') }}</p> @endif
+						</div>
+					</div>
 
 			</div>
 	</div>

@@ -210,8 +210,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/diet_workorder', 'DietMenuController@workorder');
 				Route::post('/diet_workorder', 'DietMenuController@workorder');
 
-				Route::get('/diet_menus/{class}/{period}/{week}/{day}', 'DietMenuController@create');
-				Route::get('/diet_menus/menu/{class}/{period}/{week}/{day}', 'DietMenuController@index');
+				Route::get('/diet_menus/{class}/{period}/{week}/{day}/{diet_code}', 'DietMenuController@create');
+				Route::get('/diet_menus/menu/{class}/{period}/{week}/{day}/{diet_code}', 'DietMenuController@index');
 				Route::get('/diet_menus/delete/{id}', 'DietMenuController@delete');
 				Route::delete('/diet_menus/delete/{id}', 'DietMenuController@destroy');
 
@@ -601,7 +601,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/set/search', 'SetController@search');
 				Route::get('/sets/delete/{id}', 'SetController@delete');
 
-				Route::get('/product_searches/menu/{class_code}/{period_code}/{week}/{day}/{product_code}', 'ProductSearchController@menu');
+				Route::get('/product_searches/menu/{class_code}/{period_code}/{week}/{day}/{product_code}/{diet_code}', 'ProductSearchController@menu');
 				Route::resource('product_searches', 'ProductSearchController');
 				Route::get('/product_searches/id/{id}', 'ProductSearchController@searchById');
 				Route::get('/product_searches/add/{purchase_id}/{id}', 'ProductSearchController@add');

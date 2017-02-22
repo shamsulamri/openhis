@@ -6,7 +6,7 @@ New Ward Class
 </h1>
 
 <br>
-{{ Form::model($ward_class, ['url'=>'ward_classes', 'class'=>'form-horizontal']) }} 
+{{ Form::model($ward_class, ['id'=>'ward_class_form','url'=>'ward_classes', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('class_code')) has-error @endif'>
         <label for='class_code' class='col-sm-3 control-label'>Class<span style='color:red;'> *</span></label>

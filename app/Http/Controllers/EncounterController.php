@@ -85,7 +85,7 @@ class EncounterController extends Controller
 					'locations' => $locations,
 					'consultants' => $consultants,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'beds' => Bed::where('status_code','<>','02')->get(),
+					'beds' => Bed::where('status_code','=','01')->get(),
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 				]);
@@ -125,6 +125,15 @@ class EncounterController extends Controller
 			if ($valid->passes()) {
 					$encounter->save();
 
+					/** Set patient mrn if empty **/
+					$patient = Patient::find($encounter->patient_id);
+					if (empty($patient->patient_mrn)) {
+							$mrn = "MSU".str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
+							$patient->patient_mrn = $mrn;
+							$patient->save();
+							Log::info($patient->patient_mrn);
+					}
+
 					$queueFlag = False;
 					if ($encounter->encounter_code == 'outpatient') $queueFlag=True;
 					if ($encounter->encounter_code == 'emergency' && $encounter->triage_code=='green') $queueFlag=True;
@@ -140,6 +149,9 @@ class EncounterController extends Controller
 					}
 
 					if (!$queueFlag) {
+							$bed = Bed::find($request->bed_code);
+							$bed->status_code = '03';
+							$bed->save();
 							$admission = new Admission();
 							$admission->bed_code = $request->bed_code;
 							$admission->admission_code = $request->admission_code;
@@ -147,6 +159,7 @@ class EncounterController extends Controller
 							$admission->user_id = $request->user_id;
 							$admission->encounter_id = $request->encounter_id;
 							$admission->diet_code='normal';
+							$admission->class_code= $bed->wardClass->class_diet;
 							$admission->encounter_id = $encounter->encounter_id;
 							$admission->save();
 							Log::info($admission);

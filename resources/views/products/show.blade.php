@@ -29,6 +29,13 @@
     <div class='form-group  @if ($errors->has('category_code')) has-error @endif'>
         <label for='category_code' class='col-sm-3 control-label'>Sale Price</label>
         <div class='col-sm-9'>
+            {{ Form::label('product', $product->product_purchase_price, ['class'=>'form-control','maxlength'=>'20']) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('category_code')) has-error @endif'>
+        <label for='category_code' class='col-sm-3 control-label'>Sale Price</label>
+        <div class='col-sm-9'>
             {{ Form::label('product', $product->product_sale_price, ['class'=>'form-control','maxlength'=>'20']) }}
         </div>
     </div>

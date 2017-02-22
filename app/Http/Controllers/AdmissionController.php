@@ -140,6 +140,7 @@ class AdmissionController extends Controller
 			if ($valid->passes()) {
 					$admission = new Admission($request->all());
 					$admission->diet_code='normal';
+					$admission->class_code=$ward->class_diet;
 					$admission->admission_id = $request->admission_id;
 					$admission->save();
 					if ($admission->encounter->encounter_code=='daycare') {

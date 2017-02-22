@@ -185,6 +185,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Preadmissions' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="glyphicon glyphicon-time"></i><span class='nav-label'>Preadmissions</span></a></li>
 						<li><a title='Discharges' href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
 						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
+						<li><a title='Loans' href="{{ url('/loans?type=folder') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'><span class='nav-label'>Loans</span></a></li>
 						@endcan
 						<!-- Consultation Module -->
 						@can('module-consultation')

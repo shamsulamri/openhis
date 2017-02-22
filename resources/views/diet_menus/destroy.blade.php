@@ -8,11 +8,14 @@ Delete Menu Item
 <br>
 <h4>
 Are you sure you want to delete the selected record ?
-{{ $menu->menu_id }}
+<br>
+<br>
+{{ $menu->product->product_name }}
+<br>
 {{ Form::open(['url'=>'diet_menus/delete/'.$menu->menu_id]) }}
 	{{ method_field('DELETE') }}
 	<br>
-	<a class="btn btn-default" href="/diet_menus/menu/{{ $menu->class_code }}/{{ $menu->period_code}}/{{ $menu->week_index }}/{{ $menu->day_index }}" role="button">Cancel</a>
+	<a class="btn btn-default" href="/diet_menus/menu/{{ $menu->class_code }}/{{ $menu->period_code}}/{{ $menu->week_index }}/{{ $menu->day_index }}/{{ $menu->diet_code }}" role="button">Cancel</a>
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 

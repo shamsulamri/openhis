@@ -6,6 +6,8 @@
 <form class='form-inline' action='/loan/search' method='post'>
 	<label>Status</label>
 	{{ Form::select('loan_code', $loan_status, $loan_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	<label>Location</label>
+	{{ Form::select('location_code', $locations, $location_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>Ward</label>
 	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<input type='text' class='form-control' placeholder="Loan Id" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -32,7 +34,9 @@
     <th>Request</th> 
     <th>Status</th> 
     <th>Closure</th> 
+	@can('system-administrator')
 	<th></th>
+	@endcan
 	</tr>
   </thead>
 	<tbody>
@@ -90,6 +94,7 @@
 							@endif
 					@endif
 			</td>
+			@can('system-administrator')
 			<td align='right'>
 					<!--
 					@if ($loan->loan_is_folder)
@@ -98,6 +103,7 @@
 					-->
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('loans/delete/'. $loan->loan_id) }}'>Delete</a>
 			</td>
+			@endcan
 	</tr>
 @endforeach
 @endif

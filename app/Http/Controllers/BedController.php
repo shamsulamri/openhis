@@ -40,10 +40,12 @@ class BedController extends Controller
 					->orderBy('class_name')
 					->orderBy('bed_name');
 
-			if (Auth::user()->can('module-ward')) {
-					$ward_code = $request->cookie('ward');
-					if ($ward_code) {
-							$beds = $beds->where('a.ward_code','=', $ward_code);
+			if (Auth::user()->cannot('system-administrator')) {
+					if (Auth::user()->can('module-ward')) {
+							$ward_code = $request->cookie('ward');
+							if ($ward_code) {
+									$beds = $beds->where('a.ward_code','=', $ward_code);
+							}
 					}
 			}
 
@@ -82,13 +84,15 @@ class BedController extends Controller
 			if ($valid->passes()) {
 					$bed = new Bed($request->all());
 					$bed->bed_code = $request->bed_code;
+					$bed->status_code = '01';
 					$bed->save();
 					$product = new Product();
 					$product->product_code = $bed->bed_code;
 					$product->product_name = $bed->bed_name;
+					$product->category_code = "srv";
 					$product->product_sold = 1;
 					$product->product_sale_price = 99;
-					$product->product_unit_charge=1;
+					$product->order_form="1";
 					$product->save();
 					Session::flash('message', 'Record successfully created. Please update the product price information.');
 					return redirect('/beds/id/'.$bed->bed_code);
@@ -153,6 +157,11 @@ class BedController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$bed = Bed::find($id);
+			$product = Product::find($id);
+			if (!empty($product)) {
+					$product->forceDelete();
+			}
 			Bed::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/beds');

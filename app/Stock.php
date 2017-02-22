@@ -21,6 +21,7 @@ class Stock extends Model
 				'stock_quantity',
 				'stock_description',
 				'stock_tag',
+				'loan_id',
 				'username',
 				];
 	

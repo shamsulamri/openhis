@@ -10,7 +10,9 @@ use App\WardClass;
 use Log;
 use DB;
 use Session;
-
+use App\Bed;
+use App\Product;
+use App\DietClass;
 
 class WardClassController extends Controller
 {
@@ -36,7 +38,7 @@ class WardClassController extends Controller
 			$ward_class = new WardClass();
 			return view('ward_classes.create', [
 					'ward_class' => $ward_class,
-				
+					'diet_classes' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					]);
 	}
 
@@ -63,7 +65,7 @@ class WardClassController extends Controller
 			$ward_class = WardClass::findOrFail($id);
 			return view('ward_classes.edit', [
 					'ward_class'=>$ward_class,
-				
+					'diet_classes' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					]);
 	}
 
@@ -77,6 +79,10 @@ class WardClassController extends Controller
 
 			if ($valid->passes()) {
 					$ward_class->save();
+
+					$beds = Bed::select('bed_code')->where('class_code','=',$ward_class->class_code)->pluck('bed_code');
+					$products = Product::whereIn('product_code', $beds)->update(array('product_sale_price'=>$ward_class->class_price));
+					
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/ward_classes/id/'.$id);
 			} else {

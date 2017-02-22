@@ -12,7 +12,7 @@
 					<div class='form-group  @if ($errors->has('line_price')) has-error @endif'>
 						{{ Form::label('line_price', 'Price',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
-							{{ Form::label('line_price', $purchase_order_line->line_price, ['class'=>'form-control','placeholder'=>'',]) }}
+							{{ Form::text('line_price', $purchase_order_line->line_price, ['class'=>'form-control','placeholder'=>'',]) }}
 							@if ($errors->has('line_price')) <p class="help-block">{{ $errors->first('line_price') }}</p> @endif
 						</div>
 					</div>

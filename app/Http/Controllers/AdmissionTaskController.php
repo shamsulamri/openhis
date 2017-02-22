@@ -218,7 +218,7 @@ class AdmissionTaskController extends Controller
 													->paginate($this->paginateValue);
 					break;
 				default: 
-					$admission_tasks= $admission_tasks->orderBy("bed_name")
+					$admission_tasks= $admission_tasks->orderBy("patient_mrn")
 													->orderBy("product_name")
 													->paginate($this->paginateValue);
 					break;

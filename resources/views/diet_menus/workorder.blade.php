@@ -18,7 +18,7 @@ th,td {
 	{{ Form::select('period_code', $diet_periods, $period_code, ['class'=>'form-control','onchange'=>'reload()']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">	
 </form>
-
+<br>
 @foreach ($menu_products as $product)
 		<?php $grand_total=0; ?>
 		<h3>{{ $product->product_name }}</h3>

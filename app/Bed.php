@@ -32,6 +32,7 @@ class Bed extends Model
 				'ward_code'=>'required',
 				'bed_name'=>'required',
 				'encounter_code'=>'required',
+				'class_code'=>'required',
 			];
 
 			

@@ -117,6 +117,10 @@ class PurchaseOrderLineController extends Controller
 							$purchase_order_line->line_total=($purchase_order_line->line_quantity_received+$purchase_order_line->line_quantity_received_2)*$purchase_order_line->line_price;
 					}
 					$purchase_order_line->save();
+
+					$product->product_purchase_price = $purchase_order_line->line_price;
+					$product->save();
+
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/purchase_order_lines/index/'.$request->purchase_id);
 			} else {

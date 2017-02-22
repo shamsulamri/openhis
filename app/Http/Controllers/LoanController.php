@@ -78,11 +78,13 @@ class LoanController extends Controller
 					'loans'=>$loans,
 					'loan_status' => $loan_status,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'locations' => QueueLocation::where('encounter_code','outpatient')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'ward_code'=>$request->ward_code,
 					'loan_code'=>$request->loan_code,
 					'is_folder'=>$is_folder,
 					'title'=>$title,
 					'search'=>$request->search,
+					'location_code'=>$request->location_code,
 			]);
 	}
 
@@ -286,6 +288,10 @@ class LoanController extends Controller
 					$search_is_empty=False;
 			}
 
+			if (!empty($request->location_code)) {
+					$loans=$loans->where('location_code','=',$request->location_code);
+					$search_is_empty=False;
+			}
 			$loans = $loans->orderBy('loan_code')
 							->orderBy('created_at', 'desc')
 							->paginate($this->paginateValue);
@@ -300,6 +306,8 @@ class LoanController extends Controller
 					'is_folder'=>$is_folder,
 					'title'=>$title,
 					'search'=>$request->search,
+					'location_code'=>$request->location_code,
+					'locations' => QueueLocation::where('encounter_code','outpatient')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 			]);
 	}
 

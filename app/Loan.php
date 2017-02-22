@@ -137,7 +137,9 @@ class Loan extends Model
 	{
 			$product = Product::find($this->item_code);
 			if (empty($product)) {
-					return $this->item_code;
+					// Return MRN
+					return substr($this->item_code,0,2).'-'.substr($this->item_code,2,8).'-'.substr($this->item_code,10,4);
+					//return $this->item_code;
 			} else {
 					return $product->product_name;
 			}

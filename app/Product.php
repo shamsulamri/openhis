@@ -20,6 +20,7 @@ class Product extends Model
 				'unit_code',
 				'order_form',
 				'product_upc',
+				'product_sku',
 				'product_unit_charge',
 				'product_purchased',
 				'product_stocked',

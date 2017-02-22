@@ -12,6 +12,8 @@ class WardClass extends Model
 	protected $table = 'ward_classes';
 	protected $fillable = [
 				'class_code',
+				'class_price',
+				'class_diet',
 				'class_name'];
 	
     protected $guarded = ['class_code'];
@@ -22,6 +24,7 @@ class WardClass extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'class_name'=>'required',
+				'class_price'=>'required',
 			];
 
 			

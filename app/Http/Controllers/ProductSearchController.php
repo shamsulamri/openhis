@@ -84,6 +84,7 @@ class ProductSearchController extends Controller
 					'period_code'=>$request->period_code,
 					'week'=>$request->week,
 					'day'=>$request->day,
+					'diet_code'=>$request->diet_code,
 			]);
 	}
 
@@ -153,9 +154,10 @@ class ProductSearchController extends Controller
 			return redirect('/product_searches?reason=asset&set_code='.$set_code);
 	}
 			
-	public function menu($class_code, $period_code, $week, $day, $product_code)
+	public function menu($class_code, $period_code, $week, $day, $product_code, $diet_code)
 	{
 			$diet_menu = new DietMenu();
+			$diet_menu->diet_code = $diet_code;
 			$diet_menu->class_code = $class_code;
 			$diet_menu->period_code = $period_code;
 			$diet_menu->product_code = $product_code;
@@ -164,7 +166,7 @@ class ProductSearchController extends Controller
 			$diet_menu->save();
 
 			Session::flash('message', 'Record successfully created.');
-			return redirect('/product_searches?reason=menu&class_code='.$class_code.'&period_code='.$period_code.'&week='.$week.'&day='.$day);
+			return redirect('/product_searches?reason=menu&class_code='.$class_code.'&period_code='.$period_code.'&week='.$week.'&day='.$day.'&diet_code='.$diet_code);
 	}
 
 	public function edit($id) 

@@ -34,7 +34,7 @@ th {
 		</td>
 		@foreach ($diet_periods as $period)
 		<td>
-				<a href='/diet_menus/{{ $class->class_code }}/{{ $period->period_code }}/{{ $weekOfMonth }}/{{ $dayOfWeek }}' class='btn btn-default btn-xs'>+</a>
+				<a href='/diet_menus/{{ $class->class_code }}/{{ $period->period_code }}/{{ $weekOfMonth }}/{{ $dayOfWeek }}/{{ $diet_code }}' class='btn btn-default btn-xs'>+</a>
 				<?php
 				$products = $dietHelper->menus($class->class_code, $period->period_code, $weekOfMonth, $dayOfWeek);
 				?>

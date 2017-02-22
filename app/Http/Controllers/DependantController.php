@@ -67,7 +67,7 @@ class DependantController extends Controller
 			$valid = $dependant->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
-					$dependant = new Dependant($request->all());
+					$dependant = new Patient($request->all());
 					$dependant->save();
 					$patient_dependant = new PatientDependant();
 					$patient_dependant->patient_id = $request->patient_id;

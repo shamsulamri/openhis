@@ -47,6 +47,14 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('loan_id')) has-error @endif'>
+        {{ Form::label('loan_id', 'Loan Id',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('loan_id', null, ['class'=>'form-control','placeholder'=>'Reference to loan ID if available','rows'=>'4']) }}
+            @if ($errors->has('loan_id')) <p class="help-block">{{ $errors->first('loan_id') }}</p> @endif
+        </div>
+    </div>
+
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('stock_datetime')) has-error @endif'>

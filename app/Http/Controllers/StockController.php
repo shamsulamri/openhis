@@ -103,11 +103,13 @@ class StockController extends Controller
 									$stock->save();
 									break;
 							case "transfer":
+									$store = Store::find($stock->store_code_transfer);
 									$stock->stock_quantity = abs($stock->stock_quantity);
 									$stock->stock_quantity = ($stock->stock_quantity)*-1;
-									$stock->stock_description = "Transfer out";
+									$stock->stock_description = "Transfer out to ".$store->store_name;
 									$stock->save();
 
+									$store = Store::find($stock->store_code);
 									$transfer = new Stock();
 									$transfer->product_code = $stock->product_code;
 									$transfer->username = $stock->username;
@@ -117,7 +119,7 @@ class StockController extends Controller
 									$transfer->store_code = $stock->store_code_transfer;
 									$transfer->stock_quantity = abs($stock->stock_quantity);
 									$transfer->stock_tag = $stock->stock_id;
-									$transfer->stock_description = "Transfer in";
+									$transfer->stock_description = "Transfer in from ".$store->store_name;
 									$transfer->save();
 									break;
 							default:
@@ -159,6 +161,8 @@ class StockController extends Controller
 					'store' => $store,
 					'stores' => Store::where('store_code','<>',$stock->store_code)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'maxYear' => Carbon::now()->year,
+					'stock_helper' => new StockHelper(),
+					'store_code'=>$stock->store_code,
 					]);
 	}
 

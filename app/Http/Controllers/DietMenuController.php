@@ -27,13 +27,14 @@ class DietMenuController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index($class, $period, $week, $day)
+	public function index($class, $period, $week, $day, $diet_code)
 	{
 
 			$menu_products = DietMenu::where('class_code',$class)
 								->where('period_code', $period)
 								->where('week_index', $week)
 								->where('day_index', $day)
+								->where('diet_code', $diet_code)
 								->get();
 			
 			return view('diet_menus.index',[
@@ -320,13 +321,14 @@ class DietMenuController extends Controller
 					'wards' => DietHelper::occupiedWards(),
 			]);
 	}
-	public function create(Request $request, $class, $period, $week, $day)
+	public function create(Request $request, $class, $period, $week, $day, $diet_code)
 	{
 			return view('diet_menus.create',[
 					'class_code'=>$class,
 					'period_code'=>$period,
 					'week'=>$week,
 					'day'=>$day,
+					'diet_code'=>$diet_code,
 			]);
 
 	}
@@ -347,7 +349,7 @@ class DietMenuController extends Controller
 			$menu = DietMenu::findOrFail($id);
 			DietMenu::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/diet_menus/menu/'.$menu->class_code.'/'.$menu->period_code.'/'.$menu->week_index.'/'.$menu->day_index);
+			return redirect('/diet_menus/menu/'.$menu->class_code.'/'.$menu->period_code.'/'.$menu->week_index.'/'.$menu->day_index.'/'.$menu->diet_code);
 	}
 	
 }
