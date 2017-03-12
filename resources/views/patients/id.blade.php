@@ -51,20 +51,6 @@
 		<br>
 		Preadmission 
 </a>
-@can('module-discharge')
-		@if ($patient->hasActiveEncounter()) 
-		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
-				<span class='fa fa-money' aria-hidden='true'></span>
-				<br>
-				Payment 
-		</a>
-		<a class='btn btn-default'  href='{{ URL::to('deposits/index/'. $patient->hasActiveEncounter()->encounter_id) }}'>
-				<span class='fa fa-money' aria-hidden='true'></span>
-				<br>
-				Deposit 
-		</a>
-		@endif
-@endcan
 <a class='btn btn-default'  href='{{ URL::to('loans/request/'. $patient->patient_mrn.'?type=folder') }}'>
 <span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
 <br>
@@ -77,6 +63,20 @@
 </a>
 @endif
 
+@can('module-discharge')
+		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
+				<span class='fa fa-money' aria-hidden='true'></span>
+				<br>
+				Payment 
+		</a>
+		@if ($patient->hasActiveEncounter()) 
+		<a class='btn btn-default'  href='{{ URL::to('deposits/index/'. $patient->hasActiveEncounter()->encounter_id) }}'>
+				<span class='fa fa-money' aria-hidden='true'></span>
+				<br>
+				Deposit 
+		</a>
+		@endif
+@endcan
 
 @can('module-medical-record')
 <a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>

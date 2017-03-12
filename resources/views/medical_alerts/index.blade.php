@@ -13,6 +13,7 @@
 	<tr> 
     <th>Date</th> 
     <th>Description</th>
+    <th>Type</th>
 	<th></th>
 	</tr>
   </thead>
@@ -26,6 +27,13 @@
 					<a href='{{ URL::to('medical_alerts/'. $medical_alert->alert_id . '/edit') }}'>
 						{{$medical_alert->alert_description}}
 					</a>
+			</td>
+			<td>
+			@if ($medical_alert->alert_public)
+				Public
+			@else
+				Private
+			@endif
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('medical_alerts/delete/'. $medical_alert->alert_id) }}'>Delete</a>

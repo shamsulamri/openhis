@@ -62,6 +62,12 @@ class PurchaseOrderLineController extends Controller
 			]);
 	}
 	
+	public function json($purchase_id)
+	{
+			$poline = PurchaseOrderLine::where('purchase_id', '=', $purchase_id)->get();
+			return $poline;
+	}
+
 	public function create($purchase_id)
 	{
 			$purchase_order_line = new PurchaseOrderLine();

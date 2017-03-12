@@ -38,6 +38,19 @@ class DojoUtility
 				}
 		}
 
+		public static function dateNoYearFormat($value)
+		{
+				if (!empty($value)) {
+					if (strlen($value)>10) {
+						return Carbon::parse($value)->format('d F, H:i');
+					} else {
+						return Carbon::parse($value)->format('d F');
+					}
+				} else {
+					return null;
+				}
+		}
+
 		public static function dateDMYOnly($value)
 		{
 				if (!empty($value)) {

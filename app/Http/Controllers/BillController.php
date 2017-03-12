@@ -77,6 +77,16 @@ class BillController extends Controller
 					]);
 	}
 
+	public function json($id) 
+	{
+			$bill = Bill::find($id);
+			if ($bill) {
+					return $bill;
+			} else {
+					return "Bill not posted";
+			}
+	}
+
 	public function update(Request $request, $id) 
 	{
 			$bill = Bill::findOrFail($id);

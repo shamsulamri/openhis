@@ -41,11 +41,6 @@ Interim Bill
 		@foreach ($bills as $bill)
 			<tr>
 					<td>
-							<!--
-							@if ($bill->order_completed==0) 
-								<span class='label label-danger'>Pending</span>
-							@endif
-							-->
 							@if (!$billPosted)
 							<a href='{{ URL::to('bill_items/'. $bill->bill_id . '/edit') }}'>
 							@endif
@@ -58,8 +53,8 @@ Interim Bill
 							{{ $bill->tax_code }}
 					</td>
 					<td align='right' width='50'>
+							<?php if ($bill->tax_rate>0) { ?>
 							{{ floatval($bill->tax_rate) }}
-							<?php if ($bill->tax_rate) { ?>
 							%
 							<?php } ?>
 					</td>

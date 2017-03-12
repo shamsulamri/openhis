@@ -196,7 +196,7 @@ class DischargeController extends Controller
 	{
 
 			$discharges = DB::table('discharges as a')
-					->select('patient_mrn', 'patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'e.id','name','ward_name')
+					->select('patient_mrn', 'patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'e.id','name','ward_name', 'b.encounter_code')
 					->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('ref_discharge_types as d', 'd.type_code','=','a.type_code')

@@ -343,9 +343,8 @@ class OrderController extends Controller
 			$order->product_code = $product->product_code;
 			$order->order_quantity_request = 1;
 			$order->order_unit_price = $product->product_sale_price; 
-			if ($product->gst) {
-				$order->order_sale_price = number_format($product->product_sale_price * (1+($product->gst->tax_rate/100)),2);
-				$order->order_gst_unit = number_format($product->product_sale_price * (($product->gst->tax_rate/100)),2);
+			if ($product->tax) {
+				$order->order_sale_price = number_format($product->product_sale_price * (1+($product->tax->tax_rate/100)),2);
 			} else {
 				$order->order_sale_price = number_format($product->product_sale_price,2);
 			}	

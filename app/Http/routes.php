@@ -48,6 +48,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+
+		Route::get('/form/entry/{id}', 'FormValueController@edit');
+		Route::get('/form/delete/{id}', 'FormValueController@delete');
+		Route::delete('/form/{id}', 'FormValueController@destroy');
+		Route::get('/form/{form_code}/{encounter_id}', 'FormValueController@show');
+		Route::get('/form/{form_code}/{patient_id}/create', 'FormValueController@create');
+		Route::post('/form/entry', 'FormValueController@store');
+
 		Route::get('/futures', 'FutureController@index');
 		Route::post('/future/search', 'FutureController@search');
 		Route::get('/future/search', 'FutureController@search');
@@ -292,6 +300,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::resource('bill_items', 'BillItemController',['except'=>['index','show']]);
 				Route::get('/bill_items/{id}', 'BillItemController@index');
 				Route::get('/bill_items/id/{id}', 'BillItemController@searchById');
+				Route::get('/bill_items/{id}/json', 'BillItemController@json');
 				Route::get('/bill_items/delete/{id}', 'BillItemController@delete');
 				Route::get('/bill_items/generate/{id}', 'BillItemController@generate');
 				Route::get('/bill_items/reload/{id}', 'BillItemController@reload');
@@ -299,6 +308,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 				Route::resource('bills', 'BillController');
 				Route::get('/bills/id/{id}', 'BillController@searchById');
+				Route::get('/bills/{id}/json', 'BillController@json');
 				Route::post('/bill/search', 'BillController@search');
 				Route::get('/bill/search', 'BillController@search');
 				Route::get('/bills/delete/{id}', 'BillController@delete');
@@ -310,6 +320,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				
 				Route::resource('patients', 'PatientController');
 				Route::get('/patients/id/{id}', 'PatientController@searchById');
+				Route::get('/patients/{id}/json', 'PatientController@json');
 				Route::get('/patients/dependants/{id}', 'PatientController@dependants');
 				Route::get('/patients/dependant_list/{id}', 'PatientController@dependantList');
 				Route::get('/patient/dependants', 'PatientController@find');
@@ -500,6 +511,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::group(['middleware' => 'product_list_middleware'], function () {
 
 				Route::get('/products/{id}/option', 'ProductController@option');
+				Route::get('/products/{id}/json', 'ProductController@json');
 				Route::resource('products', 'ProductController');
 				Route::get('/products/id/{id}', 'ProductController@searchById');
 				Route::post('/product/search', 'ProductController@search');
@@ -546,6 +558,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/explode_assembly/{id}', 'AssemblyController@explode');
 				Route::post('/explode_assembly/{id}', 'AssemblyController@destroy');
 				
+				Route::get('/purchase_order_lines/{id}/json', 'PurchaseOrderLineController@json');
 				Route::resource('purchase_order_lines', 'PurchaseOrderLineController', ['except'=>['index','create']]);
 				Route::get('/purchase_order_lines/index/{purchase_id}', 'PurchaseOrderLineController@index');
 				Route::get('/purchase_order_lines/create/{purchase_id}', 'PurchaseOrderLineController@create');
@@ -572,6 +585,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/store/search', 'StoreController@search');
 				Route::get('/stores/delete/{id}', 'StoreController@delete');
 
+				Route::get('/purchase_orders/{id}/json', 'PurchaseOrderController@json');
 				Route::resource('purchase_orders', 'PurchaseOrderController');
 				Route::get('/purchase_orders/id/{id}', 'PurchaseOrderController@searchById');
 				Route::post('/purchase_order/search', 'PurchaseOrderController@search');

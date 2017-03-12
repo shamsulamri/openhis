@@ -24,6 +24,7 @@
 				<a href="{{ url('/referrals') }}">Referral Types</a><br>
 				<a href="{{ url('/patient_types') }}">Patient Types</a><br>
 				<a href="{{ url('/encounter_types') }}">Encounter Types</a><br>
+				<a href="{{ url('/patient_flags') }}">Patient Flags</a><br>
 				<!--
 				<a href="{{ url('/ward_discharges') }}">Ward Discharges</a><br>
 				<a href="{{ url('/ward_arrivals') }}">Ward Arrivals</a><br>
@@ -182,7 +183,6 @@
 				<a href="{{ url('/frequencies') }}">Frequencies</a><br>
 				<a href="{{ url('/urgencies') }}">Urgencies</a><br>
 				<a href="{{ url('/relationships') }}">Relationships</a><br>
-				<a href="{{ url('/patient_flags') }}">Patient Flags</a><br>
 				<a href="{{ url('/payment_methods') }}">Payment Methods</a><br>
 			</div>
 	</div>

@@ -381,4 +381,10 @@ class PurchaseOrderController extends Controller
 			Session::flash('message', 'Record posted.');
 			return redirect('/purchase_orders');
 	}
+
+	public function json($id)
+	{
+			$purchase_order = PurchaseOrder::find($id);
+			return $purchase_order;
+	}
 }

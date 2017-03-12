@@ -84,7 +84,7 @@ class MedicalAlertController extends Controller
 	{
 			$medical_alert = MedicalAlert::findOrFail($id);
 			$medical_alert->fill($request->input());
-
+			$medical_alert->alert_public = $request->alert_public ?: 0;
 
 			$valid = $medical_alert->validate($request->all(), $request->_method);	
 

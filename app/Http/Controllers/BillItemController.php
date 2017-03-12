@@ -44,20 +44,18 @@ class BillItemController extends Controller
 						->where('encounter_id','=',$id)
 						->get();
 
-			Log::info($beds);
 			foreach ($beds as $bed) {
 					$bed_los = $bed->los;
 					if ($bed_los<=0) $bed_los=1;
 					$item = new BillItem();
 					$item->encounter_id = $id;
-					$item->order_id = 0;
 					$item->product_code = $bed->product_code;
 					$item->tax_code = $bed->tax_code;
 					$item->tax_rate = $bed->tax_rate;
 					$item->bill_quantity = $bed_los;
 					$item->bill_unit_price = $bed->product_sale_price;
-					$item->bill_total = $item->bill_unit_price*$item->bill_quantity;
-					$item->bill_gst_unit = $bed->product_sale_price*($bed->tax_rate/100);
+					$item->bill_total_pregst = $item->bill_unit_price*$item->bill_quantity;
+					$item->bill_total = $bed->product_sale_price*($bed->tax_rate/100);
 					try {
 							$item->save();
 					} catch (\Exception $e) {
@@ -66,49 +64,41 @@ class BillItemController extends Controller
 			}
 	}
 
-	public function compileBill($id) 
+	public function compileBill($encounter_id) 
 	{
 
-			$fields = 'a.encounter_id, a.order_id,b.tax_code, c.tax_rate, order_discount, a.product_code, sum(order_quantity_supply) as order_quantity_supply, sum(order_total) as order_total, order_sale_price, order_gst_unit, order_completed';
-			$order_current = DB::table('orders as a')
-					->selectRaw($fields)
-					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
-					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
-					->leftjoin('order_cancellations as d', 'd.order_id', '=','a.order_id')
-					->leftjoin('order_investigations as e', 'e.order_id', '=', 'a.order_id')
-					->where('encounter_id','=', $id)
-					->where('investigation_date','<=', Carbon::today())
-					->whereNull('cancel_id')
-					->groupBy('a.product_code')
-					->orderBy('encounter_id');
+			$encounter = Encounter::find($encounter_id);
+			$patient_id = $encounter->patient_id;
 
-			$orders = DB::table('orders as a')
-					->selectRaw($fields)
-					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
-					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
-					->leftjoin('order_cancellations as d', 'd.order_id', '=','a.order_id')
-					->leftjoin('order_investigations as e', 'e.order_id', '=', 'a.order_id')
-					->leftjoin('bill_items as f', 'f.order_id', '=', 'a.order_id') 
-					->where('order_completed','=','1')
-					->whereNull('bill_id')
-					->whereNull('cancel_id')
-					->groupBy('a.product_code')
-					->orderBy('encounter_id')
-					->union($order_current)
-					->get();
+			$sql = sprintf("
+				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, product_sale_price
+				from orders as a
+				left join products as b on b.product_code = a.product_code 
+				left join tax_codes as c on c.tax_code = b.tax_code 
+				left join bill_items as f on (f.encounter_id=a.encounter_id and f.product_code = a.product_code)
+				left join encounters as g on (g.encounter_id=a.encounter_id)
+				left join patients as h on (h.patient_id = g.patient_id)
+				where order_completed = 1 
+				and h.patient_id = %d
+				and bill_id is null 
+				group by product_code
+			", $patient_id);
 
-			Log::info($orders);
+			$orders = DB::select($sql);
+
 			foreach ($orders as $order) {
 					$item = new BillItem();
-					$item->encounter_id = $id;
-					$item->order_id = $order->order_id;
+					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->order_quantity_supply;
-					$item->bill_unit_price = $order->order_sale_price;
-					$item->bill_total = $order->order_total;
-					$item->bill_gst_unit = $order->order_gst_unit;
+					$item->bill_unit_price = $order->product_sale_price;
+					$item->bill_total_pregst = $order->order_quantity_supply*$order->product_sale_price;
+					$item->bill_total = $order->order_quantity_supply*$order->product_sale_price;
+					if ($order->tax_rate) {
+						$item->bill_total = $item->bill_total*(($order->tax_rate/100)+1);
+					}
 					try {
 							$item->save();
 					} catch (\Exception $e) {
@@ -116,15 +106,7 @@ class BillItemController extends Controller
 					}
 			}
 
-			$this->bedBills($id);
-			$bills = DB::table('bill_items as a')
-					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
-					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
-					->where('encounter_id','=', $id)
-					->orderBy('a.product_code')
-					->paginate($this->paginateValue);
-
-			return $bills;
+			$this->bedBills($encounter_id);
 	}
 
 	public function index($id)
@@ -132,10 +114,9 @@ class BillItemController extends Controller
 			$encounter = Encounter::find($id);
 
 			$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.order_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_total','bill_gst_unit','bill_exempted','order_completed')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_total','bill_total_pregst','bill_exempted')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
-					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
 					->orderBy('product_name');
 
@@ -145,10 +126,9 @@ class BillItemController extends Controller
 			if ($bills->total()==0) {
 				$bills=$this->compileBill($id);
 			$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.order_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_total','bill_gst_unit','bill_exempted','order_completed')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_total','bill_total_pregst','bill_exempted')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
-					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
@@ -158,9 +138,7 @@ class BillItemController extends Controller
 					->select('bill_id')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
-					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
-					->where('order_completed','=',0)
 					->count('bill_id');
 
 			$bill_grand_total = DB::table('bill_items')
@@ -168,7 +146,7 @@ class BillItemController extends Controller
 					->sum('bill_total');
 
 			$gst_total = DB::table('bill_items as a')
-					->selectRaw('sum(bill_quantity*bill_gst_unit) as gst_sum, sum(bill_quantity*(bill_unit_price-bill_gst_unit)) as gst_amount, tax_code')
+					->selectRaw('sum(bill_total_pregst) as gst_amount, format(sum(bill_total_pregst*(tax_rate/100)),2) as gst_sum, tax_code')
 					->where('encounter_id','=', $id)
 					->whereNotNull('tax_code')
 					->groupBy('tax_code')
@@ -289,9 +267,14 @@ class BillItemController extends Controller
 						$bill->bill_total = $bill->bill_quantity*$bill->bill_unit_price;
 			}
 
+			if ($bill->product->tax_code) {
+					$bill->bill_total = $bill->bill_total * (1+($bill->product->tax->tax_rate/100));
+			}
+
 			if ($bill->bill_discount>0) {
 					$bill->bill_total = $bill->bill_total * (1-($bill->bill_discount/100));
 			}
+
 
 			$valid = $bill->validate($request->all(), $request->_method);
 
@@ -365,5 +348,11 @@ class BillItemController extends Controller
 			return view('bill_items.index', [
 					'bills'=>$bills
 			]);
+	}
+
+	public function json($id)
+	{
+			$bill_items = BillItem::where('encounter_id','=', $id)->get();
+			return $bill_items;
 	}
 }

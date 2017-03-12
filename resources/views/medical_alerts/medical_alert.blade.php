@@ -10,6 +10,13 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('alert_public')) has-error @endif'>
+        <label for='alert_public' class='col-sm-2 control-label'></label>
+        <div class='col-sm-10'>
+			{{ Form::checkbox('alert_public', '1') }} Publish this alert to other user.
+            @if ($errors->has('alert_public')) <p class="help-block">{{ $errors->first('alert_public') }}</p> @endif
+        </div>
+    </div>
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
             <a class="btn btn-default" href="/medical_alerts" role="button">Cancel</a>

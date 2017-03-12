@@ -93,6 +93,7 @@ class ConsultationController extends Controller
 					$consultation->consultation_status=1;
 					$consultation->save();
 
+					/**
 					$order = new Order();
 					$order->consultation_id = $consultation->consultation_id;
 					$order->encounter_id = $consultation->encounter_id;
@@ -105,6 +106,8 @@ class ConsultationController extends Controller
 					$order->user_id = Auth::user()->id;
 					$order->save();
 					Log::info($order);
+					**/
+
 					Session::set('consultation_id', $consultation->consultation_id);
 					Session::set('encounter_id', $encounter->encounter_id);
 					return view('consultations.edit', [

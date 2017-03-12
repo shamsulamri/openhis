@@ -13,12 +13,22 @@ class MedicalAlert extends Model
 	protected $fillable = [
 				'patient_id',
 				'consultation_id',
+				'alert_public',
 				'alert_description'];
 	
     protected $guarded = ['alert_id'];
     protected $primaryKey = 'alert_id';
     public $incrementing = true;
     
+	protected $defaults = [
+			'alert_public'=>'0',
+	];
+
+	public function __construct(array $attributes = array())
+	{
+			    $this->setRawAttributes($this->defaults, true);
+				    parent::__construct($attributes);
+	}
 
 	public function validate($input, $method) {
 			$rules = [

@@ -7,37 +7,39 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class FormPosition extends Model
+class FormValue extends Model
 {
-	protected $table = 'form_positions';
+	protected $table = 'form_values';
 	protected $fillable = [
+				'encounter_id',
+				'patient_id',
+				'order_id',
 				'form_code',
-				'property_code',
-				'property_position'];
+				'form_value'];
 	
+    protected $guarded = ['value_id'];
+    protected $primaryKey = 'value_id';
+    public $incrementing = true;
+    
 
 	public function validate($input, $method) {
 			$rules = [
+				'encounter_id'=>'required',
 				'form_code'=>'required',
-				'property_code'=>'required',
 			];
 
-			
-			
 			$messages = [
 				'required' => 'This field is required'
 			];
 			
 			return validator::make($input, $rules ,$messages);
 	}
-	
+
+
+
 	public function form()
 	{
-			return $this->hasOne('App\Form','form_code','form_code');
+			return $this->belongsTo('App\Form','form_code');
 	}
-
-	public function property()
-	{
-			return $this->hasOne('App\FormProperty','property_code','property_code');
-	}
+	
 }

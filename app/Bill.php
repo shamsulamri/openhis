@@ -19,6 +19,9 @@ class Bill extends Model
 				'user_id',
 				'bill_change'];
 	
+    protected $guarded = ['id'];
+    protected $primaryKey = 'id';
+    public $incrementing = true;
 
 	public function validate($input, $method) {
 			$rules = [

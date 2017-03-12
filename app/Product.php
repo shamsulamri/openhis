@@ -79,7 +79,7 @@ class Product extends Model
 			return $this->belongsTo('App\UnitMeasure', 'unit_code');
 	}
 
-	public function gst()
+	public function tax()
 	{
 			return $this->belongsTo('App\TaxCode', 'tax_code');
 	}

@@ -24,6 +24,7 @@ use App\Ward;
 use App\WardHelper;
 use App\EncounterHelper;
 use App\DojoUtility;
+use App\Form;
 
 class AdmissionController extends Controller
 {
@@ -158,10 +159,23 @@ class AdmissionController extends Controller
 	public function show($id)
 	{
 			$admission = Admission::findOrFail($id);
+			//$forms = Form::orderBy('form_name')->get();
 
+
+			$sql = sprintf("
+				select a.form_code, form_name, result_count
+				from forms a
+				left join (select form_code, count(form_code) as result_count from form_values where encounter_id=%d group by form_code) b on (b.form_code = a.form_code)
+				order by result_count desc, form_name
+				", $admission->encounter_id);
+
+			$forms = DB::select($sql);
+
+			Log::info($sql);
 			return view('admissions.view', [
 					'admission'=>$admission,
 					'patient'=>$admission->encounter->patient,
+					'forms'=>$forms,
 			]);
 	}
 

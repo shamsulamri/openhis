@@ -12,7 +12,6 @@ class BillItem extends Model
 	protected $table = 'bill_items';
 	protected $fillable = [
 				'encounter_id',
-				'order_id',
 				'product_code',
 				'tax_code',
 				'tax_rate',
@@ -20,7 +19,7 @@ class BillItem extends Model
 				'bill_quantity',
 				'bill_unit_price',
 				'bill_total',
-				'bill_gst_unit',
+				'bill_total_pregst',
 				'bill_exempted'];
 	
     protected $guarded = ['bill_id'];

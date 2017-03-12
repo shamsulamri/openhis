@@ -117,6 +117,12 @@ class PatientController extends Controller
 					]);
 	}
 
+	public function json($id)
+	{
+			$patient = Patient::findOrFail($id);
+			return $patient;
+	}
+
 	public function edit(Request $request, $id) 
 	{
 			$patient = Patient::findOrFail($id);

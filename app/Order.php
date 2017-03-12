@@ -29,8 +29,6 @@ class Order extends Model
 				'order_sale_price',
 				'order_unit_price',
 				'order_total',
-				'order_discount',
-				'order_gst_unit',
 				'order_discharge',
 				'update_by',
 		];

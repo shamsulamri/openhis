@@ -163,6 +163,12 @@ class ProductController extends Controller
 				]);	
 	}
 
+	public function json($id)
+	{
+		$product = Product::find($id);
+		return $product;
+	}
+
 	public function store(Request $request) 
 	{
 			$product = new Product();
