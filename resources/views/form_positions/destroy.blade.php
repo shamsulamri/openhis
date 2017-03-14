@@ -1,16 +1,18 @@
 @extends('layouts.app2')
 
 @section('content')
-<h1>
+<h3>
 Delete Form Position
-</h1>
+</h3>
 
 <br>
-<h3>
-{{ Form::open(['url'=>'form_positions/'.$form_position->id, 'class'=>'pull-right']) }}
+<h4>
+{{ Form::open(['url'=>'form_positions/'.$form_position->id]) }}
 Are you sure you want to delete the selected record ?
 <br>
-{{ $form_position->property_code }}
+<br>
+{{ $form_position->property->property_name }}
+<br>
 <br>
 <br>
 	{{ method_field('DELETE') }}
@@ -18,5 +20,5 @@ Are you sure you want to delete the selected record ?
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 
-</h3>
+</h4>
 @endsection
