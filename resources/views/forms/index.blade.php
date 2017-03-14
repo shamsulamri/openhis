@@ -28,7 +28,7 @@
 @foreach ($forms as $form)
 	<tr>
 			<td>
-					<a href='{{ URL::to('forms/'. $form->form_code . '/edit') }}'>
+					<a href='{{ URL::to('forms/'. $form->form_code.'/edit' ) }}'>
 						{{$form->form_name}}
 					</a>
 			</td>
@@ -36,7 +36,10 @@
 					{{$form->form_code}}
 			</td>
 			<td align='right'>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('forms/'. $form->form_code) }}'>Assets</a>
+					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('forms/delete/'. $form->form_code) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

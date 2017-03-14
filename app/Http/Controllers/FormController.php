@@ -40,6 +40,15 @@ class FormController extends Controller
 					]);
 	}
 
+	public function show($id)
+	{
+			$form = Form::findOrFail($id);
+			return view('forms.show', [
+					'form'=>$form,
+				
+					]);
+	}
+
 	public function store(Request $request) 
 	{
 			$form = new Form();
@@ -78,7 +87,7 @@ class FormController extends Controller
 			if ($valid->passes()) {
 					$form->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/forms/id/'.$id);
+					return redirect('/forms');
 			} else {
 					return view('forms.edit', [
 							'form'=>$form,

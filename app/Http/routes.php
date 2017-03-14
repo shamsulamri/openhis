@@ -951,6 +951,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/form_properties/id/{id}', 'FormPropertyController@searchById');
 				Route::post('/form_property/search', 'FormPropertyController@search');
 				Route::get('/form_property/search', 'FormPropertyController@search');
+				Route::get('/form_property/add/{form_code}/{property_code}', 'FormPropertyController@add');
+				Route::get('/form_property/select', 'FormPropertyController@propertySelect');
 				Route::get('/form_properties/delete/{id}', 'FormPropertyController@delete');
 
 				Route::resource('form_positions', 'FormPositionController');

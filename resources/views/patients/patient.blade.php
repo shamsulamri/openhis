@@ -82,7 +82,7 @@
 								<div class='form-group  @if ($errors->has('patient_age')) has-error @endif'>
 									{{ Form::label('Estimated Age', 'Estimated Age',['class'=>'col-md-4 control-label']) }}
 									<div class='col-md-8'>
-										{{ Form::text('patient_age', null, ['class'=>'form-control','data-mask'=>'999','placeholder'=>'Fill for unknown patient','maxlength'=>'20']) }}
+										{{ Form::text('patient_age', null, ['class'=>'form-control','placeholder'=>'Fill for unknown patient','maxlength'=>'20']) }}
 										@if ($errors->has('patient_age')) <p class="help-block">{{ $errors->first('patient_age') }}</p> @endif
 									</div>
 								</div>

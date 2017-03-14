@@ -5,6 +5,8 @@
 <form action='/product/search' method='post' class='form-inline'>
 	<label>Product</label>
 	<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<label>Category</label>
+	{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>Store</label>
 	{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>

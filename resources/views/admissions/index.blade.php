@@ -131,18 +131,18 @@
 							<a class='btn btn-danger ' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 						@endcan
 						@if (is_null($admission->arrival_id) && empty($admission->discharge_id))
-							<a class='btn btn-default ' href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}' title='Log arrival'><span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
+							<a class='btn btn-default btn-lg' href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}' title='Log arrival'><span class='fa fa-sign-in' aria-hidden='true'></span>
 </a>
 						@endif
 						@if (!empty($admission->discharge_id))
-							<a class='btn btn-default ' href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}' title='Ward discharge'><span class='glyphicon glyphicon-bed' aria-hidden='true'></span></a>
+							<a class='btn btn-default btn-lg' href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}' title='Ward discharge'><span class='fa fa-sign-out' aria-hidden='true'></span></a>
 						@else
 								@if (!is_null($admission->arrival_id)) 
-								<a class='btn btn-default' href="{{ URL::to('loans/request/'. $admission->patient_mrn.'?type=folder') }}" title='Folder request'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
+								<a class='btn btn-default btn-lg' href="{{ URL::to('loans/request/'. $admission->patient_mrn.'?type=folder') }}" title='Folder request'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
 		</a>
-								<a class='btn btn-default' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'><span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
+								<a class='btn btn-default btn-lg' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'><span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
 		</a>
-								<a class='btn btn-default' title='Forms' href='{{ URL::to('admissions/'. $admission->admission_id) }}'><span class='fa fa-table' aria-hidden='true'></span></a>
+								<a class='btn btn-default btn-lg' title='Forms' href='{{ URL::to('admissions/'. $admission->admission_id) }}'><span class='fa fa-table' aria-hidden='true'></span></a>
 								@endif
 						@endif
 			</td>

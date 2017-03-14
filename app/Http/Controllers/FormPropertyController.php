@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\FormProperty;
+use App\FormPosition;
 use Log;
 use DB;
 use Session;
@@ -21,22 +22,23 @@ class FormPropertyController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 			$form_properties = DB::table('form_properties')
 					->orderBy('property_name')
 					->paginate($this->paginateValue);
 			return view('form_properties.index', [
-					'form_properties'=>$form_properties
+					'form_properties'=>$form_properties,
+					'form_code'=>$request->form_code,
 			]);
 	}
 
-	public function create()
+	public function create(Request $request)
 	{
 			$form_property = new FormProperty();
 			return view('form_properties.create', [
 					'form_property' => $form_property,
-				
+					'form_code'=>$request->form_code,
 					]);
 	}
 
@@ -49,8 +51,14 @@ class FormPropertyController extends Controller
 					$form_property = new FormProperty($request->all());
 					$form_property->property_code = $request->property_code;
 					$form_property->save();
+
+					$form_position = new FormPosition();
+					$form_position->form_code = $request->form_code;
+					$form_position->property_code = $form_property->property_code;
+					$form_position->property_position = 99;
+					$form_position->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/form_properties/id/'.$form_property->property_code);
+					return redirect('/form_properties/id/'.$form_property->property_code.'?form_code='.$request->form_code);
 			} else {
 					return redirect('/form_properties/create')
 							->withErrors($valid)
@@ -58,12 +66,23 @@ class FormPropertyController extends Controller
 			}
 	}
 
-	public function edit($id) 
+	public function add($form_code, $property_code) 
+	{
+			$form_position = new FormPosition();
+			$form_position->form_code = $form_code;
+			$form_position->property_code = $property_code;
+			$form_position->property_position = 99;
+			$form_position->save();
+			Session::flash('message', 'Record successfully created.');
+			return redirect('/form_properties?form_code='.$form_code);
+	}
+
+	public function edit(Request $request, $id) 
 	{
 			$form_property = FormProperty::findOrFail($id);
 			return view('form_properties.edit', [
 					'form_property'=>$form_property,
-				
+					'form_code'=>$request->form_code,	
 					]);
 	}
 
@@ -79,7 +98,7 @@ class FormPropertyController extends Controller
 			if ($valid->passes()) {
 					$form_property->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/fmrm_properties/id/'.$id);
+					return redirect('/form_properties/id/'.$id.'?form_code='.$request->form_code);
 			} else {
 					return view('form_properties.edit', [
 							'form_property'=>$form_property,
@@ -99,9 +118,10 @@ class FormPropertyController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$form = FormProperty::find($id);
 			FormProperty::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/form_properties');
+			return redirect('/form_properties?form_code='.$form->form_code);
 	}
 	
 	public function search(Request $request)
@@ -114,18 +134,22 @@ class FormPropertyController extends Controller
 
 			return view('form_properties.index', [
 					'form_properties'=>$form_properties,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'form_code'=>$request->form_code,
 					]);
 	}
 
-	public function searchById($id)
+	public function searchById(Request $request, $id)
 	{
 			$form_properties = DB::table('form_properties')
 					->where('property_code','=',$id)
 					->paginate($this->paginateValue);
 
 			return view('form_properties.index', [
-					'form_properties'=>$form_properties
+					'form_properties'=>$form_properties,
+					'form_code'=>$request->form_code,
 			]);
 	}
+
+
 }

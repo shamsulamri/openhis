@@ -29,6 +29,7 @@ use App\ProductAuthorization;
 use App\StockHelper;
 use App\Ward;
 use App\StoreAuthorization;
+use App\ProductCategory;
 
 class ProductController extends Controller
 {
@@ -82,12 +83,16 @@ class ProductController extends Controller
 
 
 			//'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+
+
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,
 					'store'=>$store,
 					'stock_helper'=> new StockHelper(),
 					'store_code'=>$this->getDefaultStore($request),
+					'categories'=>$this->getProductCategories($product_authorization),
+					'category_code'=>null,
 			]);
 	}
 
@@ -283,10 +288,13 @@ class ProductController extends Controller
 			$products = Product::orderBy('product_name')
 					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code');
 
-			if (!$product_authorization->get()->isEmpty()) {
-					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
-			}
 
+			if (!empty($request->category_code)) {
+					$products = $products->where('products.category_code','=', $request->category_code);
+			}elseif (!$product_authorization->get()->isEmpty()) {
+					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
+					Log::info("XXXX");
+			}
 
 			if (!empty($request->store)) {
 					/**
@@ -331,6 +339,8 @@ class ProductController extends Controller
 					'store' => $store,
 					'store_code'=>$request->store,
 					'stock_helper'=> new StockHelper(),
+					'categories'=>$this->getProductCategories($product_authorization),
+					'category_code'=>$request->category_code,
 					]);
 	}
 
@@ -421,4 +431,15 @@ class ProductController extends Controller
 			return $stock_on_hand;
 	}
 
+	public function getProductCategories($product_authorization) {
+
+			$categories = ProductCategory::whereIn('category_code', $product_authorization->pluck('category_code'))->lists('category_name','category_code');
+			if (count($categories)==0) {
+					$categories = ProductCategory::orderBy('category_name')->lists('category_name', 'category_code');
+			}
+
+			$categories = $categories->prepend('','');
+
+			return $categories;
+	} 
 }

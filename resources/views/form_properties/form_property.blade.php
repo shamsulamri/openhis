@@ -85,3 +85,5 @@
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+
+	{{ Form::hidden('form_code', $form_code) }}

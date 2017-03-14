@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
+<!--
 <h1>Form Position List
 <a href='/form_positions/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
@@ -14,14 +15,15 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
+-->
 
 @if ($form_positions->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Form Name</th>
-    <th>Property Name</th> 
-    <th>Property Index</th> 
+    <th>Name</th>
+    <th>Code</th> 
+    <th>Index</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -29,19 +31,19 @@
 @foreach ($form_positions as $form_position)
 	<tr>
 			<td>
-					<a href='{{ URL::to('form_positions/'. $form_position->id . '/edit') }}'>
-						{{$form_position->form_name}}
+					<a href='{{ URL::to('form_positions/'. $form_position->id).'/edit' }}'>
+					{{$form_position->property_name}}
 					</a>
 			</td>
 			<td>
-					{{$form_position->property_name}}
+					{{$form_position->property_code}}
 			</td>
 			<td>
 					{{$form_position->property_position}}
 			</td>
 
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('form_positions/delete/'. $form_position->id) }}'>Delete</a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('form_positions/delete/'. $form_position->id) }}'><span class='glyphicon glyphicon-trash'></span></a>
 			</td>
 	</tr>
 @endforeach

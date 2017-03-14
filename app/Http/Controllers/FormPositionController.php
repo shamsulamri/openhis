@@ -23,9 +23,16 @@ class FormPositionController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 			$form_positions = DB::table('form_positions')
+					->join('forms', 'form_positions.form_code','=', 'forms.form_code')
+					->join('form_properties', 'form_properties.property_code', '=', 'form_positions.property_code')
+					->orderBy('form_name')
+					->orderBy('property_position')
+					->paginate($this->paginateValue);
+
+			$form_positions = FormPosition::where('form_positions.form_code', $request->form_code)
 					->join('forms', 'form_positions.form_code','=', 'forms.form_code')
 					->join('form_properties', 'form_properties.property_code', '=', 'form_positions.property_code')
 					->orderBy('form_name')
@@ -86,7 +93,7 @@ class FormPositionController extends Controller
 			if ($valid->passes()) {
 					$form_position->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/form_positions/id/'.$id);
+					return redirect('/form_positions?form_code='.$form_position->form_code);
 			} else {
 					return view('form_positions.edit', [
 							'form_position'=>$form_position,
@@ -107,9 +114,10 @@ class FormPositionController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$form_position = FormPosition::find($id);
 			FormPosition::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/form_positions');
+			return redirect('/form_positions?form_code='.$form_position->form_code);
 	}
 	
 	public function search(Request $request)
