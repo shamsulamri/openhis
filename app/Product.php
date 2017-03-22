@@ -32,6 +32,7 @@ class Product extends Model
 				'product_purchase_price',
 				'location_code',
 				'form_code',
+				'gl_code',
 				'product_average_cost',
 				'product_conversion_unit',
 				'product_conversion_code',

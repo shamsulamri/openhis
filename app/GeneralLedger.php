@@ -7,28 +7,26 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class EncounterType extends Model
+class GeneralLedger extends Model
 {
-	protected $table = 'ref_encounter_types';
+	protected $table = 'general_ledgers';
 	protected $fillable = [
-				'encounter_code',
-				'profit_margin',
-				'encounter_name'
-		];
+				'gl_code',
+				'gl_name'];
 	
-    protected $guarded = ['encounter_code'];
-    protected $primaryKey = 'encounter_code';
+    protected $guarded = ['gl_code'];
+    protected $primaryKey = 'gl_code';
     public $incrementing = false;
     
 
 	public function validate($input, $method) {
 			$rules = [
-				'encounter_name'=>'required',
+				'gl_name'=>'required',
 			];
 
 			
         	if ($method=='') {
-        	    $rules['encounter_code'] = 'required|max:20|unique:ref_encounter_types';
+        	    $rules['gl_code'] = 'required|max:20|unique:general_ledgers';
         	}
         
 			

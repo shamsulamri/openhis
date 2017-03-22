@@ -48,7 +48,18 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('general_ledgers', 'GeneralLedgerController');
+		Route::get('/general_ledgers/id/{id}', 'GeneralLedgerController@searchById');
+		Route::post('/general_ledger/search', 'GeneralLedgerController@search');
+		Route::get('/general_ledger/search', 'GeneralLedgerController@search');
+		Route::get('/general_ledgers/delete/{id}', 'GeneralLedgerController@delete');
 
+		Route::resource('tax_types', 'TaxTypeController');
+		Route::get('/tax_types/id/{id}', 'TaxTypeController@searchById');
+		Route::post('/tax_type/search', 'TaxTypeController@search');
+		Route::get('/tax_type/search', 'TaxTypeController@search');
+		Route::get('/tax_types/delete/{id}', 'TaxTypeController@delete');
+		
 		Route::get('/form/entry/{id}', 'FormValueController@edit');
 		Route::get('/form/delete/{id}', 'FormValueController@delete');
 		Route::delete('/form/{id}', 'FormValueController@destroy');

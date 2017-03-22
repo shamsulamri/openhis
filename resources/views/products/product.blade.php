@@ -104,6 +104,13 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('gl_code')) has-error @endif'>
+						<label for='gl_code' class='col-sm-4 control-label'>GL Code</label>
+						<div class='col-sm-8'>
+							{{ Form::select('gl_code', $general_ledger,null, ['id'=>'gl_code', 'class'=>'form-control','maxlength'=>'20']) }}
+							@if ($errors->has('gl_code')) <p class="help-block">{{ $errors->first('gl_code') }}</p> @endif
+						</div>
+					</div>
 			</div>
 	</div>
 

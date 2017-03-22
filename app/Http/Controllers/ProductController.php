@@ -30,6 +30,7 @@ use App\StockHelper;
 use App\Ward;
 use App\StoreAuthorization;
 use App\ProductCategory;
+use App\GeneralLedger;
 
 class ProductController extends Controller
 {
@@ -139,6 +140,7 @@ class ProductController extends Controller
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
+					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 					]);
 	}
 
@@ -211,6 +213,7 @@ class ProductController extends Controller
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 					'store_code'=>$store_code,
+					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 					]);
 	}
 
