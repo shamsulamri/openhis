@@ -38,7 +38,7 @@
 					{{$form_property->property_code}}
 			</td>
 			<td>
-					{{$form_property->property_system}}
+					{{$form_property->system_code}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('form_property/add/'.$form_code.'/'.$form_property->property_code) }}'><span class='glyphicon glyphicon-chevron-right'></span></a>

@@ -81,6 +81,8 @@ class UserAuthorizationController extends Controller
 			$user_authorization->patient_list = $request->patient_list ?: 0;
 			$user_authorization->product_list = $request->product_list ?: 0;
 			$user_authorization->loan_function = $request->loan_function ?: 0;
+			$user_authorization->product_purchase_function = $request->product_purchase_function ?: 0;
+			$user_authorization->product_sale_function = $request->product_sale_function ?: 0;
 			$user_authorization->appointment_function = $request->appointment_function ?: 0;
 
 			$valid = $user_authorization->validate($request->all(), $request->_method);	

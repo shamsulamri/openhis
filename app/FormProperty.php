@@ -14,13 +14,13 @@ class FormProperty extends Model
 				'property_code',
 				'property_name',
 				'property_type',
-				'property_unit',
+				'unit_code',
 				'property_limit_1',
 				'property_limit_2',
 				'property_limit_type',
 				'property_list',
 				'property_shortname',
-				'property_system',
+				'system_code',
 				'property_multiline'];
 	
     	protected $guarded = ['property_code'];

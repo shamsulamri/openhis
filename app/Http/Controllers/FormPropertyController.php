@@ -8,6 +8,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\FormProperty;
 use App\FormPosition;
+use App\FormSystem;
+use App\UnitMeasure;
 use Log;
 use DB;
 use Session;
@@ -16,6 +18,7 @@ use Session;
 class FormPropertyController extends Controller
 {
 	public $paginateValue=10;
+	public $property_types = array(''=>'','number'=>'Number','list'=>'List', 'text'=>'Text', 'date'=>'Date');
 
 	public function __construct()
 	{
@@ -39,6 +42,9 @@ class FormPropertyController extends Controller
 			return view('form_properties.create', [
 					'form_property' => $form_property,
 					'form_code'=>$request->form_code,
+					'form_system' => FormSystem::all()->sortBy('system_name')->lists('system_name', 'system_code')->prepend('',''),
+					'uom' => UnitMeasure::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
+					'property_types' => $this->property_types,
 					]);
 	}
 
@@ -83,6 +89,9 @@ class FormPropertyController extends Controller
 			return view('form_properties.edit', [
 					'form_property'=>$form_property,
 					'form_code'=>$request->form_code,	
+					'form_system' => FormSystem::all()->sortBy('system_name')->lists('system_name', 'system_code')->prepend('',''),
+					'uom' => UnitMeasure::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
+					'property_types' => $this->property_types,
 					]);
 	}
 

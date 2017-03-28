@@ -11,15 +11,16 @@
 </div>
 <h4>Select queue location</h4>
 <br>
-			@foreach($locations as $l)
-			<div class='checkbox' class='form-control'>
-            {{ Form::radio('location_code', $l->location_code) }} {{ $l->location_name }}
-			</div>
-			@endforeach
-    <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
-		<label for='location_code' class='col-sm-3 control-label'></label>
-        <div class='col-sm-9'>
-            @if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
+	<div class='form-group'>
+        {{ Form::label('Current', 'Current',['class'=>'col-sm-2 control-label']) }}
+        <div class="col-sm-6">
+            {{ Form::label('current', $queue->location->location_name, ['class'=>'form-control','placeholder'=>'',]) }}
+		</div>
+	</div>
+    <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
+        {{ Form::label('Location', 'New',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-6'>
+            {{ Form::select('location_code', $location, $queue->location_code, ['class'=>'form-control']) }}
         </div>
     </div>
 

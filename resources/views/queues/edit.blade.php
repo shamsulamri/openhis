@@ -6,9 +6,8 @@
 
 {{ Form::model($queue, ['route'=>['queues.update',$queue->queue_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 	@include('queues.queue')
-	<br>
     <div class='form-group'>
-        <div class="col-sm-offset-3 col-sm-9">
+        <div class="col-sm-offset-2 col-sm-8">
             <a class="btn btn-default" href="/queues" role="button">Cancel</a>
             {{ Form::submit('Save', ['id'=>'save','class'=>'btn btn-primary']) }}
         </div>

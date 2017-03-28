@@ -48,6 +48,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('form_systems', 'FormSystemController');
+		Route::get('/form_systems/id/{id}', 'FormSystemController@searchById');
+		Route::post('/form_system/search', 'FormSystemController@search');
+		Route::get('/form_system/search', 'FormSystemController@search');
+		Route::get('/form_systems/delete/{id}', 'FormSystemController@delete');
+
 		Route::resource('general_ledgers', 'GeneralLedgerController');
 		Route::get('/general_ledgers/id/{id}', 'GeneralLedgerController@searchById');
 		Route::post('/general_ledger/search', 'GeneralLedgerController@search');

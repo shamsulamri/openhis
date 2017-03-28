@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
 class Product extends Model
 {
@@ -61,6 +62,17 @@ class Product extends Model
 			$messages = [
 					'required' => 'This field is required',
 			];
+
+        	if ($method=='PUT') {
+				$product = Product::find($this->attributes['product_code']);
+        	   	$rules['product_purchase_price'] = 'greater_than_or_equal:'.$this->attributes['product_purchase_price'].','.$product->product_purchase_price;
+				$messages['greater_than_or_equal']="Purchase prices cannot be lower than last recorded price.";
+        	}
+
+
+
+			Log::info($rules);
+			Log::info($messages);
 			
 			return validator::make($input, $rules ,$messages);
 	}

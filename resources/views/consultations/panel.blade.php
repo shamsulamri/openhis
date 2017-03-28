@@ -28,8 +28,9 @@
 	<div class='alert alert-danger' role='alert'>
 	<p>
 	@foreach ($patient->alert as $alert)
-		{{ $alert->alert_description }}
+		- {{ $alert->alert_description }}
 		@if ($alert != end($patient->alert))
+			<br>
 		@endif
 	@endforeach
 	</p>

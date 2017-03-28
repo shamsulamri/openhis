@@ -32,8 +32,24 @@
 			</div>
 			&nbsp;
 </div>
+@if (count($patient->alert)>0)
+	<br>
+	<div class='alert alert-danger' role='alert'>
+	<p>
+	@foreach ($patient->alert as $alert)
+		@if ($alert->alert_public==1) 
+		- {{ $alert->alert_description }}
+		@if ($alert != end($patient->alert))
+			<br>
+		@endif
+		@endif
+	@endforeach
+	</p>
+	</div>
+@else
+	<br>
 @endif
-<br>
+@endif
 @if (Gate::check('module-patient'))
 <a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
 						<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography

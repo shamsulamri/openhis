@@ -18,6 +18,7 @@ Interim Bill
 <p class='pull-right'>&nbsp;</p>
 @endif
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}" role="button">Print Tax Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}" role="button">Print Simple Invoice</a> 
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button">Print Medical Certificate</a>
 <br>

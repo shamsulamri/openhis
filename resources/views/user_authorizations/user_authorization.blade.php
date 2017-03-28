@@ -50,6 +50,19 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('product_purchase_function')) has-error @endif'>
+        <div class='col-sm-offset-5'>
+            {{ Form::checkbox('product_purchase_function', '1') }} <label>Product Purchase</label>
+            @if ($errors->has('product_purchase_function')) <p class="help-block">{{ $errors->first('product_purchase_function') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('product_sale_function')) has-error @endif'>
+        <div class='col-sm-offset-5'>
+            {{ Form::checkbox('product_sale_function', '1') }} <label>Product Sale</label>
+            @if ($errors->has('product_sale_function')) <p class="help-block">{{ $errors->first('product_sale_function') }}</p> @endif
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('module_ward')) has-error @endif'>
         <label for='module_ward' class='col-sm-4 control-label'>Ward Module</label>
         <div class='col-sm-8'>
@@ -118,6 +131,7 @@
             @if ($errors->has('loan_function')) <p class="help-block">{{ $errors->first('loan_function') }}</p> @endif
         </div>
     </div>
+
 
 	<div class='page-header'>
 		<h4>Default Store</h4>

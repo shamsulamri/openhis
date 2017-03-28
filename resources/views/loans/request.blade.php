@@ -11,7 +11,6 @@
 <h1>
 {{ $title }}
 </h1>
-
 <br>
 {{ Form::model($loan, ['url'=>$url, 'class'=>'form-horizontal']) }} 
 @if ($loan->loan_code=='lend')

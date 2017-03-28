@@ -13,6 +13,7 @@ use DB;
 use Session;
 use App\UserAuthorization;
 use App\AppointmentService;
+use App\TaxCode;
 use Auth;
 use Validator;
 
@@ -49,6 +50,7 @@ class UserController extends Controller
 					'user' => $user,
 					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					]);
 	}
 
@@ -78,6 +80,7 @@ class UserController extends Controller
 					'user'=>$user,
 					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 
 					]);
 	}
@@ -89,6 +92,7 @@ class UserController extends Controller
 			return view('users.profile', [
 					'user'=>$user,
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					]);
 	}
 

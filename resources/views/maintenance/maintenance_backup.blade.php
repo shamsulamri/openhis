@@ -89,17 +89,16 @@
 				<a href="{{ url('/drug_frequencies') }}">Drugs Frequencies</a><br>
 				<a href="{{ url('/drug_routes') }}">Drugs Routes</a><br>
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>
-				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
-				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
 			</small>
 			</div>
 			<div class="col-xs-3">
 			<small>
+				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
+				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
 				<a href="{{ url('/product_authorizations') }}">Product Authorizations</a><br>
 				<a href="{{ url('/store_authorizations') }}">Store Authorizations</a><br>
 				<a href="{{ url('/forms') }}">Forms</a><br>
-				<a href="{{ url('/form_properties') }}">Form Properties</a><br>
-				<a href="{{ url('/form_positions') }}">Form Positions</a><br>
+				<a href="{{ url('/form_systems') }}">Form systems</a><br>
 				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
 				<a href="{{ url('/tax_types') }}">Tax Types</a><br>
 				<a href="{{ url('/general_ledgers') }}">General Ledger Codes</a><br>

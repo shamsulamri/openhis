@@ -425,6 +425,17 @@ class LoanController extends Controller
 
 			$loan->loan_is_folder = $request->loan_is_folder ?: 0;
 
+			$hasLoan  = Loan::where('loan_code','=','request')
+					->where('product_code', '=', $request->item_code)
+					->where('ward_code', '=', $request->ward_code);
+
+			if ($hasLoan) {
+					Session::flash('warning', 'The item has already been requested and awaiting confirmation.');
+					return redirect('/loans/request/'.$id)
+							->withErrors($valid)
+							->withInput();
+			}
+
 			if ($valid->passes()) {
 					$loan = new Loan($request->all());
 					$loan->loan_id = $request->loan_id;

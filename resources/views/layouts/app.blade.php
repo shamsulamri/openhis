@@ -340,6 +340,15 @@ if ($_COOKIE['his-navbar']==1) {
 				toastr.success(toastr.options,'{{ Session::get('message') }}')
 		@endif
 
+		@if (Session::has('warning'))
+				toastr.options={"positionClass": "toast-top-full-width"};
+				toastr.warning(toastr.options,'{{ Session::get('warning') }}')
+		@endif
+
+		@if (Session::has('info'))
+				toastr.info(toastr.options,'{{ Session::get('info') }}')
+		@endif
+
 		function goBack() {
 				window.history.back();
 		}					

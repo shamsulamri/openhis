@@ -241,7 +241,7 @@ class StockController extends Controller
 
 	public function show(Request $request, $product_code, $store_code=null)
 	{
-			if ($store_code == null) {
+			if ($store_code == null or empty($store_code)) {
 					$store_code = $this->getDefaultStore($request);
 			} 
 
@@ -282,7 +282,10 @@ class StockController extends Controller
 			//$stores = $stores->lists('store_name', 'b.store_code')
 							//->prepend('','');
 							//
-			//return $stores;
+			if (empty($store_code)) {
+				return "Floor store for this ward has not been defined.";
+			}
+
 			return view('stocks.index', [
 					'stocks'=>$stocks,
 					'product'=>$product,
@@ -300,7 +303,7 @@ class StockController extends Controller
 				$default_store = Auth::user()->authorization->store_code;
 			}
 
-			if (Auth::user()->cannot('module-inventory')) {
+			if (Auth::user()->cannot('module-inventory') or empty($default_store)) {
 					$ward_code = $request->cookie('ward');
 					$ward = Ward::find($ward_code);
 					if ($ward) {

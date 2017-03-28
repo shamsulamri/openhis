@@ -71,8 +71,12 @@ class AppointmentService extends Model
 
 	public function setServiceCeaseAttribute($value)
 	{
-		if (DojoUtility::validateDate($value)==true) {
-			$this->attributes['service_cease'] = DojoUtility::dateWriteFormat($value);
+		if (strlen($value)) {
+				if (DojoUtility::validateDate($value)==true) {
+					$this->attributes['service_cease'] = DojoUtility::dateWriteFormat($value);
+				}
+		} else {
+				$this->attributes['service_cease']=null;
 		}
 	}
 

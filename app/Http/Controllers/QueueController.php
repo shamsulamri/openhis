@@ -95,12 +95,16 @@ class QueueController extends Controller
 	{
 			$queue = Queue::findOrFail($id);
 			$encounter = Encounter::findOrFail($queue->encounter_id);
-			$locations= Location::where('encounter_code',$encounter->encounter_code)->orderBy('location_name')->get();
+			$locations = Location::where('encounter_code',$encounter->encounter_code)->orderBy('location_name')->get();
+			$location = Location::where('encounter_code',$encounter->encounter_code)
+					->where('location_code','<>', $queue->location_code)
+					->orderBy('location_name')
+					->lists('location_name', 'location_code');
 
 			return view('queues.edit', [
 					'queue'=>$queue,
 					'patient'=> $encounter->patient,
-					'location'=>Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'location'=>$location,
 					'locations' => $locations,
 					'encounter' => $encounter,
 					]);

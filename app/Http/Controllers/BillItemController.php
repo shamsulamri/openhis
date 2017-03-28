@@ -71,13 +71,14 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$sql = sprintf("
-				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, product_sale_price
+				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, product_sale_price, profit_multiplier
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.tax_code 
 				left join bill_items as f on (f.encounter_id=a.encounter_id and f.product_code = a.product_code)
 				left join encounters as g on (g.encounter_id=a.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
+				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				where order_completed = 1 
 				and h.patient_id = %d
 				and bill_id is null 
@@ -93,9 +94,10 @@ class BillItemController extends Controller
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->order_quantity_supply;
-					$item->bill_unit_price = $order->product_sale_price;
-					$item->bill_total_pregst = $order->order_quantity_supply*$order->product_sale_price;
-					$item->bill_total = $order->order_quantity_supply*$order->product_sale_price;
+					$item->bill_unit_multiplier = $order->profit_multiplier;
+					$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
+					$item->bill_total = $order->order_quantity_supply*$item->bill_unit_price;
+					$item->bill_total_pregst = $order->order_quantity_supply*$item->bill_unit_price;
 					if ($order->tax_rate) {
 						$item->bill_total = $item->bill_total*(($order->tax_rate/100)+1);
 					}

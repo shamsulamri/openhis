@@ -7,19 +7,27 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('property_type')) has-error @endif'>
-        <label for='property_type' class='col-sm-3 control-label'>Type<span style='color:red;'> *</span></label>
+    <div class='form-group  @if ($errors->has('property_shortname')) has-error @endif'>
+        {{ Form::label('property_shortname', 'Shortname',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::text('property_type', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'20']) }}
-            @if ($errors->has('property_type')) <p class="help-block">{{ $errors->first('property_type') }}</p> @endif
+            {{ Form::text('property_shortname', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
+            @if ($errors->has('property_shortname')) <p class="help-block">{{ $errors->first('property_shortname') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('property_unit')) has-error @endif'>
-        {{ Form::label('property_unit', 'Unit',['class'=>'col-sm-3 control-label']) }}
+    <div class='form-group  @if ($errors->has('property_type')) has-error @endif'>
+        <label for='property_type' class='col-sm-3 control-label'>Type<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
-            {{ Form::text('property_unit', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'10']) }}
-            @if ($errors->has('property_unit')) <p class="help-block">{{ $errors->first('property_unit') }}</p> @endif
+			{{ Form::select('property_type', $property_types,null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('property_type')) <p class="help-block">{{ $errors->first('unit_code') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
+        {{ Form::label('unit_code', 'Unit',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+			{{ Form::select('unit_code', $uom,null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('unit_code')) <p class="help-block">{{ $errors->first('unit_code') }}</p> @endif
         </div>
     </div>
 
@@ -55,21 +63,13 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('property_shortname')) has-error @endif'>
-        {{ Form::label('property_shortname', 'Shortname',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('property_shortname', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
-            @if ($errors->has('property_shortname')) <p class="help-block">{{ $errors->first('property_shortname') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('property_system')) has-error @endif'>
-        {{ Form::label('property_system', 'Property System',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('property_system', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
-            @if ($errors->has('property_system')) <p class="help-block">{{ $errors->first('property_system') }}</p> @endif
-        </div>
-    </div>
+	<div class='form-group  @if ($errors->has('system_code')) has-error @endif'>
+		{{ Form::label('Property System', 'Property System',['class'=>'col-sm-2 control-label']) }}
+		<div class='col-sm-4'>
+			{{ Form::select('system_code', $form_system,null, ['class'=>'form-control','maxlength'=>'10']) }}
+			@if ($errors->has('system_code')) <p class="help-block">{{ $errors->first('system_code') }}</p> @endif
+		</div>
+	</div>
 
     <div class='form-group  @if ($errors->has('property_multiline')) has-error @endif'>
         {{ Form::label('property_multiline', 'Multiline',['class'=>'col-sm-3 control-label']) }}

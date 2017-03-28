@@ -136,6 +136,7 @@
 
 
 	<!-- Purchase -->
+	@can('product_purchase_function')
 	<hr>
 	<div class="row">
 			<div class="col-xs-6">
@@ -191,7 +192,9 @@
 					</div>
 			</div>
 	</div>
+	@endcan
 
+	@can('product_sale_function')
 	<!-- Sale -->
 	<hr>
 	<div class="row">
@@ -247,6 +250,7 @@
 					</div>
 			</div>
 	</div>
+	@endcan
 
 	<div class="row">
 			<div class="col-xs-6">

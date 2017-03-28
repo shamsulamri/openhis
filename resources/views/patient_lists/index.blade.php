@@ -3,7 +3,6 @@
 @section('content')
 <h1>Patient List</h1>
 <br>
-
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
 				<li class="active">

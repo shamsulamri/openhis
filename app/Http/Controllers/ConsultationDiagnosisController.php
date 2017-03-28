@@ -36,7 +36,7 @@ class ConsultationDiagnosisController extends Controller
 
 
 			if ($consultation_diagnoses->count()==0) {
-					return $this->create();
+					return $this->create($consultation_diagnoses);
 			} else {
 					return view('consultation_diagnoses.index', [
 							'consultation_diagnoses'=>$consultation_diagnoses,
@@ -53,7 +53,15 @@ class ConsultationDiagnosisController extends Controller
 			$consultation_diagnosis = new ConsultationDiagnosis();
 			$consultation_diagnosis->consultation_id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
-			
+
+			$diagnoses = DB::table('consultation_diagnoses as a')
+					->select('id', 'a.created_at', 'diagnosis_clinical','diagnosis_type','diagnosis_is_principal')
+					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
+					->where('encounter_id','=',$consultation->encounter_id);
+
+			if ($diagnoses->count()==0) {
+					$consultation_diagnosis->diagnosis_is_principal=1;
+			}
 			return view('consultation_diagnoses.create', [
 					'consultation_diagnosis' => $consultation_diagnosis,
 					'diagnosis_type' => DiagnosisType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),

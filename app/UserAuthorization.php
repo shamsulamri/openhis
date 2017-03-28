@@ -22,6 +22,8 @@ class UserAuthorization extends Model
 				'module_medical_record',
 				'patient_list',
 				'product_list',
+				'product_purchase_function',
+				'product_sale_function',
 				'loan_function',
 				'store_code',
 				'appointment_function',

@@ -18,6 +18,7 @@ class BillItem extends Model
 				'bill_discount',
 				'bill_quantity',
 				'bill_unit_price',
+				'bill_unit_multiplier',
 				'bill_total',
 				'bill_total_pregst',
 				'bill_exempted'];
