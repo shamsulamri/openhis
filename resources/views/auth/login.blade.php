@@ -2,7 +2,7 @@
 
 @section('content')
 	<div align='center'>
-		<h1 class="logo-name">MSUMC</h1>
+		<h1 class="logo-name">HMS</h1>
 	</div>
 
     <div class="middle-box text-center loginscreen animated fadeInDown">

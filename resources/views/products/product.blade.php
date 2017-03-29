@@ -7,6 +7,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('product_name_other')) has-error @endif'>
+        <label for='product_name_other' class='col-sm-2 control-label'>Other</label>
+        <div class='col-sm-10'>
+            {{ Form::text('product_name_other', null, ['id'=>'product_name_other','class'=>'form-control','placeholder'=>'Long, generic or other name for the product
+','maxlength'=>'200']) }}
+            @if ($errors->has('product_name_other')) <p class="help-block">{{ $errors->first('product_name_other') }}</p> @endif
+        </div>
+    </div>
 
 	<div class="row">
 			<div class="col-xs-6">

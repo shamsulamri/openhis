@@ -23,7 +23,7 @@
 					<div class='form-group  @if ($errors->has('drug_dosage')) has-error @endif'>
 						{{ Form::label('drug_dosage', 'Dosage',['class'=>'col-md-6 control-label']) }}
 						<div class='col-md-6'>
-							{{ Form::text('drug_dosage', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							{{ Form::text('drug_dosage', null, ['id'=>'dosage','class'=>'form-control','placeholder'=>'','onchange'=>'countTotalUnit()',]) }}
 							@if ($errors->has('drug_dosage')) <p class="help-block">{{ $errors->first('drug_dosage') }}</p> @endif
 						</div>
 					</div>
@@ -49,7 +49,7 @@
     <div class='form-group  @if ($errors->has('frequency_code')) has-error @endif'>
         {{ Form::label('frequency_code', 'Frequency',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::select('frequency_code', $frequency,null, ['class'=>'form-control','maxlength'=>'20']) }}
+			{{ Form::select('frequency_code', $frequency,null, ['id'=>'frequency','class'=>'form-control','maxlength'=>'20','onchange'=>'countTotalUnit()']) }}
             @if ($errors->has('frequency_code')) <p class="help-block">{{ $errors->first('frequency_code') }}</p> @endif
         </div>
     </div>
@@ -59,7 +59,7 @@
 					<div class='form-group  @if ($errors->has('drug_duration')) has-error @endif'>
 						{{ Form::label('drug_duration', 'Period',['class'=>'col-md-6 control-label']) }}
 						<div class='col-md-6'>
-							{{ Form::text('drug_duration', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							{{ Form::text('drug_duration', null, ['id'=>'duration','class'=>'form-control','placeholder'=>'','onchange'=>'countTotalUnit()',]) }}
 							@if ($errors->has('drug_duration')) <p class="help-block">{{ $errors->first('drug_duration') }}</p> @endif
 						</div>
 					</div>
@@ -67,7 +67,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('period_code')) has-error @endif'>
 						<div class='col-md-12'>
-							{{ Form::select('period_code', $period,null, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::select('period_code', $period,null, ['id'=>'period', 'class'=>'form-control','maxlength'=>'10','onchange'=>'countTotalUnit()']) }}
 							@if ($errors->has('period_code')) <p class="help-block">{{ $errors->first('period_code') }}</p> @endif
 						</div>
 					</div>
@@ -77,7 +77,7 @@
     <div class='form-group  @if ($errors->has('drug_total_unit')) has-error @endif'>
         {{ Form::label('drug_total_unit', 'Total Unit',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::text('drug_total_unit', null, ['class'=>'form-control','placeholder'=>'',]) }}
+			{{ Form::text('drug_total_unit', null, ['id'=>'total','class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('drug_total_unit')) <p class="help-block">{{ $errors->first('drug_total_unit') }}</p> @endif
         </div>
     </div>
@@ -136,6 +136,27 @@
                  }
              });
         });
+
+	function getPeriodValue(periodCode) {
+		if (periodCode=='day') return 1;
+		if (periodCode=='week') return 7;
+		if (periodCode=='month') return 30;
+	}
+
+	function getFrequencyValue(frequencyCode) {
+			@foreach($frequencyValues as $f)
+					if (frequencyCode=='{{ $f->frequency_code }}') return {{ $f->frequency_value }};
+			@endforeach
+	}
+
+	function countTotalUnit() {
+			dosage = document.getElementById('dosage').value;
+			frequency = getFrequencyValue(document.getElementById('frequency').value) 
+			period = getPeriodValue(document.getElementById('period').value) 
+			duration = document.getElementById('duration').value;
+			total = frequency*duration*period*dosage;
+			document.getElementById('total').value=total;
+	}
 
     </script>
 

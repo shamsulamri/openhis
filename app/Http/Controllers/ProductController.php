@@ -321,7 +321,9 @@ class ProductController extends Controller
 								
 			}
 
-			$products = $products->where('product_name','like','%'.$request->search.'%');
+			$products = $products->where('product_name','like','%'.$request->search.'%')
+								->orWhere('product_name_other','like','%'.$request->search.'%');
+
 
 			/** Product Authorization **/
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);

@@ -72,8 +72,8 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $products->appends(['search'=>$search])->render() }}
+@if (isset($search) | isset($category_code)) 
+	{{ $products->appends(['search'=>$search,'category_code'=>$category_code])->render() }}
 	@else
 	{{ $products->render() }}
 @endif

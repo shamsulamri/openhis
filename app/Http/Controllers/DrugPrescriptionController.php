@@ -48,6 +48,7 @@ class DrugPrescriptionController extends Controller
 					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
 					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					'frequencyValues' => Frequency::all(),
 					]);
 	}
 
@@ -88,6 +89,7 @@ class DrugPrescriptionController extends Controller
 					'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
 					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
 					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
+					'frequencyValues' => Frequency::all(),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'product' => $product,
 					]);
