@@ -16,13 +16,16 @@ use App\FormValue;
 use App\Encounter;
 use App\EncounterHelper;
 use App\Patient;
+use App\FormHelper;
+use App\Consultation;
 
 class FormValueController extends Controller
 {
+	public $paginateValue=10;
 
 	public function create($form_code, $patient_id)
 	{
-			
+			$consultation = Consultation::find(Session::get('consultation_id'));
 			$properties = FormPosition::where('form_code', '=', $form_code)
 					->orderBy('property_position')
 					->get();
@@ -37,6 +40,9 @@ class FormValueController extends Controller
 					'json'=>null,
 					'value_id'=>null,
 					'patient'=>$patient,
+					'admission'=>EncounterHelper::getCurrentAdmission($encounter_id),
+					'consultation'=>$consultation,
+					'is_create'=>True,
 			]);
 	}
 
@@ -66,6 +72,11 @@ class FormValueController extends Controller
 
 			$form_value->form_value = $json;
 			$form_value->patient_id = $encounter->patient_id;
+
+			$consultation_id = Session::get('consultation_id');
+			if ($consultation_id) {
+				$form_value->consultation_id = $consultation_id;
+			}
 			$form_value->save();
 
 			Session::flash('message', 'Record successfully created.');
@@ -74,6 +85,7 @@ class FormValueController extends Controller
 
 	public function edit($id) 
 	{
+			$consultation = Consultation::find(Session::get('consultation_id'));
 			$form_value = FormValue::find($id);
 			$json = json_decode($form_value->form_value,true);
 
@@ -84,6 +96,7 @@ class FormValueController extends Controller
 
 			$encounter = Encounter::find($form_value->encounter_id);
 			Log::info($json);
+
 			return view('form_values.create', [
 					'properties' => $properties,
 					'form' => $form,
@@ -91,13 +104,17 @@ class FormValueController extends Controller
 					'value_id' => $form_value->value_id,
 					'json' => $json,
 					'patient'=>$encounter->patient,
+					'admission'=>null,
+					'consultation'=>$consultation,
 			]);
 
 	}
 
 	public function show($form_code, $encounter_id)
 	{
+			$consultation = Consultation::find(Session::get('consultation_id'));
 			$encounter = Encounter::find($encounter_id);
+			$admission = EncounterHelper::getCurrentAdmission($encounter_id);
 			$json_values = FormValue::where('encounter_id', '=', $encounter_id)
 					->where('form_code','=',$form_code)
 					->orderBy('value_id', 'desc')
@@ -106,6 +123,7 @@ class FormValueController extends Controller
 
 			$json_values = $json_values->sortBy('value_id');
 			$properties = FormPosition::where('form_code', '=', $form_code)
+					->where('property_code','<>','header')
 					->orderBy('property_position')
 					->get();
 			$form = Form::find($form_code);
@@ -115,6 +133,55 @@ class FormValueController extends Controller
 					'properties' => $properties,
 					'form' => $form,
 					'patient'=>$encounter->patient,
+					'admission'=>$admission,
+					'encounter_id'=>$encounter_id,
+					'consultation'=>$consultation,
+			]);
+	}
+
+	public function results(Request $request, $encounter_id)
+	{
+			$consultation = Consultation::find(Session::get('consultation_id'));
+			$encounter = Encounter::find($encounter_id);
+			$admission = EncounterHelper::getCurrentAdmission($encounter_id);
+
+			$sql = sprintf("
+				select a.form_code, form_name, result_count
+				from forms a
+				left join (select form_code, count(form_code) as result_count from form_values where encounter_id=%d group by form_code) b on (b.form_code = a.form_code)
+				where result_count>0
+				order by result_count desc, form_name
+				", $encounter_id);
+
+			$results = DB::select($sql);
+
+			$form_codes = FormValue::distinct()
+								->where('encounter_id','=', $encounter_id)
+								->get(['form_code']);
+
+			if (empty($request->search)) {
+					$forms = DB::table('forms')
+							->orderBy('form_name')
+							->whereNotIn('form_code', $form_codes->pluck('form_code'))
+							->paginate($this->paginateValue);
+			} else {
+					$forms = DB::table('forms')
+							->where('form_name','like','%'.$request->search.'%')
+							->orWhere('form_code', 'like','%'.$request->search.'%')
+							->orderBy('form_name')
+							->whereNotIn('form_code', $form_codes->pluck('form_code'))
+							->paginate($this->paginateValue);
+			}
+
+			return view('form_values.result', [
+					'admission'=>$admission,
+					'patient'=>$encounter->patient,
+					'forms'=>$forms,
+					'results'=>$results,
+					'formHelper'=>new FormHelper(),
+					'encounter_id'=>$encounter_id,
+					'search'=>$request->search,
+					'consultation'=>$consultation,
 			]);
 	}
 

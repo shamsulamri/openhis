@@ -81,7 +81,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-default" href="/form_properties" role="button">Cancel</a>
+            <a class="btn btn-default" href="/form_properties?form_code={{ $form_code }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

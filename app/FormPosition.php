@@ -13,6 +13,7 @@ class FormPosition extends Model
 	protected $fillable = [
 				'form_code',
 				'property_code',
+				'property_label',
 				'property_position'];
 	
 

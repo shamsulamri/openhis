@@ -66,12 +66,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/tax_type/search', 'TaxTypeController@search');
 		Route::get('/tax_types/delete/{id}', 'TaxTypeController@delete');
 		
+		Route::get('/form/results/{encounter_id}', 'FormValueController@results');
 		Route::get('/form/entry/{id}', 'FormValueController@edit');
 		Route::get('/form/delete/{id}', 'FormValueController@delete');
 		Route::delete('/form/{id}', 'FormValueController@destroy');
 		Route::get('/form/{form_code}/{encounter_id}', 'FormValueController@show');
 		Route::get('/form/{form_code}/{patient_id}/create', 'FormValueController@create');
 		Route::post('/form/entry', 'FormValueController@store');
+		Route::post('/form/search_form/{encounter_id}', 'FormValueController@results');
 
 		Route::get('/futures', 'FutureController@index');
 		Route::post('/future/search', 'FutureController@search');

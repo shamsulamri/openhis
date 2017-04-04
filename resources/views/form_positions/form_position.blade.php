@@ -14,6 +14,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('property_label')) has-error @endif'>
+        {{ Form::label('property_label', 'Label',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('property_label', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('property_label')) <p class="help-block">{{ $errors->first('property_label') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/form_positions?form_code={{ $form_position->form_code }}" role="button">Cancel</a>

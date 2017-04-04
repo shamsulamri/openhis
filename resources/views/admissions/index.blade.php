@@ -127,9 +127,6 @@
 			@can('module-ward')
 			@if ($setWard == $ward->ward_code)
 			<td align='right'>
-						@can('system-administrator')
-							<a class='btn btn-danger ' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
-						@endcan
 						@if (is_null($admission->arrival_id) && empty($admission->discharge_id))
 							<a class='btn btn-default btn-lg' href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}' title='Log arrival'><span class='fa fa-sign-in' aria-hidden='true'></span>
 </a>
@@ -142,9 +139,12 @@
 		</a>
 								<a class='btn btn-default btn-lg' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'><span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
 		</a>
-								<a class='btn btn-default btn-lg' title='Forms' href='{{ URL::to('admissions/'. $admission->admission_id) }}'><span class='fa fa-table' aria-hidden='true'></span></a>
+								<a class='btn btn-default btn-lg' title='Forms' href='{{ URL::to('form/results/'. $admission->encounter_id) }}'><span class='fa fa-table' aria-hidden='true'></span></a>
 								@endif
 						@endif
+						@can('system-administrator')
+							<a class='btn btn-danger ' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
+						@endcan
 			</td>
 			@endif
 			@endcan

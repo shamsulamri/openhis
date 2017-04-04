@@ -25,6 +25,8 @@ use App\WardHelper;
 use App\EncounterHelper;
 use App\DojoUtility;
 use App\Form;
+use App\FormValue;
+use App\FormHelper;
 
 class AdmissionController extends Controller
 {
@@ -156,28 +158,77 @@ class AdmissionController extends Controller
 			}
 	}
 
+	/**
 	public function show($id)
 	{
 			$admission = Admission::findOrFail($id);
-			//$forms = Form::orderBy('form_name')->get();
-
 
 			$sql = sprintf("
-				select a.form_code, form_name, result_count
+				select a.form_code, form_name, result_count, b.updated_at
 				from forms a
-				left join (select form_code, count(form_code) as result_count from form_values where encounter_id=%d group by form_code) b on (b.form_code = a.form_code)
+				left join (select form_code, count(form_code) as result_count, updated_at from form_values where encounter_id=%d group by form_code) b on (b.form_code = a.form_code)
+				where result_count>0
 				order by result_count desc, form_name
 				", $admission->encounter_id);
 
-			$forms = DB::select($sql);
-
 			Log::info($sql);
+			$results = DB::select($sql);
+
+			$form_codes = FormValue::distinct()
+								->where('encounter_id','=', $admission->encounter_id)
+								->get(['form_code']);
+
+
+			$forms = DB::table('forms')
+					->orderBy('form_name')
+					->whereNotIn('form_code', $form_codes->pluck('form_code'))
+					->paginate($this->paginateValue);
+
 			return view('admissions.view', [
 					'admission'=>$admission,
 					'patient'=>$admission->encounter->patient,
 					'forms'=>$forms,
+					'results'=>$results,
+					'formHelper'=>new FormHelper(),
 			]);
 	}
+
+	public function searchForm(Request $request)
+	{
+			$admission = Admission::findOrFail($request->admission_id);
+
+			$sql = sprintf("
+				select a.form_code, form_name, result_count, b.updated_at
+				from forms a
+				left join (select form_code, count(form_code) as result_count, updated_at from form_values where encounter_id=%d group by form_code) b on (b.form_code = a.form_code)
+				where result_count>0
+				order by result_count desc, form_name
+				", $admission->encounter_id);
+
+			Log::info($sql);
+			$results = DB::select($sql);
+
+			$form_codes = FormValue::distinct()
+								->where('encounter_id','=', $admission->encounter_id)
+								->get(['form_code']);
+
+
+			$forms = DB::table('forms')
+					->where('form_name','like','%'.$request->search.'%')
+					->orWhere('form_code', 'like','%'.$request->search.'%')
+					->orderBy('form_name')
+					->whereNotIn('form_code', $form_codes->pluck('form_code'))
+					->paginate($this->paginateValue);
+
+			return view('admissions.view', [
+					'admission'=>$admission,
+					'patient'=>$admission->encounter->patient,
+					'forms'=>$forms,
+					'results'=>$results,
+					'search'=>$request->search,
+			]);
+	}
+	**/
 
 	public function edit($id) 
 	{

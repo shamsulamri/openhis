@@ -197,6 +197,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 						<h4>&nbsp;</h4>
 						@if (!empty($consultation) && !empty($patient))
+							<li><a title='Forms' href='{{ URL::to('form/results',$consultation->encounter->encounter_id) }}'><i class='fa fa-table'></i><span class='nav-label'>Forms</span></a></li>
 							<li><a title='Medical Alerts' href="/medical_alerts"><i class="fa fa-exclamation-circle"></i><span class='nav-label'>Medical Alerts</span></a></li>
 							@if ($consultation->encounter->encounter_code=='inpatient')
 							<li><a title='Diet' href="/diet"><i class="fa fa-cutlery"></i><span class='nav-label'>Diet</a></li>

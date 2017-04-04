@@ -1,9 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+@if ($consultation)
+@include('consultations.panel')
+@else
 @include('patients.id')
+@endif
 <h1>
-{{ $form->form_name }}
+<a href='{{ URL::to('form/results',[$encounter_id]) }}'>Forms</a> / {{ $form->form_name }}
 <a href='/form/{{ $form->form_code }}/{{ $patient->patient_id }}/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <table class="table table-hover">

@@ -6,7 +6,7 @@
 iframe { border: 1px #e5e5e5 solid; }
 </style>
 				
-<h1><a href='{{ URL::to('forms') }}'>Form List</a> > {{ $form->form_name }}</h1>
+<h1>{{ $form->form_name }}</h1>
 <div class="row">
 	<div class="col-xs-6">
 		<h1>Property List</h1>
