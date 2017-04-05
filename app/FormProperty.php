@@ -48,4 +48,8 @@ class FormProperty extends Model
 	}
 
 	
+	public function unitMeasure()
+	{
+			return $this->belongsTo('App\UnitMeasure', 'unit_code');
+	}
 }

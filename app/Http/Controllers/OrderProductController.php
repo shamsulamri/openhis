@@ -154,6 +154,13 @@ class OrderProductController extends Controller
 					->where('product_name','like','%'.$request->search.'%')
 					->where('product_sold','1');
 					
+				$order_products = Product::orderBy('product_name')
+					->where('product_sold','1')
+					->where(function ($query) use ($request) {
+						$query->where('product_name','like','%'.$request->search.'%')
+							->orWhere('product_name_other','like','%'.$request->search.'%');
+					});
+
 				if (!empty($request->categories)) {
 					$order_products = $order_products->where('category_code',$request->categories);
 				}

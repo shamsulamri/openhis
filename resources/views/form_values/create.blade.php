@@ -34,7 +34,7 @@
 				@else
         <label for='{{ $property->property->property_code }}' class='col-sm-3 control-label'>{{ $property->property->property_name }}</label>
 				@endif
-        <div class='col-sm-9'>
+        <div class='col-sm-7'>
 				@if ($property->property->property_type == "text")
 					{{ Form::text($property->property->property_code, $value, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 				@endif
@@ -55,8 +55,11 @@
 						<input data-mask="99/99/9999" name="{{ $property->property->property_code }}" id="{{ $property->property->property_code }}" type="text" class="form-control" value="{{ $value }}">
 				@endif
         </div>
-	
-		<label class='control-label'>{{ $property->property->property_unit }}</label>
+        <div class='col-sm-2'>
+			@if ($property->property->unitMeasure)
+				<label class='control-label'>{{ $property->property->unitMeasure->unit_name }}</label>
+			@endif
+        </div>
     </div>
 @endforeach
 
