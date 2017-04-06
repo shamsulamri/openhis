@@ -55,7 +55,8 @@ class BillItemController extends Controller
 					$item->bill_quantity = $bed_los;
 					$item->bill_unit_price = $bed->product_sale_price;
 					$item->bill_total_pregst = $item->bill_unit_price*$item->bill_quantity;
-					$item->bill_total = $bed->product_sale_price*($bed->tax_rate/100);
+					$item->bill_total = $bed->product_sale_price*(($bed->tax_rate/100)+1);
+
 					try {
 							$item->save();
 					} catch (\Exception $e) {

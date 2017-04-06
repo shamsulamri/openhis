@@ -16,7 +16,7 @@
     </div>
 
 	<div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
-		{{ Form::label('Title', 'Title',['class'=>'col-sm-3 control-label']) }}
+		{{ Form::label('Type', 'Type',['class'=>'col-sm-3 control-label']) }}
 		<div class='col-sm-9'>
 			{{ Form::select('tax_type', $tax_types,null, ['class'=>'form-control','maxlength'=>'10']) }}
 			@if ($errors->has('type_code')) <p class="help-block">{{ $errors->first('type_code') }}</p> @endif

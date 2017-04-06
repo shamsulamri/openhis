@@ -83,6 +83,7 @@ class TaxCodeController extends Controller
 			} else {
 					return view('tax_codes.edit', [
 							'tax_code'=>$tax_code,
+							'tax_types' => TaxType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 				
 							])
 							->withErrors($valid);			

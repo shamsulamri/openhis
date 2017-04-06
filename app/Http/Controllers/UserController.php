@@ -98,6 +98,7 @@ class UserController extends Controller
 
 	public function updateProfile(Request $request) 
 	{
+			return "X";
 			$user = User::where('username','=',$request->username)->first();
 			$user->fill($request->input());
 
@@ -129,6 +130,8 @@ class UserController extends Controller
 					return view('users.edit', [
 							'user'=>$user,
 							'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
+							'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
+							'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}
