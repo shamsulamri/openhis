@@ -98,7 +98,6 @@ class UserController extends Controller
 
 	public function updateProfile(Request $request) 
 	{
-			return "X";
 			$user = User::where('username','=',$request->username)->first();
 			$user->fill($request->input());
 

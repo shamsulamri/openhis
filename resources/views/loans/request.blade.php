@@ -2,7 +2,7 @@
 @extends('layouts.app')
 
 @section('content')
-@if (!$is_folder)
+@if (!$loan->loan_is_folder)
 @include('products.id')
 @endif
 @if ($patient)

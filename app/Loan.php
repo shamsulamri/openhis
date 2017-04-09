@@ -69,7 +69,6 @@ class Loan extends Model
 	{
 		return DojoUtility::dateReadFormat($value);
 	}
-	**/
 
 	public function getLoanDateStart()
 	{
@@ -81,6 +80,7 @@ class Loan extends Model
 		return Carbon::createFromFormat('d/m/Y', $this->loan_date_end);
 	}
 
+	**/
 	public function setLoanDateEndAttribute($value)
 	{
 		if (empty($value)) {
@@ -108,6 +108,7 @@ class Loan extends Model
 		}
 	}
 
+	/**
 	public function getLoanClosureDatetimeAttribute($value)
 	{
 		return DojoUtility::dateTimeReadFormat($value);
@@ -117,6 +118,7 @@ class Loan extends Model
 	{
 		return Carbon::createFromFormat('d/m/Y H:i', $this->loan_closure_datetime);
 	}
+	**/
 
 	public function user()
 	{

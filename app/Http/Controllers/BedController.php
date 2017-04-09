@@ -86,12 +86,15 @@ class BedController extends Controller
 					$bed->bed_code = $request->bed_code;
 					$bed->status_code = '01';
 					$bed->save();
+
+					$class = WardClass::find($bed->class_code);
+
 					$product = new Product();
 					$product->product_code = $bed->bed_code;
 					$product->product_name = $bed->bed_name;
 					$product->category_code = "srv";
 					$product->product_sold = 1;
-					$product->product_sale_price = 99;
+					$product->product_sale_price = $class->class_price;
 					$product->order_form="1";
 					$product->save();
 					Session::flash('message', 'Record successfully created. Please update the product price information.');

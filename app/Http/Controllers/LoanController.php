@@ -63,10 +63,10 @@ class LoanController extends Controller
 							->orderBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
 
 					$loans = Loan::where('loan_code','<>','return')
-								->whereNotNull('loan_is_folder');
+								->where('loan_is_folder','=',1);
 			} else {
 					$loan_status = LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
-					$loans = Loan::whereNull('loan_is_folder')
+					$loans = Loan::where('loan_is_folder','=',0)
 								->where('loan_code','<>','return')
 								->where('loan_code','<>','exchanged');
 			}
@@ -178,7 +178,8 @@ class LoanController extends Controller
 					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'minYear' => Carbon::now()->year,
-					'today' =>date('d/m/Y', strtotime(Carbon::now())),
+					'today_date' =>date('d/m/Y', strtotime(Carbon::now())),
+					'today_time' =>date('H:i', strtotime(Carbon::now())),
 					'today_datetime' =>date('d/m/Y H:i', strtotime(Carbon::now())),
 					'locations' => QueueLocation::where('encounter_code','outpatient')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'information'=>$information,
@@ -266,10 +267,10 @@ class LoanController extends Controller
 							->orderBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
 
 					$loans = Loan::where('loan_code', '<>', 'exchanged')
-								->whereNotNull('loan_is_folder');
+								->where('loan_is_folder','=',1);
 			} else {
 					$loan_status = LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
-					$loans = Loan::whereNull('loan_is_folder');
+					$loans = Loan::where('loan_is_folder','=',0);
 			}
 
 			if (!empty($request->search)) {
@@ -293,8 +294,9 @@ class LoanController extends Controller
 					$search_is_empty=False;
 			}
 			$loans = $loans->orderBy('loan_code')
-							->orderBy('created_at', 'desc')
-							->paginate($this->paginateValue);
+							->orderBy('created_at', 'desc');
+
+			$loans = $loans->paginate($this->paginateValue);
 
 
 			return view('loans.index', [
@@ -426,10 +428,10 @@ class LoanController extends Controller
 			$loan->loan_is_folder = $request->loan_is_folder ?: 0;
 
 			$hasLoan  = Loan::where('loan_code','=','request')
-					->where('product_code', '=', $request->item_code)
+					->where('item_code', '=', $request->item_code)
 					->where('ward_code', '=', $request->ward_code);
 
-			if ($hasLoan) {
+			if (empty($hasLoan)) {
 					Session::flash('warning', 'The item has already been requested and awaiting confirmation.');
 					return redirect('/loans/request/'.$id)
 							->withErrors($valid)
@@ -498,7 +500,6 @@ class LoanController extends Controller
 			$loan->loan_is_folder = $request->loan_is_folder ?: 0;
 
 			$valid = $loan->validate($request->all(), $request->_method);	
-
 			if ($valid->passes()) {
 					$loan->save();
 					Session::flash('message', 'Record successfully updated.');

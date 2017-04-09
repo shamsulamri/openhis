@@ -70,10 +70,10 @@
 					@endif
 					@if ($loan->loan_code=='lend')
 							@if (!empty($loan->loan_date_start))
-							{{ (DojoUtility::dateLongFormat($loan->getLoanDateStart() )) }}
+								{{ DojoUtility::dateLongFormat($loan->loan_date_start)  }}
 							@endif
 							@if (!empty($loan->loan_date_end))
-							- {{ (DojoUtility::dateLongFormat($loan->getLoanDateEnd() )) }}
+							-  {{ DojoUtility::dateLongFormat($loan->loan_date_end)  }}
 							@endif
 					@endif
 			</td>
