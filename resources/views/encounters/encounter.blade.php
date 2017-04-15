@@ -108,6 +108,7 @@
         </div>
     </div>
 
+	<!--
     <div class='form-group  @if ($errors->has('user_id')) has-error @endif'>
         <label for='user_id' class='col-sm-3 control-label'>Consultant<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -116,14 +117,23 @@
 			<small>Not required for death cases</small>
         </div>
     </div>
+	-->
 
+    <div class='form-group  @if ($errors->has('team_code')) has-error @endif'>
+        <label for='team_code' class='col-sm-3 control-label'>Team<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+            {{ Form::select('team_code', $teams,null, ['id'=>'team_code','class'=>'form-control']) }}
+            @if ($errors->has('team_code')) <p class="help-block">{{ $errors->first('team_code') }}</p> @endif
+			<small>Not required for death cases</small>
+        </div>
+    </div>
 </div>
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
 
 <script>
 	document.getElementById('admission_code').disabled = true;
 	document.getElementById('referral_code').disabled = true;
-	document.getElementById('user_id').disabled = true;
+	document.getElementById('team_code').disabled = true;
 	document.getElementById('triage').disabled = true;
 	document.getElementById('sponsor_code').disabled = true;
 	document.getElementById('sponsor_id').disabled = true;
@@ -162,7 +172,7 @@
 			document.getElementById('sponsor_id').disabled = value;
 			document.getElementById('admission_code').disabled = value;
 			document.getElementById('referral_code').disabled = value;
-			document.getElementById('user_id').disabled = value;
+			document.getElementById('team_code').disabled = value;
 			document.getElementById('triage').disabled = value;
 			document.getElementById('sponsor_code').disabled = value;
 			document.getElementById('sponsor_id').disabled = value;
@@ -185,7 +195,7 @@
 			document.getElementById('bed_code').value = '';
 			document.getElementById('admission_code').value = '';
 			document.getElementById('referral_code').value = '';
-			document.getElementById('user_id').value = '';
+			document.getElementById('team_code').value = '';
 
 			disableInputs(true);
 			triage = document.getElementById('triage');
@@ -217,7 +227,7 @@
 			if (encounterCode=='daycare') {
 					show(document.querySelectorAll('.target'));
 					document.getElementById('referral_code').disabled = false;
-					document.getElementById('user_id').disabled = false;
+					document.getElementById('team_code').disabled = false;
 					document.getElementById('ward_code').value = 'daycare';
 					document.getElementById('bed_code').disabled = false;
 					document.getElementById('admission_code').value = 'scheduled';
@@ -233,7 +243,7 @@
 					show(document.querySelectorAll('.target'));
 					document.getElementById('admission_code').disabled = false;
 					document.getElementById('referral_code').disabled = false;
-					document.getElementById('user_id').disabled = false;
+					document.getElementById('team_code').disabled = false;
 					document.getElementById('ward_code').disabled = false;
 					document.getElementById('bed_code').disabled = false;
 					wardChanged()

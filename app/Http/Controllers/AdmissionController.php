@@ -27,10 +27,25 @@ use App\DojoUtility;
 use App\Form;
 use App\FormValue;
 use App\FormHelper;
+use App\Team;
 
 class AdmissionController extends Controller
 {
 	public $paginateValue=10;
+
+	public $selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','a.encounter_id','a.user_id','e.discharge_id', 
+					'f.discharge_id as ward_discharge',
+					'a.created_at',
+					'arrival_id',	
+					'patient_mrn',
+					'ward_name',
+					'room_name',
+					'a.user_id',
+					'k.name',
+					'diet_name',
+					'class_name',
+					'n.team_name',
+			];
 
 
 	public function __construct()
@@ -54,21 +69,8 @@ class AdmissionController extends Controller
 					$ward = Ward::where('ward_code', $ward_code)->first();
 			} 
 
-			$selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','a.encounter_id','a.user_id','e.discharge_id', 
-					'f.discharge_id as ward_discharge',
-					'a.created_at',
-					'arrival_id',	
-					'patient_mrn',
-					'ward_name',
-					'room_name',
-					'a.user_id',
-					'k.name',
-					'diet_name',
-					'class_name',
-			];
-
 			$admissions = DB::table('admissions as a')
-					->select($selectFields)
+					->select($this->selectFields)
 					->leftJoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'a.encounter_id')
@@ -80,6 +82,7 @@ class AdmissionController extends Controller
 					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
 					->leftJoin('diets as l', 'l.diet_code', '=', 'a.diet_code')
 					->leftJoin('diet_classes as m', 'm.class_code', '=', 'a.class_code')
+					->leftJoin('teams as n', 'n.team_code', '=', 'a.team_code')
 					->where('h.ward_code','like', '%'.$ward_code.'%')
 					->whereNull('f.encounter_id');
 					
@@ -252,6 +255,7 @@ class AdmissionController extends Controller
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
 					'admission_type' => AdmissionType::all()->sortBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 					'encounter' => $encounter,
+					'teams' => Team::all()->sortBy('team_name')->lists('team_name', 'team_code')->prepend('',''),
 					]);
 	}
 
@@ -284,19 +288,9 @@ class AdmissionController extends Controller
 								return redirect('/admission_beds?admission_id='.$admission->admission_id);
 							}
 					} else {
-							return view('admissions.edit', [
-									'admission'=>$admission,
-									'patient' => $admission->encounter->patient,
-									'bed' => Bed::all()->sortBy('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
-									'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
-									'texture' => DietTexture::all()->sortBy('texture_name')->lists('texture_name', 'texture_code')->prepend('',''),
-									'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
-									'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
-									'admission_type' => AdmissionType::all()->sortBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
-									'consultant' => User::orderBy('name')->lists('name', 'id')->prepend('',''),
-									'encounter' => $encounter,
-									])
-									->withErrors($valid);			
+							return redirect('/admissions/'.$admission->admission_id.'/edit')
+									->withErrors($valid)
+									->withInput();
 					}
 			}
 	}
@@ -338,6 +332,7 @@ class AdmissionController extends Controller
 			$ward = $request->ward;
 			$setWard = $request->cookie('ward');
 
+			/**
 			$selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','d.consultation_id','a.encounter_id','a.user_id','e.discharge_id', 
 					'f.discharge_id as ward_discharge',
 					'a.created_at',
@@ -348,8 +343,9 @@ class AdmissionController extends Controller
 					'a.user_id',
 					'k.name',
 			];
+			**/
 			$admissions = DB::table('admissions as a')
-					->select($selectFields)
+					->select($this->selectFields)
 					->leftJoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->leftJoin('consultations as d', 'd.encounter_id','=', 'a.encounter_id')
@@ -359,12 +355,16 @@ class AdmissionController extends Controller
 					->leftJoin('beds as h', 'h.bed_code', '=', 'a.bed_code')
 					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
 					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
-					->leftJoin('users as k', 'k.id', '=', 'a.user_id');
+					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
+					->leftJoin('diets as l', 'l.diet_code', '=', 'a.diet_code')
+					->leftJoin('diet_classes as m', 'm.class_code', '=', 'a.class_code')
+					->leftJoin('teams as n', 'n.team_code', '=', 'a.team_code');
 
 			if (!empty($request->search)) {
-					$admissions = $admissions
-									->where('patient_name','like', '%'.$request->search.'%')
+					$admissions = $admissions->where(function ($query) use ($request) {
+							$query->where('patient_name','like', '%'.$request->search.'%')
 									->orWhere('patient_mrn','like', '%'.$request->search.'%');
+					});
 			}
 					
 			if (!empty($request->ward)) {

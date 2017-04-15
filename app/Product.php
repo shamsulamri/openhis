@@ -8,6 +8,7 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 use Log;
+use App\GeneralLedger;
 
 class Product extends Model
 {
@@ -35,6 +36,7 @@ class Product extends Model
 				'location_code',
 				'form_code',
 				'gl_code',
+				'status_code',
 				'product_average_cost',
 				'product_conversion_unit',
 				'product_conversion_code',
@@ -93,14 +95,81 @@ class Product extends Model
 			return $this->belongsTo('App\UnitMeasure', 'unit_code');
 	}
 
+	public function orderForm()
+	{
+			return $this->belongsTo('App\OrderForm', 'order_form');
+	}
+
+	public function resultForm()
+	{
+			return $this->belongsTo('App\Form', 'form_code');
+	}
+
 	public function tax()
 	{
 			return $this->belongsTo('App\TaxCode', 'tax_code');
 	}
 
+	public function location()
+	{
+			return $this->belongsTo('App\QueueLocation', 'location_code');
+	}
+
+	public function status()
+	{
+			return $this->belongsTo('App\ProductStatus', 'status_code');
+	}
+
+	public function getGLName()
+	{
+			if ($this->attributes['gl_code']) {
+				return GeneralLedger::find($this->attributes['gl_code'])->gl_name;
+			} else {
+				return "";
+			}
+
+	}
+
+	public function getOrderFormName()
+	{
+			if ($this->attributes['order_form']) {
+				return OrderForm::find($this->attributes['order_form'])->form_name;
+			} else {
+				return "";
+			}
+
+	}
+
+	public function getFormName()
+	{
+			if ($this->attributes['form_code']) {
+				return Form::find($this->attributes['form_code'])->form_name;
+			} else {
+				return "-";
+			}
+	}
+
+	public function getLocationName()
+	{
+			if ($this->attributes['location_code']) {
+				return QueueLocation::find($this->attributes['location_code'])->location_name;
+			} else {
+				return "-";
+			}
+	}
+
 	public function getProductOnHandAttribute($value) 
 	{
 			return floatval($value);
+	}
+
+	public function getProductSku() 
+	{
+			if ($this->attributes['product_sku']) {
+					return $this->attributes['product_sku'];
+			} else {
+					return "";
+			}
 	}
 
 	public function getUnitShortname()

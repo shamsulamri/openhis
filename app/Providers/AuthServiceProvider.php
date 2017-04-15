@@ -81,12 +81,16 @@ class AuthServiceProvider extends ServiceProvider
 				return $user->authorization->loan_function;
 		});
 
-		$gate->define('product_purchase_function', function ($user) {
-				return $user->authorization->product_purchase_function;
+		$gate->define('product_information_edit', function ($user) {
+				return $user->authorization->product_information_edit;
 		});
 
-		$gate->define('product_sale_function', function ($user) {
-				return $user->authorization->product_sale_function;
+		$gate->define('product_purchase_edit', function ($user) {
+				return $user->authorization->product_purchase_edit;
+		});
+
+		$gate->define('product_sale_edit', function ($user) {
+				return $user->authorization->product_sale_edit;
 		});
 
 		$gate->define('appointment_function', function ($user) {

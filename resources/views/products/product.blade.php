@@ -1,4 +1,6 @@
 
+	<!-- Information -->
+	@can('product_information_edit')
     <div class='form-group  @if ($errors->has('product_name')) has-error @endif'>
         <label for='product_name' class='col-sm-2 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
@@ -40,7 +42,7 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('order_form')) has-error @endif'>
-						<label for='order_form' class='col-sm-4 control-label'>Order Form<span style='color:red;'> *</span></label>
+						<label for='order_form' class='col-sm-4 control-label'>Order Form</label>
 						<div class='col-sm-8'>
 							{{ Form::select('order_form', $order_form,null, ['id'=>'order_form', 'class'=>'form-control','maxlength'=>'10']) }}
 							@if ($errors->has('order_form')) <p class="help-block">{{ $errors->first('order_form') }}</p> @endif
@@ -141,10 +143,12 @@
 					</div>
 			</div>
 	</div>
-
+	@else
+		Put view here
+	@endcan
 
 	<!-- Purchase -->
-	@can('product_purchase_function')
+	@can('product_purchase_edit')
 	<hr>
 	<div class="row">
 			<div class="col-xs-6">
@@ -202,7 +206,7 @@
 	</div>
 	@endcan
 
-	@can('product_sale_function')
+	@can('product_sale_edit')
 	<!-- Sale -->
 	<hr>
 	<div class="row">
@@ -264,8 +268,10 @@
 			<div class="col-xs-6">
 					<div class='form-group'>
 						<div class="col-sm-offset-4 col-sm-8">
-							<a class="btn btn-default" href="javascript:window.history.back()" role="button">Cancel</a>
+							<a class="btn btn-default" href="{{ url('/products') }}" role="button">Cancel</a>
+							@can('product_information_edit')
 							{{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+							@endcan
 						</div>
 					</div>
 			</div>

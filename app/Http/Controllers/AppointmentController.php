@@ -43,7 +43,7 @@ class AppointmentController extends Controller
 					'services' => Service::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'service' => Auth::user()->service_id,
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
-					'date_start'=>null,
+					'date_start'=>DojoUtility::today(),
 			]);
 	}
 
@@ -181,15 +181,24 @@ class AppointmentController extends Controller
 	
 	public function search(Request $request)
 	{
-			$date_start = DojoUtility::dateTimeWriteFormat($request->date_start.' 00:00');
+			$date_start = null;
+			if (!empty($request->date_start)) {
+					$date_start = DojoUtility::dateTimeWriteFormat($request->date_start.' 00:00');
+			} else {
+					$date_start = DojoUtility::dateTimeWriteFormat(DojoUtility::today().' 00:00');
+			}
 
 			$appointments = Appointment::orderBy('appointment_id')
 					->leftJoin('patients as b', 'appointments.patient_id', '=', 'b.patient_id');
 
 
 			if (!empty($request->search)) {
-				$appointments=$appointments->where('patient_name', 'like','%'.$request->search.'%');
+					$appointments = $appointments->where(function ($query) use ($request) {
+							$query->where('patient_name','like', '%'.$request->search.'%')
+									->orWhere('patient_mrn','like', '%'.$request->search.'%');
+					});
 			}
+
 			if (!empty($request->services)) {
 				$appointments = $appointments->where('service_id', '=', $request->services);
 			}
@@ -202,9 +211,6 @@ class AppointmentController extends Controller
 				$appointments = $appointments->where('appointment_datetime', '>=', Carbon::today());
 			}
 
-			Log::info($appointments->toSql());
-			Log::info($date_start);
-			Log::info($date_offset);
 			$appointments = $appointments->orderBy('appointment_id')
 					->paginate($this->paginateValue);
 

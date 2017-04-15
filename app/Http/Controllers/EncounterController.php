@@ -26,6 +26,7 @@ use App\Referral;
 use App\AdmissionType;
 use App\Queue;
 use App\BedMovement;
+use App\Team;
 
 		
 class EncounterController extends Controller
@@ -84,6 +85,7 @@ class EncounterController extends Controller
 					'patientOption' => 'encounter',
 					'locations' => $locations,
 					'consultants' => $consultants,
+					'teams' => Team::all()->sortBy('team_name')->lists('team_name', 'team_code')->prepend('',''),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'beds' => Bed::where('status_code','=','01')->get(),
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
@@ -152,15 +154,17 @@ class EncounterController extends Controller
 							$bed = Bed::find($request->bed_code);
 							$bed->status_code = '03';
 							$bed->save();
+
 							$admission = new Admission();
 							$admission->bed_code = $request->bed_code;
 							$admission->admission_code = $request->admission_code;
 							$admission->referral_code = $request->referral_code;
-							$admission->user_id = $request->user_id;
+							//$admission->user_id = $request->user_id;
 							$admission->encounter_id = $request->encounter_id;
 							$admission->diet_code='normal';
 							$admission->class_code= $bed->wardClass->class_diet;
 							$admission->encounter_id = $encounter->encounter_id;
+							$admission->team_code = $request->team_code;
 							$admission->save();
 							Log::info($admission);
 

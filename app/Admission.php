@@ -17,6 +17,7 @@ class Admission extends Model
 	protected $fillable = [
 				'encounter_id',
 				'user_id',
+				'team_code',
 				'bed_code',
 				'admission_code',
 				'referral_code',
@@ -41,7 +42,7 @@ class Admission extends Model
 			case "POST":
 					$rules = [
 						'encounter_id'=>'required',
-						'user_id'=>'required',
+						'team_code'=>'required',
 					];
 					break;
 			default:
@@ -55,7 +56,7 @@ class Admission extends Model
 					} else {
 							$rules = [
 								'encounter_id'=>'required',
-								'user_id'=>'required',
+								'team_code'=>'required',
 							];
 					}
 			}
@@ -71,6 +72,11 @@ class Admission extends Model
 	public function encounter() 
 	{
 			return $this->belongsTo('App\Encounter', 'encounter_id');
+	}
+
+	public function team() 
+	{
+			return $this->belongsTo('App\Team', 'team_code');
 	}
 
 	public function bed()

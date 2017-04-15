@@ -96,8 +96,8 @@ class OrderInvestigationController extends Controller
 
 	public function edit($id) 
 	{
-			$consultation = Consultation::find(Session::get('consultation_id'));
 			$order_investigation = OrderInvestigation::findOrFail($id);
+			$consultation = Consultation::find($order_investigation->order->consultation_id);
 
 			$product = DB::table('products')
 						->select('product_name','product_code')
@@ -115,6 +115,37 @@ class OrderInvestigationController extends Controller
 					'consultOption' => 'consultation',
 					'order' => $order_investigation->order,
 					]);
+	}
+
+	public function editDate($id) 
+	{
+			$order_investigation = OrderInvestigation::findOrFail($id);
+			$consultation = Consultation::find($order_investigation->order->consultation_id);
+
+			$product = DB::table('products')
+						->select('product_name','product_code')
+						->where('product_code','=',$order_investigation->order->product_code)->get();
+			
+			return view('order_investigations.edit_date', [
+					'order_investigation'=>$order_investigation,
+					'urgency' => Urgency::all()->sortBy('urgency_name')->lists('urgency_name', 'urgency_code')->prepend('',''),
+					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
+					'consultation' => $consultation,
+					'patient'=>$consultation->encounter->patient,
+					'product' => $product,
+					'tab' => 'order',
+					'consultOption' => 'consultation',
+					'order' => $order_investigation->order,
+					]);
+	}
+
+	public function updateDate(Request $request) {
+			$order_investigation = OrderInvestigation::findOrFail($request->id);
+			$order_investigation->fill($request->input());
+			$order_investigation->save();
+			Session::flash('message', 'Record successfully updated.');
+			return redirect('/futures');
 	}
 
 	public function update(Request $request, $id) 

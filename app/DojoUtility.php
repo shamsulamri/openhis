@@ -27,7 +27,6 @@ class DojoUtility
 
 		public static function dateLongFormat($value)
 		{
-				return $value;
 				if (!empty($value)) {
 					if (strlen($value)>10) {
 						return Carbon::parse($value)->format('d F Y, H:i');

@@ -41,6 +41,9 @@
 					<br>
 					<small>{{$future->product->category->category_name}}<small>
 			</td>
+			<td align='right'>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_investigations/'. $future->orderInvestigation->id.'/edit_date') }}'>Edit</a>
+			</td>
 	</tr>
 @endforeach
 @endif

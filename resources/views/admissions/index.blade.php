@@ -105,7 +105,9 @@
 					<br>
 					<small>{{$admission->patient_mrn}}
 					<br>
-					{{$admission->name}}</small>
+					{{$admission->name}}
+					{{ $admission->team_name }}
+					</small>
 			</td>
 			<td>
 					{{$admission->bed_name}} 
@@ -114,7 +116,7 @@
 					@endif
 					@cannot('module-ward')
 					<br>
-					<small>{{$admission->ward_name}}<small>	
+					<small>{{$admission->ward_name}}</small>	
 					@endcannot
 			</td>
 			@can('module-ward')

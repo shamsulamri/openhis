@@ -50,17 +50,24 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('product_purchase_function')) has-error @endif'>
+    <div class='form-group  @if ($errors->has('product_information_edit')) has-error @endif'>
         <div class='col-sm-offset-5'>
-            {{ Form::checkbox('product_purchase_function', '1') }} <label>Product Purchase</label>
-            @if ($errors->has('product_purchase_function')) <p class="help-block">{{ $errors->first('product_purchase_function') }}</p> @endif
+            {{ Form::checkbox('product_information_edit', '1') }} <label>Edit product information</label>
+            @if ($errors->has('product_information_edit')) <p class="help-block">{{ $errors->first('product_information_edit') }}</p> @endif
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('product_sale_function')) has-error @endif'>
+    <div class='form-group  @if ($errors->has('product_purchase_edit')) has-error @endif'>
         <div class='col-sm-offset-5'>
-            {{ Form::checkbox('product_sale_function', '1') }} <label>Product Sale</label>
-            @if ($errors->has('product_sale_function')) <p class="help-block">{{ $errors->first('product_sale_function') }}</p> @endif
+            {{ Form::checkbox('product_purchase_edit', '1') }} <label>Edit purchase information</label>
+            @if ($errors->has('product_purchase_edit')) <p class="help-block">{{ $errors->first('product_purchase_edit') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('product_sale_edit')) has-error @endif'>
+        <div class='col-sm-offset-5'>
+            {{ Form::checkbox('product_sale_edit', '1') }} <label>Edit sale information</label>
+            @if ($errors->has('product_sale_edit')) <p class="help-block">{{ $errors->first('product_sale_edit') }}</p> @endif
         </div>
     </div>
     <div class='form-group  @if ($errors->has('module_ward')) has-error @endif'>

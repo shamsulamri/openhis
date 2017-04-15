@@ -14,9 +14,11 @@
 </div>
 @endif
 <br>
+	@can('product_information_edit')
 		<a class='btn btn-default' href='{{ URL::to('products/'. $product->product_code.'/edit') }}'>
 			<span class='fa fa-glass' aria-hidden='true'></span><br>Edit<br>Product
 		</a>
+	@endcan
 @if ($product->product_stocked==1)
 		<a class='btn btn-default' href='{{ URL::to('stocks/'. $product->product_code) }}'>
 			<span class='glyphicon glyphicon-road' aria-hidden='true'></span><br>Stock<br>Movements

@@ -167,6 +167,8 @@ class ProductController extends Controller
 					'status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
 					'return_id' => $return_id,
 					'reason' => $request->reason,
+					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
+					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 				]);	
 	}
 
@@ -203,6 +205,7 @@ class ProductController extends Controller
 				$store_code = Auth::user()->authorization->store_code;
 			}
 
+			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 			return view('products.edit', [
 					'product'=>$product,
 					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
@@ -214,6 +217,7 @@ class ProductController extends Controller
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 					'store_code'=>$store_code,
 					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
+					'categories'=>$this->getProductCategories($product_authorization),
 					]);
 	}
 
