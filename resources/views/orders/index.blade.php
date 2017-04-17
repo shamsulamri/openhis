@@ -70,7 +70,9 @@ $category='';
 						@endif
 					@else
 						@if (!isset($order->cancel_id))
-							<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>Delete</a>
+							<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>
+											<span class='glyphicon glyphicon-minus'></span>
+										</a>
 						@endif
 					@endif
 				@else

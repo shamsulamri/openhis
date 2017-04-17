@@ -167,49 +167,13 @@
 			<div class="col-xs-6">
 					<div class='form-group'>
 						<div class="col-sm-offset-4 col-sm-8">
-							<a class="btn btn-default" href="javascript:window.history.back()" role="button">Back</a>
+							<a class="btn btn-default" href="{{ url('order_sets/index/'.$return_id) }}" role="button">Back</a>
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-6">
 			</div>
 	</div>
-
-	<script>
-
-		function UpdateSalePrice() {
-			form = document.forms['product_form'];
-			purchase_price = Number(form.product_purchase_price.value);
-			profit_margin = Number(form.product_sale_margin.value)/100;
-
-			product_sale_price = purchase_price*(1+profit_margin);
-			form.product_sale_price.value= product_sale_price.toFixed(2);
-		}	
-
-         $(document).ready(function(){
-             $("#product_form").validate({
-                 rules: {
-                     product_conversion_unit: {
-                         number: true
-                     },
-                     product_purchase_price: {
-                         number: true
-                     },
-                     product_reorder: {
-                         number: true
-                     },
-                     product_sale_margin: {
-                         number: true
-                     },
-                     product_sale_price: {
-                         number: true
-                     },
-				 }
-             });
-        });
-
-    </script>
-
 
 {{ Form::close() }}
 @endsection

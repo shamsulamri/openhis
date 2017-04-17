@@ -14,22 +14,18 @@
 
 @if ($order_sets->total()>0)
 <table class="table table-condensed">
- <thead>
-	<tr> 
-    <th>Product</th>
-	<th></th>
-	</tr>
-  </thead>
 	<tbody>
 @foreach ($order_sets as $order_set)
 	<tr>
 			<td>
-					<a href='{{ URL::to('products/'. $order_set->product_code ) }}'>
+					<a href='{{ URL::to('products/'. $order_set->product_code.'?id='.$set->set_code ) }}'>
 						{{$order_set->product_name}}
 					</a>
 			</td>
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_sets/delete/'. $order_set->id) }}'>-</a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_sets/delete/'. $order_set->id) }}'>
+						<span class='glyphicon glyphicon-minus'></span>
+					</a>
 			</td>
 	</tr>
 @endforeach

@@ -32,17 +32,19 @@
 			</td>
 			<td align='right'>
 				@if ($reason=='purchase_order')
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/add/'. $purchase_id . '/' . $product_search->product_code) }}'>+</a>
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/add/'. $purchase_id . '/' . $product_search->product_code) }}'>
 				@endif
 				@if ($reason=='bom')
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/bom/'. $product_code . '/' . $product_search->product_code) }}'>+</a>
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/bom/'. $product_code . '/' . $product_search->product_code) }}'>
 				@endif
 				@if ($reason=='asset')
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/asset/'. $set_code . '/' . $product_search->product_code) }}'>+</a>
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/asset/'. $set_code . '/' . $product_search->product_code) }}'>
 				@endif
 				@if ($reason=='menu')
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/menu/'. $class_code . '/' . $period_code . '/' . $week . '/'. $day . '/'. $product_search->product_code) .'/'. $diet_code }}'>+</a>
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/menu/'. $class_code . '/' . $period_code . '/' . $week . '/'. $day . '/'. $product_search->product_code) .'/'. $diet_code }}'>
 				@endif
+								<span class='glyphicon glyphicon-plus'></span>
+							</a>
 			</td>
 	</tr>
 @endforeach

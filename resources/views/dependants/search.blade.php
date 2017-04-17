@@ -31,7 +31,9 @@
 					{{$patient->patient_new_ic}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-primary btn-xs' href='/dependants/add/{{ $patient->patient_id }}/{{ $patient_id }}'><span class='fa fa-chevron-right'></span></a>
+					<a class='btn btn-primary btn-xs' href='/dependants/add/{{ $patient->patient_id }}/{{ $patient_id }}'>
+						<span class='glyphicon glyphicon-plus'></span>
+					</a>
 			</td>
 	</tr>
 @endforeach

@@ -78,7 +78,9 @@
 										@endif
 									</td>
 									<td width='10'>
-										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}' class='btn btn-primary btn-xs'>+</a>
+										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}' class='btn btn-primary btn-xs'>
+											<span class='glyphicon glyphicon-plus'></span>
+										</a>
 									</td>
 							</tr>
 						@endforeach

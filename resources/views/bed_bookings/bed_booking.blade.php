@@ -1,8 +1,8 @@
     <div class='form-group  @if ($errors->has('book_date')) has-error @endif'>
         <label for='book_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
-			<input id="book_date" name="book_date" type="text">
-            @if ($errors->has('book_date')) <p class="help-block">{{ $errors->first('book_date') }}</p> @endif
+				<input id="book_date" name="book_date" type="text">
+            	@if ($errors->has('book_date')) <p class="help-block">{{ $errors->first('book_date') }}</p> @endif
         </div>
     </div>
 
