@@ -54,10 +54,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/team_members/delete/{id}', 'TeamMemberController@delete');
 		
 
+		Route::get('/team/add/{id}/{team_code}', 'TeamController@addMember');
 		Route::resource('teams', 'TeamController');
 		Route::get('/teams/id/{id}', 'TeamController@searchById');
 		Route::post('/team/search', 'TeamController@search');
 		Route::get('/team/search', 'TeamController@search');
+		Route::post('/team/search_member/{id}', 'TeamController@searchMember');
 		Route::get('/teams/delete/{id}', 'TeamController@delete');
 		
 		Route::resource('form_systems', 'FormSystemController');

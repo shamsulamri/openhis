@@ -99,9 +99,10 @@ class TeamMemberController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$member = TeamMember::find($id);
 			TeamMember::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/team_members');
+			return redirect('/teams/'.$member->team_code);
 	}
 	
 	public function search(Request $request)

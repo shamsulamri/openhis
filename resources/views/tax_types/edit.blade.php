@@ -9,7 +9,7 @@ Edit Tax Type
 {{ Form::model($tax_type, ['route'=>['tax_types.update',$tax_type->type_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>
-        <label for='ward_code' class='col-sm-2 control-label'>type_code<span style='color:red;'> *</span></label>
+        <label for='ward_code' class='col-sm-2 control-label'>Code<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::label('type_code', $tax_type->type_code, ['class'=>'control-label']) }}
         </div>

@@ -1,26 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Team Index</h1>
-<br>
+<h1>Team Index
+<a href='/teams/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+</h1>
 <form action='/team/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<div class='input-group'>
+		<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+		<span class='input-group-btn'>
+			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
+		</span>
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
-<br>
-<a href='/teams/create' class='btn btn-primary'>Create</a>
-<br>
-<br>
+
 @if ($teams->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>team_name</th>
-    <th>team_code</th> 
+    <th>Team</th>
+    <th>Code</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -36,7 +36,10 @@
 					{{$team->team_code}}
 			</td>
 			<td align='right'>
+					<a class='btn btn-default btn-xs' href='{{ URL('teams/'.$team->team_code) }}'>Members</a>
+					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('teams/delete/'. $team->team_code) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

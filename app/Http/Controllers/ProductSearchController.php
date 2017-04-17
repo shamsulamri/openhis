@@ -287,6 +287,7 @@ class ProductSearchController extends Controller
 					'period_code'=>$request->period_code,
 					'week'=>$request->week,
 					'day'=>$request->day,
+					'diet_code'=>$request->diet_code,
 					]);
 	}
 

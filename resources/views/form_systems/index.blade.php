@@ -1,26 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Form System Index</h1>
-<br>
+<h1>Form System Index
+<a href='/form_systems/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+</h1>
 <form action='/form_system/search' method='post'>
-	<input type='text' class='form-control input-lg' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<div class='input-group'>
+		<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+		<span class='input-group-btn'>
+			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
+		</span>
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
-<br>
-<a href='/form_systems/create' class='btn btn-primary'>Create</a>
-<br>
 <br>
 @if ($form_systems->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>system_name</th>
-    <th>system_code</th> 
+    <th>Name</th>
+    <th>Code</th> 
 	<th></th>
 	</tr>
   </thead>

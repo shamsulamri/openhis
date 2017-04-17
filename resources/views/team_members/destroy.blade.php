@@ -11,7 +11,7 @@ Are you sure you want to delete the selected record ?
 {{ $team_member->team_code }}
 {{ Form::open(['url'=>'team_members/'.$team_member->member_id, 'class'=>'pull-right']) }}
 	{{ method_field('DELETE') }}
-	<a class="btn btn-default" href="/team_members" role="button">Cancel</a>
+	<a class="btn btn-default" href="/teams/{{ $team_member->team_code }}" role="button">Cancel</a>
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 

@@ -156,7 +156,12 @@ class ProductController extends Controller
 	{
 			$return_id = $request->id;
 			$product = Product::find($id); 
-			return view('products.show', [
+			$viewpage ="products.show";
+			if ($request->detail) {
+				$viewpage ="products.show_detail";
+			}
+
+			return view($viewpage, [
 					'product' => $product,
 					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
 					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
