@@ -6,7 +6,7 @@ New Ward
 </h1>
 
 <br>
-{{ Form::model($ward, ['url'=>'wards', 'class'=>'form-horizontal']) }} 
+{{ Form::model($ward, ['id'=>'form','url'=>'wards', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>
         <label for='ward_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>

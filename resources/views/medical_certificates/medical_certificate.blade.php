@@ -104,22 +104,4 @@
 				autoclose: true
 		});
 
-		$('.clockpicker').clockpicker();
-		$(function(){
-				$('#mc_time_start').combodate({
-						format: "HH:mm",
-						template: "HH : mm",
-						value: '{{ $medical_certificate->mc_time_start }}',
-						minuteStep: 1,
-						customClass: 'select'
-				});    
-		});
-
-		$(function(){
-				$('#mc_time_end').combodate({
-						format: "HH:mm",
-						template: "HH : mm",
-						value: '{{ $medical_certificate->mc_time_end }}',
-						minuteStep: 1,
-						customClass: 'select'
-				});    
+	</script>

@@ -1,8 +1,11 @@
     <div class='form-group  @if ($errors->has('book_date')) has-error @endif'>
         <label for='book_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
-				<input id="book_date" name="book_date" type="text">
-            	@if ($errors->has('book_date')) <p class="help-block">{{ $errors->first('book_date') }}</p> @endif
+			<div class="input-group date">
+				<input data-mask="99/99/9999" name="book_date" id="book_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($bed_booking->book_date) }}">
+				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			</div>
+				@if ($errors->has('book_date')) <p class="help-block">{{ $errors->first('book_date') }}</p> @endif
         </div>
     </div>
 
@@ -19,13 +22,6 @@
         <div class='col-sm-9'>
             {{ Form::select('class_code', $class,null, ['class'=>'form-control','maxlength'=>'10']) }}
             @if ($errors->has('class_code')) <p class="help-block">{{ $errors->first('class_code') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('bed_code')) has-error @endif'>
-        <label for='bed_code' class='col-sm-3 control-label'>Bed</label>
-        <div class='col-sm-9'>
-            {{ Form::select('bed_code', $bed,$bed_booking->bed_code, ['id'=>'bed_code','class'=>'form-control','maxlength'=>'10']) }}
         </div>
     </div>
 
@@ -48,20 +44,14 @@
 
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
 	{{ Form::hidden('admission_id', $admission_id ) }}
-	{{ Form::hidden('bed', $bed_booking->bed_code ) }}
 
-<script>
-	document.getElementById('bed_code').disabled = true;
-	</script>
 	<script>
-		$(function(){
-				$('#book_date').combodate({
-						format: "DD/MM/YYYY HH:mm",
-						template: "DD MMMM YYYY     HH : mm",
-						value: '{{ $bed_booking->book_date }}',
-						maxYear: '{{ \Carbon\Carbon::now()->year+5 }}',
-						minYear: '{{ \Carbon\Carbon::now()->year }}',
-						customClass: 'select'
-				});    
+		$('#book_date').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
 		});
 	</script>

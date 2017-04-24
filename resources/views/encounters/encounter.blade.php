@@ -262,6 +262,7 @@
 							if (document.getElementById('triage').value != '') {
 								document.getElementById('ward_code').value = 'observation';
 								document.getElementById('bed_code').disabled = false;
+								document.getElementById('ward_code').disabled = false;
 								wardChanged();
 							}
 						checkPatientType();

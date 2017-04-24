@@ -138,7 +138,7 @@ class EmployeeController extends Controller
 			$employee = Employee::findOrFail($id);
 			$user = new User();
 			$user->name = $employee->name;
-			$user->username = $employee->nickname;
+			$user->username = $employee->empid;
 			$user->email = $employee->email;
 			$user->employee_id = $employee->empid;
 

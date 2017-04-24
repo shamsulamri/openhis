@@ -59,9 +59,6 @@
 					<br>
 					<small>
 					{{$bed_booking->class_name }} 
-					@if ($bed_booking->bed_name)
-						({{$bed_booking->bed_name }})
-					@endif
 					</small>
 			</td>
 			@can('module-ward')

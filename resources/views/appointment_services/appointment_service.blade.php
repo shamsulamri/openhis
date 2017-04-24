@@ -52,7 +52,7 @@
 	</div>
 
     <div class='form-group  @if ($errors->has('service_duration')) has-error @endif'>
-        {{ Form::label('service_duration', 'Duration',['class'=>'col-sm-3 control-label']) }}
+        {{ Form::label('service_duration', 'Slot Duration',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::text('service_duration', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('service_duration')) <p class="help-block">{{ $errors->first('service_duration') }}</p> @endif

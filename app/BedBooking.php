@@ -28,36 +28,31 @@ class BedBooking extends Model
 				'patient_id'=>'required',
 				'class_code'=>'required',
 				'ward_code'=>'required',
-				'book_date'=>'size:16|date_format:d/m/Y H:i',
+				'book_date'=>'required|size:10|date_format:d/m/Y|after:now',
 			];
 
-			
-			
 			$messages = [
-				'required' => 'This field is required'
+					'required' => 'This field is required',
+					'book_date.after' => 'The book date must be greater than today.',
 			];
-			
 			return validator::make($input, $rules ,$messages);
 	}
 
 	
 	public function setBookDateAttribute($value)
 	{
-		if (DojoUtility::validateDateTime($value)==true) {
-			$this->attributes['book_date'] = DojoUtility::dateTimeWriteFormat($value);
+		if (DojoUtility::validateDate($value)==true) {
+			$this->attributes['book_date'] = DojoUtility::dateWriteFormat($value);
 		}
 	}
 
+	/**
 	public function getBookDateAttribute($value)
 	{
 		return DojoUtility::dateTimeReadFormat($value);
 	}
+	**/
 
-
-	public function bed()
-	{
-			return $this->belongsTo('App\Bed', 'bed_code');
-	}
 
 	public function patient()
 	{

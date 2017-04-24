@@ -42,14 +42,13 @@ class BedBookingController extends Controller
 			}
 
 			$bed_bookings = DB::table('bed_bookings as a')
-					->select(['d.ward_code', 'book_id', 'book_date', 'a.created_at', 'bed_name', 'a.admission_id','patient_mrn', 'patient_name', 'b.class_name', 'a.class_code','ward_name'])
+					->select(['d.ward_code', 'book_id', 'book_date', 'a.created_at', 'a.admission_id','patient_mrn', 'patient_name', 'b.class_name', 'a.class_code','ward_name'])
 					->leftJoin('ward_classes as b', 'b.class_code','=', 'a.class_code')
 					->leftJoin('patients as c', 'c.patient_id','=', 'a.patient_id')
 					->leftJoin('wards as d', 'd.ward_code', '=', 'a.ward_code')
 					->leftJoin('admissions as e', 'e.admission_id','=', 'a.admission_id')
 					->leftJoin('encounters as f', 'f.encounter_id', '=', 'e.encounter_id')
 					->leftJoin('discharges as g', 'g.encounter_id', '=', 'f.encounter_id')
-					->leftJoin('beds as h', 'h.bed_code', '=', 'a.bed_code')
 					->where('book_date','>=', Carbon::today())
 					->orderBy('a.book_date');
 
@@ -85,19 +84,14 @@ class BedBookingController extends Controller
 			$bed_booking->admission_id = $admission_id;
 			$bed_booking->ward_code = $request->ward_code;
 			$bed_booking->class_code = $request->class_code;
-			$bed_booking->bed_code = $request->bed_code;
 
 			$title = "Bed Reservation";
 			if ($request->book=='preadmission') $title = "Preadmission";
 			if ($admission_id != null) {
 					$admission = Admission::find($admission_id);
-					//$bed_booking->bed_code = $admission->bed_code;
 			}
 			return view('bed_bookings.create', [
 					'bed_booking' => $bed_booking,
-					'bed' => Bed::where('ward_code', $request->ward_code)
-								->where('class_code', $request->class_code)
-								->orderBY('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
 					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'patient' => Patient::find($bed_booking->patient_id),
@@ -113,7 +107,6 @@ class BedBookingController extends Controller
 
 			if ($valid->passes()) {
 					$bed_booking = new BedBooking($request->all());
-					$bed_booking->bed_code = $request->bed;
 					$bed_booking->book_id = $request->book_id;
 					$bed_booking->save();
 					Session::flash('message', 'Record successfully created.');
@@ -138,9 +131,6 @@ class BedBookingController extends Controller
 					'patient' => Patient::find($bed_booking->patient_id),
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'bed' => Bed::where('ward_code', $bed_booking->ward_code)
-								->where('class_code', $bed_booking->class_code)
-								->orderBY('bed_name')->lists('bed_name', 'bed_code')->prepend('',''),
 					'admission_id' => $bed_booking->admission_id,
 					]);
 	}
@@ -181,7 +171,7 @@ class BedBookingController extends Controller
 	{	
 			BedBooking::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/bed_bookings');
+			return redirect('/bed_bookings?type=preadmission');
 	}
 	
 	public function search(Request $request)

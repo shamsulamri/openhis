@@ -16,6 +16,7 @@ class Ward extends Model
 				'gender_code',
 				'department_code',
 				'store_code',
+				'ward_level',
 				'ward_name'];
 	
     protected $guarded = ['ward_code'];
@@ -26,6 +27,7 @@ class Ward extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'ward_name'=>'required',
+				'ward_level'=>'numeric',
 			];
 
 			

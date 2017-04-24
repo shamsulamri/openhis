@@ -6,7 +6,7 @@ Edit Ward
 </h1>
 
 <br>
-{{ Form::model($ward, ['route'=>['wards.update',$ward->ward_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
+{{ Form::model($ward, ['id'=>'form','route'=>['wards.update',$ward->ward_code],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group @if ($errors->has('ward_code')) has-error @endif'>
         <label for='ward_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>
