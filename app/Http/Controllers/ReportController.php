@@ -33,7 +33,7 @@ class ReportController extends Controller
 								'appointment'=>'Appointment', 
 					],
 					'encounters'=>['outpatient'=>'Outpatient', 'inpatient'=>'Inpatient'],
-					'minYear'=>2011,
+					'minYear'=>2012,
 					'report'=>null,
 					'today'=>DojoUtility::today(),
 					'tomorrow'=>DojoUtility::tomorrow(),
@@ -49,8 +49,8 @@ class ReportController extends Controller
 				$report = $request->report;
 				$encounter = $request->encounter;
 				$ward_code = $request->ward_code;
-				$date_start = DojoUtility::dateWriteFormat($request->date_start)->toDateString();
-				$date_end = DojoUtility::dateWriteFormat($request->date_end)->toDateString();
+				$date_start = DojoUtility::dateWriteFormat($request->date_start);
+				$date_end = DojoUtility::dateWriteFormat($request->date_end);
 				$user = $request->user;
 				$service_id = $request->service_id;
 
