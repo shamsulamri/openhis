@@ -200,19 +200,20 @@ class OrderInvestigationController extends Controller
 	{
 			$multi = OrderMultiple::where('order_id','=', $order_investigation->order_id)->delete();
 			$frequencies = $order_investigation->period->period_mins/$order_investigation->frequency->frequency_mins;
-
+			
 			if ($frequencies>0) {
 					for ($i=0; $i<$frequencies; $i++) {
 							$multi = new OrderMultiple();
 							$multi->order_id = $order_investigation->order_id;
 							$multi->save();
 					}
+					Log::info($order_investigation->order_id);
 					$order = Order::find($order_investigation->order_id);
-					$order->order_multiple==1;
+					$order->order_multiple=1;
 					$order->save();
 			} else {
 					$order = Order::find($order_investigation->order_id);
-					$order->order_multiple==0;
+					$order->order_multiple=0;
 					$order->save();
 			}
 
