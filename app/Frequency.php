@@ -12,6 +12,7 @@ class Frequency extends Model
 	protected $table = 'ref_frequencies';
 	protected $fillable = [
 				'frequency_code',
+				'frequency_mins',
 				'frequency_name'];
 	
     protected $guarded = ['frequency_code'];

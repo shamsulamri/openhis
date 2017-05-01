@@ -13,7 +13,7 @@ class Period extends Model
 	protected $fillable = [
 				'period_name',
 				'period_label',
-				'period_value'];
+				'period_mins'];
 	
     protected $guarded = ['period_code'];
     protected $primaryKey = 'period_code';

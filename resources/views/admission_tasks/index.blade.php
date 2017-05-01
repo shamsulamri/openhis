@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+<?php
+$multiple_ids="";
+?>
 <h1>Inpatient Tasks</h1>
 @if (Auth::user()->authorization->module_support!=1)
 <h3>{{ $ward->ward_name }}</h3>
@@ -104,9 +107,11 @@ $header_count=0;
 	@endif
 	<tr>
 			<td width='10'>
+				@if ($admission_task->order_multiple==0)
 					@if (!$admission_task->updated_by && empty($admission_task->cancel_id))
-					{{ Form::checkbox($admission_task->order_id, 1, $admission_task->order_completed) }}
+					{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed) }}
 					@endif
+				@endif
 			</td>
 			@if ($group_by=='order')
 			<td width='150'>
@@ -125,10 +130,30 @@ $header_count=0;
 			<td>
 				@if ($group_by=='patient')
 					{{strtoupper($admission_task->product_name)}}
+					@if ($admission_task->order_multiple==1)
+						<br>
+						<?php
+							$multis = $order_helper->getMultipleOrder($admission_task->order_id);
+						?>
+						@include('admission_tasks.multiple')
+						@foreach ($multis as $multi)
+						<?php $multiple_ids = $multiple_ids.$multi->multiple_id.","; ?>
+						@endforeach
+					@endif
 				@else
 					<a href='{{ URL::to('admission_tasks/'. $admission_task->order_id . '/edit') }}' >
 					{{strtoupper($admission_task->patient_name)}}
 					</a>
+					@if ($admission_task->order_multiple==1)
+						<br>
+						<?php
+							$multis = $order_helper->getMultipleOrder($admission_task->order_id);
+						?>
+						@include('admission_tasks.multiple')
+						@foreach ($multis as $multi)
+						<?php $multiple_ids = $multiple_ids.$multi->multiple_id.","; ?>
+						@endforeach
+					@endif
 				@endif
 			</td>
 			<td>
@@ -174,6 +199,7 @@ $header_count=0;
 @if ($admission_tasks->total()>0)
 {{ Form::submit('Update Task', ['class'=>'btn btn-default']) }}
 {{ Form::hidden('completed_ids',$order_ids) }}
+{{ Form::hidden('multiple_ids',$multiple_ids) }}
 @endif
 </form>
 @if (isset($search)) 

@@ -10,6 +10,8 @@
 <a href='{{ URL::to('form/results',[$encounter_id]) }}'>Forms</a> / {{ $form->form_name }}
 <a href='/form/{{ $form->form_code }}/{{ $patient->patient_id }}/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
+<a href='/chart/line/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-line-chart'></span> Chart</a>
+<a href='/form/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-table'></span> Table</a>
 <table class="table table-hover">
 	<thead>
 	<tr>

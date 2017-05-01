@@ -44,7 +44,7 @@
 				@if ($property->property->property_type == "number")
 					<input class='form-control' id="{{ $property->property->property_code }}" onkeypress="return isNumberKey(event)" type="text" name="{{ $property->property->property_code }}" value="{{ $value }}">
 				@endif
-				@if ($property->property->property_type == "List")
+				@if ($property->property->property_type == "list")
 					<?php 
 						$list = explode(";",$property->property->property_list);
 						$list = array_combine($list, $list);

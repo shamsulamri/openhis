@@ -280,8 +280,16 @@ Interim Bill
 <div class="widget style1 gray-bg">
 <h4>Post Bill</h4>
 {{ Form::model($bill, ['id'=>'post_form','url'=>'bills', 'class'=>'form-horizontal']) }} 
-			<input type='checkbox' id='post_checkbox' value='1' onchange='javascript:enablePostButton()'>
-			I have confirmed that all the information above are correct.
+	<table>
+		<tr>
+				<td width='30'>
+					<input type='checkbox' id='post_checkbox' value='1' onchange='javascript:enablePostButton()'>
+				</td>
+				<td>
+					I have confirmed that all the information above are correct.
+				</td>
+		</tr>
+	</table>
             {{ Form::hidden('encounter_id', null, ['id'=>'encounter_id','class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_grand_total', $bill_grand_total, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_payment_total', $payment_total, ['class'=>'form-control','placeholder'=>'',]) }}

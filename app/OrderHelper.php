@@ -4,24 +4,15 @@ namespace App;
 use Carbon\Carbon;
 use DB;
 use App\Encounter;
+use App\OrderMultiple;
 use Log;
 
 class OrderHelper 
 {
-	
-	public function totalAdmission()
+	public function getMultipleOrder($order_id) 
 	{
-
-			$sql = "select count(*) as total_admission from admissions a
-					left join beds b on (a.bed_code = b.bed_code)
-					left join discharges c on (c.encounter_id = a.encounter_id)
-					where ward_code = '".$this->ward_code."'
-					and discharge_id is null";
-
-			$results = DB::select($sql);
-			
-			return $results[0]->total_admission;
-
+			$orders = OrderMultiple::where('order_id', '=',$order_id)->get();
+			return $orders;
 	}
 
 }

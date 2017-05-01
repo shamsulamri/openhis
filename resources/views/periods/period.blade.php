@@ -15,11 +15,11 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('period_value')) has-error @endif'>
-        {{ Form::label('period_value', 'Value',['class'=>'col-sm-3 control-label']) }}
+    <div class='form-group  @if ($errors->has('period_mins')) has-error @endif'>
+        {{ Form::label('period_mins', 'Minutes',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::text('period_value', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('period_value')) <p class="help-block">{{ $errors->first('period_value') }}</p> @endif
+            {{ Form::text('period_mins', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('period_mins')) <p class="help-block">{{ $errors->first('period_value') }}</p> @endif
         </div>
     </div>
 

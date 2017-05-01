@@ -15,6 +15,8 @@ use App\QueueLocation as Location;
 use App\Ward;
 use App\ProductCategory;
 use App\Order;
+use App\OrderMultiple;
+use App\OrderHelper;
 use App\QueueLocation;
 use App\Store;
 use Auth;
@@ -43,7 +45,7 @@ class AdmissionTaskController extends Controller
 			$location_code = $request->cookie('queue_location');
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name','ward_name','a.encounter_id','a.updated_by')
+					->select('a.order_id', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name','ward_name','a.encounter_id','a.updated_by')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -59,11 +61,11 @@ class AdmissionTaskController extends Controller
 					->where('order_completed','=',0)
 					->where('a.product_code','<>','consultation_fee')
 					->whereNull('cancel_id')
+					->whereNull('discharge_id')
 					->whereNotNull('n.post_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');
 
-					//->whereNull('discharge_id')
 
 			if (Auth::user()->authorization->module_support==1) {
 					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
@@ -89,6 +91,8 @@ class AdmissionTaskController extends Controller
 					'ward_code'=>$ward_code,
 					'location_code'=>$location_code,
 					'location'=>Location::find($location_code),
+					'order_helper'=>new OrderHelper(),
+					'multiple_ids'=>'',
 			]);
 	}
 
@@ -180,7 +184,7 @@ class AdmissionTaskController extends Controller
 			$location_code = $request->cookie('queue_location');
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by','cancel_id')
+					->select('a.order_id', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by','cancel_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -194,6 +198,7 @@ class AdmissionTaskController extends Controller
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('d.category_code','like', '%'.$request->categories.'%')
 					->where('a.product_code','<>','consultation_fee')
+					->whereNull('discharge_id')
 					->whereNull('cancel_id');
 
 			if (Auth::user()->authorization->module_support==1) {
@@ -237,6 +242,8 @@ class AdmissionTaskController extends Controller
 					'ward_code'=>$ward_code,
 					'location_code'=>$location_code,
 					'location'=>Location::find($location_code),
+					'order_helper'=>new OrderHelper(),
+					'multiple_ids'=>'',
 			]);
 	}
 
@@ -273,12 +280,36 @@ class AdmissionTaskController extends Controller
 								->whereNull('updated_by')
 								->first();
 
+					$name = "order:".$id;
 					if (!empty($order)) {
-							if ($request->$id==1) {
+							if ($request->$name==1) {
 									$order->order_completed=1;
 									$order->updated_by = Auth::user()->id;
 									$order->store_code = $store_code;
 									$order->save();
+							} 
+					}
+					/*
+					else {
+							if ($order->order_completed==1) $order->updated_by = Auth::user()->id;
+							$order->order_completed=0;
+					}
+					 */
+			}
+
+			/** Multiple orders **/
+			$multis = explode(",",$request->multiple_ids);
+
+			foreach($multis as $multi) {
+					$multiple_order = OrderMultiple::find($multi);
+
+					$name = "multi:".$multi;
+					if (!empty($multiple_order)) {
+							if ($request->$name==1) {
+									$multiple_order->order_completed=1;
+									$multiple_order->updated_by = Auth::user()->id;
+									$multiple_order->store_code = $store_code;
+									$multiple_order->save();
 							} 
 					}
 					/*

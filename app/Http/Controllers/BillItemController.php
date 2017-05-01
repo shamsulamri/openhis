@@ -55,13 +55,58 @@ class BillItemController extends Controller
 					$item->bill_quantity = $bed_los;
 					$item->bill_unit_price = $bed->product_sale_price;
 					$item->bill_total_pregst = $item->bill_unit_price*$item->bill_quantity;
-					$item->bill_total = $bed->product_sale_price*(($bed->tax_rate/100)+1);
+					$item->bill_total = $item->bill_unit_price*$item->bill_quantity;
+
+					if ($bed->tax_rate) {
+						$item->bill_total = $item->bill_total*(($bed->tax_rate/100)+1);
+					}
 
 					try {
 							$item->save();
 					} catch (\Exception $e) {
 							\Log::info($e->getMessage());
 					}
+			}
+	}
+
+	public function multipleOrders($id) 
+	{
+			$sql = sprintf("
+				select count(a.order_id) as order_quantity_supply, b.product_code, d.tax_code, tax_rate, c.product_sale_price, d.tax_code, d.tax_rate, profit_multiplier
+				from order_multiples a
+				left join orders b on (b.order_id = a.order_id)
+				left join products c on (c.product_code = b.product_code)
+				left join tax_codes d on (d.tax_code = c.tax_code)
+				left join encounters as g on (g.encounter_id=b.encounter_id)
+				left join patients as h on (h.patient_id = g.patient_id)
+				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				where b.encounter_id=%d
+				and a.order_completed=1
+				group by a.order_id
+			", $id);
+			
+			$orders = DB::select($sql);
+
+			foreach ($orders as $order) {
+				$item = new BillItem();
+				$item->encounter_id = $id;
+				$item->product_code = $order->product_code;
+				$item->tax_code = $order->tax_code;
+				$item->tax_rate = $order->tax_rate;
+				$item->bill_quantity = $order->order_quantity_supply;
+				$item->bill_unit_multiplier = $order->profit_multiplier;
+				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
+				$item->bill_total = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_total_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+				if ($order->tax_rate) {
+						$item->bill_total = $item->bill_total*(($order->tax_rate/100)+1);
+				}
+
+				try {
+					$item->save();
+				} catch (\Exception $e) {
+					\Log::info($e->getMessage());
+				}
 			}
 	}
 
@@ -83,6 +128,7 @@ class BillItemController extends Controller
 				where order_completed = 1 
 				and h.patient_id = %d
 				and bill_id is null 
+				and order_multiple=0
 				group by product_code
 			", $patient_id);
 
@@ -110,6 +156,7 @@ class BillItemController extends Controller
 			}
 
 			$this->bedBills($encounter_id);
+			$this->multipleOrders($encounter_id);
 	}
 
 	public function index($id)

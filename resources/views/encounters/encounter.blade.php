@@ -120,7 +120,7 @@
 	-->
 
     <div class='form-group  @if ($errors->has('team_code')) has-error @endif'>
-        <label for='team_code' class='col-sm-3 control-label'>Team<span style='color:red;'> *</span></label>
+        <label for='team_code' class='col-sm-3 control-label'>Consultant/Team<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::select('team_code', $teams,null, ['id'=>'team_code','class'=>'form-control']) }}
             @if ($errors->has('team_code')) <p class="help-block">{{ $errors->first('team_code') }}</p> @endif

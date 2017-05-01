@@ -56,6 +56,14 @@ class OrderInvestigation extends Model
 		return $this->belongsTo('App\Order','order_id');
 	}	
 
+	public function period() {
+		return $this->belongsTo('App\Period','period_code');
+	}	
+
+	public function frequency() {
+		return $this->belongsTo('App\Frequency','frequency_code');
+	}	
+
 	public function save(array $options = array())
 	{
 			$changed = $this->isDirty() ? $this->getDirty() : false;

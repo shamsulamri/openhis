@@ -47,12 +47,21 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+
+
+		Route::resource('order_multiples', 'OrderMultipleController');
+		Route::get('/order_multiples/id/{id}', 'OrderMultipleController@searchById');
+		Route::post('/order_multiple/search', 'OrderMultipleController@search');
+		Route::get('/order_multiple/search', 'OrderMultipleController@search');
+		Route::get('/order_multiples/delete/{id}', 'OrderMultipleController@delete');
+		
 		Route::resource('team_members', 'TeamMemberController');
 		Route::get('/team_members/id/{id}', 'TeamMemberController@searchById');
 		Route::post('/team_member/search', 'TeamMemberController@search');
 		Route::get('/team_member/search', 'TeamMemberController@search');
 		Route::get('/team_members/delete/{id}', 'TeamMemberController@delete');
 		
+		Route::get('/chart/line/{form_code}/{encounter_id}', 'ChartController@line');
 
 		Route::get('/team/add/{id}/{team_code}', 'TeamController@addMember');
 		Route::resource('teams', 'TeamController');

@@ -15,6 +15,7 @@ use App\Period;
 use App\Frequency;
 use App\Consultation;
 use App\Order;
+use App\OrderMultiple;
 use App\Product;
 use Auth;
 
@@ -154,6 +155,7 @@ class OrderInvestigationController extends Controller
 			$order_investigation->fill($request->input());
 			$order_investigation->investigation_recur = $request->investigation_recur ?: 0;
 
+			$frequencies = $order_investigation->period->period_mins/$order_investigation->frequency->frequency_mins;
 			$order = Order::find($order_investigation->order_id);
 			$order->fill($request->input());
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
@@ -164,7 +166,8 @@ class OrderInvestigationController extends Controller
 
 			if ($valid->passes() && $valid2->passes()) {
 					$order_investigation->save();
-					
+					$this->createMultipleOrder($order_investigation);
+
 					$order = Order::find($order_investigation->order_id);
 					$order->post_id=0;
 					$order->save();
@@ -191,6 +194,28 @@ class OrderInvestigationController extends Controller
 							])
 							->withErrors($valid);			
 			}
+	}
+
+	public function createMultipleOrder($order_investigation) 
+	{
+			$multi = OrderMultiple::where('order_id','=', $order_investigation->order_id)->delete();
+			$frequencies = $order_investigation->period->period_mins/$order_investigation->frequency->frequency_mins;
+
+			if ($frequencies>0) {
+					for ($i=0; $i<$frequencies; $i++) {
+							$multi = new OrderMultiple();
+							$multi->order_id = $order_investigation->order_id;
+							$multi->save();
+					}
+					$order = Order::find($order_investigation->order_id);
+					$order->order_multiple==1;
+					$order->save();
+			} else {
+					$order = Order::find($order_investigation->order_id);
+					$order->order_multiple==0;
+					$order->save();
+			}
+
 	}
 	
 	public function delete($id)
