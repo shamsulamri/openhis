@@ -162,11 +162,12 @@ class ConsultationController extends Controller
 			$post->consultation_id = $id;
 			$post->save();
 
+			$this->postDiagnosticOrder($consultation);
+
 			Order::where('consultation_id','=',$id)
 					->where('post_id','=',0)
 					->update(['post_id'=>$post->post_id]);
 
-			$this->postDiagnosticOrder($consultation);
 
 			if (Auth::user()->authorization->module_consultation==1) {
 					return redirect('/patient_lists');
@@ -177,12 +178,13 @@ class ConsultationController extends Controller
 
 	public function postDiagnosticOrder($consultation)
 	{
-			Log::info('AMQP');
+			Log::info("Post Diagnostic Order to rabbit");
 			$id = Session::get('consultation_id');
 			$orders = Order::where('consultation_id','=',$id)
 					->where('post_id','=',0)
 					->get();
 
+			Log::info(count($orders));
 			if (count($orders)==0) return;
 
 			$items = [];
@@ -204,7 +206,8 @@ class ConsultationController extends Controller
 				];
 				if ($order->orderInvestigation) {
 						$event = ['status'=>'requested', 'dateTime'=>$order->orderInvestigation->investigation_date ];
-						Log::info("-----");
+						Log::info("----- AMQP -----");
+						Log::info($order);
 						Log::info($order->orderInvestigation->investigation_date);
 
 						$diagnostic = new DiagnosticOrder();
