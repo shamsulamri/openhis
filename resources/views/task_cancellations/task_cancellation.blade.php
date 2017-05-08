@@ -25,7 +25,7 @@
 		@if ($source=='nurse')
             <a class="btn btn-default" href="/admission_tasks" role="button">Cancel</a>
 		@else
-            <a class="btn btn-default" href="/order_tasks/task/{{ Session::get('encounter_id') }}/{{ $task_cancellation->order->product->category->location_code }}" role="button">Cancel</a>
+            <a class="btn btn-default" href="/order_tasks/task/{{ Session::get('encounter_id') }}/{{ $task_cancellation->order->product->category_code }}" role="button">Cancel</a>
 		@endif
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>

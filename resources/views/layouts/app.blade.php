@@ -204,7 +204,7 @@ if ($_COOKIE['his-navbar']==1) {
 							@endif
 							@if ($patient->gender_code=='P')
 							<li><a title='Obstetic History' href="/obstetric"><i class="fa fa-user"></i><span class='nav-label'>Obstetric History</span></a></li>
-							<li><a title='Newborn Details' href="/newborns"><i class="fa fa-gift"></i><span class='nav-label'>Newborn Details</span></a></li>
+							<li><a title='Newborn Registration' href="/newborns"><i class="fa fa-gift"></i><span class='nav-label'>Newborn Registration</span></a></li>
 							@endif
 							<li><a title='Medical Certificate' href="/medical_certificates/create"><i class="fa fa-certificate"></i><span class='nav-label'>Medical Certificate</span></a></li>
 							<li><a title='Medical Documents' href="/documents?patient_mrn={{ $patient->patient_mrn }}"><i class="fa fa-files-o"></i><span class='nav-label'>Documents</span></a></li>

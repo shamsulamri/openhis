@@ -164,6 +164,7 @@ class ConsultationController extends Controller
 
 			$this->postDiagnosticOrder($consultation);
 
+			Log::info("Post orders....");
 			Order::where('consultation_id','=',$id)
 					->where('post_id','=',0)
 					->update(['post_id'=>$post->post_id]);
@@ -178,13 +179,11 @@ class ConsultationController extends Controller
 
 	public function postDiagnosticOrder($consultation)
 	{
-			Log::info("Post Diagnostic Order to rabbit");
 			$id = Session::get('consultation_id');
 			$orders = Order::where('consultation_id','=',$id)
 					->where('post_id','=',0)
 					->get();
 
-			Log::info(count($orders));
 			if (count($orders)==0) return;
 
 			$items = [];
