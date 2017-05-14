@@ -61,11 +61,11 @@ class AdmissionTaskController extends Controller
 					->where('order_completed','=',0)
 					->where('a.product_code','<>','consultation_fee')
 					->whereNull('cancel_id')
-					->whereNull('discharge_id')
 					->whereNotNull('n.post_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');
 
+			//->whereNull('discharge_id')
 
 			if (Auth::user()->authorization->module_support==1) {
 					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
@@ -198,9 +198,10 @@ class AdmissionTaskController extends Controller
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('d.category_code','like', '%'.$request->categories.'%')
 					->where('a.product_code','<>','consultation_fee')
-					->whereNull('discharge_id')
 					->whereNull('cancel_id');
 
+			//->whereNull('discharge_id')
+			
 			if (Auth::user()->authorization->module_support==1) {
 					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
 					if (!empty($ward_code)) { 
@@ -310,6 +311,17 @@ class AdmissionTaskController extends Controller
 									$multiple_order->updated_by = Auth::user()->id;
 									$multiple_order->store_code = $store_code;
 									$multiple_order->save();
+									$multiple_completed = OrderMultiple::where('order_id','=', $multiple_order->order_id);
+
+									Log::info("Count order:".$multiple_completed->count());
+									Log::info("Count order:".$multiple_completed->where('order_completed','=',1)->count());
+									if ($multiple_completed->count()==$multiple_completed->where('order_completed','=',1)->count()) {
+											$parent_order = Order::find($multiple_order->order_id);
+											$parent_order->order_completed=1;
+											$parent_order->updated_by = Auth::user()->id;
+											$parent_order->store_code = $store_code;
+											$parent_order->save();
+									}
 							} 
 					}
 					/*

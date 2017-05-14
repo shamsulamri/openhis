@@ -152,11 +152,15 @@
 			@endcan
 			@can('module-discharge')
 					@if (!$admission->discharge_id)
-					<td align='right'>
+					<td align='right' width='20'>
 							<a class='btn btn-primary ' href='{{ URL::to('bill_items/'. $admission->encounter_id) }}'>Interim Bill</a>
+					</td>
+					@else
+					<td align='right'>
 					</td>
 					@endif
 			@endcan
+
 	</tr>
 @endforeach
 @endif

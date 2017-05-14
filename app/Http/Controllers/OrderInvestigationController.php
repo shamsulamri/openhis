@@ -155,7 +155,10 @@ class OrderInvestigationController extends Controller
 			$order_investigation->fill($request->input());
 			$order_investigation->investigation_recur = $request->investigation_recur ?: 0;
 
-			$frequencies = $order_investigation->period->period_mins/$order_investigation->frequency->frequency_mins;
+			if (!empty($order_investigation->period->period_mins) && !empty($order_investigation->frequency->frequency_mins)) {
+					$frequencies = $order_investigation->period->period_mins/$order_investigation->frequency->frequency_mins;
+			}
+
 			$order = Order::find($order_investigation->order_id);
 			$order->fill($request->input());
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
@@ -198,6 +201,7 @@ class OrderInvestigationController extends Controller
 
 	public function createMultipleOrder($order_investigation) 
 	{
+		if (!empty($order_investigation->period->period_mins) && !empty($order_investigation->frequency->frequency_mins)) {
 			$multi = OrderMultiple::where('order_id','=', $order_investigation->order_id)->delete();
 			$frequencies = $order_investigation->period->period_mins/$order_investigation->frequency->frequency_mins;
 			
@@ -216,7 +220,7 @@ class OrderInvestigationController extends Controller
 					$order->order_multiple=0;
 					$order->save();
 			}
-
+		}
 	}
 	
 	public function delete($id)

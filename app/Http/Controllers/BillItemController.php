@@ -15,6 +15,8 @@ use App\Product;
 use App\QueueLocation as Location;
 use App\Encounter;
 use App\DojoUtility;
+use App\Order;
+use App\OrderMultiple;
 use Carbon\Carbon;
 
 class BillItemController extends Controller
@@ -241,6 +243,20 @@ class BillItemController extends Controller
 			$billPosted=False;
 			if (count($billPost)>0) $billPosted=True;
 
+			$incomplete_orders = Order::where('encounter_id','=',$id)
+									->where('order_completed','=',0)
+									->leftjoin('order_cancellations as b','orders.order_id','=', 'b.order_id')
+									->whereNull('cancel_id')
+									->where('order_multiple','=',0)
+									->count();
+
+			$incomplete_orders = $incomplete_orders + OrderMultiple::where('encounter_id','=',$id)
+									->leftJoin('orders as b', 'b.order_id', '=', 'order_multiples.order_id')
+									->leftjoin('order_cancellations as c','c.order_id','=', 'b.order_id')
+									->where('order_multiples.order_completed','=',0)
+									->whereNull('cancel_id')
+									->count();
+
 			return view('bill_items.index', [
 					'bills'=>$bills,
 					'billPosted'=>$billPosted,
@@ -255,6 +271,7 @@ class BillItemController extends Controller
 					'bill_change' => $bill_change,
 					'bill_outstanding' => $bill_outstanding,
 					'pending' => $pending,
+					'incomplete_orders'=>$incomplete_orders,
 			]);
 	}
 

@@ -9,7 +9,11 @@ Final Bill
 Interim Bill
 @endif
 </h1>
+@if ($incomplete_orders>0 && $encounter->discharge->discharge_id)
+<div class='alert alert-danger' role='alert'>Patient has {{ $incomplete_orders }} incomplete order(s)</div>
+@else
 <br>
+@endif
 @if ($bills->total()>0)
 
 <a class="btn btn-default" href="/discharges" role="button">Cancel</a>
