@@ -89,6 +89,7 @@ class BillMaterialController extends Controller
 			$bill_material = BillMaterial::findOrFail($id);
 			$bill_material->fill($request->input());
 
+			$unit = isset($bill_material->product->unitMeasure->unit_shortname) ? $bill_material->product->unitMeasure->unit_shortname : '-';
 
 			$valid = $bill_material->validate($request->all(), $request->_method);	
 
@@ -97,8 +98,10 @@ class BillMaterialController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/bill_materials/index/'.$bill_material->product_code);
 			} else {
+					//return $valid->errors();
 					return view('bill_materials.edit', [
 							'bill_material'=>$bill_material,
+							'unit'=> $unit,
 							])
 							->withErrors($valid);			
 			}

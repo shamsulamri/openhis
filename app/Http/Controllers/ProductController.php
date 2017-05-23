@@ -307,7 +307,6 @@ class ProductController extends Controller
 					$products = $products->where('products.category_code','=', $request->category_code);
 			}elseif (!$product_authorization->get()->isEmpty()) {
 					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
-					Log::info("XXXX");
 			}
 
 			if (!empty($request->store)) {
@@ -330,14 +329,18 @@ class ProductController extends Controller
 								
 			}
 
-			$products = $products->where('product_name','like','%'.$request->search.'%')
-								->orWhere('product_name_other','like','%'.$request->search.'%');
 
 
 			/** Product Authorization **/
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 			if (!$product_authorization->get()->isEmpty()) {
 					$products = $products->whereIn('b.category_code',$product_authorization->pluck('category_code'));
+			}
+
+			if (!empty($request->search)) {
+					$products = $products->where('product_name','like','%'.$request->search.'%')
+								->orWhere('product_name_other','like','%'.$request->search.'%')
+								->orWhere('product_code','like','%'.$request->search.'%');
 			}
 
 			$products = $products->paginate($this->paginateValue);

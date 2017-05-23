@@ -108,16 +108,16 @@ class DrugPrescriptionController extends Controller
 			if ($valid->passes()) {
 					$drug_prescription->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/products');
+					return redirect('/products/'.$drug_prescription->drug_code.'/edit');
 			} else {
 					return view('drug_prescriptions.edit', [
 							'drug_prescription'=>$drug_prescription,
-					'drug' => Drug::all()->sortBy('drug_name')->lists('drug_name', 'drug_code')->prepend('',''),
-					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-					'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
-					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
-					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
-					'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+							'drug' => Drug::all()->sortBy('drug_name')->lists('drug_name', 'drug_code')->prepend('',''),
+							'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
+							'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
+							'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
+							'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
+							'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

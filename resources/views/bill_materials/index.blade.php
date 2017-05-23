@@ -25,7 +25,9 @@
 					{{ floatval($bill_material->bom_quantity) }} {{ $bill_material->unit_shortname }}
 			</td>
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('bill_materials/delete/'. $bill_material->id) }}'>-</a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('bill_materials/delete/'. $bill_material->id) }}'>
+						<span class='glyphicon glyphicon-minus'></span>
+					</a>
 			</td>
 	</tr>
 @endforeach

@@ -12,7 +12,7 @@
 <?php
 $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_code);
 ?>
-            {{ Form::label('on_hand', $on_hand, ['class'=>'form-control']) }}
+			<label class='form-control'>{{ $on_hand }}</label>
         </div>
     </div>
     <div class='form-group  @if ($errors->has('move_code')) has-error @endif'>
