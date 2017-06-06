@@ -28,6 +28,8 @@ use App\Form;
 use App\FormValue;
 use App\FormHelper;
 use App\Team;
+use App\Period;
+use App\DietHelper;
 
 class AdmissionController extends Controller
 {
@@ -45,6 +47,7 @@ class AdmissionController extends Controller
 					'diet_name',
 					'class_name',
 					'n.team_name',
+					'nbm_status',
 			];
 
 
@@ -55,6 +58,7 @@ class AdmissionController extends Controller
 
 	public function index(Request $request)
 	{
+			DietHelper::updateNilByMouthStatus();
 			$ward_code = "";
 			$ward = null;
 			$setWard=null;
@@ -263,13 +267,16 @@ class AdmissionController extends Controller
 	{
 			$admission = Admission::findOrFail($id);
 			$admission->fill($request->input());
-			$admission->admission_nbm = $request->admission_nbm ?: 0;
+			$admission->nbm_status = $request->nbm_status ?: 0;
 			$encounter = Encounter::findOrFail($admission->encounter_id);
+
+			$nbm_datetime = DojoUtility::dateWriteFormat($request->nbm_start_date).' '.$request->nbm_start_time;
 
 			if ($request->consultation_id>0) {
 					$admission->diet_code = $request->diet_code;
 					$admission->texture_code = $request->texture_code;
 					$admission->class_code = $request->class_code;
+					$admission->nbm_datetime = $nbm_datetime;
 					$admission->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/diet');
@@ -297,6 +304,8 @@ class AdmissionController extends Controller
 	
 	public function diet() 
 	{
+			
+
 			$consultation=Consultation::find(Session::get('consultation_id'));
 			$encounter = $consultation->encounter;
 			$admission = $consultation->encounter->admission;
@@ -309,7 +318,23 @@ class AdmissionController extends Controller
 					'texture' => DietTexture::all()->sortBy('texture_name')->lists('texture_name', 'texture_code')->prepend('',''),
 					'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'consultOption' => 'diet',
+					'nbm_start_time'=>'10:05',
+					'period' => Period::whereIn('period_code', array('hour','day'))->orderBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					'nbm_start_date' => DojoUtility::dateReadFormat($admission->nbm_datetime),
+					'nbm_start_time' => DojoUtility::timeReadFormat($admission->nbm_datetime),
 					]);
+	}
+
+	public function removeNilByMouth($admission_id)
+	{
+			DB::table('admissions')->where('admission_id', $admission_id)->update(['nbm_status'=>0, 
+					'nbm_duration'=>null,
+					'nbm_datetime'=>null, 
+					'period_code'=>null
+			]);
+
+			Session::flash('message', 'Nil by Mouth cleared.');
+			return redirect('/diet');
 	}
 
 	public function delete($id)

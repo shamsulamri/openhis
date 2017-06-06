@@ -2,7 +2,27 @@
 
 @section('content')
 <h1>Patient List</h1>
+@if ($hasOpenOrders->count()>0)
+<div class="alert alert-danger" role="alert">You have unposted order in {{ $hasOpenOrders->count() }} consultation(s). Please close pending consultation to post the order.
+	<br>
+	<br>
+		@foreach($hasOpenOrders as $openOrder)
+			<?php
+				$patient = $openOrder->consultation->encounter->patient; 
+			?>	
+			- <a href='{{ URL::to('consultations/'. $openOrder->consultation_id . '/edit') }}'>
+				<strong>{{ $patient->patient_name }}</strong>
+				{{ DojoUtility::getAge($patient->patient_birthdate) }}, {{ $patient->gender->gender_name }}
+				({{ $patient->getMRN() }})
+			</a>
+			@if ($openOrder != $hasOpenOrders[$hasOpenOrders->count()-1])
+					<br>
+			@endif
+		@endforeach
+</div>
+@else
 <br>
+@endif
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
 				<li class="active">

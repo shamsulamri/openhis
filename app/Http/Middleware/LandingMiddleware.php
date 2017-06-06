@@ -25,7 +25,11 @@ class LandingMiddleware
 		} 		
 
 		if ($request->user()->can('module-consultation')) {
-				return redirect('/patient_lists');
+				if ($request->user()->can('module-ward')) {
+						return redirect('/admissions');
+				} else {
+						return redirect('/patient_lists');
+				}
 		} 		
 
 		if ($request->user()->can('module-diet')) {

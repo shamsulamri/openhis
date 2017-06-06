@@ -184,5 +184,14 @@ class DojoUtility
 
 				return $value;
 		}
+
+		public static function formatMRN($mrn) 
+		{
+			if (is_null($mrn)) {
+					return "-";
+			} else {
+					return substr($mrn,0,2).'-'.substr($mrn,2,8).'-'.substr($mrn,10,4);
+			}
+		}
 }
 

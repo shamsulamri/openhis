@@ -195,8 +195,8 @@
 				<a href="{{ url('/users') }}">Users</a><br>
 				<a href="{{ url('/user_authorizations') }}">Authorization Groups</a><br>
 				<a href="{{ url('/employees') }}">Employees</a><br>
-				<a href="{{ url('/teams') }}">Teams</a><br>
 				<!--
+				<a href="{{ url('/teams') }}">Teams</a><br>
 				<a href="{{ url('/team_members') }}">Team Members</a><br>
 				-->
 			</div>

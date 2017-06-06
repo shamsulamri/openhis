@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use App\DietMenu;
 use DB;
 use App\BillMaterial;
+use App\Admission;
 use Log;
 
 class DietHelper 
@@ -46,7 +47,7 @@ class DietHelper
 								->where('a.diet_code','=', $diet)
 								->where('a.class_code','=', $class)
 								->where('ward_code','=', $ward_code)
-								->where('a.admission_nbm','=',0)
+								->where('a.nbm_status','=',0)
 								->whereNull('discharge_id');
 				Log::info($diet);
 				Log::info($class);
@@ -66,7 +67,7 @@ class DietHelper
 			$patient_count = DB::table('admissions as a')
 						->leftjoin('discharges as b', 'b.encounter_id','=', 'a.encounter_id')
 						->where('diet_code', '=', $diet_code)
-						->where('a.admission_nbm','=',0)
+						->where('a.nbm_status','=',0)
 						->whereNull('discharge_id')
 						->count();
 
@@ -81,7 +82,7 @@ class DietHelper
 						->leftjoin('discharges as c', 'c.encounter_id','=', 'a.encounter_id')
 						->where('ward_code','=', $ward_code)
 						->where('diet_code', '=', $diet_code)
-						->where('a.admission_nbm','=',1)
+						->where('a.nbm_status','=',1)
 						->whereNull('discharge_id')
 						->count();
 
@@ -114,7 +115,7 @@ class DietHelper
 								->leftjoin('discharges as b', 'b.encounter_id','=', 'a.encounter_id')
 								->where('diet_code','=', $diet)
 								->where('class_code','=', $class)
-								->where('a.admission_nbm','=',0)
+								->where('a.nbm_status','=',0)
 								->whereNull('discharge_id');
 
 				//Log::info($diet);
@@ -154,7 +155,7 @@ class DietHelper
 								->where('a.diet_code','=', $diet)
 								->where('a.class_code','=', $class)
 								->where('ward_code', '=', $ward_code)
-								->where('a.admission_nbm','=',0)
+								->where('a.nbm_status','=',0)
 								->whereNull('discharge_id')
 								->count();
 			}
@@ -189,7 +190,7 @@ class DietHelper
 								->where('a.diet_code','=', $diet)
 								->where('a.class_code','=', $class)
 								->where('ward_code','=', $ward_code)
-								->where('a.admission_nbm','=',0)
+								->where('a.nbm_status','=',0)
 								->whereNull('discharge_id');
 
 				Log::info($diet);
@@ -216,13 +217,59 @@ class DietHelper
 								->select('ward_code', DB::raw('count(*) as total'))
 								->leftjoin('beds as b', 'b.bed_code','=', 'a.bed_code')
 								->leftjoin('discharges as c', 'c.encounter_id','=', 'a.encounter_id')
-								->where('a.admission_nbm','=',0)
+								->where('a.nbm_status','=',0)
 								->whereNull('discharge_id')
 								->groupBy('ward_code')
 								->pluck('ward_code');
 
 			$wards = Ward::whereIn('ward_code', $ward_codes)->get();
 			return $wards;
+	}
+
+	public static function updateNilByMouthStatus() 
+	{
+
+			/** Set nbm **/
+			$sql = "select admission_id
+					from admissions a
+					left join ref_periods b on (a.period_code = b.period_code)
+					where nbm_datetime is not null
+					and now() between nbm_datetime and date_add(nbm_datetime, INTERVAL period_mins MINUTE)";
+
+			$results = DB::select($sql);
+
+			if (!empty($results)) {
+					$nbms=array();
+					foreach($results as $result) {
+							Log::info($result->admission_id);
+							array_push($nbms, $result->admission_id);
+					}
+					DB::table('admissions')->whereIn('admission_id', $nbms)->update(['nbm_status'=>1]);
+					Log::info($nbms);
+			}
+
+			/** Remove nbm **/
+			$sql = "select admission_id
+					from admissions a
+					left join ref_periods b on (a.period_code = b.period_code)
+					where nbm_datetime is not null
+					and now()>date_add(nbm_datetime, INTERVAL period_mins MINUTE)";
+
+			$results = DB::select($sql);
+
+			if (!empty($results)) {
+					$nbms=array();
+					foreach($results as $result) {
+							Log::info($result->admission_id);
+							array_push($nbms, $result->admission_id);
+					}
+					DB::table('admissions')->whereIn('admission_id', $nbms)->update(['nbm_status'=>0, 
+							'nbm_duration'=>null,
+							'nbm_datetime'=>null, 
+							'period_code'=>null
+					]);
+					Log::info($nbms);
+			}
 	}
 }
 

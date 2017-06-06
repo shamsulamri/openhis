@@ -159,12 +159,12 @@ class EncounterController extends Controller
 							$admission->bed_code = $request->bed_code;
 							$admission->admission_code = $request->admission_code;
 							$admission->referral_code = $request->referral_code;
-							//$admission->user_id = $request->user_id;
+							$admission->user_id = $request->user_id;
 							$admission->encounter_id = $request->encounter_id;
 							$admission->diet_code='normal';
 							$admission->class_code= $bed->wardClass->class_diet;
 							$admission->encounter_id = $encounter->encounter_id;
-							$admission->team_code = $request->team_code;
+							//$admission->team_code = $request->team_code;
 							$admission->save();
 							Log::info($admission);
 

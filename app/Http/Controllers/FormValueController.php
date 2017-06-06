@@ -119,6 +119,7 @@ class FormValueController extends Controller
 					->where('form_code','=',$form_code)
 					->orderBy('value_id', 'desc')
 					->limit(5)
+					->offset(0)
 					->get();
 
 			$json_values = $json_values->sortBy('value_id');

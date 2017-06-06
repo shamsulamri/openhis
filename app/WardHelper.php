@@ -4,12 +4,14 @@ namespace App;
 use Carbon\Carbon;
 use DB;
 use App\Encounter;
+use App\Consultation;
 use Log;
 
 class WardHelper 
 {
 	
 	public $ward_code;
+	public $openConsultationId=0;    
 
 	function __construct($code) {
 		$this->ward_code = $code;
@@ -77,5 +79,27 @@ class WardHelper
 			}
 
 	
+	}
+
+	public function hasOpenConsultation($patientId, $encounter_id, $user_id)
+	{
+			$consultation = Consultation::where('patient_id','=',$patientId)
+					->where('encounter_id',$encounter_id)
+					->where('consultation_status',1)
+					->where('user_id',$user_id)
+					->get();
+			
+		    if (count($consultation)>0) {	
+					$this->openConsultationId=$consultation[0]->consultation_id;
+					return $consultation[0];
+			} else {
+					return;
+			}
+	}
+
+	public function getOpenConsultation($consultation_id) {
+			$consultation = Consultation::find($consultation_id)->get();
+			return $consultation;
+
 	}
 }

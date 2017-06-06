@@ -28,6 +28,7 @@
         </div>
     </div>
 
+	<!--
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
         {{ Form::label('Send To', 'Send To',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -43,10 +44,11 @@
             @if ($errors->has('order_is_discharge')) <p class="help-block">{{ $errors->first('order_is_discharge') }}</p> @endif
         </div>
     </div>
+	-->
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-default" href="/order_products" role="button">Cancel</a>
+            <a class="btn btn-default" href="/orders" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

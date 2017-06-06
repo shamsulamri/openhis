@@ -16,6 +16,8 @@ use App\Admission;
 use App\Ward;
 use App\DojoUtility;
 use App\TeamMember;
+use App\WardHelper;
+use App\OrderHelper;
 
 class PatientListController extends Controller
 {
@@ -28,7 +30,6 @@ class PatientListController extends Controller
 
 	public function index(Request $request)
 	{
-
 			if (empty($request->cookie('queue_location'))) {
 					Session::flash('message', 'Location not set. Please select your location or room.');
 					return redirect('/queue_locations');
@@ -55,7 +56,7 @@ class PatientListController extends Controller
 
 			$selectFields = ['patient_mrn', 'patient_name', 'a.created_at', 'a.encounter_id', 'b.patient_id', 'bed_name', 'ward_name', 'room_name','patient_birthdate', 'gender_name'];
 
-			$team_member = TeamMember::where('username','=',Auth::user()->username)->first();
+			//$team_member = TeamMember::where('username','=',Auth::user()->username)->first();
 
 			$inpatients = DB::table('admissions as a')
 							->select($selectFields)
@@ -66,7 +67,7 @@ class PatientListController extends Controller
 							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
 							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
 							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
-							->where('team_code', $team_member->team_code)
+							->where('a.user_id', Auth::user()->id)
 							->where('b.encounter_code', 'inpatient')
 							->whereNull('discharge_id')
 							->get();
@@ -80,7 +81,7 @@ class PatientListController extends Controller
 							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
 							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
 							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
-							->where('team_code', $team_member->team_code)
+							->where('a.user_id', Auth::user()->id)
 							->where('b.encounter_code', 'daycare')
 							->whereNull('discharge_id')
 							->get();
@@ -139,6 +140,9 @@ class PatientListController extends Controller
 					'mortuary' => $mortuary,
 					'admission' => new Admission(),
 					'dojo' => new DojoUtility(),
+					'wardHelper'=> new WardHelper(null),
+					'orderHelper'=>new OrderHelper(),
+					'hasOpenOrders'=>OrderHelper::hasOpenOrders(Auth::user()->id),
 			]);
 	}
 

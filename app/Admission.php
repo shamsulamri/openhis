@@ -28,12 +28,15 @@ class Admission extends Model
 				'texture_code',
 				'class_code',
 				'diet_description',
-				'admission_nbm'];
+				'nbm_duration',
+				'nbm_datetime',
+				'period_code',
+				'nbm_status'];
 	
     protected $guarded = ['admission_id'];
     protected $primaryKey = 'admission_id';
     public $incrementing = true;
-	public $openConsultationId=0;    
+	//public $openConsultationId=0;    
 
 	public function validate($input, $method) {
 			$rules = [];
@@ -42,7 +45,7 @@ class Admission extends Model
 			case "POST":
 					$rules = [
 						'encounter_id'=>'required',
-						'team_code'=>'required',
+						'user_id'=>'required',
 					];
 					break;
 			default:
@@ -56,7 +59,7 @@ class Admission extends Model
 					} else {
 							$rules = [
 								'encounter_id'=>'required',
-								'team_code'=>'required',
+								'user_id'=>'required',
 							];
 					}
 			}
@@ -84,11 +87,17 @@ class Admission extends Model
 			return $this->hasOne('App\Bed', 'bed_code', 'bed_code');
 	}
 
+	public function period()
+	{
+			return $this->belongsTo('App\Period', 'period_code', 'period_code');
+	}
+
 	public function bedMovement()
 	{
 			return $this->hasMany('App\BedMovement', 'admission_id'); 
 	}
 
+	/**
 	public function hasOpenConsultation($patientId, $encounter_id)
 	{
 			$consultation = Consultation::where('patient_id','=',$patientId)
@@ -104,5 +113,6 @@ class Admission extends Model
 					return 0;
 			}
 	}
+	**/
 
 }

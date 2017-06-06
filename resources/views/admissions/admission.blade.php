@@ -18,7 +18,6 @@
         </div>
     </div>
 
-	<!--
     <div class='form-group  @if ($errors->has('user_id')) has-error @endif'>
         <label for='user_id' class='col-sm-3 control-label'>Consultant<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -27,8 +26,8 @@
 			<small>Not required for death cases</small>
         </div>
     </div>
-	-->
 
+	<!--
     <div class='form-group  @if ($errors->has('team_code')) has-error @endif'>
         <label for='team_code' class='col-sm-3 control-label'>Team<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -37,6 +36,7 @@
 			<small>Not required for death cases</small>
         </div>
     </div>
+	-->
 			
 	{{ Form::hidden('encounter_id', null) }}
 

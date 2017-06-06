@@ -49,6 +49,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		});
 
 
+		Route::resource('diet_therapeutics', 'DietTherapeuticController');
+		Route::get('/diet_therapeutics/id/{id}', 'DietTherapeuticController@searchById');
+		Route::post('/diet_therapeutic/search', 'DietTherapeuticController@search');
+		Route::get('/diet_therapeutic/search', 'DietTherapeuticController@search');
+		Route::get('/diet_therapeutics/delete/{id}', 'DietTherapeuticController@delete');
+
 		Route::resource('order_multiples', 'OrderMultipleController');
 		Route::get('/order_multiples/id/{id}', 'OrderMultipleController@searchById');
 		Route::post('/order_multiple/search', 'OrderMultipleController@search');
@@ -454,7 +460,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 				Route::get('/orders/single/{product_code}', 'OrderController@single');
 				Route::get('/orders/task', 'OrderController@task');
-				Route::get('/orders/make', 'OrderController@make');
+				Route::get('/orders/make/{encounter_id?}', 'OrderController@make');
 				Route::post('/orders/multiple', 'OrderController@multiple');
 				Route::resource('orders', 'OrderController', ['except'=>[ 'create', 'show']]);
 				Route::get('/orders/{id}/show', 'OrderController@show');
@@ -544,6 +550,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/newborns/delete/{id}', 'NewbornController@delete');
 
 				Route::get('/diet', 'AdmissionController@diet');
+				Route::get('/nbm/remove/{id}', 'AdmissionController@removeNilByMouth');
 
 				Route::resource('order_cancellations', 'OrderCancellationController', ['except'=>['create']]);
 				Route::get('/order_cancellations/create/{id}', 'OrderCancellationController@create');

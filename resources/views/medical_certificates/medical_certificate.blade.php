@@ -104,4 +104,5 @@
 				autoclose: true
 		});
 
+		$('.clockpicker').clockpicker();
 	</script>

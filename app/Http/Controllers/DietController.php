@@ -77,6 +77,7 @@ class DietController extends Controller
 
 			if ($valid->passes()) {
 					$diet->save();
+					Log::info($diet);
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/diets/id/'.$id);
 			} else {

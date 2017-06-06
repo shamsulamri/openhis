@@ -29,38 +29,6 @@ xxx
 	</strong>
 	</h4>
 @endif
-<!--
-<ul class='nav nav-pills nav-justified'>
-			<li role='presentation' class=
-				@if ($consultOption=='consultation')
-					'active'
-				@endif
-			><a href="/consultations/{{ $consultation->consultation_id }}/edit"><span class='glyphicon glyphicon-comment' aria-hidden='true'></span> &nbsp;Consultation</a></li>
-			<li role='presentation' class=
-				@if ($consultOption=='medical_alerts')
-					'active'
-				@endif
-			><a href="/medical_alerts"><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span> &nbsp;Alerts</a></li>
-			<li role='presentation' class=
-				@if ($consultOption=='medical_certificate')
-					'active'
-				@endif
-			><a href="/medical_certificates/create"><span class='glyphicon glyphicon-certificate' aria-hidden='true'></span> &nbsp;Certificate</a></li>
-			@if ($consultation->encounter->admission)
-			<li role='presentation' class=
-				@if ($consultOption=='newborn')
-					'active'
-				@endif
-			>
-			<a href="/newborns?id={{ $consultation->consultation_id }}"><span class='glyphicon glyphicon-baby-formula' aria-hidden='true'></span> &nbsp;Newborn</a></li>
-			<li role='presentation' class=
-				@if ($consultOption=='dietary')
-					'active'
-				@endif
-			><a href="/diet"><span class='glyphicon glyphicon-cutlery' aria-hidden='true'></span> &nbsp;Dietary</a></li>
-			@endif
-</ul>
--->
 	</div>
 </div>
 

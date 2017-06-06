@@ -171,7 +171,7 @@ class ConsultationController extends Controller
 
 
 			if (Auth::user()->authorization->module_consultation==1) {
-					return redirect('/patient_lists');
+					return redirect('/');
 			} else {
 					return redirect('/order_queues');
 			}
@@ -230,7 +230,14 @@ class ConsultationController extends Controller
 			$consultation = Consultation::findOrFail($id);
 			Session::set('consultation_id', $consultation->consultation_id);
 			Session::set('encounter_id', $consultation->encounter->encounter_id);
-			return view('consultations.edit', [
+
+			$landing_page = "consultations.edit";
+			/**
+			if (Auth::user()->can('module-ward')) {
+					$landing_page = "orders/make";
+			}
+			**/
+			return view($landing_page, [
 					'consultation'=>$consultation,
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'clinical',

@@ -16,6 +16,7 @@ use App\DojoUtility;
 use App\Form;
 use App\FormProperty;
 use App\Encounter;
+use App\Consultation;
 
 class ChartController extends Controller
 {
@@ -24,7 +25,7 @@ class ChartController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function line($form_code, $encounter_id)
+	public function line($form_code, $encounter_id, $consultation_id = null)
 	{
 			$encounter = Encounter::find($encounter_id);
 
@@ -80,7 +81,12 @@ class ChartController extends Controller
 			$rgbs[1] = "rgba(255,176,0,0.8)";
 			$rgbs[2] = "rgba(26,179,148,0.8)";
 			$rgbs[3] = "rgba(255,176,0,0.8)";
-
+				
+			$consultation = null;
+			if (Session::get('consultation_id')) {
+				$consultation = Consultation::find(Session::get('consultation_id'));
+			}
+			
 			return view('charts.test', [
 					'chart_id'=>'test',
 					'chart_title'=>$form->form_name,
@@ -90,6 +96,7 @@ class ChartController extends Controller
 					'patient'=>$encounter->patient,
 					'encounter_id'=>$encounter_id,
 					'form'=>$form,
+					'consultation'=>$consultation,
 			]);
 	}
 

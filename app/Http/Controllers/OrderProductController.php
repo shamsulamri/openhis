@@ -21,6 +21,7 @@ use App\DojoUtility;
 use App\ProductCategory;
 use App\Product;
 use App\ProductAuthorization;
+use App\OrderHelper;
 use Auth;
 
 class OrderProductController extends Controller
@@ -150,6 +151,11 @@ class OrderProductController extends Controller
 			}
 			 */
 			if (!empty($request->search)) {
+				$order_product_single = Product::find($request->search);
+				if ($order_product_single) {
+						OrderHelper::orderItem($order_product_single);
+						return redirect('/order_product/search');
+				}
 				$order_products = Product::orderBy('product_name')
 					->where('product_name','like','%'.$request->search.'%')
 					->where('product_sold','1');
@@ -183,6 +189,7 @@ class OrderProductController extends Controller
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
 			}
+
 			$consultation_id = Session::get('consultation_id'); //$request->consultation_id;
 			$consultation = Consultation::findOrFail($consultation_id);
 

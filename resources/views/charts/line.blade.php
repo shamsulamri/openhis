@@ -1,10 +1,10 @@
 <div class="col-lg-12">
 <h1>
 <a href='{{ URL::to('form/results',[$encounter_id]) }}'>Forms</a> / {{ $form->form_name }}
-<a href='/form/{{ $form->form_code }}/{{ $patient->patient_id }}/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <a href='/chart/line/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-line-chart'></span> Chart</a>
 <a href='/form/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-table'></span> Table</a>
+<a href='/form/{{ $form->form_code }}/{{ $patient->patient_id }}/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 <br>
 			<br>
 			<div>
@@ -52,7 +52,7 @@
 		scaleGridLineColor: "rgba(0,0,0,.05)",
 		scaleGridLineWidth: 1,
 		scaleLabel: function(label){return  label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");},
-		bezierCurve: true,
+		bezierCurve: false,
 		bezierCurveTension: 0.4,
 		pointDot: true,
 		pointDotRadius: 4,

@@ -189,26 +189,14 @@ if ($_COOKIE['his-navbar']==1) {
 						@endcan
 						<!-- Consultation Module -->
 						@can('module-consultation')
+								@cannot('module-ward')
 						<div class="dropdown profile-element"> 
 								<h4>&nbsp;Consultation</h4>
 						</div>
-						<li><a title='Patient List' href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
-						<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
-						<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
-						<h4>&nbsp;</h4>
-						@if (!empty($consultation) && !empty($patient))
-							<li><a title='Forms' href='{{ URL::to('form/results',$consultation->encounter->encounter_id) }}'><i class='fa fa-table'></i><span class='nav-label'>Forms</span></a></li>
-							<li><a title='Medical Alerts' href="/medical_alerts"><i class="fa fa-exclamation-circle"></i><span class='nav-label'>Medical Alerts</span></a></li>
-							@if ($consultation->encounter->encounter_code=='inpatient')
-							<li><a title='Diet' href="/diet"><i class="fa fa-cutlery"></i><span class='nav-label'>Diet</a></li>
-							@endif
-							@if ($patient->gender_code=='P')
-							<li><a title='Obstetic History' href="/obstetric"><i class="fa fa-user"></i><span class='nav-label'>Obstetric History</span></a></li>
-							<li><a title='Newborn Registration' href="/newborns"><i class="fa fa-gift"></i><span class='nav-label'>Newborn Registration</span></a></li>
-							@endif
-							<li><a title='Medical Certificate' href="/medical_certificates/create"><i class="fa fa-certificate"></i><span class='nav-label'>Medical Certificate</span></a></li>
-							<li><a title='Medical Documents' href="/documents?patient_mrn={{ $patient->patient_mrn }}"><i class="fa fa-files-o"></i><span class='nav-label'>Documents</span></a></li>
-						@endif
+										<li><a title='Patient List' href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
+										<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
+										<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
+								@endcan
 						@endcan
 
 						<!-- Diet Module -->
@@ -327,6 +315,13 @@ if ($_COOKIE['his-navbar']==1) {
                     <div class="full-height-scroll white-bg border-left">
 						<div class="col-lg-12">
 								@yield('content')
+								<br>
+								<br>
+								<br>
+								<br>
+								<br>
+								<br>
+								<br>
 						</div>
 					</div>
             </div>

@@ -4,11 +4,13 @@
 <style>
 iframe { border: 1px #e5e5e5 solid; }
 </style>
+@if (!empty($consultation))
 @can('module-consultation')
 		@include('consultations.panel')		
 		<h1>Orders</h1>
 		<br>
 @endcan
+@endif
 @cannot('module-consultation')
 		@include('patients.id')
 		<h1>Edit Orders</h1>

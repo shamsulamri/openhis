@@ -8,8 +8,11 @@
 		</tr>
  		</thead>
 @foreach ($patients as $patient)
-	<?php $status='' ?>
-	@if ($admission->hasOpenConsultation($patient->patient_id, $patient->encounter_id)>0)
+	<?php 
+	$status='';
+	$openConsultation = $wardHelper->hasOpenConsultation($patient->patient_id, $patient->encounter_id, Auth::user()->id);
+	?>
+	@if (!empty($openConsultation))
 			<?php $status='warning' ?>
 	@endif
 	<tr class='{{ $status }}'>
@@ -31,7 +34,7 @@
 					</small>
 					@endif
 					<br>
-					<small>{{ $patient->patient_mrn }}</small>
+					<small>{{ DojoUtility::formatMRN($patient->patient_mrn) }}</small>
 			</td>
 			<td>
 					{{ $patient->bed_name }} 
@@ -42,10 +45,10 @@
 					<small>{{ $patient->ward_name }}</small>
 			</td>
 			<td align='right'>
-				@if ($admission->hasOpenConsultation($patient->patient_id, $patient->encounter_id)==0)
+				@if (empty($openConsultation))
 				<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $patient->encounter_id) }}'>&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;</a>
 				@else
-				<a class='btn btn-warning btn-xs' href='{{ URL::to('consultations/'. $admission->openConsultationId. '/edit') }}'>Resume</a>
+				<a class='btn btn-warning btn-xs' href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'>Resume</a>
 				@endif
 			</td>
 	</tr>

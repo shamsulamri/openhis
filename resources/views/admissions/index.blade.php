@@ -122,7 +122,14 @@
 			@can('module-ward')
 			@if ($ward->ward_code != 'mortuary')
 			<td>
+					@if ($admission->nbm_status==1)
+					<div class='label label-danger'>
+					Nil by Mouth
+					@else
+					<div class='label label-default'>
 					{{$admission->diet_name}}
+					@endif
+					</div>
 			</td>
 			@endif
 			@endcan
@@ -142,6 +149,14 @@
 								<a class='btn btn-default btn-lg' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'><span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
 		</a>
 								<a class='btn btn-default btn-lg' title='Forms' href='{{ URL::to('form/results/'. $admission->encounter_id) }}'><span class='fa fa-table' aria-hidden='true'></span></a>
+									<?php
+										$consultation = $wardHelper->hasOpenConsultation($admission->patient_id, $admission->encounter_id, Auth::user()->id);
+									?>
+									@if (empty($consultation))
+										<a class='btn btn-default btn-lg' title='Consultation' href='{{ URL::to('consultations/create?encounter_id='. $admission->encounter_id) }}'><span class='fa fa-stethoscope' aria-hidden='true'></span></a>
+										@else
+										<a class='btn btn-warning btn-lg' href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'><span class='fa fa-stethoscope' aria-hidden='true'></span></a>
+									@endif
 								@endif
 						@endif
 						@can('system-administrator')
