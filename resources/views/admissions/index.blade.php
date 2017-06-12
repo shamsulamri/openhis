@@ -126,7 +126,13 @@
 					<div class='label label-danger'>
 					Nil by Mouth
 					@else
-					<div class='label label-default'>
+
+					@php ($label = "default")
+					@if ($admission->diet_code != 'normal') 
+							@php ($label = "danger")
+					@else 
+					@endif
+					<div class='label label-{{ $label }}'>
 					{{$admission->diet_name}}
 					@endif
 					</div>

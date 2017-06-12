@@ -25,12 +25,15 @@ class Admission extends Model
 				'employee_id',
 				'organisation_code',
 				'organisation_id',
+				'diet_code',
+				'therapeutic_values',
 				'texture_code',
 				'class_code',
 				'diet_description',
 				'nbm_duration',
 				'nbm_datetime',
 				'period_code',
+				'diet_textures',
 				'nbm_status'];
 	
     protected $guarded = ['admission_id'];

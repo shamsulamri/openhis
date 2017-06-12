@@ -104,6 +104,7 @@ class UserController extends Controller
 			$valid = $user->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					$user->consultant = $request->consultant ?: 0;
 					$user->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/user_profile');
@@ -122,6 +123,7 @@ class UserController extends Controller
 			$valid = $user->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					$user->consultant = $request->consultant ?: 0;
 					$user->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/users/id/'.$id);

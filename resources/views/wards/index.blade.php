@@ -21,6 +21,7 @@
 	<tr> 
     <th>Name</th>
     <th>Code</th> 
+    <th>Code</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -31,6 +32,9 @@
 					<a href='{{ URL::to('wards/'. $ward->ward_code . '/edit') }}'>
 						{{$ward->ward_name}}
 					</a>
+			</td>
+			<td>
+					{{$ward->ward_code}}
 			</td>
 			<td>
 					{{$ward->ward_code}}

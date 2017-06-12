@@ -61,6 +61,21 @@ class DietHelper
 
 	}
 
+	public function therapeutic_count($diet_code, $therapeutic_value, $ward_code) 
+	{
+			$count = DB::table('admissions as a')
+						->leftjoin('beds as b', 'b.bed_code','=', 'a.bed_code')
+						->leftjoin('discharges as c', 'c.encounter_id','=', 'a.encounter_id')
+						->where('a.diet_code','=', $diet_code)
+						->where('therapeutic_values', '=', $therapeutic_value)
+						->where('ward_code','=', $ward_code)
+						->where('a.nbm_status','=',0)
+						->whereNull('discharge_id')
+						->count();
+
+			return $count;
+	}
+
 	public function diet($diet_code)
 	{
 

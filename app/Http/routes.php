@@ -48,6 +48,19 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('stock_limits', 'StockLimitController');
+		Route::get('/stock_limits/id/{id}', 'StockLimitController@searchById');
+		Route::post('/stock_limit/search', 'StockLimitController@search');
+		Route::get('/stock_limit/search', 'StockLimitController@search');
+		Route::get('/stock_limit/{id}', 'StockLimitController@product');
+		Route::post('/stock_limit/{id}', 'StockLimitController@updateLimit');
+		Route::get('/stock_limits/delete/{id}', 'StockLimitController@delete');
+
+		Route::resource('admission_therapeutics', 'AdmissionTherapeuticController');
+		Route::get('/admission_therapeutics/id/{id}', 'AdmissionTherapeuticController@searchById');
+		Route::post('/admission_therapeutic/search', 'AdmissionTherapeuticController@search');
+		Route::get('/admission_therapeutic/search', 'AdmissionTherapeuticController@search');
+		Route::get('/admission_therapeutics/delete/{id}', 'AdmissionTherapeuticController@delete');
 
 		Route::resource('diet_therapeutics', 'DietTherapeuticController');
 		Route::get('/diet_therapeutics/id/{id}', 'DietTherapeuticController@searchById');

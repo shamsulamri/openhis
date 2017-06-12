@@ -24,6 +24,7 @@ th,td {
 <br>
 
 <table class='table table-bordered'>
+	<thead>
 	<tr>
 		<th width='15%'>Menu</th>
 		@foreach ($wards as $ward)
@@ -31,9 +32,10 @@ th,td {
 		@endforeach
 		<th width='15%'>Total</th>
 	</tr>
+	</thead>
 	@foreach ($menu_products as $product)
 	<tr>
-		<td width='15%'>
+		<td class='info' width='15%'>
 			<div align='left'>
 			{{ $product->product_name }}
 			</div>
@@ -44,7 +46,7 @@ th,td {
 		<td width='15%'>{{ $count }}</td>
 		<?php $total+=$count; ?>
 		@endforeach
-		<td>{{ $total }}</td>
+		<td><strong>{{ $total }}</strong></td>
 	</tr>
 	@endforeach
 </table>

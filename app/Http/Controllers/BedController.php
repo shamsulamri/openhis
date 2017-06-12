@@ -20,6 +20,8 @@ use App\Department;
 use App\EncounterType;
 use App\BedHelper;
 use App\Product;
+use App\DojoUtility;
+use App\WardDischarge;
 
 class BedController extends Controller
 {
@@ -124,6 +126,20 @@ class BedController extends Controller
 	public function update(Request $request, $id) 
 	{
 			$bed = Bed::findOrFail($id);
+	
+			if (Auth::user()->can('module-ward')) {
+					if ($bed->status_code=='02' && $request->status_code=='01') {
+							$now = DojoUtility::now();
+							$ward_discharge = WardDischarge::where('bed_code', $id)
+													->whereNull('housekeeping_datetime')
+													->first();
+							if ($ward_discharge) {
+									$ward_discharge->housekeeping_datetime = DojoUtility::dateTimeWriteFormat($now);
+									$ward_discharge->save();
+							}
+					}
+			}
+
 			$bed->fill($request->input());
 
 

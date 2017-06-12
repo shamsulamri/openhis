@@ -40,7 +40,6 @@ class Bed extends Model
         	    $rules['bed_code'] = 'required|max:20|unique:beds';
         	    $rules['encounter_code'] = 'required';
         	}
-        
 			
 			$messages = [
 				'required' => 'This field is required'

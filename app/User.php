@@ -14,6 +14,7 @@ class User extends Authenticatable
 				'username',
 				'password',
 				'email',
+				'consultant',
 				'tax_code',
 				'gst_number',
 				'employee_id',

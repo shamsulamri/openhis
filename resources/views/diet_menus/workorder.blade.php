@@ -23,6 +23,7 @@ th,td {
 		<?php $grand_total=0; ?>
 		<h3>{{ $product->product_name }}</h3>
 		<table class='table table-bordered table-condensed'>
+		<thead>
 		<tr>
 			<th>Ward</th>
 		@foreach ($diet_classes as $class)
@@ -32,9 +33,10 @@ th,td {
 		@endforeach
 			<th>Total</th>
 		</tr>
+		</thead>
 		@foreach ($wards as $ward)
 		<tr>
-			<td>	
+			<td class='info'>	
 			<div align='left'>
 			{{ $ward->ward_name }}
 			</div>
@@ -51,13 +53,13 @@ th,td {
 					{{ $count }}
 				</td>
 				@endforeach
-				<td>{{ $total }}</td>
+				<td><strong>{{ $total }}</strong></td>
 		</tr>
 		@endforeach
 	<tr>
 		<td colspan='{{ count($diet_classes) }}'>
 		<td>Grand Total</td>
-		<td>{{ $grand_total }}</td>
+		<td><strong>{{ $grand_total }}</strong></td>
 	</tr>
 		</table>
 @endforeach

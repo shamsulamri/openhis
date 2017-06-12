@@ -12,8 +12,16 @@
     <div class='form-group  @if ($errors->has('diet_code')) has-error @endif'>
         {{ Form::label('diet_code', 'Diet',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::select('diet_code', $diet,null, ['class'=>'form-control','maxlength'=>'20']) }}
+            {{ Form::select('diet_code', $diet,null, ['class'=>'form-control','maxlength'=>'20', 'onchange'=>'dietChange()']) }}
             @if ($errors->has('diet_code')) <p class="help-block">{{ $errors->first('diet_code') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('class_code')) has-error @endif'>
+        {{ Form::label('class_code', 'Class',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::select('class_code', $class,null, ['id'=>'class_code', 'class'=>'form-control','maxlength'=>'20']) }}
+            @if ($errors->has('class_code')) <p class="help-block">{{ $errors->first('class_code') }}</p> @endif
         </div>
     </div>
 
@@ -25,16 +33,6 @@
         </div>
     </div>
 
-	<!--
-    <div class='form-group  @if ($errors->has('class_code')) has-error @endif'>
-        {{ Form::label('class_code', 'Class',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::select('class_code', $class,null, ['class'=>'form-control','maxlength'=>'20']) }}
-            @if ($errors->has('class_code')) <p class="help-block">{{ $errors->first('class_code') }}</p> @endif
-        </div>
-    </div>
-	-->
-
    <div class='form-group  @if ($errors->has('diet_description')) has-error @endif'>
         <label for='diet_description' class='col-sm-3 control-label'>Description</label>
         <div class='col-sm-9'>
@@ -43,7 +41,27 @@
         </div>
     </div>
 
+<!--
 	<hr>
+<h4>Therapeutic Diets</h4>
+@foreach ($therapeutics as $therapeutic)
+   <div class='form-group'>
+		   <div class='col-sm-9 col-sm-offset-3'>
+			@if (!empty($therapeutic_values))
+				<?php
+						$value=0;
+						if (!empty($therapeutic_values[$therapeutic->therapeutic_code])) {
+							$value=$therapeutic_values[$therapeutic->therapeutic_code]->therapeutic_value;
+						}
+				?>
+				{{ Form::checkbox('therapeutic_'.$therapeutic->therapeutic_code,1,$value) }}
+				{{ Form::label('x',$therapeutic->therapeutic_name, ['class'=>'control-label']) }}
+			@endif
+			</div>
+	</div>
+@endforeach
+-->
+<hr>
 <h4>Nil by Mouth</h4>
 	<!--
     <div class='form-group  @if ($errors->has('nbm_status')) has-error @endif'>
@@ -174,5 +192,42 @@
 		});
 
 		$('.clockpicker').clockpicker();
+
+		function dietChange() {
+				dietCode = document.getElementById('diet_code').value;
+				var classMenu = document.getElementById('class_code');
+				clearList(classMenu);
+				dietClasses = [
+						@foreach($classes as $class)
+							'{{ $class->diet_code }}:{{ $class->class_code }}:{{ $class->class_name }}',
+						@endforeach
+				]
+
+				for (var i=0;i<dietClasses.length;i++) {
+					values = dietClasses[i].split(":")
+					if (dietCode==values[0]) {
+							addList(classMenu,values[1], values[2]);
+					}
+				}
+		}
+
+		function clearList(selectedList) {
+				var i;
+				for(i=selectedList.options.length-1;i>=0;i--)
+				{
+					selectedList.remove(i);
+				}
+		}
+
+		function addList(selectedList, value, text ) {
+				var optn = document.createElement("OPTION");
+				optn.text = text;
+				optn.value = value;
+
+				selectedList.options.add(optn);
+		}  
+
+		dietChange();
+		document.getElementById('class_code').value = '{{ $admission->class_code }}';
 	</script>
 @endsection

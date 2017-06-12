@@ -7,22 +7,23 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class WardDischarge extends Model
+class AdmissionTherapeutic extends Model
 {
-	protected $table = 'ward_discharges';
+	protected $table = 'admission_therapeutics';
 	protected $fillable = [
-				'bed_code',
-				'housekeeping_datetime',
-				'discharge_description'];
+				'admission_id',
+				'therapeutic_code',
+				'therapeutic_value'];
 	
-    protected $guarded = ['discharge_id'];
-    protected $primaryKey = 'discharge_id';
+    protected $guarded = ['admission_id'];
+    protected $primaryKey = 'admission_id';
     public $incrementing = true;
     
 
 	public function validate($input, $method) {
 			$rules = [
-
+				'therapeutic_code'=>'required',
+				'therapeutic_value'=>'required',
 			];
 
 			

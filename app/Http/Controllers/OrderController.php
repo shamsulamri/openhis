@@ -313,7 +313,8 @@ class OrderController extends Controller
 									break;
 							default:
 									$product = Product::find($product_code);
-									$order = $this->orderItem($product);
+									OrderHelper::orderItem($product);
+									//$order = $this->orderItem($product);
 					}
 			}
 

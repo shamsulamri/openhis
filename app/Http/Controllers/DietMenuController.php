@@ -14,6 +14,7 @@ use App\DietClass;
 use App\DietPeriod;
 use App\DietHelper;
 use App\Ward;
+use App\Admission;
 use Log;
 
 class DietMenuController extends Controller
@@ -72,7 +73,7 @@ class DietMenuController extends Controller
 
 			Log::info($dayOfWeek);
 			return view('diet_menus.menu', [
-					'diets' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code'),
+					'diets' => Diet::orderBy('diet_index')->lists('diet_name', 'diet_code'),
 					'diet_classes' => DietClass::where('diet_code',$diet_code)->orderBy('class_position')->get(),
 					'diet_code' => $diet_code,
 					'class_code' => $class_code, 
@@ -124,7 +125,7 @@ class DietMenuController extends Controller
 
 
 			return view('diet_menus.cooklist', [
-					'diets' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code'),
+					'diets' => Diet::orderBy('diet_index')->lists('diet_name', 'diet_code'),
 					'diet_classes' => DietClass::where('diet_code',$diet_code)->orderBy('class_position')->get(),
 					'diet_code' => $diet_code,
 					'class_code' => $class_code, 
@@ -176,7 +177,7 @@ class DietMenuController extends Controller
 							->get();
 
 			return view('diet_menus.bom', [
-					'diets' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code'),
+					'diets' => Diet::orderBy('diet_index')->lists('diet_name', 'diet_code'),
 					'diet_classes' => DietClass::where('diet_code',$diet_code)->orderBy('class_position')->get(),
 					'diet_code' => $diet_code,
 					'class_code' => $class_code, 
@@ -230,7 +231,7 @@ class DietMenuController extends Controller
 			$wards = DietHelper::occupiedWards();
 
 			return view('diet_menus.workorder', [
-					'diets' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code'),
+					'diets' => Diet::orderBy('diet_index')->lists('diet_name', 'diet_code'),
 					'diet_classes' => DietClass::where('diet_code',$diet_code)->orderBy('class_position')->get(),
 					'diet_periods' => DietPeriod::all()->sortBy('period_position')->lists('period_name', 'period_code'),
 					'diet_code' => $diet_code,
@@ -289,7 +290,7 @@ class DietMenuController extends Controller
 							->get();
 
 			return view('diet_menus.distribution', [
-					'diets' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code'),
+					'diets' => Diet::orderBy('diet_index')->lists('diet_name', 'diet_code'),
 					'diet_classes' => DietClass::where('diet_code', $diet_code)->orderBy('class_name')->lists('class_name', 'class_code'),
 					'diet_code' => $diet_code,
 					'class_code' => $class_code, 
@@ -313,14 +314,27 @@ class DietMenuController extends Controller
 					$diet_code = $request->diet_code;
 			}
 
+			$sql = "select count(*) as total, diet_name
+					from admissions as a
+					left join diets as b on (a.diet_code = b.diet_code)
+					left join discharges as c on (c.encounter_id = a.encounter_id)
+					where discharge_id is null
+					group by a.diet_code
+					having total>0
+					order by diet_name";
+
+			$diet_stats = DB::select($sql);
+
 			return view('diet_menus.order', [
-					'diets' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code'),
+					'diets' => Diet::orderBy('diet_index')->lists('diet_name', 'diet_code'),
 					'diet_classes' => DietClass::where('diet_code',$diet_code)->orderBy('class_position')->get(),
 					'diet_code' => $diet_code,
 					'dietHelper' => new DietHelper(),
 					'wards' => DietHelper::occupiedWards(),
+					'diet_stats'=>$diet_stats,
 			]);
 	}
+
 	public function create(Request $request, $class, $period, $week, $day, $diet_code)
 	{
 			return view('diet_menus.create',[

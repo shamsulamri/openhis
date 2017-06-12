@@ -69,7 +69,7 @@ class EncounterController extends Controller
 
 			$locations = Location::whereNotNull('encounter_code')->get();
 			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
-							->where('module_consultation',1)
+							->where('consultant',1)
 							->orderBy('name')
 							->lists('name','id')
 							->prepend('','');

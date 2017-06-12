@@ -21,20 +21,22 @@ th {
 
 <br>
 <table class='table table-bordered'>
+	<thead>
 	<tr>
 		<th width='20%'>Class</th>
 		@foreach ($diet_periods as $period)
 		<th width='15%'>{{ $period->period_name }}</th>
 		@endforeach
 	</tr>
+	</thead>
 	@foreach ($diet_classes as $class)
 	<tr width='300'>
-		<td>
+		<td class='info'>
 			{{ $class->class_name }}
 		</td>
 		@foreach ($diet_periods as $period)
-		<td>
-				<a href='/diet_menus/{{ $class->class_code }}/{{ $period->period_code }}/{{ $weekOfMonth }}/{{ $dayOfWeek }}/{{ $diet_code }}' class='btn btn-default btn-xs'>+</a>
+		<td class='warning'>
+				<a href='/diet_menus/{{ $class->class_code }}/{{ $period->period_code }}/{{ $weekOfMonth }}/{{ $dayOfWeek }}/{{ $diet_code }}' class='btn btn-primary btn-xs'>+</a>
 				<?php
 				$products = $dietHelper->menus($class->class_code, $period->period_code, $weekOfMonth, $dayOfWeek);
 				?>

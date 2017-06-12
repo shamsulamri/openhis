@@ -90,6 +90,7 @@ class WardDischargeController extends Controller
 					$ward_discharge = new WardDischarge($request->all());
 					$ward_discharge->discharge_id = $request->discharge_id;
 					$ward_discharge->encounter_id = $request->encounter_id;
+					$ward_discharge->bed_code = $admission->bed_code;
 					$ward_discharge->save();
 
 					$bed = Bed::find($admission->bed_code);

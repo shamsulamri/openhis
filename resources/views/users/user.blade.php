@@ -31,6 +31,13 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('consultant')) has-error @endif'>
+        <label for='consultant' class='col-sm-3 control-label'>Employee ID<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+            {{ Form::checkbox('consultant', '1', $user->consultant, ['class'=>'checkbox']) }}
+            @if ($errors->has('consultant')) <p class="help-block">{{ $errors->first('consultant') }}</p> @endif
+        </div>
+    </div>
 	<hr>
     <div class='form-group  @if ($errors->has('gst_number')) has-error @endif'>
         <label for='gst_number' class='col-sm-3 control-label'>GST Number</label>

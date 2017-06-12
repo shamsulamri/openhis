@@ -3,10 +3,12 @@
 	<div class='col-sm-12'>
 		<h2>{{ $product->product_name }}</h2>
 		<h6>{{ $product->product_code }}</strong></h6>
+		<!--
 		@if ($product->product_on_hand>0)
 		<span class='label label-default'>On Hand: {{ $product->product_on_hand }}</span>
 		<br>
 		@endif
+		-->
 		<br>
 	</div>
 </div>
@@ -18,6 +20,9 @@
 		</a>
 	@endcan
 @if ($product->product_stocked==1)
+		<a class='btn btn-default' href='{{ URL::to('stock_limit/'. $product->product_code) }}'>
+			<span class='fa fa-cart-plus' aria-hidden='true'></span><br>Reorder<br>Limits
+		</a>
 		<a class='btn btn-default' href='{{ URL::to('stocks/'. $product->product_code) }}'>
 			<span class='glyphicon glyphicon-road' aria-hidden='true'></span><br>Stock<br>Movements
 		</a>

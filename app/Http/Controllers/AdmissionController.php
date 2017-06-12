@@ -30,6 +30,8 @@ use App\FormHelper;
 use App\Team;
 use App\Period;
 use App\DietHelper;
+use App\DietTherapeutic;
+use App\AdmissionTherapeutic;
 
 class AdmissionController extends Controller
 {
@@ -45,6 +47,7 @@ class AdmissionController extends Controller
 					'a.user_id',
 					'k.name',
 					'diet_name',
+					'a.diet_code',
 					'class_name',
 					'n.team_name',
 					'nbm_status',
@@ -121,7 +124,7 @@ class AdmissionController extends Controller
 			$encounter = Encounter::findOrFail($admission->encounter_id);
 
 			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
-							->where('module_consultation',1)
+							->where('consultant',1)
 							->orderBy('name')
 							->lists('name','id')
 							->prepend('','');
@@ -243,7 +246,7 @@ class AdmissionController extends Controller
 			$encounter = Encounter::findOrFail($admission->encounter_id);
 
 			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
-							->where('module_consultation',1)
+							->where('consultant',1)
 							->orderBy('name')
 							->lists('name','id')
 							->prepend('','');
@@ -270,13 +273,44 @@ class AdmissionController extends Controller
 			$admission->nbm_status = $request->nbm_status ?: 0;
 			$encounter = Encounter::findOrFail($admission->encounter_id);
 
-			$nbm_datetime = DojoUtility::dateWriteFormat($request->nbm_start_date).' '.$request->nbm_start_time;
+			$nbm_datetime = null;
+			if ($request->nbm_start_date) {
+				$nbm_datetime = DojoUtility::dateWriteFormat($request->nbm_start_date).' '.$request->nbm_start_time;
+			}
+
+			/** Therapeutics **/
+			$therapeutics = DietTherapeutic::all();
+
+			$admission_therapeutics = AdmissionTherapeutic::find($id);
+			if ($admission_therapeutics) {
+				$admission_therapeutics->delete();
+			}
+
+			$therapeutic_values = "";
+			foreach ($therapeutics as $therapeutic) {
+				$value = $request['therapeutic_'.$therapeutic->therapeutic_code] ?: 0;
+				$admission_therapeutic = new AdmissionTherapeutic();
+				$admission_therapeutic->admission_id = $id;
+				$admission_therapeutic->therapeutic_code = $therapeutic->therapeutic_code;
+				$admission_therapeutic->therapeutic_value = $value;
+				$admission_therapeutic->save();
+
+				if ($value==1) {
+						$therapeutic_values .= $therapeutic->therapeutic_code.',';
+				}
+			}
+			$therapeutic_values = substr($therapeutic_values,0,-1);
+			Log::info($therapeutic_values);
 
 			if ($request->consultation_id>0) {
 					$admission->diet_code = $request->diet_code;
 					$admission->texture_code = $request->texture_code;
 					$admission->class_code = $request->class_code;
 					$admission->nbm_datetime = $nbm_datetime;
+					$admission->therapeutic_values = $therapeutic_values;
+					if (!empty($therapeutic_values)) {
+						$admission->diet_code = 'therapeutic';
+					}
 					$admission->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/diet');
@@ -304,24 +338,33 @@ class AdmissionController extends Controller
 	
 	public function diet() 
 	{
-			
-
 			$consultation=Consultation::find(Session::get('consultation_id'));
 			$encounter = $consultation->encounter;
 			$admission = $consultation->encounter->admission;
+
+			$therapeutic_values = AdmissionTherapeutic::select('b.therapeutic_code','therapeutic_name', 'therapeutic_value')
+									->leftJoin('diet_therapeutics as b', 'b.therapeutic_code','=', 'admission_therapeutics.therapeutic_code')
+									->where('admission_id',$admission->admission_id)
+									->get()
+									->keyBy('therapeutic_code');
+
 			return view('admissions.diet', [
 					'admission'=>$admission,
 					'consultation'=>$consultation,
 					'patient'=>$consultation->encounter->patient,
 					'consultOption'=>'dietary', 
-					'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
+					'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code'),
 					'texture' => DietTexture::all()->sortBy('texture_name')->lists('texture_name', 'texture_code')->prepend('',''),
-					'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'class' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code'),
+					'classes' => DietClass::all(),
 					'consultOption' => 'diet',
 					'nbm_start_time'=>'10:05',
 					'period' => Period::whereIn('period_code', array('hour','day'))->orderBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'nbm_start_date' => DojoUtility::dateReadFormat($admission->nbm_datetime),
 					'nbm_start_time' => DojoUtility::timeReadFormat($admission->nbm_datetime),
+					'therapeutics' => DietTherapeutic::all()->sortBy('therapeutic_name'),
+					'diet_textures' => DietTexture::all()->sortBy('texture_name'),
+					'therapeutic_values'=>$therapeutic_values,
 					]);
 	}
 

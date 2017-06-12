@@ -12,7 +12,6 @@ class DietTexture extends Model
 	protected $table = 'diet_textures';
 	protected $fillable = [
 				'texture_code',
-				'diet_code',
 				'texture_name'];
 	
     protected $guarded = ['texture_code'];
@@ -22,7 +21,6 @@ class DietTexture extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'diet_code'=>'required',
 				'texture_name'=>'required',
 			];
 

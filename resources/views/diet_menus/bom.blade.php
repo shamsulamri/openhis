@@ -20,16 +20,18 @@ th {
 <br>
 
 <table class='table table-bordered'>
+	<thead>
 	<tr>
 		<th width='15%'>Period</th>
 		<th width='15%'>Menu</th>
 		<th width='15%'>Unit</th>
 		<th width='30%'>BoM</th>
 	</tr>
+	</thead>
 	@foreach ($menu_products as $product)
 	<tr>
-		<td>{{ $product->period_name }}</td>
-		<td width='15%'>{{ $product->product_name }}</td>
+		<td class='info'>{{ $product->period_name }}</td>
+		<td class='warning' width='15%'>{{ $product->product_name }}</td>
 		<?php $total=0; ?>
 		@foreach ($diet_classes as $class)
 		<?php $count=$dietHelper->cooklist($diet_code,$class->class_code, $product->period_code, $product->product_code); ?>

@@ -1,12 +1,4 @@
 
-    <div class='form-group  @if ($errors->has('diet_code')) has-error @endif'>
-        <label for='diet_code' class='col-sm-3 control-label'>Diet<span style='color:red;'> *</span></label>
-        <div class='col-sm-9'>
-            {{ Form::select('diet_code', $diet,null, ['class'=>'form-control','maxlength'=>'10']) }}
-            @if ($errors->has('diet_code')) <p class="help-block">{{ $errors->first('diet_code') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group  @if ($errors->has('texture_name')) has-error @endif'>
         <label for='texture_name' class='col-sm-3 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>

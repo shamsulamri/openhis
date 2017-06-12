@@ -149,6 +149,7 @@
 				<a href="{{ url('/diet_ratings') }}">Diet Ratings</a><br>
 				<a href="{{ url('/diet_periods') }}">Diet Periods</a><br>
 				<a href="{{ url('/diet_textures') }}">Diet Textures</a><br>
+				<a href="{{ url('/diet_therapeutics') }}">Therapeutic Diets</a><br>
 			</small>
 			</div>
 	</div>

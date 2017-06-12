@@ -8,18 +8,31 @@ th, td {
 </style>
 <h1>Diet Orders</h1>
 <br>
-
 <div class="row">
-@foreach ($diet_stats as $stat)
 	<div class="col-md-4">
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
-				<h5><strong>{{ $stat->diet_name }}</strong></h5>	
-				<h4><strong>{{ $stat->total }}</strong></h4>	
+				<h5><strong>Normal</strong></h5>	
+				<h4><strong>{{ $dietHelper->diet('normal') }}</strong></h4>	
 			</div>
 		</div>
 	</div>
-@endforeach
+	<div class="col-md-4">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Therapeutic</strong></h5>	
+				<h4><strong>{{ $dietHelper->diet('therapeutic') }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Enteral</strong></h5>	
+				<h4><strong>{{ $dietHelper->diet('enteral') }}</strong></h4>	
+			</div>
+		</div>
+	</div>
 </div>
 <form class='form-inline' action='/diet_orders' method='post' name='myform'>
 	<label>Diet&nbsp;</label>
@@ -30,25 +43,23 @@ th, td {
 <br>
 
 <table class='table table-bordered'>
-	<thead>
 	<tr>
 		<th width='20%'><div align='left'>Ward</div></th>
-		@foreach ($diet_classes as $class)
-		<th width='15%'>{{ $class->class_name }}</th>
+		@foreach ($therapeutics as $therapeutic)
+		<th width='15%'>{{ $therapeutic->therapeutic_values }}</th>
 		@endforeach
 		<th width='15%'>Total</th>
 	</tr>
-	</thead>
 	@foreach ($wards as $ward)
 	<tr>
-		<td class='info'><div align='left'>{{ $ward->ward_name }}</div></td>
+		<td><div align='left'>{{ $ward->ward_name }}</div></td>
 		<?php $total=0; ?>
-		@foreach ($diet_classes as $class)
-		<?php $count=$dietHelper->order($diet_code,$class->class_code, $ward->ward_code); ?>
+		@foreach ($therapeutics as $therapeutic)
+		<?php $count=$dietHelper->therapeutic_count($diet_code,$therapeutic->therapeutic_values, $ward->ward_code); ?>
 		<td width='15%'>{{ $count }}</td>
 		<?php $total+=$count; ?>
 		@endforeach
-		<td><strong>{{ $total }}</strong></td>
+		<td>{{ $total }}</td>
 	</tr>
 	@endforeach
 </table>

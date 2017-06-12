@@ -37,7 +37,6 @@ class DietTextureController extends Controller
 			$diet_texture = new DietTexture();
 			return view('diet_textures.create', [
 					'diet_texture' => $diet_texture,
-					'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
 					]);
 	}
 
@@ -64,7 +63,6 @@ class DietTextureController extends Controller
 			$diet_texture = DietTexture::findOrFail($id);
 			return view('diet_textures.edit', [
 					'diet_texture'=>$diet_texture,
-					'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
 					]);
 	}
 
@@ -83,7 +81,6 @@ class DietTextureController extends Controller
 			} else {
 					return view('diet_textures.edit', [
 							'diet_texture'=>$diet_texture,
-					'diet' => Diet::all()->sortBy('diet_name')->lists('diet_name', 'diet_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

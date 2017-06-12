@@ -17,6 +17,7 @@ th, td {
 <br>
 
 <table class='table table-bordered'>
+	<thead>
 	<tr>
 		<th width='15%'>Period</th>
 		<th width='15%'>Menu</th>
@@ -25,17 +26,18 @@ th, td {
 		@endforeach
 		<th width='15%'>Total</th>
 	</tr>
+	</thead>
 	@foreach ($menu_products as $product)
 	<tr>
-		<td><div align='left'>{{ $product->period_name }}</div></td>
-		<td width='15%'><div align='left'>{{ $product->product_name }}</div></td>
+		<td class='info'><div align='left'>{{ $product->period_name }}</div></td>
+		<td class='warning' width='15%'><div align='left'>{{ $product->product_name }}</div></td>
 		<?php $total=0; ?>
 		@foreach ($diet_classes as $class)
 		<?php $count=$dietHelper->cooklist($diet_code,$class->class_code, $product->period_code, $product->product_code); ?>
 		<td width='15%'>{{ $count }}</td>
 		<?php $total+=$count; ?>
 		@endforeach
-		<td>{{ $total }}</td>
+		<td><strong>{{ $total }}</strong></td>
 	</tr>
 	@endforeach
 </table>
