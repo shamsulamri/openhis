@@ -21,9 +21,12 @@ class PurchaseOrderLine extends Model
 				'line_quantity_received',
 				'line_receive_date_1',
 				'line_price',
+				'tax_code',
+				'tax_rate',
 				'line_batch_number',
 				'line_expiry_date',
 				'line_total',
+				'line_total_gst',
 				'line_receive_date_2',
 				'line_quantity_received_2'];
 	

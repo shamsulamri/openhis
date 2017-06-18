@@ -126,7 +126,10 @@ class ProductSearchController extends Controller
 			$purchase_order_line->purchase_id = $purchase_id;
 			$purchase_order_line->product_code = $id;
 			$purchase_order_line->line_price = $product->product_purchase_price;
+			$purchase_order_line->tax_code = $product->purchase_tax_code;
+			$purchase_order_line->tax_rate = isset($product->purchase_tax_rate) ? $product->purhcase_tax->tax_rate : 0;
 			$purchase_order_line->save();
+			Log::info($product->tax);
 			Session::flash('message', 'Enter order quantity.');
 			return redirect('/product_searches?reason=purchase_order&purchase_id='.$purchase_id.'&line_id='.$purchase_order_line->line_id);
 	}

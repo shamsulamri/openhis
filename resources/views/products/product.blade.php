@@ -174,6 +174,14 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_conversion_unit')) has-error @endif'>
+						{{ Form::label('product_conversion_unit', 'Conversion Unit',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('product_conversion_unit', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('product_conversion_unit')) <p class="help-block">{{ $errors->first('product_conversion_unit') }}</p> @endif
+						</div>
+					</div>
+					<!--
 					<div class='form-group  @if ($errors->has('product_reorder')) has-error @endif'>
 						{{ Form::label('product_reorder', 'Reorder Limit',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
@@ -181,16 +189,17 @@
 							@if ($errors->has('product_reorder')) <p class="help-block">{{ $errors->first('product_reorder') }}</p> @endif
 						</div>
 					</div>
+					-->
 			</div>
 	</div>
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_conversion_unit')) has-error @endif'>
-						{{ Form::label('product_conversion_unit', 'Conversion Unit',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('purchase_tax_code')) has-error @endif'>
+						{{ Form::label('purchase_tax_code', 'Input Tax Code',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::text('product_conversion_unit', null, ['class'=>'form-control','placeholder'=>'',]) }}
-							@if ($errors->has('product_conversion_unit')) <p class="help-block">{{ $errors->first('product_conversion_unit') }}</p> @endif
+							{{ Form::select('purchase_tax_code', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
+							@if ($errors->has('purchase_tax_code')) <p class="help-block">{{ $errors->first('purchase_tax_code') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -246,7 +255,7 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('tax_code')) has-error @endif'>
-						{{ Form::label('tax_code', 'Tax Code',['class'=>'col-sm-4 control-label']) }}
+						{{ Form::label('tax_code', 'Output Tax Code',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
 							{{ Form::select('tax_code', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
 							@if ($errors->has('tax_code')) <p class="help-block">{{ $errors->first('tax_code') }}</p> @endif

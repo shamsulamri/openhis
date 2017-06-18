@@ -22,6 +22,7 @@ class Stock extends Model
 				'stock_description',
 				'stock_tag',
 				'loan_id',
+				'batch_number',
 				'username',
 				];
 	
@@ -79,4 +80,12 @@ class Stock extends Model
 		return Carbon::createFromFormat('d/m/Y H:i', $this->stock_datetime);
 	}
 	 */
+	public function getStockQuantity() 
+	{
+		if ($this->move_code == 'adjust') {
+				return $this->stock_quantity;
+		} else {
+				return abs($this->stock_quantity);
+		}
+	}
 }

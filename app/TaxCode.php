@@ -13,7 +13,7 @@ class TaxCode extends Model
 	protected $fillable = [
 				'tax_code',
 				'tax_name',
-				'tax_type',
+				'tax_shortname',
 				'tax_rate'];
 	
     protected $guarded = ['tax_code'];

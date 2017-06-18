@@ -31,6 +31,14 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('batch_number')) has-error @endif'>
+        {{ Form::label('batch_number', 'Batch Number',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('batch_number', null, ['class'=>'form-control']) }}
+            @if ($errors->has('batch_number')) <p class="help-block">{{ $errors->first('batch_number') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('store_code_transfer')) has-error @endif'>
         <label for='store_code_transfer' class='col-sm-3 control-label'>Transfer Store</label>
         <div class='col-sm-9'>
@@ -50,7 +58,7 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
     <div class='form-group  @if ($errors->has('loan_id')) has-error @endif'>
         {{ Form::label('loan_id', 'Loan Id',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::text('loan_id', null, ['class'=>'form-control','placeholder'=>'Reference to loan ID if available','rows'=>'4']) }}
+            {{ Form::text('loan_id', null, ['class'=>'form-control','placeholder'=>'Reference to loan ID if available']) }}
             @if ($errors->has('loan_id')) <p class="help-block">{{ $errors->first('loan_id') }}</p> @endif
         </div>
     </div>

@@ -37,7 +37,6 @@ class TaxCodeController extends Controller
 			$tax_code = new TaxCode();
 			return view('tax_codes.create', [
 					'tax_code' => $tax_code,
-					'tax_types' => TaxType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					]);
 	}
 
@@ -64,7 +63,6 @@ class TaxCodeController extends Controller
 			$tax_code = TaxCode::findOrFail($id);
 			return view('tax_codes.edit', [
 					'tax_code'=>$tax_code,
-					'tax_types' => TaxType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					]);
 	}
 
@@ -83,8 +81,6 @@ class TaxCodeController extends Controller
 			} else {
 					return view('tax_codes.edit', [
 							'tax_code'=>$tax_code,
-							'tax_types' => TaxType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
-				
 							])
 							->withErrors($valid);			
 			}

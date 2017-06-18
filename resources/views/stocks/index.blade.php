@@ -54,7 +54,7 @@
 							@endif
 					</td>
 					<td align='right'>
-							{{ floatval($stock->stock_quantity) }}
+							{{ floatval($stock->getStockQuantity()) }}
 					</td>
 					@can('system-administrator')
 					<td align='right'>

@@ -33,6 +33,7 @@ class Product extends Model
 				'product_bom',
 				'product_reorder',
 				'product_purchase_price',
+				'purchase_tax_code',
 				'location_code',
 				'form_code',
 				'gl_code',
@@ -108,6 +109,11 @@ class Product extends Model
 	public function tax()
 	{
 			return $this->belongsTo('App\TaxCode', 'tax_code');
+	}
+
+	public function purchase_tax()
+	{
+			return $this->belongsTo('App\TaxCode', 'purchase_tax_code');
 	}
 
 	public function location()

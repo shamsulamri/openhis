@@ -30,7 +30,7 @@ $count=0;
 @foreach ($purchase_order_lines as $purchase_order_line)
 	<?php 
 		if (empty($purchase_order_line->deleted_at)) {
-			$grandTotal += $purchase_order_line->line_total;
+			$grandTotal += $purchase_order_line->line_total_gst;
 		}
 	?>
 @endforeach
@@ -80,9 +80,11 @@ $count=0;
 	<tr> 
     <th>#</th>
     <th>Product</th>
-    <th><div align='right'>Quantity</div></th> 
-    <th><div align='right'>Price/Unit</div></th> 
+    <th><div align='right'>Tax</div></th> 
+    <th><div align='right'>#</div></th> 
+    <th><div align='right'>Unit Price</div></th> 
     <th><div align='right'>Total</div></th> 
+    <th><div align='right'>Total GST</div></th> 
 	@if ($purchase_order->purchase_received==0)
 	<th></th>
 	@endif
@@ -112,7 +114,12 @@ $count=0;
 					</s>
 			@endif
 			</td>
-			<td width='100' align='right'>
+			<td width='10' align='right'>
+					@if (!empty($purchase_order_line->tax_code))
+					{{ $purchase_order_line->product->purchase_tax->tax_shortname }}&nbsp;({{ number_format($purchase_order_line->product->purchase_tax->tax_rate) }}%)
+					@endif
+			</td>
+			<td width='50' align='right'>
 					{{ $purchase_order_line->line_quantity_received+$purchase_order_line->line_quantity_received_2 }} 
 					{{ $purchase_order_line->product->getUnitShortname() }}
 			</td>
@@ -121,6 +128,9 @@ $count=0;
 			</td>
 			<td width='10' align='right'>
 					{{ number_format($purchase_order_line->line_total,2) }}
+			</td>
+			<td width='50' align='right'>
+					{{ number_format($purchase_order_line->line_total_gst,2) }}
 			</td>
 			<td align='right' width='20'>
 					@if ($purchase_order->purchase_received==0)
@@ -134,7 +144,7 @@ $count=0;
 @endif
 @if ($grandTotal>0)
 	<tr>
-		<td colspan='4' align='right'><br><strong>Grand Total</strong></td>
+		<td colspan='6' align='right'><br><strong>Grand Total</strong></td>
 		<td width='20' align='right'><br>{{ number_format($grandTotal,2) }}</td>
 		<td></td>
 	</tr>
