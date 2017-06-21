@@ -255,12 +255,14 @@ class StockController extends Controller
 
 			$product = Product::find($product_code);
 
+			/*
 			$stores = Store::orderBy('store_name')
 							->select('stores.store_code', 'stock_stores.stock_quantity')
 							->leftjoin('stock_stores', function ($query) use($product_code) {
 									$query->where('stock_stores.product_code','=', $product_code);
 									$query->where('stock_stores.store_code','=', 'stores.store_code');
 							});
+			*/
 
 			$sql = sprintf("select a.store_code, store_name,  stock_quantity from store_authorizations a 
 						left join stores c on (c.store_code = a.store_code)

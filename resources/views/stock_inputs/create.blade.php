@@ -2,9 +2,8 @@
 
 @section('content')
 <h1>
-New Stock Input
+New Stock Bulk Movement
 </h1>
-@include('common.errors')
 <br>
 {{ Form::model($stock_input, ['url'=>'stock_inputs', 'class'=>'form-horizontal']) }} 
     

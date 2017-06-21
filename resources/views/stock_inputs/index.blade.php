@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Stock Input Index
+<h1>Bulk Stock Movement
 <a href='/stock_inputs/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/stock_input/search' method='post'>
@@ -19,8 +19,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>input_id</th>
-    <th>input_id</th> 
+    <th>Movement Type</th>
+    <th>Date</th> 
+    <th>Status</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -28,15 +29,26 @@
 @foreach ($stock_inputs as $stock_input)
 	<tr>
 			<td>
-					<a href='{{ URL::to('stock_inputs/'. $stock_input->input_id . '/edit') }}'>
-						{{$stock_input->input_id}}
-					</a>
+					{{$stock_input->movement->move_name}}
 			</td>
 			<td>
-					{{$stock_input->input_id}}
+					{{ date('d F Y, H:i', strtotime($stock_input->created_at)) }}
+			</td>
+			<td>
+					@if ($stock_input->input_close==1)
+						Close
+					@else
+						Open
+					@endif
 			</td>
 			<td align='right'>
+					@if ($stock_input->input_close==0)
+					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/input/'. $stock_input->input_id) }}'>Resume</a>
+					@endif
+			@can('system-administrator')
+					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/'. $stock_input->input_id . '/edit') }}'>Edit</a>			
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('stock_inputs/delete/'. $stock_input->input_id) }}'>Delete</a>
+			@endcan
 			</td>
 	</tr>
 @endforeach

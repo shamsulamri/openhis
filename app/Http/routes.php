@@ -48,11 +48,20 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('stock_input_lines', 'StockInputLineController');
+		Route::get('/stock_input_lines/id/{id}', 'StockInputLineController@searchById');
+		Route::post('/stock_input_line/search', 'StockInputLineController@search');
+		Route::get('/stock_input_line/search', 'StockInputLineController@search');
+		Route::get('/stock_input_lines/delete/{id}', 'StockInputLineController@delete');
+
 		Route::resource('stock_inputs', 'StockInputController');
 		Route::get('/stock_inputs/id/{id}', 'StockInputController@searchById');
 		Route::post('/stock_input/search', 'StockInputController@search');
 		Route::get('/stock_input/search', 'StockInputController@search');
 		Route::get('/stock_inputs/delete/{id}', 'StockInputController@delete');
+		Route::get('/stock_inputs/input/{id}/{product_code?}', 'StockInputController@input');
+		Route::post('/stock_input/input', 'StockInputController@input_post');
+		Route::get('/stock_input/close/{id}', 'StockInputController@input_close');
 
 		Route::resource('stock_limits', 'StockLimitController');
 		Route::get('/stock_limits/id/{id}', 'StockLimitController@searchById');

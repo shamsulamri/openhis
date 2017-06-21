@@ -11,11 +11,9 @@ class StockInput extends Model
 {
 	protected $table = 'stock_inputs';
 	protected $fillable = [
-				'store_code',
-				'product_code',
-				'amount_current',
-				'amount_new',
-				'amount_difference'];
+				'move_code',
+				'store_code_transfer',
+				'store_code'];
 	
     protected $guarded = ['input_id'];
     protected $primaryKey = 'input_id';
@@ -24,10 +22,9 @@ class StockInput extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'product_code'=>'required',
-				'amount_current'=>'required',
-				'amount_new'=>'required',
-				'amount_difference'=>'required',
+				'move_code'=>'required',
+				'store_code'=>'required',
+				'store_code_transfer'=>'required_if:move_code,==,transfer',
 			];
 
 			
@@ -39,5 +36,18 @@ class StockInput extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function store()
+	{
+		return $this->belongsTo('App\Store', 'store_code');
+	}
+
+	public function store_transfer()
+	{
+		return $this->belongsTo('App\Store', 'store_code_transfer');
+	}
+	public function movement()
+	{
+		return $this->belongsTo('App\StockMovement', 'move_code');
+	}
 	
 }
