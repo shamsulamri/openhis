@@ -18,17 +18,12 @@ class PurchaseOrderLine extends Model
 				'purchase_id',
 				'product_code',
 				'line_quantity_ordered',
-				'line_quantity_received',
-				'line_receive_date_1',
 				'line_price',
 				'tax_code',
 				'tax_rate',
-				'line_batch_number',
-				'line_expiry_date',
 				'line_total',
 				'line_total_gst',
-				'line_receive_date_2',
-				'line_quantity_received_2'];
+		];
 	
     protected $guarded = ['line_id'];
     protected $primaryKey = 'line_id';

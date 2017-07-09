@@ -19,6 +19,7 @@ use Auth;
 use App\DojoUtility;
 use App\StockInputLine;
 use App\StockStore;
+use App\StockHelper;
 
 class StockInputController extends Controller
 {
@@ -174,19 +175,22 @@ class StockInputController extends Controller
 							->where('product_code', $request->product_code)
 							->first();
 
+			$stock_store_quantity=0;
 			if (!empty($request->amount_new) && !empty($product)) {
-				if ($request->amount_new>$stock_store->stock_quantity && $stock_input->move_code=='transfer') {
-						Session::flash('error', 'New amount cannot be greater than current.');
-						return redirect('/stock_inputs/input/'.$request->input_id.'/'.$request->product_code)
-									->withInput();
+				if (!empty($stock_store->stock_quantity)) {
+						if ($request->amount_new>$stock_store_quantity && $stock_input->move_code=='transfer') {
+								Session::flash('error', 'New amount cannot be greater than current.');
+								return redirect('/stock_inputs/input/'.$request->input_id.'/'.$request->product_code)
+											->withInput();
+						}
 				}
 				$line = new StockInputLine();
 				$line->input_id = $stock_input->input_id;
 				$line->product_code = $product->product_code;
-				$line->amount_current = $stock_store->stock_quantity;
+				$line->amount_current = $stock_store_quantity;
 				$line->amount_new = $request->amount_new;
 				$line->batch_number = $request->batch_number;
-				$line->amount_difference = $request->amount_new - $stock_store->stock_quantity;
+				$line->amount_difference = $request->amount_new - $stock_store_quantity;
 				$line->save();
 
 				$stock = new Stock();
@@ -235,8 +239,8 @@ class StockInputController extends Controller
 							$stock->save();
 				}
 
-				$product_controller = new ProductController();
-				$product_controller->updateTotalOnHand($stock->product_code);
+				$stock_helper = new StockHelper();
+				$stock_helper->updateAllStockOnHand($stock->product_code);
 
 				$product= new Product();
 				return redirect('/stock_inputs/input/'.$stock_input->input_id);

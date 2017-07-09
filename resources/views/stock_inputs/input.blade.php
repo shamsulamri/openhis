@@ -15,7 +15,7 @@
 <br>
 <br>
 <form id='form' action='/stock_input/input' method='post'>
-<table class='table table-bordered table-hover'>
+<table class="table table-hover">
 	<thead>
 	<tr>
 		<th width='25%'>Code</th>

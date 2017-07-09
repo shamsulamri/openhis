@@ -24,7 +24,7 @@ class PurchaseOrder extends Model
 				'purchase_received',
 				'store_code',
 				'purchase_description',
-				'receive_datetime',
+				'purchase_close',
 				'invoice_number',
 				'invoice_date'];
 	

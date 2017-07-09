@@ -378,6 +378,7 @@ class ProductController extends Controller
 			]);
 	}
 
+	/**
 	public function updateTotalOnHand($product_code)
 	{
 			StockStore::where('product_code','=', $product_code)->delete();
@@ -449,6 +450,7 @@ class ProductController extends Controller
 			Log::info($store_code.':'.$stock_on_hand);
 			return $stock_on_hand;
 	}
+	**/
 
 	public function getProductCategories($product_authorization) {
 

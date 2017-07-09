@@ -128,8 +128,9 @@ class StockController extends Controller
 					}
 
 					
-					$productController = new ProductController();
-					$productController->updateTotalOnHand($stock->product_code);
+					$helper = new StockHelper();
+					$helper->updateAllStockOnHand($stock->product_code);
+
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/stocks/'.$stock->product_code.'/'.$stock->store_code);
 			} else {
@@ -144,8 +145,12 @@ class StockController extends Controller
 
 	public function updateTotalOnHand($product_code)
 	{
-			$product = new ProductController();
-			return $product->updateTotalOnHand($product_code);
+			$helper = new StockHelper();
+			$helper->updateAllStockOnHand($product_code);
+			$product = Product::find($product_code);
+			return $product->product_on_hand;
+			//$product = new ProductController();
+			//return $product->updateTotalOnHand($product_code);
 	}
 
 
@@ -175,8 +180,8 @@ class StockController extends Controller
 
 			if ($valid->passes()) {
 					$stock->save();
-					$product = new ProductController();
-					$product->updateTotalOnHand($stock->product_code);
+					$helper = new StockHelper();
+					$helper->updateAllStockOnHand($stock->product_code);
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/stocks/'.$stock->product_code.'/'.$stock->store_code);
 			} else {
@@ -204,8 +209,8 @@ class StockController extends Controller
 	{	
 			$stock = Stock::find($id);
 			Stock::find($id)->delete();
-			$product = new ProductController();
-			$product->updateTotalOnHand($stock->product_code);
+			$helper = new StockHelper();
+			$helper->updateAllStockOnHand($stock->product_code);
 			Session::flash('message', 'Record deleted.');
 			return redirect('/stocks/'.$stock->product_code);
 	}
@@ -315,4 +320,5 @@ class StockController extends Controller
 
 			return $default_store;
 	}
+
 }

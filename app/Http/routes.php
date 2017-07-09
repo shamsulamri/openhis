@@ -602,7 +602,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/stocks/delete/{id}', 'StockController@delete');
 				Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);
 				Route::get('/stocks/{product_code}/{store_code?}', 'StockController@show');
-				Route::get('/stocks/onhand/{product_code}/{store_code}', 'StockController@onHand');
+				//Route::get('/stocks/onhand/{product_code}/{store_code}', 'StockController@onHand');
 				Route::get('/stocks/create/{product_code}/{store_code}', 'StockController@create');
 				Route::get('/stocks/id/{id}', 'StockController@searchById');
 				Route::post('/stock/search', 'StockController@search');
@@ -646,6 +646,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/purchase_order_line/search', 'PurchaseOrderLineController@search');
 				Route::get('/purchase_order_line/search', 'PurchaseOrderLineController@search');
 				Route::get('/purchase_order_lines/delete/{id}', 'PurchaseOrderLineController@delete');
+				Route::get('/purchase_order_line/receive/{id}', 'PurchaseOrderLineController@stockReceiveLine');
+				Route::post('/purchase_order_line/receive_post/{id}', 'PurchaseOrderLineController@stockReceivePost');
 				
 				Route::resource('urgencies', 'UrgencyController');
 				Route::get('/urgencies/id/{id}', 'UrgencyController@searchById');

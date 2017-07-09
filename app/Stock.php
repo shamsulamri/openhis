@@ -23,6 +23,9 @@ class Stock extends Model
 				'stock_tag',
 				'loan_id',
 				'batch_number',
+				'delivery_number',
+				'invoice_number',
+				'expiry_date',
 				'username',
 				];
 	
@@ -38,6 +41,7 @@ class Stock extends Model
 				'stock_quantity'=>'required',
 				'stock_datetime'=>'required|size:16|date_format:d/m/Y H:i',
 				'store_code_transfer'=>'required_if:move_code,==,transfer',
+				'expiry_date'=>'size:10|date_format:d/m/Y',
 			];
 
 			$messages = [
@@ -49,6 +53,14 @@ class Stock extends Model
 	}
 
 	
+	public function setExpiryDateAttribute($value)
+	{
+		$this->attributes['expiry_date'] = null;
+		if (DojoUtility::validateDate($value)==true) {
+			$this->attributes['expiry_date'] = DojoUtility::dateWriteFormat($value);
+		}
+	}
+
 	public function setStockDatetimeAttribute($value)
 	{
 		if (DojoUtility::validateDateTime($value)==true) {

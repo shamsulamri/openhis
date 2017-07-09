@@ -53,21 +53,6 @@
 			</td>
 			@can('system-administrator')
 			<td align='right'>
-				<!--
-					@if ($product->product_bom==1)
-					<a class='btn btn-default btn-xs' href='{{ URL::to('bill_materials/'. $product->product_code) }}'>Bill of Materials</a>
-					@endif
-					@if ($product->category_code=='assembly')
-					<a class='btn btn-default btn-xs' href='{{ URL::to('build_assembly/'. $product->product_code) }}'>Build Assemblies</a>
-					@endif
-					@if ($product->category_code=='drugs')
-					<a class='btn btn-default btn-xs' href='{{ URL::to('drug_prescriptions/'. $product->product_code.'/edit') }}'><i class='fa fa-user-md' aria-hidden='true'></i>
-</a>
-					@endif
-					@if ($product->product_stocked==1)
-					<a class='btn btn-default btn-xs' href='{{ URL::to('stocks/'. $product->product_code) }}'><span class='glyphicon glyphicon-road' aria-hidden='true'></span></a>
-					@endif
-				-->
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('products/delete/'. $product->product_code) }}'>Delete</a>
 			</td>
 			@endcan

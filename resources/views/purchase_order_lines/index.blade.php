@@ -8,7 +8,7 @@ $count=0;
 @if ($purchase_order->purchase_posted==1)
 		@if ($purchase_order->purchase_received==1)
 				<div class='alert alert-success'>
-				Stock receive on <strong>{{ (DojoUtility::dateLongFormat(str_replace('/','-',$purchase_order->receive_datetime))) }}</strong> at <strong>{{ $purchase_order->store->store_name }}</strong>
+				Purchase order closed on <strong>{{ (DojoUtility::dateLongFormat(str_replace('/','-',$purchase_order->purchase_close))) }}</strong>
 				</div>
 		@else
 				<div class='alert alert-warning'>
@@ -17,11 +17,14 @@ $count=0;
 		@endif
 @endif
 @if ($purchase_order->purchase_posted==1)
+	<!--
 	@if ($purchase_order->purchase_received==0)
 	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-primary'>Stock Receive</a>
 	@else
 	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-default'>Update Invoice Information</a>
 	@endif
+	<a href='/purchase_orders/{{ $purchase_id }}/edit' class='btn btn-primary'>Close Purchase Order</a>
+	-->
 @else
 		@can('module-diet')
 		<a href='/purchase_order/diet/{{ $purchase_id }}' class='btn btn-primary'>Diet BOM</a>
@@ -72,13 +75,18 @@ $count=0;
 			</div>
 	</div>
 
-<br>
-<br>
 @if ($purchase_order_lines->total()>0)
+{{ Form::open(['url'=>'/purchase_order_line/receive/'.$purchase_order_line->purchase_id]) }}
+<!--
+{{ Form::submit('Stock Receive', ['class'=>'btn btn-primary']) }}
+-->
+<br>
 <table class="table table-condensed">
  <thead>
 	<tr> 
+	<!--
     <th>#</th>
+	-->
     <th>Product</th>
     <th><div align='right'>Tax</div></th> 
     <th><div align='right'>#</div></th> 
@@ -96,9 +104,12 @@ $count=0;
 		$count += 1;
 	?>
 	<tr>
-			<td width='10'>
+			<!--
+			<td width='50'>
+					{{ Form::checkbox($purchase_order_line->line_id,1) }}
 					{{ $count }}	
 			</td>
+			-->
 			<td>
 			@if (empty($purchase_order_line->deleted_at))
 					@if ($purchase_order->purchase_received==1)
@@ -120,7 +131,7 @@ $count=0;
 					@endif
 			</td>
 			<td width='50' align='right'>
-					{{ $purchase_order_line->line_quantity_received+$purchase_order_line->line_quantity_received_2 }} 
+					{{ number_format($purchase_order_line->line_quantity_ordered) }} 
 					{{ $purchase_order_line->product->getUnitShortname() }}
 			</td>
 			<td width='50' align='right'>
@@ -144,13 +155,14 @@ $count=0;
 @endif
 @if ($grandTotal>0)
 	<tr>
-		<td colspan='6' align='right'><br><strong>Grand Total</strong></td>
+		<td colspan='5' align='right'><br><strong>Grand Total</strong></td>
 		<td width='20' align='right'><br>{{ number_format($grandTotal,2) }}</td>
 		<td></td>
 	</tr>
 @endif
 </tbody>
 </table>
+{{ Form::close() }}
 @if (isset($search)) 
 	{{ $purchase_order_lines->appends(['search'=>$search])->render() }}
 	@else
