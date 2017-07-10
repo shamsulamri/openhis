@@ -28,6 +28,7 @@ class Product extends Model
 				'product_purchased',
 				'product_stocked',
 				'product_sold',
+				'product_drop_charge',
 				'product_dismantle_material',
 				'product_sale_price',
 				'product_bom',

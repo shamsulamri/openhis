@@ -55,7 +55,7 @@ $category='';
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>
 			@else
-					<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>
+						<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>
 						<span class='glyphicon glyphicon-ok'></span>
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>

@@ -153,8 +153,10 @@ class OrderProductController extends Controller
 			if (!empty($request->search)) {
 				$order_product_single = Product::find($request->search);
 				if ($order_product_single) {
-						OrderHelper::orderItem($order_product_single);
-						return redirect('/order_product/search');
+						if ($order_product_single->product_sold==1) {
+								OrderHelper::orderItem($order_product_single, $request->cookie('ward'));
+								return redirect('/order_product/search');
+						}
 				}
 				$order_products = Product::orderBy('product_name')
 					->where('product_name','like','%'.$request->search.'%')

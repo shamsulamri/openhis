@@ -21,6 +21,8 @@ use App\DrugPrescription;
 use App\DojoUtility;
 use App\EncounterHelper;
 use App\OrderHelper;
+use App\Ward;
+use App\StockHelper;
 
 class OrderController extends Controller
 {
@@ -106,6 +108,7 @@ class OrderController extends Controller
 					'order_completed',
 					'order_report',
 					'category_name',
+					'product_drop_charge',
 					];
 			$orders = DB::table('orders as a')
 					->select($fields)
@@ -170,6 +173,16 @@ class OrderController extends Controller
 					$order->order_id = $request->order_id;
 					$order->order_sale_price = $product->product_sale_price;
 					$order->user_id = Auth::user()->id;
+
+					if ($product->product_drop_charge==1) {
+							$ward_code = $request->cookie('ward');
+							$ward = Ward::where('ward_code', $ward_code)->first();
+							$order->store_code = $ward->store_code;
+							$order->order_completed = 1;
+							$helper = new StockHelper();
+							$helper->updateAllStockOnHand($order->product_code);
+					}
+
 					$order->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/orders');
@@ -227,7 +240,18 @@ class OrderController extends Controller
 
 			$valid = $order->validate($request->all(), $request->_method);	
 
+			$product = Product::find($order->product_code);
+
 			if ($valid->passes()) {
+					if ($product->product_drop_charge==1) {
+							$ward_code = $request->cookie('ward');
+							$ward = Ward::where('ward_code', $ward_code)->first();
+							$order->store_code = $ward->store_code;
+							$order->order_completed = 1;
+							$helper = new StockHelper();
+							$helper->updateAllStockOnHand($order->product_code);
+					}
+					$order->order_quantity_supply = $order->order_quantity_request;
 					$order->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/orders/');
@@ -313,7 +337,7 @@ class OrderController extends Controller
 									break;
 							default:
 									$product = Product::find($product_code);
-									OrderHelper::orderItem($product);
+									OrderHelper::orderItem($product, $request->cookie('ward'));
 									//$order = $this->orderItem($product);
 					}
 			}
@@ -326,7 +350,7 @@ class OrderController extends Controller
 	public function single(Request $request, $product_code)
 	{
 			$product = Product::find($product_code);
-			OrderHelper::orderItem($product);
+			OrderHelper::orderItem($product, $request->cookie('ward'));
 			//Session::flash('message', 'Product added to order list.');
 			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
 	}

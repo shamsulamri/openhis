@@ -11,6 +11,7 @@ use App\OrderPost;
 use Session;
 use Auth;
 use Log;
+use App\Ward;
 
 class OrderHelper 
 {
@@ -20,7 +21,7 @@ class OrderHelper
 			return $orders;
 	}
 
-	public static function orderItem($product) 
+	public static function orderItem($product, $ward_code) 
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 			$order = new Order();
@@ -41,6 +42,11 @@ class OrderHelper
 			}	
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 			$order->location_code = $product->location_code;
+			if ($product->product_drop_charge==1) {
+					$ward = Ward::where('ward_code', $ward_code)->first();
+					$order->store_code = $ward->store_code;
+					$order->order_completed=1;
+			}
 			$order->save();
 
 			if ($product->order_form==2) {

@@ -121,6 +121,7 @@ class Order extends Model
 				$order->orderInvestigation()->delete();
 				$order->orderDrug()->delete();
 			});
+
 	}
 
 	public function save(array $options = array())

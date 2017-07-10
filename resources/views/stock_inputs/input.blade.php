@@ -20,9 +20,9 @@
 	<tr>
 		<th width='25%'>Code</th>
 		<th width='30%'>Product</th>
-		<th width='15%'>Batch Number</th>
-		<th width='15%'>Current Amount</th>
-		<th width='15%'>New Amount</th>
+		<th width='15%'><div align='right'>Batch Number<div></th>
+		<th width='15%'><div align='right'>Quantity<div></th>
+		<th width='15%'><div align='right'>New Amount<div></th>
 	</tr>
 	</thead>
 	<tr class='info'>
@@ -65,7 +65,7 @@
 			{{ $line->batch_number }}
 		</td>	
 		<td align='right'>
-			{{ $line->amount_current }}
+			{{ number_format($line->amount_current) }}
 		</td>	
 		<td align='right'>
 			{{ $line->amount_new }}
