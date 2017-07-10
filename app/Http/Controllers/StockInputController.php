@@ -178,6 +178,7 @@ class StockInputController extends Controller
 			$stock_store_quantity=0;
 			if (!empty($request->amount_new) && !empty($product)) {
 				if (!empty($stock_store->stock_quantity)) {
+						$stock_store_quantity = $stock_store->stock_quantity;
 						if ($request->amount_new>$stock_store_quantity && $stock_input->move_code=='transfer') {
 								Session::flash('error', 'New amount cannot be greater than current.');
 								return redirect('/stock_inputs/input/'.$request->input_id.'/'.$request->product_code)
