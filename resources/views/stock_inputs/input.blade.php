@@ -43,7 +43,9 @@
 		</td>
 		<td align='right'>
 			@if (!empty($stock_store->stock_quantity))
-			{{ Form::label('label', floatval($stock_store->stock_quantity), ['class'=>'control-label']) }}
+			{{ Form::label('label', number_format($stock_store->stock_quantity), ['class'=>'control-label']) }}
+			@else
+			{{ Form::label('label', '-', ['class'=>'control-label']) }}
 			@endif
 		</td>
 		<td>

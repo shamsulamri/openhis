@@ -52,10 +52,14 @@
 	</tr>
   </thead>
 	<tbody>
+<?php $count=0; ?>
 @foreach($purchase_receives as $receive)
 <?php
 	$total_receive = $stock_helper->stockReceiveSum($receive->line_id);
+	$total_receive = $total_receive/$receive->product->product_conversion_unit;
+	if ($total_receive==0) $total_receive='-';
 	$balance = $receive->line_quantity_ordered-$total_receive;
+	if ($balance==0) $count++;
 ?>
 	<tr>
 @if ($balance>0)
@@ -73,7 +77,7 @@
 				</div>
 			</td>
 			<td>
-            	{{ Form::label('supplier_name', number_format($receive->line_quantity_ordered), ['class'=>'form-control']) }}
+            	{{ Form::label('quantity_order', number_format($receive->line_quantity_ordered), ['class'=>'form-control']) }}
 			</td>
 			<td>
 				{{ Form::label('total_receive_'.$receive->line_id, $total_receive, ['class'=>'form-control']) }}
@@ -117,14 +121,24 @@
 @endforeach
 </tbody>
 </table>
+	@if ($count==count($purchase_receives))
+    <div class="alert alert-info">
+			All item received. You may close this purchase order.
+	</div>
+	@endif
     <div class="alert alert-warning">
 	<table>
 		<tr>
 				<td width='30'>
-					{{ Form::checkbox('close_purchase_order','1') }}
+					@if ($count==count($purchase_receives))
+					{{ Form::checkbox('close_purchase_order','1', 1) }}
+					@else
+					{{ Form::checkbox('close_purchase_order','1', 0) }}
+					@endif
 				</td>
 				<td>
-					<h3>Close this purchase order.
+					<h3>
+					Close this purchase order.
 					<span style='color:red;'>
 					<strong>Warning !</strong> this option is irrevisible.
 					</span>
@@ -133,6 +147,11 @@
 		</tr>
 	</table>
 <br>
+@if ($count==count($purchase_receives))
+{{ Form::hidden('count_completed', '1') }}
+@else
+{{ Form::hidden('count_completed', '0') }}
+@endif
 {{ Form::submit('Post Stock Receive', ['class'=>'btn btn-default']) }}
 </div>
 <script>

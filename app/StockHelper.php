@@ -140,7 +140,6 @@ class StockHelper
 			$sum = Stock::where('line_id',$line_id)->sum('stock_quantity');
 
 			if (empty($sum)) $sum='-';
-			if ($sum>0) $sum = number_format($sum);
 			return $sum;
 
 	}

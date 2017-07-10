@@ -212,12 +212,14 @@ class PurchaseOrderLineController extends Controller
 										->select('line_id')
 										->get();
 
-			if (empty($request->store_code)) {
-				$valid['store_code']='This field is required.';
-			}
+			if ($request->count_completed==0) {
+					if (empty($request->store_code)) {
+						$valid['store_code']='This field is required.';
+					}
 
-			if (empty($request->invoice_number)) {
-				$valid['invoice_number']='This field is required.';
+					if (empty($request->invoice_number)) {
+						$valid['invoice_number']='This field is required.';
+					}
 			}
 
 			$valid = array_merge($valid, $this->validateStockReceive($request, $id));
@@ -267,17 +269,18 @@ class PurchaseOrderLineController extends Controller
 			$valid= array();
 
 			$purchase_order_lines = PurchaseOrderLine::where('purchase_id',$purchase_id)
-										->select('line_id', 'line_quantity_ordered')
 										->get();
 
 			foreach($purchase_order_lines as $line) {
 
 					$quantity_order = $line->line_quantity_ordered;
 					$total_receive = $stock_helper->stockReceiveSum($line->line_id);
+					$total_receive = $total_receive/$line->product->product_conversion_unit;
 					$receive_name = "receive_quantity_".$line->line_id;
 					$quantity_receive = $request[$receive_name];
 
 					$balance = $quantity_order-$total_receive;
+					Log::info('->'.$balance);	
 
 					if ($quantity_receive > $balance) {
 						$valid['line_'.$line->line_id]='Quantity receive greater than order.';

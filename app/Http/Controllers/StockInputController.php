@@ -176,7 +176,13 @@ class StockInputController extends Controller
 							->first();
 
 			$stock_store_quantity=0;
+
 			if (!empty($request->amount_new) && !empty($product)) {
+				if (empty($stock_store)) {
+						Session::flash('error', 'Insufficient quantity.');
+						return redirect('/stock_inputs/input/'.$request->input_id.'/'.$request->product_code)
+									->withInput();
+				}
 				if (!empty($stock_store->stock_quantity)) {
 						$stock_store_quantity = $stock_store->stock_quantity;
 						if ($request->amount_new>$stock_store_quantity && $stock_input->move_code=='transfer') {
