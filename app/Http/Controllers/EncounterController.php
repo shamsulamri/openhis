@@ -27,7 +27,8 @@ use App\AdmissionType;
 use App\Queue;
 use App\BedMovement;
 use App\Team;
-
+use App\DojoUtility;
+use App\BedBooking;
 		
 class EncounterController extends Controller
 {
@@ -74,6 +75,37 @@ class EncounterController extends Controller
 							->lists('name','id')
 							->prepend('','');
 
+			$today = DojoUtility::today();
+			$today = DojoUtility::dateWriteFormat($today);
+			$preadmissions = BedBooking::selectRaw('count(*) as preadmissions, ward_code, class_code')->where('book_date', $today)->groupBy(['ward_code', 'class_code'])->get();
+			
+
+			Bed::where('status_code','04')->update(['status_code'=>'01']);
+
+			foreach($preadmissions as $preadmission) {
+				$preadmission_beds = Bed::where('status_code','04')
+										->where('ward_code', $preadmission->ward_code)
+										->where('class_Code', $preadmission->class_code)
+										->count();
+
+
+				if ($preadmission_beds<$preadmission->preadmissions) {
+						$beds = Bed::where('status_code','01')
+										->where('ward_code', $preadmission->ward_code)
+										->where('class_Code', $preadmission->class_code)
+										->limit($preadmission->preadmissions-$preadmission_beds)
+										->get();
+
+						foreach($beds as $bed) {
+								$bed->status_code = '04';
+								$bed->save();
+						}		
+				}
+
+				Log::info($preadmission_beds);
+
+			}
+
 			return view('encounters.create', [
 					'encounter' => $encounter,
 					'patient' => $patient,
@@ -87,9 +119,10 @@ class EncounterController extends Controller
 					'consultants' => $consultants,
 					'teams' => Team::all()->sortBy('team_name')->lists('team_name', 'team_code')->prepend('',''),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'beds' => Bed::where('status_code','=','01')->get(),
+					'beds' => Bed::where('status_code','=','01')->orWhere('status_code','04')->get(),
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
+					'preadmissions'=>$preadmissions,
 				]);
 	}
 

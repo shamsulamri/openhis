@@ -12,6 +12,7 @@ class OrderMultiple extends Model
 	protected $table = 'order_multiples';
 	protected $fillable = [
 				'order_id',
+				'updated_by',
 				'order_completed'];
 	
     protected $guarded = ['multiple_id'];
@@ -35,4 +36,8 @@ class OrderMultiple extends Model
 	}
 
 	
+	public function updatedBy()
+	{
+			return $this->belongsTo('App\User', 'updated_by','id');
+	}
 }

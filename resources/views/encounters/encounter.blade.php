@@ -289,7 +289,7 @@
 			wardCode = document.getElementById('ward_code').value;
 			beds = [
 				@foreach($beds as $bed)
-					'{{ $bed->bed_code }}:{{ $bed->class_code }}:{{ $bed->ward_code }}:{{ $bed->bed_name }}',
+					'{{ $bed->bed_code }}:{{ $bed->class_code }}:{{ $bed->ward_code }}:{{ $bed->getBedNameStatus() }}',
 				@endforeach
 			]
 

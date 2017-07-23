@@ -16,7 +16,6 @@
 </form>
 <br>
 -->
-
 @if ($form_positions->total()>0)
 <table class="table table-hover">
  <thead>
@@ -50,11 +49,7 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $form_positions->appends(['search'=>$search])->render() }}
-	@else
-	{{ $form_positions->render() }}
-@endif
+	{{ $form_positions->appends(['form_code'=>$form_code])->render() }}
 <br>
 @if ($form_positions->total()>0)
 	{{ $form_positions->total() }} records found.

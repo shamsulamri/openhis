@@ -18,6 +18,8 @@ use App\DojoUtility;
 use App\Order;
 use App\OrderMultiple;
 use Carbon\Carbon;
+use App\FormValue;
+use App\Form;
 
 class BillItemController extends Controller
 {
@@ -71,47 +73,6 @@ class BillItemController extends Controller
 			}
 	}
 
-	public function multipleOrders($id) 
-	{
-			$sql = sprintf("
-				select count(a.order_id) as order_quantity_supply, b.product_code, d.tax_code, tax_rate, c.product_sale_price, d.tax_code, d.tax_rate, profit_multiplier
-				from order_multiples a
-				left join orders b on (b.order_id = a.order_id)
-				left join products c on (c.product_code = b.product_code)
-				left join tax_codes d on (d.tax_code = c.tax_code)
-				left join encounters as g on (g.encounter_id=b.encounter_id)
-				left join patients as h on (h.patient_id = g.patient_id)
-				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
-				where b.encounter_id=%d
-				and a.order_completed=1
-				group by a.order_id
-			", $id);
-			
-			$orders = DB::select($sql);
-
-			foreach ($orders as $order) {
-				$item = new BillItem();
-				$item->encounter_id = $id;
-				$item->product_code = $order->product_code;
-				$item->tax_code = $order->tax_code;
-				$item->tax_rate = $order->tax_rate;
-				$item->bill_quantity = $order->order_quantity_supply;
-				$item->bill_unit_multiplier = $order->profit_multiplier;
-				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
-				$item->bill_total = $order->order_quantity_supply*$item->bill_unit_price;
-				$item->bill_total_pregst = $order->order_quantity_supply*$item->bill_unit_price;
-				if ($order->tax_rate) {
-						$item->bill_total = $item->bill_total*(($order->tax_rate/100)+1);
-				}
-
-				try {
-					$item->save();
-				} catch (\Exception $e) {
-					\Log::info($e->getMessage());
-				}
-			}
-	}
-
 	public function compileBill($encounter_id) 
 	{
 
@@ -159,6 +120,108 @@ class BillItemController extends Controller
 
 			$this->bedBills($encounter_id);
 			$this->multipleOrders($encounter_id);
+			$this->forms($encounter_id);
+			$this->outstandingCharges($encounter_id);
+	}
+
+	public function multipleOrders($id) 
+	{
+			$sql = sprintf("
+				select count(a.order_id) as order_quantity_supply, b.product_code, d.tax_code, tax_rate, c.product_sale_price, d.tax_code, d.tax_rate, profit_multiplier
+				from order_multiples a
+				left join orders b on (b.order_id = a.order_id)
+				left join products c on (c.product_code = b.product_code)
+				left join tax_codes d on (d.tax_code = c.tax_code)
+				left join encounters as g on (g.encounter_id=b.encounter_id)
+				left join patients as h on (h.patient_id = g.patient_id)
+				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				where b.encounter_id=%d
+				and a.order_completed=1
+				group by a.order_id
+			", $id);
+			
+			$orders = DB::select($sql);
+
+			foreach ($orders as $order) {
+				$item = new BillItem();
+				$item->encounter_id = $id;
+				$item->product_code = $order->product_code;
+				$item->tax_code = $order->tax_code;
+				$item->tax_rate = $order->tax_rate;
+				$item->bill_quantity = $order->order_quantity_supply;
+				$item->bill_unit_multiplier = $order->profit_multiplier;
+				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
+				$item->bill_total = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_total_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+				if ($order->tax_rate) {
+						$item->bill_total = $item->bill_total*(($order->tax_rate/100)+1);
+				}
+
+				try {
+					$item->save();
+				} catch (\Exception $e) {
+					\Log::info($e->getMessage());
+				}
+			}
+	}
+
+	public function forms($encounter_id)
+	{
+			$sql = sprintf("
+				select count(*) as order_quantity_supply, c.product_code, d.tax_code, tax_rate, c.product_sale_price, d.tax_code, d.tax_rate, profit_multiplier
+				from form_values a
+				left join forms b on (b.form_code = a.form_code)
+				left join products c on (c.form_code = b.form_code)
+				left join tax_codes d on (d.tax_code = c.tax_code)
+				left join encounters as g on (g.encounter_id=a.encounter_id)
+				left join patients as h on (h.patient_id = g.patient_id)
+				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				where a.encounter_id=%d
+				group by a.form_code, c.product_code, profit_multiplier
+			", $encounter_id);
+			
+			$orders = DB::select($sql);
+
+			foreach ($orders as $order) {
+				$item = new BillItem();
+				$item->encounter_id = $encounter_id;
+				$item->product_code = $order->product_code;
+				$item->tax_code = $order->tax_code;
+				$item->tax_rate = $order->tax_rate;
+				$item->bill_quantity = $order->order_quantity_supply;
+				$item->bill_unit_multiplier = $order->profit_multiplier;
+				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
+				$item->bill_total = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_total_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+				if ($order->tax_rate) {
+						$item->bill_total = $item->bill_total*(($order->tax_rate/100)+1);
+				}
+
+				try {
+					$item->save();
+				} catch (\Exception $e) {
+					\Log::info($e->getMessage());
+				}
+			}
+	}
+
+	public function outstandingCharges($encounter_id)
+	{
+			$encounter = Encounter::find($encounter_id);
+			Log::info($encounter->patient->outstandingBill());
+
+			$outstanding = abs($encounter->patient->outstandingBill());
+			if (abs($outstanding)>0) {
+				$item = new BillItem();
+				$item->encounter_id = $encounter_id;
+				$item->product_code = 'others';
+				$item->bill_quantity = 1;
+				$item->bill_unit_price = $outstanding; 
+				$item->bill_total = $outstanding;
+				$item->bill_total_pregst = $outstanding;
+				$item->save();
+				Log::info($item);
+			}
 	}
 
 	public function index($id)
@@ -196,6 +259,7 @@ class BillItemController extends Controller
 			$bill_grand_total = DB::table('bill_items')
 					->where('encounter_id','=', $id)
 					->sum('bill_total');
+			if (empty($bill_grand_total)) $bill_grand_total=0;
 
 			$gst_total = DB::table('bill_items as a')
 					->selectRaw('sum(bill_total_pregst) as gst_amount, format(sum(bill_total_pregst*(tax_rate/100)),2) as gst_sum, tax_code')
@@ -247,15 +311,17 @@ class BillItemController extends Controller
 									->where('order_completed','=',0)
 									->leftjoin('order_cancellations as b','orders.order_id','=', 'b.order_id')
 									->whereNull('cancel_id')
-									->where('order_multiple','=',0)
 									->count();
+									//->where('order_multiple','=',0)
 
+			/**
 			$incomplete_orders = $incomplete_orders + OrderMultiple::where('encounter_id','=',$id)
 									->leftJoin('orders as b', 'b.order_id', '=', 'order_multiples.order_id')
 									->leftjoin('order_cancellations as c','c.order_id','=', 'b.order_id')
 									->where('order_multiples.order_completed','=',0)
 									->whereNull('cancel_id')
 									->count();
+			**/
 
 			return view('bill_items.index', [
 					'bills'=>$bills,

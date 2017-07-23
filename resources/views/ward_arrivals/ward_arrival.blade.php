@@ -1,8 +1,8 @@
 
-    <div class='form-group  @if ($errors->has('arrival_description')) has-error @endif'>
-        {{ Form::label('bed', 'Bed',['class'=>'col-sm-3 control-label']) }}
+    <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
+        {{ Form::label('Bed', 'Bed',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::text('bed', $encounter->admission->bed->bed_name, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+            {{ Form::select('bed_code', $beds, $encounter->bed_code, ['id'=>'bed_code','onchange'=>'','class'=>'form-control']) }}
         </div>
     </div>
     <div class='form-group  @if ($errors->has('arrival_description')) has-error @endif'>
@@ -15,6 +15,8 @@
 			@endif
         </div>
     </div>
+
+
     <div class='form-group  @if ($errors->has('arrival_description')) has-error @endif'>
         {{ Form::label('ward', 'Ward',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

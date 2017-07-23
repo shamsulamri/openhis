@@ -26,7 +26,6 @@ class Bill extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
-				'bill_grand_total'=>'required',
 			];
 
 			

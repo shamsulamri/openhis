@@ -45,7 +45,6 @@ class BillController extends Controller
 			$bill = new Bill();
 			$valid = $bill->validate($request->all(), $request->_method);
 
-
 			if ($valid->passes()) {
 					$bill = new Bill($request->all());
 					$bill->user_id = Auth::user()->id;

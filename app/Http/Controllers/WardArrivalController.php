@@ -11,6 +11,9 @@ use Log;
 use DB;
 use Session;
 use App\Encounter;
+use App\Bed;
+use App\Admission;
+use App\BedMovement;
 
 class WardArrivalController extends Controller
 {
@@ -31,15 +34,24 @@ class WardArrivalController extends Controller
 			]);
 	}
 
-	public function create($encounter_id)
+	public function create(Request $request, $encounter_id)
 	{
 			$encounter = Encounter::find($encounter_id);
 			$ward_arrival = new WardArrival();
 			$ward_arrival->encounter_id = $encounter_id;
+			$ward_code = $request->cookie('ward');
+
+			$bed = Bed::find($encounter->admission->bed_code);
+			$beds = Bed::where('status_code','01')
+						->where('ward_code', $ward_code)
+						->orderBy('bed_name')
+						->lists('bed_name', 'bed_code')->prepend($bed->bed_name,$bed->bed_code);
+
 			return view('ward_arrivals.create', [
 					'ward_arrival' => $ward_arrival,
 					'patient' => $encounter->patient,	
 					'encounter' => $encounter,
+					'beds' => $beds,
 					]);
 	}
 
@@ -47,6 +59,26 @@ class WardArrivalController extends Controller
 	{
 			$ward_arrival = new WardArrival();
 			$valid = $ward_arrival->validate($request->all(), $request->_method);
+
+			$encounter = Encounter::find($request->encounter_id);
+			$bed_assigned = $encounter->admission->bed;
+			$admission = Admission::find($encounter->admission->admission_id);
+			$admission->bed_code = $request->bed_code;
+			$admission->save();
+
+			if ($bed_assigned->bed_code != $request->bed_code) {
+							$bed_assigned->status_code = '01';
+							$bed_assigned->save();
+
+							$bed = Bed::find($request->bed_code);
+							$bed->status_code = '03';
+							$bed->save();
+			}
+
+			$bed_movement = BedMovement::where('admission_id', $encounter->admission->admission_id)->first();
+			$bed_movement->move_from = $request->bed_code;
+			$bed_movement->move_to = $request->bed_code;
+			$bed_movement->save();
 
 			if ($valid->passes()) {
 					$ward_arrival = new WardArrival($request->all());

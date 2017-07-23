@@ -81,8 +81,13 @@ $header_count=0;
 			@endif
 			<?php $header_count=0; ?>
 			<tr>
-					<th colspan=7>
+					<th colspan=3>
 						{{strtoupper($admission_task->product_name)}} (<span id='{{ $admission_task->product_code }}'>#</span>)
+
+					</th>
+					<th colspan=4>
+						{!! $order_helper->drugDescription($admission_task->order_id, "") !!}
+
 					</th>
 			</tr>
 			@endif
@@ -129,7 +134,13 @@ $header_count=0;
 			@endif
 			<td>
 				@if ($group_by=='patient')
-					{{strtoupper($admission_task->product_name)}}
+
+					<a href='{{ URL::to('admission_tasks/'. $admission_task->order_id . '/edit') }}' >
+						{{strtoupper($admission_task->product_name)}}
+					</a>
+					<strong>
+						{!! $order_helper->drugDescription($admission_task->order_id, " - ") !!}
+					</strong>
 					@if ($admission_task->order_multiple==1)
 						<br>
 						<?php
@@ -197,10 +208,20 @@ $header_count=0;
 </tbody>
 </table>
 @if ($admission_tasks->total()>0)
-{{ Form::submit('Update Task', ['class'=>'btn btn-default']) }}
-{{ Form::hidden('completed_ids',$order_ids) }}
-{{ Form::hidden('multiple_ids',$multiple_ids) }}
+		{{ Form::submit('Update Task', ['class'=>'btn btn-default']) }}
+		{{ Form::hidden('completed_ids',$order_ids) }}
+		{{ Form::hidden('multiple_ids',$multiple_ids) }}
 @endif
+
+
+{{ Form::hidden('group_by', $group_by) }}
+{{ Form::hidden('show_all', $show_all) }}
+@if (Auth::user()->authorization->module_support==1)
+		{{ Form::hidden('ward_code', $ward_code) }}
+@else
+		{{ Form::hidden('categories', $category) }}
+@endif
+
 </form>
 @if (isset($search)) 
 	{{ $admission_tasks->appends(['search'=>$search])->render() }}

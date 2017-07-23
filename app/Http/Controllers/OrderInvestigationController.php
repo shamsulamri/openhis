@@ -16,6 +16,7 @@ use App\Frequency;
 use App\Consultation;
 use App\Order;
 use App\OrderMultiple;
+use App\OrderHelper;
 use App\Product;
 use Auth;
 
@@ -169,7 +170,7 @@ class OrderInvestigationController extends Controller
 
 			if ($valid->passes() && $valid2->passes()) {
 					$order_investigation->save();
-					$this->createMultipleOrder($order_investigation);
+					OrderHelper::createInvestigationOrders($order_investigation);
 
 					$order = Order::find($order_investigation->order_id);
 					$order->post_id=0;
@@ -199,30 +200,6 @@ class OrderInvestigationController extends Controller
 			}
 	}
 
-	public function createMultipleOrder($order_investigation) 
-	{
-		if (!empty($order_investigation->period->period_mins) && !empty($order_investigation->frequency->frequency_mins)) {
-			$multi = OrderMultiple::where('order_id','=', $order_investigation->order_id)->delete();
-			$frequencies = $order_investigation->period->period_mins/$order_investigation->frequency->frequency_mins;
-			
-			if ($frequencies>0) {
-					for ($i=0; $i<$frequencies; $i++) {
-							$multi = new OrderMultiple();
-							$multi->order_id = $order_investigation->order_id;
-							$multi->save();
-					}
-					Log::info($order_investigation->order_id);
-					$order = Order::find($order_investigation->order_id);
-					$order->order_multiple=1;
-					$order->save();
-			} else {
-					$order = Order::find($order_investigation->order_id);
-					$order->order_multiple=0;
-					$order->save();
-			}
-		}
-	}
-	
 	public function delete($id)
 	{
 		$order_investigation = OrderInvestigation::findOrFail($id);

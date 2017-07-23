@@ -23,6 +23,7 @@ use App\EncounterHelper;
 use App\OrderHelper;
 use App\Ward;
 use App\StockHelper;
+use App\OrderMultiple;
 
 class OrderController extends Controller
 {
@@ -280,6 +281,7 @@ class OrderController extends Controller
 	public function destroy($id)
 	{	
 			$order = Order::find($id);
+			OrderMultiple::where('order_id', $id)->delete();
 			Order::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/orders/');

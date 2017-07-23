@@ -75,6 +75,7 @@ class OrderHelper
 							$order->save();
 					}
 					$order_drug->save();
+					OrderHelper::createDrugServings($order_drug);
 					$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 					$order->save();
 					Log::info($order);
@@ -87,6 +88,58 @@ class OrderHelper
 					$order_investigation->save();
 			}
 	}	
+
+	public static function createDrugServings($order_drug) 
+	{
+		if ($order_drug->order->consultation->encounter->encounter_code == 'inpatient') {
+				if (!empty($order_drug->period->period_mins) && !empty($order_drug->frequency->frequency_value)) {
+					$multi = OrderMultiple::where('order_id','=', $order_drug->order_id)->delete();
+					$frequencies = $order_drug->frequency->frequency_value*$order_drug->drug_duration*($order_drug->period->period_mins/1440);
+					
+					if ($frequencies>0) {
+							OrderMultiple::where('order_id',$order_drug->order_id)->delete();
+							for ($i=0; $i<$frequencies; $i++) {
+									$multi = new OrderMultiple();
+									$multi->order_id = $order_drug->order_id;
+									$multi->save();
+							}
+							Log::info($order_drug->order_id);
+							$order = Order::find($order_drug->order_id);
+							$order->order_multiple=1;
+							$order->save();
+					} else {
+							$order = Order::find($order_drug->order_id);
+							$order->order_multiple=0;
+							$order->save();
+					}
+				}
+		}
+	}
+
+	public static function createInvestigationOrders($order_investigation) 
+	{
+		if (!empty($order_investigation->period->period_mins) && !empty($order_investigation->frequency->frequency_mins)) {
+			$multi = OrderMultiple::where('order_id','=', $order_investigation->order_id)->delete();
+			$frequencies = ($order_investigation->investigation_duration*$order_investigation->period->period_mins)/$order_investigation->frequency->frequency_mins;
+			
+			if ($frequencies>0) {
+					OrderMultiple::where('order_id',$order_investigation->order_id)->delete();
+					for ($i=0; $i<$frequencies; $i++) {
+							$multi = new OrderMultiple();
+							$multi->order_id = $order_investigation->order_id;
+							$multi->save();
+					}
+					Log::info($order_investigation->order_id);
+					$order = Order::find($order_investigation->order_id);
+					$order->order_multiple=1;
+					$order->save();
+			} else {
+					$order = Order::find($order_investigation->order_id);
+					$order->order_multiple=0;
+					$order->save();
+			}
+		}
+	}
 
 		public static function hasOpenOrders($user_id)
 		{
@@ -102,6 +155,38 @@ class OrderHelper
 				} else {
 					return null;
 				}
+		}
+		
+		public static function drugDescription($id, $prefix) 
+		{
+			$description = "";
+				
+
+			$order_drug = OrderDrug::where('order_id', $id)->first();
+
+			if ($order_drug) {
+					if ($order_drug->drug_strength>0) {
+						$description .= $order_drug->drug_strength." ".$order_drug->unit->unit_name.", ";
+					}
+
+					if ($order_drug->drug_dosage>0) {
+						$description .= $order_drug->drug_dosage." ".$order_drug->dosage->dosage_name.", ";
+					}
+
+					if ($order_drug->route) {
+						$description .= $order_drug->route->route_name .", ";
+					}
+
+					if ($order_drug->frequency) {
+						$description .= $order_drug->frequency->frequency_name.", ";
+					}
+
+					if ($order_drug->drug_duration>0) {
+						$description .= $order_drug->drug_duration." ".strtolower($order_drug->period->period_name);
+					}
+
+					return $prefix.$description;
+			}
 		}
 }
 

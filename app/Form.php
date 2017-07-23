@@ -37,4 +37,8 @@ class Form extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 	
+	public function product()
+	{
+			return $this->hasMany('App\Product', 'form_code', 'form_code');
+	}
 }

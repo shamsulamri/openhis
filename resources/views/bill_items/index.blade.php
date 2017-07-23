@@ -9,10 +9,14 @@ Final Bill
 Interim Bill
 @endif
 </h1>
-@if ($incomplete_orders>0 && $encounter->discharge->discharge_id)
-<div class='alert alert-danger' role='alert'>Patient has {{ $incomplete_orders }} incomplete order(s)</div>
-@else
-<br>
+@if ($encounter->discharge)
+	@if (!$encounter->bill)
+		@if ($incomplete_orders>0 && $encounter->discharge->discharge_id)
+		<div class='alert alert-danger' role='alert'>Patient has {{ $incomplete_orders }} incomplete order(s)</div>
+		@else
+		<br>
+		@endif
+	@endif
 @endif
 @if ($bills->total()>0)
 
@@ -160,7 +164,7 @@ Interim Bill
 @endif
 <h4>Payments
 @if (!$billPosted)
-<a href='/payments/create/{{ $patient->patient_id }}/{{ $bill->encounter_id }}' class='btn btn-primary btn-sm pull-right'>New Payment</a>
+<a href='/payments/create/{{ $patient->patient_id }}/{{ $encounter_id }}' class='btn btn-primary btn-sm pull-right'>New Payment</a>
 @endif
 </h4>
 @if ($payments->total()>0)
@@ -201,7 +205,7 @@ Interim Bill
 				</div>
 			</td>
 			<td align='right'>
-					<strong>{{number_format($payment_total,2)}}<strong>
+					<strong>{{number_format($payment_total,2)}}</strong>
 			</td>
 			@if (!$billPosted)
 			<td align='right'>
@@ -229,7 +233,7 @@ Interim Bill
 				</div>
 			</td>
 			<td align='right' width='100'>
-					<strong>{{number_format($deposit_total,2)}}<strong>
+					<strong>{{number_format($deposit_total,2)}}</strong>
 			</td>
 			@if (!$billPosted)
 			<td width='90'>
@@ -246,7 +250,7 @@ Interim Bill
 				</div>
 			</td>
 			<td align='right' width='100'>
-					<strong>{{number_format($bill_grand_total-$payment_total+$deposit_total,2)}}<strong>
+					<strong>{{number_format($bill_grand_total-$payment_total+$deposit_total,2)}}</strong>
 			</td>
 			@if (!$billPosted)
 			<td width='90'>
@@ -263,7 +267,7 @@ Interim Bill
 				</div>
 			</td>
 			<td align='right' width='100'>
-					<strong>{{number_format($payment_total+$deposit_total-$bill_grand_total,2)}}<strong>
+					<strong>{{number_format($payment_total+$deposit_total-$bill_grand_total,2)}}</strong>
 			</td>
 			@if (!$billPosted)
 			<td width='90'>
@@ -283,7 +287,7 @@ Interim Bill
 @if (!$billPosted)
 <div class="widget style1 gray-bg">
 <h4>Post Bill</h4>
-{{ Form::model($bill, ['id'=>'post_form','url'=>'bills', 'class'=>'form-horizontal']) }} 
+{{ Form::open(['id'=>'post_form','url'=>'bills', 'class'=>'form-horizontal']) }} 
 	<table>
 		<tr>
 				<td width='30'>
@@ -294,7 +298,7 @@ Interim Bill
 				</td>
 		</tr>
 	</table>
-            {{ Form::hidden('encounter_id', null, ['id'=>'encounter_id','class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::hidden('encounter_id', $encounter_id, ['id'=>'encounter_id','class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_grand_total', $bill_grand_total, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_payment_total', $payment_total, ['class'=>'form-control','placeholder'=>'',]) }}
             {{ Form::hidden('bill_deposit_total', $deposit_total, ['class'=>'form-control','placeholder'=>'',]) }}

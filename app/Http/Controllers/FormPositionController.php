@@ -25,12 +25,14 @@ class FormPositionController extends Controller
 
 	public function index(Request $request)
 	{
+			/*
 			$form_positions = DB::table('form_positions')
 					->join('forms', 'form_positions.form_code','=', 'forms.form_code')
 					->join('form_properties', 'form_properties.property_code', '=', 'form_positions.property_code')
 					->orderBy('form_name')
 					->orderBy('property_position')
 					->paginate($this->paginateValue);
+			 */
 
 			$form_positions = FormPosition::where('form_positions.form_code', $request->form_code)
 					->join('forms', 'form_positions.form_code','=', 'forms.form_code')
@@ -40,7 +42,8 @@ class FormPositionController extends Controller
 					->paginate($this->paginateValue);
 
 			return view('form_positions.index', [
-					'form_positions'=>$form_positions
+					'form_positions'=>$form_positions,
+					'form_code'=>$request->form_code,
 			]);
 	}
 

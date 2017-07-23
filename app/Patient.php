@@ -240,7 +240,7 @@ class Patient extends Model
 						->where('b.patient_id','=',$this->patient_id)
 						->sum('bill_outstanding');
 
-			$sql = "select (sum(bill_payment_total-IFNULL(bill_change,0)-bill_grand_total) + IFNULL(nonenc_payment,0)) as outstanding
+			$sql = "select (sum(IFNULL(bill_payment_total,0)-IFNULL(bill_change,0)-bill_grand_total) + IFNULL(nonenc_payment,0)) as outstanding
 						from bills as a
 						left join encounters b on (a.encounter_id=b.encounter_id)
 						left join (
@@ -261,7 +261,12 @@ class Patient extends Model
 					->where('patient_id','=', $this->patient_id)
 					->sum('deposit_amount');
 
-			$value = $value + $deposit_total;
+			$others = DB::table('bill_items as a')
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->where('patient_id','=', $this->patient_id)
+					->sum('bill_total');
+
+			$value = $value + $deposit_total+$others;
 			return $value;
 	}
 

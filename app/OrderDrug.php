@@ -41,4 +41,23 @@ class OrderDrug extends Model
 		return $this->belongsTo('App\Order','order_id');
 	}	
 	
+	public function period() {
+		return $this->belongsTo('App\Period','period_code');
+	}	
+
+	public function frequency() {
+		return $this->belongsTo('App\DrugFrequency','frequency_code');
+	}	
+
+	public function unit() {
+		return $this->belongsTo('App\UnitMeasure','unit_code');
+	}	
+
+	public function dosage() {
+		return $this->belongsTo('App\DrugDosage','dosage_code');
+	}	
+
+	public function route() {
+		return $this->belongsTo('App\DrugRoute','route_code');
+	}	
 }

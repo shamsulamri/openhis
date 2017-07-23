@@ -20,6 +20,8 @@ use App\Consultation;
 use App\Product;
 use Auth;
 use App\DrugPrescription;
+use App\OrderMultiple;
+use App\OrderHelper;
 
 class OrderDrugController extends Controller
 {
@@ -157,6 +159,7 @@ class OrderDrugController extends Controller
 
 			if ($valid->passes()) {
 					$order_drug->save();
+					OrderHelper::createDrugServings($order_drug);
 
 					$order = Order::find($order_drug->order_id);
 					$order->post_id=0;
@@ -175,6 +178,7 @@ class OrderDrugController extends Controller
 			}
 	}
 	
+
 	public function delete($id)
 	{
 		$order_drug = OrderDrug::findOrFail($id);

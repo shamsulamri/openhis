@@ -14,6 +14,7 @@
         </div>
     </div>
 
+	@if ($admission_task->product->category_code!='drugs')
     <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
         {{ Form::label('order_quantity_supply', 'Quantity Supply',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -21,6 +22,14 @@
             @if ($errors->has('order_quantity_supply')) <p class="help-block">{{ $errors->first('order_quantity_supply') }}</p> @endif
         </div>
     </div>
+	@else
+    <div class='form-group  @if ($errors->has('task_description')) has-error @endif'>
+        {{ Form::label('task_description', 'Description',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+			{{ Form::label('task_description', $order_helper->drugDescription($admission_task->order_id, ""), ['class'=>'form-control']) }}
+        </div>
+    </div>
+	@endif
 
     <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
         {{ Form::label('order_report', 'Report',['class'=>'col-sm-3 control-label']) }}

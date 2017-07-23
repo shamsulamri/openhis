@@ -20,6 +20,7 @@ use App\OrderHelper;
 use App\QueueLocation;
 use App\Store;
 use Auth;
+use Route;
 
 class AdmissionTaskController extends Controller
 {
@@ -132,6 +133,7 @@ class AdmissionTaskController extends Controller
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'product' => $admission_task->product,
 					'patient'=>$admission_task->consultation->encounter->patient,
+					'order_helper'=>new OrderHelper(),
 					]);
 	}
 
@@ -313,9 +315,12 @@ class AdmissionTaskController extends Controller
 									$multiple_order->save();
 									$multiple_completed = OrderMultiple::where('order_id','=', $multiple_order->order_id);
 
-									Log::info("Count order:".$multiple_completed->count());
-									Log::info("Count order:".$multiple_completed->where('order_completed','=',1)->count());
-									if ($multiple_completed->count()==$multiple_completed->where('order_completed','=',1)->count()) {
+									$count_total = $multiple_completed->count();
+									$count_completed = $multiple_completed->where('order_completed',1)->count();
+									Log::info("Count order:".$count_total);
+									Log::info("Count order:".$count_completed);
+
+									if ($count_total==$count_completed) {
 											$parent_order = Order::find($multiple_order->order_id);
 											$parent_order->order_completed=1;
 											$parent_order->updated_by = Auth::user()->id;
@@ -331,7 +336,7 @@ class AdmissionTaskController extends Controller
 					}
 					 */
 			}
-			Session::flash('message', 'Record updated.');
-			return redirect('/admission_tasks');
+
+			return redirect()->action('AdmissionTaskController@search', $request);
 	}
 }

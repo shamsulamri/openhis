@@ -108,6 +108,10 @@ class DischargeController extends Controller
 					$discharge->discharge_id = $request->discharge_id;
 					$discharge->save();
 
+					DB::table('bill_items')
+						->where('encounter_id','=',$discharge->encounter_id)
+						->delete();
+
 					$consultation = Consultation::findOrFail($discharge->consultation_id);
 					$consultation->consultation_status = 1;
 					$consultation->save();

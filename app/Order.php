@@ -30,7 +30,7 @@ class Order extends Model
 				'order_unit_price',
 				'order_total',
 				'order_discharge',
-				'update_by',
+				'updated_by',
 		];
 	
     protected $guarded = ['order_id'];
