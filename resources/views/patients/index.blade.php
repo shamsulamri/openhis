@@ -36,7 +36,7 @@
   </thead>
 	<tbody>
 @foreach ($patients as $patient)
-	<?php $current_encounter = $patient->getCurrentEncounter(); ?>
+<?php $current_encounter = $patient->getCurrentEncounter(); ?>
 	<tr>
 			<td width='10%'>
 					{{ $patient->getMRN() }}

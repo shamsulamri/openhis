@@ -86,7 +86,7 @@ class Patient extends Model
 				    parent::__construct($attributes);
 	}
 
-	public function validate($input) {
+	public function validate($input, $method) {
 			$rules = [];
 			
 			$rules = [
@@ -95,6 +95,16 @@ class Patient extends Model
 				'patient_birthdate'=>'date_format:d/m/Y',
 				'patient_email'=>'email',
 			];
+
+        	if ($method=='') {
+        	    $rules['patient_new_ic'] = 'unique:patients';
+        	    $rules['patient_old_ic'] = 'unique:patients';
+        	    $rules['patient_passport'] = 'unique:patients';
+        	    $rules['patient_birth_certificate'] = 'unique:patients';
+        	    $rules['patient_police_id'] = 'unique:patients';
+        	    $rules['patient_military_id'] = 'unique:patients';
+			}
+
 			if (empty($this->attributes['patient_is_unknown']) == false) {
 					if ($this->attributes['patient_is_unknown'] == 1) {
 							$rules['patient_age']='required';

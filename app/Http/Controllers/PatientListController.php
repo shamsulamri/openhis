@@ -113,6 +113,7 @@ class PatientListController extends Controller
 							->whereNull('discharge_id')
 							->get();
 
+			/*
 			$outpatients = DB::table('queues as a')
 					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id', 'patient_birthdate', 'gender_name','location_name')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
@@ -128,6 +129,31 @@ class PatientListController extends Controller
 					->orderBy('discharge_id')
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
+			 */
+
+			$outpatients = DB::table('queues as a')
+					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id', 'patient_birthdate', 'gender_name','location_name')
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->leftJoin('consultations as f', function($q) 
+					{
+						$q->on('f.encounter_id','=','a.encounter_id')
+		   				  ->where('f.user_id','=',Auth::user()->id);
+	
+					})
+					->leftJoin('ref_genders as k', 'k.gender_code', '=', 'c.gender_code')
+					->where('a.location_code',$request->cookie('queue_location'))
+					->whereNull('discharge_id')
+					->whereNull('a.deleted_at')
+					->orWhere('a.location_code','pool')
+					->orderBy('discharge_id')
+					->orderBy('a.created_at');
+
+			//dd($outpatients->toSql());
+					
+			$outpatients = $outpatients->paginate($this->paginateValue);
 
 			return view('patient_lists.index', [
 					'outpatient_lists'=>$outpatients,

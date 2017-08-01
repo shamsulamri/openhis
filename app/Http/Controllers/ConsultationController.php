@@ -30,15 +30,9 @@ class ConsultationController extends Controller
 
 	public function index()
 	{
-			$consultations = Consultation::where('user_id', Auth::user()->id)
-					->orderBy('created_at','desc');
-				
-
-			//dd($consultations->toSql());
-			$consultations = $consultations->paginate($this->paginateValue);
-
 			$consultations = DB::table('consultations as a')
 					->leftjoin('patients as b','b.patient_id','=', 'a.patient_id')
+					->where('user_id', Auth::user()->id)
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
@@ -152,7 +146,11 @@ class ConsultationController extends Controller
 			$id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail($id);
 			if ($consultation->encounter->encounter_code=='outpatient') {
-					$consultation->consultation_status = 1;
+					if (Auth::user()->consultant) {
+						$consultation->consultation_status = 1;
+					} else {
+						$consultation->consultation_status = 2;
+					}
 			} else {
 					$consultation->consultation_status = 2;
 			}

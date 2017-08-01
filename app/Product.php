@@ -56,6 +56,7 @@ class Product extends Model
 				'product_name'=>'required',
 				'category_code'=>'required',
 				'order_form'=>'required',
+				'product_sale_price'=>'required_if:product_sold,==,"1"'
 			];
 
 			
@@ -66,6 +67,7 @@ class Product extends Model
 			
 			$messages = [
 					'required' => 'This field is required',
+					'product_sale_price.required_if' => 'Field required when product is sold to patient',
 			];
 
         	if ($method=='PUT') {

@@ -29,12 +29,11 @@ class QueueController extends Controller
 			$selectedLocation = $request->cookie('queue_location');
 
 			$queues = DB::table('queues as a')
-					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
+					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
-					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
 					->whereNull('discharge_id')
 					->whereNull('a.deleted_at')
 					->orderBy('a.created_at')
@@ -151,12 +150,11 @@ class QueueController extends Controller
 			$selectedLocation = $request->locations;
 
 			$queues = DB::table('queues as a')
-					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
+					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id')
 					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->join('queue_locations as d', 'd.location_code','=', 'a.location_code')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
-					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
 					->where('a.location_code','like','%'.$request->locations.'%')
 					->where('patient_name', 'like','%'.$request->search.'%')
 					->whereNull('discharge_id')
@@ -182,12 +180,11 @@ class QueueController extends Controller
 					->paginate($this->paginateValue);
 
 			$queues = DB::table('queues as a')
-					->select('queue_id', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'f.consultation_id')
+					->select('queue_id', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id')
 					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->join('queue_locations as d', 'd.location_code','=', 'a.location_code')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
-					->leftJoin('consultations as f', 'f.encounter_id','=', 'a.encounter_id')
 					->where('a.location_code','=',$request->cookie('queue_location'))
 					->whereNull('discharge_id')
 					->where('queue_id','=',$id)

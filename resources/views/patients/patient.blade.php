@@ -1,8 +1,21 @@
     <div class='form-group'>
         <div class=" col-sm-12">
             	{{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+<input type="button" id="getInfo" value="Read MyKad" class='btn btn-primary'/>
         </div>
     </div>
+
+<div class="mykad_reading">
+	<div class='alert alert-warning' role='alert'><strong>Reading MyKad.</strong> Please wait until the process complete.</div>
+</div>
+
+<div class="mykad_complete">
+	<div class='alert alert-info' role='alert'><strong>MyKad read successfully.</strong> Click on the Photo tab to upload image.</div>
+</div>
+
+<div class="mykad_error">
+	<div class='alert alert-danger' role='alert'><strong>Error reading MyKad.</strong> Please check if your device is connected properly.</div>
+</div>
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
 				<li class="active"><a data-toggle="tab" href="#tab-1">Demography</a></li>
@@ -16,7 +29,7 @@
 					<div class='form-group  @if ($errors->has('patient_name')) has-error @endif'>
 						<label for='patient_name' class='col-sm-2 control-label'>Name<span style='color:red;'> *</span></label>
 						<div class='col-sm-10'>
-							{{ Form::text('patient_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50','style'=>'text-transform: uppercase']) }}
+							{{ Form::text('patient_name', null, ['id'=>'patient_name','class'=>'form-control','placeholder'=>'','maxlength'=>'50','style'=>'text-transform: uppercase']) }}
 							@if ($errors->has('patient_name')) <p class="help-block">{{ $errors->first('patient_name') }}</p> @endif
 						</div>
 					</div>
@@ -73,7 +86,7 @@
 									<div class='form-group  @if ($errors->has('gender_code')) has-error @endif'>
 										<label for='gender_code' class='col-sm-4 control-label'>Gender<span style='color:red;'> *</span></label>
 										<div class='col-sm-8'>
-											{{ Form::select('gender_code', $gender,null, ['class'=>'form-control','maxlength'=>'1']) }}
+											{{ Form::select('gender_code', $gender,null, ['id'=>'gender_code','class'=>'form-control','maxlength'=>'1']) }}
 											@if ($errors->has('gender_code')) <p class="help-block">{{ $errors->first('gender_code') }}</p> @endif
 										</div>
 									</div>
@@ -169,7 +182,7 @@
 									<div class='form-group  @if ($errors->has('patient_new_ic')) has-error @endif'>
 										{{ Form::label('New Identification', 'Identification',['class'=>'col-md-4 control-label']) }}
 										<div class='col-md-8'>
-											{{ Form::text('patient_new_ic', null, ['class'=>'form-control','data-mask'=>'999999-99-9999', 'placeholder'=>'MyKad number','maxlength'=>'20']) }}
+											{{ Form::text('patient_new_ic', null, ['id'=>'patient_new_ic','class'=>'form-control','data-mask'=>'999999-99-9999', 'placeholder'=>'MyKad number','maxlength'=>'20']) }}
 											@if ($errors->has('patient_new_ic')) <p class="help-block">{{ $errors->first('patient_new_ic') }}</p> @endif
 										</div>
 									</div>
@@ -345,7 +358,7 @@
 									<div class='form-group  @if ($errors->has('patient_cur_street_1')) has-error @endif'>
 										{{ Form::label('Street 1', 'Address 1',['class'=>'col-sm-3 control-label']) }}
 										<div class='col-sm-9'>
-											{{ Form::text('patient_cur_street_1', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+											{{ Form::text('patient_cur_street_1', null, ['id'=>'patient_cur_street_1','class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 											@if ($errors->has('patient_cur_street_1')) <p class="help-block">{{ $errors->first('patient_cur_street_1') }}</p> @endif
 										</div>
 									</div>
@@ -353,7 +366,7 @@
 									<div class='form-group  @if ($errors->has('patient_cur_street_2')) has-error @endif'>
 										{{ Form::label('Street 2', 'Address 2',['class'=>'col-sm-3 control-label']) }}
 										<div class='col-sm-9'>
-											{{ Form::text('patient_cur_street_2', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+											{{ Form::text('patient_cur_street_2', null, ['id'=>'patient_cur_street_2','class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 											@if ($errors->has('patient_cur_street_2')) <p class="help-block">{{ $errors->first('patient_cur_street_2') }}</p> @endif
 										</div>
 									</div>
@@ -363,7 +376,7 @@
 												<div class='form-group  @if ($errors->has('patient_cur_postcode')) has-error @endif'>
 														{{ Form::label('Postcode', 'Postcode',['class'=>'col-md-6 control-label']) }}
 														<div class='col-md-6'>
-															{{ Form::text('patient_cur_postcode', null, ['class'=>'form-control','data-mask'=>'99999','placeholder'=>'','maxlength'=>'5','onblur'=>'current_postcode_change()','id'=>'patient_cur_postcode']) }}
+															{{ Form::text('patient_cur_postcode', null, ['id'=>'patient_cur_postcode','class'=>'form-control','data-mask'=>'99999','placeholder'=>'','maxlength'=>'5','onblur'=>'current_postcode_change()','id'=>'patient_cur_postcode']) }}
 															@if ($errors->has('patient_cur_postcode')) <p class="help-block">{{ $errors->first('patient_cur_postcode') }}</p> @endif
 														</div>
 												</div>
@@ -372,7 +385,7 @@
 												<div class='form-group  @if ($errors->has('patient_cur_city')) has-error @endif'>
 														{{ Form::label('City', 'City',['class'=>'col-md-3 control-label']) }}
 														<div class='col-md-9'>
-															{{ Form::select('patient_cur_city',$city, null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50','id'=>'patient_cur_city']) }}
+															{{ Form::select('patient_cur_city',$city, null, ['id'=>'patient_cur_city','class'=>'form-control','placeholder'=>'','maxlength'=>'50','id'=>'patient_cur_city']) }}
 															@if ($errors->has('patient_cur_city')) <p class="help-block">{{ $errors->first('patient_cur_city') }}</p> @endif
 														</div>
 												</div>
@@ -382,14 +395,14 @@
 									<div class='form-group  @if ($errors->has('patient_cur_state')) has-error @endif'>
 										{{ Form::label('State', 'State',['class'=>'col-md-3 control-label']) }}
 										<div class='col-md-9'>
-											{{ Form::select('patient_cur_state', $state, null, ['class'=>'form-control','maxlength'=>'10','id'=>'patient_cur_state']) }}
+											{{ Form::select('patient_cur_state', $state, null, ['id'=>'patient_cur_state','class'=>'form-control','maxlength'=>'10','id'=>'patient_cur_state']) }}
 											@if ($errors->has('patient_cur_state')) <p class="help-block">{{ $errors->first('patient_cur_state') }}</p> @endif
 										</div>
 									</div>
 									<div class='form-group  @if ($errors->has('patient_cur_country')) has-error @endif'>
 										{{ Form::label('Country', 'Country',['class'=>'col-md-3 control-label']) }}
 										<div class='col-md-9'>
-											{{ Form::select('patient_cur_country', $nation,null, ['class'=>'form-control','maxlength'=>'10']) }}
+											{{ Form::select('patient_cur_country', $nation,null, ['id'=>'patient_cur_country','class'=>'form-control','maxlength'=>'10']) }}
 											@if ($errors->has('patient_cur_country')) <p class="help-block">{{ $errors->first('patient_cur_country') }}</p> @endif
 										</div>
 									</div>
@@ -526,9 +539,9 @@
 									<div class='form-group'>
 										<div class='col-sm-8'>
 											@if (Storage::disk('local')->has('/'.$patient->patient_mrn.'/'.$patient->patient_mrn))	
-											<img id='show_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='80' width='70'>
+											<img id='show_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='200' width='150'>
 											@else
-													<img id='show_image' src='/profile-img.png' style='border:2px solid gray' height='80' width='70'>
+													<img id='show_image' src='/profile-img.png' style='border:2px solid gray' height='200' width='150'>
 											@endif
 											<br>
 											<br>
@@ -543,7 +556,9 @@
 				<div>	
 			<div>
 	</div>
+
 <script>
+
 		$('#patient_birthdate').datepicker({
 						format: "dd/mm/yyyy",
 						todayBtn: "linked",
@@ -581,8 +596,8 @@
 					reader.onload = function (e) {
 						$('#show_image')
 							.attr('src', e.target.result)
-							.width(70)
-							.heigt(80);
+							.width(150)
+							.heigt(200);
 					};
 					reader.readAsDataURL(input.files[0]);
 			}
@@ -644,4 +659,225 @@
 			state.value = values[1]; 
 		}
 		$('.clockpicker').clockpicker();
+</script>
+
+<script type="text/javascript">
+           // var conn;
+           var cmd;
+           var noSupportMessage = "Your browser cannot support WebSocket!";
+           var ws;
+           
+            $(document).ready(function () {
+               
+                connectSocketServer();
+               // initCanvas();
+                
+
+                $('#getInfo').click(function () {;
+                    
+					show(document.querySelectorAll('.mykad_reading'));
+					hide(document.querySelectorAll('.mykad_error'));
+                    // ReadCard("ACS ACR128U ICC Interface 0", "C:\\test\\mykad.jpeg")))
+                    cmd = "R";
+                    var readerName = "IRIS SCR18U 0";
+                    var fileName = "C:\\mykad\\photo.jpeg";         
+                    ws.send(cmd + "," + readerName + "," + fileName );
+                });
+                
+                //
+            });
+            
+            function initCanvas()
+            {
+                var canvas = document.getElementById("MyCanvas");
+                var ctx = canvas.getContext('2d');
+                ctx.fillStyle = "gray";
+                ctx.fillRect(0, 0, 150, 200);
+            }
+            
+            function disconnectWebSocket() {
+                if (ws) {
+                    ws.close();
+                }
+            }
+           
+            function connectSocketServer() {
+                var support = "MozWebSocket" in window ? 'MozWebSocket' : ("WebSocket" in window ? 'WebSocket' : null);
+
+                if (support == null) {
+                    alert("* " + noSupportMessage + "<br/>");
+                    return;
+                }
+
+                //appendMessage("* Connecting to server ..<br/>");
+                // create a new websocket and connect
+                ws = new window[support]('ws://localhost:8100/');
+                ws.binaryType = "arraybuffer";
+
+                // when data is comming from the server, this metod is called
+                ws.onmessage = function (evt) {
+
+                    if(evt.data instanceof ArrayBuffer)
+                    {       
+                        //drawImage(evt.data);
+
+                    }else
+                    {    
+                        var data = evt.data.split(',');
+                        
+                        if(data[0] === '0')
+                        {
+                            var display = data[1] + '<BR>' + 
+                                          data[2] + '<BR>' + 
+                                          data[3] + '<BR>' + 
+                                          data[4] + '<BR>' + 
+                                          data[5] + '<BR>' + 
+                                          data[6] + '<BR>' + 
+                                          data[7] + '<BR>' +
+                                          data[8] + '<BR>' +
+                                          data[9] + '<BR>';
+
+							document.getElementById('patient_name').value = cleanData(data[1]);
+							document.getElementById('gender_code').value = cleanData(data[3]);
+
+							var patient_new_ic = cleanData(data[2]);
+							patient_new_ic = patient_new_ic.substring(0,6) + "-" + patient_new_ic.substring(6,8) + "-" + patient_new_ic.substring(8,12);
+							document.getElementById('patient_new_ic').value = patient_new_ic;
+
+							document.getElementById('patient_cur_street_1').value = cleanData(data[4]) + " " + cleanData(data[5]);
+							document.getElementById('patient_cur_street_2').value = cleanData(data[6]);
+							document.getElementById('patient_cur_city').value = cleanData(data[7]);
+							document.getElementById('patient_cur_postcode').value = cleanData(data[8]);
+							document.getElementById('patient_cur_state').value = cleanData(data[9]);
+							current_postcode_change();
+							hide(document.querySelectorAll('.mykad_reading'));
+							show(document.querySelectorAll('.mykad_complete'));
+                        }else{
+							hide(document.querySelectorAll('.mykad_reading'));
+							show(document.querySelectorAll('.mykad_error'));
+                        }
+                    }
+                };
+
+                // when the connection is established, this method is called
+                ws.onopen = function () {
+                };
+
+                // when the connection is closed, this method is called
+                ws.onclose = function () {
+
+                };
+            }
+            
+			function cleanData(data) 
+			{
+					for (i=0;i<data.length;i++) {
+							if (data.charCodeAt(i)==0) {
+									data = data.substring(0,i);
+									return data.trim();
+							}
+					}
+					return data.trim();
+			}
+
+            function UploadImage()
+            {
+                //Convert image to canvas
+                var canvas = document.createElement('canvas');
+                canvas.width = 150;
+                canvas.height = 200;
+                var ctx = canvas.getContext('2d');
+                var img=document.getElementById("show_image");
+                ctx.drawImage(img,0,0);
+                
+                var canvasData = canvas.toDataURL("image/jpeg");
+                
+                //Send canvas data to server
+                $.ajax({
+                    type: "POST",
+                    url: "script.php",
+                    data: { 
+                       imgBase64: canvasData
+                    }
+                  }).done(function(o) {
+                    console.log('saved'); 
+                    // If you want the file to be visible in the browser 
+                    // - please modify the callback in javascript. All you
+                    // need is to return the url to the file, you just saved 
+                    // and than put the image in your browser.
+                  });
+                  
+                  /*PHP code
+                   * $img = $_POST['data'];
+                    $img = str_replace('data:image/png;base64,', '', $img);
+                    $img = str_replace(' ', '+', $img);
+                    $fileData = base64_decode($img);
+                    //saving
+                    $fileName = 'photo.jpeg';
+                    file_put_contents($fileName, $fileData);
+                   */
+                
+            }
+  
+            function drawImage(data) {
+                
+                var byteArray = new Uint8Array(data);           
+                var image = document.getElementById('show_image');
+                image.src = 'data:image/jpeg;base64,'+encode(byteArray);
+            }
+            
+            function encode (input) {
+            var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+            var output = "";
+            var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+            var i = 0;
+
+            while (i < input.length) {
+                chr1 = input[i++];
+                chr2 = i < input.length ? input[i++] : Number.NaN; // Not sure if the index 
+                chr3 = i < input.length ? input[i++] : Number.NaN; // checks are needed here
+
+                enc1 = chr1 >> 2;
+                enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                enc4 = chr3 & 63;
+
+                if (isNaN(chr2)) {
+                    enc3 = enc4 = 64;
+                } else if (isNaN(chr3)) {
+                    enc4 = 64;
+                }
+                output += keyStr.charAt(enc1) + keyStr.charAt(enc2) +
+                          keyStr.charAt(enc3) + keyStr.charAt(enc4);
+            }
+            return output;
+        }
+            
+            
+	hide(document.querySelectorAll('.mykad_reading'));
+	hide(document.querySelectorAll('.mykad_complete'));
+	hide(document.querySelectorAll('.mykad_error'));
+
+	function hide (elements) {
+		elements = elements.length ? elements : [elements];
+		for (var index = 0; index < elements.length; index++) {
+			elements[index].style.display = 'none';
+		}
+	}
+
+	function show (elements, specifiedDisplay) {
+		var computedDisplay, element, index;
+
+		elements = elements.length ? elements : [elements];
+		for (index = 0; index < elements.length; index++) {
+				element = elements[index];
+
+				element.style.display = '';
+				computedDisplay = window.getComputedStyle(element, null).getPropertyValue('display');
+
+				if (computedDisplay === 'none') {
+				element.style.display = specifiedDisplay || 'block';
+				}
+		}
+	}
 </script>

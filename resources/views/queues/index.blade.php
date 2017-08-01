@@ -34,13 +34,9 @@
 			</td>
 			<td>
 
-					@if ($queue->consultation_id==null)
 							<a href='{{ URL::to('queues/'. $queue->queue_id . '/edit') }}'>
 								{{strtoupper($queue->patient_name)}}
 							</a>
-					@else
-								{{strtoupper($queue->patient_name)}}
-					@endif
 					<br>
 					<small>{{$queue->patient_mrn}}</small>
 			</td>
@@ -48,7 +44,11 @@
 					{{$queue->location_name}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-default btn-xs' href='{{ URL::to('loans/request/'. $queue->patient_mrn.'?type=folder') }}'>Folder Request</a>
+					<a class='btn btn-default btn-lg' href='{{ URL::to('loans/request/'. $queue->patient_mrn.'?type=folder') }}'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></a>
+
+					@can('module-consultation')
+					<a class='btn btn-default btn-lg' title='Consultation' href='{{ URL::to('consultations/create?encounter_id='. $queue->encounter_id) }}'><span class='fa fa-stethoscope' aria-hidden='true'></span></a>
+					@endcan
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
 					@endcan

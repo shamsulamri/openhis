@@ -78,9 +78,11 @@
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 	<li><a href="/consultations/close">End Consultation</a></li>
 	@if (empty($consultation->encounter->discharge->discharge_id))
-    <li role="separator" class="divider"></li>
-	<li><a href="/medical_certificates/create">Medical Certificate</a></li>
-	<li><a href="/discharges/create" role="button">Clinical Discharge</a></li>
+			@if (Auth::user()->consultant)
+			<li role="separator" class="divider"></li>
+			<li><a href="/medical_certificates/create">Medical Certificate</a></li>
+			<li><a href="/discharges/create" role="button">Clinical Discharge</a></li>
+			@endif
 	@endif
   </ul>
 </div>

@@ -84,7 +84,8 @@ class PatientController extends Controller
 	public function store(Request $request) 
 	{
 			$patient = new Patient($request->all());
-			$valid = $patient->validate($request->all(), "demography");
+			//$valid = $patient->validate($request->all(), "demography");
+			$valid = $patient->validate($request->all(), $request->_method);	
 			if ($valid->passes()) {
 					$patient->save();
 					$this->saveImage($patient,$request->file('file'));
@@ -152,7 +153,7 @@ class PatientController extends Controller
 			$patient->fill($request->input());
 			$patient->patient_is_unknown = $request->patient_is_unknown ?: 0;
 			
-			$valid = $patient->validate($request->all());	
+			$valid = $patient->validate($request->all(), $request->_method);	
 			if ($valid->passes()) {
 					$this->saveImage($patient,$request->file('file'));
 					$patient->save();
@@ -187,6 +188,11 @@ class PatientController extends Controller
 			$patients = Patient::where('patient_name','like','%'.$search.'%')
 					->orWhere('patient_mrn', 'like','%'.$search.'%')
 					->orWhere('patient_new_ic', 'like','%'.$search.'%')
+					->orWhere('patient_old_ic', 'like','%'.$search.'%')
+					->orWhere('patient_birth_certificate', 'like','%'.$search.'%')
+					->orWhere('patient_passport', 'like','%'.$search.'%')
+					->orWhere('patient_police_id', 'like','%'.$search.'%')
+					->orWhere('patient_military_id', 'like','%'.$search.'%')
 					->orderBy('patient_name')
 					->paginate($this->paginateValue);
 
@@ -226,7 +232,6 @@ class PatientController extends Controller
 			for ($i=0;$i<3;$i++) {
 					foreach ($patients as $x) {
 							$patients = $patients->merge($this->getDependants($x->id));
-							Log::info($patients);
 					}
 			}
 			$patients=$patients->except([$id]);

@@ -10,7 +10,7 @@ use App\PaymentMethod;
 use Log;
 use DB;
 use Session;
-
+use App\GeneralLedger;
 
 class PaymentMethodController extends Controller
 {
@@ -36,6 +36,7 @@ class PaymentMethodController extends Controller
 			$payment_method = new PaymentMethod();
 			return view('payment_methods.create', [
 					'payment_method' => $payment_method,
+					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 				
 					]);
 	}
@@ -63,7 +64,7 @@ class PaymentMethodController extends Controller
 			$payment_method = PaymentMethod::findOrFail($id);
 			return view('payment_methods.edit', [
 					'payment_method'=>$payment_method,
-				
+					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 					]);
 	}
 

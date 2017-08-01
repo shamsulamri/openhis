@@ -189,14 +189,17 @@ if ($_COOKIE['his-navbar']==1) {
 						@endcan
 						<!-- Consultation Module -->
 						@can('module-consultation')
+								@if (!Auth::user()->consultant)
+								<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-th-list"></i><span class='nav-label'>Queues</span></a></li>
+								@endif
 								@cannot('module-ward')
 						<div class="dropdown profile-element"> 
 								<h4>&nbsp;Consultation</h4>
 						</div>
 										<li><a title='Patient List' href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
-										<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
 										<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
-								@endcan
+								@endcannot
+										<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
 						@endcan
 
 						<!-- Diet Module -->

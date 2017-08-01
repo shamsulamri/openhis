@@ -12,6 +12,7 @@ class PaymentMethod extends Model
 	protected $table = 'payment_methods';
 	protected $fillable = [
 				'payment_code',
+				'gl_code',
 				'payment_name'];
 	
     protected $guarded = ['payment_code'];

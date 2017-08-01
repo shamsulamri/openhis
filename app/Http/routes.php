@@ -452,6 +452,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/encounter/search', 'EncounterController@search');
 				Route::get('/encounters/delete/{id}', 'EncounterController@delete');
 
+				/*
 				Route::resource('queues', 'QueueController');
 				Route::get('/queues/id/{id}', 'QueueController@searchById');
 				Route::post('/queue/search', 'QueueController@search');
@@ -459,7 +460,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/queues/delete/{id}', 'QueueController@delete');
 
 
-				/*
 				Route::resource('deposits', 'DepositController',['except'=>['create','index']]);
 				Route::get('/deposits/index/{id}', 'DepositController@index');
 				Route::get('/deposits/create/{id}', 'DepositController@create');
@@ -485,6 +485,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 
 		});
+
+				Route::resource('queues', 'QueueController');
+				Route::get('/queues/id/{id}', 'QueueController@searchById');
+				Route::post('/queue/search', 'QueueController@search');
+				Route::get('/queue/search', 'QueueController@search');
+				Route::get('/queues/delete/{id}', 'QueueController@delete');
 
 				Route::get('/orders/single/{product_code}', 'OrderController@single');
 				Route::get('/orders/task', 'OrderController@task');
