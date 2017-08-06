@@ -6,7 +6,7 @@
 						<h6>{{ $patient->patientAge() }}</h6>
 						@if ($patient->outstandingBill() < 0) 
 						<h4>
-						<p class='text-warning'>
+						<p class='text-danger'>
 						<strong>Warning !</strong> Outstanding bill
 						</p>
 						</h4>

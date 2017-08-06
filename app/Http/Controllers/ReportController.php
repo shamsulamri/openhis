@@ -31,6 +31,7 @@ class ReportController extends Controller
 								'folder_distribution'=>'Folder Distribution', 
 								'preadmission'=>'Preadmission', 
 								'appointment'=>'Appointment', 
+								'product'=>'Product List', 
 					],
 					'encounters'=>['outpatient'=>'Outpatient', 'inpatient'=>'Inpatient'],
 					'minYear'=>2012,
@@ -67,9 +68,10 @@ class ReportController extends Controller
 								return redirect($url);
 								break;
 						case "bill_list":
-								$url = sprintf("%s/ReportServlet?report=%s&dateReport=%s&sponsorCode=%s&reportUser=%s",
+								$url = sprintf("%s/ReportServlet?report=%s&encounterType=%s&dateReport=%s&sponsorCode=%s&reportUser=%s",
 											$server,
 											$report,
+											$encounter,
 											$date_start,
 											'',
 											$user

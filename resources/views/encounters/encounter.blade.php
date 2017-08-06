@@ -85,6 +85,13 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('class_code')) has-error @endif'>
+        {{ Form::label('Class', 'Class',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::select('class_code', $classes, null, ['id'=>'class_code','onchange'=>'classChanged()','class'=>'form-control']) }}
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         {{ Form::label('Bed', 'Bed',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -295,9 +302,31 @@
 
 			var bedSelect = document.getElementById('bed_code');
 			clearList(bedSelect);
+			classChanged();
+			/**
 			for (var i=0;i<beds.length;i++) {
 					values = beds[i].split(":")
 					if (wardCode==values[2]) {
+							addList(bedSelect,values[0], values[3]);
+					}
+			}
+			**/
+	}
+
+	function classChanged() {
+			wardCode = document.getElementById('ward_code').value;
+			classCode = document.getElementById('class_code').value;
+			beds = [
+				@foreach($beds as $bed)
+					'{{ $bed->bed_code }}:{{ $bed->class_code }}:{{ $bed->ward_code }}:{{ $bed->getBedNameStatus() }}',
+				@endforeach
+			]
+
+			var bedSelect = document.getElementById('bed_code');
+			clearList(bedSelect);
+			for (var i=0;i<beds.length;i++) {
+					values = beds[i].split(":")
+					if (wardCode==values[2] && classCode==values[1]) {
 							addList(bedSelect,values[0], values[3]);
 					}
 			}

@@ -271,12 +271,17 @@ class Patient extends Model
 					->where('patient_id','=', $this->patient_id)
 					->sum('deposit_amount');
 
+			$others=0;
+			/**
 			$others = DB::table('bill_items as a')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->where('patient_id','=', $this->patient_id)
+					->where('product_code','!=', 'others')
 					->sum('bill_total');
+			**/
 
 			$value = $value + $deposit_total+$others;
+			Log::info($value);
 			return $value;
 	}
 

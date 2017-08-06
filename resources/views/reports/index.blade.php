@@ -18,6 +18,7 @@
         </div>
     </div>
 
+	<!--
     <div class='form-group  @if ($errors->has('report')) has-error @endif'>
         <label for='report' class='col-sm-3 control-label'>Ward</label>
         <div class='col-sm-9'>
@@ -38,6 +39,7 @@
 			{{ Form::select('user', $user,null, ['class'=>'form-control','maxlength'=>'10']) }}
         </div>
     </div>
+	-->
 
     <div class='form-group  @if ($errors->has('date_start')) has-error @endif'>
         <label for='date_start' class='col-sm-3 control-label'>Date Start</label>

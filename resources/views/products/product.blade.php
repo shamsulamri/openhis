@@ -168,7 +168,7 @@
 					<div class='form-group  @if ($errors->has('product_purchase_price')) has-error @endif'>
 						{{ Form::label('product_purchase_price', 'Purchase Price',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::text('product_purchase_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							{{ Form::text('product_purchase_price', null, ['class'=>'form-control','placeholder'=>'','onkeyup'=>'UpdateSalePrice()']) }}
 							@if ($errors->has('product_purchase_price')) <p class="help-block">{{ $errors->first('product_purchase_price') }}</p> @endif
 						</div>
 					</div>
@@ -177,7 +177,7 @@
 					<div class='form-group  @if ($errors->has('product_conversion_unit')) has-error @endif'>
 						{{ Form::label('product_conversion_unit', 'Conversion Unit',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::text('product_conversion_unit', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							{{ Form::text('product_conversion_unit', null, ['class'=>'form-control','placeholder'=>'','onkeyup'=>'UpdateSalePrice()']) }}
 							@if ($errors->has('product_conversion_unit')) <p class="help-block">{{ $errors->first('product_conversion_unit') }}</p> @endif
 						</div>
 					</div>
@@ -236,7 +236,7 @@
 					<div class='form-group  @if ($errors->has('product_sale_price')) has-error @endif'>
 						{{ Form::label('product_sale_price', 'Sale Price',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::text('product_sale_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							{{ Form::text('product_sale_price', null, ['class'=>'form-control','placeholder'=>'']) }}
 							@if ($errors->has('product_sale_price')) <p class="help-block">{{ $errors->first('product_sale_price') }}</p> @endif
 						</div>
 					</div>
@@ -304,12 +304,19 @@
 
 		function UpdateSalePrice() {
 			form = document.forms['product_form'];
-			purchase_price = Number(form.product_purchase_price.value);
-			profit_margin = Number(form.product_sale_margin.value)/100;
+			if (isNumeric(form.product_sale_margin.value)) {
+					cost_unit = Number(form.product_purchase_price.value/form.product_conversion_unit.value);
+					profit_margin = Number(form.product_sale_margin.value)/100;
 
-			product_sale_price = purchase_price*(1+profit_margin);
-			form.product_sale_price.value= product_sale_price.toFixed(2);
+					product_sale_price = cost_unit*(1+profit_margin);
+					form.product_sale_price.value= product_sale_price.toFixed(2);
+			}
 		}	
+
+
+		var isNumeric = function(obj){
+				  return !Array.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
+		}
 
          $(document).ready(function(){
              $("#product_form").validate({

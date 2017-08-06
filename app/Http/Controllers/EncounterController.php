@@ -29,6 +29,7 @@ use App\BedMovement;
 use App\Team;
 use App\DojoUtility;
 use App\BedBooking;
+use App\WardClass;
 		
 class EncounterController extends Controller
 {
@@ -119,6 +120,7 @@ class EncounterController extends Controller
 					'consultants' => $consultants,
 					'teams' => Team::all()->sortBy('team_name')->lists('team_name', 'team_code')->prepend('',''),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'classes' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'beds' => Bed::where('status_code','=','01')->orWhere('status_code','04')->get(),
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
