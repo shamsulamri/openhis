@@ -38,6 +38,12 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('encounter_description')) has-error @endif'>
+        {{ Form::label('Description', 'Description',['class'=>'col-sm-4 control-label']) }}
+        <div class='col-sm-8'>
+            {{ Form::text('encounter_description', null, ['id'=>'encounter_description','placeholder'=>'Queue number or other relevant information','class'=>'form-control']) }}
+        </div>
+    </div>
 
         </div>
         <div class='col-xs-6'>

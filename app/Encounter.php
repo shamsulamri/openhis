@@ -25,6 +25,7 @@ class Encounter extends Model
 				'sponsor_code',
 				'sponsor_id',
 				'triage_code',
+				'encounter_description',
 		];
 	
     protected $guarded = ['encounter_id'];

@@ -72,7 +72,7 @@
 <br>
 	&nbsp;&nbsp;Folder&nbsp;&nbsp;
 </a>
-<a class='btn btn-default'  href='{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}'>
+<a class='btn btn-default'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}'>
 <span class='glyphicon glyphicon-print' aria-hidden='true'></span>
 <br>
 &nbsp;&nbsp;Label&nbsp;&nbsp;

@@ -58,7 +58,7 @@ class TaskCancellationController extends Controller
 					if ($request->source=='nurse') {
 							return redirect('/admission_tasks');
 					} else {
-							return redirect('/order_tasks/task/'.Session::get('encounter_id').'/'.$task_cancellation->order->product->category->location_code);
+							return redirect('/order_tasks/task/'.Session::get('encounter_id').'/'.$task_cancellation->order->location_code);
 					}
 			} else {
 					return redirect('/task_cancellations/create/'.$request->order_id.'?source='.$request->source)
