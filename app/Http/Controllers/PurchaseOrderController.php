@@ -27,7 +27,7 @@ use App\PurchaseOrderHelper;
 class PurchaseOrderController extends Controller
 {
 	public $paginateValue=10;
-	public $statuses = array(''=>'','open'=>'Open','posted'=>'Posted');
+	public $statuses = array(''=>'','open'=>'Open','posted'=>'Posted','close'=>'Close');
 
 	public function __construct()
 	{
@@ -230,8 +230,20 @@ class PurchaseOrderController extends Controller
 			}
 
 			if ($request->status != '') {
-				$selected_status=array(''=>'','open'=>0, 'posted'=>1);
-				$purchase_orders = $purchase_orders->where('purchase_posted','=', $selected_status[$request->status]);
+				switch($request->status) {
+						case "posted":
+								$purchase_orders = $purchase_orders->where('purchase_posted','=', 1 );
+								$purchase_orders = $purchase_orders->where('purchase_received','=', 0 );
+								break;
+						case "close":
+								$purchase_orders = $purchase_orders->where('purchase_posted','=', 1 );
+								$purchase_orders = $purchase_orders->where('purchase_received','=', 1 );
+								break;
+						case "open":
+								$purchase_orders = $purchase_orders->where('purchase_posted','=', 0 );
+								$purchase_orders = $purchase_orders->where('purchase_received','=', 0 );
+								break;
+				} 
 			}
 
 			$purchase_orders = $purchase_orders->where('author_id', '=', Auth::user()->author_id);

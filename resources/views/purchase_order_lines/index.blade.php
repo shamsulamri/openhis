@@ -113,12 +113,16 @@ $count=0;
 			<td>
 			@if (empty($purchase_order_line->deleted_at))
 					@if ($purchase_order->purchase_received==1)
+						<strong>
 						{{$purchase_order_line->product->product_name}}
+						</strong>
 					@else
 					<a href='{{ URL::to('purchase_order_lines/'. $purchase_order_line->line_id . '/edit') }}'>
 						{{$purchase_order_line->product->product_name}}
 					</a>
 					@endif
+						<br>
+						{{$purchase_order_line->product->product_code}}
 			@else
 					<s>
 						{{$purchase_order_line->product->product_name}}

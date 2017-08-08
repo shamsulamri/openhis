@@ -225,10 +225,10 @@ if ($_COOKIE['his-navbar']==1) {
 								<h4>&nbsp;Inventory</h4>
 						</div>
 						<li><a title='Products' href="{{ url('/products') }}"><i class='fa fa-glass'></i><span class='nav-label'>Products</span></a></li>
-						<li><a title='Purchase Orders' href="{{ url('/purchase_orders') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchase Orders</span></a></li>
 						<li><a title='Suppliers' href="{{ url('/suppliers') }}"><i class='fa fa-truck' aria-hidden='true'></i><span class='nav-label'>Suppliers</span></a></li>
-						<li><a title='Bulk Movement' href="{{ url('/stock_inputs') }}"><i class='fa fa-ship'></i><span class='nav-label'>Bulk Movement</span></a></li>
 						<li><a title='Stores' href="{{ url('/stores') }}"><i class='fa fa-th-large'></i><span class='nav-label'>Stores</span></a></li>
+						<li><a title='Purchase Orders' href="{{ url('/purchase_orders') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchase Orders</span></a></li>
+						<li><a title='Bulk Movement' href="{{ url('/stock_inputs') }}"><i class='fa fa-ship'></i><span class='nav-label'>Bulk Movement</span></a></li>
 						<li><a title='Order Sets' href="{{ url('/sets') }}"><i class='fa fa-medkit'></i><span class='nav-label'>Order Sets</span></a></li>
 						<li><a title='Product Authorizations' href="{{ url('/product_authorizations') }}"><i class='fa fa-barcode'></i><span class='nav-label'>Product Authorizations</span></a></li>
 						<li><a title='Loans' href="{{ url('/loans') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'><span class='nav-label'>Loans</span></a></li>

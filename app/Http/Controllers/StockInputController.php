@@ -165,7 +165,7 @@ class StockInputController extends Controller
 
 	public function input_post(Request $request)
 	{
-			$product = Product::find($request->product_code);
+			$product = Product::find(trim($request->product_code));
 			if (empty($request->product_code)) {
 				$product = new Product();	
 			}
