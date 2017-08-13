@@ -14,6 +14,7 @@ class UserAuthorization extends Model
 				'author_name',
 				'module_patient',
 				'module_consultation',
+				'module_order',
 				'module_inventory',
 				'module_ward',
 				'module_support',
@@ -27,6 +28,8 @@ class UserAuthorization extends Model
 				'product_sale_edit',
 				'loan_function',
 				'store_code',
+				'location_code',
+				'identification_prefix',
 				'appointment_function',
 				'system_administrator'];
 	

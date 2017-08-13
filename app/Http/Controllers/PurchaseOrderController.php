@@ -76,13 +76,14 @@ class PurchaseOrderController extends Controller
 
 	public function store(Request $request) 
 	{
-			$purchase_order = new PurchaseOrder();
-			$purchase_order->user_id = Auth::user()->id;
+			//$purchase_order = new PurchaseOrder();
+			//$purchase_order->user_id = Auth::user()->id;
 
+			$purchase_order = new PurchaseOrder($request->all());
 			$valid = $purchase_order->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
-					$purchase_order = new PurchaseOrder($request->all());
+					//$purchase_order = new PurchaseOrder($request->all());
 					$purchase_order->purchase_id = $request->purchase_id;
 					$purchase_order->author_id = Auth::user()->author_id;
 					$purchase_order->save();
@@ -218,7 +219,7 @@ class PurchaseOrderController extends Controller
 					->leftJoin('suppliers as b', 'b.supplier_code','=','purchase_orders.supplier_code');
 
 			if (!empty($request->search)) {
-				$purchase_orders = $purchase_orders->where('purchase_id', 'like','%'.$request->search.'%');
+				$purchase_orders = $purchase_orders->where('purchase_number', 'like','%'.$request->search.'%');
 			}
 
 			if (!empty($request->date_search)) {

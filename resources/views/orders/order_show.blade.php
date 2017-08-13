@@ -18,6 +18,12 @@
         </div>
     </div>
 
+    <div class='form-group'>
+        {{ Form::label('order_by', 'Order By',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::label('order_by', $order->user->name, ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
 	@if ($order->order_report)
     <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
         {{ Form::label('Report', 'Report',['class'=>'col-sm-3 control-label']) }}
@@ -74,8 +80,3 @@
 			</div>
     </div>
 
-    <div class='form-group'>
-        <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-warning" href="/orders" role="button">Back</a>
-        </div>
-    </div>

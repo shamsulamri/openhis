@@ -55,7 +55,7 @@
 				@endif
 			</td>
 			<td>
-					{{ $purchase_order->purchase_id }}
+					{{ $purchase_order->purchase_number }}
 			</td>
 			<td>
 					{{ DojoUtility::dateLongFormat($purchase_order->purchase_date) }}

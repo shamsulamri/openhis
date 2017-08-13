@@ -103,6 +103,7 @@ class OrderController extends Controller
 					'a.product_code', 
 					'cancel_id', 
 					'a.order_id', 
+					'a.user_id', 
 					'post_id', 
 					'd.created_at',
 					'order_is_discharge',
@@ -111,6 +112,7 @@ class OrderController extends Controller
 					'category_name',
 					'product_drop_charge',
 					];
+
 			$orders = DB::table('orders as a')
 					->select($fields)
 					->join('products as b','a.product_code','=','b.product_code')
@@ -119,8 +121,14 @@ class OrderController extends Controller
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
 					->where('a.encounter_id','=',Session::get('encounter_id'))
 					->orderBy('b.category_code')
-					->orderBy('a.created_at', 'desc')
-					->paginate($this->paginateValue);
+					->orderBy('a.created_at', 'desc');
+
+			if (!empty(Auth::user()->authorization->location_code)) {
+				$location_code = Auth::user()->authorization->location_code;
+				$orders = $orders->where('a.location_code','=', $location_code);
+			} 
+
+			$orders = $orders->paginate($this->paginateValue);
 
 			return view('orders.index', [
 					'orders'=>$orders,

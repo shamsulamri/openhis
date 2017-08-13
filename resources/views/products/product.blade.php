@@ -72,11 +72,11 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
-						{{ Form::label('unit_code', 'UOM',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('product_sku')) has-error @endif'>
+						{{ Form::label('product_sku', 'SKU',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::select('unit_code', $unit,null, ['class'=>'form-control','maxlength'=>'10']) }}
-							@if ($errors->has('unit_code')) <p class="help-block">{{ $errors->first('unit_code') }}</p> @endif
+							{{ Form::text('product_sku', null, ['class'=>'form-control','placeholder'=>'Store Keeping Unit','maxlength'=>'100']) }}
+							@if ($errors->has('product_sku')) <p class="help-block">{{ $errors->first('product_sku') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -93,11 +93,11 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_sku')) has-error @endif'>
-						{{ Form::label('product_sku', 'SKU',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('gl_code')) has-error @endif'>
+						<label for='gl_code' class='col-sm-4 control-label'>GL Code</label>
 						<div class='col-sm-8'>
-							{{ Form::text('product_sku', null, ['class'=>'form-control','placeholder'=>'Store Keeping Unit','maxlength'=>'100']) }}
-							@if ($errors->has('product_sku')) <p class="help-block">{{ $errors->first('product_sku') }}</p> @endif
+							{{ Form::select('gl_code', $general_ledger,null, ['id'=>'gl_code', 'class'=>'form-control','maxlength'=>'20']) }}
+							@if ($errors->has('gl_code')) <p class="help-block">{{ $errors->first('gl_code') }}</p> @endif
 						</div>
 					</div>
 
@@ -106,7 +106,7 @@
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_dismantle_material')) has-error @endif'>
+					<div class='form-group  @if ($errors->has('product_stocked')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
 							{{ Form::checkbox('product_stocked', '1') }} <label>Physical Stock</label><br> Check for product you want to manage stock level for.
 							@if ($errors->has('product_stocked')) <p class="help-block">{{ $errors->first('product_stocked') }}</p> @endif
@@ -114,11 +114,10 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('gl_code')) has-error @endif'>
-						<label for='gl_code' class='col-sm-4 control-label'>GL Code</label>
-						<div class='col-sm-8'>
-							{{ Form::select('gl_code', $general_ledger,null, ['id'=>'gl_code', 'class'=>'form-control','maxlength'=>'20']) }}
-							@if ($errors->has('gl_code')) <p class="help-block">{{ $errors->first('gl_code') }}</p> @endif
+					<div class='form-group  @if ($errors->has('product_track_batch')) has-error @endif'>
+						<div class='col-sm-offset-4 col-sm-8'>
+							{{ Form::checkbox('product_track_batch', '1') }} <label>Track Batch Number</label><br>Batch number required during stock movement.
+							@if ($errors->has('product_track_batch')) <p class="help-block">{{ $errors->first('product_track_batch') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -213,6 +212,19 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-6">
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_purchase_unit')) has-error @endif'>
+						{{ Form::label('product_purchase_unit', 'Purchase Unit',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::select('product_purchase_unit', $unit,null, ['class'=>'form-control','maxlength'=>'10']) }}
+							@if ($errors->has('unit_code')) <p class="help-block">{{ $errors->first('unit_code') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 	@endcan
 
 	@can('product_sale_edit')
@@ -263,6 +275,13 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
+						{{ Form::label('unit_code', 'Sale Unit',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::select('unit_code', $unit,null, ['class'=>'form-control','maxlength'=>'10']) }}
+							@if ($errors->has('unit_code')) <p class="help-block">{{ $errors->first('unit_code') }}</p> @endif
+						</div>
+					</div>
 			</div>
 	</div>
 	<div class="row">

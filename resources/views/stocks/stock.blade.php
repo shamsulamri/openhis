@@ -32,7 +32,11 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
     </div>
 
     <div class='form-group  @if ($errors->has('batch_number')) has-error @endif'>
-        {{ Form::label('batch_number', 'Batch Number',['class'=>'col-sm-3 control-label']) }}
+		<label for='batch_number' class='col-sm-3 control-label'>Batch Number
+			@if ($product->product_track_batch==1)
+			<span style='color:red;'> *</span>
+			@endif
+		</label>
         <div class='col-sm-9'>
             {{ Form::text('batch_number', null, ['class'=>'form-control']) }}
             @if ($errors->has('batch_number')) <p class="help-block">{{ $errors->first('batch_number') }}</p> @endif

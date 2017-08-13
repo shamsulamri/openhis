@@ -26,6 +26,7 @@ class Product extends Model
 				'product_sku',
 				'product_unit_charge',
 				'product_purchased',
+				'product_purchase_unit',
 				'product_stocked',
 				'product_sold',
 				'product_drop_charge',
@@ -38,6 +39,7 @@ class Product extends Model
 				'location_code',
 				'form_code',
 				'gl_code',
+				'product_track_batch',
 				'status_code',
 				'product_average_cost',
 				'product_conversion_unit',
@@ -97,6 +99,11 @@ class Product extends Model
 	public function unitMeasure()
 	{
 			return $this->belongsTo('App\UnitMeasure', 'unit_code');
+	}
+
+	public function purchaseUnitMeasure()
+	{
+			return $this->belongsTo('App\UnitMeasure', 'product_purchase_unit');
 	}
 
 	public function orderForm()
@@ -186,7 +193,16 @@ class Product extends Model
 			if ($this->unitMeasure) {
 					return $this->unitMeasure->unit_shortname;
 			} else {
-					return "unit";
+					return "U";
+			}
+	}
+
+	public function getPurchaseUnitShortname()
+	{
+			if ($this->purchaseUnitMeasure) {
+					return $this->purchaseUnitMeasure->unit_shortname;
+			} else {
+					return "U";
 			}
 	}
 }

@@ -34,6 +34,7 @@ class Stock extends Model
     public $incrementing = true;
     
 	public function validate($input, $method) {
+			$product = Product::find($input['product_code']);
 			$rules = [
 				'move_code'=>'required',
 				'store_code'=>'required',
@@ -43,6 +44,10 @@ class Stock extends Model
 				'store_code_transfer'=>'required_if:move_code,==,transfer',
 				'expiry_date'=>'size:10|date_format:d/m/Y',
 			];
+
+			if ($product->product_track_batch==1) {
+				$rules['batch_number']='required';
+			}
 
 			$messages = [
 				'required' => 'This field is required',

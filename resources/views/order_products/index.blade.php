@@ -19,10 +19,13 @@
 				<span class='input-group-btn'>
 					<button class="btn btn-default" type="submit" value="Submit"><span class='glyphicon glyphicon-search'></span></button>
 				</span>
+	@if (count($categories)>2)
 	{{ Form::select('categories', $categories, $category_code, ['class'=>'form-control']) }}
+	@endif
 			</div>
 			</div>
 	</div>
+	@can('module-consultation')
 	<br>	
 	<div class="row">
 			<div class="col-xs-12">
@@ -30,6 +33,7 @@
             {{ Form::select('set_code', $sets,$set_value, ['class'=>'form-control','maxlength'=>'10','onchange'=>'orderSet()','id'=>'orderset']) }}
 			</div>
 	</div>
+	@endcan
 <!--
 <br>
 	<a href='/order_product/drug' class='btn btn-default btn-xs'>Drug History</a>

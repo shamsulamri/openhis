@@ -13,6 +13,7 @@ use Session;
 use App\QueueLocation;
 use App\EncounterType;
 use Carbon\Carbon;
+use Auth;
 
 class OrderQueueController extends Controller
 {
@@ -39,7 +40,12 @@ class OrderQueueController extends Controller
 					//return "Location not set";
 					return redirect('queue_locations');
 			}
-			$location_code = $request->cookie('queue_location');
+
+			if (!empty(Auth::user()->authorization->location_code)) {
+				$location_code = Auth::user()->authorization->location_code;
+			} else {
+				$location_code = $request->cookie('queue_location');
+			}
 			$location = QueueLocation::find($location_code);
 			/*
 			$order_queues = DB::table('orders as a')

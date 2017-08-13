@@ -212,13 +212,24 @@ class PurchaseOrderLineController extends Controller
 										->select('line_id')
 										->get();
 
-			if ($request->count_completed==0) {
+			//if ($request->count_completed==0) {
 					if (empty($request->store_code)) {
 						$valid['store_code']='This field is required.';
 					}
 
 					if (empty($request->invoice_number)) {
 						$valid['invoice_number']='This field is required.';
+					}
+			//}
+
+			// Validate batch number 
+		
+			foreach($purchase_order_lines as $line) {
+					if ($request['track_batch_'.$line->line_id]==1) {
+							$batch_name = "batch_number_".$line->line_id;
+							if (empty($request[$batch_name])) {
+								$valid[$batch_name]='This field is required.';
+							}
 					}
 			}
 

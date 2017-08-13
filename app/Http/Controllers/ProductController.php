@@ -237,6 +237,7 @@ class ProductController extends Controller
 			$product->product_stocked = $request->product_stocked ?: 0;
 			$product->product_dismantle_material = $request->product_dismantle_material ?: 0;
 			$product->product_drop_charge = $request->product_drop_charge ?: 0;
+			$product->product_track_batch = $request->product_track_batch ?: 0;
 
 			$valid = $product->validate($request->all(), $request->_method);	
 

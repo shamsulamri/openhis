@@ -134,9 +134,9 @@ $count=0;
 					{{ $purchase_order_line->product->purchase_tax->tax_shortname }}&nbsp;({{ number_format($purchase_order_line->product->purchase_tax->tax_rate) }}%)
 					@endif
 			</td>
-			<td width='50' align='right'>
+			<td width='80' align='right'>
 					{{ number_format($purchase_order_line->line_quantity_ordered) }} 
-					{{ $purchase_order_line->product->getUnitShortname() }}
+					{{ $purchase_order_line->product->getPurchaseUnitShortname() }}
 			</td>
 			<td width='50' align='right'>
 					{{ number_format($purchase_order_line->line_price,2) }}

@@ -35,6 +35,10 @@ class Kernel extends HttpKernel
 			\App\Http\Middleware\ConsultationMiddleware::class,
         ],
 
+        'order' => [
+			\App\Http\Middleware\OrderMiddleware::class,
+        ],
+
         'patient' => [
 			\App\Http\Middleware\PatientMiddleware::class,
         ],

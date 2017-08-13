@@ -4,8 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Auth;
+use Log;
 
-class LoanFunctionMiddleware
+class OrderMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,13 +17,15 @@ class LoanFunctionMiddleware
      */
     public function handle($request, Closure $next)
     {
+
 		if (Auth::check()) {
-				if ($request->user()->cannot('module_order')) {
+				if ($request->user()->cannot('module-order')) {
 						return redirect('/unauthorized');
 				} 		
 		} else {
 				return redirect('/login');
 		}	
+
         return $next($request);
     }
 }

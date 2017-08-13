@@ -492,6 +492,10 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/queue/search', 'QueueController@search');
 				Route::get('/queues/delete/{id}', 'QueueController@delete');
 
+
+				Route::post('/discharge/search', 'DischargeController@search');
+
+		Route::group(['middleware' => 'order'], function () {
 				Route::get('/orders/single/{product_code}', 'OrderController@single');
 				Route::get('/orders/task', 'OrderController@task');
 				Route::get('/orders/make/{encounter_id?}', 'OrderController@make');
@@ -505,6 +509,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/orders/delete/{id}', 'OrderController@delete');
 				Route::post('/orders/diagnostic_report/{id}', 'OrderController@updateDiagnosticReport');
 
+				Route::resource('order_investigations', 'OrderInvestigationController');
+				Route::get('/order_investigations/create/{code}', 'OrderInvestigationController@create');
+				Route::get('/order_investigations/id/{id}', 'OrderInvestigationController@searchById');
+				Route::post('/order_investigation/search', 'OrderInvestigationController@search');
+				Route::get('/order_investigation/search', 'OrderInvestigationController@search');
+				Route::get('/order_investigations/delete/{id}', 'OrderInvestigationController@delete');
+
 				Route::resource('order_products', 'OrderProductController');
 				Route::get('/order_products/{id}', 'OrderProductController@index');
 				Route::get('/order_products/id/{id}', 'OrderProductController@searchById');
@@ -513,15 +524,22 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/order_product/drug', 'OrderProductController@drugHistory');
 				Route::get('/order_products/delete/{id}', 'OrderProductController@delete');
 
-				Route::post('/discharge/search', 'DischargeController@search');
-		Route::group(['middleware' => 'consultation'], function () {
+				Route::resource('order_drugs', 'OrderDrugController',['except'=>['create']]);
+				Route::get('/order_drugs/id/{id}', 'OrderDrugController@searchById');
+				Route::get('/order_drugs/create/{product_code}', 'OrderDrugController@create');
+				Route::post('/order_drug/search', 'OrderDrugController@search');
+				Route::get('/order_drug/search', 'OrderDrugController@search');
+				Route::get('/order_drugs/delete/{id}', 'OrderDrugController@delete');
 
-				Route::resource('order_investigations', 'OrderInvestigationController');
-				Route::get('/order_investigations/create/{code}', 'OrderInvestigationController@create');
-				Route::get('/order_investigations/id/{id}', 'OrderInvestigationController@searchById');
-				Route::post('/order_investigation/search', 'OrderInvestigationController@search');
-				Route::get('/order_investigation/search', 'OrderInvestigationController@search');
-				Route::get('/order_investigations/delete/{id}', 'OrderInvestigationController@delete');
+				Route::resource('order_cancellations', 'OrderCancellationController', ['except'=>['create']]);
+				Route::get('/order_cancellations/create/{id}', 'OrderCancellationController@create');
+				Route::get('/order_cancellations/id/{id}', 'OrderCancellationController@searchById');
+				Route::post('/order_cancellation/search', 'OrderCancellationController@search');
+				Route::get('/order_cancellation/search', 'OrderCancellationController@search');
+				Route::get('/order_cancellations/delete/{id}', 'OrderCancellationController@delete');
+		});
+
+		Route::group(['middleware' => 'consultation'], function () {
 
 				Route::get('/discharges/ward/{id}', 'DischargeController@ward');
 				Route::resource('discharges', 'DischargeController', ['except'=>['index','show']]);
@@ -557,13 +575,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/consultation_procedure/search', 'ConsultationProcedureController@search');
 				Route::get('/consultation_procedures/delete/{id}', 'ConsultationProcedureController@delete');
 
-				Route::resource('order_drugs', 'OrderDrugController',['except'=>['create']]);
-				Route::get('/order_drugs/id/{id}', 'OrderDrugController@searchById');
-				Route::get('/order_drugs/create/{product_code}', 'OrderDrugController@create');
-				Route::post('/order_drug/search', 'OrderDrugController@search');
-				Route::get('/order_drug/search', 'OrderDrugController@search');
-				Route::get('/order_drugs/delete/{id}', 'OrderDrugController@delete');
-
 				Route::resource('medical_alerts', 'MedicalAlertController');
 				Route::get('/medical_alerts/{id}', 'MedicalAlertController@index');
 				Route::get('/medical_alerts/id/{id}', 'MedicalAlertController@searchById');
@@ -586,12 +597,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/diet', 'AdmissionController@diet');
 				Route::get('/nbm/remove/{id}', 'AdmissionController@removeNilByMouth');
 
-				Route::resource('order_cancellations', 'OrderCancellationController', ['except'=>['create']]);
-				Route::get('/order_cancellations/create/{id}', 'OrderCancellationController@create');
-				Route::get('/order_cancellations/id/{id}', 'OrderCancellationController@searchById');
-				Route::post('/order_cancellation/search', 'OrderCancellationController@search');
-				Route::get('/order_cancellation/search', 'OrderCancellationController@search');
-				Route::get('/order_cancellations/delete/{id}', 'OrderCancellationController@delete');
 		});
 
 		Route::group(['middleware' => 'product_list_middleware'], function () {

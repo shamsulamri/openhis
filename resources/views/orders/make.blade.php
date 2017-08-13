@@ -15,7 +15,7 @@ iframe { border: 1px #e5e5e5 solid; }
 		@include('patients.id')
 		<h1>Edit Orders</h1>
 		<br>
-        <a class="btn btn-default" href="/order_tasks/task/{{ Session::get('encounter_id') }}/{{Cookie::get('queue_location')}}" role="button">Back to Task</a>
+        <a class="btn btn-primary" href="/order_tasks/task/{{ Session::get('encounter_id') }}/{{Cookie::get('queue_location')}}" role="button">Back to Task</a>
 		<br>
 		<br>
 @endcannot

@@ -143,10 +143,12 @@ class OrderHelper
 
 		public static function hasOpenOrders($user_id)
 		{
-				$orders = Order::where('user_id', $user_id)
-							->distinct('encounter_id')
+				$orders = Order::where('orders.user_id', $user_id)
+							->distinct('orders.encounter_id')
+							->leftjoin('discharges as b', 'orders.encounter_id','=', 'b.encounter_id')
 							->where('post_id',0)
-							->groupBy('encounter_id')
+							->whereNull('discharge_id')
+							->groupBy('orders.encounter_id')
 							->get();
 
 

@@ -23,6 +23,7 @@ use App\Product;
 use App\ProductAuthorization;
 use App\OrderHelper;
 use Auth;
+use Gate;
 
 class OrderProductController extends Controller
 {
@@ -35,7 +36,9 @@ class OrderProductController extends Controller
 
 	public function index()
 	{
-			return redirect('/order_product/drug');
+			if (Gate::allows('module-consultation')) {
+					return redirect('/order_product/drug');
+			}
 			$order_products = DB::table('products')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
@@ -48,9 +51,11 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
-					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('',''),
+					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history'),
 					'set_value' => '',
 					'search' => '',
+					'categories' => $this->getCategories(),
+					'category_code'=> NULL,
 			]);
 	}
 
@@ -205,7 +210,7 @@ class OrderProductController extends Controller
 					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history'),
 					'set_value' => $request->set_code,
 					'page' => $request->page,
-					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'categories' => $this->getCategories(),
 					'category_code'=> $request->categories,
 					]);
 	}
@@ -239,7 +244,7 @@ class OrderProductController extends Controller
 					'tab'=>'drug',
 					'consultOption' => 'consultation',
 					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history'),
-					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'categories' => $this->getCategories(),
 					'category_code'=> null,
 					'set_value' => $request->set_code,
 					'page' => $request->page,
@@ -256,5 +261,19 @@ class OrderProductController extends Controller
 			return view('order_products.index', [
 					'order_products'=>$order_products
 			]);
+	}
+
+	public function getCategories() {
+			$categories = ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');
+			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+
+			if (!$product_authorization->get()->isEmpty()) {
+				$categories = ProductCategory::whereIn('category_code', $product_authorization->pluck('category_code'))
+								->orderBy('category_name')
+								->lists('category_name', 'category_code')
+								->prepend('','');
+			}
+
+			return $categories;
 	}
 }

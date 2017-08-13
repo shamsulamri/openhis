@@ -35,6 +35,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('module_order')) has-error @endif'>
+        <label for='module_order' class='col-sm-4 control-label'>Order Module</label>
+        <div class='col-sm-8'>
+            {{ Form::checkbox('module_order', '1') }}
+            @if ($errors->has('module_order')) <p class="help-block">{{ $errors->first('module_order') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('appointment_function')) has-error @endif'>
         <label for='appointment_function' class='col-sm-4 control-label'>Appointment Module</label>
         <div class='col-sm-8'>
@@ -139,15 +147,29 @@
         </div>
     </div>
 
-
 	<div class='page-header'>
-		<h4>Default Store</h4>
+		<h4>Default Information</h4>
 	</div>
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
         {{ Form::label('store_code', 'Store',['class'=>'col-sm-4 control-label']) }}
 		<div class='col-sm-8'>
 			{{ Form::select('store_code', $store, null, ['class'=>'form-control','maxlength'=>'10']) }}
 			@if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
+		</div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
+        {{ Form::label('location_code', 'Location',['class'=>'col-sm-4 control-label']) }}
+		<div class='col-sm-8'>
+			{{ Form::select('location_code', $location, null, ['class'=>'form-control','maxlength'=>'10']) }}
+			@if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
+		</div>
+    </div>
+    <div class='form-group  @if ($errors->has('identification_prefix')) has-error @endif'>
+        {{ Form::label('identification_prefix', 'Identification Prefix',['class'=>'col-sm-4 control-label']) }}
+		<div class='col-sm-8'>
+            {{ Form::text('identification_prefix', null, ['class'=>'form-control','placeholder'=>'Purchase order number prefix','maxlength'=>'20']) }}
+			@if ($errors->has('identification_prefix')) <p class="help-block">{{ $errors->first('identification_prefix') }}</p> @endif
 		</div>
     </div>
 	<br>

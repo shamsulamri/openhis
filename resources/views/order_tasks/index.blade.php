@@ -8,13 +8,14 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<button class="btn btn-primary" type="submit" value="Submit">Update Status</button>
-					<!--
+					@can('module-order')
 					<a class='btn btn-primary' href='/orders/make'>Edit Orders</a>
-					-->
+					@endcan
 			</div>
 			<div align="right" class="col-xs-6">
 			@if ($location->location_code == 'pharmacy')
-					<a class="btn btn-primary pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button">Print Drug Label</a>
+					<a class="btn btn-primary pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+ Drug Label</a>
 			@endif
 			</div>
 	</div>

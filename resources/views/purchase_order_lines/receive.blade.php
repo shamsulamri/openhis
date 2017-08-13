@@ -31,6 +31,15 @@
 			@if ($errors->has('invoice_number')) <p class="help-block">{{ $errors->first('invoice_number') }}</p> @endif
         </div>
     </div>
+    <div class='form-group  @if ($errors->has('invoice_date')) has-error @endif'>
+        <label for='invoice_date' class='col-sm-3 control-label'>Invoice Date<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+			<div class="input-group date">
+				<input data-mask="99/99/9999" name="invoice_date" id="invoice_date" type="text" class="form-control">
+				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			</div>
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('delivery_number')) has-error @endif'>
         <label for='delivery_number' class='col-sm-3 control-label'>Delivery Number</label>
         <div class='col-sm-9'>
@@ -44,7 +53,7 @@
 	<tr> 
     <th width='10'></th>
     <th>Product</th>
-    <th width='100'>Quantity Order</th> 
+    <th width='100'>Unit</th> 
     <th width='100'>Total Receive</th> 
     <th width='100'>Quantity Receive </th> 
     <th width='120'>Expiry Date</th> 
@@ -57,7 +66,6 @@
 <?php
 	$total_receive = $stock_helper->stockReceiveSum($receive->line_id);
 	$total_receive = $total_receive/$receive->product->product_conversion_unit;
-	if ($total_receive==0) $total_receive='-';
 	$balance = $receive->line_quantity_ordered-$total_receive;
 	if ($balance==0) $count++;
 ?>
@@ -67,7 +75,7 @@
 					{{ Form::checkbox($receive->line_id,1, true) }}
 			</td>
 			<td>
-				{{ $receive->product->product_name }} ({{ $receive->product->getUnitShortname() }})
+				{{ $receive->product->product_name }} 
 				<br>
 				<small>
 				{{ $receive->product->product_code }}
@@ -77,10 +85,12 @@
 				</div>
 			</td>
 			<td>
-            	{{ Form::label('quantity_order', number_format($receive->line_quantity_ordered), ['class'=>'form-control']) }}
+				{{ $receive->product->getUnitShortname() }}
 			</td>
 			<td>
-				{{ Form::label('total_receive_'.$receive->line_id, $total_receive, ['class'=>'form-control']) }}
+				<h4>
+				{{ $total_receive }} of {{ number_format($receive->line_quantity_ordered) }}
+				</h4>
 			</td>
 			<td>
     			<div class='@if ($errors->has('line_'.$receive->line_id)) has-error @endif'>
@@ -93,7 +103,13 @@
 				</div>
 			</td>
 			<td>
-				{{ Form::text('batch_number_'.$receive->line_id, null, ['class'=>'form-control']) }}
+    			<div class='@if ($errors->has('batch_number_'.$receive->line_id)) has-error @endif'>
+						{{ Form::text('batch_number_'.$receive->line_id, null, ['class'=>'form-control']) }}
+						@if ($errors->has('batch_number_'.$receive->line_id)) <p class="help-block">{{ $errors->first('batch_number_'.$receive->line_id) }}</p> @endif
+				<div>
+				@if ($receive->product->product_track_batch)
+					<input type='hidden' name="track_batch_{{ $receive->line_id }}" value='1'>
+				@endif
 			</td>
 @else
 			<td>
@@ -178,6 +194,16 @@
 				 }
              });
         });
+
+		$('#invoice_date').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
+		});
 </script>
 {{ Form::close() }}
 @endsection
+

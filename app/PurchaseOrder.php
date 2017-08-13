@@ -8,6 +8,7 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 use Log;
+use Auth;
 
 class PurchaseOrder extends Model
 {
@@ -17,6 +18,7 @@ class PurchaseOrder extends Model
 	protected $table = 'purchase_orders';
 	protected $fillable = [
 				'purchase_id',
+				'purchase_number',
 				'author_id',
 				'supplier_code',
 				'purchase_date',
@@ -107,5 +109,18 @@ class PurchaseOrder extends Model
 	public function store()
 	{
 			return $this->belongsTo('App\Store', 'store_code');
+	}
+
+	public static function boot()
+	{
+			parent::boot();
+
+			static::created(function($purchase_order)
+			{
+					$prefix = Auth::user()->authorization->identification_prefix;
+					$purchase_number = $prefix.str_pad(PurchaseOrder::where('purchase_number','like', $prefix."%")->count()+1, 4, '0', STR_PAD_LEFT);
+					$purchase_order->purchase_number = $purchase_number;
+					$purchase_order->save();
+			});
 	}
 }

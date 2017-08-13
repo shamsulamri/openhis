@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\Store;
+use App\QueueLocation;
 
 class UserAuthorizationController extends Controller
 {
@@ -24,7 +25,7 @@ class UserAuthorizationController extends Controller
 	public function index()
 	{
 			$user_authorizations = DB::table('user_authorizations')
-					->orderBy('module_consultation')
+					->orderBy('author_name')
 					->paginate($this->paginateValue);
 			return view('user_authorizations.index', [
 					'user_authorizations'=>$user_authorizations
@@ -37,6 +38,7 @@ class UserAuthorizationController extends Controller
 			return view('user_authorizations.create', [
 					'user_authorization' => $user_authorization,
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					]);
 	}
 
@@ -63,6 +65,7 @@ class UserAuthorizationController extends Controller
 			return view('user_authorizations.edit', [
 					'user_authorization'=>$user_authorization,
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					]);
 	}
 
@@ -81,6 +84,7 @@ class UserAuthorizationController extends Controller
 			$user_authorization->patient_list = $request->patient_list ?: 0;
 			$user_authorization->product_list = $request->product_list ?: 0;
 			$user_authorization->loan_function = $request->loan_function ?: 0;
+			$user_authorization->module_order = $request->module_order ?: 0;
 			$user_authorization->product_information_edit = $request->product_information_edit ?: 0;
 			$user_authorization->product_purchase_edit = $request->product_purchase_edit ?: 0;
 			$user_authorization->product_sale_edit = $request->product_sale_edit ?: 0;

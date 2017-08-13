@@ -18,6 +18,7 @@ use App\Http\Controllers\ProductController;
 use App\Store;
 use App\Order;
 use Carbon\Carbon;
+use Auth;
 
 class OrderTaskController extends Controller
 {
@@ -71,7 +72,11 @@ class OrderTaskController extends Controller
 			Session::set('encounter_id', $encounter_id);
 			$encounter = Encounter::find($encounter_id);
 
-			$location_code = $request->cookie('queue_location');
+			if (!empty(Auth::user()->authorization->location_code)) {
+				$location_code = Auth::user()->authorization->location_code;
+			} else {
+				$location_code = $request->cookie('queue_location');
+			}
 			$location = Location::find($location_code);
 
 			$consultation = Consultation::where('patient_id','=',$encounter->patient_id)
