@@ -18,6 +18,7 @@ use App\DojoUtility;
 use App\TeamMember;
 use App\WardHelper;
 use App\OrderHelper;
+use App\Order;
 
 class PatientListController extends Controller
 {
@@ -152,7 +153,7 @@ class PatientListController extends Controller
 					->orderBy('a.created_at');
 
 			//dd($outpatients->toSql());
-					
+			
 			$outpatients = $outpatients->paginate($this->paginateValue);
 
 			return view('patient_lists.index', [

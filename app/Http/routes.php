@@ -47,6 +47,43 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('drug_diseases', 'DrugDiseaseController');
+		Route::get('/drug_diseases/id/{id}', 'DrugDiseaseController@searchById');
+		Route::post('/drug_disease/search', 'DrugDiseaseController@search');
+		Route::get('/drug_disease/search', 'DrugDiseaseController@search');
+		Route::get('/drug_diseases/delete/{id}', 'DrugDiseaseController@delete');
+		
+		
+		Route::resource('drug_prescriptions', 'DrugPrescriptionController');
+		Route::get('/drug_prescriptions/id/{id}', 'DrugPrescriptionController@searchById');
+		Route::post('/drug_prescription/search', 'DrugPrescriptionController@search');
+		Route::get('/drug_prescription/search', 'DrugPrescriptionController@search');
+		Route::get('/drug_prescriptions/delete/{id}', 'DrugPrescriptionController@delete');
+		
+		Route::resource('drug_special_instructions', 'DrugSpecialInstructionController');
+		Route::get('/drug_special_instructions/id/{id}', 'DrugSpecialInstructionController@searchById');
+		Route::post('/drug_special_instruction/search', 'DrugSpecialInstructionController@search');
+		Route::get('/drug_special_instruction/search', 'DrugSpecialInstructionController@search');
+		Route::get('/drug_special_instructions/delete/{id}', 'DrugSpecialInstructionController@delete');
+		
+		Route::resource('drug_instructions', 'DrugInstructionController');
+		Route::get('/drug_instructions/id/{id}', 'DrugInstructionController@searchById');
+		Route::post('/drug_instruction/search', 'DrugInstructionController@search');
+		Route::get('/drug_instruction/search', 'DrugInstructionController@search');
+		Route::get('/drug_instructions/delete/{id}', 'DrugInstructionController@delete');
+		
+
+		Route::resource('drug_indications', 'DrugIndicationController');
+		Route::get('/drug_indications/id/{id}', 'DrugIndicationController@searchById');
+		Route::post('/drug_indication/search', 'DrugIndicationController@search');
+		Route::get('/drug_indication/search', 'DrugIndicationController@search');
+		Route::get('/drug_indications/delete/{id}', 'DrugIndicationController@delete');
+
+		Route::resource('drug_cautions', 'DrugCautionController');
+		Route::get('/drug_cautions/id/{id}', 'DrugCautionController@searchById');
+		Route::post('/drug_caution/search', 'DrugCautionController@search');
+		Route::get('/drug_caution/search', 'DrugCautionController@search');
+		Route::get('/drug_cautions/delete/{id}', 'DrugCautionController@delete');
 
 		Route::resource('stock_input_lines', 'StockInputLineController');
 		Route::get('/stock_input_lines/id/{id}', 'StockInputLineController@searchById');
@@ -688,12 +725,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/purchase_order/verify', 'PurchaseOrderController@postVerify');
 				Route::get('/purchase_orders/delete/{id}', 'PurchaseOrderController@delete');
 				Route::get('/purchase_order/diet/{id}', 'PurchaseOrderController@diet');
-
-				Route::resource('drug_prescriptions', 'DrugPrescriptionController');
-				Route::get('/drug_prescriptions/id/{id}', 'DrugPrescriptionController@searchById');
-				Route::post('/drug_prescription/search', 'DrugPrescriptionController@search');
-				Route::get('/drug_prescription/search', 'DrugPrescriptionController@search');
-				Route::get('/drug_prescriptions/delete/{id}', 'DrugPrescriptionController@delete');
 
 				Route::resource('drugs', 'DrugController');
 				Route::get('/drugs/id/{id}', 'DrugController@searchById');

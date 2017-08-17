@@ -21,6 +21,12 @@ class OrderHelper
 			return $orders;
 	}
 
+	public static function getOrder($order_id) 
+	{
+			$order = Order::find($order_id);
+			return $order;
+	}
+
 	public static function orderItem($product, $ward_code) 
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
@@ -59,7 +65,7 @@ class OrderHelper
 							$order_drug->drug_dosage = $drug_prescription->drug_dosage;
 							$order_drug->dosage_code = $drug_prescription->dosage_code;
 							$order_drug->route_code = $drug_prescription->route_code;
-							$order_drug->frequency_code = $drug_prescription->frequency_code;
+							//$order_drug->frequency_code = $drug_prescription->frequency_code;
 							$order_drug->drug_duration = $drug_prescription->drug_duration;
 							$order_drug->period_code = $drug_prescription->period_code;
 							$order_drug->drug_prn = $drug_prescription->drug_prn;
@@ -87,6 +93,7 @@ class OrderHelper
 					$order_investigation->investigation_date = date('d/m/Y');
 					$order_investigation->save();
 			}
+			return $order->order_id;
 	}	
 
 	public static function createDrugServings($order_drug) 
@@ -150,7 +157,6 @@ class OrderHelper
 							->whereNull('discharge_id')
 							->groupBy('orders.encounter_id')
 							->get();
-
 
 				if ($orders) {
 					return $orders;

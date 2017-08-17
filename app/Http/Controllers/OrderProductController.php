@@ -163,10 +163,13 @@ class OrderProductController extends Controller
 								return redirect('/order_product/search');
 						}
 				}
+
+				/*
 				$order_products = Product::orderBy('product_name')
 					->where('product_name','like','%'.$request->search.'%')
 					->where('product_sold','1');
-					
+				 */
+
 				$order_products = Product::orderBy('product_name')
 					->where('product_sold','1')
 					->where(function ($query) use ($request) {
@@ -200,6 +203,10 @@ class OrderProductController extends Controller
 			$consultation_id = Session::get('consultation_id'); //$request->consultation_id;
 			$consultation = Consultation::findOrFail($consultation_id);
 
+			$order_id=0;
+			if (!empty($request->order_id)) {
+				$order_id = $request->order_id;
+			}
 			return view('order_products.index', [
 					'order_products'=>$order_products,
 					'search'=>$request->search,
@@ -212,6 +219,7 @@ class OrderProductController extends Controller
 					'page' => $request->page,
 					'categories' => $this->getCategories(),
 					'category_code'=> $request->categories,
+					'order_id'=>$order_id,
 					]);
 	}
 
@@ -249,6 +257,7 @@ class OrderProductController extends Controller
 					'set_value' => $request->set_code,
 					'page' => $request->page,
 					'dojo' => new DojoUtility(),
+					'order_id'=>0,
 					]);
 	}
 

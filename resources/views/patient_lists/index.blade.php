@@ -8,12 +8,14 @@
 	<br>
 		@foreach($hasOpenOrders as $openOrder)
 			<?php
-				$patient = $openOrder->consultation->encounter->patient; 
+				$order = $orderHelper->getOrder($openOrder->order_id);
+				$patient = $order->consultation->encounter->patient;
 			?>	
-			- <a href='{{ URL::to('consultations/'. $openOrder->consultation_id . '/edit') }}'>
-				<strong>{{ $patient->patient_name }}</strong>
-				{{ DojoUtility::getAge($patient->patient_birthdate) }}, {{ $patient->gender->gender_name }}
-				({{ $patient->getMRN() }})
+			- <a href='{{ URL::to('consultations/'. $order->consultation_id . '/edit') }}'>
+				<strong>
+				{{ $patient->getMRN() }}
+				</strong>  
+				{{ $patient->patient_name }}
 			</a>
 			@if ($openOrder != $hasOpenOrders[$hasOpenOrders->count()-1])
 					<br>

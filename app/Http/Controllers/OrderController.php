@@ -360,9 +360,9 @@ class OrderController extends Controller
 	public function single(Request $request, $product_code)
 	{
 			$product = Product::find($product_code);
-			OrderHelper::orderItem($product, $request->cookie('ward'));
+			$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));
 			//Session::flash('message', 'Product added to order list.');
-			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
+			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page.'&order_id='.$order_id);
 	}
 
 	public function make()

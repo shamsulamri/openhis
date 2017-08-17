@@ -14,6 +14,7 @@ use App\UnitMeasure as Unit;
 use App\DrugDosage as Dosage;
 use App\DrugRoute as Route;
 use App\DrugFrequency as Frequency;
+use App\DrugDisease;
 use App\Period;
 use App\Order;
 use App\Consultation;
@@ -119,24 +120,40 @@ class OrderDrugController extends Controller
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 			$order_drug = OrderDrug::findOrFail($id);
 			$product_code = $order_drug->order->product_code;
-			$product = DB::table('products')
-						->select('product_name','product_code')
-						->where('product_code','=',$product_code)->get();
+			$product = Product::find($product_code);
+
+			$prescriptions = DrugPrescription::where('drug_code','=', $product_code)
+					->leftjoin('drug_routes as c','c.route_code','=',  'drug_prescriptions.route_code')
+					->leftjoin('drug_frequencies as d','d.frequency_code','=',  'drug_prescriptions.frequency_code')
+					->leftjoin('drug_dosages as e', 'e.dosage_code','=', 'drug_prescriptions.dosage_code')
+					->orderBy('frequency_name')
+					->get();
+
+			$frequencies = DrugPrescription::where('drug_code','=', $product_code)
+					->leftjoin('drug_frequencies as d','d.frequency_code','=',  'drug_prescriptions.frequency_code')
+					->orderBy('frequency_name')
+					->lists('frequency_name', 'd.frequency_code')->prepend('','');
+
+
+				//	'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
+			$indications = DrugDisease::where('drug_code','=', $product_code)->distinct()->get();
 
 			return view('order_drugs.edit', [
 					'order_drug'=>$order_drug,
 					'unit' => Unit::where('unit_drug',1)->orderBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
 					'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
 					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
-					'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 					'frequencyValues' => Frequency::all(),
 					'period' => Period::whereIn('period_code', array('day','week', 'month'))->orderBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
 					'consultation' => $consultation,
+					'frequency'=>$frequencies,
 					'patient'=>$consultation->encounter->patient,
-					'product' => $product[0],
+					'product' => $product,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
 					'order'=>$order_drug->order,
+					'prescriptions'=>$prescriptions,
+					'indications'=>$indications,
 					]);
 	}
 
@@ -167,14 +184,8 @@ class OrderDrugController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/orders');
 			} else {
-					return view('order_drugs.edit', [
-							'order_drug'=>$order_drug,
-							'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-							'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
-							'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
-							'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
-							'period' => Period::all()->sortBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
-					])->withErrors($valid);			
+					return redirect('/order_drugs/'.$id.'/edit')
+						->withErrors($valid);			
 			}
 	}
 	

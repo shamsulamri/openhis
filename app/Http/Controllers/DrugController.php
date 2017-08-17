@@ -10,7 +10,9 @@ use App\Drug;
 use Log;
 use DB;
 use Session;
-use App\DrugCategory as Category;
+use App\DrugSpecialInstruction as Special;
+use App\DrugInstruction as Instruction;
+use App\DrugCaution as Caution;
 
 
 class DrugController extends Controller
@@ -37,7 +39,9 @@ class DrugController extends Controller
 			$drug = new Drug();
 			return view('drugs.create', [
 					'drug' => $drug,
-					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'special' => Special::all()->sortBy('special_instruction_english')->lists('special_instruction_english', 'special_code')->prepend('',''),
+					'instruction' => Instruction::all()->sortBy('instruction_english')->lists('instruction_english', 'instruction_code')->prepend('',''),
+					'caution' => Caution::all()->sortBy('caution_english')->lists('caution_english', 'caution_code')->prepend('',''),
 					]);
 	}
 
@@ -64,7 +68,9 @@ class DrugController extends Controller
 			$drug = Drug::findOrFail($id);
 			return view('drugs.edit', [
 					'drug'=>$drug,
-					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'special' => Special::all()->sortBy('special_instruction_english')->lists('special_instruction_english', 'special_code')->prepend('',''),
+					'instruction' => Instruction::all()->sortBy('instruction_english')->lists('instruction_english', 'instruction_code')->prepend('',''),
+					'caution' => Caution::all()->sortBy('caution_english')->lists('caution_english', 'caution_code')->prepend('',''),
 					]);
 	}
 
@@ -73,7 +79,6 @@ class DrugController extends Controller
 			$drug = Drug::findOrFail($id);
 			$drug->fill($request->input());
 
-			$drug->drug_unit_charge = $request->drug_unit_charge ?: 0;
 
 			$valid = $drug->validate($request->all(), $request->_method);	
 
@@ -84,7 +89,9 @@ class DrugController extends Controller
 			} else {
 					return view('drugs.edit', [
 							'drug'=>$drug,
-					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'special' => Special::all()->sortBy('special_instruction_english')->lists('special_instruction_english', 'special_code')->prepend('',''),
+					'instruction' => Instruction::all()->sortBy('instruction_english')->lists('instruction_english', 'instruction_code')->prepend('',''),
+					'caution' => Caution::all()->sortBy('caution_english')->lists('caution_english', 'caution_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}
@@ -108,9 +115,9 @@ class DrugController extends Controller
 	public function search(Request $request)
 	{
 			$drugs = DB::table('drugs')
-					->where('drug_trade_name','like','%'.$request->search.'%')
+					->where('drug_generic_name','like','%'.$request->search.'%')
 					->orWhere('drug_code', 'like','%'.$request->search.'%')
-					->orderBy('drug_trade_name')
+					->orderBy('drug_generic_name')
 					->paginate($this->paginateValue);
 
 			return view('drugs.index', [

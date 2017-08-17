@@ -12,18 +12,17 @@ class DrugPrescription extends Model
 	protected $table = 'drug_prescriptions';
 	protected $fillable = [
 				'drug_code',
-				'drug_strength',
-				'unit_code',
 				'drug_dosage',
 				'dosage_code',
-				'route_code',
 				'frequency_code',
+				'route_code',
 				'drug_duration',
 				'period_code',
 				'drug_total_unit',
-				'drug_prn',
-				'drug_instruction',
-				'drug_meal'];
+				'instruction_code',
+				'special_code',
+				'caution_code',
+				'indication_code'];
 	
     protected $guarded = ['prescription_id'];
     protected $primaryKey = 'prescription_id';
@@ -32,7 +31,7 @@ class DrugPrescription extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'drug_code'=>'required',
+
 			];
 
 			
@@ -44,5 +43,13 @@ class DrugPrescription extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function product()
+	{
+			return $this->belongsTo('App\Product', 'drug_code', 'product_code');
+	}
 	
+	public function frequency()
+	{
+			return $this->belongsTo('App\DrugFrequency', 'frequency_code');
+	}
 }

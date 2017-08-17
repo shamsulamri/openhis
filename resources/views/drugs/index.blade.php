@@ -1,22 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Drug List</h1>
-<br>
+<h1>Drug List
+<a href='/drugs/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+</h1>
 <form action='/drug/search' method='post'>
-	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<div class='input-group'>
+		<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+		<span class='input-group-btn'>
+			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
+		</span>
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
 
-<a href='/drugs/create' class='btn btn-primary'>Create</a>
-<br>
-<br>
 @if ($drugs->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Name</th>
+    <th>Generic Name</th>
     <th>Code</th> 
 	<th></th>
 	</tr>
@@ -25,12 +28,12 @@
 @foreach ($drugs as $drug)
 	<tr>
 			<td>
+					{{$drug->drug_code}}
+			</td>
+			<td>
 					<a href='{{ URL::to('drugs/'. $drug->drug_code . '/edit') }}'>
 						{{$drug->drug_generic_name}}
 					</a>
-			</td>
-			<td>
-					{{$drug->drug_code}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('drugs/delete/'. $drug->drug_code) }}'>Delete</a>

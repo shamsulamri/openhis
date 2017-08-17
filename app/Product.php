@@ -136,6 +136,11 @@ class Product extends Model
 			return $this->belongsTo('App\ProductStatus', 'status_code');
 	}
 
+	public function drug()
+	{
+			return $this->hasOne('App\Drug', 'drug_code', 'product_code');
+	}
+
 	public function getGLName()
 	{
 			if ($this->attributes['gl_code']) {

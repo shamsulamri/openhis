@@ -19,12 +19,13 @@
 				<span class='input-group-btn'>
 					<button class="btn btn-default" type="submit" value="Submit"><span class='glyphicon glyphicon-search'></span></button>
 				</span>
-	@if (count($categories)>2)
-	{{ Form::select('categories', $categories, $category_code, ['class'=>'form-control']) }}
-	@endif
 			</div>
 			</div>
 	</div>
+	@if (count($categories)>2)
+	<br>
+	{{ Form::select('categories', $categories, $category_code, ['class'=>'form-control']) }}
+	@endif
 	@can('module-consultation')
 	<br>	
 	<div class="row">
@@ -62,19 +63,15 @@
 											</p>
 											-->
 											<br>
-											@if ($order_product->drug_strength>0)
-											{{ $order_product->drug_strength }} {{ $order_product->unit_name }}, 
-											@endif
-
 											@if ($order_product->drug_dosage>0)
-											{{ $order_product->drug_dosage }} {{ $order_product->dosage_name }}, 
+											{{ $order_product->drug_dosage }} {{ $order_product->dosage_name }}
 											@endif
 
 											@if ($order_product->route_name != '')
-											{{ $order_product->route_name }},  
+											, {{ $order_product->route_name }}
 											@endif
 											@if ($order_product->frequency_name !='')
-											{{ $order_product->frequency_name }}, 
+											, {{ $order_product->frequency_name }}
 											@endif
 											@if ($order_product->drug_duration>0)
 											{{ $order_product->drug_duration }} {{ $order_product->period_name }}
@@ -112,7 +109,11 @@
 @endif
 <script>
 	var frame = parent.document.getElementById('frameDetail');
+	@if ($order_id>0)
+	frame.src = "/orders/{{ $order_id }}/edit";
+	@else
 	frame.src = "/orders";
+	@endif
 
 	function orderSet() {
 			document.getElementById('search').value="";

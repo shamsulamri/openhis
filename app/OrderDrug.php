@@ -26,6 +26,10 @@ class OrderDrug extends Model
 
 	public function validate($input, $method) {
 			$rules = [
+				'drug_dosage'=>'required',
+				'dosage_code'=>'required',
+				'route_code'=>'required',
+				'frequency_code'=>'required',
 			];
 
 			

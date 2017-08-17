@@ -43,11 +43,6 @@
 					<span class='glyphicon glyphicon-fire' aria-hidden='true'></span><br>Explode<br>Assembly
 				</a>
 		@endif
-		@if ($product->category_code=='drugs')
-				<a class='btn btn-default' href='{{ URL::to('drug_prescriptions/'. $product->product_code.'/edit') }}'>
-					<span class='glyphicon glyphicon-pencil' aria-hidden='true'></span><br>Drug<br>Prescription
-				</a>
-		@endif
 		<a class='btn btn-default' href='{{ URL::to('product_maintenances/'. $product->product_code) }}'>
 			<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span><br>Product<br>Maintenance
 		</a>
