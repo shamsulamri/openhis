@@ -163,6 +163,7 @@
 		</tr>
 	</table>
 <br>
+
 @if ($count==count($purchase_receives))
 {{ Form::hidden('count_completed', '1') }}
 @else

@@ -10,7 +10,7 @@ use App\StockMovement;
 use Log;
 use DB;
 use Session;
-
+use App\GeneralLedger;
 
 class StockMovementController extends Controller
 {
@@ -36,6 +36,7 @@ class StockMovementController extends Controller
 			$stock_movement = new StockMovement();
 			return view('stock_movements.create', [
 					'stock_movement' => $stock_movement,
+					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 				
 					]);
 	}
@@ -63,6 +64,7 @@ class StockMovementController extends Controller
 			$stock_movement = StockMovement::findOrFail($id);
 			return view('stock_movements.edit', [
 					'stock_movement'=>$stock_movement,
+					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 				
 					]);
 	}

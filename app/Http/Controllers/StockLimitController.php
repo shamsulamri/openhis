@@ -137,9 +137,14 @@ class StockLimitController extends Controller
 	public function product($id)
 	{
 			$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)->get();
-			$limits = StockLimit::select('store_code', 'limit_reorder')->where('product_code', $id)->lists('limit_reorder', 'store_code');
+			$limits = StockLimit::select('store_code', 'limit_min','limit_max')
+					->where('product_code', $id)
+					->get();
+
 			$ids = $stores->pluck('store_code')->toArray();
 			$ids = implode(";", $ids);
+
+			$limits = $limits->keyBy('store_code');
 
 			return view('stock_limits.limit_index', [
 					'product'=>Product::find($id),
@@ -160,15 +165,15 @@ class StockLimitController extends Controller
 				Log::info(empty($limit));
 
 				if (empty($limit)) {
-						if (!empty($request[$store_code])) {
-								$limit = new StockLimit();
-								$limit->store_code = $store_code;
-								$limit->product_code = $id;
-								$limit->limit_reorder = $request[$store_code];
-								$limit->save();
-						}
+						$limit = new StockLimit();
+						$limit->store_code = $store_code;
+						$limit->product_code = $id;
+						$limit->limit_min = $request[$store_code."_min"];
+						$limit->limit_max = $request[$store_code."_max"];
+						$limit->save();
 				} else {
-						$limit->limit_reorder = $request[$store_code];
+						$limit->limit_min = $request[$store_code."_min"];
+						$limit->limit_max = $request[$store_code."_max"];
 						$limit->save();
 				}
 			}

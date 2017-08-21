@@ -47,6 +47,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+
+		Route::resource('stock_batches', 'StockBatchController');
+		Route::get('/stock_batches/id/{id}', 'StockBatchController@searchById');
+		Route::post('/stock_batch/search', 'StockBatchController@search');
+		Route::get('/stock_batch/search', 'StockBatchController@search');
+		Route::get('/stock_batches/delete/{id}', 'StockBatchController@delete');
+		
 		Route::resource('drug_diseases', 'DrugDiseaseController');
 		Route::get('/drug_diseases/id/{id}', 'DrugDiseaseController@searchById');
 		Route::post('/drug_disease/search', 'DrugDiseaseController@search');
@@ -97,7 +104,9 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/stock_input/search', 'StockInputController@search');
 		Route::get('/stock_inputs/delete/{id}', 'StockInputController@delete');
 		Route::get('/stock_inputs/input/{id}/{product_code?}', 'StockInputController@input');
-		Route::post('/stock_input/input', 'StockInputController@input_post');
+		Route::get('/stock_inputs/show/{id}/{product_code?}', 'StockInputController@show');
+		Route::get('/stock_input/post/{id}', 'StockInputController@post');
+		//Route::post('/stock_input/input', 'StockInputController@input_post');
 		Route::get('/stock_input/close/{id}', 'StockInputController@input_close');
 
 		Route::resource('stock_limits', 'StockLimitController');
@@ -745,6 +754,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/product_searches/add/{purchase_id}/{id}', 'ProductSearchController@add');
 				Route::get('/product_searches/bom/{product_code}/{bom_product_code}', 'ProductSearchController@bom');
 				Route::get('/product_searches/asset/{set_code}/{product_code}', 'ProductSearchController@asset');
+				Route::get('/product_searches/bulk/{input_id}/{product_code}', 'ProductSearchController@bulk');
 				Route::post('/product_search/search', 'ProductSearchController@search');
 				Route::get('/product_search/search', 'ProductSearchController@search');
 				Route::get('/product_searches/delete/{id}', 'ProductSearchController@delete');

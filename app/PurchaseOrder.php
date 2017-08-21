@@ -118,7 +118,7 @@ class PurchaseOrder extends Model
 			static::created(function($purchase_order)
 			{
 					$prefix = Auth::user()->authorization->identification_prefix;
-					$purchase_number = $prefix.str_pad(PurchaseOrder::where('purchase_number','like', $prefix."%")->count()+1, 4, '0', STR_PAD_LEFT);
+					$purchase_number = $prefix.str_pad(PurchaseOrder::where('purchase_number','like', $prefix."%")->count()+1, 6, '0', STR_PAD_LEFT);
 					$purchase_order->purchase_number = $purchase_number;
 					$purchase_order->save();
 			});

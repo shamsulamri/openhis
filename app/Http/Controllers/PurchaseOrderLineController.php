@@ -247,15 +247,16 @@ class PurchaseOrderLineController extends Controller
 
 					$receive_name = "receive_quantity_".$line->line_id;
 					$batch_name = "batch_number_".$line->line_id;
-					$expiry_name = "expiry_date_".$line->line_id;
+					$expiry_date = "expiry_date_".$line->line_id;
 
+					Log::info("------>".$expiry_date);
 					$stock_helper->stockReceive($line->line_id,
 							$request[$receive_name], 
 							$request->store_code, 
 							$request[$batch_name], 
 							$request->delivery_number, 
 							$request->invoice_number, 
-							$request[$expiry_name]);
+							$request[$expiry_date]);
 
 
 				}

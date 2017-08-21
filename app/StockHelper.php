@@ -9,12 +9,6 @@ use Log;
 
 class StockHelper 
 {
-	public function getStockCount($product_code, $store_code)
-   	{
-
-			return $this->stockOnHand($product_code, $store_code);
-	}
-
 	public function getStockCountByStore($product_code, $store_code) 
 	{
 			$value = StockStore::where('product_code',$product_code);
@@ -131,6 +125,16 @@ class StockHelper
 			$stock->stock_description = "Purchase id: ".$item->purchase_id;
 			$stock->save();
 			Log::info($stock);
+
+			if ($product->product_track_batch==1) {
+					$batch = new StockBatch();
+					$batch->stock_id = $stock->stock_id;
+					$batch->product_code = $product->product_code;
+					$batch->batch_number = $batch_number;
+					$batch->expiry_date = $stock->expiry_date;
+					$batch->batch_quantity = $quantity;
+					$batch->save();
+			}
 
 			$this->updateAllStockOnHand($product->product_code);
 	}

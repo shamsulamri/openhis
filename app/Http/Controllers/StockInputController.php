@@ -62,7 +62,7 @@ class StockInputController extends Controller
 					$stock_input->username = Auth::user()->username;
 					$stock_input->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/stock_inputs/input/'.$stock_input->input_id);
+					return redirect('/stock_inputs/show/'.$stock_input->input_id);
 			} else {
 					return redirect('/stock_inputs/create')
 							->withErrors($valid)
@@ -142,6 +142,14 @@ class StockInputController extends Controller
 			]);
 	}
 
+	public function show($id)
+	{
+			$stock_input = StockInput::find($id);
+			return view('stock_inputs.show',[
+					'stock_input'=>$stock_input,
+			]);
+	}
+
 	public function input($id, $product_code=null)
 	{
 			$product = new Product();
@@ -160,53 +168,39 @@ class StockInputController extends Controller
 					'product'=>$product,
 					'input_lines'=>$input_lines,
 					'stock_store'=>$stock_store,
+					'stock_helper'=>new StockHelper(),
 			]);
 	}
 
-	public function input_post(Request $request)
+	public function post($id)
 	{
-			$product = Product::find(trim($request->product_code));
-			if (empty($request->product_code)) {
-				$product = new Product();	
+			$input_lines = StockInputLine::where('input_id', $id)->get();
+			foreach($input_lines as $input_line) {
+				$this->input_post($input_line);
 			}
-			$stock_input = StockInput::find($request->input_id);
-			$input_lines = StockInputLine::where('input_id', $request->input_id)->orderBy('line_id','desc')->get();
+
+			$stock_input = StockInput::find($id);
+			$stock_input->input_close=1;
+			$stock_input->save();
+			return redirect('/stock_inputs');
+	}
+
+	public function input_post($line)
+	{
+			$product = $line->product;
+			$stock_input = StockInput::find($line->input_id);
 			$stock_store = StockStore::where('store_code',$stock_input->store_code)
-							->where('product_code', $request->product_code)
+							->where('product_code', $product->product_code)
 							->first();
 
-			$stock_store_quantity=0;
-
-			if (!empty($request->amount_new) && !empty($product)) {
-				if (empty($stock_store)) {
-						Session::flash('error', 'Insufficient quantity.');
-						return redirect('/stock_inputs/input/'.$request->input_id.'/'.$request->product_code)
-									->withInput();
-				}
-				if (!empty($stock_store->stock_quantity)) {
-						$stock_store_quantity = $stock_store->stock_quantity;
-						if ($request->amount_new>$stock_store_quantity && $stock_input->move_code=='transfer') {
-								Session::flash('error', 'New amount cannot be greater than current.');
-								return redirect('/stock_inputs/input/'.$request->input_id.'/'.$request->product_code)
-											->withInput();
-						}
-				}
-				$line = new StockInputLine();
-				$line->input_id = $stock_input->input_id;
-				$line->product_code = $product->product_code;
-				$line->amount_current = $stock_store_quantity;
-				$line->amount_new = $request->amount_new;
-				$line->batch_number = $request->batch_number;
-				$line->amount_difference = $request->amount_new - $stock_store_quantity;
-				$line->save();
-
+			if (!empty($line->amount_new) && !empty($product)) {
 				$stock = new Stock();
 				$stock->username = Auth::user()->username;
 				$stock->move_code = $stock_input->move_code;
 				$stock->store_code = $stock_input->store_code;
 				$stock->product_code = $product->product_code;
-				$stock->stock_quantity = $request->amount_new;
-				$stock->batch_number = $request->batch_number;
+				$stock->stock_quantity = $line->amount_new;
+				$stock->batch_number = $line->batch_number;
 				$stock_datetime = DojoUtility::now();
 				$stock->stock_datetime = $stock_datetime;
 
@@ -248,17 +242,8 @@ class StockInputController extends Controller
 
 				$stock_helper = new StockHelper();
 				$stock_helper->updateAllStockOnHand($stock->product_code);
-
-				$product= new Product();
-				return redirect('/stock_inputs/input/'.$stock_input->input_id);
 			}
 
-			return view('stock_inputs.input', [
-					'stock_input'=>$stock_input,
-					'product'=>$product,
-					'input_lines'=>$input_lines,
-					'stock_store'=>$stock_store,
-			]);
 	}
 
 	public function input_close($id)

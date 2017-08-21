@@ -23,6 +23,9 @@ use App\PurchaseOrder;
 use App\DietMenu;
 use App\ProductAuthorization;
 use Auth;
+use App\StockInputLine;
+use App\StockInput;
+use App\StockStore;
 
 class ProductSearchController extends Controller
 {
@@ -67,6 +70,9 @@ class ProductSearchController extends Controller
 					case "asset":
 							$return_id = $request->set_code;
 							break;
+					case "bulk":
+							$return_id = $request->input_id;
+							break;
 			}
 
 			$product_searches = $product_searches->paginate($this->paginateValue);
@@ -85,6 +91,7 @@ class ProductSearchController extends Controller
 					'week'=>$request->week,
 					'day'=>$request->day,
 					'diet_code'=>$request->diet_code,
+					'input_id'=>$request->input_id,
 			]);
 	}
 
@@ -144,6 +151,25 @@ class ProductSearchController extends Controller
 			Session::flash('message', 'Record successfully created.');
 			return redirect('/product_searches?reason=bom&product_code='.$product_code);
 			
+	}
+
+	public function bulk($input_id, $product_code) 
+	{
+		$stock_input = StockInput::find($input_id);
+		$stock_store = StockStore::where('store_code',$stock_input->store_code)
+					->where('product_code', $product_code)
+					->first();
+
+		$line = new StockInputLine();
+		$line->input_id = $input_id;
+		$line->product_code = $product_code;
+		if ($stock_store) {
+				$line->amount_current = $stock_store->stock_quantity;
+		}
+
+		$line->save();
+		Session::flash('message', 'aaaaRecord successfully created.');
+		return redirect('/product_searches?reason=bulk&line_id='.$line->line_id);
 	}
 
 	public function asset($set_code, $product_code)
@@ -291,6 +317,8 @@ class ProductSearchController extends Controller
 					'week'=>$request->week,
 					'day'=>$request->day,
 					'diet_code'=>$request->diet_code,
+					'line_id'=>$request->line_id,
+					'input_id'=>$request->input_id,
 					]);
 	}
 

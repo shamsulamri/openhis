@@ -21,7 +21,7 @@
 	@endcan
 @if ($product->product_stocked==1)
 		<a class='btn btn-default' href='{{ URL::to('stock_limit/'. $product->product_code) }}'>
-			<span class='fa fa-cart-plus' aria-hidden='true'></span><br>Reorder<br>Limits
+			<span class='fa fa-cart-plus' aria-hidden='true'></span><br>Stock<br>Limits
 		</a>
 		<a class='btn btn-default' href='{{ URL::to('stocks/'. $product->product_code) }}'>
 			<span class='glyphicon glyphicon-road' aria-hidden='true'></span><br>Stock<br>Movements

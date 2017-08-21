@@ -12,7 +12,9 @@ class StockMovement extends Model
 	protected $table = 'stock_movements';
 	protected $fillable = [
 				'move_code',
-				'move_name'];
+				'move_name',
+				'gl_code',
+		];
 	
     protected $guarded = ['move_code'];
     protected $primaryKey = 'move_code';

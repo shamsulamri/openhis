@@ -34,6 +34,17 @@ class AppServiceProvider extends ServiceProvider
 						return True;
 				}	
 		});
+
+		Validator::extend('lower_than_or_equal', function($attribute, $value, $parameters, $validator) {
+				if ($value==$parameters[1]) {
+						return True;
+				}
+				if ($value<$parameters[1]) {
+						return True;
+				} else {
+						return False;
+				}	
+		});
 	}
 
     /**

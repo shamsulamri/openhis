@@ -11,7 +11,8 @@ use Log;
 use DB;
 use Session;
 use App\Product;
-
+use App\StockStore;
+use App\StockInput;
 
 class StockInputLineController extends Controller
 {
@@ -64,7 +65,7 @@ class StockInputLineController extends Controller
 			$stock_input_line = StockInputLine::findOrFail($id);
 			return view('stock_input_lines.edit', [
 					'stock_input_line'=>$stock_input_line,
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
+					'product'=>Product::find($stock_input_line->product_code),
 					]);
 	}
 
@@ -79,13 +80,11 @@ class StockInputLineController extends Controller
 			if ($valid->passes()) {
 					$stock_input_line->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/stock_input_lines/id/'.$id);
+					return redirect('/stock_inputs/input/'.$stock_input_line->input_id);
 			} else {
-					return view('stock_input_lines.edit', [
-							'stock_input_line'=>$stock_input_line,
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
-							])
-							->withErrors($valid);			
+					return redirect('/stock_input_lines/'.$id.'/edit')
+							->withErrors($valid)
+							->withInput();
 			}
 	}
 	
@@ -99,9 +98,10 @@ class StockInputLineController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$line = StockInputLine::find($id);
 			StockInputLine::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/stock_input_lines');
+			return redirect('/stock_inputs/input/'.$line->input_id);
 	}
 	
 	public function search(Request $request)

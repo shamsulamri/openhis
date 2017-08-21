@@ -1,30 +1,18 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
-<h1>Bulk Stock Movement
-<a href='/stock_inputs/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
-</h1>
-<h2>
-{{ $stock_input->store->store_name }} <i class='fa fa-arrow-right'></i> {{ $stock_input->movement->move_name }}
-@if ($stock_input->move_code == 'transfer')
-	<i class='fa fa-arrow-right'></i> {{ $stock_input->store_transfer->store_name }}
-@endif
-</h2>
-<br>
-<a class="btn btn-warning" href="/stock_input/close/{{ $stock_input->input_id }}" role="button">Close Movement</a>
-<br>
-<br>
 <form id='form' action='/stock_input/input' method='post'>
 <table class="table table-hover">
 	<thead>
 	<tr>
-		<th width='25%'>Code</th>
-		<th width='30%'>Product</th>
+		<th>Product</th>
 		<th width='15%'><div align='right'>Batch Number<div></th>
-		<th width='15%'><div align='right'>Quantity<div></th>
-		<th width='15%'><div align='right'>New Amount<div></th>
+		<th width='15%'><div align='right'>Quantity On Hand<div></th>
+		<th width='15%'><div align='right'>New Quantity<div></th>
+		<th><div align='right'><div></th>
 	</tr>
 	</thead>
+	<!--
 	<tr class='info'>
 		<td valign='middle'>
 			@if ($product)
@@ -53,23 +41,31 @@
 			</div>
 		</td>
 	</tr>
+	-->
 	@foreach($input_lines as $line)
 	<tr>
 		<td>
-			{{ $line->product_code }}
-		</td>	
-		<td>
+			
+			<a href='{{ URL::to('stock_input_lines/'. $line->line_id . '/edit') }}'>
 			{{ $line->product->product_name }}
+			</a>
+			<br>
+			{{ $line->product_code }}
 		</td>	
 		<td align='right'>
 			{{ $line->batch_number }}
 		</td>	
 		<td align='right'>
-			{{ number_format($line->amount_current) }}
+			{{ Form::label('label', $stock_helper->getStockCountByStore($line->product_code, $stock_input->store_code), ['class'=>'control-label']) }}
 		</td>	
 		<td align='right'>
 			{{ $line->amount_new }}
 		</td>	
+			<td align='right'>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('stock_input_lines/delete/'. $line->line_id) }}'>
+											<span class='glyphicon glyphicon-remove'></span>
+					</a>
+			</td>
 	</tr>
 	@endforeach
 </table>

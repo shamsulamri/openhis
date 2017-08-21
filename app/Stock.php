@@ -46,7 +46,7 @@ class Stock extends Model
 			];
 
 			if ($product->product_track_batch==1) {
-				$rules['batch_number']='required';
+				//$rules['batch_number']='required';
 			}
 
 			$messages = [

@@ -43,7 +43,7 @@
 			</td>
 			<td align='right'>
 					@if ($stock_input->input_close==0)
-					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/input/'. $stock_input->input_id) }}'>Resume</a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/show/'. $stock_input->input_id) }}'>Resume</a>
 					@endif
 			@can('system-administrator')
 					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/'. $stock_input->input_id . '/edit') }}'>Edit</a>			

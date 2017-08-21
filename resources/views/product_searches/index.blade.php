@@ -18,6 +18,8 @@
 	<input type='hidden' name="week" value="{{ $week }}">
 	<input type='hidden' name="day" value="{{ $day }}">
 	<input type='hidden' name="return_id" value="{{ $return_id }}">
+	<input type='hidden' name="line_id" value="{{ $line_id }}">
+	<input type='hidden' name="input_id" value="{{ $input_id }}">
 </form>
 <br>
 @if ($product_searches->total()>0)
@@ -43,6 +45,9 @@
 				@if ($reason=='menu')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/menu/'. $class_code . '/' . $period_code . '/' . $week . '/'. $day . '/'. $product_search->product_code) .'/'. $diet_code }}'>
 				@endif
+				@if ($reason=='bulk')
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/bulk/'. $input_id . '/' . $product_search->product_code) }}'>
+				@endif
 								<span class='glyphicon glyphicon-plus'></span>
 							</a>
 			</td>
@@ -52,9 +57,9 @@
 </table>
 @endif
 @if (isset($search)) 
-	{{ $product_searches->appends(['diet_code'=>$diet_code,'class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'search'=>$search,'reason'=>$reason,  'purchase_id'=>$purchase_id])->render() }}
+	{{ $product_searches->appends(['input_id'=>$input_id, 'diet_code'=>$diet_code,'class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'search'=>$search,'reason'=>$reason,  'purchase_id'=>$purchase_id])->render() }}
 	@else
-	{{ $product_searches->appends(['diet_code'=>$diet_code,'class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'reason'=>$reason, 'purchase_id'=>$purchase_id])->render() }}
+	{{ $product_searches->appends(['input_id'=>$input_id, 'diet_code'=>$diet_code,'class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'reason'=>$reason, 'purchase_id'=>$purchase_id])->render() }}
 @endif
 <br>
 @if ($product_searches->total()>0)
@@ -77,6 +82,9 @@
 	@endif
 	@if ($reason=='menu')
 	frameLine.src='/diet_menus/menu/{{ $class_code }}/{{ $period_code }}/{{ $week }}/{{ $day }}/{{ $diet_code }}';
+	@endif
+	@if ($reason=='bulk')
+	frameLine.src='/stock_input_lines/{{ $line_id }}/edit';
 	@endif
 </script>
 @endif

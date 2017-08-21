@@ -20,6 +20,7 @@ use App\StockHelper;
 use App\Ward;
 use Auth;
 use App\StoreAuthorization;
+use App\StockBatch;
 
 class StockController extends Controller
 {
@@ -47,6 +48,12 @@ class StockController extends Controller
 			$stock->product_code = $product_code;
 			$stock->stock_datetime = DojoUtility::now();
 			$store = Store::find($store_code);
+			$batches = StockBatch::selectRaw('sum(batch_quantity) as batch_quantity, expiry_date, batch_number')
+						->where('product_code','=', $product_code)
+						->groupBy('batch_number')
+						->orderBy('expiry_date')
+						->get();
+
 			return view('stocks.create', [
 					'stock' => $stock,
 					'move' => Move::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
@@ -56,14 +63,42 @@ class StockController extends Controller
 					'store_code'=>$store_code,
 					'maxYear' => Carbon::now()->year,
 					'stock_helper' => new StockHelper(),
+					'batches'=>$batches,
 					]);
 	}
 
 	public function store(Request $request) 
 	{
+
 			$stock = new Stock();
 
 			$product = Product::find($request->product_code);
+
+			$batches = StockBatch::selectRaw('sum(batch_quantity) as batch_quantity, expiry_date, batch_number, product_code')
+						->where('product_code','=', $product->product_code)
+						->groupBy('batch_number')
+						->orderBy('expiry_date','batch_number')
+						->get();
+
+			/** Validate quantity & batch quantity **/
+			$batch_quantity = 0;
+			if ($product->product_track_batch==1) {
+					foreach($batches as $batch) {
+						$batch_quantity += $request['batch_quantity_'.$batch->batch_number];
+						Log::info($batch_quantity);
+					}
+
+					$batch_quantity += $request['batch_quantity_new'];
+
+					Log::info('---'.$batch_quantity);
+					if ($batch_quantity != abs($request->stock_quantity)) {
+							Session::flash('error', 'Quantity does not equal to the total batch quantity.');
+							return redirect('/stocks/create/'.$request->product_code.'/'.$request->store_code)
+									->withInput();
+					}
+			}
+
+			/** end **/
 
 			$origin_date = $request->stock_datetime;
 			if (DojoUtility::validateDateTime($request->stock_datetime)==true) {
@@ -87,22 +122,27 @@ class StockController extends Controller
 					$stock->username = Auth::user()->username;
 					$stock->stock_id = $request->stock_id;
 
+					$is_negetive = FALSE;
 					switch($request->move_code) {
 							case "receive":
+									$is_negetive=FALSE;
 									$stock->stock_quantity = abs($stock->stock_quantity);
 									$stock->save();
 									break;
 							case "dispose":
+									$is_negetive=TRUE;
 									$stock->stock_quantity = abs($stock->stock_quantity);
 									$stock->stock_quantity = -($stock->stock_quantity);
 									$stock->save();
 									break;
 							case "return":
+									$is_negetive=TRUE;
 									$stock->stock_quantity = abs($stock->stock_quantity);
 									$stock->stock_quantity = -($stock->stock_quantity);
 									$stock->save();
 									break;
 							case "transfer":
+									$is_negetive=TRUE;
 									$store = Store::find($stock->store_code_transfer);
 									$stock->stock_quantity = abs($stock->stock_quantity);
 									$stock->stock_quantity = ($stock->stock_quantity)*-1;
@@ -123,10 +163,46 @@ class StockController extends Controller
 									$transfer->save();
 									break;
 							default:
+									if ($request->stock_quantity<0) $is_negetive=TRUE;
 									$stock->save();
 
 					}
 
+
+					if ($product->product_track_batch==1) {
+							if ($stock->move_code=='take') {
+									StockBatch::where('product_code','=', $stock->product_code)->delete();
+							}
+							foreach($batches as $batch) {
+									$batch_quantity = $request['batch_quantity_'.$batch->batch_number];
+									$batch_quantity = abs($batch_quantity);
+
+									if ($is_negetive) {
+										$batch_quantity = abs($batch_quantity)*-1;
+									}
+
+									if (!empty($batch_quantity)) {
+
+											$new_batch = new StockBatch();
+											$new_batch->stock_id = $stock->stock_id;
+											$new_batch->product_code = $batch->product_code;
+											$new_batch->batch_number = $batch->batch_number;
+											$new_batch->batch_quantity = $batch_quantity;
+											$new_batch->expiry_date = $batch->expiry_date;
+											$new_batch->save();
+									}
+							}
+
+							if (!empty($request->batch_number_new)) {
+									$new_batch = new StockBatch();
+									$new_batch->stock_id = $stock->stock_id;
+									$new_batch->product_code = $stock->product_code;
+									$new_batch->batch_number = $request->batch_number_new;
+									$new_batch->batch_quantity = $request->batch_quantity_new;
+									$new_batch->expiry_date = DojoUtility::dateWriteFormat($request->batch_expiry_date_new);
+									$new_batch->save();
+							}
+					}
 					
 					$helper = new StockHelper();
 					$helper->updateAllStockOnHand($stock->product_code);

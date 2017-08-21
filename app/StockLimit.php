@@ -13,7 +13,8 @@ class StockLimit extends Model
 	protected $fillable = [
 				'product_code',
 				'store_code',
-				'limit_reorder'];
+				'limit_max',
+				'limit_min'];
 	
     protected $guarded = ['limit_id'];
     protected $primaryKey = 'limit_id';
@@ -37,4 +38,8 @@ class StockLimit extends Model
 	}
 
 	
+	public function store()
+	{
+		return $this->belongsTo('App\Store', 'store_code');
+	}
 }

@@ -31,17 +31,55 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('batch_number')) has-error @endif'>
-		<label for='batch_number' class='col-sm-3 control-label'>Batch Number
-			@if ($product->product_track_batch==1)
-			<span style='color:red;'> *</span>
-			@endif
-		</label>
+	@if ($product->product_track_batch)
+    <div class='form-group'>
+        <label class='col-sm-3 control-label'>Batch</label>
         <div class='col-sm-9'>
-            {{ Form::text('batch_number', null, ['class'=>'form-control']) }}
-            @if ($errors->has('batch_number')) <p class="help-block">{{ $errors->first('batch_number') }}</p> @endif
+				<table class="table table-hover">
+					<thead>
+					<tr>
+						<th width='30%'>Number</th>
+						<th width='30%'><div align='center'>Expiry Date<div></th>
+						<th width='30%'><div align='center'>Quantity<div></th>
+						<th></th>
+					</tr>
+					</thead>
+			@foreach ($batches as $batch)	
+					<tr>
+						<td>
+            					{{ Form::label('stock_quantity', $batch->batch_number, ['class'=>'form-control','placeholder'=>'',]) }}
+						</td>
+						<td>
+            					{{ Form::label('stock_quantity', $batch->expiry_date, ['class'=>'form-control','placeholder'=>'',]) }}
+						</td>
+						<td>
+								{{ Form::text('batch_quantity_'.$batch->batch_number, null, ['class'=>'form-control']) }}
+						</td>
+						<td>
+								/ {{ $batch->batch_quantity }}
+						</td>
+					</tr>
+			@endforeach
+					<tr>
+						<td>
+				{{ Form::text('batch_number_new', null,['placeholder'=>'Batch Number', 'class'=>'form-control']) }}
+						</td>
+						<td>
+							<div class="input-group date">
+								{{ Form::text('batch_expiry_date_new',null, ['class'=>'form-control','data-mask'=>'99/99/9999','id'=>'batch_expiry_date_new']) }}
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
+						</td>
+						<td>
+								{{ Form::text('batch_quantity_new', null,['placeholder'=>'Quantity', 'class'=>'form-control']) }}
+						</td>
+						<td>
+						</td>
+					</tr>
+				</table>
         </div>
     </div>
+	@endif
 
     <div class='form-group  @if ($errors->has('store_code_transfer')) has-error @endif'>
         <label for='store_code_transfer' class='col-sm-3 control-label'>Transfer Store</label>
@@ -95,6 +133,7 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
 					</div>
 			</div>
 	</div>
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/stocks/{{ $product->product_code }}/{{ $store->store_code }}" role="button">Cancel</a>
@@ -136,6 +175,14 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
 				autoclose: true
 		});
 
+		$('#batch_expiry_date_new').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
+		});
 		$('.clockpicker').clockpicker();
 
          $(document).ready(function(){

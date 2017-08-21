@@ -38,7 +38,6 @@ class Product extends Model
 				'purchase_tax_code',
 				'location_code',
 				'form_code',
-				'gl_code',
 				'product_track_batch',
 				'status_code',
 				'product_average_cost',
@@ -139,16 +138,6 @@ class Product extends Model
 	public function drug()
 	{
 			return $this->hasOne('App\Drug', 'drug_code', 'product_code');
-	}
-
-	public function getGLName()
-	{
-			if ($this->attributes['gl_code']) {
-				return GeneralLedger::find($this->attributes['gl_code'])->gl_name;
-			} else {
-				return "";
-			}
-
 	}
 
 	public function getOrderFormName()

@@ -140,7 +140,6 @@ class ProductController extends Controller
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
-					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 					]);
 	}
 
@@ -173,7 +172,6 @@ class ProductController extends Controller
 					'return_id' => $return_id,
 					'reason' => $request->reason,
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
-					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 				]);	
 	}
 
@@ -221,7 +219,6 @@ class ProductController extends Controller
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 					'store_code'=>$store_code,
-					'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 					'categories'=>$this->getProductCategories($product_authorization),
 					]);
 	}
@@ -255,7 +252,6 @@ class ProductController extends Controller
 							'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 							'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 							'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
-							'general_ledger' => GeneralLedger::all()->sortBy('gl_name')->lists('gl_name', 'gl_code')->prepend('',''),
 							'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 							])
 							->withErrors($valid);			

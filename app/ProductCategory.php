@@ -12,6 +12,7 @@ class ProductCategory extends Model
 	protected $table = 'product_categories';
 	protected $fillable = [
 				'category_name',
+				'gl_code',
 		];
 	
     protected $guarded = ['category_code'];
@@ -35,5 +36,14 @@ class ProductCategory extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function getGLName()
+	{
+			if ($this->attributes['gl_code']) {
+				return GeneralLedger::find($this->attributes['gl_code'])->gl_name;
+			} else {
+				return "";
+			}
+
+	}
 	
 }

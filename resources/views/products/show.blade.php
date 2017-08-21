@@ -122,13 +122,6 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('gl_code')) has-error @endif'>
-						<label for='gl_code' class='col-sm-4 control-label'>GL Code</label>
-						<div class='col-sm-8'>
-            				{{ Form::label('', $product->getGLName(), ['class'=>'form-control']) }}
-							@if ($errors->has('gl_code')) <p class="help-block">{{ $errors->first('gl_code') }}</p> @endif
-						</div>
-					</div>
 			</div>
 	</div>
 
