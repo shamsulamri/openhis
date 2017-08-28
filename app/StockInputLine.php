@@ -13,11 +13,12 @@ class StockInputLine extends Model
 	protected $table = 'stock_input_lines';
 	protected $fillable = [
 				'input_id',
+				'po_line_id',
 				'product_code',
-				'batch_number',
-				'amount_current',
-				'amount_new',
-				'amount_difference'];
+				'line_value',
+				'line_pre_quantity',
+				'line_post_quantity',
+				'line_difference'];
 	
     protected $guarded = ['line_id'];
     protected $primaryKey = 'line_id';
@@ -26,11 +27,10 @@ class StockInputLine extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'amount_new'=>'required',
-				'amount_current'=>'required',
+				'line_post_quantity'=>'required',
 			];
-
 			
+			//'amount_current'=>'required',
 			
 			$messages = [
 				'required' => 'This field is required',
@@ -47,15 +47,13 @@ class StockInputLine extends Model
 			if ($stock_store) {
 						$this->attributes['amount_current'] = $stock_store->stock_quantity;
 			}
-			Log::info("----------------------------");
-			Log::info($this->attributes['amount_current']);
 
         	if ($method=='PUT') {
 				$product = Product::find($this->attributes['product_code']);
 
 
 				if ($stock_input->move_code=='transfer') {
-        	   			$rules['amount_new'] = 'lower_than_or_equal:'.$this->attributes['amount_new'].','.$stock_store->stock_quantity;
+        	   			$rules['line_post_quantity'] = 'lower_than_or_equal:'.$this->attributes['line_post_quantity'].','.$stock_store->stock_quantity;
 						$messages['lower_than_or_equal']="Quantity cannot be greater than on-hand.";
 				}
 
@@ -72,12 +70,18 @@ class StockInputLine extends Model
 		if (!empty($this->amount_current)) {
 			return $this->amount_current;
 		} else {
-			return "-";
+			return 0;
 		}
 
 	}
+
 	public function product()
 	{
 		return $this->belongsTo('App\Product', 'product_code');
+	}
+
+	public function batches()
+	{
+		return $this->hasMany('App\StockInputBatch', 'line_id');
 	}
 }

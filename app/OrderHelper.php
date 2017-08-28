@@ -27,6 +27,16 @@ class OrderHelper
 			return $order;
 	}
 
+	public function getPrescription($order_id)
+	{
+			$drug = OrderDrug::where('order_id', $order_id)->first();
+
+			$value = $drug->drug_dosage." ".$drug->dosage->dosage_name;
+			$value = $value.", ".$drug->route_code.", ".$drug->frequency_code;
+			$value = $value.", ".$drug->drug_duration." ".$drug->period_code;
+			return $value;
+	}
+
 	public static function orderItem($product, $ward_code) 
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));

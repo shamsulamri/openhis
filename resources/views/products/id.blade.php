@@ -3,12 +3,11 @@
 	<div class='col-sm-12'>
 		<h2>{{ $product->product_name }}</h2>
 		<h6>{{ $product->product_code }}</strong></h6>
-		<!--
 		@if ($product->product_on_hand>0)
-		<span class='label label-default'>On Hand: {{ $product->product_on_hand }}</span>
-		<br>
+		<h3>
+		Stock On Hand: {{ $product->product_on_hand }}
+		</h3>
 		@endif
-		-->
 		<br>
 	</div>
 </div>

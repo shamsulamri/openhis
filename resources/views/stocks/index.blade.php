@@ -18,9 +18,11 @@
 	<div class='col-md-8'>
 
 		@if (!empty($store_code))
+		<!--
 		<a href='/stocks/create/{{ $product->product_code }}/{{ $store_code }}' class='btn btn-primary'>Create</a>
 		<br>
 		<br>
+		-->
 		@endif
 		@if ($stocks->total()>0)
 		<table class="table table-hover">
@@ -29,6 +31,7 @@
 			<th>Date</th> 
 			<th>Movement</th>
 			<th><div align='right'>Quantity</div></th>
+			<th><div align='right'>Value</div></th>
 			@can('system-administrator')
 			<th></th>
 			@endcan
@@ -45,9 +48,7 @@
 							@endif
 					</td>
 					<td>
-							<a href='{{ URL::to('stocks/'. $stock->stock_id . '/edit') }}'>
 								{{$stock->move_name}}
-							</a>
 							@if (!empty($stock->stock_description))
 								<br>
 								<small>{{ $stock->stock_description }}</small>
@@ -55,6 +56,9 @@
 					</td>
 					<td align='right'>
 							{{ floatval($stock->getStockQuantity()) }}
+					</td>
+					<td align='right'>
+							{{ number_format(abs($stock->stock_value),2) }}
 					</td>
 					@can('system-administrator')
 					<td align='right'>

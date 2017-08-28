@@ -100,7 +100,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_stocked')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_stocked', '1') }} <label>Physical Stock</label><br> Check for product you want to manage stock level for.
+							{{ Form::checkbox('product_stocked', '1') }} <label>Stocked Product</label><br> Check for product you want to manage stock level for.
 							@if ($errors->has('product_stocked')) <p class="help-block">{{ $errors->first('product_stocked') }}</p> @endif
 						</div>
 					</div>
@@ -108,7 +108,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_track_batch')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_track_batch', '1') }} <label>Track Batch Number</label><br>Batch number required during stock movement.
+							{{ Form::checkbox('product_track_batch', '1') }} <label>Batch Tracked</label><br>Batch number required during stock movement.
 							@if ($errors->has('product_track_batch')) <p class="help-block">{{ $errors->first('product_track_batch') }}</p> @endif
 						</div>
 					</div>
@@ -238,10 +238,30 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_sale_price')) has-error @endif'>
-						{{ Form::label('product_sale_price', 'Sale Price',['class'=>'col-sm-4 control-label']) }}
+						{{ Form::label('product_sale_price', 'Sell Price',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
 							{{ Form::text('product_sale_price', null, ['class'=>'form-control','placeholder'=>'']) }}
 							@if ($errors->has('product_sale_price')) <p class="help-block">{{ $errors->first('product_sale_price') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_average_cost')) has-error @endif'>
+						{{ Form::label('product_average_cost', 'Average Cost',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::label('product_average_cost', $product->product_average_cost, ['class'=>'form-control']) }}
+							@if ($errors->has('product_average_cost')) <p class="help-block">{{ $errors->first('product_average_cost') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('tax_code')) has-error @endif'>
+						{{ Form::label('tax_code', 'Output Tax Code',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::select('tax_code', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
+							@if ($errors->has('tax_code')) <p class="help-block">{{ $errors->first('tax_code') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -258,13 +278,6 @@
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('tax_code')) has-error @endif'>
-						{{ Form::label('tax_code', 'Output Tax Code',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-							{{ Form::select('tax_code', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
-							@if ($errors->has('tax_code')) <p class="help-block">{{ $errors->first('tax_code') }}</p> @endif
-						</div>
-					</div>
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>

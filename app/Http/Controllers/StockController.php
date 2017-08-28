@@ -46,7 +46,6 @@ class StockController extends Controller
 	{
 			$stock = new Stock();
 			$stock->product_code = $product_code;
-			$stock->stock_datetime = DojoUtility::now();
 			$store = Store::find($store_code);
 			$batches = StockBatch::selectRaw('sum(batch_quantity) as batch_quantity, expiry_date, batch_number')
 						->where('product_code','=', $product_code)
@@ -56,7 +55,7 @@ class StockController extends Controller
 
 			return view('stocks.create', [
 					'stock' => $stock,
-					'move' => Move::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
+					'move' => Move::where('move_code','<>','sale')->orderBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
 					'stores' => Store::where('store_code','<>',$store_code)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'product' => Product::find($product_code),
 					'store' => $store,
@@ -68,6 +67,66 @@ class StockController extends Controller
 	}
 
 	public function store(Request $request) 
+	{
+			$stock_helper = new StockHelper();
+			$stock = new Stock();
+
+			$product = Product::find($request->product_code);
+
+			$batches = $stock_helper->getBatches($product->product_code);
+
+			/** Validate batches **/
+			$batch_quantity = 0;
+			if ($product->product_track_batch==1) {
+					foreach($batches as $batch) {
+						$batch_quantity += $request[$product->product_code.'_'.$batch->batch_number];
+						Log::info($batch_quantity);
+					}
+
+					$batch_quantity += $request['batch_quantity_new'];
+
+					if ($batch_quantity != abs($request->stock_quantity)) {
+							Session::flash('error', 'Total batch quantity must equal to global quantity.');
+							return redirect('/stocks/create/'.$request->product_code.'/'.$request->store_code)
+									->withInput();
+					}
+			}
+			/** end **/
+
+
+			$valid = $stock->validate($request->all(), $request->_method);
+
+			$validQuantity=True;
+			$quantityControls = array('adjust','transfer','dispose','return');
+			if (in_array($request->move_code,$quantityControls)) {
+					if (abs($request->stock_quantity)>$product->product_on_hand) {
+							$validQuantity=False;
+					}
+			}
+
+			if ($valid->passes() && $validQuantity) {
+					$stock = new Stock($request->all());
+					$stock->username = Auth::user()->username;
+
+					$stock = $stock_helper->moveStock($stock);
+
+					if ($product->product_track_batch==1) {
+							$stock_helper->moveStockBatch($request, $stock);
+					}
+
+					Session::flash('message', 'Record successfully created.');
+					return redirect('/stocks/'.$stock->product_code.'/'.$stock->store_code);
+			} else {
+					if (!$validQuantity) {
+						$valid->getMessageBag()->add('stock_quantity','Amount greater than item on hand.');
+					}
+					return redirect('/stocks/create/'.$request->product_code.'/'.$request->store_code)
+							->withErrors($valid)
+							->withInput();
+			}
+	}
+
+	public function store2(Request $request) 
 	{
 
 			$stock = new Stock();
@@ -100,12 +159,14 @@ class StockController extends Controller
 
 			/** end **/
 
+			/**
 			$origin_date = $request->stock_datetime;
 			if (DojoUtility::validateDateTime($request->stock_datetime)==true) {
 					$stock_datetime = Carbon::createFromFormat('d/m/Y H:i', $request->stock_datetime);
 					$stock_datetime = $stock_datetime->format('Y/m/d H:i');
 					$request->stock_datetime = $stock_datetime;
 			}
+			**/
 
 			$valid = $stock->validate($request->all(), $request->_method);
 
@@ -118,12 +179,29 @@ class StockController extends Controller
 			}
 
 			if ($valid->passes() && $validQuantity) {
+					if ($request->move_code=='take') {
+							Stock::where('product_code','=', $request->product_code)
+									->where('store_code', '=', $request->store_code)
+									->delete();
+					}
 					$stock = new Stock($request->all());
 					$stock->username = Auth::user()->username;
 					$stock->stock_id = $request->stock_id;
 
 					$is_negetive = FALSE;
 					switch($request->move_code) {
+							case "loan_in":
+									$is_negetive=FALSE;
+									$stock->stock_quantity = abs($stock->stock_quantity);
+									$stock->save();
+									break;
+							case "loan_out":
+									$is_negetive=TRUE;
+									$stock->stock_quantity = abs($stock->stock_quantity);
+									$stock->stock_quantity = -($stock->stock_quantity);
+									$stock->stock_value = -($stock->stock_value);
+									$stock->save();
+									break;
 							case "receive":
 									$is_negetive=FALSE;
 									$stock->stock_quantity = abs($stock->stock_quantity);
@@ -133,12 +211,14 @@ class StockController extends Controller
 									$is_negetive=TRUE;
 									$stock->stock_quantity = abs($stock->stock_quantity);
 									$stock->stock_quantity = -($stock->stock_quantity);
+									$stock->stock_value = -($stock->stock_value);
 									$stock->save();
 									break;
 							case "return":
 									$is_negetive=TRUE;
 									$stock->stock_quantity = abs($stock->stock_quantity);
 									$stock->stock_quantity = -($stock->stock_quantity);
+									$stock->stock_value = -($stock->stock_value);
 									$stock->save();
 									break;
 							case "transfer":
@@ -147,26 +227,32 @@ class StockController extends Controller
 									$stock->stock_quantity = abs($stock->stock_quantity);
 									$stock->stock_quantity = ($stock->stock_quantity)*-1;
 									$stock->stock_description = "Transfer out to ".$store->store_name;
+									$stock->stock_value = -($stock->stock_value);
 									$stock->save();
 
 									$store = Store::find($stock->store_code);
 									$transfer = new Stock();
 									$transfer->product_code = $stock->product_code;
 									$transfer->username = $stock->username;
-									$transfer->stock_datetime = $origin_date;
+									//$transfer->stock_datetime = $origin_date;
 									$transfer->move_code = $stock->move_code;
 									$transfer->store_code_transfer = $stock->store_code;
 									$transfer->store_code = $stock->store_code_transfer;
 									$transfer->stock_quantity = abs($stock->stock_quantity);
+									$transfer->stock_value = abs($stock->stock_value);
 									$transfer->stock_tag = $stock->stock_id;
 									$transfer->stock_description = "Transfer in from ".$store->store_name;
 									$transfer->save();
 									break;
 							default:
 									if ($request->stock_quantity<0) $is_negetive=TRUE;
+									if ($is_negetive) {
+											$stock->stock_value = -($stock->stock_value);
+									}
 									$stock->save();
 
 					}
+
 
 
 					if ($product->product_track_batch==1) {
@@ -326,12 +412,13 @@ class StockController extends Controller
 					$store_code = $this->getDefaultStore($request);
 			} 
 
-			$stocks = Stock::orderBy('stock_datetime','desc')
+			$stocks = Stock::orderBy('stock_id','desc')
 					->leftJoin('stock_movements as b', 'b.move_code', '=','stocks.move_code')
 					->leftJoin('stores as c', 'c.store_code', '=','stocks.store_code')
 					->where('product_code','=',$product_code)
 					->where('stocks.store_code','=',$store_code)
 					->orderBy('stock_id','desc')
+					->withTrashed()
 					->paginate($this->paginateValue);
 
 			$product = Product::find($product_code);

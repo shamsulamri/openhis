@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-New Stock Bulk Movement
+New Stock Movement
 </h1>
 <br>
 {{ Form::model($stock_input, ['url'=>'stock_inputs', 'class'=>'form-horizontal']) }} 

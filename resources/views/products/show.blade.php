@@ -1,7 +1,14 @@
 @extends('layouts.app2')
 
 @section('content')
-<h3>View Product</h3>
+@if ($reason=='bulk')
+<a class="btn btn-default" href="{{ url('stock_inputs/input/'.$return_id) }}" role="button">Back</a>
+@elseif ($reason=='purchase_order')
+<a class="btn btn-default" href="{{ url('purchase_order_lines/index/'.$return_id) }}" role="button">Back</a>
+@else
+<a class="btn btn-default" href="{{ url('order_sets/index/'.$return_id) }}" role="button">Back</a>
+@endif
+<br>
 <br>
 {{ Form::model($product, ['id'=>'product_form', 'url'=>'products', 'class'=>'form-horizontal']) }} 
 	<!-- Information -->
@@ -44,19 +51,19 @@
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('order_form')) has-error @endif'>
-						<label for='order_form' class='col-sm-4 control-label'>Order Form</label>
+					<div class='form-group  @if ($errors->has('average_cost')) has-error @endif'>
+						<label for='average_cost' class='col-sm-4 control-label'>Average Cost</label>
 						<div class='col-sm-8'>
-            				{{ Form::label('order_form', $product->getOrderFormName(), ['class'=>'form-control']) }}
-							@if ($errors->has('order_form')) <p class="help-block">{{ $errors->first('order_form') }}</p> @endif
+            				{{ Form::label('average_cost', $product->product_average_cost, ['class'=>'form-control']) }}
+							@if ($errors->has('average_cost')) <p class="help-block">{{ $errors->first('average_cost') }}</p> @endif
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('form_code')) has-error @endif'>
-						{{ Form::label('form_code', 'Result Form',['class'=>'col-sm-4 control-label']) }}
+						{{ Form::label('form_code', 'Conversion Unit',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('form_code', $product->getFormName(), ['class'=>'form-control']) }}
+            				{{ Form::label('form_code', $product->product_conversion_unit, ['class'=>'form-control']) }}
 							@if ($errors->has('form_code')) <p class="help-block">{{ $errors->first('form_code') }}</p> @endif
 						</div>
 					</div>
@@ -156,17 +163,6 @@
 	</div>
 
 
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group'>
-						<div class="col-sm-offset-4 col-sm-8">
-							<a class="btn btn-default" href="{{ url('order_sets/index/'.$return_id) }}" role="button">Back</a>
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-			</div>
-	</div>
 
 {{ Form::close() }}
 @endsection

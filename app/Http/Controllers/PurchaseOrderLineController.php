@@ -14,7 +14,11 @@ use App\Product;
 use App\PurchaseOrder;
 use App\Store;
 use App\StockHelper;
+use App\Stock;
+use Auth;
 use App\DojoUtility;
+use App\StockInput;
+use App\StockInputLine;
 
 class PurchaseOrderLineController extends Controller
 {
@@ -190,6 +194,38 @@ class PurchaseOrderLineController extends Controller
 	{
 			$purchase_order = PurchaseOrder::find($id);
 			$purchase_order_lines = PurchaseOrderLine::where('purchase_id',$id)
+										->get();
+
+			$stock_input = new StockInput();
+			$stock_input->username = Auth::user()->username;
+			$stock_input->move_code = 'receive';
+			$stock_input->store_code = 'main';
+			$stock_input->purchase_id = $id;
+			$stock_input->input_description = "Purchase Order Identification:".$id;
+			$stock_input->save();
+
+			$stock_helper = new StockHelper();
+
+			foreach($purchase_order_lines as $line) {
+				$total_receive = $stock_helper->stockReceiveSum($line->line_id);
+				Log::info('Total: '.$total_receive);
+
+				$input_line = new StockInputLine();
+				$input_line->input_id = $stock_input->input_id;
+				$input_line->po_line_id = $line->line_id;
+				$input_line->product_code = $line->product_code;
+				$input_line->line_value = $line->line_total;
+				$input_line->line_post_quantity = $line->line_quantity_ordered-$total_receive;
+				$input_line->save();
+			}
+
+			return redirect('stock_inputs/show/'.$stock_input->input_id);
+	}
+
+	public function stockReceiveLine2($id) 
+	{
+			$purchase_order = PurchaseOrder::find($id);
+			$purchase_order_lines = PurchaseOrderLine::where('purchase_id',$id)
 										->select('line_id')
 										->get();
 
@@ -209,7 +245,7 @@ class PurchaseOrderLineController extends Controller
 			$valid = array();
 			$stock_helper = new StockHelper();
 			$purchase_order_lines = PurchaseOrderLine::where('purchase_id',$id)
-										->select('line_id')
+										->select('line_id','product_code','line_total')
 										->get();
 
 			//if ($request->count_completed==0) {
@@ -249,6 +285,7 @@ class PurchaseOrderLineController extends Controller
 					$batch_name = "batch_number_".$line->line_id;
 					$expiry_date = "expiry_date_".$line->line_id;
 
+					/**
 					Log::info("------>".$expiry_date);
 					$stock_helper->stockReceive($line->line_id,
 							$request[$receive_name], 
@@ -257,6 +294,27 @@ class PurchaseOrderLineController extends Controller
 							$request->delivery_number, 
 							$request->invoice_number, 
 							$request[$expiry_date]);
+							**/
+
+						$stock_quantity = $request[$receive_name];
+						if ($line->product->product_conversion_unit>0) {
+								$stock_quantity = $stock_quantity*$line->product->product_conversion_unit;	
+						}
+
+
+						$stock = new Stock();
+						$stock->username = Auth::user()->username;
+						$stock->move_code = 'receive';
+						$stock->store_code = $request->store_code;
+						$stock->product_code = $line->product_code;
+						$stock->stock_quantity = $stock_quantity;
+						$stock->stock_value = $line->line_total;
+						$stock->batch_number = $request[$batch_name];
+						$stock->stock_datetime = DojoUtility::now();
+						$stock->stock_description = "Purchase id: ".$line->purchase_id;
+						$stock->invoice_number = $request->invoice_number;
+
+						$stock = $stock_helper->moveStock($stock);
 
 
 				}
@@ -272,7 +330,8 @@ class PurchaseOrderLineController extends Controller
 			}
 
 			Session::flash('message', 'Record successfully created.');
-			return redirect('/purchase_order_line/receive/'.$id);
+			//return redirect('/purchase_order_line/receive/'.$id);
+			return redirect('/purchase_orders');
 	}
 
 	public function validateStockReceive(Request $request, $purchase_id)

@@ -11,8 +11,11 @@ class StockInput extends Model
 {
 	protected $table = 'stock_inputs';
 	protected $fillable = [
+				'purchase_id',
 				'move_code',
 				'store_code_transfer',
+				'input_description',
+				'input_close',
 				'store_code'];
 	
     protected $guarded = ['input_id'];
@@ -43,7 +46,7 @@ class StockInput extends Model
 
 	public function store_transfer()
 	{
-		return $this->belongsTo('App\Store', 'store_code_transfer');
+		return $this->belongsTo('App\Store', 'store_code_transfer', 'store_code');
 	}
 	public function movement()
 	{

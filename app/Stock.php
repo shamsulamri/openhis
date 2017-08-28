@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
@@ -10,15 +11,20 @@ use Log;
 
 class Stock extends Model
 {
+	use SoftDeletes;
+	protected $dates = ['deleted_at'];
+
 	protected $table = 'stocks';
 	protected $fillable = [
 				'line_id',
+				'order_id',
 				'move_code',
 				'store_code',
 				'store_code_transfer',
 				'product_code',
 				'stock_datetime',
 				'stock_quantity',
+				'stock_value',
 				'stock_description',
 				'stock_tag',
 				'loan_id',
@@ -40,14 +46,10 @@ class Stock extends Model
 				'store_code'=>'required',
 				'product_code'=>'required',
 				'stock_quantity'=>'required',
-				'stock_datetime'=>'required|size:16|date_format:d/m/Y H:i',
+				'stock_value'=>'required',
 				'store_code_transfer'=>'required_if:move_code,==,transfer',
 				'expiry_date'=>'size:10|date_format:d/m/Y',
 			];
-
-			if ($product->product_track_batch==1) {
-				//$rules['batch_number']='required';
-			}
 
 			$messages = [
 				'required' => 'This field is required',

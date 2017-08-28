@@ -3,23 +3,20 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
-class StockBatch extends Model
+class StockInputBatch extends Model
 {
-	use SoftDeletes;
-	protected $dates = ['deleted_at'];
-
-	protected $table = 'stock_batches';
+	protected $table = 'stock_input_batches';
 	protected $fillable = [
-				'stock_id',
-				'store_code',
+				'input_id',
+				'line_id',
 				'product_code',
 				'batch_number',
-				'expiry_date',
+				'batch_expiry_date',
 				'batch_quantity'];
 	
     protected $guarded = ['batch_id'];
@@ -29,13 +26,13 @@ class StockBatch extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'stock_id'=>'required',
+				'line_id'=>'required',
+				'product_code'=>'required',
 				'batch_number'=>'required',
+				'batch_expiry_date'=>'required',
 				'batch_quantity'=>'required',
 			];
 
-			
-			
 			$messages = [
 				'required' => 'This field is required'
 			];
@@ -43,5 +40,18 @@ class StockBatch extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	/*
+	public function setBatchExpiryDateAttribute($value)
+	{
+		$this->attributes['batch_expiry_date'] = null;
+		if (DojoUtility::validateDate($value)==true) {
+			$this->attributes['batch_expiry_date'] = DojoUtility::dateWriteFormat($value);
+		}
+	}
+	 */
 	
+	public function StockInputLine()
+	{
+			return $this->belongsTo('App\StockInputLine', 'line_id');
+	}
 }

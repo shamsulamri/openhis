@@ -23,12 +23,13 @@
 <br>
 
 @if ($order_tasks->total()>0)
-<table class="table table-hover">
+<table class="table">
  <thead>
 	<tr> 
     <th></th>
     <th>Product</th>
-    <th>Request</th>
+    <th>Available</th>
+    <th>Quantity</th>
     <th>Ordered By</th>
     <th>Date</th>
 	<th></th>
@@ -40,31 +41,55 @@
 	<?php 
 	$status='';
 	$order_product = $product->find($order->product_code);
+	$allocated =  $stock_helper->getStockAllocatedByStore($order->product_code, $location->store_code, $encounter_id); //-$order->order_quantity_request;
+	$available = $stock_helper->getStockCountByStore($order->product_code, $location->store_code);
+	//$available = $available-$allocated;
 	?>
 	@if ($order->order_completed==1) 
 			<?php $status='success' ?>
 	@endif
+	@if ($product->product_track_batch==0)
+				@if ($available-$allocated<$order->order_quantity_request)
+						<?php $status = 'danger'; ?>
+				@endif
+	@endif
 	<tr class='{{ $status }}'>
 			<td width='10'>
-					@if (!isset($order->cancel_id))
+					@if (!isset($order->cancel_id) && $order->order_completed==0)
 					{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
 					@endif
 			</td>
 			<td>
-					@if (!isset($order->cancel_id))
-					<a href='{{ URL::to('order_tasks/'. $order->order_id . '/edit') }}'>
-					{{$order->product_name}}
-					</a>
+					@if (!isset($order->cancel_id) && $order->order_completed==0)
+							<a href='{{ URL::to('order_tasks/'. $order->order_id . '/edit') }}'>
+							{{$order->product_name}}
+							</a>
+					@elseif (!isset($order->cancel_id) && $order->order_completed==1)
+							{{$order->product_name}}
 					@else
-					<strike>
-					{{$order->product_name}}
-					</strike>
+							<strike>
+							{{$order->product_name}}
+							</strike>
+					@endif
+
+					@if ($order_product->category_code=='drugs')
+					<br>
+						{{ $order_helper->getPrescription($order->order_id) }}
+					@endif
+
+					@if ($status=='danger')
+						<br>
+						<span class='label label-danger'>Insufficient amount.</span>
 					@endif
 			</td>
 			<td>
-					{{ $order->order_quantity_request }}
-					@if (!empty($order_product->unitMeasure->unit_name))
-					{{ $order_product->unitMeasure->unit_name }}
+					{{ $available }} @if($allocated!=0) ({{ $allocated }}) @endif
+			</td>
+			<td width='100'>
+					@if ($order->product_track_batch==0)
+					{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
+					@else
+					{{ $order->order_quantity_request }} 
 					@endif
 			</td>
 			<td>
@@ -81,6 +106,70 @@
 					@endif
 			</td>
 	</tr>
+	@if ($order->product_track_batch && $order->order_completed==0)
+<?php
+	$batches = $stock_helper->getBatches($order->product_code, $location->store_code);
+	$order_request = $order->order_quantity_request;
+	$total_quantity = 0;
+?>
+			@if (count($batches)>0) 
+			<tr>
+				<td colspan=1>		
+				</td>
+				<td colspan=2>
+						<table class='table'>
+							<thead>
+							<tr>
+								<th>Batch Number</th>
+								<th>Expiry Date<div></th>
+								<th width='20%'>On-Hand</th>
+								<th width='20%'>Quantity<div></th>
+							</tr>
+							</thead>
+					@foreach ($batches as $batch)	
+						<?php
+						$allocated = 0;
+						if ($order_request>$batch->batch_quantity) {
+							$allocated = $batch->batch_quantity;
+						} else {
+							$allocated = $order_request-$total_quantity;
+						}
+						if ($allocated+$total_quantity>$order_request) $allocated = $order_request-$total_quantity;
+						$total_quantity += $allocated;
+						?>
+							<tr>
+								<td>
+										{{ Form::label('stock_quantity', $batch->batch_number, ['class'=>'form-control']) }}
+								</td>
+								<td>
+										{{ Form::label('stock_quantity', $batch->expiry_date, ['class'=>'form-control']) }}
+								</td>
+								<td>
+										{{ Form::label('batch_quantity', $batch->batch_quantity, ['class'=>'form-control']) }}
+								</td>
+								<td>
+										{{ Form::text($batch->product_code.'_'.$batch->batch_number, $allocated, ['class'=>'form-control']) }}
+								</td>
+							</tr>
+					@endforeach
+						@if ($total_quantity<$order->order_quantity_request)
+						<tr>
+							<td colspan=4>
+								<div class='alert alert-danger'>
+									<strong>Warning !</strong> Insufficient supply ({{ $order_request-$total_quantity }})
+								</div>
+							</td>
+						</tr>
+						@endif
+						</table>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			@endif
+	@endif
 @endforeach
 @endif
 </tbody>

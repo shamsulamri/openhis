@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Bulk Stock Movement
+<h1>Stock Movement
 <a href='/stock_inputs/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/stock_input/search' method='post'>
@@ -20,6 +20,7 @@
  <thead>
 	<tr> 
     <th>Movement Type</th>
+    <th>Description</th>
     <th>Date</th> 
     <th>Status</th> 
 	<th></th>
@@ -30,6 +31,9 @@
 	<tr>
 			<td>
 					{{$stock_input->movement->move_name}}
+			</td>
+			<td>
+					{{$stock_input->input_description }}
 			</td>
 			<td>
 					{{ date('d F Y, H:i', strtotime($stock_input->created_at)) }}
@@ -44,10 +48,12 @@
 			<td align='right'>
 					@if ($stock_input->input_close==0)
 					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/show/'. $stock_input->input_id) }}'>Resume</a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('stock_inputs/delete/'. $stock_input->input_id) }}'>Delete</a>
+					@else
+					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/show/'. $stock_input->input_id . '/edit') }}'>View</a>			
 					@endif
 			@can('system-administrator')
 					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/'. $stock_input->input_id . '/edit') }}'>Edit</a>			
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('stock_inputs/delete/'. $stock_input->input_id) }}'>Delete</a>
 			@endcan
 			</td>
 	</tr>

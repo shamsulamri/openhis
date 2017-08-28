@@ -22,6 +22,15 @@
             @if ($errors->has('store_code_transfer')) <p class="help-block">{{ $errors->first('store_code_transfer') }}</p> @endif
         </div>
     </div>
+
+    <div class='form-group  @if ($errors->has('input_description')) has-error @endif'>
+        {{ Form::label('input_description', 'Description',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::textarea('input_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+            @if ($errors->has('input_description')) <p class="help-block">{{ $errors->first('input_description') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
             <a class="btn btn-default" href="/stock_inputs" role="button">Cancel</a>

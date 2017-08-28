@@ -30,6 +30,7 @@ use App\StockStore;
 class ProductSearchController extends Controller
 {
 	public $paginateValue=10;
+	public $gline_id=0;
 
 	public function __construct()
 	{
@@ -52,11 +53,16 @@ class ProductSearchController extends Controller
 					$product_searches = $product_searches->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 			}
 
-
 			$purchase_order = PurchaseOrder::find($request->purchase_id);
 
 			$reason = $request->reason;
 			$return_id = 0;
+
+			$categories = $product_authorization->orderBy('category_name')
+									->select('b.category_code','category_name')
+									->leftjoin('product_categories as b', 'b.category_code','=', 'product_authorizations.category_code')
+									->lists('category_name', 'b.category_code')
+									->prepend('','');
 
 			switch ($reason) {
 					case "purchase_order":
@@ -126,17 +132,18 @@ class ProductSearchController extends Controller
 			}
 	}
 
-	public function add($purchase_id, $id)
+	public function add($purchase_id, $product_code)
 	{
-			$product = Product::find($id);
+			$product = Product::find($product_code);
 			$purchase_order_line = new PurchaseOrderLine();
 			$purchase_order_line->purchase_id = $purchase_id;
-			$purchase_order_line->product_code = $id;
+			$purchase_order_line->product_code = $product_code;
 			$purchase_order_line->line_price = $product->product_purchase_price;
 			$purchase_order_line->tax_code = $product->purchase_tax_code;
 			$purchase_order_line->tax_rate = isset($product->purchase_tax_rate) ? $product->purhcase_tax->tax_rate : 0;
 			$purchase_order_line->save();
-			Log::info($product->tax);
+
+			$this->gline_id = $purchase_order_line->line_id;
 			Session::flash('message', 'Enter order quantity.');
 			return redirect('/product_searches?reason=purchase_order&purchase_id='.$purchase_id.'&line_id='.$purchase_order_line->line_id);
 	}
@@ -160,16 +167,17 @@ class ProductSearchController extends Controller
 					->where('product_code', $product_code)
 					->first();
 
+		$product = Product::find($product_code);
 		$line = new StockInputLine();
 		$line->input_id = $input_id;
 		$line->product_code = $product_code;
 		if ($stock_store) {
-				$line->amount_current = $stock_store->stock_quantity;
+				$line->line_pre_quantity = $stock_store->stock_quantity;
 		}
 
 		$line->save();
-		Session::flash('message', 'aaaaRecord successfully created.');
-		return redirect('/product_searches?reason=bulk&line_id='.$line->line_id);
+		Session::flash('message', 'Record successfully created.');
+		return redirect('/product_searches?reason=bulk&input_id='.$input_id.'&line_id='.$line->line_id);
 	}
 
 	public function asset($set_code, $product_code)
@@ -268,7 +276,8 @@ class ProductSearchController extends Controller
 									->where('product_bom','!=',1)
 									->where(function ($query) use($search) {
 											$query->where('product_name','like','%'.$search.'%')
-												  ->orWhere('product_code', 'like','%'.$search.'%');
+												  ->orWhere('product_code', 'like','%'.$search.'%')
+												  ->orWhere('product_name_other','like','%'.$search.'%');
 									});
 							
 							if (!$product_authorization->get()->isEmpty()) {
@@ -280,7 +289,8 @@ class ProductSearchController extends Controller
 							$product_searches = Product::orderBy('product_name')
 									->where(function ($query) use($search) {
 											$query->where('product_name','like','%'.$search.'%')
-												  ->orWhere('product_code', 'like','%'.$search.'%');
+												  ->orWhere('product_code', 'like','%'.$search.'%')
+												  ->orWhere('product_name_other','like','%'.$search.'%');
 									})
 									->orderBy('product_name');
 
@@ -289,7 +299,8 @@ class ProductSearchController extends Controller
 											->whereIn('products.category_code',$product_authorization->pluck('category_code'))
 											->where(function ($query) use($search) {
 													$query->where('product_name','like','%'.$search.'%')
-														  ->orWhere('product_code', 'like','%'.$search.'%');
+														  ->orWhere('product_code', 'like','%'.$search.'%')
+												  		  ->orWhere('product_name_other','like','%'.$search.'%');
 											})
 									->orderBy('product_name');
 							}
@@ -303,23 +314,44 @@ class ProductSearchController extends Controller
 
 			$purchase_order = PurchaseOrder::find($request->purchase_id);
 
-			return view('product_searches.index', [
-					'product_searches'=>$product_searches,
-					'search'=>$request->search,
-					'purchase_id'=>$request->purchase_id,
-					'reason'=>$request->reason,
-					'product_code'=>$request->product_code,
-					'set_code'=>$request->set_code,
-					'purchase_order'=>$purchase_order,
-					'return_id'=>$request->return_id,
-					'class_code'=>$request->class_code,
-					'period_code'=>$request->period_code,
-					'week'=>$request->week,
-					'day'=>$request->day,
-					'diet_code'=>$request->diet_code,
-					'line_id'=>$request->line_id,
-					'input_id'=>$request->input_id,
+			if ($product_searches->count()==1) {
+					switch ($reason) {
+							case "bulk";
+									$this->bulk($request->input_id, $product_searches[0]->product_code);
+									return redirect('/product_searches?reason=bulk&input_id='.$request->input_id);
+									break;
+							case "purchase_order";
+									$this->add($request->purchase_id, $product_searches[0]->product_code);
+									return redirect('/product_searches?reason=purchase_order&purchase_id='.$request->purchase_id.'&line_id='.$this->gline_id);
+									break;
+							case "bom";
+									$this->bom($request->product_code, $product_searches[0]->product_code);
+									return redirect('/product_searches?reason=bom&product_code='.$request->product_code);
+									break;
+							case "asset";
+									$this->asset($request->set_code, $product_searches[0]->product_code);
+									return redirect('/product_searches?reason=asset&set_code='.$request->set_code);
+									break;
+					}
+			} else {
+					return view('product_searches.index', [
+							'product_searches'=>$product_searches,
+							'search'=>$request->search,
+							'purchase_id'=>$request->purchase_id,
+							'reason'=>$request->reason,
+							'product_code'=>$request->product_code,
+							'set_code'=>$request->set_code,
+							'purchase_order'=>$purchase_order,
+							'return_id'=>$request->return_id,
+							'class_code'=>$request->class_code,
+							'period_code'=>$request->period_code,
+							'week'=>$request->week,
+							'day'=>$request->day,
+							'diet_code'=>$request->diet_code,
+							'line_id'=>$request->line_id,
+							'input_id'=>$request->input_id,
 					]);
+			}
 	}
 
 	public function searchById($id)

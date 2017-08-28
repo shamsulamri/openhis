@@ -111,5 +111,26 @@
 		@if (Session::has('message'))
 				toastr.success(toastr.options,'{{ Session::get('message') }}')
 		@endif
+
+		@if (Session::has('warning'))
+				toastr.options={"positionClass": "toast-top-full-width"};
+				toastr.warning(toastr.options,'{{ Session::get('warning') }}')
+		@endif
+
+		@if (Session::has('error'))
+				toastr.error(toastr.options,'{{ Session::get('error') }}')
+		@endif
+
+		@if (Session::has('info'))
+				toastr.info(toastr.options,'{{ Session::get('info') }}')
+		@endif
+		@if (count($errors) > 0)
+				toastr.error(toastr.options,'Please correct the errors highlighted below.')
+		@endif
+
+		$(document).ready(function() {
+				$("input:text").focus(function() { $(this).select(); } );
+		});
+
 		</script>
 </body>

@@ -6,15 +6,28 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
-        <label for='store_code' class='col-sm-3 control-label'>On Hand</label>
-        <div class='col-sm-9'>
-<?php
-$on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_code);
-?>
-			<label class='form-control'>{{ $on_hand }}</label>
-        </div>
-    </div>
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
+						<label for='store_code' class='col-sm-6 control-label'>On Hand</label>
+						<div class='col-sm-6'>
+				<?php
+				$on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_code);
+				?>
+							<label class='form-control'>{{ $on_hand }}</label>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group'>
+						<label for='store_code' class='col-sm-6 control-label'>Average Cost</label>
+						<div class='col-sm-6'>
+							<label class='form-control'>{{ $product->product_average_cost }}</label>
+						</div>
+					</div>
+			</div>
+	</div>
+
     <div class='form-group  @if ($errors->has('move_code')) has-error @endif'>
         <label for='move_code' class='col-sm-3 control-label'>Movement Type<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -23,14 +36,35 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('stock_quantity')) has-error @endif'>
-        <label for='stock_quantity' class='col-sm-3 control-label'>Quantity<span style='color:red;'> *</span></label>
+    <div class='form-group  @if ($errors->has('store_code_transfer')) has-error @endif'>
+        <label for='store_code_transfer' class='col-sm-3 control-label'>Transfer/Loan Store</label>
         <div class='col-sm-9'>
-            {{ Form::text('stock_quantity', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('stock_quantity')) <p class="help-block">{{ $errors->first('stock_quantity') }}</p> @endif
+            {{ Form::select('store_code_transfer', $stores,null, ['id'=>'store_code_transfer', 'class'=>'form-control','maxlength'=>'20']) }}
+            @if ($errors->has('store_code_transfer')) <p class="help-block">{{ $errors->first('store_code_transfer') }}</p> @endif
         </div>
     </div>
 
+
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('stock_quantity')) has-error @endif'>
+						<label for='stock_quantity' class='col-sm-6 control-label'>Quantity<span style='color:red;'> *</span></label>
+						<div class='col-sm-6'>
+							{{ Form::text('stock_quantity', null, ['class'=>'form-control','id'=>'stock_quantity','onchange'=>'updateValue()',]) }}
+							@if ($errors->has('stock_quantity')) <p class="help-block">{{ $errors->first('stock_quantity') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('stock_value')) has-error @endif'>
+						<label for='stock_value' class='col-sm-6 control-label'>Value<span style='color:red;'> *</span></label>
+						<div class='col-sm-6'>
+							{{ Form::text('stock_value', null, ['class'=>'form-control','id'=>'stock_value',]) }}
+							@if ($errors->has('stock_value')) <p class="help-block">{{ $errors->first('stock_value') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 	@if ($product->product_track_batch)
     <div class='form-group'>
         <label class='col-sm-3 control-label'>Batch</label>
@@ -53,7 +87,7 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
             					{{ Form::label('stock_quantity', $batch->expiry_date, ['class'=>'form-control','placeholder'=>'',]) }}
 						</td>
 						<td>
-								{{ Form::text('batch_quantity_'.$batch->batch_number, null, ['class'=>'form-control']) }}
+								{{ Form::text($product->product_code.'_'.$batch->batch_number, null, ['class'=>'form-control']) }}
 						</td>
 						<td>
 								/ {{ $batch->batch_quantity }}
@@ -81,13 +115,6 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
     </div>
 	@endif
 
-    <div class='form-group  @if ($errors->has('store_code_transfer')) has-error @endif'>
-        <label for='store_code_transfer' class='col-sm-3 control-label'>Transfer Store</label>
-        <div class='col-sm-9'>
-            {{ Form::select('store_code_transfer', $stores,null, ['id'=>'store_code_transfer', 'class'=>'form-control','maxlength'=>'20']) }}
-            @if ($errors->has('store_code_transfer')) <p class="help-block">{{ $errors->first('store_code_transfer') }}</p> @endif
-        </div>
-    </div>
 
     <div class='form-group  @if ($errors->has('stock_description')) has-error @endif'>
         {{ Form::label('stock_description', 'Description',['class'=>'col-sm-3 control-label']) }}
@@ -105,6 +132,7 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
         </div>
     </div>
 
+	<!--
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('stock_datetime')) has-error @endif'>
@@ -133,6 +161,7 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
 					</div>
 			</div>
 	</div>
+	-->
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
@@ -142,6 +171,7 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
     </div>
 
 	{{ Form::hidden('product_code', null) }}
+	{{ Form::hidden('average_cost', $product->product_average_cost, ['id'=>'average_cost']) }}
 	{{ Form::hidden('store_code', $store->store_code) }}
 	{{ Form::hidden('stock_datetime', null, ['id'=>'stock_datetime']) }}
 	
@@ -158,12 +188,21 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
 		function checkMovementType() {
 			moveType = document.getElementById('move_code');
 			store = document.getElementById('store_code_transfer');
-			if (moveType.value=='transfer') {
+			if (moveType.value=='transfer' || moveType.value=='loan_in' || moveType.value=='loan_out') {
 				store.disabled = false;
 			} else {
 				store.value = "";
 				store.disabled = true;
 			}
+		}
+
+		function updateValue() {
+			stockValue = document.getElementById('stock_value');
+			stockQuantity = document.getElementById('stock_quantity');
+			average_cost = document.getElementById('average_cost');
+
+			var value = Math.abs(average_cost.value*stockQuantity.value);
+			stockValue.value = value.toFixed(2);
 		}
 
 		$('#stock_date').datepicker({

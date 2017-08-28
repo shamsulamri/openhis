@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use App\StockStore;
 use App\PurchaseOrderLine;
 use Log;
+use Auth;
+use App\StockInputBatch;
 
 class StockHelper 
 {
@@ -23,6 +25,47 @@ class StockHelper
 
 	}
 
+	public function getStockAllocatedByStore($product_code, $store_code,$encounter_id) 
+	{
+			$allocated = Order::where('product_code','=',$product_code)
+					->leftjoin('order_cancellations as a', 'a.order_id', '=', 'orders.order_id')
+					->where('order_completed','=', 0)
+					->where('encounter_id','<>', $encounter_id)
+					->whereNull('cancel_id');
+
+			if (!empty($store_code)) {
+					$allocated = $allocated->where('orders.store_code', $store_code);
+			}
+
+			$allocated = $allocated->sum('order_quantity_request');
+
+			return floatval($allocated);
+
+	}
+
+	public function stockOnHand($product_code, $store_code) 
+	{
+			$stock_on_hand = Stock::where('product_code','=',$product_code)
+							->where('store_code','=',$store_code)
+							->sum('stock_quantity');
+
+			Log::info("ON HAND: ".$stock_on_hand);
+			if ($stock_on_hand>0) {
+					$stock_store = StockStore::where('product_code','=', $product_code)
+									->where('store_code','=', $store_code)
+									->first();
+					if (empty($stock_store)) {
+							$stock_store = new StockStore();
+					}
+
+					$stock_store->product_code = $product_code;
+					$stock_store->store_code = $store_code;
+					$stock_store->stock_quantity = $stock_on_hand;
+					$stock_store->save();
+			}
+	}
+
+	/**
 	public function stockOnHand($product_code, $store_code) 
 	{
 
@@ -78,6 +121,7 @@ class StockHelper
 			Log::info($store_code.':'.$stock_on_hand);
 			return $stock_on_hand;
 	}
+	**/
 
 	public function updateAllStockOnHand($product_code)
 	{
@@ -88,13 +132,26 @@ class StockHelper
 					$total += $this->stockOnHand($product_code, $store->store_code);
 			}
 					
+			$total = Stock::where('product_code','=',$product_code)
+							->sum('stock_quantity');
+
 			$product = Product::find($product_code);
 			$product->product_on_hand = $total;
-			Log::info($total);
-			Log::info($product->product_on_hand);
+			$product->product_average_cost = $this->updateAverageCost($product_code);
+
 			$product->save();		
 
 			return $total;
+	}
+
+	public function updateAverageCost($product_code) 
+	{
+			$average_cost = Stock::select(DB::raw('sum(stock_value)/sum(stock_quantity) as average_cost'))
+							->where('product_code','=', $product_code)
+							->where('move_code','<>','sale')
+							->get();
+
+			return $average_cost[0]->average_cost;
 	}
 
 	public function stockReceive($id, $quantity, $store_code, $batch_number, $delivery_number, $invoice_number, $expiry_date)
@@ -141,11 +198,138 @@ class StockHelper
 
 	public function stockReceiveSum($line_id)
 	{
-			$sum = Stock::where('line_id',$line_id)->sum('stock_quantity');
+			$sum = StockInputLine::where('po_line_id',$line_id)->sum('line_post_quantity');
 
 			if (empty($sum)) $sum='-';
 			return $sum;
 
+	}
+
+	public function getBatches($product_code, $store_code)
+	{
+			$batches = StockBatch::selectRaw('sum(batch_quantity) as batch_quantity, expiry_date,product_code, batch_number')
+						->where('product_code','=', $product_code)
+						->where('store_code','=', $store_code)
+						->having('batch_quantity','>',0)
+						->groupBy('batch_number')
+						->orderBy('expiry_date')
+						->get();
+
+			return $batches;
+	}
+
+	public function moveStock($stock) 
+	{
+			if ($stock->move_code=='take') {
+					Stock::where('product_code','=', $stock->product_code)
+							->where('store_code', '=', $stock->store_code)
+							->delete();
+			}
+
+			$stock->username = Auth::user()->username;
+
+			switch($stock->move_code) {
+					case "loan_in":
+							$stock->stock_quantity = abs($stock->stock_quantity);
+							$stock->save();
+							break;
+					case "loan_out":
+							$stock->stock_quantity = -($stock->stock_quantity);
+							$stock->stock_value = -($stock->stock_value);
+							$stock->save();
+							break;
+					case "receive":
+							$stock->stock_quantity = abs($stock->stock_quantity);
+							$stock->save();
+							break;
+					case "dispose":
+							$stock->stock_quantity = -($stock->stock_quantity);
+							$stock->stock_value = -($stock->stock_value);
+							$stock->save();
+							break;
+					case "return":
+							$stock->stock_quantity = -($stock->stock_quantity);
+							$stock->stock_value = -($stock->stock_value);
+							$stock->save();
+							break;
+					case "transfer":
+							$store = Store::find($stock->store_code_transfer);
+							$stock->stock_quantity = ($stock->stock_quantity)*-1;
+							$stock->stock_description = "Transfer out to ".$store->store_name;
+							$stock->stock_value = -($stock->stock_value);
+							$stock->save();
+
+							$store = Store::find($stock->store_code);
+							$transfer = new Stock();
+							$transfer->product_code = $stock->product_code;
+							$transfer->username = $stock->username;
+							$transfer->move_code = $stock->move_code;
+							$transfer->store_code_transfer = $stock->store_code;
+							$transfer->store_code = $stock->store_code_transfer;
+							$transfer->stock_quantity = abs($stock->stock_quantity);
+							$transfer->stock_value = abs($stock->stock_value);
+							$transfer->stock_tag = $stock->stock_id;
+							$transfer->stock_description = "Transfer in from ".$store->store_name;
+							$transfer->save();
+
+							break;
+					default:
+							// Adjustment
+							if ($stock->stock_quantity<0) $stock->stock_value = -($stock->stock_value);
+							$stock->save();
+
+			}
+			
+			$this->updateAllStockOnHand($stock->product_code);
+
+			return $stock;
+	} 
+
+	public function moveStockBatch($request, $stock)
+	{
+			if ($stock->move_code=='take') {
+					StockBatch::where('product_code','=', $stock->product_code)->delete();
+			}
+
+			$batches = $this->getBatches($stock->product_code);
+
+			foreach($batches as $batch) {
+					$batch_quantity = $request[$stock->product_code.'_'.$batch->batch_number];
+					$batch_quantity = abs($batch_quantity);
+
+					if ($stock->stock_quantity<0) {
+							$batch_quantity = -($batch_quantity);
+					}
+
+					if (!empty($batch_quantity)) {
+							$new_batch = new StockBatch();
+							$new_batch->stock_id = $stock->stock_id;
+							$new_batch->product_code = $batch->product_code;
+							$new_batch->batch_number = $batch->batch_number;
+							$new_batch->batch_quantity = $batch_quantity;
+							$new_batch->expiry_date = $batch->expiry_date;
+							$new_batch->save();
+					}
+			}
+
+			if (!empty($request->batch_number_new)) {
+					$new_batch = new StockBatch();
+					$new_batch->stock_id = $stock->stock_id;
+					$new_batch->product_code = $stock->product_code;
+					$new_batch->batch_number = $request->batch_number_new;
+					$new_batch->batch_quantity = $request->batch_quantity_new;
+					$new_batch->expiry_date = DojoUtility::dateWriteFormat($request->batch_expiry_date_new);
+					$new_batch->save();
+			}
+	}
+
+	public function getStockInputBatchCount($line_id) 
+	{
+			$count = StockInputBatch::where('line_id',$line_id)
+						->sum('batch_quantity');
+			
+			if (empty($count)) $count=0;
+			return $count;
 	}
 }
 

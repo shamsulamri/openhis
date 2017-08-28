@@ -84,7 +84,9 @@
 					<a class='btn btn-default btn-xs' href='{{ URL::to('purchase_order_lines/'. $purchase_order->purchase_id) }}'>Line Items</a>
 					@if ($purchase_order->purchase_posted==1 && $purchase_order->purchase_received==0)
 					<a class='btn btn-default btn-xs' href='{{ URL::to('purchase_order_line/receive/'. $purchase_order->purchase_id) }}'>Stock Receive</a>
+					@else
 					@endif
+
 				@if (!$purchase_order->purchase_posted)
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('purchase_orders/delete/'. $purchase_order->purchase_id) }}'>Delete</a>
 				@endif

@@ -48,6 +48,21 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('stock_receives', 'StockReceiveController');
+		Route::get('/stock_receives/id/{id}', 'StockReceiveController@searchById');
+		Route::post('/stock_receive/search', 'StockReceiveController@search');
+		Route::get('/stock_receive/search', 'StockReceiveController@search');
+		Route::get('/stock_receives/delete/{id}', 'StockReceiveController@delete');
+
+		Route::resource('stock_input_batches', 'StockInputBatchController');
+		Route::get('/stock_input_batches/id/{id}', 'StockInputBatchController@searchById');
+		Route::post('/stock_input_batch/search', 'StockInputBatchController@search');
+		Route::post('/stock_input_batch/add', 'StockInputBatchController@batchAdd');
+		Route::get('/stock_input_batch/search', 'StockInputBatchController@search');
+		Route::get('/stock_input_batches/delete/{id}', 'StockInputBatchController@delete');
+		Route::get('/stock_input_batches/batch/{line_id}', 'StockInputBatchController@batch');
+		
+
 		Route::resource('stock_batches', 'StockBatchController');
 		Route::get('/stock_batches/id/{id}', 'StockBatchController@searchById');
 		Route::post('/stock_batch/search', 'StockBatchController@search');
@@ -107,7 +122,9 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/stock_inputs/show/{id}/{product_code?}', 'StockInputController@show');
 		Route::get('/stock_input/post/{id}', 'StockInputController@post');
 		//Route::post('/stock_input/input', 'StockInputController@input_post');
+		Route::post('/stock_input/save/{id}', 'StockInputController@save');
 		Route::get('/stock_input/close/{id}', 'StockInputController@input_close');
+		Route::post('/stock_input/post/{id}', 'StockInputController@post');
 
 		Route::resource('stock_limits', 'StockLimitController');
 		Route::get('/stock_limits/id/{id}', 'StockLimitController@searchById');

@@ -46,6 +46,9 @@
 
 	{{ Form::hidden('purchase_id',null) }}
 	<script>
+
+
+
 		/*
 		$(function(){
 				$('#line_expiry_date').combodate({

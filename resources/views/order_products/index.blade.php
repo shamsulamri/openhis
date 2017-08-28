@@ -109,7 +109,7 @@
 @endif
 <script>
 	var frame = parent.document.getElementById('frameDetail');
-	@if ($order_id>0)
+	@if (!empty($order_id))
 	frame.src = "/orders/{{ $order_id }}/edit";
 	@else
 	frame.src = "/orders";

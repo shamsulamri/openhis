@@ -7,8 +7,10 @@
 	<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<label>Category</label>
 	{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	<!--
 	<label>Store</label>
 	{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+	-->
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
@@ -21,6 +23,7 @@
     <th>Code</th> 
     <th>Name</th>
     <th><div align='right'>On Hand</div></th> 
+    <th><div align='right'>Average Cost</div></th> 
 	@can('system-administrator')
 	<th></th>
 	@endcan
@@ -38,7 +41,7 @@
 					@else
 					<a href='{{ URL::to('products/'. $product->product_code.'?detail=true') }}'>
 					@endcan
-						{{$product->product_name}}
+						{{ $product->product_name }}
 						@if ($product->product_bom==1)
 							*
 						@endif
@@ -46,10 +49,13 @@
 			</td>
 			<td align='right'>
 			@if	($product->product_stocked==1)
-				{{ $stock_helper->getStockCountByStore($product->product_code, $store_code) }}
+				{{ $product->product_on_hand }}
 			@else
 					-
 			@endif
+			<td align='right'>
+					{{$product->product_average_cost}}
+			</td>
 			</td>
 			@can('system-administrator')
 			<td align='right'>

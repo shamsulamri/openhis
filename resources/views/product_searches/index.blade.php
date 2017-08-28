@@ -31,6 +31,8 @@
 					<a href='{{ URL::to('products/'. $product_search->product_code.'?reason='.$reason.'&id='.$return_id) }}' target='frameLine'>
 						{{$product_search->product_name}}
 					</a>
+					<br>
+					{{ $product_search->product_code }}
 			</td>
 			<td align='right'>
 				@if ($reason=='purchase_order')
@@ -74,17 +76,22 @@
 	@if ($reason=='purchase_order')
 	frameLine.src='/purchase_order_lines/{{ $line_id }}/edit';
 	@endif
+
 	@if ($reason=='bom')
 	frameLine.src='/bill_materials/index/{{ $product_code }}';
 	@endif
+			
 	@if ($reason=='asset')
 	frameLine.src='/order_sets/index/{{ $set_code }}';
 	@endif
+
 	@if ($reason=='menu')
 	frameLine.src='/diet_menus/menu/{{ $class_code }}/{{ $period_code }}/{{ $week }}/{{ $day }}/{{ $diet_code }}';
 	@endif
+
 	@if ($reason=='bulk')
-	frameLine.src='/stock_input_lines/{{ $line_id }}/edit';
+	//frameLine.src='/stock_input_lines/{{ $line_id }}/edit';
+	frameLine.src='/stock_inputs/input/{{ $input_id }}';
 	@endif
 </script>
 @endif

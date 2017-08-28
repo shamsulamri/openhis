@@ -47,6 +47,11 @@ class QueueLocation extends Model
 			return $this->belongsTo('App\Department', 'department_code');
 	}
 
+	public function store()
+	{
+			return $this->belongsTo('App\Store', 'store_code');
+	}
+
 	public function encounter()
 	{
 			return $this->belongsTo('App\EncounterType', 'encounter_code');

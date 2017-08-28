@@ -18,7 +18,12 @@ use App\Http\Controllers\ProductController;
 use App\Store;
 use App\Order;
 use Carbon\Carbon;
+use App\Stock;
 use Auth;
+use App\StockHelper;
+use App\StockBatch;
+use App\OrderDrug;
+use App\OrderHelper;
 
 class OrderTaskController extends Controller
 {
@@ -88,11 +93,13 @@ class OrderTaskController extends Controller
 					'i.location_name',	
 					'cancel_id',
 					'order_quantity_request',
+					'order_quantity_supply',
 					'a.created_at',
 					'k.name',
 					'order_completed',
 					'name',
 					'investigation_date',
+					'product_track_batch',
 					];
 			$order_tasks = DB::table('orders as a')
 					->select($fields)
@@ -121,7 +128,9 @@ class OrderTaskController extends Controller
 				
 			$ids='';
 			foreach ($order_tasks as $task) {
-					$ids .= (string)$task->order_id.",";
+					if ($task->order_completed==0) {
+							$ids .= (string)$task->order_id.",";
+					}
 			}
 			
 			return view('order_tasks.index', [
@@ -132,6 +141,8 @@ class OrderTaskController extends Controller
 					'ids'=>$ids,
 					'location'=>$location,
 					'product'=> new Product(),
+					'stock_helper'=> new StockHelper(),
+					'order_helper'=> new OrderHelper(),
 			]);
 	}
 	public function edit($id) 
@@ -209,9 +220,13 @@ class OrderTaskController extends Controller
 
 	public function status(Request $request)
 	{
-			$store_code = "main";
-			$location_code = $request->cookie('queue_location');
+			if (!empty(Auth::user()->authorization->location_code)) {
+				$location_code = Auth::user()->authorization->location_code;
+			} else {
+				$location_code = $request->cookie('queue_location');
+			}
 			$location = Location::find($location_code);
+
 			$store_code = $location->store_code;
 
 			$values = explode(',',$request->ids);
@@ -222,7 +237,31 @@ class OrderTaskController extends Controller
 							OrderTask::where('order_id', $orderId)->update(['order_completed'=>$value]);				
 							if ($value=='1') {
 								OrderTask::where('order_id', $orderId)->update(['store_code'=>$store_code]);				
-							} else {
+
+								$order = Order::find($orderId);
+								$order->order_quantity_supply = $request['quantity_'.$order->order_id];
+								$order->save();
+
+								$stock = new Stock();
+								$stock->order_id = $orderId;
+								$stock->product_code = $order->product_code;
+							  	$stock->stock_quantity = -($order->order_quantity_supply);
+								$stock->store_code = $store_code;
+								$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
+								$stock->move_code = 'sale';
+								$stock->save();
+
+								if ($stock->product->product_track_batch==1) {
+									$total_quantity = $this->statusBatch($request, $stock);
+									$stock->stock_quantity = -$total_quantity;
+									$stock->stock_value = $order->product->product_average_cost*$total_quantity;
+									$stock->save();
+
+									$order->order_quantity_supply = $total_quantity;
+									$order->save();
+									Log::info("-----------------------------");
+									Log::info($order->order_quantity_supply);
+								} 							} else {
 								OrderTask::where('order_id', $orderId)->update(['store_code'=>null]);				
 							}
 							$order = OrderTask::find($orderId);
@@ -234,5 +273,33 @@ class OrderTaskController extends Controller
 			Session::flash('message', 'Record successfully updated.');
 			return redirect('order_queues');
 			//return redirect('/order_tasks/task/'.$order_task->consultation->consultation_id.'/'.$order_task->product->category->location_code);
+	}
+
+
+	public function statusBatch(Request $request, $stock) 
+	{
+		$stock_helper = new StockHelper();
+
+		$batches = $stock_helper->getBatches($stock->product_code, $stock->store_code);
+
+		$total_quantity = 0;
+		foreach($batches as $batch) {
+			$batch_quantity = $request[$batch->product_code.'_'.$batch->batch_number];
+			$batch_quantity = abs($batch_quantity);
+			if (!empty($batch_quantity)) {
+					$new_batch = new StockBatch();
+					$new_batch->stock_id = $stock->stock_id;
+					$new_batch->store_code = $stock->store_code;
+					$new_batch->product_code = $stock->product_code;
+					$new_batch->batch_number = $batch->batch_number;
+					$new_batch->batch_quantity = -($batch_quantity);
+					$new_batch->expiry_date = $batch->expiry_date;
+					$new_batch->save();
+					$total_quantity += $batch_quantity;
+					Log::info($new_batch);
+			}
+		}
+
+		return $total_quantity;
 	}
 }
