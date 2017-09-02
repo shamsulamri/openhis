@@ -103,6 +103,7 @@ class OrderQueueController extends Controller
 					'location'=>$location,
 					'encounter_code'=>null,
 					'is_discharge'=>$request->discharge,
+					'count'=>$request->count,
 					]);
 	}
 

@@ -32,4 +32,8 @@ class StockStore extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function store()
+	{
+		return $this->belongsTo('App\Store', 'store_code');
+	}
 }

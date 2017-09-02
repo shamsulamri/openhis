@@ -23,7 +23,9 @@ class Loan extends Model
 				'loan_closure_datetime',
 				'loan_closure_description',
 				'loan_is_folder',
+				'loan_is_indent',
 				'exchange_id',
+				'input_line_id',
 				'loan_code'];
 	
     protected $guarded = ['loan_id'];
@@ -135,9 +137,9 @@ class Loan extends Model
 			return $this->belongsTo('App\LoanStatus', 'loan_code');
 	}
 
-	public function getItemName()
+	public function getItemName($item_code = null)
 	{
-			$product = Product::find($this->item_code);
+			$product = Product::find($item_code);
 			if (empty($product)) {
 					// Return MRN
 					return substr($this->item_code,0,2).'-'.substr($this->item_code,2,8).'-'.substr($this->item_code,10,4);
@@ -148,6 +150,18 @@ class Loan extends Model
 
 	}	
 
+	public function getItemCode($item_code = null)
+	{
+			$product = Product::find($item_code);
+			if (empty($product)) {
+					// Return MRN
+					return substr($this->item_code,0,2).'-'.substr($this->item_code,2,8).'-'.substr($this->item_code,10,4);
+					//return $this->item_code;
+			} else {
+					return $product->product_code;
+			}
+
+	}	
 	public function location()
 	{
 			return $this->belongsTo('App\QueueLocation', 'location_code');

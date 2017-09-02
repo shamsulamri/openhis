@@ -23,6 +23,7 @@ use Auth;
 use App\DrugPrescription;
 use App\OrderMultiple;
 use App\OrderHelper;
+use App\StockHelper;
 
 class OrderDrugController extends Controller
 {
@@ -137,6 +138,9 @@ class OrderDrugController extends Controller
 
 				//	'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 			$indications = DrugDisease::where('drug_code','=', $product_code)->distinct()->get();
+			$stock_helper = new StockHelper();
+
+			$allocated = $stock_helper->getStockAllocatedByStore($product_code, null, $order_drug->order->encounter_id);
 
 			return view('order_drugs.edit', [
 					'order_drug'=>$order_drug,
@@ -154,6 +158,7 @@ class OrderDrugController extends Controller
 					'order'=>$order_drug->order,
 					'prescriptions'=>$prescriptions,
 					'indications'=>$indications,
+					'allocated'=>$allocated,
 					]);
 	}
 
@@ -171,8 +176,31 @@ class OrderDrugController extends Controller
 			$order->order_quantity_supply = $request->order_quantity_request;
 			$order->order_total = $product->product_sale_price*$order->order_quantity_request;
 			$order->save();
+
+			$stock_helper = new StockHelper();
+			$on_hand = $stock_helper->getStockCountByStore($order->product_code, null);
+			$allocated = $stock_helper->getStockAllocatedByStore($order->product_code, null, $order->encounter_id);
+
+			$valid=null;
+
+			//$order->save();
 			
 			$valid = $order_drug->validate($request->all(), $request->_method);	
+			if ($on_hand-$allocated<$order->order_quantity_request) {
+					//$valid['order_quantity_request']='Insufficient quantity.'; 
+					$valid->getMessageBag()->add('order_quantity_request', 'Insufficient quantity.');
+					return redirect('/order_drugs/'.$id.'/edit')
+							->withErrors($valid)
+							->withInput();
+			}
+
+			/**
+			if (!empty($valid)) {
+					return redirect('/order_drugs/'.$id.'/edit')
+							->withErrors($valid)
+							->withInput();
+			} 
+			**/
 
 			if ($valid->passes()) {
 					$order_drug->save();

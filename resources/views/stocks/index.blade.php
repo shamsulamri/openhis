@@ -11,7 +11,7 @@
 	<div class='col-md-4'>
 		<div class='list-group'>
 		@foreach ($stores as $s)
-		<a class='list-group-item @if ($s->store_code==$store_code) {!! 'active' !!} @endif' href="/stocks/{{ $product->product_code }}/{{ $s->store_code }}">{{ $s->store_name }}<span class='badge'>{{ floatval($s->stock_quantity) }}</span></a>
+		<a class='list-group-item @if ($s->store_code==$store_code) {!! 'active' !!} @endif' href="/stocks/{{ $product->product_code }}/{{ $s->store_code }}">{{ $s->store->store_name }}<span class='badge'>{{ floatval($s->stock_quantity) }}</span></a>
 		@endforeach
 		</div>
 	</div>

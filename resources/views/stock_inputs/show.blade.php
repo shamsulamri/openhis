@@ -10,7 +10,9 @@ iframe { border: 1px #e5e5e5 solid; }
 @else
 <h1>Stock Receive</h1>
 @endif
+
 <!--
+@if ($errors->has('stock')) <p class="help-block">{{ $errors->first('stock') }}</p> @endif
 <h2>
 {{ $stock_input->store->store_name }} <i class='fa fa-arrow-right'></i> {{ $stock_input->movement->move_name }}
 @if ($stock_input->move_code == 'transfer')
@@ -37,7 +39,7 @@ iframe { border: 1px #e5e5e5 solid; }
     <div class='form-group'>
         <label class='col-sm-2 control-label'>Target Store</label>
         <div class='col-sm-10'>
-            {{ Form::label('store', $stock_input->store_code_transfer, ['class'=>'form-control']) }}
+            {{ Form::label('store', $stock_input->store_transfer->store_name, ['class'=>'form-control']) }}
         </div>
     </div>
 	@endif

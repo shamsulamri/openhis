@@ -21,6 +21,7 @@ use App\Ward;
 use Auth;
 use App\StoreAuthorization;
 use App\StockBatch;
+use App\StockStore;
 
 class StockController extends Controller
 {
@@ -423,35 +424,12 @@ class StockController extends Controller
 
 			$product = Product::find($product_code);
 
-			/*
-			$stores = Store::orderBy('store_name')
-							->select('stores.store_code', 'stock_stores.stock_quantity')
-							->leftjoin('stock_stores', function ($query) use($product_code) {
-									$query->where('stock_stores.product_code','=', $product_code);
-									$query->where('stock_stores.store_code','=', 'stores.store_code');
-							});
-			*/
-
-			$sql = sprintf("select a.store_code, store_name,  stock_quantity from store_authorizations a 
-						left join stores c on (c.store_code = a.store_code)
-						left join stock_stores b on (b.product_code = '%s' and b.store_code = a.store_code)
-						where author_id = %d", $product_code, Auth::user()->authorization->author_id);
-
-			$stores = DB::select($sql);
-
-
-			/**
-			$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)
-							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
-							->orderBy('store_name')
-							->get();
-			**/
+			$stores = StockStore::where('product_code', $product_code)
+						->whereIn('store_code', Auth::user()->storeCodes())
+						->get();
 
 			$store = Store::find($store_code);
 
-			//$stores = $stores->lists('store_name', 'b.store_code')
-							//->prepend('','');
-							//
 			if (empty($store_code)) {
 				return "Floor store for this ward has not been defined.";
 			}

@@ -47,6 +47,19 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('product_groups', 'ProductGroupController');
+		Route::get('/product_groups/id/{id}', 'ProductGroupController@searchById');
+		Route::post('/product_group/search', 'ProductGroupController@search');
+		Route::get('/product_group/search', 'ProductGroupController@search');
+		Route::get('/product_groups/delete/{id}', 'ProductGroupController@delete');
+		
+
+		Route::resource('product_subcategories', 'ProductSubcategoryController');
+		Route::get('/product_subcategories/id/{id}', 'ProductSubcategoryController@searchById');
+		Route::post('/product_subcategory/search', 'ProductSubcategoryController@search');
+		Route::get('/product_subcategory/search', 'ProductSubcategoryController@search');
+		Route::get('/product_subcategories/delete/{id}', 'ProductSubcategoryController@delete');
+		
 
 		Route::resource('stock_receives', 'StockReceiveController');
 		Route::get('/stock_receives/id/{id}', 'StockReceiveController@searchById');
@@ -125,6 +138,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/stock_input/save/{id}', 'StockInputController@save');
 		Route::get('/stock_input/close/{id}', 'StockInputController@input_close');
 		Route::post('/stock_input/post/{id}', 'StockInputController@post');
+		Route::get('/stock_input/indent/{id}', 'StockInputController@indent');
 
 		Route::resource('stock_limits', 'StockLimitController');
 		Route::get('/stock_limits/id/{id}', 'StockLimitController@searchById');

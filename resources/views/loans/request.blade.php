@@ -117,6 +117,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('loan_is_indent')) has-error @endif'>
+        {{ Form::label('loan_is_indent', 'Stock Indent',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::checkbox('loan_is_indent', '1') }}
+            @if ($errors->has('loan_is_indent')) <p class="help-block">{{ $errors->first('loan_is_indent') }}</p> @endif
+        </div>
+    </div>
+
 	@if (!$loan->loan_is_folder && $loan->loan_code != 'exchange')
     <div class='form-group  @if ($errors->has('loan_recur')) has-error @endif'>
         {{ Form::label('loan_recur', 'Recur Daily',['class'=>'col-sm-3 control-label']) }}

@@ -183,6 +183,7 @@ class OrderController extends Controller
 					$order->order_sale_price = $product->product_sale_price;
 					$order->user_id = Auth::user()->id;
 
+
 					if ($product->product_drop_charge==1) {
 							$ward_code = $request->cookie('ward');
 							$ward = Ward::where('ward_code', $ward_code)->first();

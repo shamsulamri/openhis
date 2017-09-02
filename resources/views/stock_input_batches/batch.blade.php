@@ -6,7 +6,7 @@
 <br>
 <br>
 <h3>{{ $product->product_name }}</h3>
-<h4>Line Quantity: {{ $line->line_post_quantity }}</h4>
+<h4>Line Quantity: {{ $line->line_quantity }}</h4>
 <form id='form' action='/stock_input_batch/add' method='post'>
 		<table class="table table-hover">
 			<thead>

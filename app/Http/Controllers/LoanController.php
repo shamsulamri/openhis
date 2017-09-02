@@ -21,6 +21,7 @@ use App\Patient;
 use App\QueueLocation;
 use App\Queue;
 use Auth;
+use App\ProductAuthorization;
 
 class LoanController extends Controller
 {
@@ -66,13 +67,21 @@ class LoanController extends Controller
 								->where('loan_is_folder','=',1);
 			} else {
 					$loan_status = LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
-					$loans = Loan::where('loan_is_folder','=',0)
+					$loans = Loan::select('product_code', 'loan_quantity', 'loans.location_code', 'loan_id', 'exchange_id', 'ward_code', 'loan_code', 'loan_is_folder', 'loans.created_at')
+								->where('loan_is_folder','=',0)
 								->where('loan_code','<>','return')
 								->where('loan_code','<>','exchanged');
 			}
 
-			$loans = $loans->orderBy('created_at', 'desc')
+			$loans = $loans->leftjoin('products as b','b.product_code','=', 'loans.item_code');
+			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+			if (!$product_authorization->get()->isEmpty()) {
+					$loans = $loans->whereIn('b.category_code',$product_authorization->pluck('category_code'));
+			}
+
+			$loans = $loans->orderBy('loans.created_at', 'desc')
 							->paginate($this->paginateValue);
+
 
 			return view('loans.index', [
 					'loans'=>$loans,
@@ -107,6 +116,7 @@ class LoanController extends Controller
 	public function create()
 	{
 			$loan = new Loan();
+			$loan->loan_is_indent=1;
 			return view('loans.create', [
 					'loan' => $loan,
 					'loan_status' => LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('',''),
@@ -293,8 +303,15 @@ class LoanController extends Controller
 					$loans=$loans->where('location_code','=',$request->location_code);
 					$search_is_empty=False;
 			}
+
+			$loans = $loans->leftjoin('products as b','b.product_code','=', 'loans.item_code');
+			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+			if (!$product_authorization->get()->isEmpty()) {
+					$loans = $loans->whereIn('b.category_code',$product_authorization->pluck('category_code'));
+			}
+
 			$loans = $loans->orderBy('loan_code')
-							->orderBy('created_at', 'desc');
+							->orderBy('loans.created_at', 'desc');
 
 			$loans = $loans->paginate($this->paginateValue);
 
@@ -361,9 +378,10 @@ class LoanController extends Controller
 			$loan->loan_code = 'request';
 			$loan->loan_request_by = Auth::user()->id;
 			$loan->ward_code = $request->cookie('ward');
+			$loan->loan_is_indent=1;
 
 			$is_folder = False;
-			$title="Loan Request";
+			$title="Stock Indent";
 			$patient=null;
 			$is_exchange=False;
 			if (!empty($request->loan)) {
@@ -443,9 +461,14 @@ class LoanController extends Controller
 					$loan->loan_id = $request->loan_id;
 					$loan->exchange_id = $request->exchange_id;
 					$loan->save();
+
+					Session::flash('message', 'Record successfully created.');
+					return redirect('/loans/ward');
+					/*
 					return view('loans.submitted', [
 							'loan'=>$loan
 					]);
+					 */
 			} else {
 					if ($loan->loan_is_folder) {
 					return redirect('/loans/request/'.$id.'?type=folder')

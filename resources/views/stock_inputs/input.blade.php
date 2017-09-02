@@ -4,6 +4,7 @@
 <form id='form' action='/stock_input/save/{{ $input_id }}' method='post'>
 @if ($stock_input->input_close==0)
 {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+<a href='/stock_input/indent/{{ $input_id }}' class='btn btn-default'>Indent</a>
 <br>
 <br>
 @endif
@@ -12,6 +13,7 @@
 	<tr>
 		<th>Product</th>
 		<th width='50'>UOM</th>
+		<th width='50'>On Hand</th>
 		<th width='80'>Quantity</th>
 		<th width='80'>Value</th>
 		<th width='50'>Batch</th>
@@ -25,9 +27,10 @@
 $class = 'default';
 if ($line->product->product_track_batch==1) {
 		$batch_count =  $stock_helper->getStockInputBatchCount($line->line_id);
-		$batch_quantity = $line->line_post_quantity;
+		$batch_quantity = $line->line_quantity;
 		if ($batch_count != $batch_quantity) $class = 'danger';
 }
+$on_hand = $stock_helper->getStockCountByStore($line->product_code, $stock_input->store_code);
 ?>
 	<tr>
 		<td>
@@ -39,31 +42,38 @@ if ($line->product->product_track_batch==1) {
 		<td align='center'>
 			{{ $line->product->unitMeasure->unit_shortname }}
 		</td>	
+		<td align='center'>
+			<div class='@if ($on_hand==0) has-error @endif'>
+			{{ Form::label('on_hand_'.$line->line_id, $on_hand?:' 0 ', ['id'=>'on_hand_'.$line->line_id,'class'=>'form-control']) }}
+			</div>
+		</td>	
 		<td>
-		@if ($stock_input->input_close==0)
-			{{ Form::text('quantity_'.$line->line_id, $line->line_post_quantity, ['id'=>'quantity_'.$line->line_id,'class'=>'form-control', 'onchange'=>'updateValue('.$line->line_id.')']) }}
+		@if ($stock_input->input_close==0 && $on_hand>0)
+			{{ Form::text('quantity_'.$line->line_id, $line->line_quantity, ['id'=>'quantity_'.$line->line_id,'class'=>'form-control', 'onchange'=>'updateValue('.$line->line_id.')']) }}
 		@else
-			{{ $line->line_post_quantity }}
+            {{ Form::label('quantity', $line->line_quantity?:' 0 ', ['class'=>'form-control']) }}
 		@endif
 		</td>	
 		<td>
 			{{ Form::hidden('average_'.$line->line_id, $line->product->product_average_cost, ['id'=>'average_'.$line->line_id]) }}
-		@if ($stock_input->input_close==0)
+		@if ($stock_input->input_close==0 && $on_hand>0)
 			{{ Form::text('value_'.$line->line_id, $line->line_value, ['class'=>'form-control','id'=>'value_'.$line->line_id]) }}
 		@else
-			{{ $line->line_value }}
+            {{ Form::label('value', $line->line_value?:' 0 ', ['class'=>'form-control']) }}
 		@endif
 		</td>	
 		<td align='center'>
 			<div class='@if ($class=='danger') has-error @endif'>
-			@if ($line->product->product_track_batch==1)
-				@if ($line->line_post_quantity != 0)
+			@if ($line->product->product_track_batch==1 && $stock_input->input_close==0)
+				@if ($line->line_quantity != 0 && $on_hand>0)
 					<a href='{{ URL::to('stock_input_batches/batch/'.$line->line_id) }}'>
             		{{ Form::label('s', $batch_count."/".$batch_quantity, ['class'=>'form-control']) }}
 					</a>
 				@else
-					?
+            		{{ Form::label('batch', '?', ['class'=>'form-control']) }}
 				@endif
+			@else
+            		{{ Form::label('s', $batch_count."/".$batch_quantity, ['class'=>'form-control']) }}
 			@endif
 			</div>
 		</td>	
@@ -96,11 +106,11 @@ if ($line->product->product_track_batch==1) {
 
 		setTimeout(function(){
 				if (document.getElementById('product_code').value) {
-						document.getElementById('line_post_quantity').focus();	
-						document.getElementById('line_post_quantity').disabled=false;
+						document.getElementById('line_quantity').focus();	
+						document.getElementById('line_quantity').disabled=false;
 						document.getElementById('batch_number').disabled=false;
 				} else {
-						document.getElementById('line_post_quantity').disabled=true;
+						document.getElementById('line_quantity').disabled=true;
 						document.getElementById('batch_number').disabled=true;
 						document.getElementById('product_code').focus();	
 				}

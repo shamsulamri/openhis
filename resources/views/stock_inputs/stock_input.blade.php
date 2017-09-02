@@ -18,7 +18,7 @@
     <div class='form-group  @if ($errors->has('store_code_transfer')) has-error @endif'>
         <label for='store_code_transfer' class='col-sm-2 control-label'>Target Store</label>
         <div class='col-sm-10'>
-            {{ Form::select('store_code_transfer', $store,null, ['id'=>'store_code_transfer', 'class'=>'form-control','maxlength'=>'20']) }}
+            {{ Form::select('store_code_transfer', $store_target,null, ['id'=>'store_code_transfer', 'class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('store_code_transfer')) <p class="help-block">{{ $errors->first('store_code_transfer') }}</p> @endif
         </div>
     </div>

@@ -82,21 +82,9 @@
 			<div class="col-xs-3">
 			<small>
 				<a href="{{ url('/product_categories') }}">Product Categories</a><br>
+				<a href="{{ url('/product_groups') }}">Product Groups</a><br>
 				<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
 				<a href="{{ url('/stock_movements') }}">Stock Movements</a><br>
-				<a href="{{ url('/drug_categories') }}">Drug Categories</a><br>
-				<a href="{{ url('/drug_systems') }}">Drug Systems</a><br>
-				<a href="{{ url('/drug_dosages') }}">Drug Dosages</a><br>
-				<a href="{{ url('/drug_frequencies') }}">Drug Frequencies</a><br>
-				<a href="{{ url('/drug_routes') }}">Drug Routes</a><br>
-				<a href="{{ url('/drug_cautions') }}">Drug Cautions</a><br>
-				<a href="{{ url('/drug_indications') }}">Drug Indications</a><br>
-				<a href="{{ url('/drug_instructions') }}">Drug Instructions</a><br>
-				<a href="{{ url('/drug_special_instructions') }}">Drug Special Instructions</a><br>
-			</small>
-			</div>
-			<div class="col-xs-3">
-			<small>
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>
 				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
 				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
@@ -107,6 +95,19 @@
 				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
 				<a href="{{ url('/tax_types') }}">Tax Types</a><br>
 				<a href="{{ url('/general_ledgers') }}">General Ledger Codes</a><br>
+			</small>
+			</div>
+			<div class="col-xs-3">
+			<small>
+				<a href="{{ url('/drug_categories') }}">Drug Categories</a><br>
+				<a href="{{ url('/drug_systems') }}">Drug Systems</a><br>
+				<a href="{{ url('/drug_dosages') }}">Drug Dosages</a><br>
+				<a href="{{ url('/drug_frequencies') }}">Drug Frequencies</a><br>
+				<a href="{{ url('/drug_routes') }}">Drug Routes</a><br>
+				<a href="{{ url('/drug_cautions') }}">Drug Cautions</a><br>
+				<a href="{{ url('/drug_indications') }}">Drug Indications</a><br>
+				<a href="{{ url('/drug_instructions') }}">Drug Instructions</a><br>
+				<a href="{{ url('/drug_special_instructions') }}">Drug Special Instructions</a><br>
 			</small>
 			</div>
 	</div>

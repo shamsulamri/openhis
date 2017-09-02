@@ -12,6 +12,7 @@ use Session;
 use Auth;
 use Log;
 use App\Ward;
+use App\QueueLocation;
 
 class OrderHelper 
 {
@@ -58,6 +59,10 @@ class OrderHelper
 			}	
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 			$order->location_code = $product->location_code;
+
+			$location = QueueLocation::find($order->location_code);
+			$order->store_code = $location->store_code;
+
 			if ($product->product_drop_charge==1) {
 					$ward = Ward::where('ward_code', $ward_code)->first();
 					$order->store_code = $ward->store_code;

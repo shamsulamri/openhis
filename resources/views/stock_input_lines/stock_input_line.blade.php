@@ -10,7 +10,7 @@
     <div class='form-group  @if ($errors->has('amount_current')) has-error @endif'>
         <label for='amount_current' class='col-sm-2 control-label'>On-Hand</label>
         <div class='col-sm-10'>
-            {{ Form::label('0', $stock_input_line->line_pre_quantity, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('0', $stock_input_line->line_snapshot_quantity, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('amount_current')) <p class="help-block">{{ $errors->first('amount_current') }}</p> @endif
         </div>
     </div>

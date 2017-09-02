@@ -17,7 +17,7 @@ class LoanFunctionMiddleware
     public function handle($request, Closure $next)
     {
 		if (Auth::check()) {
-				if ($request->user()->cannot('module_order')) {
+				if ($request->user()->cannot('loan_function')) {
 						return redirect('/unauthorized');
 				} 		
 		} else {

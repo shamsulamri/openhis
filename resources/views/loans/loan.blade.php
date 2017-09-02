@@ -1,6 +1,5 @@
-	
 	@if ($loan->loan_code=='accept')
-			<div class='alert alert-info'>Loan Accepted</div>
+			<div class='alert alert-info'>Request Accepted</div>
 	@endif
 	<div class='page-header'>
 		<h4>Request Information</h4>
@@ -34,7 +33,11 @@
 		@endif
 		</label>
         <div class='col-sm-9'>
-            {{ Form::label('item_code', $loan->getItemName(), ['class'=>'form-control','placeholder'=>'',]) }}
+			@if ($product)
+            {{ Form::label('item_code', $product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}
+			@else
+            {{ Form::label('item_code', $loan->getItemName($loan->item_code), ['class'=>'form-control','placeholder'=>'',]) }}
+			@endif
         </div>
     </div>
 
@@ -73,7 +76,6 @@
         </div>
     </div>
 	@endif
-
 	@if (!$loan->loan_is_folder)
     <div class='form-group  @if ($errors->has('loan_quantity')) has-error @endif'>
         <label for='loan_quantity' class='col-sm-3 control-label'>Quantity<span style='color:red;'> *</span></label>
@@ -91,6 +93,7 @@
         </div>
     </div>
 
+
 	@if (!$loan->loan_is_folder && $loan->loan_code != 'exchange' && $loan->loan_code != 'exchanged')
     <div class='form-group  @if ($errors->has('loan_recur')) has-error @endif'>
         {{ Form::label('loan_recur', 'Recurring Daily',['class'=>'col-sm-3 control-label']) }}
@@ -103,6 +106,7 @@
 	@endif
 
 
+@if ($loan->loan_is_indent==0)_
 	<div class='page-header'>
 		<h4>
 			Loan Request
@@ -250,7 +254,7 @@
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
-
+@endif
 	{{ Form::hidden('ward_code', $loan->ward_code) }}
 	{{ Form::hidden('item_code', $loan->item_code) }}
 	{{ Form::hidden('loan_request_by', $loan->loan_request_by) }}

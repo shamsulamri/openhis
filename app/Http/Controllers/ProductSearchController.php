@@ -172,7 +172,7 @@ class ProductSearchController extends Controller
 		$line->input_id = $input_id;
 		$line->product_code = $product_code;
 		if ($stock_store) {
-				$line->line_pre_quantity = $stock_store->stock_quantity;
+				$line->line_snapshot_quantity = $stock_store->stock_quantity;
 		}
 
 		$line->save();

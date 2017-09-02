@@ -21,24 +21,27 @@ class StockHelper
 
 			$value = $value->sum('stock_quantity');
 			
+			Log::info($store_code);
 			return floatval($value);
 
 	}
 
-	public function getStockAllocatedByStore($product_code, $store_code,$encounter_id) 
+	public function getStockAllocatedByStore($product_code, $store_code=null,$encounter_id=null) 
 	{
 			$allocated = Order::where('product_code','=',$product_code)
 					->leftjoin('order_cancellations as a', 'a.order_id', '=', 'orders.order_id')
 					->where('order_completed','=', 0)
-					->where('encounter_id','<>', $encounter_id)
 					->whereNull('cancel_id');
+
+			if (!empty($encounter_id)) {
+					$allocated = $allocated->where('encounter_id','<>', $encounter_id);
+			}
 
 			if (!empty($store_code)) {
 					$allocated = $allocated->where('orders.store_code', $store_code);
 			}
 
 			$allocated = $allocated->sum('order_quantity_request');
-
 			return floatval($allocated);
 
 	}
@@ -198,7 +201,7 @@ class StockHelper
 
 	public function stockReceiveSum($line_id)
 	{
-			$sum = StockInputLine::where('po_line_id',$line_id)->sum('line_post_quantity');
+			$sum = StockInputLine::where('po_line_id',$line_id)->sum('line_quantity');
 
 			if (empty($sum)) $sum='-';
 			return $sum;
@@ -331,5 +334,6 @@ class StockHelper
 			if (empty($count)) $count=0;
 			return $count;
 	}
+
 }
 

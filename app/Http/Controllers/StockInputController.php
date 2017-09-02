@@ -25,6 +25,9 @@ use App\StockInputBatch;
 use App\StockBatch;
 use App\PurchaseOrder;
 use App\StockReceive;
+use App\Loan;
+use App\Ward;
+use App\ProductAuthorization;
 
 class StockInputController extends Controller
 {
@@ -53,6 +56,7 @@ class StockInputController extends Controller
 							->orderBy('store_name')->lists('store_name', 'b.store_code')->prepend('','');
 
 			$stock_input = new StockInput();
+
 			return view('stock_inputs.create', [
 					'stock_input' => $stock_input,
 					'move' => StockMovement::where('move_code','<>','sale')
@@ -60,7 +64,8 @@ class StockInputController extends Controller
 							->orderBy('move_name')
 							->lists('move_name', 'move_code')
 							->prepend('',''),
-					'store' => $stores,
+					'store' => Auth::user()->storeList(),
+					'store_target' => Store::orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 
@@ -71,6 +76,12 @@ class StockInputController extends Controller
 
 			if ($valid->passes()) {
 					$stock_input = new StockInput($request->all());
+					if (empty($stock_input->input_description)) {
+							$stock_input->input_description = $stock_input->movement->move_name.": ".$stock_input->store->store_name;
+							if ($stock_input->move_code=='transfer') {
+								$stock_input->input_description = $stock_input->input_description." to ".$stock_input->store_transfer->store_name;
+							}
+					}
 					$stock_input->input_id = $request->input_id;
 					$stock_input->username = Auth::user()->username;
 					$stock_input->save();
@@ -117,6 +128,7 @@ class StockInputController extends Controller
 	
 	public function delete($id)
 	{
+
 		$stock_input = StockInput::findOrFail($id);
 		return view('stock_inputs.destroy', [
 			'stock_input'=>$stock_input
@@ -126,7 +138,13 @@ class StockInputController extends Controller
 
 	public function destroy($id)
 	{	
+		$lines = StockInputLine::where('input_id', $id);
+
 			StockInput::find($id)->delete();
+			DB::table('loans')
+					->whereIn('input_line_id',$lines->pluck('line_id'))
+					->update(['input_line_id'=>null]);
+
 			Session::flash('message', 'Record deleted.');
 			return redirect('/stock_inputs');
 	}
@@ -205,9 +223,9 @@ class StockInputController extends Controller
 	{
 		$lines = StockInputLine::where('input_id', $id)->get();
 		foreach ($lines as $line) {
-				$line->line_post_quantity = $request['quantity_'.$line->line_id];
+				$line->line_quantity = $request['quantity_'.$line->line_id];
 				$line->line_value = $request['value_'.$line->line_id];
-				$line->line_difference = $line->line_pre_quantity - $line->line_post_quantity;
+				$line->line_difference = $line->line_snapshot_quantity - $line->line_quantity;
 				$line->save();
 		}
 
@@ -241,14 +259,19 @@ class StockInputController extends Controller
 			foreach($input_lines as $line) {
 					if ($line->product->product_track_batch == 1) {
 							$batch_receive = $stock_helper->getStockInputBatchCount($line->line_id); 
-							$batch_quantity = $line->line_post_quantity;
+							$batch_quantity = $line->line_quantity;
 							if ($batch_receive != $batch_quantity) {
 									$valid['batch']='Incomplete batch quantity.';
 							}
 					}
+					$on_hand = $stock_helper->getStockCountByStore($line->product_code, $stock_input->store_code);
+					if ($on_hand==0) {
+							$valid['stock']='Insufficient stock.';
+					}
 			}
 
 			if (!empty($valid)) {
+					return $valid;
 					return redirect('/stock_inputs/show/'.$id)
 							->withErrors($valid)
 							->withInput();
@@ -300,13 +323,13 @@ class StockInputController extends Controller
 			$conversion=1;
 			if ($stock_input->move_code == 'receive') $conversion = $line->product->product_conversion_unit;
 
-			if (!empty($line->line_post_quantity) && !empty($product)) {
+			if (!empty($line->line_quantity) && !empty($product)) {
 				$stock = new Stock();
 				$stock->username = Auth::user()->username;
 				$stock->move_code = $stock_input->move_code;
 				$stock->store_code = $stock_input->store_code;
 				$stock->product_code = $product->product_code;
-				$stock->stock_quantity = $line->line_post_quantity*$conversion;
+				$stock->stock_quantity = $line->line_quantity*$conversion;
 				$stock->stock_conversion_unit = $line->product->product_conversion_unit;
 				$stock->stock_value = $line->line_value;
 				$stock->batch_number = $line->batch_number;
@@ -374,4 +397,45 @@ class StockInputController extends Controller
 			return $id;
 	}
 
+	public function indent($id)
+	{
+			$stock_input = StockInput::find($id);
+			$store = Ward::where('store_code','=',$stock_input->store_code_transfer)->first();
+
+			if ($store) {
+					$loans = Loan::where('ward_code','=', $store->ward_code)
+								->where('loan_code', '=', 'accept')
+								->whereNull('input_line_id');
+					$loans = $loans->leftjoin('products as b','b.product_code','=', 'loans.item_code');
+
+					$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+					if (!$product_authorization->get()->isEmpty()) {
+							$loans = $loans->whereIn('b.category_code',$product_authorization->pluck('category_code'));
+					}
+
+					$loans = $loans->get();
+
+					$stock_helper = new StockHelper();
+
+					foreach ($loans as $loan) {
+						$pre_quantity = $stock_helper->getStockCountByStore($loan->item_code, $stock_input->stre_code);
+						$product = Product::find($loan->item_code);
+						$input_line = new StockInputLine();
+						$input_line->input_id = $stock_input->input_id;
+						$input_line->product_code = $loan->item_code;
+						$input_line->line_value = $loan->loan_quantity*$product->product_average_cost;
+						$input_line->line_snapshot_quantity = $pre_quantity;
+						$input_line->line_quantity = $loan->loan_quantity;
+						$input_line->save();
+						$loan->input_line_id = $input_line->line_id;
+						$loan->save();
+					}
+
+					Session::flash('message', $loans->count().' items indented.');
+			} else {
+					Session::flash('message', 'No items indented.');
+			}
+
+			return redirect('/stock_inputs/input/'.$stock_input->input_id);
+	}
 }

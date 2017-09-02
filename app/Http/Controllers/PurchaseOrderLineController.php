@@ -215,7 +215,7 @@ class PurchaseOrderLineController extends Controller
 				$input_line->po_line_id = $line->line_id;
 				$input_line->product_code = $line->product_code;
 				$input_line->line_value = $line->line_total;
-				$input_line->line_post_quantity = $line->line_quantity_ordered-$total_receive;
+				$input_line->line_quantity = $line->line_quantity_ordered-$total_receive;
 				$input_line->save();
 			}
 

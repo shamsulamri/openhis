@@ -1,6 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+audio {
+	display:none;
+}
+</style>
+@if (!empty($count)) 
+		@if ($order_queues->count()>$count)
+				<audio controls autoplay>
+						<source src="Positive.ogg" type="audio/mpeg">
+						Your browser does not support the audio element.
+				</audio> 
+		@endif
+@endif
+
 @if ($is_discharge)
 <h1>Discharge Orders</h1>
 @else
@@ -84,4 +99,14 @@
 @else
 	No record found.
 @endif
+
+<script>
+setTimeout(
+		function() 
+		{
+				window.location.href = "order_queues?count={{ $order_queues->count() }}";
+		}
+,30000);
+</script>
+	
 @endsection

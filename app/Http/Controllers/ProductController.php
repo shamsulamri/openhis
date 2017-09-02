@@ -26,11 +26,11 @@ use Gate;
 use App\Order;
 use Auth;
 use App\ProductAuthorization;
-use App\StockHelper;
 use App\Ward;
 use App\StoreAuthorization;
 use App\ProductCategory;
 use App\GeneralLedger;
+use App\StockHelper;
 
 class ProductController extends Controller
 {
@@ -43,6 +43,7 @@ class ProductController extends Controller
 
 	public function index(Request $request)
 	{
+			$stock_helper = new StockHelper();
 			//$this->authorize('module-inventory');
 			/*
 			if (Gate::denies('module-inventory')) {
@@ -54,45 +55,28 @@ class ProductController extends Controller
 			if (Auth::user()->authorization->author_id==7) {
 					$loan=True;
 			}
-			/*
-			$products = DB::table('products')
-					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code')
-					->orderBy('product_name')
-					->paginate($this->paginateValue);
-			 */
-			
-			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 
 			$products = Product::orderBy('product_name')
 					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code');
 
 
+			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 			if (!$product_authorization->get()->isEmpty()) {
 					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 			}
-					
 
 			$products = $products->orderBy('products.created_at','desc')
 							->paginate($this->paginateValue);
 
 			$store_code = null;
-			$store = StoreAuthorization::where('author_id', Auth::user()->author_id)
-							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
-							->orderBy('store_name')
-							->lists('store_name', 'b.store_code');
-			//				->prepend('','');
-
-
-			//'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-
 
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,
-					'store'=>$store,
+					'store'=>Auth::user()->storeList(),
 					'stock_helper'=> new StockHelper(),
 					'store_code'=>$this->getDefaultStore($request),
-					'categories'=>$this->getProductCategories($product_authorization),
+					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>null,
 			]);
 	}
@@ -219,7 +203,7 @@ class ProductController extends Controller
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 					'store_code'=>$store_code,
-					'categories'=>$this->getProductCategories($product_authorization),
+					'categories'=>Auth::user()->categoryList(),
 					]);
 	}
 
@@ -280,83 +264,46 @@ class ProductController extends Controller
 					$loan=True;
 			}
 
-			/**
-			$products = DB::table('products as a')
-					->leftjoin('product_categories as b', 'b.category_code','=', 'a.category_code')
-					->where('product_name','like','%'.$request->search.'%')
-					->orWhere('product_code', 'like','%'.$request->search.'%')
-					->orderBy('product_name')
-					->paginate($this->paginateValue);
-
+			/*** Base ***/
 			$products = Product::orderBy('product_name')
-					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code')
-					->where('product_name','like','%'.$request->search.'%')
-					->orWhere('product_code', 'like','%'.$request->search.'%')
-					->paginate($this->paginateValue);
-			**/
-
-			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
-
-			$products = Product::orderBy('product_name')
-					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code');
-
-
-			if (!empty($request->category_code)) {
-					$products = $products->where('products.category_code','=', $request->category_code);
-			}elseif (!$product_authorization->get()->isEmpty()) {
-					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
-			}
+					->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code');
 
 			if (!empty($request->store)) {
-					/**
-					$products = DB::table('stocks as a')
-									->leftjoin('products as b', 'b.product_code', '=', 'a.product_code')
-									->leftjoin('stock_stores as c', function($join)
-									{
-											$join->on('c.product_code','=', 'a.product_code')
-												->on('c.store_code','=','a.store_code');
-									})
-									->where('a.store_code','=',$request->store);
-					**/
-
-					/**
-					$products = DB::table('stock_stores as a')
-									->leftjoin('products as b', 'b.product_code', '=', 'a.product_code')
-									->where('store_code','=', $request->store);
-					**/
-								
+					$products = StockStore::where('store_code',$request->store)
+									->leftjoin('products', 'products.product_code', '=', 'stock_stores.product_code');
 			}
 
-
-
-			/** Product Authorization **/
-			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
-			if (!$product_authorization->get()->isEmpty()) {
-					$products = $products->whereIn('b.category_code',$product_authorization->pluck('category_code'));
+			/*** Category ***/
+			$category_codes = Auth::user()->categoryCodes();
+			if (!empty($request->category_code)) {
+					$products = $products->where('products.category_code','=', $request->category_code);
+			} else {
+					if (count($category_codes)>0) {
+							$products = $products->whereIn('products.category_code',$category_codes);
+					}
 			}
 
+			$products = $products->leftjoin('ref_unit_measures as d', 'd.unit_code', '=', 'products.unit_code');
+			/*** Seach Param ***/
 			if (!empty($request->search)) {
-					$products = $products->where('product_name','like','%'.$request->search.'%')
+					$products = $products->where(function ($query) use ($request) {
+								$query->where('product_name','like','%'.$request->search.'%')
 								->orWhere('product_name_other','like','%'.$request->search.'%')
-								->orWhere('product_code','like','%'.$request->search.'%');
+								->orWhere('products.product_code','like','%'.$request->search.'%');
+					});
 			}
 
+			//dd($products->toSql());
 			$products = $products->paginate($this->paginateValue);
-
-			$store = StoreAuthorization::where('author_id', Auth::user()->author_id)
-							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
-							->orderBy('store_name')
-							->lists('store_name', 'b.store_code')
-							->prepend('','');
 
 			return view('products.index', [
 					'products'=>$products,
 					'search'=>$request->search,
 					'loan'=>$loan,
-					'store' => $store,
+					'store' => Auth::user()->storeList(),
+					'categories'=>Auth::user()->categoryList(),
 					'store_code'=>$request->store,
 					'stock_helper'=> new StockHelper(),
-					'categories'=>$this->getProductCategories($product_authorization),
 					'category_code'=>$request->category_code,
 					]);
 	}
@@ -377,7 +324,7 @@ class ProductController extends Controller
 					'store_code'=>null,
 					'stock_helper'=>new StockHelper(),
 					'default_store'=>$this->getDefaultStore($request),
-					'categories'=>$this->getProductCategories($product_authorization),
+					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>$request->category_code,
 			]);
 	}
@@ -460,17 +407,6 @@ class ProductController extends Controller
 			Log::info($store_code.':'.$stock_on_hand);
 			return $stock_on_hand;
 	}
+
 	**/
-
-	public function getProductCategories($product_authorization) {
-
-			$categories = ProductCategory::whereIn('category_code', $product_authorization->pluck('category_code'))->lists('category_name','category_code');
-			if (count($categories)==0) {
-					$categories = ProductCategory::orderBy('category_name')->lists('category_name', 'category_code');
-			}
-
-			$categories = $categories->prepend('','');
-
-			return $categories;
-	} 
 }

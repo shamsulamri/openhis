@@ -99,6 +99,10 @@ class StockInputLineController extends Controller
 	public function destroy($id)
 	{	
 			$line = StockInputLine::find($id);
+			DB::table('loans')
+					->where('input_line_id',$id)
+					->update(['input_line_id'=>null]);
+
 			StockInputLine::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/stock_inputs/input/'.$line->input_id);

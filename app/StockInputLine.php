@@ -16,8 +16,8 @@ class StockInputLine extends Model
 				'po_line_id',
 				'product_code',
 				'line_value',
-				'line_pre_quantity',
-				'line_post_quantity',
+				'line_snapshot_quantity',
+				'line_quantity',
 				'line_difference'];
 	
     protected $guarded = ['line_id'];
@@ -27,7 +27,7 @@ class StockInputLine extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'line_post_quantity'=>'required',
+				'line_quantity'=>'required',
 			];
 			
 			//'amount_current'=>'required',
@@ -53,7 +53,7 @@ class StockInputLine extends Model
 
 
 				if ($stock_input->move_code=='transfer') {
-        	   			$rules['line_post_quantity'] = 'lower_than_or_equal:'.$this->attributes['line_post_quantity'].','.$stock_store->stock_quantity;
+        	   			$rules['line_quantity'] = 'lower_than_or_equal:'.$this->attributes['line_quantity'].','.$stock_store->stock_quantity;
 						$messages['lower_than_or_equal']="Quantity cannot be greater than on-hand.";
 				}
 
@@ -83,5 +83,10 @@ class StockInputLine extends Model
 	public function batches()
 	{
 		return $this->hasMany('App\StockInputBatch', 'line_id');
+	}
+
+	public function stockInput()
+	{
+		return $this->belongsTo('App\StockInput', 'input_id');
 	}
 }

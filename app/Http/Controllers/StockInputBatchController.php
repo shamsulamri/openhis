@@ -182,7 +182,7 @@ class StockInputBatchController extends Controller
 			$line = StockInputLine::find($request->line_id);
 
 
-			if ($total>$line->line_post_quantity) {
+			if ($total>$line->line_quantity) {
 					Session::flash('error', 'Total batch quantity cannot be greater than line quantity.');
 					return redirect('/stock_input_batches/batch/'.$request->line_id)
 									->withInput();

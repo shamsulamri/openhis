@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Loans</h1>
+<h1>Stock Indent</h1>
 @if (!empty($ward_code))
 <h3>{{ $ward->ward_name }}</h3>
 @endif

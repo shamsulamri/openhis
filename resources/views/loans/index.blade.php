@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Loans</h1>
+<h1>Ward Request</h1>
 <br>
 <form class='form-inline' action='/loan/search' method='post'>
 	<label>Status</label>
@@ -47,7 +47,7 @@
 			</td>
 			<td>
 					<a href='{{ URL::to('loans/'. $loan->loan_id . '/edit') }}'>
-						{{$loan->getItemName() }}
+						{{$loan->getItemName($loan->product_code) }}
 					</a>
 			</td>
 			@if (!$is_folder)
