@@ -18,7 +18,6 @@ class AdmissionBed extends Model
 				'room_code',
 				'status_code',
 				'bed_name',
-				'bed_virtual',
 				'gender_code',
 				'department_code'];
 	

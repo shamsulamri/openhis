@@ -21,9 +21,7 @@ class StockHelper
 
 			$value = $value->sum('stock_quantity');
 			
-			Log::info($store_code);
 			return floatval($value);
-
 	}
 
 	public function getStockAllocatedByStore($product_code, $store_code=null,$encounter_id=null) 
@@ -42,8 +40,41 @@ class StockHelper
 			}
 
 			$allocated = $allocated->sum('order_quantity_request');
+
 			return floatval($allocated);
 
+	}
+
+	public function onPurchase($product_code)
+	{
+			$quantity = PurchaseOrderLine::where('purchase_order_lines.product_code',$product_code)
+						->leftjoin('stock_input_lines as b','b.po_line_id', '=', 'purchase_order_lines.line_id')
+						->leftjoin('stock_inputs as c', 'c.input_id', '=', 'b.input_id')
+						->where('input_close','=', 0);
+
+			return $quantity->sum('line_quantity_ordered');
+	}
+
+	public function onTransfer($product_code, $store_code)
+	{
+			$quantity = StockInputLine::where('product_code','=', $product_code)
+							->leftjoin('stock_inputs as b', 'b.input_id','=', 'stock_input_lines.input_id')
+							->where('input_close','=', 0)
+							->where('store_code', $store_code)
+							->where('move_code','=','transfer');
+
+			return $quantity->sum('line_quantity');
+	}
+
+	public function inTransfer($product_code, $store_code)
+	{
+			$quantity = StockInputLine::where('product_code','=', $product_code)
+							->leftjoin('stock_inputs as b', 'b.input_id','=', 'stock_input_lines.input_id')
+							->where('input_close','=', 0)
+							->where('store_code_transfer', $store_code)
+							->where('move_code','=','transfer');
+
+			return $quantity->sum('line_quantity');
 	}
 
 	public function stockOnHand($product_code, $store_code) 

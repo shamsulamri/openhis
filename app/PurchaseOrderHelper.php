@@ -36,4 +36,13 @@ class PurchaseOrderHelper
 			return $results[0]->total;
 
 	}
+
+	public function stockReceive($line_id) 
+	{
+			$quantity = StockInputLine::where('po_line_id','=', $line_id)
+						->sum('line_quantity');
+
+			return $quantity;
+
+	}
 }

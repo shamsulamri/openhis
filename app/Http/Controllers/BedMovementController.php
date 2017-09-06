@@ -126,4 +126,47 @@ class BedMovementController extends Controller
 					'bed_movements'=>$bed_movements
 			]);
 	}
+
+	public function enquiry(Request $request)
+	{
+			$movements = array(''=>'','swap'=>'Swap','change'=>'Change','transfer'=>'Transfer');
+			$bed_movements = BedMovement::leftjoin('encounters as b', 'b.encounter_id','=', 'bed_movements.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
+					->leftJoin('beds as d', 'd.bed_code', '=', 'bed_movements.move_from')
+					->leftJoin('beds as e', 'e.bed_code', '=', 'bed_movements.move_to')
+					->where(function ($query) use ($request) {
+							$query->where('patient_name','like', '%'.$request->search.'%')
+									->orWhere('patient_mrn','like', '%'.$request->search.'%')
+									->orWhere('b.encounter_id','=',$request->search);
+					})
+					->orderBy('bed_movements.encounter_id','move_id');
+
+			if (!empty($request->move_code)) {
+					$bed_movements = $bed_movements->where('d.bed_code','<>', DB::raw('e.bed_code'));
+					switch ($request->move_code) {
+						case  "swap":
+							$bed_movements = $bed_movements->where('d.class_code','=', DB::raw('e.class_code'))
+													->where('d.ward_code','=', DB::raw('e.ward_code'));
+							break;
+						case  "change":
+							$bed_movements = $bed_movements->where('d.class_code','<>', DB::raw('e.class_code'))
+													->where('d.ward_code','=', DB::raw('e.ward_code'));
+							break;
+						case  "transfer":
+							$bed_movements = $bed_movements->where('d.ward_code','<>', DB::raw('e.ward_code'));
+							break;
+					}
+			}
+
+			//dd($bed_movements->toSql());
+			$bed_movements = $bed_movements->paginate($this->paginateValue);
+
+
+			return view('bed_movements.enquiry', [
+					'bed_movements'=>$bed_movements,
+					'search'=>$request->search,
+					'movements'=>$movements,
+					'move_code'=>$request->move_code
+					]);
+	}
 }

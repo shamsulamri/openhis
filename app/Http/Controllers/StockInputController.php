@@ -41,7 +41,6 @@ class StockInputController extends Controller
 	public function index()
 	{
 			$stock_inputs = StockInput::where('username', Auth::user()->username)
-					->orderBy('input_close')
 					->orderBy('input_id','desc')
 					->paginate($this->paginateValue);
 			return view('stock_inputs.index', [
@@ -264,14 +263,16 @@ class StockInputController extends Controller
 									$valid['batch']='Incomplete batch quantity.';
 							}
 					}
-					$on_hand = $stock_helper->getStockCountByStore($line->product_code, $stock_input->store_code);
-					if ($on_hand==0) {
-							$valid['stock']='Insufficient stock.';
+
+					if ($stock_input->move_code == 'transfer') {
+							$on_hand = $stock_helper->getStockCountByStore($line->product_code, $stock_input->store_code);
+							if ($on_hand==0) {
+									$valid['stock']='Insufficient stock.';
+							}
 					}
 			}
 
 			if (!empty($valid)) {
-					return $valid;
 					return redirect('/stock_inputs/show/'.$id)
 							->withErrors($valid)
 							->withInput();
@@ -290,10 +291,12 @@ class StockInputController extends Controller
 				$stock_receive->delivery_number = $request->delivery_number;
 				$stock_receive->save();
 				
-				$purchase_order = PurchaseOrder::find($stock_input->purchase_id);
-				$purchase_order->purchase_received=1;
-				$purchase_order->purchase_close = DojoUtility::now();
-				$purchase_order->save();
+				if ($request->close_transaction==1) {
+						$purchase_order = PurchaseOrder::find($stock_input->purchase_id);
+						$purchase_order->purchase_received=1;
+						$purchase_order->purchase_close = DojoUtility::now();
+						$purchase_order->save();
+				}
 			} else {
 					$stock_input->input_description=$request->input_description;
 			}
@@ -322,6 +325,7 @@ class StockInputController extends Controller
 
 			$conversion=1;
 			if ($stock_input->move_code == 'receive') $conversion = $line->product->product_conversion_unit;
+			if ($conversion==0) $conversion=1;
 
 			if (!empty($line->line_quantity) && !empty($product)) {
 				$stock = new Stock();

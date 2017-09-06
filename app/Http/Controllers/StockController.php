@@ -34,12 +34,30 @@ class StockController extends Controller
 
 	public function index()
 	{
-			$stocks = Stocks::where('product_code','=', $product_code)
-					->orderBy('product_code')
-					->paginate($this->paginateValue);
+			$store_code = Auth::user()->defaultStore();
+			$stocks = Stock::orderBy('stock_id', 'desc')
+						->leftjoin('products', 'products.product_code','=', 'stocks.product_code')
+						->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code')
+						->where('store_code', $store_code);
+
+			$category_codes = Auth::user()->categoryCodes();
+			if (count($category_codes)>0) {
+					$stocks = $stocks->whereIn('products.category_code',$category_codes);
+			}
+
+			$stocks = $stocks->paginate($this->paginateValue);
 
 			return view('stocks.index', [
-					'stocks'=>$stocks
+					'stocks'=>$stocks,
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'categories'=>Auth::user()->categoryList(),
+					'category_code'=>null,
+					'store_code'=>$store_code,
+					'search'=>null,
+					'date_start'=>null,
+					'date_end'=>null,
+					'move' => Move::where('move_code','<>','sale')->orderBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
+					'move_code'=>null,
 			]);
 	}
 
@@ -380,19 +398,69 @@ class StockController extends Controller
 	
 	public function search(Request $request)
 	{
-			$stocks = DB::table('stocks as a')
-					->leftJoin('stock_movements as b', 'b.move_code', '=','a.move_code')
-					->leftJoin('stores as c', 'c.store_code', '=','a.store_code')
-					->where('product_code','=',$request->product_code)
-					->where('a.store_code','=',$request->store_code)
-					->orderBy('stock_datetime', 'desc')
-					->paginate($this->paginateValue);
-			$product = Product::find($request->product_code);
+			$stocks = Stock::orderBy('stock_id', 'desc')
+						->leftjoin('products', 'products.product_code','=', 'stocks.product_code')
+						->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code');
+
+			/*** Store ***/
+			if (!empty($request->store_code)) {
+					$stocks = $stocks->where('store_code', $request->store_code);
+			}
+
+			/*** Movement ***/
+			if (!empty($request->move_code)) {
+					$stocks = $stocks->where('move_code', $request->move_code);
+			}
+
+			/*** Category ***/
+			$category_codes = Auth::user()->categoryCodes();
+			if (!empty($request->category_code)) {
+					$stocks = $stocks->where('products.category_code','=', $request->category_code);
+			} else {
+					if (count($category_codes)>0) {
+							$stocks = $stocks->whereIn('products.category_code',$category_codes);
+					}
+			}
+
+			/*** Date Range ****/
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			if (isset($date_start) & isset($date_end)) {
+					$stocks = $stocks->whereBetween('stocks.created_at', [$date_start.' 00:00', $date_end.' 23:59']);
+			}	
+
+			if (isset($date_start) & !isset($date_end)) {
+					$stocks = $stocks->where('stocks.created_at', ">=", $date_start.' 00:00');
+			}	
+
+			if (!isset($date_start) & isset($date_end)) {
+					$stocks = $stocks->where('stocks.created_at', "<=", $date_end.' 23:59');
+			}	
+
+			/*** Seach Param ***/
+			if (!empty($request->search)) {
+					$stocks = $stocks->where(function ($query) use ($request) {
+								$query->where('product_name','like','%'.$request->search.'%')
+								->orWhere('product_name_other','like','%'.$request->search.'%')
+								->orWhere('products.product_code','like','%'.$request->search.'%');
+					});
+			}
+
+			$stocks = $stocks->paginate($this->paginateValue);
+
 			return view('stocks.index', [
 					'stocks'=>$stocks,
-					'product'=>$product,
 					'store_code'=>$request->store_code,
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'categories'=>Auth::user()->categoryList(),
+					'category_code'=>$request->category_code,
+					'store_code'=>$request->store_code,
+					'search'=>$request->search,
+					'date_start'=> $date_start,
+					'date_end'=> $date_end,
+					'move_code'=> $request->move_code,
+					'move' => Move::where('move_code','<>','sale')->orderBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
 			]);
 	}
 
@@ -434,7 +502,7 @@ class StockController extends Controller
 				return "Floor store for this ward has not been defined.";
 			}
 
-			return view('stocks.index', [
+			return view('stocks.show', [
 					'stocks'=>$stocks,
 					'product'=>$product,
 					'store_code'=>$store_code,

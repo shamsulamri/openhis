@@ -53,4 +53,8 @@ class StockInput extends Model
 		return $this->belongsTo('App\StockMovement', 'move_code');
 	}
 	
+	public function purchase()
+	{
+		return $this->belongsTo('App\PurchaseOrder', 'purchase_id');
+	}
 }

@@ -57,4 +57,17 @@ class BedMovement extends Model
 			return $this->belongsTo('App\Bed', 'move_to','bed_code');
 	}
 
+	public function bedFrom() 
+	{
+			return $this->belongsTo('App\Bed', 'move_from','bed_code');
+	}
+
+	public function bedTo() 
+	{
+			return $this->belongsTo('App\Bed', 'move_to','bed_code');
+	}
+	public function encounter()
+	{
+			return $this->belongsTo('App\Encounter', 'encounter_id');
+	}
 }

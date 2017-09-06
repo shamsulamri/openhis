@@ -15,6 +15,7 @@ use Session;
 class StockBatchController extends Controller
 {
 	public $paginateValue=10;
+	public $batch_status=[''=>'','available'=>'Available', 'unavailable'=>'Unavailable'];
 
 	public function __construct()
 	{
@@ -23,11 +24,17 @@ class StockBatchController extends Controller
 
 	public function index()
 	{
-			$stock_batches = DB::table('stock_batches')
-					->orderBy('batch_number')
+			$stock_batches = StockBatch::selectRaw('*, sum(batch_quantity) as total_quantity')
+					->groupBy('store_code', 'product_code', 'batch_number', 'expiry_date')
+					->orderBy('batch_id','desc')
 					->paginate($this->paginateValue);
+
+			$stock_batches=null;
+
 			return view('stock_batches.index', [
-					'stock_batches'=>$stock_batches
+					'stock_batches'=>$stock_batches,
+					'status'=>$this->batch_status,
+					'status_code'=>null,
 			]);
 	}
 
@@ -105,15 +112,28 @@ class StockBatchController extends Controller
 	
 	public function search(Request $request)
 	{
-			$stock_batches = DB::table('stock_batches')
-					->where('batch_number','like','%'.$request->search.'%')
-					->orWhere('batch_id', 'like','%'.$request->search.'%')
-					->orderBy('batch_number')
-					->paginate($this->paginateValue);
+			$stock_batches = StockBatch::selectRaw('*, sum(batch_quantity) as total_quantity')
+					->leftjoin('products', 'products.product_code','=', 'stock_batches.product_code')
+					->where(function ($query) use ($request) {
+									$query->orWhere('batch_number','like','%'.$request->search.'%')
+									->orWhere('products.product_code','like','%'.$request->search.'%');
+					})
+					->groupBy('store_code', 'stock_batches.product_code', 'batch_number', 'expiry_date')
+					->orderBy('batch_id','desc');
+
+			if ($request->status_code == 'available') {
+					$stock_batches = $stock_batches->havingRaw('sum(batch_quantity)>0');
+			} elseif ($request->status_code == 'unavailable') {
+					$stock_batches = $stock_batches->havingRaw('sum(batch_quantity)<=0');
+			}
+
+			$stock_batches = $stock_batches->paginate($this->paginateValue);
 
 			return view('stock_batches.index', [
 					'stock_batches'=>$stock_batches,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'status'=>$this->batch_status,
+					'status_code'=>$request->status_code,
 					]);
 	}
 

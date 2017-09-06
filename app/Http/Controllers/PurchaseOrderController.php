@@ -219,7 +219,7 @@ class PurchaseOrderController extends Controller
 					->leftJoin('suppliers as b', 'b.supplier_code','=','purchase_orders.supplier_code');
 
 			if (!empty($request->search)) {
-				$purchase_orders = $purchase_orders->where('purchase_number', 'like','%'.$request->search.'%');
+				$purchase_orders = $purchase_orders->where('purchase_order_number', 'like','%'.$request->search.'%');
 			}
 
 			if (!empty($request->date_search)) {

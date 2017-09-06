@@ -153,8 +153,6 @@ class AdmissionBedController extends Controller
 			$admission_bed = AdmissionBed::findOrFail($id);
 			$admission_bed->fill($request->input());
 
-			$admission_bed->bed_virtual = $request->bed_virtual ?: 0;
-
 			$valid = $admission_bed->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
@@ -315,10 +313,15 @@ class AdmissionBedController extends Controller
 			$bed_movement->save();
 			
 			$bed = Bed::where('bed_code', '=',$bed_code)->first();
-
+		
 			$admission->bed_code = $bed_code;
-			$admission->class_code = $bed->class_code; 
+			//$admission->class_code = $bed->class_code; 
 			$admission->save();
+
+			/** Set new bed to occupiied **/
+			$bed = Bed::find($bed_code);
+			$bed->status_code = '03';
+			$bed->save();
 
 			if (!empty($request->book_id)) {
 				BedBooking::find($request->book_id)->delete();	

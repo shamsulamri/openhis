@@ -125,14 +125,12 @@ iframe { border: 1px #e5e5e5 solid; }
 					</div>
 			</div>
 	</div>
-	<!--
     <div class='form-group  @if ($errors->has('delivery_number')) has-error @endif'>
         <label for='status' class='col-sm-2 control-label'></label>
         <div class='col-sm-10'>
 				{{ Form::checkbox('close_transaction','1', 0) }} Transaction complete
         </div>
     </div>
-	-->
 <script>
 		$('#invoice_date').datepicker({
 				format: "dd/mm/yyyy",

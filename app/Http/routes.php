@@ -47,6 +47,15 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+
+		Route::resource('bed_movements', 'BedMovementController');
+		Route::get('/bed_movements/id/{id}', 'BedMovementController@searchById');
+		Route::post('/bed_movement/search', 'BedMovementController@search');
+		Route::get('/bed_movement/search', 'BedMovementController@search');
+		Route::get('/bed_movements/delete/{id}', 'BedMovementController@delete');
+		Route::post('/bed_movement/enquiry', 'BedMovementController@enquiry');
+		Route::get('/bed_movement/enquiry', 'BedMovementController@enquiry');
+				
 		Route::resource('product_groups', 'ProductGroupController');
 		Route::get('/product_groups/id/{id}', 'ProductGroupController@searchById');
 		Route::post('/product_group/search', 'ProductGroupController@search');
@@ -323,6 +332,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/bed/search', 'BedController@search');
 		Route::get('/bed/search', 'BedController@search');
 		Route::get('/beds/delete/{id}', 'BedController@delete');
+		Route::get('/bed/enquiry', 'BedController@enquiry');
+		Route::post('/bed/enquiry', 'BedController@enquiry');
 
 		Route::post('/order_task/status', 'OrderTaskController@status');
 		Route::get('/order_tasks/task/{consultation_id}/{location_code}', 'OrderTaskController@task');
@@ -353,6 +364,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/admission/search', 'AdmissionController@search');
 		Route::get('/admission/search', 'AdmissionController@search');
 		Route::get('/admissions/delete/{id}', 'AdmissionController@delete');
+		Route::post('/admission/enquiry', 'AdmissionController@enquiry');
+		Route::get('/admission/enquiry', 'AdmissionController@enquiry');
 
 		Route::group(['middleware' => 'diet_middleware'], function () {
 
@@ -472,6 +485,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		});
 
 		Route::group(['middleware' => 'patient_list_middleware'], function () {
+				Route::post('/discharge/enquiry', 'DischargeController@enquiry');
+				Route::get('/discharge/enquiry', 'DischargeController@enquiry');
 				Route::get('/discharges', 'DischargeController@index');
 				
 				Route::resource('patients', 'PatientController');
@@ -678,6 +693,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 		Route::group(['middleware' => 'product_list_middleware'], function () {
 
+				Route::post('/products/reorder', 'ProductController@reorder');
+				Route::get('/products/reorder', 'ProductController@reorder');
+				Route::post('/products/on_hand', 'ProductController@onHandEnquiry');
+				Route::get('/products/on_hand', 'ProductController@onHandEnquiry');
+				Route::post('/products/enquiry', 'ProductController@enquiry');
+				Route::get('/products/enquiry', 'ProductController@enquiry');
 				Route::get('/products/{id}/option', 'ProductController@option');
 				Route::get('/products/{id}/json', 'ProductController@json');
 				Route::resource('products', 'ProductController');
@@ -726,6 +747,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/explode_assembly/{id}', 'AssemblyController@explode');
 				Route::post('/explode_assembly/{id}', 'AssemblyController@destroy');
 				
+				Route::post('/purchase_order_lines/enquiry', 'PurchaseOrderLineController@enquiry');
+				Route::get('/purchase_order_lines/enquiry', 'PurchaseOrderLineController@enquiry');
 				Route::get('/purchase_order_lines/{id}/json', 'PurchaseOrderLineController@json');
 				Route::resource('purchase_order_lines', 'PurchaseOrderLineController', ['except'=>['index','create']]);
 				Route::get('/purchase_order_lines/index/{purchase_id}', 'PurchaseOrderLineController@index');
@@ -895,12 +918,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/block_dates/delete/{id}', 'BlockDateController@delete');
 				
 				
-				
-				Route::resource('bed_movements', 'BedMovementController');
-				Route::get('/bed_movements/id/{id}', 'BedMovementController@searchById');
-				Route::post('/bed_movement/search', 'BedMovementController@search');
-				Route::get('/bed_movement/search', 'BedMovementController@search');
-				Route::get('/bed_movements/delete/{id}', 'BedMovementController@delete');
 				
 				Route::resource('care_organisations', 'CareOrganisationController');
 				Route::get('/care_organisations/id/{id}', 'CareOrganisationController@searchById');

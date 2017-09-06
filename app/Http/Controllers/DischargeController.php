@@ -19,6 +19,7 @@ use Carbon\Carbon;
 use App\MedicalCertificate;
 use App\DojoUtility;
 use App\DischargeType;
+use App\EncounterType;
 use App\DischargeHelper;
 
 class DischargeController extends Controller
@@ -249,5 +250,46 @@ class DischargeController extends Controller
 	public function ward($id)
 	{
 			return "ward";
+	}
+
+	public function enquiry(Request $request)
+	{
+			$discharges = Discharge::orderBy('discharge_id','desc')
+					->select('patient_mrn', 'patient_name', 'discharges.encounter_id', 'discharges.discharge_id', 'type_name','discharges.created_at', 'e.id','name','ward_name', 'b.encounter_code')
+					->leftJoin('encounters as b', 'b.encounter_id','=','discharges.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
+					->leftJoin('ref_discharge_types as d', 'd.type_code','=','discharges.type_code')
+					->leftJoin('bills as e', 'e.encounter_id', '=', 'discharges.encounter_id')
+					->leftJoin('admissions as i', 'i.encounter_id', '=', 'b.encounter_id')
+					->leftJoin('users as f', 'f.id', '=', 'discharges.user_id')
+					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
+					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
+					->orderBy('discharge_id','desc');
+			
+			if (!empty($request->search)) {
+					$discharges = $discharges->where(function ($query) use ($request) {
+							$query->where('patient_mrn','like','%'.$request->search.'%')
+								->orWhere('patient_name', 'like','%'.$request->search.'%');
+					});
+			}
+
+			if (!empty($request->type_code)) {
+					$discharges = $discharges->where('discharges.type_code','=', $request->type_code);
+			}
+
+			if (!empty($request->encounter_code)) {
+					$discharges = $discharges->where('b.encounter_code','=', $request->encounter_code);
+			}
+
+			$discharges = $discharges->paginate($this->paginateValue);
+			return view('discharges.enquiry', [
+					'discharges'=>$discharges,
+					'search'=>$request->search,
+					'discharge_types' => DischargeType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'encounter_types' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'type_code'=>$request->type_code,
+					'encounter_code'=>$request->encounter_code,
+					'dojo' => new DojoUtility(),
+					]);
 	}
 }

@@ -64,13 +64,13 @@ class User extends Authenticatable
 			$stores = StoreAuthorization::where('author_id', $this->author_id)
 							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
 							->orderBy('store_name')
-							->lists('store_name', 'b.store_code')
-							->prepend('','');
+							->lists('store_name', 'b.store_code');
 
-			if (count($stores)==1) {
-				$stores = Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('','');
-			}
+			if (count($stores)==0) {
+				$stores = Store::all()->sortBy('store_name')->lists('store_name', 'store_code');
+			} 
 
+			//$stores = $stores->prepend('All Store','all')->prepend('','');
 			return $stores;
 	}
 
@@ -103,5 +103,23 @@ class User extends Authenticatable
 			$codes = ProductAuthorization::select('category_code')->where('author_id', $this->author_id)
 					->pluck('category_code');
 			return $codes;
+	}
+
+	public function defaultStore() 
+	{
+			$default_store=null;
+			if ($this->authorization->store_code) {
+				$default_store = $this->authorization->store_code;
+			}
+
+			if ($this->authorization->module_inventory==0) {
+					$ward_code = $request->cookie('ward');
+					$ward = Ward::find($ward_code);
+					if ($ward) {
+						$default_store = $ward->store_code;
+					} 
+			} 		
+
+			return $default_store;
 	}
 }

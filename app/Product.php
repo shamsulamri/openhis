@@ -90,6 +90,11 @@ class Product extends Model
 			$this->attributes['product_name'] = strtoupper($value);
 	}
 
+	public function getProductNameAttribute($value)
+	{
+			return strtoupper($value);
+	}
+
 	public function category()
 	{
 			return $this->belongsTo('App\ProductCategory','category_code');

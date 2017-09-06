@@ -1,10 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Stock Movement Enquiry</h1>
-<br>
-<form action='/stock/search' method='post' class='form-horizontal'>
+<h1>Purchase Enquiry</h1>
+<form action='/purchase_order_lines/enquiry' method='post' class='form-horizontal'>
 	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label for='date_start' class='col-sm-3 control-label'><div align='left'>Number</div></label>
+						<div class='col-sm-9'>
+							<input type='text' class='form-control' placeholder="Order or invoice number" name='document_number' value='{{ $document_number }}'' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
 						<label for='date_start' class='col-sm-3 control-label'><div align='left'>Product</div></label>
@@ -15,17 +22,9 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label for='date_end' class='col-sm-3 control-label'>Category</label>
+						<label for='date_end' class='col-sm-3 control-label'>Status</label>
 						<div class='col-sm-9'>
-							{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-4">
-					<div class='form-group'>
-						<label for='date_end' class='col-sm-3 control-label'>Store</label>
-						<div class='col-sm-9'>
-							{{ Form::select('store_code', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::select('status_code', $order_status, $status_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
@@ -54,65 +53,68 @@
 					</div>
 			</div>
 			<div class="col-xs-4">
-					<div class='form-group'>
-						<label for='date_end' class='col-sm-3 control-label'>Transaction</label>
-						<div class='col-sm-9'>
-							{{ Form::select('move_code', $move, $move_code, ['class'=>'form-control','maxlength'=>'10']) }}
-						</div>
-					</div>
+	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 			</div>
 	</div>
-							<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
 
-
-@if ($stocks->total()>0)
+@if ($lines->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Transaction</th>
-    <th>Date</th> 
-    <th>Store</th> 
-    <th>Product</th> 
-    <th><div align='right'>Quantity</div></th> 
-    <th><div align='right'>Value</div></th> 
+    <th width='100'>PO Number</th> 
+    <th width='100'>Order Date</th> 
+    <th width='100'>Delivery Date</th> 
+    <th width='100'>Invoice Number</th> 
+    <th>Product</th>
+    <th>Code</th>
+    <th>Status</th>
+    <th width='100'><div align='right'>Quantity</div></th> 
+    <th width='100'><div align='right'>Value</div></th> 
 	@can('system-administrator')
 	<th></th>
 	@endcan
 	</tr>
   </thead>
 	<tbody>
-@foreach ($stocks as $stock)
+@foreach ($lines as $line)
 	<tr>
 			<td>
-					{{$stock->movement->move_name}}
+					{{$line->stockInput->purchase->purchase_order_number}}
 			</td>
 			<td>
-					{{ DojoUtility::dateReadFormat($stock->stock_datetime)}}
+					{{ DojoUtility::dateReadFormat($line->stockInput->purchase->purchase_date) }}
 			</td>
 			<td>
-					{{$stock->store->store_name}}
-					@if ($stock->storeTransfer)
-					<br>to
-					{{$stock->storeTransfer->store_name}}
-					@endif
+					{{ DojoUtility::dateReadFormat($line->created_at) }}
 			</td>
 			<td>
-					{{$stock->product->product_name}}
-					<br>
-					{{$stock->product->product_code}}
+					{{ $line->invoice_number }}	
+			</td>
+			<td>
+					{{$line->product->product_name}}
+			</td>
+			<td>
+					{{$line->product->product_code}}
+			</td>
+			<td>
+				<?php
+					if ($line->purchase_posted==1 & $line->purchase_received==0) echo '<span class="label label-success">Posted</span>';
+					if ($line->purchase_posted==1 & $line->purchase_received==1) echo '<span class="label label-default">Close</span>';
+					if ($line->purchase_posted==0 & $line->purchase_received==0) echo '<span class="label label-success">Open</span>';
+				?>
 			</td>
 			<td align='right'>
-					{{ abs($stock->stock_quantity)}}
+					{{$line->line_quantity}}
 			</td>
 			<td align='right'>
-					{{ number_format(abs($stock->stock_value),2) }}
+					{{$line->line_value}}
 			</td>
 			@can('system-administrator')
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('stocks/delete/'. $stock->stock_id) }}'>Delete</a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('purchase_order_lines/delete/'. $line->line_id) }}'>Delete</a>
 			</td>
 			@endcan
 	</tr>
@@ -120,11 +122,14 @@
 @endif
 </tbody>
 </table>
-
-{{ $stocks->appends(['search'=>$search, 'store_code'=>$store_code, 'category_code'=>$category_code])->render() }}
+@if (isset($search)) 
+	{{ $lines->appends(['search'=>$search])->render() }}
+	@else
+	{{ $lines->render() }}
+@endif
 <br>
-@if ($stocks->total()>0)
-	{{ $stocks->total() }} records found.
+@if ($lines->total()>0)
+	{{ $lines->total() }} records found.
 @else
 	No record found.
 @endif

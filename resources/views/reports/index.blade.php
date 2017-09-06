@@ -3,85 +3,31 @@
 @section('content')
 <h1>Reports</h1>
 <br>
-{{ Form::model($report, ['url'=>'reports', 'class'=>'form-horizontal']) }} 
-    <div class='form-group  @if ($errors->has('report')) has-error @endif'>
-        <label for='report' class='col-sm-3 control-label'>Report</label>
-        <div class='col-sm-9'>
-			{{ Form::select('report', $reports,null, ['class'=>'form-control','maxlength'=>'10']) }}
-        </div>
-    </div>
 
-    <div class='form-group  @if ($errors->has('report')) has-error @endif'>
-        <label for='report' class='col-sm-3 control-label'>Encounter</label>
-        <div class='col-sm-9'>
-			{{ Form::select('encounter', $encounters,null, ['class'=>'form-control','maxlength'=>'10']) }}
-        </div>
-    </div>
+<h3>Admission, Discharge & Transfers</h3>
+<h3>
+<div class="row">
+	<div class="col-xs-6">
+		<a href="{{ url('/admission/enquiry') }}">Admission Enquiry</a><br>
+		<a href="{{ url('/discharge/enquiry') }}">Discharge Enquiry</a><br>
+		<a href="{{ url('/bed/enquiry') }}">Bed Enquiry</a><br>
+		<a href="{{ url('/bed_movement/enquiry') }}">Bed Movement History</a><br>
+	</div>
+</div>
+<br>
 
-	<!--
-    <div class='form-group  @if ($errors->has('report')) has-error @endif'>
-        <label for='report' class='col-sm-3 control-label'>Ward</label>
-        <div class='col-sm-9'>
-			{{ Form::select('ward_code', $wards,null, ['class'=>'form-control','maxlength'=>'10']) }}
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('report')) has-error @endif'>
-        <label for='report' class='col-sm-3 control-label'>Service</label>
-        <div class='col-sm-9'>
-			{{ Form::select('service_id', $services,null, ['class'=>'form-control','maxlength'=>'10']) }}
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('report')) has-error @endif'>
-        <label for='report' class='col-sm-3 control-label'>User</label>
-        <div class='col-sm-9'>
-			{{ Form::select('user', $user,null, ['class'=>'form-control','maxlength'=>'10']) }}
-        </div>
-    </div>
-	-->
-
-    <div class='form-group  @if ($errors->has('date_start')) has-error @endif'>
-        <label for='date_start' class='col-sm-3 control-label'>Date Start</label>
-        <div class='col-sm-9'>
-			<input id="date_start" name="date_start" type="text">
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('date_end')) has-error @endif'>
-        <label for='date_end' class='col-sm-3 control-label'>Date End</label>
-        <div class='col-sm-9'>
-			<input id="date_end" name="date_end" type="text">
-        </div>
-    </div>
-
-    <div class='form-group'>
-        <div class="col-sm-offset-3 col-sm-9">
-            {{ Form::submit('Submit', ['class'=>'btn btn-primary']) }}
-        </div>
-    </div>
-{{ Form::close() }}
-	<script>
-		$(function(){
-				$('#date_start').combodate({
-						format: "DD/MM/YYYY",
-						template: "DD MMMM YYYY",
-						value: '{{ $today }}',
-						maxYear: '{{ $minYear+5 }}',
-						minYear: '{{ $minYear }}',
-						customClass: 'select'
-				});    
-		});
-
-		$(function(){
-				$('#date_end').combodate({
-						format: "DD/MM/YYYY",
-						template: "DD MMMM YYYY",
-						value: '{{ $tomorrow }}',
-						maxYear: '{{ $minYear+5 }}',
-						minYear: '{{ $minYear }}',
-						customClass: 'select'
-				});    
-		});
-	</script>
+</h3>
+<h3>Inventory & Order Management</h3>
+<h3>
+<div class="row">
+	<div class="col-xs-6">
+		<a href="{{ url('/products/enquiry') }}">Product Enquiry</a><br>
+		<a href="{{ url('/products/on_hand') }}">Stock On Hand Enquiry</a><br>
+		<a href="{{ url('/stocks') }}">Stock Movement Enquiry</a><br>
+		<a href="{{ url('/stock_batches') }}">Batch Number Enquiry</a><br>
+		<a href="{{ url('/purchase_order_lines/enquiry') }}">Purchase Enquiry</a><br>
+		<a href="{{ url('/products/reorder') }}">Reorder Enquiry</a><br>
+	</div>
+</div>
+</h3>
 @endsection

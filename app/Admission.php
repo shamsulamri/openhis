@@ -85,6 +85,11 @@ class Admission extends Model
 			return $this->belongsTo('App\Team', 'team_code');
 	}
 
+	public function consultant() 
+	{
+			return $this->belongsTo('App\User', 'user_id');
+	}
+
 	public function bed()
 	{
 			return $this->hasOne('App\Bed', 'bed_code', 'bed_code');

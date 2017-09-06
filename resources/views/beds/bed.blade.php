@@ -56,15 +56,6 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('bed_virtual')) has-error @endif'>
-        {{ Form::label('bed_virtual', 'Virtual Bed',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::checkbox('bed_virtual', '1') }}
-            @if ($errors->has('bed_virtual')) <p class="help-block">{{ $errors->first('bed_virtual') }}</p> @endif
-        </div>
-    </div>
-
-
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/beds" role="button">Cancel</a>

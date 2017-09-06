@@ -51,6 +51,7 @@ class AdmissionController extends Controller
 					'class_name',
 					'n.team_name',
 					'nbm_status',
+					'c.gender_code',
 			];
 
 
@@ -400,18 +401,29 @@ class AdmissionController extends Controller
 			$ward = $request->ward;
 			$setWard = $request->cookie('ward');
 
-			/**
-			$selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','d.consultation_id','a.encounter_id','a.user_id','e.discharge_id', 
-					'f.discharge_id as ward_discharge',
-					'a.created_at',
-					'arrival_id',	
-					'patient_mrn',
-					'ward_name',
-					'room_name',
-					'a.user_id',
-					'k.name',
-			];
-			**/
+			$admissions = $this->search_query($request);
+
+			$wardHelper = null;
+			$ward_code = $request->cookie('ward');
+			if ($ward) $wardHelper = new WardHelper($ward_code);
+
+			return view('admissions.index', [
+					'admissions'=>$admissions,
+					'user'=>Auth::user(),
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => $request->ward,
+					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
+					'search'=>$request->search,
+					'setWard'=>$setWard,
+					'dojo' => new DojoUtility(),
+					'admission_code'=>$request->admission_code,
+					'wardHelper'=>$wardHelper,
+			]);
+	}
+
+	public function search_query($request)
+	{
+
 			$admissions = DB::table('admissions as a')
 					->select($this->selectFields)
 					->leftJoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
@@ -448,27 +460,10 @@ class AdmissionController extends Controller
 					->groupBy('b.encounter_id')
 					->orderBy('patient_name')
 					->orderBy('a.bed_code');
-					
-			//dd($admissions->toSql());
 
 			$admissions = $admissions->paginate($this->paginateValue);
 
-			$wardHelper = null;
-			$ward_code = $request->cookie('ward');
-			if ($ward) $wardHelper = new WardHelper($ward_code);
-
-			return view('admissions.index', [
-					'admissions'=>$admissions,
-					'user'=>Auth::user(),
-					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'ward' => $request->ward,
-					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
-					'search'=>$request->search,
-					'setWard'=>$setWard,
-					'dojo' => new DojoUtility(),
-					'admission_code'=>$request->admission_code,
-					'wardHelper'=>$wardHelper,
-			]);
+			return $admissions;
 	}
 
 	public function searchById($id)
@@ -482,6 +477,43 @@ class AdmissionController extends Controller
 			]);
 	}
 
+	public function enquiry(Request $request)
+	{
+			$ward = $request->ward;
+			$setWard = $request->cookie('ward');
+
+			$admissions = Admission::orderBy('b.patient_id')
+							->select('*','admissions.created_at as admission_date')
+							->leftJoin('encounters as b', 'b.encounter_id','=', 'admissions.encounter_id')
+							->leftJoin('patients as c', 'c.patient_id','=', 'b.patient_id')
+							->leftJoin('beds as h', 'h.bed_code', '=', 'admissions.bed_code');
+
+			if (!empty($request->search)) {
+					$admissions = $admissions->where(function ($query) use ($request) {
+							$query->where('patient_name','like', '%'.$request->search.'%')
+									->orWhere('patient_mrn','like', '%'.$request->search.'%');
+					});
+			}
+					
+			if (!empty($request->ward)) {
+					$admissions = $admissions->where('h.ward_code','=', $request->ward);
+			}
+
+			if (!empty($request->admission_code)) {
+					$admissions = $admissions->where('admission_code','=', $request->admission_code);
+			}
+			$admissions = $admissions->paginate($this->paginateValue);
+
+			return view('admissions.enquiry', [
+					'admissions'=>$admissions,
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => $request->ward,
+					'search'=>$request->search,
+					'admission_code'=>$request->admission_code,
+					'admission_type' => AdmissionType::all()->sortBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
+					'admission_code'=>$request->admission_code,
+			]);
+	}
 
 
 }

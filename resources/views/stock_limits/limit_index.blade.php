@@ -23,7 +23,13 @@
 	}
 	?>
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
-        <label for='store_code' class='col-sm-3 control-label'>{{ $store->store->store_name }}</label>
+		<label for='store_code' class='col-sm-3 control-label'>
+			@if ($store->store)
+			{{ $store->store->store_name }}
+			@else
+			{{ $store->store_name }}
+			@endif
+		</label>
         <div class='col-sm-3'>
 			{{ Form::text($store->store_code."_min", $min, ['class'=>'form-control']) }}
         </div>

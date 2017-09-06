@@ -75,6 +75,11 @@ class StockInputLine extends Model
 
 	}
 
+	public function poline()
+	{
+		return $this->belongsTo('App\PurchaseOrderLine', 'line_id', 'po_line_id');
+	}
+
 	public function product()
 	{
 		return $this->belongsTo('App\Product', 'product_code');
@@ -88,5 +93,10 @@ class StockInputLine extends Model
 	public function stockInput()
 	{
 		return $this->belongsTo('App\StockInput', 'input_id');
+	}
+
+	public function invoice()
+	{
+		return $this->belongsTo('App\StockReceive', 'input_id');
 	}
 }

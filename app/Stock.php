@@ -93,6 +93,20 @@ class Stock extends Model
 		return $this->belongsTo('App\User', 'username','username');
 	}
 	
+	public function store()
+	{
+		return $this->belongsTo('App\Store', 'store_code');
+	}
+
+	public function storeTransfer()
+	{
+		return $this->belongsTo('App\Store', 'store_code_transfer');
+	}
+
+	public function movement()
+	{
+		return $this->belongsTo('App\StockMovement', 'move_code');
+	}
 	/*
 	public function getStockDateTime()
 	{
@@ -106,5 +120,10 @@ class Stock extends Model
 		} else {
 				return abs($this->stock_quantity);
 		}
+	}
+
+	public function purchaseOrderLine()
+	{
+		return $this->belongsTo('App\PurchaseOrderLine', 'line_id');
 	}
 }

@@ -18,7 +18,7 @@ class PurchaseOrder extends Model
 	protected $table = 'purchase_orders';
 	protected $fillable = [
 				'purchase_id',
-				'purchase_number',
+				'purchase_order_number',
 				'author_id',
 				'supplier_code',
 				'purchase_date',
@@ -27,8 +27,7 @@ class PurchaseOrder extends Model
 				'store_code',
 				'purchase_description',
 				'purchase_close',
-				'invoice_number',
-				'invoice_date'];
+				];
 	
     protected $guarded = ['purchase_id'];
     protected $primaryKey = 'purchase_id';
@@ -118,8 +117,8 @@ class PurchaseOrder extends Model
 			static::created(function($purchase_order)
 			{
 					$prefix = Auth::user()->authorization->identification_prefix;
-					$purchase_number = $prefix.str_pad(PurchaseOrder::where('purchase_number','like', $prefix."%")->count()+1, 6, '0', STR_PAD_LEFT);
-					$purchase_order->purchase_number = $purchase_number;
+					$purchase_order_number = $prefix.str_pad(PurchaseOrder::where('purchase_order_number','like', $prefix."%")->count()+1, 8, '0', STR_PAD_LEFT);
+					$purchase_order->purchase_order_number = $purchase_order_number;
 					$purchase_order->save();
 			});
 	}

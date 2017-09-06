@@ -255,4 +255,39 @@ class BedController extends Controller
 			return $beds[0]->count;
 	}
 
+	public function enquiry(Request $request)
+	{
+			$beds = DB::table('beds as a')
+					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
+					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
+					->leftjoin('bed_statuses as d', 'd.status_code','=', 'a.status_code')
+					->where('a.ward_code','like', '%'.$request->ward_code.'%')
+					->where('a.class_code','like', '%'.$request->class_code.'%')
+					->where(function ($query) use ($request) {
+							$query->where('bed_name','like','%'.$request->search.'%')
+								  ->orWhere('bed_code', 'like','%'.$request->search.'%');
+					});
+
+			if (!empty($request->status_code)) {
+				$beds = $beds->where('a.status_code','=', $request->status_code);
+			}
+
+			$beds = $beds->orderBy('ward_name')
+						 ->orderBy('class_name')
+						 ->orderBy('bed_name')
+						 ->paginate($this->paginateValue);
+
+			return view('beds.enquiry', [
+					'beds'=>$beds,
+					'search'=>$request->search,
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'ward_code' => $request->ward_code,
+					'class_code' => $request->class_code,
+					'bedHelper' => new BedHelper(),
+					'status' => BedStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
+					'status_code'=>$request->status_code,
+			]);
+
+	}
 }

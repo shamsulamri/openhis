@@ -44,12 +44,6 @@ class ProductController extends Controller
 	public function index(Request $request)
 	{
 			$stock_helper = new StockHelper();
-			//$this->authorize('module-inventory');
-			/*
-			if (Gate::denies('module-inventory')) {
-				return view('common.403');
-			}
-			 */
 
 			$loan=False;
 			if (Auth::user()->authorization->author_id==7) {
@@ -59,44 +53,20 @@ class ProductController extends Controller
 			$products = Product::orderBy('product_name')
 					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code');
 
-
-			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
-			if (!$product_authorization->get()->isEmpty()) {
-					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
+			$category_codes = Auth::user()->categoryCodes();
+			if (count($category_codes)>0) {
+					$products = $products->whereIn('products.category_code',$category_codes);
 			}
 
 			$products = $products->orderBy('products.created_at','desc')
 							->paginate($this->paginateValue);
 
-			$store_code = null;
-
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,
-					'store'=>Auth::user()->storeList(),
-					'stock_helper'=> new StockHelper(),
-					'store_code'=>$this->getDefaultStore($request),
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>null,
 			]);
-	}
-
-	public function getDefaultStore(Request $request) 
-	{
-			$default_store=null;
-			if (Auth::user()->authorization->store_code) {
-				$default_store = Auth::user()->authorization->store_code;
-			}
-
-			if (Auth::user()->cannot('module-inventory')) {
-					$ward_code = $request->cookie('ward');
-					$ward = Ward::find($ward_code);
-					if ($ward) {
-						$default_store = $ward->store_code;
-					} 
-			} 		
-
-			return $default_store;
 	}
 
 	public function create()
@@ -145,17 +115,20 @@ class ProductController extends Controller
 			}
 
 			return view($viewpage, [
-					'product' => $product,
-					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
-					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
-					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
-					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
-					'status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
-					'return_id' => $return_id,
-					'reason' => $request->reason,
-					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
+						'product' => $product,
+						'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+						'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
+						'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+						'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+						'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
+						'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
+						'status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
+						'return_id' => $return_id,
+						'reason' => $request->reason,
+						'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
+						'stock_helper'=>new StockHelper(),
+						'store'=>Auth::user()->storeList()->prepend('',''),
+						'store_code'=>null,
 				]);	
 	}
 
@@ -264,13 +237,74 @@ class ProductController extends Controller
 					$loan=True;
 			}
 
+			$products = $this->search_query($request, TRUE);
+
+			return view('products.index', [
+					'products'=>$products,
+					'search'=>$request->search,
+					'loan'=>$loan,
+					'store'=>Auth::user()->storeList()->prepend('All Store','all')->prepend('',''),
+					'categories'=>Auth::user()->categoryList(),
+					'store_code'=>$request->store,
+					'stock_helper'=> new StockHelper(),
+					'category_code'=>$request->category_code,
+					]);
+	}
+
+	public function onHandEnquiry(Request $request)
+	{
+			$loan=False;
+			if (Auth::user()->authorization->author_id==7) {
+					$loan=True;
+			}
+
+			if (empty($request->store)) {
+			//		$request->store = Auth::user()->defaultStore();
+			}
+			$products = $this->search_query($request, FALSE);
+
+			return view('products.on_hand', [
+					'products'=>$products,
+					'search'=>$request->search,
+					'loan'=>$loan,
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'categories'=>Auth::user()->categoryList(),
+					'store_code'=>$request->store,
+					'stock_helper'=> new StockHelper(),
+					'category_code'=>$request->category_code,
+					]);
+	}
+
+	public function search_query($request, $is_product_list=FALSE, $is_reorder=FALSE)
+	{
 			/*** Base ***/
 			$products = Product::orderBy('product_name')
 					->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code');
 
-			if (!empty($request->store)) {
-					$products = StockStore::where('store_code',$request->store)
-									->leftjoin('products', 'products.product_code', '=', 'stock_stores.product_code');
+			/*** Not product list ***/
+			if (!$is_product_list) {
+					if (empty($request->store)) {
+							$products = StockStore::leftjoin('products', 'products.product_code', '=', 'stock_stores.product_code')
+									->whereIn('stock_stores.store_code', Auth::user()->storeCodes());
+					} else {
+							$products = StockStore::leftjoin('products', 'products.product_code', '=', 'stock_stores.product_code')
+									->where('stock_stores.store_code',$request->store);
+					}
+
+					$products = $products->leftJoin('stock_limits as d', function($query) use ($request) {
+							$query->on('d.product_code','=', 'products.product_code')
+								->on('d.store_code','=', 'stock_stores.store_code');	
+					});
+
+					$products = $products->select('product_name', 'stock_stores.product_code', 'stock_stores.store_code', 'product_on_hand', 'product_stocked', 'limit_max', 'limit_min', 'product_average_cost');
+			}
+
+
+			/*** Reorder ***/
+			if ($is_reorder) {
+					$products = $products->where('stock_stores.stock_quantity','<', DB::raw('d.limit_min'))
+										->leftjoin('stores as f', 'f.store_code', '=', 'stock_stores.store_code')
+										->orderBy('store_name');
 			}
 
 			/*** Category ***/
@@ -283,7 +317,8 @@ class ProductController extends Controller
 					}
 			}
 
-			$products = $products->leftjoin('ref_unit_measures as d', 'd.unit_code', '=', 'products.unit_code');
+			$products = $products->leftjoin('ref_unit_measures as e', 'e.unit_code', '=', 'products.unit_code');
+
 			/*** Seach Param ***/
 			if (!empty($request->search)) {
 					$products = $products->where(function ($query) use ($request) {
@@ -296,16 +331,7 @@ class ProductController extends Controller
 			//dd($products->toSql());
 			$products = $products->paginate($this->paginateValue);
 
-			return view('products.index', [
-					'products'=>$products,
-					'search'=>$request->search,
-					'loan'=>$loan,
-					'store' => Auth::user()->storeList(),
-					'categories'=>Auth::user()->categoryList(),
-					'store_code'=>$request->store,
-					'stock_helper'=> new StockHelper(),
-					'category_code'=>$request->category_code,
-					]);
+			return $products;
 	}
 
 	public function searchById(Request $request, $id)
@@ -323,7 +349,7 @@ class ProductController extends Controller
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'store_code'=>null,
 					'stock_helper'=>new StockHelper(),
-					'default_store'=>$this->getDefaultStore($request),
+					'default_store'=>Auth::user()->defaultStore(),
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>$request->category_code,
 			]);
@@ -409,4 +435,51 @@ class ProductController extends Controller
 	}
 
 	**/
+
+	public function enquiry(Request $request)
+	{
+		$stock_helper = new StockHelper();
+		$product = null;
+		$store_code = null;
+
+		if (!empty($request->search)) {
+			$product = Product::find($request->search);
+		}
+
+		if (!empty($request->store_code)) $store_code = $request->store_code;
+
+		return view('products.enquiry', [
+				'product'=>$product,
+				'stock_helper'=>$stock_helper,
+				'store'=>Auth::user()->storeList()->prepend('',''),
+				'store_code'=>$store_code,
+				'search'=>$request->search,
+		]);
+	}
+
+	public function reorder(Request $request)
+	{
+			$loan=False;
+			if (Auth::user()->authorization->author_id==7) {
+					$loan=True;
+			}
+
+			if (empty($request->store)) {
+			//		$request->store = Auth::user()->defaultStore();
+			} 
+
+			$products = $this->search_query($request, FALSE, TRUE);
+
+			return view('products.reorder', [
+					'products'=>$products,
+					'search'=>$request->search,
+					'loan'=>$loan,
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'categories'=>Auth::user()->categoryList(),
+					'store_code'=>$request->store,
+					'stock_helper'=> new StockHelper(),
+					'category_code'=>$request->category_code,
+			]);
+	}
+
 }

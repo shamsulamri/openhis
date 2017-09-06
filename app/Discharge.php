@@ -62,4 +62,9 @@ class Discharge extends Model
 	{
 			return $this->belongsTo('App\Consultation','consultation_id', 'consultation_id');
 	}
+
+	public function encounter() 
+	{
+			return $this->belongsTo('App\Encounter', 'encounter_id');
+	}
 }

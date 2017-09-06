@@ -3,7 +3,7 @@
 @section('content')
 <h1>Encounter List</h1>
 <br>
-<form action='/encounter/search' method='post'>
+<form action='/encounter/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>

@@ -13,7 +13,7 @@ class BedHelper
 			$sql = "select encounter_id
 					from beds a
 					left join (
-							select a.encounter_id, bed_code from admissions as a
+							select a.encounter_id, a.bed_code from admissions as a
 							left join ward_discharges b on (a.encounter_id = b.encounter_id)
 							where discharge_id is null
 					) as b on (a.bed_code = b.bed_code)

@@ -193,5 +193,15 @@ class DojoUtility
 					return substr($mrn,0,2).'-'.substr($mrn,2,8).'-'.substr($mrn,10,4);
 			}
 		}
+
+		public static function dateDiff($date_1 , $date_2 , $differenceFormat = '%d' )
+		{
+				$datetime1 = date_create($date_1);
+				$datetime2 = date_create($date_2);
+
+				$interval = date_diff($datetime1, $datetime2);
+
+				return $interval->format($differenceFormat);
+		}
 }
 

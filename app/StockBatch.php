@@ -44,4 +44,18 @@ class StockBatch extends Model
 	}
 
 	
+	public function store()
+	{
+			return $this->belongsTo('App\Store', 'store_code');
+	}
+
+	public function product()
+	{
+		return $this->belongsTo('App\Product', 'product_code');
+	}
+
+	public function stock()
+	{
+		return $this->belongsTo('App\Stock', 'stock_id');
+	}
 }

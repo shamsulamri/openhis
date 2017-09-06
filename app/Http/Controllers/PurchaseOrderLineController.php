@@ -19,10 +19,12 @@ use Auth;
 use App\DojoUtility;
 use App\StockInput;
 use App\StockInputLine;
+use App\PurchaseOrderHelper;
 
 class PurchaseOrderLineController extends Controller
 {
 	public $paginateValue=100;
+	public $order_status = array(''=>'','open'=>'Open','posted'=>'Posted','close'=>'Close');
 
 	public function __construct()
 	{
@@ -57,6 +59,8 @@ class PurchaseOrderLineController extends Controller
 					'purchase_order_lines'=>$purchase_order_lines,
 					'purchase_order'=>$purchase_order,
 					'purchase_id' => $purchase_id,
+					'order_status'=> $this->order_status,
+					'status_code'=>null,
 			]);
 	}
 
@@ -359,5 +363,79 @@ class PurchaseOrderLineController extends Controller
 			}
 
 			return $valid;
+	}
+
+	public function enquiry(Request $request)
+	{
+		$lines = StockInputLine::leftJoin('stock_receives as b', 'b.input_id','=', 'stock_input_lines.input_id')
+				->leftJoin('stock_inputs as c', 'c.input_id', '=', 'b.input_id')
+				->leftJoin('purchase_orders as d', 'd.purchase_id', '=', 'c.purchase_id')
+				->leftJoin('products as e', 'e.product_code', '=', 'stock_input_lines.product_code')
+				->whereNotNull('po_line_id');
+
+		if (!empty($request->document_number)) {
+				$lines = $lines->where('purchase_order_number','=',$request->document_number);
+				$lines = $lines->orWhere('invoice_number','=',$request->document_number);
+		}
+
+		if (!empty($request->search)) {
+				$lines = $lines->where('product_name','like','%'.$request->search.'%');
+		}
+
+		/*** Category ****/
+		$category_codes = Auth::user()->categoryCodes();
+		if (count($category_codes)>0) {
+			$lines = $lines->whereIn('e.category_code',$category_codes);
+		}
+
+		/*** Status ***/
+		if ($request->status_code != '') {
+				switch($request->status_code) {
+						case "posted":
+								$lines = $lines->where('purchase_posted','=', 1 );
+								$lines = $lines->where('purchase_received','=', 0 );
+								break;
+						case "close":
+								$lines = $lines->where('purchase_posted','=', 1 );
+								$lines = $lines->where('purchase_received','=', 1 );
+								break;
+						case "open":
+								$lines = $lines->where('purchase_posted','=', 0 );
+								$lines = $lines->where('purchase_received','=', 0 );
+								break;
+				} 
+		}
+
+		/*** Date Range ****/
+		$date_start = DojoUtility::dateWriteFormat($request->date_start);
+		$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+		if (isset($date_start) & isset($date_end)) {
+			$lines = $lines->whereBetween('purchase_date', [$date_start.' 00:00', $date_end.' 23:59']);
+		}	
+
+		if (isset($date_start) & !isset($date_end)) {
+			$lines = $lines->where('purchase_date', ">=", $date_start.' 00:00');
+		}	
+
+		if (!isset($date_start) & isset($date_end)) {
+			$lines = $lines->where('purchase_date', "<=", $date_end.' 23:59');
+		}	
+
+		$lines = $lines->orderBy('purchase_date', 'invoice_number');
+		$lines = $lines->paginate($this->paginateValue);
+
+		return view('purchase_order_lines.enquiry', [
+				'store'=>Auth::user()->storeList()->prepend('',''),
+				'store_code'=>$request->store_code,
+				'lines'=>$lines,
+				'search'=>$request->search,
+				'date_start'=> $date_start,
+				'date_end'=> $date_end,
+				'purchase_helper'=>new PurchaseOrderHelper(),
+				'document_number'=>$request->document_number,
+				'order_status'=> $this->order_status,
+				'status_code'=>$request->status_code,
+		]);
 	}
 }

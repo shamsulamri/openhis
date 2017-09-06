@@ -137,12 +137,15 @@ class StockLimitController extends Controller
 	public function product($id)
 	{
 			$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)->get();
+			if (count($stores)==0) {
+					$stores = Store::all();
+			}
+
 			$limits = StockLimit::select('store_code', 'limit_min','limit_max')
 					->where('product_code', $id)
 					->get();
 
-			$ids = $stores->pluck('store_code')->toArray();
-			$ids = implode(";", $ids);
+			$ids = Store::all()->implode('store_code',';');
 
 			$limits = $limits->keyBy('store_code');
 
