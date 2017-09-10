@@ -2,12 +2,14 @@
 
 @section('content')
 <h1>Bed Movement History</h1>
-<form action='/bed_movement/enquiry' method='post' class='form-inline'>
+<form id='form' action='/bed_movement/enquiry' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Encounter id or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 		&nbsp;
 		<label>Movement</label>
 		{{ Form::select('move_code', $movements, $move_code, ['class'=>'form-control']) }}
-		<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
+	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
+	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+	<input type='hidden' id='export_report' name="export_report">
 		<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -28,35 +30,22 @@
 @foreach ($bed_movements as $bed_movement)
 	<tr>
 			<td>
-					{{$bed_movement->encounter->encounter_id}}
+					{{$bed_movement->encounter_id}}
 			</td>
 			<td>
 					{{ DojoUtility::dateReadFormat($bed_movement->move_date)}}
 			</td>
 			<td>
-					{{$bed_movement->encounter->patient->patient_name}}
+					{{$bed_movement->patient_name}}
 			</td>
 			<td>
-					{{$bed_movement->encounter->patient->getMRN()}}
+					{{$bed_movement->patient_mrn}}
 			</td>
 			<td>
-					{{$bed_movement->bedTo->bed_name}}
+					{{$bed_movement->bed_to}}
 			</td>
 			<td>
-					@if ($bed_movement->move_from == $bed_movement->move_to) 
-						Admission 
-					@else
-						@if ($bed_movement->bedFrom->ward_code == $bed_movement->bedTo->ward_code) 
-								@if ($bed_movement->bedFrom->class_code == $bed_movement->bedTo->class_code) 
-									Swap 
-								@else
-									Change
-								@endif
-						@else
-								Transfer
-						@endif
-						
-					@endif
+					{{ $bed_movement->transaction_name }}
 			</td>
 	</tr>
 @endforeach
@@ -74,4 +63,10 @@
 @else
 	No record found.
 @endif
+<script>
+		function search_now(value) {
+				document.getElementById('export_report').value = value;
+				document.getElementById('form').submit();
+		}
+</script>
 @endsection

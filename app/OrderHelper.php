@@ -47,6 +47,7 @@ class OrderHelper
 			$order->user_id = Auth::user()->id;
 			if ($admission) {
 				$order->admission_id = $admission->admission_id;
+				$order->ward_code = $admission->bed->ward_code;
 			}
 
 			$order->product_code = $product->product_code;

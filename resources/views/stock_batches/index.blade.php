@@ -2,11 +2,13 @@
 
 @section('content')
 <h1>Batch Number Enquiry</h1>
-<form action='/stock_batch/search' method='post' class='form-inline'>
+<form id='form' action='/stock_batch/search' method='post' class='form-inline'>
 		<input type='text' class='form-control' placeholder="Batch Number" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 		<label>Status</label>
 		{{ Form::select('status_code', $status, $status_code, ['class'=>'form-control']) }}
-		<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
+		<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
+		<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+		<input type='hidden' id='export_report' name="export_report">
 		<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -36,22 +38,20 @@
 					{{ DojoUtility::dateReadFormat($stock_batch->expiry_date)}}
 			</td>
 			<td>
-					{{$stock_batch->store->store_name}}
+					{{$stock_batch->store_name}}
 					<br>
-					{{$stock_batch->stock->movement->move_name}}
+					{{$stock_batch->move_name}}
 			</td>
 			<td>
-					{{$stock_batch->product->product_name}}
+					{{$stock_batch->product_name}}
 					<br>
-					{{ $stock_batch->product->product_code }}
+					{{ $stock_batch->product_code }}
 			</td>
 			<td>
 					{{$stock_batch->total_quantity }}
 			</td>
 			<td>
-						@if ($stock_batch->stock->purchaseOrderLine)
-						{{ $stock_batch->stock->purchaseOrderLine->purchaseOrder->supplier->supplier_name }}
-						@endif
+					{{ $stock_batch->supplier_name }}
 			</td>
 			@can('system-administrator')
 			<td align='right'>
@@ -74,4 +74,10 @@
 	No record found.
 @endif
 @endif
+<script>
+		function search_now(value) {
+				document.getElementById('export_report').value = value;
+				document.getElementById('form').submit();
+		}
+</script>
 @endsection

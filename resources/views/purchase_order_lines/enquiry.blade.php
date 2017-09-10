@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>Purchase Enquiry</h1>
-<form action='/purchase_order_lines/enquiry' method='post' class='form-horizontal'>
+<form id='form' action='/purchase_order_lines/enquiry' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
@@ -53,7 +53,9 @@
 					</div>
 			</div>
 			<div class="col-xs-4">
-	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
+	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+	<input type='hidden' id='export_report' name="export_report">
 			</div>
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
@@ -82,10 +84,10 @@
 @foreach ($lines as $line)
 	<tr>
 			<td>
-					{{$line->stockInput->purchase->purchase_order_number}}
+					{{$line->purchase_order_number}}
 			</td>
 			<td>
-					{{ DojoUtility::dateReadFormat($line->stockInput->purchase->purchase_date) }}
+					{{ DojoUtility::dateReadFormat($line->purchase_date) }}
 			</td>
 			<td>
 					{{ DojoUtility::dateReadFormat($line->created_at) }}
@@ -94,16 +96,16 @@
 					{{ $line->invoice_number }}	
 			</td>
 			<td>
-					{{$line->product->product_name}}
+					{{$line->product_name}}
 			</td>
 			<td>
-					{{$line->product->product_code}}
+					{{$line->product_code}}
 			</td>
 			<td>
 				<?php
 					if ($line->purchase_posted==1 & $line->purchase_received==0) echo '<span class="label label-success">Posted</span>';
 					if ($line->purchase_posted==1 & $line->purchase_received==1) echo '<span class="label label-default">Close</span>';
-					if ($line->purchase_posted==0 & $line->purchase_received==0) echo '<span class="label label-success">Open</span>';
+					if ($line->purchase_posted==0 & $line->purchase_received==0) echo '<span class="label label-primary">Open</span>';
 				?>
 			</td>
 			<td align='right'>
@@ -153,5 +155,10 @@
 		});
 
 		$('.clockpicker').clockpicker();
-	</script>
+
+		function search_now(value) {
+				document.getElementById('export_report').value = value;
+				document.getElementById('form').submit();
+		}
+</script>
 @endsection

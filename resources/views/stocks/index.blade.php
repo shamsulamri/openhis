@@ -3,7 +3,7 @@
 @section('content')
 <h1>Stock Movement Enquiry</h1>
 <br>
-<form action='/stock/search' method='post' class='form-horizontal'>
+<form id='form' action='/stock/search' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
@@ -62,7 +62,9 @@
 					</div>
 			</div>
 	</div>
-							<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
+	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+	<input type='hidden' id='export_report' name="export_report">
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -87,16 +89,16 @@
 @foreach ($stocks as $stock)
 	<tr>
 			<td>
-					{{$stock->movement->move_name}}
+					{{ $stock->move_name }}
 			</td>
 			<td>
-					{{ DojoUtility::dateReadFormat($stock->stock_datetime)}}
+					{{ DojoUtility::dateTimeReadFormat($stock->stock_datetime)}}
 			</td>
 			<td>
-					{{$stock->store->store_name}}
-					@if ($stock->storeTransfer)
+					{{ $stock->store_from }}
+					@if ($stock->store_to)
 					<br>to
-					{{$stock->storeTransfer->store_name}}
+					{{ $stock->store_to }}
 					@endif
 			</td>
 			<td>
@@ -148,5 +150,11 @@
 		});
 
 		$('.clockpicker').clockpicker();
+
+		function search_now(value) {
+				document.getElementById('export_report').value = value;
+				document.getElementById('form').submit();
+		}
+</script>
 	</script>
 @endsection

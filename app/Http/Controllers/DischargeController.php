@@ -254,16 +254,30 @@ class DischargeController extends Controller
 
 	public function enquiry(Request $request)
 	{
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			$subquery = "
+				select a.encounter_id, a.created_at
+				from consultations as a
+				left join encounters as b on (a.encounter_id = b.encounter_id)
+				where b.encounter_code = 'outpatient'
+			";
 			$discharges = Discharge::orderBy('discharge_id','desc')
-					->select('patient_mrn', 'patient_name', 'discharges.encounter_id', 'discharges.discharge_id', 'type_name','discharges.created_at', 'e.id','name','ward_name', 'b.encounter_code')
+					->select(DB::raw('b.created_at as encounter_date, discharges.created_at as discharge_date, patient_name, patient_mrn, encounter_name, ward_name,location_name, datediff(discharges.created_at, b.created_at) as LOS, timediff(outpatients.created_at, b.created_at) as waiting_time, type_name, name'))
 					->leftJoin('encounters as b', 'b.encounter_id','=','discharges.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
-					->leftJoin('ref_discharge_types as d', 'd.type_code','=','discharges.type_code')
-					->leftJoin('bills as e', 'e.encounter_id', '=', 'discharges.encounter_id')
-					->leftJoin('admissions as i', 'i.encounter_id', '=', 'b.encounter_id')
-					->leftJoin('users as f', 'f.id', '=', 'discharges.user_id')
-					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
-					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
+					->leftJoin('admissions as d', 'd.encounter_id', '=', 'b.encounter_id')
+					->leftJoin('users as e', 'e.id', '=', 'discharges.user_id')
+					->leftJoin('queues as f', 'f.encounter_id', '=', 'discharges.encounter_id')
+					->leftJoin('ref_encounter_types as aa', 'aa.encounter_code','=','b.encounter_code')
+					->leftJoin('beds as bb', 'bb.bed_code', '=', 'd.bed_code')
+					->leftJoin('wards as cc', 'cc.ward_code', '=', 'bb.ward_code')
+					->leftJoin('ref_discharge_types as dd', 'dd.type_code','=','discharges.type_code')
+					->leftJoin('queue_locations as ee', 'ee.location_code', '=', 'f.location_code')
+					->leftJoin(DB::raw('('.$subquery.') outpatients'), function($join) {
+							$join->on('discharges.encounter_id','=', 'outpatients.encounter_id');
+					})
 					->orderBy('discharge_id','desc');
 			
 			if (!empty($request->search)) {
@@ -281,8 +295,25 @@ class DischargeController extends Controller
 					$discharges = $discharges->where('b.encounter_code','=', $request->encounter_code);
 			}
 
+			if (!empty($date_start) && empty($request->date_end)) {
+				$discharges = $discharges->where('discharges.created_at', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($date_start) && !empty($request->date_end)) {
+				$discharges = $discharges->where('discharges.created_at', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($date_start) && !empty($date_end)) {
+				$discharges = $discharges->whereBetween('discharges.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
+			if ($request->export_report) {
+				DojoUtility::export_report($discharges->get());
+			}
+
 			$discharges = $discharges->paginate($this->paginateValue);
 			return view('discharges.enquiry', [
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
 					'discharges'=>$discharges,
 					'search'=>$request->search,
 					'discharge_types' => DischargeType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),

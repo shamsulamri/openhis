@@ -19,6 +19,8 @@ use App\Ward;
 use Carbon\Carbon;
 use App\DojoUtility;
 use Auth;
+use App\User;
+use App\Priority;
 
 class BedBookingController extends Controller
 {
@@ -90,13 +92,16 @@ class BedBookingController extends Controller
 			if ($admission_id != null) {
 					$admission = Admission::find($admission_id);
 			}
+
 			return view('bed_bookings.create', [
 					'bed_booking' => $bed_booking,
-					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => Ward::where('ward_code','<>','mortuary')->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'patient' => Patient::find($bed_booking->patient_id),
 					'title' => $title,
 					'admission_id' => $admission_id,
+					'consultants' => $this->getConsultants(),
+					'priority' => Priority::all()->sortBy('priority_name')->lists('priority_name', 'priority_code')->prepend('',''),
 					]);
 	}
 
@@ -126,12 +131,15 @@ class BedBookingController extends Controller
 	public function edit($id) 
 	{
 			$bed_booking = BedBooking::findOrFail($id);
+
 			return view('bed_bookings.edit', [
 					'bed_booking'=>$bed_booking,
 					'patient' => Patient::find($bed_booking->patient_id),
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
-					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => Ward::where('ward_code','<>','mortuary')->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'admission_id' => $bed_booking->admission_id,
+					'consultants' => $this->getConsultants(),
+					'priority' => Priority::all()->sortBy('priority_name')->lists('priority_name', 'priority_code')->prepend('',''),
 					]);
 	}
 
@@ -199,4 +207,75 @@ class BedBookingController extends Controller
 			]);
 	}
 
+	public function enquiry(Request $request)
+	{
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			$bed_bookings = BedBooking::select('patient_name', 'patient_mrn', 'book_date', 'ward_name', 'class_name', 'priority_name')
+					->leftJoin('patients as b', 'b.patient_id', '=', 'bed_bookings.patient_id')
+					->leftJoin('beds as c', 'c.bed_code', '=', 'bed_bookings.bed_code')
+					->leftJoin('wards as d', 'd.ward_code', '=', 'bed_bookings.ward_code')
+					->leftJoin('ward_classes as e', 'e.class_code', '=', 'bed_bookings.class_code')
+					->leftJoin('ref_priorities as f', 'f.priority_code', '=', 'bed_bookings.priority_code')
+					->orderBy('book_id');
+
+			if (!empty($request->search)) {
+					$bed_bookings = $bed_bookings->where('patient_name','like','%'.$request->search.'%')
+							->orWhere('patient_mrn', 'like','%'.$request->search.'%');
+			}
+
+			if (!empty($request->date_start) && empty($request->date_end)) {
+				$bed_bookings = $bed_bookings->where('book_date', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($request->date_start) && !empty($request->date_end)) {
+				$bed_bookings = $bed_bookings->where('book_date', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($request->date_start) && !empty($request->date_end)) {
+				$bed_bookings = $bed_bookings->whereBetween('book_date', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
+
+			if (!empty($request->ward_code)) {
+					$bed_bookings = $bed_bookings->where('bed_bookings.ward_code','=',$request->ward_code);
+			}
+
+			if (!empty($request->class_code)) {
+					$bed_bookings = $bed_bookings->where('bed_bookings.class_code','=',$request->class_code);
+			}
+
+			if (!empty($request->user_id)) {
+					$bed_bookings = $bed_bookings->where('user_id','=',$request->user_id);
+			}
+
+			if ($request->export_report) {
+					DojoUtility::export_report($bed_bookings->get());
+			}
+
+			$bed_bookings = $bed_bookings->paginate($this->paginateValue);
+
+			return view('bed_bookings.enquiry', [
+					'bed_bookings'=>$bed_bookings,
+					'search'=>$request->search,
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
+					'ward' => Ward::where('ward_code','<>','mortuary')->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
+					'consultants' => $this->getConsultants(),
+					'ward_code' => $request->ward_code,
+					'class_code' => $request->class_code,
+					'user_id' => $request->user_id,
+					]);
+	}
+
+	public function getConsultants()
+	{
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('consultant',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
+			return $consultants;
+	}
 }

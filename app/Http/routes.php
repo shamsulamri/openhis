@@ -47,6 +47,21 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('bed_transactions', 'BedTransactionController');
+		Route::get('/bed_transactions/id/{id}', 'BedTransactionController@searchById');
+		Route::post('/bed_transaction/search', 'BedTransactionController@search');
+		Route::get('/bed_transaction/search', 'BedTransactionController@search');
+		Route::get('/bed_transactions/delete/{id}', 'BedTransactionController@delete');
+		
+
+		Route::resource('priorities', 'PriorityController');
+		Route::get('/priorities/id/{id}', 'PriorityController@searchById');
+		Route::post('/priority/search', 'PriorityController@search');
+		Route::get('/priority/search', 'PriorityController@search');
+		Route::get('/priorities/delete/{id}', 'PriorityController@delete');
+		
+		Route::post('/preadmission/enquiry', 'BedBookingController@enquiry');
+		Route::get('/preadmission/enquiry', 'BedBookingController@enquiry');
 
 		Route::resource('bed_movements', 'BedMovementController');
 		Route::get('/bed_movements/id/{id}', 'BedMovementController@searchById');
@@ -359,6 +374,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/loans/exchange/{id}', 'LoanController@requestExchange');
 		Route::post('/loans/exchange/{id}', 'LoanController@exchangePost');
 		
+		Route::get('/admission/export', 'AdmissionController@export');
 		Route::resource('admissions', 'AdmissionController');
 		Route::get('/admissions/id/{id}', 'AdmissionController@searchById');
 		Route::post('/admission/search', 'AdmissionController@search');
@@ -526,6 +542,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/appointment/search', 'AppointmentController@search');
 				Route::get('/appointments/delete/{id}', 'AppointmentController@delete');
 				Route::post('/appointments/multiple_delete', 'AppointmentController@bulkDelete');
+				Route::get('/appointment/enquiry', 'AppointmentController@enquiry');
+				Route::post('/appointment/enquiry', 'AppointmentController@enquiry');
 
 				Route::resource('appointment_services', 'AppointmentServiceController', ['except'=>['show']]);
 				Route::get('/appointment_services/id/{id}', 'AppointmentServiceController@searchById');
@@ -583,6 +601,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/queue/search', 'QueueController@search');
 				Route::get('/queue/search', 'QueueController@search');
 				Route::get('/queues/delete/{id}', 'QueueController@delete');
+				Route::post('/queue/enquiry', 'QueueController@enquiry');
+				Route::get('/queue/enquiry', 'QueueController@enquiry');
 
 
 				Route::post('/discharge/search', 'DischargeController@search');
@@ -600,6 +620,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/order/search', 'OrderController@search');
 				Route::get('/orders/delete/{id}', 'OrderController@delete');
 				Route::post('/orders/diagnostic_report/{id}', 'OrderController@updateDiagnosticReport');
+				Route::post('/order/enquiry', 'OrderController@enquiry');
+				Route::get('/order/enquiry', 'OrderController@enquiry');
 
 				Route::resource('order_investigations', 'OrderInvestigationController');
 				Route::get('/order_investigations/create/{code}', 'OrderInvestigationController@create');

@@ -100,6 +100,7 @@ class OrderTaskController extends Controller
 					'name',
 					'investigation_date',
 					'product_track_batch',
+					'product_stocked',
 					];
 			$order_tasks = DB::table('orders as a')
 					->select($fields)

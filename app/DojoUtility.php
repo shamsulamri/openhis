@@ -4,6 +4,7 @@ namespace App;
 use Carbon\Carbon;
 use DateTime;
 use Log;
+use Excel;
 
 class DojoUtility 
 {
@@ -194,14 +195,49 @@ class DojoUtility
 			}
 		}
 
-		public static function dateDiff($date_1 , $date_2 , $differenceFormat = '%d' )
+		public static function dateDiff($date_1 , $date_2 , $differenceFormat = '%a' )
 		{
-				$datetime1 = date_create($date_1);
-				$datetime2 = date_create($date_2);
+				$date_1 = Carbon::parse($date_1)->format('Y/m/d');
+				$date_2 = Carbon::parse($date_2)->format('Y/m/d');
+				$date_1 = Carbon::parse($date_1);
+				$date_2 = Carbon::parse($date_2);
 
-				$interval = date_diff($datetime1, $datetime2);
+				return $date_2->diffInDays($date_1);
 
-				return $interval->format($differenceFormat);
+		}
+
+		public static function export_report($data)
+		{
+				//$data = $data->get();
+				Log::info(count($data));
+				$filename = "hms_".Carbon::now();
+				Excel::create($filename, function($excel) use ($data) {
+
+					$excel->sheet('Sheetname', function($sheet) use ($data) {
+							$sheet->fromArray($data);
+					});
+
+				})->export('csv');
+		}
+
+		public static function roundUp($value) {
+				$valueInString = strval(round($value,2));
+				if (strpos($valueInString, ".") == 0) $valueInString = $valueInString.".00";
+				$valueArray = explode(".", $valueInString);
+				$substringValue = substr($valueArray[1], 1);
+				 
+				if ($substringValue >= 1 && $substringValue <= 5) {
+						$tempValue = str_replace(substr($valueArray[1], 1), 5, substr($valueArray[1], 1));
+						$tempValue = substr($valueArray[1],0,1).$tempValue;
+						$newvalue = floatval($valueArray[0].".".$tempValue);
+				} elseif($substringValue == 0) {
+						$newvalue = floatval($value);
+				} else {
+						$newFloat = floatval($valueArray[0].".".substr($valueArray[1],0,1));
+						$newvalue = ($newFloat+0.1);
+				}
+				 
+				return $newvalue;
 		}
 }
 

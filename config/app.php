@@ -155,7 +155,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+		Maatwebsite\Excel\ExcelServiceProvider::class,
 		Bschmitt\Amqp\AmqpServiceProvider::class,
     ],
 
@@ -207,6 +207,7 @@ return [
 		'Uuid' 		=> Webpatser\Uuid\Uuid::class,
 		'Amqp' 		=> Bschmitt\Amqp\Facades\Amqp::class,
 		'DojoUtility'=> App\DojoUtility::class,
+		'Excel'     => Maatwebsite\Excel\Facades\Excel::class,
     ],
 
 ];

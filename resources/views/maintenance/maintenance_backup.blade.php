@@ -128,6 +128,7 @@
 				<a href="{{ url('/beds') }}">Beds</a><br>
 				<a href="{{ url('/departments') }}">Departments</a><br>
 				<a href="{{ url('/bed_statuses') }}">Bed Statuses</a><br>
+				<a href="{{ url('/bed_transactions') }}">Bed Transactions</a><br>
 			</div>
 	</div>
 	</h5>
@@ -192,6 +193,7 @@
 				<a href="{{ url('/urgencies') }}">Urgencies</a><br>
 				<a href="{{ url('/relationships') }}">Relationships</a><br>
 				<a href="{{ url('/payment_methods') }}">Payment Methods</a><br>
+				<a href="{{ url('/priorities') }}">Priorities</a><br>
 			</div>
 	</div>
 	</h5>

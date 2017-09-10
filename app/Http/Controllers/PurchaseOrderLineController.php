@@ -367,7 +367,9 @@ class PurchaseOrderLineController extends Controller
 
 	public function enquiry(Request $request)
 	{
-		$lines = StockInputLine::leftJoin('stock_receives as b', 'b.input_id','=', 'stock_input_lines.input_id')
+		$lines = StockInputLine::select('line_id', 'purchase_order_number','purchase_date', 'c.created_at', 'invoice_number', 'product_name', 
+					'e.product_code', 'purchase_posted', 'purchase_received', 'line_quantity','line_value')
+				->leftJoin('stock_receives as b', 'b.input_id','=', 'stock_input_lines.input_id')
 				->leftJoin('stock_inputs as c', 'c.input_id', '=', 'b.input_id')
 				->leftJoin('purchase_orders as d', 'd.purchase_id', '=', 'c.purchase_id')
 				->leftJoin('products as e', 'e.product_code', '=', 'stock_input_lines.product_code')
@@ -423,6 +425,11 @@ class PurchaseOrderLineController extends Controller
 		}	
 
 		$lines = $lines->orderBy('purchase_date', 'invoice_number');
+
+		if ($request->export_report) {
+				DojoUtility::export_report($lines->get());
+		}
+
 		$lines = $lines->paginate($this->paginateValue);
 
 		return view('purchase_order_lines.enquiry', [

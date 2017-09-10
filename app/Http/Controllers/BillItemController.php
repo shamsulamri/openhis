@@ -259,7 +259,13 @@ class BillItemController extends Controller
 			$bill_grand_total = DB::table('bill_items')
 					->where('encounter_id','=', $id)
 					->sum('bill_total');
-			if (empty($bill_grand_total)) $bill_grand_total=0;
+
+			if (empty($bill_grand_total)) {
+					$bill_grand_total=0;
+			} else {
+					$bill_grand_total = DojoUtility::roundUp($bill_grand_total);
+			}
+
 
 			$gst_total = DB::table('bill_items as a')
 					->selectRaw('sum(bill_total_pregst) as gst_amount, format(sum(bill_total_pregst*(tax_rate/100)),2) as gst_sum, tax_code')

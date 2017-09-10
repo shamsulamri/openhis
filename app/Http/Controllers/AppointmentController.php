@@ -254,4 +254,66 @@ class AppointmentController extends Controller
 			Session::flash('message', 'Record deleted.');
 			return redirect('/appointments');
 	}
+
+	public function enquiry(Request $request)
+	{
+			$request->search = trim($request->search);
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			if (empty($request->date_start)) {
+					$date_start = DojoUtility::dateTimeWriteFormat(DojoUtility::today().' 00:00');
+			}
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			$appointment_status = array(''=>'','cancel'=>'Cancel');
+			$appointments = Appointment::select('appointment_datetime', 'patient_name', 'patient_mrn', 'patient_phone_mobile', 'patient_phone_home', 'service_name', 'appointment_cancel', 'appointment_description')
+					->leftJoin('patients as b', 'appointments.patient_id', '=', 'b.patient_id')
+					->leftJoin('appointment_services as c', 'appointments.service_id', '=', 'c.service_id')
+					->orderBy('appointment_id', 'desc');
+
+
+			if (!empty($request->search)) {
+					$appointments = $appointments->where(function ($query) use ($request) {
+							$query->where('patient_name','like', '%'.$request->search.'%')
+									->orWhere('patient_mrn','like', '%'.$request->search.'%');
+					});
+			}
+
+			if (!empty($request->services)) {
+				$appointments = $appointments->where('appointments.service_id', '=', $request->services);
+			}
+
+			if (!empty($date_start) && empty($request->date_end)) {
+				$appointments = $appointments->where('appointment_datetime', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($date_start) && !empty($request->date_end)) {
+				$appointments = $appointments->where('appointment_datetime', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($date_start) && !empty($date_end)) {
+				$appointments = $appointments->whereBetween('appointment_datetime', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
+
+			if (!empty($request->status_code)) {
+					$appointments = $appointments->onlyTrashed();
+			}
+
+			if ($request->export_report) {
+					DojoUtility::export_report($appointments->get());
+			}
+
+			$appointments = $appointments->orderBy('appointment_id')
+					->paginate($this->paginateValue);
+
+			return view('appointments.enquiry', [
+					'appointments'=>$appointments,
+					'services' => Service::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'service' => $request->services,
+					'search' => $request->search,
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
+					'appointment_status'=>$appointment_status,
+					'status_code'=>$request->status_code,
+					]);
+	}
 }

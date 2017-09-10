@@ -58,9 +58,11 @@ class OrderCancellationController extends Controller
 					$order_cancellation->user_id = Auth::user()->id;
 					$order_cancellation->save();
 
+					/**
 					$order = Order::find($order_cancellation->order_id);
 					$order->post_id=0;
 					$order->save();
+					**/
 
 					Session::flash('message', 'Record successfully created.');
 					//return redirect('/orders/'.$order_cancellation->order->consultation_id);

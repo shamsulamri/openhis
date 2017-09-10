@@ -339,4 +339,5 @@ class AdmissionTaskController extends Controller
 
 			return redirect()->action('AdmissionTaskController@search', $request);
 	}
+
 }

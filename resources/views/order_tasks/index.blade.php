@@ -48,10 +48,12 @@
 	@if ($order->order_completed==1) 
 			<?php $status='success' ?>
 	@endif
-	@if ($product->product_track_batch==0)
-				@if ($available-$allocated<$order->order_quantity_request)
-						<?php $status = 'danger'; ?>
-				@endif
+	@if ($product->product_stocked)
+			@if ($product->product_track_batch==0)
+						@if ($available-$allocated<$order->order_quantity_request)
+								<?php $status = 'danger'; ?>
+						@endif
+			@endif
 	@endif
 	<tr class='{{ $status }}'>
 			<td width='10'>
@@ -86,7 +88,7 @@
 					{{ $available }} @if($allocated!=0) ({{ $allocated }}) @endif
 			</td>
 			<td width='100'>
-					@if ($order->product_track_batch==0)
+					@if ($order->product_track_batch==0 && $order->product_stocked==1)
 					{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
 					@else
 					{{ $order->order_quantity_request }} 

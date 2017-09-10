@@ -23,8 +23,8 @@
 	<div class="col-md-4">
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
-				<h5><strong>Awaiting Discharge</strong></h5>	
-				<h4><strong>{{ $bedHelper->wardDischarge() }}</strong></h4>	
+				<h5><strong>Clinical Discharge</strong></h5>	
+				<h4><strong>{{ $bedHelper->dischargeClinical() }}</strong></h4>	
 			</div>
 		</div>
 	</div>

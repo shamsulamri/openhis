@@ -28,10 +28,6 @@ class Stock extends Model
 				'stock_description',
 				'stock_tag',
 				'loan_id',
-				'batch_number',
-				'delivery_number',
-				'invoice_number',
-				'expiry_date',
 				'username',
 				];
 	

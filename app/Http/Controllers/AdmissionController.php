@@ -32,6 +32,7 @@ use App\Period;
 use App\DietHelper;
 use App\DietTherapeutic;
 use App\AdmissionTherapeutic;
+use App\Race;
 
 class AdmissionController extends Controller
 {
@@ -477,16 +478,28 @@ class AdmissionController extends Controller
 			]);
 	}
 
-	public function enquiry(Request $request)
+	public function enquiry(Request $request, $export=FALSE)
 	{
 			$ward = $request->ward;
 			$setWard = $request->cookie('ward');
 
+			$fields = [	
+						'admissions.created_at as admission_date',
+						'patient_name','patient_mrn','gender_name', 
+						'bed_name','ward_name',
+						'room_name',
+						'name',
+					];
 			$admissions = Admission::orderBy('b.patient_id')
-							->select('*','admissions.created_at as admission_date')
+							->select($fields)
 							->leftJoin('encounters as b', 'b.encounter_id','=', 'admissions.encounter_id')
 							->leftJoin('patients as c', 'c.patient_id','=', 'b.patient_id')
-							->leftJoin('beds as h', 'h.bed_code', '=', 'admissions.bed_code');
+							->leftJoin('beds as h', 'h.bed_code', '=', 'admissions.bed_code')
+							->leftJoin('ref_genders as i','i.gender_code','=','c.gender_code')
+							->leftJoin('admissions as j','j.encounter_id','=','b.encounter_id')
+							->leftJoin('ward_rooms as k', 'k.room_code','=', 'h.room_code')
+							->leftJoin('wards as l','l.ward_code','=','h.ward_code')
+							->leftJoin('users as m','m.id','=','j.user_id');
 
 			if (!empty($request->search)) {
 					$admissions = $admissions->where(function ($query) use ($request) {
@@ -502,6 +515,11 @@ class AdmissionController extends Controller
 			if (!empty($request->admission_code)) {
 					$admissions = $admissions->where('admission_code','=', $request->admission_code);
 			}
+
+			if ($request->export_report) {
+				DojoUtility::export_report($admissions->get());
+			}
+
 			$admissions = $admissions->paginate($this->paginateValue);
 
 			return view('admissions.enquiry', [
@@ -514,6 +532,4 @@ class AdmissionController extends Controller
 					'admission_code'=>$request->admission_code,
 			]);
 	}
-
-
 }

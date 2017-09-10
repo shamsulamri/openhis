@@ -24,6 +24,8 @@ use App\OrderHelper;
 use App\Ward;
 use App\StockHelper;
 use App\OrderMultiple;
+use App\User;
+use App\ProductCategory;
 
 class OrderController extends Controller
 {
@@ -399,4 +401,105 @@ class OrderController extends Controller
 			]);
 	}
 
+	public function enquiry(Request $request)
+	{
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			$orders = Order::select('b.encounter_id','e.product_code', 'product_name', 'orders.order_id','order_completed', 'patient_name', 'patient_mrn', 'orders.created_at as order_date', 'name', 'cancel_id', 'cancel_reason', 'post_id', 'order_report')
+					->leftJoin('encounters as b', 'b.encounter_id', '=', 'orders.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
+					->leftJoin('products as e', 'e.product_code', '=', 'orders.product_code')
+					->leftJoin('users as f', 'f.id', '=', 'orders.user_id')
+					->leftJoin('order_cancellations as g', 'g.order_id', '=', 'orders.order_id')
+					->orderBy('b.encounter_id');
+
+			if (!empty($request->search)) {
+					$orders = $orders->where('patient_name','like','%'.$request->search.'%')
+							->orWhere('patient_mrn', 'like','%'.$request->search.'%');
+			}
+
+			if (!empty($request->date_start) && empty($request->date_end)) {
+				$orders = $orders->where('orders.created_at', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($request->date_start) && !empty($request->date_end)) {
+				$orders = $orders->where('orders.created_at', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($request->date_start) && !empty($request->date_end)) {
+				$orders = $orders->whereBetween('orders.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
+
+			if (!empty($request->ward_code)) {
+					$orders = $orders->where('orders.ward_code','=',$request->ward_code);
+			}
+
+			if (!empty($request->category_code)) {
+					$orders = $orders->where('e.category_code','=',$request->category_code);
+			} else {
+					$category_codes = Auth::user()->categoryCodes();
+					if (count($category_codes)>0) {
+							$orders = $orders->whereIn('e.category_code',$category_codes);
+					}
+			}
+
+			if (!empty($request->user_id)) {
+					$orders = $orders->where('user_id','=',$request->user_id);
+			}
+
+			if (!empty($request->status_code)) {
+					switch ($request->status_code) {
+							case "unposted":
+									$orders = $orders->where('post_id','=',0);
+									break;
+							case "posted":
+									$orders = $orders->where('post_id','>',0)
+													->whereNull('cancel_id');
+									break;
+							case "cancel":
+									$orders = $orders->whereNotNull('cancel_id');
+									break;
+							case "completed":
+									$orders = $orders->where('order_completed','=',1);
+									break;
+							case "reported":
+									$orders = $orders->whereNotNull('order_report');
+									break;
+					}
+			}
+			
+			if ($request->export_report) {
+				DojoUtility::export_report($orders->get());
+			}
+			$orders = $orders->paginate($this->paginateValue);
+
+			$categories = ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');
+			$status = array(''=>'','posted'=>'Posted','unposted'=>'Unposted','cancel'=>'Cancel', 'completed'=>'Completed','reported'=>'Reported');
+
+			return view('orders.enquiry', [
+					'orders'=>$orders,
+					'search'=>$request->search,
+					'ward' => Ward::where('ward_code','<>','mortuary')->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward_code' => $request->ward_code,
+					'consultants' => $this->getConsultants(),
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
+					'user_id' => $request->user_id,
+					'categories'=>Auth::user()->categoryList(),
+					'category_code' => $request->category_code,
+					'status'=> $status,
+					'status_code' => $request->status_code,
+					]);
+	}
+
+	public function getConsultants()
+	{
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('consultant',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
+			return $consultants;
+	}
 }

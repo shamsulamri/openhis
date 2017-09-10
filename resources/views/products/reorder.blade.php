@@ -2,14 +2,16 @@
 
 @section('content')
 <h1>Reorder Enquiry</h1>
-<form action='/products/reorder' method='post' class='form-inline'>
+<form id='form' action='/products/reorder' method='post' class='form-inline'>
 	<label>Product</label>
 	<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<label>Category</label>
 	{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>Store</label>
 	{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
+	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+	<input type='hidden' id='export_report' name="export_report">
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -43,53 +45,31 @@ if ($store_code == '') $store_code = null;
 					<a href='{{ URL::to('products/'. $product->product_code.'?detail=true') }}'>
 					@endcan
 						{{ $product->product_name }} 
-						@if ($product->product) 
-							({{ $product->product->unitMeasure->unit_shortname }}) 
-						@else
-							@if ($product->unitMeasure)
-							({{ $product->unitMeasure->unit_shortname }}) 
-							@endif
-						@endif
-						@if ($product->product_bom==1)
-							*
-						@endif
+						({{ $product->unit_shortname }}) 
 					</a>
 					<br>
 					{{$product->product_code}}
 			</td>
 			<td align='right'>
-				@if ($product->store)
-				{{ $product->store->store_name }}
-				@else
-					-
-				@endif
+				{{ $product->store_name }}
 			</td>
 			<td align='right'>
-			@if	($product->product_stocked==1)
-				<?php $on_hand = $stock_helper->getStockCountByStore($product->product_code, $product->store_code); ?>
-				{{ floatval($on_hand) }}
-			@else
-					-
-			@endif
+				{{ floatval($product->stock_quantity) }}
 			</td>
 			<td align='right'>
-				@if ($product->limit_min)
 				{{ $product->limit_min }}
-				@endif
 			</td>
 			<td align='right'>
-				@if ($product->limit_min)
 				{{ $product->limit_max }}
-				@endif
 			</td>
 			<td align='right'>
-				{{ floatval($stock_helper->onPurchase($product->product_code)) }}
+				{{ floatval($product->on_purchase) }}
 			</td>
 			<td align='right'>
-            	{{ floatval($stock_helper->onTransfer($product->product_code, $product->store_code)) }}
+				{{ floatval($product->on_transfer) }}
 			</td>
 			<td align='right'>
-            	{{ floatval($stock_helper->inTransfer($product->product_code, $product->store_code)) }}
+				{{ floatval($product->in_transfer) }}
 			</td>
 	</tr>
 @endforeach
@@ -107,4 +87,10 @@ if ($store_code == '') $store_code = null;
 @else
 	No record found.
 @endif
+<script>
+		function search_now(value) {
+				document.getElementById('export_report').value = value;
+				document.getElementById('form').submit();
+		}
+</script>
 @endsection

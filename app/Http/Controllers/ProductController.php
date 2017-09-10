@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -31,6 +33,7 @@ use App\StoreAuthorization;
 use App\ProductCategory;
 use App\GeneralLedger;
 use App\StockHelper;
+use App\DojoUtility;
 
 class ProductController extends Controller
 {
@@ -251,30 +254,6 @@ class ProductController extends Controller
 					]);
 	}
 
-	public function onHandEnquiry(Request $request)
-	{
-			$loan=False;
-			if (Auth::user()->authorization->author_id==7) {
-					$loan=True;
-			}
-
-			if (empty($request->store)) {
-			//		$request->store = Auth::user()->defaultStore();
-			}
-			$products = $this->search_query($request, FALSE);
-
-			return view('products.on_hand', [
-					'products'=>$products,
-					'search'=>$request->search,
-					'loan'=>$loan,
-					'store'=>Auth::user()->storeList()->prepend('',''),
-					'categories'=>Auth::user()->categoryList(),
-					'store_code'=>$request->store,
-					'stock_helper'=> new StockHelper(),
-					'category_code'=>$request->category_code,
-					]);
-	}
-
 	public function search_query($request, $is_product_list=FALSE, $is_reorder=FALSE)
 	{
 			/*** Base ***/
@@ -459,27 +438,134 @@ class ProductController extends Controller
 
 	public function reorder(Request $request)
 	{
-			$loan=False;
-			if (Auth::user()->authorization->author_id==7) {
-					$loan=True;
+			$sql = "
+				select product_name, a.product_code, store_name, a.stock_quantity, limit_min, limit_max, on_purchase, on_transfer, in_transfer, unit_shortname
+				from stock_stores as a 
+				left join products as b on (a.product_code = b.product_code) 
+				left join stores as c on (c.store_code = a.store_code) 
+				left join stock_limits as d on (d.product_code = b.product_code and d.store_code = a.store_code)
+				left join (
+						select sum(line_quantity_ordered) as on_purchase, product_code
+						from purchase_order_lines as a
+						left join purchase_orders as b on (a.purchase_id = b.purchase_id)
+						where purchase_posted=1 
+						and purchase_received=0
+						group by product_code
+				) as e on (e.product_code = a.product_code)
+				left join (
+						select sum(line_quantity) as on_transfer, product_code, store_code
+						from stock_input_lines as a
+						left join stock_inputs as b on (a.input_id = b.input_id)
+						where move_code = 'transfer'
+						and input_close = 0
+						group by store_code, product_code
+				) as f on (f.product_code = a.product_code and f.store_code = a.store_code)
+				left join (
+						select sum(line_quantity) as in_transfer, product_code, store_code_transfer
+						from stock_input_lines as a
+						left join stock_inputs as b on (a.input_id = b.input_id)
+						where move_code = 'transfer'
+						and input_close = 0
+						group by store_code_transfer, product_code
+				) as g on (g.product_code = a.product_code and g.store_code_transfer = a.store_code)
+				left join ref_unit_measures as h on (h.unit_code = b.unit_code)
+				where stock_quantity<limit_min
+			";
+
+			if (!empty($request->store)) {
+				$sql = $sql." and a.store_code = '".$request->store."'";
 			}
 
-			if (empty($request->store)) {
-			//		$request->store = Auth::user()->defaultStore();
-			} 
+			if (!empty($request->category_code)) {
+				$sql = $sql." and b.category_code = '".$request->category_code."'";
+			}
 
-			$products = $this->search_query($request, FALSE, TRUE);
+			$data = DB::select($sql);
 
+			if ($request->export_report) {
+				$data = collect($data)->map(function($x){ return (array) $x; })->toArray(); 
+				DojoUtility::export_report($data);
+			}
+			
+			/** Pagination **/
+			$page = Input::get('page', 1); 
+			$offSet = ($page * $this->paginateValue) - $this->paginateValue;
+			$itemsForCurrentPage = array_slice($data, $offSet, $this->paginateValue, true);
+
+			$data = new LengthAwarePaginator($itemsForCurrentPage, count($data), 
+					$this->paginateValue, 
+					$page, 
+					['path' => $request->url(), 
+					'query' => $request->query()]
+			);
 			return view('products.reorder', [
-					'products'=>$products,
+					'products'=>$data,
 					'search'=>$request->search,
-					'loan'=>$loan,
 					'store'=>Auth::user()->storeList()->prepend('',''),
 					'categories'=>Auth::user()->categoryList(),
 					'store_code'=>$request->store,
 					'stock_helper'=> new StockHelper(),
 					'category_code'=>$request->category_code,
 			]);
+	}
+
+	public function onHandEnquiry(Request $request)
+	{
+			$sql = "
+				select 	product_name, a.product_code, store_name, a.stock_quantity, allocated, (a.stock_quantity-allocated) as available, 
+						b.product_average_cost, (b.product_average_cost*a.stock_quantity) as total_cost, unit_shortname
+				from stock_stores as a
+				left join products as b on (a.product_code = b.product_code)
+				left join stores as c on (c.store_code = a.store_code)
+				left join (
+						select sum(order_quantity_request) as allocated, store_code
+						from orders as a
+						left join order_cancellations as b on (a.order_id = b.order_id)
+						where order_completed=0
+						and cancel_id is null
+						group by store_code
+				) as d on (d.store_code = a.store_code)
+				left join ref_unit_measures as e on (e.unit_code = b.unit_code)
+			";
+
+			$sql = $sql."where (product_name like '%".$request->search."%' or a.product_code like '%".$request->search."%')";
+
+			if (!empty($request->store)) {
+				$sql = $sql." and a.store_code = '".$request->store."'";
+			}
+
+			if (!empty($request->category_code)) {
+				$sql = $sql." and b.category_code = '".$request->category_code."'";
+			}
+
+			$data = DB::select($sql);
+
+			if ($request->export_report) {
+				$data = collect($data)->map(function($x){ return (array) $x; })->toArray(); 
+				DojoUtility::export_report($data);
+			}
+			
+			/** Pagination **/
+			$page = Input::get('page', 1); 
+			$offSet = ($page * $this->paginateValue) - $this->paginateValue;
+			$itemsForCurrentPage = array_slice($data, $offSet, $this->paginateValue, true);
+
+			$data = new LengthAwarePaginator($itemsForCurrentPage, count($data), 
+					$this->paginateValue, 
+					$page, 
+					['path' => $request->url(), 
+					'query' => $request->query()]
+			);
+
+			return view('products.on_hand', [
+					'products'=>$data,
+					'search'=>$request->search,
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'categories'=>Auth::user()->categoryList(),
+					'store_code'=>$request->store,
+					'stock_helper'=> new StockHelper(),
+					'category_code'=>$request->category_code,
+					]);
 	}
 
 }

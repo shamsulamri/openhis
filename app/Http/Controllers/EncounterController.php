@@ -209,6 +209,7 @@ class EncounterController extends Controller
 							$bed_movement->move_from = $admission->bed_code;
 							$bed_movement->move_to = $admission->bed_code;
 							$bed_movement->move_date = date('d/m/Y');
+							$bed_movement->transaction_code = 'admission';
 							$bed_movement->save();
 
 							Session::flash('message', 'Record successfully created.');

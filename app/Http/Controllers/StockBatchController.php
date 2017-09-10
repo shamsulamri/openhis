@@ -10,7 +10,7 @@ use App\StockBatch;
 use Log;
 use DB;
 use Session;
-
+use App\DojoUtility;
 
 class StockBatchController extends Controller
 {
@@ -29,7 +29,17 @@ class StockBatchController extends Controller
 					->orderBy('batch_id','desc')
 					->paginate($this->paginateValue);
 
-			$stock_batches=null;
+			$stock_batches = StockBatch::selectRaw('stock_batches.batch_number,expiry_date, product_name, a.product_code, store_name,move_name, supplier_name, sum(batch_quantity) as total_quantity')
+					->leftjoin('products as a', 'a.product_code','=', 'stock_batches.product_code')
+					->leftJoin('stores as b', 'b.store_code','=','stock_batches.store_code')
+					->leftJoin('stocks as c', 'c.stock_id', '=', 'stock_batches.stock_id')
+					->leftJoin('stock_movements as d', 'd.move_code', '=', 'c.move_code')
+					->leftJoin('purchase_order_lines as e', 'e.line_id', '=', 'c.line_id')		
+					->leftJoin('purchase_orders as f', 'f.purchase_id', '=', 'e.purchase_id')
+					->leftJoin('suppliers as g', 'g.supplier_code', '=', 'f.supplier_code')
+					->groupBy('b.store_code', 'stock_batches.product_code', 'batch_number', 'expiry_date')
+					->orderBy('expiry_date')
+					->paginate($this->paginateValue);
 
 			return view('stock_batches.index', [
 					'stock_batches'=>$stock_batches,
@@ -112,14 +122,20 @@ class StockBatchController extends Controller
 	
 	public function search(Request $request)
 	{
-			$stock_batches = StockBatch::selectRaw('*, sum(batch_quantity) as total_quantity')
-					->leftjoin('products', 'products.product_code','=', 'stock_batches.product_code')
+			$stock_batches = StockBatch::selectRaw('stock_batches.batch_number,expiry_date, product_name, a.product_code, store_name,move_name, supplier_name, sum(batch_quantity) as total_quantity')
+					->leftjoin('products as a', 'a.product_code','=', 'stock_batches.product_code')
+					->leftJoin('stores as b', 'b.store_code','=','stock_batches.store_code')
+					->leftJoin('stocks as c', 'c.stock_id', '=', 'stock_batches.stock_id')
+					->leftJoin('stock_movements as d', 'd.move_code', '=', 'c.move_code')
+					->leftJoin('purchase_order_lines as e', 'e.line_id', '=', 'c.line_id')		
+					->leftJoin('purchase_orders as f', 'f.purchase_id', '=', 'e.purchase_id')
+					->leftJoin('suppliers as g', 'g.supplier_code', '=', 'f.supplier_code')
 					->where(function ($query) use ($request) {
 									$query->orWhere('batch_number','like','%'.$request->search.'%')
-									->orWhere('products.product_code','like','%'.$request->search.'%');
+									->orWhere('a.product_code','like','%'.$request->search.'%');
 					})
-					->groupBy('store_code', 'stock_batches.product_code', 'batch_number', 'expiry_date')
-					->orderBy('batch_id','desc');
+					->groupBy('b.store_code', 'stock_batches.product_code', 'batch_number', 'expiry_date')
+					->orderBy('expiry_date');
 
 			if ($request->status_code == 'available') {
 					$stock_batches = $stock_batches->havingRaw('sum(batch_quantity)>0');
@@ -127,6 +143,9 @@ class StockBatchController extends Controller
 					$stock_batches = $stock_batches->havingRaw('sum(batch_quantity)<=0');
 			}
 
+			if ($request->export_report) {
+				DojoUtility::export_report($stock_batches->get());
+			}
 			$stock_batches = $stock_batches->paginate($this->paginateValue);
 
 			return view('stock_batches.index', [

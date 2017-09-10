@@ -23,14 +23,14 @@
 	<div class="col-md-4">
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
-				<h5><strong>Awaiting Discharge</strong></h5>	
-				<h4><strong>{{ $bedHelper->wardDischarge() }}</strong></h4>	
+				<h5><strong>Clinical Discharge</strong></h5>	
+				<h4><strong>{{ $bedHelper->dischargeClinical() }}</strong></h4>	
 			</div>
 		</div>
 	</div>
 </div>
 
-<form action='/bed/enquiry' method='post' class='form-inline'>
+<form id='form' action='/bed/enquiry' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<label>&nbsp;Ward</label>
 	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
@@ -38,12 +38,13 @@
 	{{ Form::select('class_code', $class, $class_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>&nbsp;Status</label>
 	{{ Form::select('status_code', $status, $status_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
+	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+	<input type='hidden' id='export_report' name="export_report">
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
 
-@if ($beds->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
@@ -69,26 +70,27 @@
 					{{$bed->ward_name}}
 			</td>
 			<td>
-					@if ($bed->status_code == '03')
-					{{ $bedHelper->occupiedBy($bed->bed_code, $bed->ward_code) }}
+					@if ($bed->status_name == 'Occupied')
+					{{ $bed->patient_name }} ({{ $bed->patient_mrn }})
 					@else
 					{{$bed->status_name}}
 					@endif
 			</td>
 	</tr>
 @endforeach
-@endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $beds->appends(['search'=>$search])->render() }}
-	@else
-	{{ $beds->render() }}
-@endif
+{{ $beds->appends(['search'=>$search, 'ward_code'=>$ward_code, 'class_code'=>$class_code, 'status_code'=>$status_code])->render() }}
 <br>
 @if ($beds->total()>0)
 	{{ $beds->total() }} records found.
 @else
 	No record found.
 @endif
+<script>
+		function search_now(value) {
+				document.getElementById('export_report').value = value;
+				document.getElementById('form').submit();
+		}
+</script>
 @endsection

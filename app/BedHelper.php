@@ -61,7 +61,7 @@ class BedHelper
 	
 	}
 
-	public function wardDischarge() {
+	public function dischargeClinical() {
 
 			$sql = "select count(*) as total from admissions as a
 					left join ward_discharges b on (a.encounter_id = b.encounter_id)

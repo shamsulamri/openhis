@@ -16,6 +16,8 @@ class BedBooking extends Model
 				'ward_code',
 				'class_code',
 				'book_date',
+				'user_id',
+				'priority_code',
 				'book_description'];
 	
     protected $guarded = ['book_id'];
@@ -28,6 +30,7 @@ class BedBooking extends Model
 				'patient_id'=>'required',
 				'class_code'=>'required',
 				'ward_code'=>'required',
+				'user_id'=>'required',
 				'book_date'=>'required|size:10|date_format:d/m/Y|after:now',
 			];
 

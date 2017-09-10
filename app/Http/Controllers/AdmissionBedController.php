@@ -310,6 +310,20 @@ class AdmissionBedController extends Controller
 			$bed_movement->move_from = $admission->bed_code;
 			$bed_movement->move_to = $bed_code;
 			$bed_movement->move_date = date('d/m/Y');
+			if ($bed_movement->move_from == $bed_movement->move_to) { 
+				$transaction = "admission";
+			} else {
+				if ($bed_movement->bedFrom->ward_code == $bed_movement->bedTo->ward_code) {
+						if ($bed_movement->bedFrom->class_code == $bed_movement->bedTo->class_code) {
+							$transaction = "swap";
+						} else {
+							$transaction = "change";
+						}
+				} else {
+					$transaction = "transfer";
+				}	
+			}
+			$bed_movement->transaction_code = $transaction;
 			$bed_movement->save();
 			
 			$bed = Bed::where('bed_code', '=',$bed_code)->first();

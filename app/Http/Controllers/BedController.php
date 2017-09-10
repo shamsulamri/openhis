@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
 
 use App\Http\Requests;
 use Auth;
@@ -257,25 +259,55 @@ class BedController extends Controller
 
 	public function enquiry(Request $request)
 	{
-			$beds = DB::table('beds as a')
-					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
-					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
-					->leftjoin('bed_statuses as d', 'd.status_code','=', 'a.status_code')
-					->where('a.ward_code','like', '%'.$request->ward_code.'%')
-					->where('a.class_code','like', '%'.$request->class_code.'%')
-					->where(function ($query) use ($request) {
-							$query->where('bed_name','like','%'.$request->search.'%')
-								  ->orWhere('bed_code', 'like','%'.$request->search.'%');
-					});
+			$search = '%'.$request->search.'%';
 
-			if (!empty($request->status_code)) {
-				$beds = $beds->where('a.status_code','=', $request->status_code);
+			$sql = "
+				select bed_name, class_name, ward_name, status_name, patient_name, patient_mrn
+				from beds as a
+				left join wards as b on (a.ward_code = b.ward_code)
+				left join ward_classes as c on (c.class_code = a.class_code)
+				left join bed_statuses as d on (d.status_code = a.status_code)
+				left join (
+					select a.bed_code, patient_name, patient_mrn from admissions as a
+					left join ward_discharges b on (a.encounter_id = b.encounter_id)
+					left join encounters c on (c.encounter_id = a.encounter_id)
+					left join patients d on (d.patient_id = c.patient_id)
+					where discharge_id is null
+				) as e on (e.bed_code = a.bed_code)
+				where (bed_name like ? or a.bed_code like ?) 
+			";
+
+			if (!empty($request->ward_code)) {
+				$sql = $sql.sprintf(" and a.ward_code = '%s' ", $request->ward_code);
 			}
 
-			$beds = $beds->orderBy('ward_name')
-						 ->orderBy('class_name')
-						 ->orderBy('bed_name')
-						 ->paginate($this->paginateValue);
+			if (!empty($request->status_code)) {
+				$sql = $sql.sprintf(" and a.status_code = '%s' ", $request->status_code);
+			}
+
+			if (!empty($request->class_code)) {
+				$sql = $sql.sprintf(" and a.class_code = '%s' ", $request->class_code);
+			}
+
+			$sql = $sql." order by ward_name, class_name, bed_name";
+
+			$beds = DB::select($sql, [$search, $search]);
+
+			if ($request->export_report) {
+				$beds = collect($beds)->map(function($x){ return (array) $x; })->toArray(); 
+				DojoUtility::export_report($beds);
+			}
+			
+			$page = Input::get('page', 1); 
+			$offSet = ($page * $this->paginateValue) - $this->paginateValue;
+			$itemsForCurrentPage = array_slice($beds, $offSet, $this->paginateValue, true);
+
+			$beds = new LengthAwarePaginator($itemsForCurrentPage, count($beds), 
+					$this->paginateValue, 
+					$page, 
+					['path' => $request->url(), 
+					'query' => $request->query()]
+			);
 
 			return view('beds.enquiry', [
 					'beds'=>$beds,

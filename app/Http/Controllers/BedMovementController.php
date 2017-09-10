@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -10,6 +12,7 @@ use App\BedMovement;
 use Log;
 use DB;
 use Session;
+use App\DojoUtility;
 
 class BedMovementController extends Controller
 {
@@ -127,10 +130,12 @@ class BedMovementController extends Controller
 			]);
 	}
 
-	public function enquiry(Request $request)
+	/*
+	public function enquiry2(Request $request)
 	{
 			$movements = array(''=>'','swap'=>'Swap','change'=>'Change','transfer'=>'Transfer');
-			$bed_movements = BedMovement::leftjoin('encounters as b', 'b.encounter_id','=', 'bed_movements.encounter_id')
+			$bed_movements = BedMovement::select('b.encounter_id', 'move_date','patient_name','patient_mrn',
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'bed_movements.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftJoin('beds as d', 'd.bed_code', '=', 'bed_movements.move_from')
 					->leftJoin('beds as e', 'e.bed_code', '=', 'bed_movements.move_to')
@@ -158,12 +163,69 @@ class BedMovementController extends Controller
 					}
 			}
 
-			//dd($bed_movements->toSql());
+			if ($request->export_report) {
+				DojoUtility::export_report($bed_movements->get());
+			}
+
 			$bed_movements = $bed_movements->paginate($this->paginateValue);
 
 
 			return view('bed_movements.enquiry', [
 					'bed_movements'=>$bed_movements,
+					'search'=>$request->search,
+					'movements'=>$movements,
+					'move_code'=>$request->move_code
+					]);
+	}
+	 */
+
+	public function enquiry(Request $request)
+	{
+			$movements = array(''=>'','admission'=>'Admission', 'swap'=>'Swap','change'=>'Change','transfer'=>'Transfer');
+
+			$sql = "
+				select a.encounter_id, patient_name, patient_mrn, move_date, e.bed_name as bed_to, d.bed_name as bed_from, transaction_name
+				from bed_movements as a
+				left join encounters as b on (b.encounter_id = a.encounter_id)
+				left join patients as c on (c.patient_id = b.patient_id)
+				left join beds as d on (d.bed_code = a.move_from)
+				left join beds as e on (e.bed_Code = a.move_to)
+				left join bed_transactions as f on (f.transaction_code = a.transaction_code)
+			";
+
+			if (is_numeric($request->search)) {
+				$sql = $sql."where a.encounter_id = ".$request->search;
+			} else {
+				$sql = $sql."where (patient_name like '%".$request->search."%' or patient_mrn like '%".$request->search."%')";
+			}
+
+			if (!empty($request->move_code)) {
+					$sql = $sql." and a.transaction_code = '".$request->move_code."' ";
+			}
+
+			$sql = $sql." order by encounter_id desc, move_id";
+
+			$data = DB::select($sql);
+
+			if ($request->export_report) {
+				$data = collect($data)->map(function($x){ return (array) $x; })->toArray(); 
+				DojoUtility::export_report($data);
+			}
+			
+			/** Pagination **/
+			$page = Input::get('page', 1); 
+			$offSet = ($page * $this->paginateValue) - $this->paginateValue;
+			$itemsForCurrentPage = array_slice($data, $offSet, $this->paginateValue, true);
+
+			$data = new LengthAwarePaginator($itemsForCurrentPage, count($data), 
+					$this->paginateValue, 
+					$page, 
+					['path' => $request->url(), 
+					'query' => $request->query()]
+			);
+
+			return view('bed_movements.enquiry', [
+					'bed_movements'=>$data,
 					'search'=>$request->search,
 					'movements'=>$movements,
 					'move_code'=>$request->move_code

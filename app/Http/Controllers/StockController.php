@@ -35,10 +35,17 @@ class StockController extends Controller
 	public function index()
 	{
 			$store_code = Auth::user()->defaultStore();
-			$stocks = Stock::orderBy('stock_id', 'desc')
+			$stocks = Stock::select('move_name', 'stock_datetime', 'e.store_name as store_from', 'f.store_name as store_to', 
+						'product_name', 'products.product_code','stock_quantity', 'stock_value'
+						)
 						->leftjoin('products', 'products.product_code','=', 'stocks.product_code')
 						->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code')
-						->where('store_code', $store_code);
+						->leftjoin('stock_movements as d', 'd.move_code', '=', 'stocks.move_code')
+						->leftjoin('stores as e', 'e.store_code', '=', 'stocks.store_code')
+						->leftjoin('stores as f', 'f.store_code', '=', 'stocks.store_code_transfer')
+						->orderBy('stock_id', 'desc')
+						->where('stocks.store_code', $store_code)
+						->orderBy('stock_id', 'desc');
 
 			$category_codes = Auth::user()->categoryCodes();
 			if (count($category_codes)>0) {
@@ -398,18 +405,24 @@ class StockController extends Controller
 	
 	public function search(Request $request)
 	{
-			$stocks = Stock::orderBy('stock_id', 'desc')
+			$stocks = Stock::select('move_name', 'stock_datetime', 'e.store_name as store_from', 'f.store_name as store_to', 
+						'product_name', 'products.product_code','stock_quantity', 'stock_value'
+						)
 						->leftjoin('products', 'products.product_code','=', 'stocks.product_code')
-						->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code');
+						->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code')
+						->leftjoin('stock_movements as d', 'd.move_code', '=', 'stocks.move_code')
+						->leftjoin('stores as e', 'e.store_code', '=', 'stocks.store_code')
+						->leftjoin('stores as f', 'f.store_code', '=', 'stocks.store_code_transfer')
+						->orderBy('stock_id', 'desc');
 
 			/*** Store ***/
 			if (!empty($request->store_code)) {
-					$stocks = $stocks->where('store_code', $request->store_code);
+					$stocks = $stocks->where('stocks.store_code', $request->store_code);
 			}
 
 			/*** Movement ***/
 			if (!empty($request->move_code)) {
-					$stocks = $stocks->where('move_code', $request->move_code);
+					$stocks = $stocks->where('stocks.move_code', $request->move_code);
 			}
 
 			/*** Category ***/
@@ -447,6 +460,10 @@ class StockController extends Controller
 					});
 			}
 
+
+			if ($request->export_report) {
+				DojoUtility::export_report($stocks->get());
+			}
 			$stocks = $stocks->paginate($this->paginateValue);
 
 			return view('stocks.index', [

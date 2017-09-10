@@ -3,13 +3,15 @@
 @section('content')
 <h1>Admission Enquiry</h1>
 
-<form action='/admission/enquiry' method='post' class='form-inline'>
-	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+<form id='form' action='/admission/enquiry' method='post' class='form-inline'>
+	<input type='text' class='form-control' placeholder="Patient name or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<label>Ward</label>
 	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>Type</label>
 	{{ Form::select('admission_code', $admission_type, $admission_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+	<a href='#' onclick='javascript:export_report();' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+	<input type='hidden' id='export_report' name="export_report" value="0">
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -18,7 +20,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Date</th>
+    <th>Admission Date</th>
     <th>Patient</th>
     <th>Gender</th>
     <th>Bed</th>
@@ -29,7 +31,6 @@
 @foreach ($admissions as $admission)
 	<?php 
 	$status='';
-	$patient = $admission->encounter->patient;
 	?>
 	<tr class='{{ $status }}'>
 			<td>
@@ -41,23 +42,21 @@
 					</small>	
 			</td>
 			<td>
-					{{ strtoupper($patient->patient_name) }}
+					{{ strtoupper($admission->patient_name) }}
 					<br>
-					<small>{{$patient->patient_mrn}}</small>
+					<small>{{$admission->patient_mrn}}</small>
 			</td>
 			<td>
-					{{ $patient->gender->gender_name }}
+					{{ $admission->gender_name }}
 			</td>
 			<td>
-					{{ $admission->bed->bed_name }} 
-					@if ($admission->bed->room) 
-						/ {{$admission->bed->room->room_name}} 
-					@endif
+					{{ $admission->bed_name }} 
+						/ {{$admission->room_name}} 
 					<br>
-					<small>{{$admission->bed->ward->ward_name}}</small>	
+					<small>{{$admission->ward_name}}</small>	
 			</td>
 			<td>
-					{{$admission->consultant->name }}
+					{{$admission->name }}
 			</td>
 	</tr>
 @endforeach
@@ -75,4 +74,12 @@
 @else
 	No record found.
 @endif
+
+<script>
+		function export_report() {
+				document.getElementById('export_report').value = "1";
+				document.getElementById('form').submit();
+		}
+</script>
+		
 @endsection
