@@ -60,6 +60,7 @@
 
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
 	{{ Form::hidden('admission_id', $admission_id ) }}
+	{{ Form::hidden('book', $book ) }}
 
 	<script>
 		$('#book_date').datepicker({

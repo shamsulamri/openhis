@@ -7,6 +7,12 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('type_name')) has-error @endif'>
+        <label for='type_name' class='col-sm-3 control-label'>Mortuary</label>
+        <div class='col-sm-9'>
+			{{ Form::checkbox('is_mortuary', '1') }} 
+        </div>
+    </div>
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/discharge_types" role="button">Cancel</a>

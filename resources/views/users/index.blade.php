@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>User Index</h1>
+<h1>User List</h1>
 <br>
 <form action='/user/search' method='post'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -18,6 +18,7 @@
  <thead>
 	<tr> 
     <th>Name</th>
+    <th>Group</th>
 	<th>Username</th>
     <th>Employee ID</th> 
     <th></th> 
@@ -32,7 +33,7 @@
 					</a>
 			</td>
 			<td>
-					{{$user->username}}
+					{{ $user->authorization->author_name }}
 			</td>
 			<td>
 					{{$user->employee_id}}

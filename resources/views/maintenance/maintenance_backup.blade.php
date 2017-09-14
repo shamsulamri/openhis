@@ -53,6 +53,7 @@
 			<div class="col-xs-6">
 				<a href="{{ url('/consultations') }}">Consultation</a><br>
 				<a href="{{ url('/patient_lists') }}">Patient Lists</a><br>
+				<a href="{{ url('/discharges') }}">Discharges</a><br>
 			</div>
 			<div class="col-xs-6">
 			<small>
@@ -88,6 +89,7 @@
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>
 				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
 				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
+				<a href="{{ url('/loan_types') }}">Loan Types</a><br>
 				<a href="{{ url('/product_authorizations') }}">Product Authorizations</a><br>
 				<a href="{{ url('/store_authorizations') }}">Store Authorizations</a><br>
 				<a href="{{ url('/forms') }}">Forms</a><br>
@@ -123,7 +125,7 @@
 			<div class="col-xs-6">
 			<small>
 				<a href="{{ url('/wards') }}">Wards</a><br>
-				<a href="{{ url('/ward_classes') }}">Ward Classes</a><br>
+				<a href="{{ url('/ward_classes') }}">Classes</a><br>
 				<a href="{{ url('/rooms') }}">Rooms</a><br>
 				<a href="{{ url('/beds') }}">Beds</a><br>
 				<a href="{{ url('/departments') }}">Departments</a><br>

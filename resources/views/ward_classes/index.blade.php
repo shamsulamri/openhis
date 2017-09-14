@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Ward Class List
+<h1>Class List
 <a href='/ward_classes/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/ward_class/search' method='post'>
@@ -21,6 +21,7 @@
 	<tr> 
     <th>Name</th>
     <th>Code</th> 
+    <th>Price</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -34,6 +35,9 @@
 			</td>
 			<td>
 					{{$ward_class->class_code}}
+			</td>
+			<td>
+					{{number_format($ward_class->class_price,2)}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('ward_classes/delete/'. $ward_class->class_code) }}'>Delete</a>

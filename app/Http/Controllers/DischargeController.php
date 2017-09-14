@@ -87,9 +87,14 @@ class DischargeController extends Controller
 
 			$mc = $consultation->medical_certificate;
 
+			$discharge_type = Type::where('is_mortuary',0)->orderBy('type_name')->lists('type_name', 'type_code')->prepend('','');
+			if ($discharge->encounter->encounter_code=='mortuary') {
+				$discharge_type = Type::where('is_mortuary',1)->orderBy('type_name')->lists('type_name', 'type_code')->prepend('','');
+			}
+
 			return view('discharges.create', [
 					'discharge' => $discharge,
-					'type' => Type::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'type' => $discharge_type,
 					'consultation' => $consultation,
 					'mc' => $consultation->medical_certificate,
 					'patient' => $consultation->encounter->patient,

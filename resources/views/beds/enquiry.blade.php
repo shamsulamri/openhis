@@ -67,6 +67,9 @@
 					{{$bed->class_name}}
 			</td>
 			<td>
+					{{$bed->room_name }}
+			</td>
+			<td>
 					{{$bed->ward_name}}
 			</td>
 			<td>

@@ -36,13 +36,17 @@
 					{{$stock_input->input_description }}
 			</td>
 			<td>
-					{{ date('d F Y, H:i', strtotime($stock_input->created_at)) }}
+					{{ DojoUtility::dateTimeReadFormat($stock_input->created_at) }}
 			</td>
 			<td>
 					@if ($stock_input->input_close==1)
+						<div class='label label-success'>
 						Close
+						</div>
 					@else
+						<div class='label label-warning'>
 						Open
+						</div>
 					@endif
 			</td>
 			<td align='right'>

@@ -36,7 +36,7 @@ class StockController extends Controller
 	{
 			$store_code = Auth::user()->defaultStore();
 			$stocks = Stock::select('move_name', 'stock_datetime', 'e.store_name as store_from', 'f.store_name as store_to', 
-						'product_name', 'products.product_code','stock_quantity', 'stock_value'
+						'product_name', 'products.product_code','stock_quantity', 'stock_value', 'stocks.move_code'
 						)
 						->leftjoin('products', 'products.product_code','=', 'stocks.product_code')
 						->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code')
@@ -406,7 +406,7 @@ class StockController extends Controller
 	public function search(Request $request)
 	{
 			$stocks = Stock::select('move_name', 'stock_datetime', 'e.store_name as store_from', 'f.store_name as store_to', 
-						'product_name', 'products.product_code','stock_quantity', 'stock_value'
+						'product_name', 'products.product_code','stock_quantity', 'stock_value', 'stocks.move_code'
 						)
 						->leftjoin('products', 'products.product_code','=', 'stocks.product_code')
 						->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code')

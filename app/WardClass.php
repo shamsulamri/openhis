@@ -29,7 +29,7 @@ class WardClass extends Model
 
 			
         	if ($method=='') {
-        	    $rules['class_code'] = 'required|max:10|unique:ward_classes';
+        	    $rules['class_code'] = 'required|max:20|unique:ward_classes';
         	}
         
 			

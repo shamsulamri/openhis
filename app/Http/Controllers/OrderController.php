@@ -416,7 +416,8 @@ class OrderController extends Controller
 
 			if (!empty($request->search)) {
 					$orders = $orders->where('patient_name','like','%'.$request->search.'%')
-							->orWhere('patient_mrn', 'like','%'.$request->search.'%');
+							->orWhere('patient_mrn', 'like','%'.$request->search.'%')
+							->orWhere('b.encounter_id', 'like','%'.$request->search.'%');
 			}
 
 			if (!empty($request->date_start) && empty($request->date_end)) {

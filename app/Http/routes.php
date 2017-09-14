@@ -47,6 +47,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('loan_types', 'LoanTypeController');
+		Route::get('/loan_types/id/{id}', 'LoanTypeController@searchById');
+		Route::post('/loan_type/search', 'LoanTypeController@search');
+		Route::get('/loan_type/search', 'LoanTypeController@search');
+		Route::get('/loan_types/delete/{id}', 'LoanTypeController@delete');
+		
 		Route::resource('bed_transactions', 'BedTransactionController');
 		Route::get('/bed_transactions/id/{id}', 'BedTransactionController@searchById');
 		Route::post('/bed_transaction/search', 'BedTransactionController@search');
@@ -452,6 +458,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/loan/search', 'LoanController@search');
 				Route::post('/loan/request_search', 'LoanController@request_search');
 				Route::get('/loans/delete/{id}', 'LoanController@delete');
+				Route::get('/loan/enquiry', 'LoanController@enquiry');
+				Route::post('/loan/enquiry', 'LoanController@enquiry');
 
 		});
 

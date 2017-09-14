@@ -1,30 +1,30 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Order Enquiry</h1>
-<form id='form' action='/order/enquiry' method='post' class='form-horizontal'>
+<h1>Request Enquiry</h1>
+<form id='form' action='/loan/enquiry' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'><div align='left'>Patient</div></label>
+						<label for='date_start' class='col-sm-3 control-label'><div align='left'>Product</div></label>
 						<div class='col-sm-9'>
-							<input type='text' class='form-control' placeholder="Name or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+							<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-2 control-label'>Ward</label>
-						<div class='col-sm-10'>
-            				{{ Form::select('ward_code', $ward,$ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						<label class='col-sm-3 control-label'><div align='left'>Ward</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-2 control-label'>Physician</label>
-						<div class='col-sm-10'>
-								{{ Form::select('user_id', $consultants,$user_id, ['class'=>'form-control','maxlength'=>'10']) }}
+						<label for='date_end' class='col-sm-3 control-label'>Type</label>
+						<div class='col-sm-9'>
+							{{ Form::select('type_code', $types, $type_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
@@ -32,7 +32,7 @@
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'><div align='left'>From</div></label>
+						<label for='date_start' class='col-sm-3 control-label'><div align='left'>From</div></label>
 						<div class='col-sm-9'>
 							<div class="input-group date">
 								<input data-mask="99/99/9999" name="date_start" id="date_start" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($date_start) }}">
@@ -43,8 +43,8 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-2 control-label'>To</label>
-						<div class='col-sm-10'>
+						<label for='date_end' class='col-sm-3 control-label'>To</label>
+						<div class='col-sm-9'>
 							<div class="input-group date">
 								<input data-mask="99/99/9999" name="date_end" id="date_end" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($date_end) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -54,21 +54,15 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label for='date_end' class='col-sm-2 control-label'>Category</label>
-						<div class='col-sm-10'>
-								{{ Form::select('category_code', $categories,$category_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						<label for='date_end' class='col-sm-3 control-label'>Status</label>
+						<div class='col-sm-9'>
+							{{ Form::select('loan_code', $loan_status, $loan_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
 	</div>
 	<div class="row">
 			<div class="col-xs-4">
-					<div class='form-group'>
-						<label class='col-sm-3 control-label'><div align='left'>Status</div></label>
-						<div class='col-sm-9'>
-								{{ Form::select('status_code', $status,$status_code, ['class'=>'form-control','maxlength'=>'10']) }}
-						</div>
-					</div>
 			</div>
 			<div class="col-xs-4">
 			</div>
@@ -80,63 +74,45 @@
 	<input type='hidden' id='export_report' name="export_report">
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-
-
 <br>
 
-@if ($orders->total()>0)
+@if ($loans->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Encounter</th>
-    <th>Patient</th>
-	<th>Order Date</th>
-	<th>Product</th>
-	<th>Physician</th>
-	<th>Status</th>
+    <th>Type</th> 
+    <th>Name</th>
+    <th>Code</th>
+    <th>Quantity</th> 
+    <th>Source</th> 
+    <th>Request Date</th> 
+    <th>Status</th> 
 	</tr>
   </thead>
 	<tbody>
-@foreach ($orders as $order)
+@foreach ($loans as $loan)
 	<tr>
 			<td>
-					{{ $order->encounter_id }}
+					{{ $loan->type_name }}
 			</td>
 			<td>
-					{{$order->patient_name}}
-					<br>
-					<small>{{$order->patient_mrn}}</small>
+					{{$loan->product_name}}
+					{{$loan->patient_name}}
 			</td>
 			<td>
-					{{ DojoUtility::dateTimeReadFormat($order->order_date) }}
+					{{$loan->item_code}}
 			</td>
 			<td>
-					{{$order->product_name}}
-					<br>
-					<small>{{$order->product_code}}</small>
+					{{$loan->loan_quantity}}
 			</td>
 			<td>
-					{{ $order->name }}
+					{{$loan->ward_name}}
 			</td>
 			<td>
-					@if ($order->cancel_id) 
-							<span class="label label-warning">Cancel</span>
-							<br>
-							<small>{{$order->cancel_reason}}</small>
-					@else
-							@if ($order->order_completed==0) 
-								@if ($order->post_id==0) 
-									<span class="label label-danger">Unposted</span>
-								@else
-									<span class="label label-default">Posted</span>
-								@endif
-							@else
-								<span class="label label-success">Completed</span>
-								@if (!empty($order->report==0))
-									<span class="label label-primary">Reported</span>
-								@endif
-							@endif
-					@endif
+					{{ DojoUtility::dateTimeReadFormat($loan->request_date) }}
+			</td>
+			<td>
+					{{$loan->loan_name}}
 			</td>
 	</tr>
 @endforeach
@@ -144,13 +120,13 @@
 </tbody>
 </table>
 @if (isset($search)) 
-	{{ $orders->appends(['search'=>$search])->render() }}
+	{{ $loans->appends(['search'=>$search])->render() }}
 	@else
-	{{ $orders->render() }}
+	{{ $loans->render() }}
 @endif
 <br>
-@if ($orders->total()>0)
-	{{ $orders->total() }} records found.
+@if ($loans->total()>0)
+	{{ $loans->total() }} records found.
 @else
 	No record found.
 @endif

@@ -1,6 +1,5 @@
 
 
-	@if ($consultation->encounter->encounter_code != 'mortuary')
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         <label for='type_code' class='col-sm-3 control-label'>Outcome<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -8,7 +7,6 @@
             @if ($errors->has('type_code')) <p class="help-block">{{ $errors->first('type_code') }}</p> @endif
         </div>
     </div>
-	@endif
 
 	@if ($consultation->encounter->encounter_code=='inpatient')
     <div class='form-group  @if ($errors->has('discharge_diagnosis')) has-error @endif'>
@@ -108,9 +106,6 @@
 	{{ Form::hidden('user_id', null) }}
 	{{ Form::hidden('consultation_id', null) }}
 	{{ Form::hidden('encounter_id', null) }}
-	@if ($consultation->encounter->encounter_code == 'mortuary')
-		{{ Form::hidden('type_code', 'home') }}
-	@endif
 
 	<script>
 		$('#discharge_date').datepicker({

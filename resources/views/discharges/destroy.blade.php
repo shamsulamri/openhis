@@ -8,7 +8,10 @@ Delete Discharge
 <br>
 <h3>
 Are you sure you want to delete the selected record ?
-{{ $discharge->type_code }}
+<br>
+<br>
+{{ $discharge->encounter->patient->patient_name }}
+({{ $discharge->encounter->patient->getMRN() }})
 {{ Form::open(['url'=>'discharges/'.$discharge->discharge_id, 'class'=>'pull-right']) }}
 	{{ method_field('DELETE') }}
 	<a class="btn btn-default" href="/discharges" role="button">Cancel</a>

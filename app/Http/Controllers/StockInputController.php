@@ -60,6 +60,8 @@ class StockInputController extends Controller
 					'stock_input' => $stock_input,
 					'move' => StockMovement::where('move_code','<>','sale')
 							->where('move_code','<>','receive')
+							->where('move_code','<>','explode')
+							->where('move_code','<>','build')
 							->orderBy('move_name')
 							->lists('move_name', 'move_code')
 							->prepend('',''),
@@ -336,7 +338,7 @@ class StockInputController extends Controller
 				$stock->stock_quantity = $line->line_quantity*$conversion;
 				$stock->stock_conversion_unit = $line->product->product_conversion_unit;
 				$stock->stock_value = $line->line_value;
-				$stock->batch_number = $line->batch_number;
+				//$stock->batch_number = $line->batch_number;
 				$stock_datetime = DojoUtility::now();
 				$stock->stock_datetime = $stock_datetime;
 				$stock->stock_description = $stock_input->input_description;
@@ -408,6 +410,7 @@ class StockInputController extends Controller
 
 			if ($store) {
 					$loans = Loan::where('ward_code','=', $store->ward_code)
+								->where('type_code', '<>', 'folder')
 								->where('loan_code', '=', 'accept')
 								->whereNull('input_line_id');
 					$loans = $loans->leftjoin('products as b','b.product_code','=', 'loans.item_code');
@@ -422,7 +425,7 @@ class StockInputController extends Controller
 					$stock_helper = new StockHelper();
 
 					foreach ($loans as $loan) {
-						$pre_quantity = $stock_helper->getStockCountByStore($loan->item_code, $stock_input->stre_code);
+						$pre_quantity = $stock_helper->getStockCountByStore($loan->item_code, $stock_input->store_code);
 						$product = Product::find($loan->item_code);
 						$input_line = new StockInputLine();
 						$input_line->input_id = $stock_input->input_id;

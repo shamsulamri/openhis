@@ -14,7 +14,7 @@ $on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_co
 <h4>The maximum number of dismantle is <strong>{{ $on_hand }}</strong></h4>
 <br>
 <form class='form-inline' action='/explode_assembly/{{ $product->product_code }}' method='post'>
-	<label>Store</label>
+	<label>Receiving Store</label>
     {{ Form::select('store_code', $store,$store_code, ['class'=>'form-control']) }}
 	<label>Quanity</label>
 	{{ Form::text('quantity', null, ['class'=>'form-control','placeholder'=>'']) }}

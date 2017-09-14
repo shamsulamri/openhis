@@ -102,12 +102,32 @@ class BedBookingController extends Controller
 					'admission_id' => $admission_id,
 					'consultants' => $this->getConsultants(),
 					'priority' => Priority::all()->sortBy('priority_name')->lists('priority_name', 'priority_code')->prepend('',''),
+					'book' => $request->book,
 					]);
 	}
 
 	public function store(Request $request) 
 	{
 			$bed_booking = new BedBooking();
+
+			$book_date = DojoUtility::dateWriteFormat($request->book_date);
+			$count = BedBooking::where('book_date', $book_date)
+						->where('ward_code', $request->ward_code)
+						->count();
+
+			$title = "Bed Reservation";
+			if ($request->book=='preadmission') $title = "Preadmission";
+
+			$limit = env('RESERVATION_LIMIT');
+			if ($count>=$limit) {
+					$valid=null;
+					$valid['book_date']='Booking limit reached. Please choose a new date.';
+					Session(['title'=>$title]);
+					return redirect('/bed_bookings/create/'.$request->patient_id.'/'.$request->admission_id)
+							->withErrors($valid)
+							->withInput();
+			}
+			
 			$valid = $bed_booking->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {

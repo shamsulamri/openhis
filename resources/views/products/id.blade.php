@@ -49,6 +49,6 @@
 
 @can('loan_function')
 		<a class='btn btn-default' href='{{ URL::to('loans/request/'. $product->product_code) }}'>
-			<span class='glyphicon glyphicon-transfer' aria-hidden='true'></span><br>Loan<br>Request
+			<span class='glyphicon glyphicon-transfer' aria-hidden='true'></span><br>Product<br>Request
 		</a>
 @endcan

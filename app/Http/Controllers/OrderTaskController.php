@@ -117,6 +117,7 @@ class OrderTaskController extends Controller
 					->leftjoin('users as k','k.id','=', 'a.user_id')
 					->where('c.encounter_id','=', $encounter_id)
 					->where('a.location_code','=',$location_code)
+					->whereNull('cancel_id')
 					->orderBy('cancel_id')
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')

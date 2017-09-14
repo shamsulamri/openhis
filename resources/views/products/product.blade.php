@@ -249,7 +249,7 @@
 					<div class='form-group  @if ($errors->has('product_average_cost')) has-error @endif'>
 						{{ Form::label('product_average_cost', 'Average Cost',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::label('product_average_cost', $product->product_average_cost, ['class'=>'form-control']) }}
+							{{ Form::text('product_average_cost', null, ['class'=>'form-control']) }}
 							@if ($errors->has('product_average_cost')) <p class="help-block">{{ $errors->first('product_average_cost') }}</p> @endif
 						</div>
 					</div>

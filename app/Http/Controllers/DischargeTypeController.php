@@ -72,6 +72,7 @@ class DischargeTypeController extends Controller
 			$discharge_type = DischargeType::findOrFail($id);
 			$discharge_type->fill($request->input());
 
+			$discharge_type->is_mortuary = $request->is_mortuary ?: 0;
 
 			$valid = $discharge_type->validate($request->all(), $request->_method);	
 

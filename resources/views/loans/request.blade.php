@@ -2,7 +2,7 @@
 @extends('layouts.app')
 
 @section('content')
-@if (!$loan->loan_is_folder)
+@if ($loan->type_code != 'folder')
 @include('products.id')
 @endif
 @if ($patient)
@@ -13,7 +13,14 @@
 </h1>
 <br>
 {{ Form::model($loan, ['url'=>$url, 'class'=>'form-horizontal']) }} 
-@if ($loan->loan_code=='lend')
+
+    <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
+        <label for='loan_code' class='col-sm-3 control-label'>Type</label>
+        <div class='col-sm-9'>
+            {{ Form::label('loan_code', $loan->type->type_name, ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
+@if ($loan->loan_code=='on_loan')
     <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
         <label for='loan_code' class='col-sm-3 control-label'>Status<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -43,13 +50,6 @@
 	@endif
 
 	@if ($patient)
-	<div class='form-group'>
-		<label for='item_code' class='col-sm-3 control-label'>Item</label>
-        <div class='col-sm-9'>
-            {{ Form::label('item', 'Folder', ['class'=>'form-control','placeholder'=>'',]) }}
-        </div>
-    </div>
-
 	<div class='form-group'>
 		<label for='item_code' class='col-sm-3 control-label'>Patient</label>
         <div class='col-sm-9'>
@@ -90,14 +90,14 @@
 	@endif
 	@if ($loan->location_code)
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
-        <label for='location_code' class='col-sm-3 control-label'>Clinic</label>
+        <label for='location_code' class='col-sm-3 control-label'>Location</label>
         <div class='col-sm-9'>
             {{ Form::select('location_code', $locations,$location_code, ['class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
         </div>
     </div>
 	@endif
-	@if (!$loan->loan_is_folder)
+	@if ($loan->type_code!='folder')
     <div class='form-group  @if ($errors->has('loan_quantity')) has-error @endif'>
         <label for='loan_quantity' class='col-sm-3 control-label'>Quantity<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -112,11 +112,15 @@
     <div class='form-group  @if ($errors->has('loan_description')) has-error @endif'>
         <label for='loan_description' class='col-sm-3 control-label'>Description</label>
         <div class='col-sm-9'>
-            {{ Form::textarea('loan_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
-            @if ($errors->has('loan_description')) <p class="help-block">{{ $errors->first('loan_description') }}</p> @endif
+			@if ($loan->loan_code=='on_loan')
+					{{ Form::label('loan_description', str_replace(chr(13), "\n", $loan->loan_description." "), ['class'=>'form-control']) }}
+			@else
+					{{ Form::textarea('loan_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+			@endif
         </div>
     </div>
 
+@if ($loan->type_code=='indent' && $loan->loan_code != 'on_loan')
     <div class='form-group  @if ($errors->has('loan_is_indent')) has-error @endif'>
         {{ Form::label('loan_is_indent', 'Stock Indent',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -124,8 +128,9 @@
             @if ($errors->has('loan_is_indent')) <p class="help-block">{{ $errors->first('loan_is_indent') }}</p> @endif
         </div>
     </div>
+@endif
 
-	@if (!$loan->loan_is_folder && $loan->loan_code != 'exchange')
+	@if (!$loan->type_code=='folder' && $loan->loan_code != 'exchange')
     <div class='form-group  @if ($errors->has('loan_recur')) has-error @endif'>
         {{ Form::label('loan_recur', 'Recur Daily',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -147,9 +152,7 @@
 	{{ Form::hidden('loan_request_by', null) }}
 	{{ Form::hidden('loan_code', $loan->loan_code) }}
 	{{ Form::hidden('exchange_id', $loan->exchange_id) }}
-	@if ($loan->loan_is_folder)
-		{{ Form::hidden('loan_is_folder',1) }}
-	@endif
+	{{ Form::hidden('type_code',$loan->type_code) }}
 		
 	<script>
 		$(function(){

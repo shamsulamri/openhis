@@ -123,6 +123,16 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group'>
+						<div class='col-sm-offset-4 col-sm-8'>
+							@if ($product->product_track_batch)
+								<span class="fa fa-check-square-o" aria-hidden="true"></span>
+							@else
+								<span class="fa fa-square-o" aria-hidden="true"></span>
+							@endif
+							<label>Batch Tracked</label><br>Batch number required during stock movement.
+						</div>
+					</div>
 			</div>
 	</div>
 

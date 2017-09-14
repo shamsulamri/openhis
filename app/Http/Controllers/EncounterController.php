@@ -107,6 +107,12 @@ class EncounterController extends Controller
 
 			}
 
+			$beds =  Bed::leftJoin('ward_rooms as b', 'b.room_code', '=', 'beds.room_code')
+							->where('status_code','=','01')
+							->orWhere('status_code','04')
+							->orderBy('room_name')
+							->get();
+
 			return view('encounters.create', [
 					'encounter' => $encounter,
 					'patient' => $patient,
@@ -121,7 +127,7 @@ class EncounterController extends Controller
 					'teams' => Team::all()->sortBy('team_name')->lists('team_name', 'team_code')->prepend('',''),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'classes' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
-					'beds' => Bed::where('status_code','=','01')->orWhere('status_code','04')->get(),
+					'beds' => $beds,
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 					'preadmissions'=>$preadmissions,

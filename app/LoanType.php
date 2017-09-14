@@ -7,11 +7,10 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class DischargeType extends Model
+class LoanType extends Model
 {
-	protected $table = 'ref_discharge_types';
+	protected $table = 'loan_types';
 	protected $fillable = [
-				'is_mortuary',
 				'type_name'];
 	
     protected $guarded = ['type_code'];
@@ -26,7 +25,7 @@ class DischargeType extends Model
 
 			
         	if ($method=='') {
-        	    $rules['type_code'] = 'required|max:10|unique:ref_discharge_types';
+        	    $rules['type_code'] = 'required|max:20|unique:loan_types';
         	}
         
 			

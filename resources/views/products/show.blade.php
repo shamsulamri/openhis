@@ -1,7 +1,6 @@
 @extends('layouts.app2')
 
 @section('content')
-{{ $reason }}
 @if ($reason=='bulk')
 <a class="btn btn-default" href="{{ url('stock_inputs/input/'.$return_id) }}" role="button">Back</a>
 @elseif ($reason=='purchase_order')

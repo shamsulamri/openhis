@@ -70,6 +70,7 @@ class Bed extends Model
 	public function getBedNameStatus()
 	{
 			$value = $this->bed_name;
+			if ($this->room) $value = $value." (".$this->room->room_name.")";
 			if ($this->status_code=='04') {
 				$value =  $this->bed_name.' ('.$this->status->status_name.')';
 			}

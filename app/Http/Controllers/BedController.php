@@ -262,7 +262,7 @@ class BedController extends Controller
 			$search = '%'.$request->search.'%';
 
 			$sql = "
-				select bed_name, class_name, ward_name, status_name, patient_name, patient_mrn
+				select bed_name, class_name, ward_name, status_name, patient_name, patient_mrn, room_name
 				from beds as a
 				left join wards as b on (a.ward_code = b.ward_code)
 				left join ward_classes as c on (c.class_code = a.class_code)
@@ -274,6 +274,7 @@ class BedController extends Controller
 					left join patients d on (d.patient_id = c.patient_id)
 					where discharge_id is null
 				) as e on (e.bed_code = a.bed_code)
+				left join ward_rooms as f on (f.room_code = a.room_code)
 				where (bed_name like ? or a.bed_code like ?) 
 			";
 
@@ -289,7 +290,7 @@ class BedController extends Controller
 				$sql = $sql.sprintf(" and a.class_code = '%s' ", $request->class_code);
 			}
 
-			$sql = $sql." order by ward_name, class_name, bed_name";
+			$sql = $sql." order by ward_name, class_name, room_name, bed_name";
 
 			$beds = DB::select($sql, [$search, $search]);
 

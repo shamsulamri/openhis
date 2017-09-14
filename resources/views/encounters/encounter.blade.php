@@ -234,6 +234,8 @@
 					addList(wardSelect,'mortuary', 'Mortuary');
 					document.getElementById('ward_code').value = 'mortuary';
 					document.getElementById('ward_code').disabled = true;
+					document.getElementById('class_code').value = 'undefined';
+					document.getElementById('class_code').disabled = true;
 					wardChanged()
 			}
 

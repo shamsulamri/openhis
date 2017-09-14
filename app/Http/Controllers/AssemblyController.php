@@ -47,16 +47,11 @@ class AssemblyController extends Controller
 
 			$store_code = ($request->store_code) ? $request->store_code : Auth::user()->authorization->store_code;
 
-			$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)
-					->select('store_name', 'store_authorizations.store_code')
-					->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
-					->orderBy('store_name')
-					->lists('store_name', 'store_code');
 			return view('assemblies.index', [
 					'product'=>$product,
 					'boms'=>$boms,
 					'quantity'=>$quantity,
-					'store' => $stores,
+					'store'=>Auth::user()->storeList()->prepend('',''),
 					'store_code'=>$store_code,
 					'stock_helper'=>new StockHelper(),
 			]);
@@ -98,6 +93,21 @@ class AssemblyController extends Controller
 					$msg = "Build cannot be greater than ".$max;
 			}
 			if ($flag) {
+
+				$stock = new Stock();
+				$stock->move_code='build';
+				$stock->store_code = $request->store_code;
+				$stock->product_code = $id;
+				$stock->stock_quantity = $stock->stock_quantity+$quantity;
+				$stock->stock_datetime = DojoUtility::now(); 
+				$stock->stock_description = "Build Assembly";
+
+				$product = Product::find($id);
+				$stock->stock_value = $product->product_average_cost*$stock->stock_quantity;
+
+				$stock->save();
+				$stock_id = $stock->stock_id;
+
 				foreach($boms as $bom) {
 						$stock = new Stock();
 						$stock->move_code='adjust';
@@ -107,20 +117,17 @@ class AssemblyController extends Controller
 						$stock->stock_datetime = DojoUtility::now(); 
 						$stock->stock_description = "Build Assembly: ".$id;
 						$stock->username = Auth::user()->username;
+						$stock->stock_tag = $stock_id;
+
+						$product = Product::find($bom->bom_product_code);
+						$stock->stock_value = $product->product_average_cost*$stock->stock_quantity;
+
 						$stock->save();
 
 						$product_controller->updateTotalOnHand($stock->product_code);
 
 				}
 
-				$stock = new Stock();
-				$stock->move_code='receive';
-				$stock->store_code = $request->store_code;
-				$stock->product_code = $id;
-				$stock->stock_quantity = $stock->stock_quantity+$quantity;
-				$stock->stock_datetime = DojoUtility::now(); 
-				$stock->stock_description = "Build Assembly";
-				$stock->save();
 
 				$product_controller->updateTotalOnHand($id);
 				Session::flash('message', 'Product built.');
@@ -156,16 +163,10 @@ class AssemblyController extends Controller
 	{
 			$product = Product::find($id);
 
-			$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)
-					->select('store_name', 'store_authorizations.store_code')
-					->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
-					->orderBy('store_name')
-					->lists('store_name', 'store_code');
-
 			return view('assemblies.explode', [
 					'product'=>$product,
-					'store' => $stores,
-					'store_code'=>Auth::user()->authorization->store_code,
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'store_code'=>Auth::user()->defaultStore(),
 					'stock_helper'=>new StockHelper(),
 			]);
 	}
@@ -189,6 +190,20 @@ class AssemblyController extends Controller
 			}
 
 
+			$stock = new Stock();
+			$stock->move_code='explode';
+			$stock->store_code = $request->store_code;
+			$stock->product_code = $id;
+			$stock->stock_quantity = -1*$quantity;
+			$stock->stock_datetime = DojoUtility::now(); 
+			$stock->stock_description = "Explode Assembly: ".$quantity;
+
+			$product = Product::find($id);
+			$stock->stock_value = $product->product_average_cost*$stock->stock_quantity;
+
+			$stock->save();
+			$stock_id = $stock->stock_id;
+
 			foreach ($bom_products as $bom_product) {
 
 						$stock = new Stock();
@@ -197,21 +212,18 @@ class AssemblyController extends Controller
 						$stock->product_code = $bom_product->bom_product_code;
 						$stock->stock_quantity = $quantity*$bom_product->bom_quantity;
 						$stock->stock_datetime = DojoUtility::now(); 
-						$stock->stock_description = "Dismantle Assembly: ".$id;
+						$stock->stock_description = "Explode Assembly: ".$id;
 						$stock->username = Auth::user()->username;
+						$stock->stock_tag = $stock_id;
+
+						$product = Product::find($bom_product->bom_product_code);
+						$stock->stock_value = $product->product_average_cost*$stock->stock_quantity;
+						
 						$stock->save();
 
 						$product_controller->updateTotalOnHand($stock->product_code);
 			}
 
-				$stock = new Stock();
-				$stock->move_code='adjust';
-				$stock->store_code = $request->store_code;
-				$stock->product_code = $id;
-				$stock->stock_quantity = -1*$quantity;
-				$stock->stock_datetime = DojoUtility::now(); 
-				$stock->stock_description = "Dismantle Assembly: ".$quantity;
-				$stock->save();
 
 				$product_controller->updateTotalOnHand($id);
 			Session::flash('message', 'Product exploded.');

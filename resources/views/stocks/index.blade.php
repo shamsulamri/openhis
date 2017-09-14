@@ -55,7 +55,7 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label for='date_end' class='col-sm-3 control-label'>Transaction</label>
+						<label for='date_end' class='col-sm-3 control-label'>Movement</label>
 						<div class='col-sm-9'>
 							{{ Form::select('move_code', $move, $move_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
@@ -74,7 +74,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Transaction</th>
+    <th>Movement</th>
     <th>Date</th> 
     <th>Store</th> 
     <th>Product</th> 
@@ -107,7 +107,11 @@
 					{{$stock->product->product_code}}
 			</td>
 			<td align='right'>
-					{{ abs($stock->stock_quantity)}}
+					@if ($stock->move_code=='adjust')
+					{{ number_format($stock->stock_quantity) }}
+					@else
+					{{ number_format(abs($stock->stock_quantity)) }}
+					@endif
 			</td>
 			<td align='right'>
 					{{ number_format(abs($stock->stock_value),2) }}

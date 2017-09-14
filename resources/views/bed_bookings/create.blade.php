@@ -3,7 +3,11 @@
 @section('content')
 @include('patients.id')
 <h1>
+@if (Session('title'))
+{{ Session('title') }}
+@else
 {{ $title }}
+@endif
 </h1>
 <br>
 

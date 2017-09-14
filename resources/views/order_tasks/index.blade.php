@@ -89,7 +89,11 @@
 			</td>
 			<td width='100'>
 					@if ($order->product_track_batch==0 && $order->product_stocked==1)
-					{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
+						@if ($order->order_completed==0) 
+							{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
+						@else
+							{{ $order->order_quantity_supply }}
+						@endif
 					@else
 					{{ $order->order_quantity_request }} 
 					@endif
@@ -98,7 +102,7 @@
 					{{ $order->name }}
 			</td>
 			<td>
-					{{ (DojoUtility::dateLongFormat($order->investigation_date)) }}
+					{{ (DojoUtility::dateReadFormat($order->investigation_date)) }}
 			</td>
 			<td align='right'>
 					@if (!isset($order->cancel_id))

@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-Edit Loan
+Edit Request
 </h1>
 
 {{ Form::model($loan, ['route'=>['loans.update',$loan->loan_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 

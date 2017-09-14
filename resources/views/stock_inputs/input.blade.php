@@ -17,7 +17,7 @@
 		<th width='50'>UOM</th>
 		<th width='50'>On Hand</th>
 		<th width='80'>Quantity</th>
-		<th width='80'>Value</th>
+		<th width='100'>Value</th>
 		<th width='50'>Batch</th>
 		@if ($stock_input->input_close==0)
 		<th width='50'></th>
@@ -36,9 +36,9 @@ $on_hand = $stock_helper->getStockCountByStore($line->product_code, $stock_input
 ?>
 	<tr>
 		<td>
-			<strong>{{ $line->product->product_name }}</strong>
+			{{ $line->product->product_name }}
 			<br>
-			{{ $line->product_code }}
+			<small>{{ $line->product_code }}</small>
 		</td>	
 		<td align='center'>
 			{{ $line->product->unitMeasure->unit_shortname }}
@@ -56,7 +56,7 @@ $on_hand = $stock_helper->getStockCountByStore($line->product_code, $stock_input
 		@endif
 		</td>	
 		<td>
-			{{ Form::hidden('average_'.$line->line_id, $line->line_value, ['id'=>'average_'.$line->line_id]) }}
+			{{ Form::hidden('average_'.$line->line_id, $line->product_average_cost, ['id'=>'average_'.$line->line_id]) }}
 		@if ($stock_input->input_close==0)
 			{{ Form::text('value_'.$line->line_id, $line->line_value, ['class'=>'form-control','id'=>'value_'.$line->line_id]) }}
 		@else

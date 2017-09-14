@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-Edit Ward Class
+Edit Class
 </h1>
 
 <br>

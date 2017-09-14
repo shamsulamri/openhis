@@ -11,11 +11,6 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@can('system-administrator')
-<a href='/discharges/create' class='btn btn-primary'>Create</a>
-<br>
-@endcan
-<br>
 @if ($discharges->total()>0)
 <table class="table table-hover">
  <thead>
@@ -70,6 +65,7 @@
 				}
 			}
 			?>
+			@cannot('system-administrator')
 			@if ($discharge->encounter_code=='inpatient')
 					@can('module-discharge')
 					<a class='btn btn-{{ $button_type }} btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
@@ -81,15 +77,16 @@
 							@can('module-discharge')
 							<a class='btn btn-{{ $button_type }} btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
 							@endcan
-							@can('system-administrator')
-							<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
-							@endcan
 					@else
 							<span class="label label-warning">
 							Preparing drug...
 							</span>
 					@endif
 			@endif
+			@endcannot
+			@can('system-administrator')
+			<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
+			@endcan
 			</td>
 	</tr>
 @endforeach

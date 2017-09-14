@@ -14,6 +14,7 @@ class Loan extends Model
 				'item_code',
 				'loan_request_by',
 				'ward_code',
+				'type_code',
 				'location_code',
 				'loan_quantity',
 				'loan_date_start',
@@ -22,7 +23,6 @@ class Loan extends Model
 				'loan_description',
 				'loan_closure_datetime',
 				'loan_closure_description',
-				'loan_is_folder',
 				'loan_is_indent',
 				'exchange_id',
 				'input_line_id',
@@ -139,12 +139,14 @@ class Loan extends Model
 
 	public function getItemName($item_code = null)
 	{
-			$product = Product::find($item_code);
-			if (empty($product)) {
+			
+			//if (empty($product)) {
+			if ($this->type_code=='folder') {
 					// Return MRN
 					return substr($this->item_code,0,2).'-'.substr($this->item_code,2,8).'-'.substr($this->item_code,10,4);
 					//return $this->item_code;
 			} else {
+					$product = Product::find($this->item_code);
 					return $product->product_name;
 			}
 
@@ -164,6 +166,21 @@ class Loan extends Model
 	}	
 	public function location()
 	{
-			return $this->belongsTo('App\QueueLocation', 'location_code');
+			return $this->belongsTo('App\QueueLocation', 'loc','location_code');
+	}
+
+	public function type()
+	{
+			return $this->belongsTo('App\LoanType', 'type_code');
+	}
+
+	public function patient()
+	{
+			return $this->belongsTo('App\Patient', 'item_code','patient_mrn');
+	}
+
+	public function product()
+	{
+			return $this->belongsTo('App\Product', 'item_code','product_Code');
 	}
 }

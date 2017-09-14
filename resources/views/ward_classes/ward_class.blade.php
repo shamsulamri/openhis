@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class='form-group  @if ($errors->has('class_diet')) has-error @endif'>
-        <label for='class_diet' class='col-sm-3 control-label'>Diet<span style='color:red;'> *</span></label>
+        <label for='class_diet' class='col-sm-3 control-label'>Diet</label>
         <div class='col-sm-9'>
             {{ Form::select('class_diet', $diet_classes,null, ['id'=>'class_diet','class'=>'form-control']) }}
             @if ($errors->has('class_diet')) <p class="help-block">{{ $errors->first('class_diet') }}</p> @endif

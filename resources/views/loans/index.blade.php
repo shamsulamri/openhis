@@ -1,17 +1,41 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Ward Request</h1>
-<br>
-<form class='form-inline' action='/loan/search' method='post'>
-	<label>Status</label>
-	{{ Form::select('loan_code', $loan_status, $loan_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Location</label>
-	{{ Form::select('location_code', $locations, $location_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Ward</label>
-	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<input type='text' class='form-control' placeholder="Loan Id" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	{{ Form::submit('Refresh', ['class'=>'btn btn-default']) }}
+<h1>Request List</h1>
+<form class='form-horizontal' action='/loan/search' method='post'>
+	<div class="row">
+			<div class="col-xs-3">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Status</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('loan_code', $loan_status, $loan_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Location</label>
+						<div class='col-sm-9'>
+							{{ Form::select('location_code', $locations, $location_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Ward</label>
+						<div class='col-sm-9'>
+							{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-1">
+					<div class='form-group'>
+						<div class='col-sm-12'>
+							{{ Form::submit('Refresh', ['class'=>'btn btn-primary pull-right']) }}
+						</div>
+					</div>
+			</div>
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	@if ($is_folder)
 	<input type='hidden' name='type' value='folder'>
@@ -23,17 +47,19 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Id</th>
 	@if ($is_folder)
+    <th>Name</th>
     <th>MRN</th>
 	@else
     <th>Item</th>
+    <th>Code</th>
     <th>Quantity</th> 
 	@endif
     <th>Source</th> 
-    <th>Request</th> 
+    <th>Request Date</th> 
     <th>Status</th> 
-    <th>Closure</th> 
+    <th>Type</th> 
+    <th>Resolution</th> 
 	@can('system-administrator')
 	<th></th>
 	@endcan
@@ -42,15 +68,24 @@
 	<tbody>
 @foreach ($loans as $loan)
 	<tr>
-			<td>
-					{{ $loan->loan_id }}
-			</td>
+			@if ($is_folder)
 			<td>
 					<a href='{{ URL::to('loans/'. $loan->loan_id . '/edit') }}'>
-						{{$loan->getItemName($loan->product_code) }}
+					{{ $loan->patient->patient_name }}
 					</a>
 			</td>
-			@if (!$is_folder)
+			<td>
+						{{ DojoUtility::formatMRN($loan->item_code) }}
+			</td>
+			@else
+			<td>
+					<a href='{{ URL::to('loans/'. $loan->loan_id . '/edit') }}'>
+						{{ $loan->product_name }}
+					</a>
+			</td>
+			<td>
+					{{ $loan->item_code }}
+			</td>
 			<td>
 					@if ($loan->loan_quantity>0)
 					{{$loan->loan_quantity }}
@@ -60,21 +95,24 @@
 			</td>
 			@endif
 			<td>
-				@if (!empty($loan->ward_code))
-					{{$loan->ward->ward_name }}
-				@endif
-				@if (!empty($loan->location_code))
+					@if ($loan->location)
 					{{$loan->location->location_name }}
-				@endif
+					@endif
+					@if ($loan->ward)
+					{{$loan->ward->ward_name }}
+					@endif
 			</td>
 			<td>
-					{{ (DojoUtility::dateLongFormat($loan->created_at )) }}
+					{{ (DojoUtility::dateTimeReadFormat($loan->request_date )) }}
 			</td>
 			<td>
 					{{$loan->status->loan_name}}
 					@if ($loan->exchange_id>0)
 						(Exchange)
 					@endif
+			</td>
+			<td>
+					{{$loan->type->type_name}}
 			</td>
 			<td>
 					@if ($loan->loan_code=='exchanged') 
@@ -85,7 +123,7 @@
 								{{ (DojoUtility::dateLongFormat($loan->loan_closure_datetime )) }}
 							@endif
 					@endif
-					@if ($loan->loan_code=='lend')
+					@if ($loan->loan_code=='on_loan')
 							@if (!empty($loan->loan_date_start))
 							{{ (DojoUtility::dateLongFormat($loan->loan_date_start )) }}
 							@endif
@@ -96,11 +134,6 @@
 			</td>
 			@can('system-administrator')
 			<td align='right'>
-					<!--
-					@if ($loan->loan_is_folder)
-            		<a class="btn btn-default btn-xs" href="/documents?patient_mrn={{ $loan->item_code }}" role="button">Documents</a>
-					@endif
-					-->
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('loans/delete/'. $loan->loan_id) }}'>Delete</a>
 			</td>
 			@endcan

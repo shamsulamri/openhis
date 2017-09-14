@@ -29,11 +29,6 @@ class UserController extends Controller
 
 	public function index()
 	{
-			$users = DB::table('users') 
-					->orderBy('name')
-					->paginate($this->paginateValue);
-
-
 			$users = User::whereNotNull('name')
 					->orderBy('name')
 					->paginate($this->paginateValue);
@@ -155,7 +150,7 @@ class UserController extends Controller
 	
 	public function search(Request $request)
 	{
-			$users = DB::table('users')
+			$users = User::orderBy('name')
 					->where('name','like','%'.$request->search.'%')
 					->orWhere('id', 'like','%'.$request->search.'%')
 					->orderBy('name')
@@ -169,13 +164,12 @@ class UserController extends Controller
 
 	public function searchById($id)
 	{
-			$users = DB::table('users')
+			$users = User::orderBy('name')
 					->where('id','=',$id)
 					->paginate($this->paginateValue);
 
 			return view('users.index', [
 					'users'=>$users,
-					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 			]);
 	}
 

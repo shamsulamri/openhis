@@ -20,6 +20,7 @@
     <th>Name</th> 
     <th>Category</th> 
     <th>UOM</th> 
+    <th><div align='right'>On Hand</div></th> 
 	@can('system-administrator')
 	<th></th>
 	@endcan
@@ -54,8 +55,13 @@ $allocated=0;
 						@if ($product->product) 
 							{{ $product->product->unitMeasure->unit_shortname }}
 						@else
-							{{ $product->unitMeasure->unit_shortname }}
+							@if ($product->unitMeasure)
+									{{ $product->unitMeasure->unit_shortname }}
+							@endif
 						@endif
+			</td>
+			<td align='right'>
+					{{ $product->product_on_hand }}
 			</td>
 			@can('system-administrator')
 			<td align='right'>

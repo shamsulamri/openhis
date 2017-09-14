@@ -4,7 +4,7 @@
 <h1>Reports</h1>
 <br>
 
-<h3>Order Management</h3>
+<h3>Clinical Order</h3>
 <h3>
 <div class="row">
 	<div class="col-xs-6">
@@ -46,7 +46,8 @@
 		<a href="{{ url('/stocks') }}">Stock Movement Enquiry</a><br>
 		<a href="{{ url('/stock_batches') }}">Batch Number Enquiry</a><br>
 		<a href="{{ url('/purchase_order_lines/enquiry') }}">Purchase Enquiry</a><br>
-		<a href="{{ url('/products/reorder') }}">Reorder Enquiry</a><br>
+		<a href="{{ url('/products/reorder') }}">Product Reorder Enquiry</a><br>
+		<a href="{{ url('/loan/enquiry') }}">Request Enquiry</a><br>
 	</div>
 </div>
 </h3>

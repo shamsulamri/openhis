@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Stock Indent</h1>
+<h1>Ward Request </h1>
 @if (!empty($ward_code))
 <h3>{{ $ward->ward_name }}</h3>
 @endif
@@ -19,9 +19,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Id</th>
     <th>Item</th>
     <th>Quantity</th>
+    <th>Type</th>
     <th>Status</th> 
     <th>Date</th> 
 	<th></th>
@@ -31,27 +31,34 @@
 @foreach ($loans as $loan)
 	<tr>
 			<td>
-					{{ $loan->loan_id }}
-			</td>
-			<td>
-					@if ($loan->loan_is_folder)
-					<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
-					@else
-					<span class='glyphicon glyphicon-shopping-cart' aria-hidden='true'></span>
-					@endif
+
 					<a href='{{ URL::to('loans/request/'. $loan->loan_id . '/edit') }}'>
+					@if ($loan->type_code=='folder')
+					<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
 						{{ $loan->getItemName() }}
+					@else
+					<span class='fa fa-glass' aria-hidden='true'></span>
+						{{ $loan->product_name }}
+					@endif
 					</a>
 			</td>
 			<td>
-					@if ($loan->loan_is_folder)
+					@if ($loan->type_code=='folder')
 						-
 					@else
 						{{$loan->loan_quantity }}
 					@endif
 			</td>
 			<td>
+					@if ($loan->type)
+					{{$loan->type->type_name}}
+					@endif
+			</td>
+			<td>
 					{{$loan->status->loan_name}}
+					@if ($loan->exchange_id>0)
+						(Exchange)
+					@endif
 			</td>
 			<td>
 					@if ($loan->loan_code=='exchanged') 
@@ -68,7 +75,7 @@
 					@if ($loan->loan_code=='request')
 						{{ (DojoUtility::dateLongFormat($loan->created_at )) }}
 					@endif
-					@if ($loan->loan_code=='lend')
+					@if ($loan->loan_code=='on_loan')
 							@if (!empty($loan->loan_date_start))
 								{{ DojoUtility::dateLongFormat($loan->loan_date_start)  }}
 							@endif
@@ -81,7 +88,7 @@
 					@if ($loan->loan_code=='exchange' or $loan->loan_code=='request') 
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('loans/request/'. $loan->loan_id.'/delete') }}'>Delete</a>
 					@endif
-					@if ($loan->loan_code=='lend' && !$loan->loan_is_folder) 
+					@if ($loan->loan_code=='on_loan' && $loan->type_code!='folder') 
 					<a class='btn btn-default btn-xs' href="{{ URL::to('loans/request/'. $loan->loan_id.'/?loan=exchange') }}">Exchange</a>
 					@endif
 			</td>
