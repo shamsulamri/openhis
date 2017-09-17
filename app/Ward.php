@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
 class Ward extends Model
 {
@@ -44,4 +45,13 @@ class Ward extends Model
 	}
 
 	
+	public function gender()
+	{
+			return $this->belongsTo('App\Gender', 'gender_code');
+	}
+
+	public function department()
+	{
+			return $this->belongsTo('App\Department', 'department_code');
+	}
 }

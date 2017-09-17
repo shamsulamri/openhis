@@ -16,6 +16,7 @@ use App\AppointmentService;
 use App\TaxCode;
 use Auth;
 use Validator;
+use App\QueueLocation;
 
 
 class UserController extends Controller
@@ -41,11 +42,20 @@ class UserController extends Controller
 	public function create()
 	{
 			$user = new User();
+
+			$locations = QueueLocation::select(DB::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code, encounter_code"))
+					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
+					->whereNotNull('encounter_code')
+					->orderBy('location_name')
+					->lists('location_name', 'location_code')
+					->prepend('','');
+
 			return view('users.create', [
 					'user' => $user,
 					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
+					'location' => $locations,
 					]);
 	}
 
@@ -71,12 +81,20 @@ class UserController extends Controller
 	public function edit($id) 
 	{
 			$user = User::findOrFail($id);
+
+			$locations = queuelocation::select(db::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code, encounter_code"))
+					->leftjoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
+					->wherenotnull('encounter_code')
+					->orderby('location_name')
+					->lists('location_name', 'location_code')
+					->prepend('','');
+
 			return view('users.edit', [
 					'user'=>$user,
 					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
-
+					'location' => $locations,
 					]);
 	}
 

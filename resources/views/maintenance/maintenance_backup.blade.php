@@ -85,6 +85,8 @@
 				<a href="{{ url('/product_categories') }}">Product Categories</a><br>
 				<a href="{{ url('/product_groups') }}">Product Groups</a><br>
 				<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
+				<a href="{{ url('/product_charges') }}">Product Charges</a><br>
+				<a href="{{ url('/product_price_tiers') }}">Product Price Tiers</a><br>
 				<a href="{{ url('/stock_movements') }}">Stock Movements</a><br>
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>
 				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>

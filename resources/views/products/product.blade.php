@@ -186,6 +186,26 @@
 
 	<div class="row">
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_cost')) has-error @endif'>
+						{{ Form::label('product_cost', 'Unit Cost',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('product_cost', null, ['class'=>'form-control']) }}
+							@if ($errors->has('product_cost')) <p class="help-block">{{ $errors->first('product_cost') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_purchase_unit')) has-error @endif'>
+						{{ Form::label('product_purchase_unit', 'Purchase Unit',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::select('product_purchase_unit', $unit,null, ['class'=>'form-control','maxlength'=>'10']) }}
+							@if ($errors->has('unit_code')) <p class="help-block">{{ $errors->first('unit_code') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
+	<div class="row">
+			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('purchase_tax_code')) has-error @endif'>
 						{{ Form::label('purchase_tax_code', 'Input Tax Code',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
@@ -200,19 +220,6 @@
 						<div class='col-sm-8'>
 							{{ Form::text('product_conversion_code', null, ['class'=>'form-control','placeholder'=>'Product code',]) }}
 							@if ($errors->has('product_conversion_code')) <p class="help-block">{{ $errors->first('product_conversion_code') }}</p> @endif
-						</div>
-					</div>
-			</div>
-	</div>
-	<div class="row">
-			<div class="col-xs-6">
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_purchase_unit')) has-error @endif'>
-						{{ Form::label('product_purchase_unit', 'Purchase Unit',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-							{{ Form::select('product_purchase_unit', $unit,null, ['class'=>'form-control','maxlength'=>'10']) }}
-							@if ($errors->has('unit_code')) <p class="help-block">{{ $errors->first('unit_code') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -237,20 +244,20 @@
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_sale_price')) has-error @endif'>
-						{{ Form::label('product_sale_price', 'Sell Price',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('charge_code')) has-error @endif'>
+						{{ Form::label('charge_code', 'Price Tier',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::text('product_sale_price', null, ['class'=>'form-control','placeholder'=>'']) }}
-							@if ($errors->has('product_sale_price')) <p class="help-block">{{ $errors->first('product_sale_price') }}</p> @endif
+							{{ Form::select('charge_code', $charges ,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
+							@if ($errors->has('charge_code')) <p class="help-block">{{ $errors->first('charge_code') }}</p> @endif
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_average_cost')) has-error @endif'>
-						{{ Form::label('product_average_cost', 'Average Cost',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('product_sale_margin')) has-error @endif'>
+						{{ Form::label('product_sale_margin', 'Profit Margin',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::text('product_average_cost', null, ['class'=>'form-control']) }}
-							@if ($errors->has('product_average_cost')) <p class="help-block">{{ $errors->first('product_average_cost') }}</p> @endif
+							{{ Form::text('product_sale_margin', null, ['class'=>'form-control','placeholder'=>'', 'onkeyup'=>'UpdateSalePrice()']) }}
+							@if ($errors->has('product_sale_margin')) <p class="help-block">{{ $errors->first('product_sale_margin') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -266,11 +273,11 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_sale_margin')) has-error @endif'>
-						{{ Form::label('product_sale_margin', 'Profit Margin',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('product_sale_price')) has-error @endif'>
+						{{ Form::label('product_sale_price', 'Sale Price',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::text('product_sale_margin', null, ['class'=>'form-control','placeholder'=>'', 'onkeyup'=>'UpdateSalePrice()']) }}
-							@if ($errors->has('product_sale_margin')) <p class="help-block">{{ $errors->first('product_sale_margin') }}</p> @endif
+							{{ Form::text('product_sale_price', null, ['class'=>'form-control','placeholder'=>'']) }}
+							@if ($errors->has('product_sale_price')) <p class="help-block">{{ $errors->first('product_sale_price') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -328,13 +335,15 @@
 
 		function UpdateSalePrice() {
 			form = document.forms['product_form'];
+			cost_unit = Number(form.product_purchase_price.value/form.product_conversion_unit.value);
+			form.product_cost.value= cost_unit.toFixed(2);
 			if (isNumeric(form.product_sale_margin.value)) {
-					cost_unit = Number(form.product_purchase_price.value/form.product_conversion_unit.value);
 					profit_margin = Number(form.product_sale_margin.value)/100;
 
 					product_sale_price = cost_unit*(1+profit_margin);
 					form.product_sale_price.value= product_sale_price.toFixed(2);
 			}
+
 		}	
 
 

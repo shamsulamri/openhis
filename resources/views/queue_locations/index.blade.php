@@ -20,6 +20,7 @@
 	<tr> 
     <th>Name</th>
     <th>Code</th> 
+    <th>Department</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -33,6 +34,11 @@
 			</td>
 			<td>
 					{{$queue_location->location_code}}
+			</td>
+			<td>
+					@if ($queue_location->department)
+					{{$queue_location->department->department_name}}
+					@endif
 			</td>
 			<td align='right'>
 					<a class='btn btn-warning btn-xs' href='{{ URL::to('queue_locations/set/'. $queue_location->location_code) }}'>Set Location</a>

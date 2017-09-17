@@ -72,6 +72,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
+        {{ Form::label('location_code', 'Consultation Room',['class'=>'col-sm-3 control-label']) }}
+		<div class='col-sm-9'>
+			{{ Form::select('location_code', $location, null, ['class'=>'form-control','maxlength'=>'10']) }}
+			@if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
+		</div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/users" role="button">Cancel</a>

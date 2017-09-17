@@ -20,6 +20,7 @@ class User extends Authenticatable
 				'employee_id',
 				'author_id',
 				'service_id',
+				'location_code',
 				];
 	
     protected $hidden = [

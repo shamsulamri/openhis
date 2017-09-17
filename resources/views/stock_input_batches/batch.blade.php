@@ -2,7 +2,7 @@
 
 @section('content')
 		<a class="btn btn-default" href="/stock_inputs/input/{{ $input_id }}" role="button">Back</a>
-		<a href='#' onclick='submitForm()' class='btn btn-primary'>Save</a>
+		<a href='#' onclick='submitForm()' class='btn btn-primary'>Update</a>
 <br>
 <br>
 <h3>{{ $product->product_name }}</h3>

@@ -22,7 +22,7 @@
 
             </form>
 					
-            <p class="m-t"> <small>{{ Config::get('host.application_name') }} &copy; 2016</small> </p>
+            <p class="m-t"> <small>{{ env('APPLICATION_NAME') }} &copy; 2016</small> </p>
 
         </div>
     </div>

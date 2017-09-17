@@ -213,7 +213,7 @@ class StockInputBatchController extends Controller
 									->withInput();
 					}
 			} else {
-					Session::flash('message', 'Record successfully created.');
+					Session::flash('message', 'Record successfully updated.');
 					return redirect('/stock_input_batches/batch/'.$request->line_id);
 			}
 	}

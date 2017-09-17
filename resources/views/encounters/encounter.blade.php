@@ -192,6 +192,7 @@
 			document.getElementById('location_code').disabled = value;
 			document.getElementById('ward_code').disabled = value;
 			document.getElementById('bed_code').disabled = value;
+			document.getElementById('class_code').disabled = value;
 	}
 
 	checkPatientType();
@@ -261,6 +262,7 @@
 					document.getElementById('user_id').disabled = false;
 					document.getElementById('ward_code').disabled = false;
 					document.getElementById('bed_code').disabled = false;
+					document.getElementById('class_code').disabled = false;
 					wardChanged()
 					removeItemList(document.getElementById('ward_code'),'daycare');
 					removeItemList(document.getElementById('ward_code'),'mortuary');
@@ -302,23 +304,26 @@
 
 	function wardChanged() {
 			wardCode = document.getElementById('ward_code').value;
-			beds = [
-				@foreach($beds as $bed)
-					'{{ $bed->bed_code }}:{{ $bed->class_code }}:{{ $bed->ward_code }}:{{ $bed->getBedNameStatus() }}',
+
+			classes = [
+				@foreach($ward_classes as $class)
+					'{{ $class->ward_code }}:{{ $class->class_code }}: {{ $class->wardClass->class_name }}',
 				@endforeach
 			]
 
 			var bedSelect = document.getElementById('bed_code');
+			var classSelect = document.getElementById('class_code');
 			clearList(bedSelect);
-			classChanged();
-			/**
-			for (var i=0;i<beds.length;i++) {
-					values = beds[i].split(":")
-					if (wardCode==values[2]) {
-							addList(bedSelect,values[0], values[3]);
+			clearList(classSelect);
+
+			for (var i=0;i<classes.length;i++) {
+					values = classes[i].split(":")
+					if (wardCode==values[0]) {
+							addList(classSelect,values[1], values[2]);
 					}
 			}
-			**/
+
+			classChanged();
 	}
 
 	function classChanged() {

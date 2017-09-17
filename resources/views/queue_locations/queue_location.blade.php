@@ -39,6 +39,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('location_level')) has-error @endif'>
+        <label for='location_level' class='col-sm-3 control-label'>Level</label>
+        <div class='col-sm-9'>
+            {{ Form::text('location_level', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
+            @if ($errors->has('location_level')) <p class="help-block">{{ $errors->first('location_level') }}</p> @endif
+        </div>
+    </div>
+	
     <div class='form-group  @if ($errors->has('location_is_pool')) has-error @endif'>
         {{ Form::label('location_is_pool', 'Pool Location',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

@@ -26,7 +26,8 @@ class QueueLocationController extends Controller
 
 	public function index(Request $request)
 	{
-			$queue_locations = DB::table('queue_locations')
+			$queue_locations = QueueLocation::orderBy('department_name')
+					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
 					->orderBy('location_name')
 					->paginate($this->paginateValue);
 
@@ -99,6 +100,7 @@ class QueueLocationController extends Controller
 			if ($valid->passes()) {
 					$queue_location->save();
 					Session::flash('message', 'Record successfully updated.');
+					return redirect('/queue_locations');
 					return redirect('/queue_locations/id/'.$id);
 			} else {
 					return view('queue_locations.edit', [
@@ -127,10 +129,9 @@ class QueueLocationController extends Controller
 	
 	public function search(Request $request)
 	{
-			$queue_locations = DB::table('queue_locations')
+			$queue_locations = QueueLocation::orderBy('location_name')
 					->where('location_name','like','%'.$request->search.'%')
 					->orWhere('location_code', 'like','%'.$request->search.'%')
-					->orderBy('location_name')
 					->paginate($this->paginateValue);
 
 			return view('queue_locations.index', [
@@ -141,7 +142,7 @@ class QueueLocationController extends Controller
 
 	public function searchById($id)
 	{
-			$queue_locations = DB::table('queue_locations')
+			$queue_locations = QueueLocation::orderBy('location_name')
 					->where('location_code','=',$id)
 					->paginate($this->paginateValue);
 

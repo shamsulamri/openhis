@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>{{ Config::get('host.application_name') }}</title>
+<title>{{ env('APPLICATON_NAME') }}</title>
 <link href="/assets/inspinia/css/bootstrap.min.css" rel="stylesheet">
 <link href="/assets/inspinia/font-awesome/css/font-awesome.css" rel="stylesheet">
 <link href="/assets/inspinia/css/animate.css" rel="stylesheet">

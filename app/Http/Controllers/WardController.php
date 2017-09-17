@@ -27,8 +27,7 @@ class WardController extends Controller
 	public function index(Request $request)
 	{
 
-			$wards = DB::table('wards')
-					->orderBy('ward_name')
+			$wards = Ward::orderBy('ward_name')
 					->paginate($this->paginateValue);
 			return view('wards.index', [
 					'wards'=>$wards,
@@ -117,10 +116,9 @@ class WardController extends Controller
 	
 	public function search(Request $request)
 	{
-			$wards = DB::table('wards')
+			$wards = Ward::orderBy('ward_name')
 					->where('ward_name','like','%'.$request->search.'%')
 					->orWhere('ward_code', 'like','%'.$request->search.'%')
-					->orderBy('ward_name')
 					->paginate($this->paginateValue);
 
 			return view('wards.index', [
@@ -131,7 +129,7 @@ class WardController extends Controller
 
 	public function searchById($id)
 	{
-			$wards = DB::table('wards')
+			$wards = Ward::orderBy('ward_name')
 					->where('ward_code','=',$id)
 					->paginate($this->paginateValue);
 

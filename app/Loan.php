@@ -23,7 +23,6 @@ class Loan extends Model
 				'loan_description',
 				'loan_closure_datetime',
 				'loan_closure_description',
-				'loan_is_indent',
 				'exchange_id',
 				'input_line_id',
 				'loan_code'];

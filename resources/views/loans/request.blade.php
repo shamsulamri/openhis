@@ -14,12 +14,14 @@
 <br>
 {{ Form::model($loan, ['url'=>$url, 'class'=>'form-horizontal']) }} 
 
+@if ($loan->type_code != 'folder')
     <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
         <label for='loan_code' class='col-sm-3 control-label'>Type</label>
         <div class='col-sm-9'>
-            {{ Form::label('loan_code', $loan->type->type_name, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::select('type_code', $loan_types,null, ['class'=>'form-control','maxlength'=>'20']) }}
         </div>
     </div>
+@endif
 @if ($loan->loan_code=='on_loan')
     <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
         <label for='loan_code' class='col-sm-3 control-label'>Status<span style='color:red;'> *</span></label>
@@ -120,17 +122,7 @@
         </div>
     </div>
 
-@if ($loan->type_code=='indent' && $loan->loan_code != 'on_loan')
-    <div class='form-group  @if ($errors->has('loan_is_indent')) has-error @endif'>
-        {{ Form::label('loan_is_indent', 'Stock Indent',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::checkbox('loan_is_indent', '1') }}
-            @if ($errors->has('loan_is_indent')) <p class="help-block">{{ $errors->first('loan_is_indent') }}</p> @endif
-        </div>
-    </div>
-@endif
-
-	@if (!$loan->type_code=='folder' && $loan->loan_code != 'exchange')
+	@if ($loan->type_code != 'folder' && $loan->loan_code != 'exchange')
     <div class='form-group  @if ($errors->has('loan_recur')) has-error @endif'>
         {{ Form::label('loan_recur', 'Recur Daily',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

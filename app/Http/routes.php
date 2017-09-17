@@ -47,6 +47,19 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('product_price_tiers', 'ProductPriceTierController');
+		Route::get('/product_price_tiers/id/{id}', 'ProductPriceTierController@searchById');
+		Route::post('/product_price_tier/search', 'ProductPriceTierController@search');
+		Route::get('/product_price_tier/search', 'ProductPriceTierController@search');
+		Route::get('/product_price_tiers/delete/{id}', 'ProductPriceTierController@delete');
+		
+
+		Route::resource('product_charges', 'ProductChargeController');
+		Route::get('/product_charges/id/{id}', 'ProductChargeController@searchById');
+		Route::post('/product_charge/search', 'ProductChargeController@search');
+		Route::get('/product_charge/search', 'ProductChargeController@search');
+		Route::get('/product_charges/delete/{id}', 'ProductChargeController@delete');
+
 		Route::resource('loan_types', 'LoanTypeController');
 		Route::get('/loan_types/id/{id}', 'LoanTypeController@searchById');
 		Route::post('/loan_type/search', 'LoanTypeController@search');

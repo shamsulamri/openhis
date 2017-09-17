@@ -40,5 +40,9 @@ class WardClass extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function getClassNameAttribute($value)
+	{
+			return strtoupper($value);
+	}
 	
 }

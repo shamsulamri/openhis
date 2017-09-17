@@ -390,7 +390,6 @@ class LoanController extends Controller
 			$loan->loan_request_by = Auth::user()->id;
 			$loan->ward_code = $request->cookie('ward');
 			$loan->type_code='indent';
-			$loan->loan_is_indent=1;
 
 			$is_folder = False;
 			$title="Product Request";
@@ -425,7 +424,6 @@ class LoanController extends Controller
 									$loan->location_code = null;
 							}
 					}
-
 			}
 
 			$ward_code =  $request->cookie('ward') ?: null;
@@ -446,6 +444,7 @@ class LoanController extends Controller
 					'locations'=>QueueLocation::where('encounter_code','outpatient')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location_code'=>$location_code,
 					'ward_code'=>$ward_code,
+					'loan_types'=>LoanType::where('type_code','<>', 'folder')->orderBy('type_code')->lists('type_name', 'type_code')->prepend('',''),
 					]);
 		
 	}
@@ -474,9 +473,7 @@ class LoanController extends Controller
 					if ($request->type_code=='folder') {
 							$loan->type_code=$request->type_code;
 					} else {
-							if ($request->loan_is_indent==0) {
-								$loan->type_code='loan';	
-							}
+							$loan->type_code=$request->type_code;
 					}
 					$loan->save();
 
@@ -512,13 +509,6 @@ class LoanController extends Controller
 			$patient=null;
 			if ($loan->type_code=='folder') {
 					$patient = Patient::where('patient_mrn',$loan->item_code)->first();
-					$loan->loan_is_indent=0;
-			}
-			if ($loan->type_code=='loan') {
-					$loan->loan_is_indent=0;
-			}
-			if ($loan->type_code=='indent') {
-					$loan->loan_is_indent=1;
 			}
 
 			return view('loans.request', [
@@ -536,24 +526,20 @@ class LoanController extends Controller
 					'location_code'=>$request->cookie('queue_location') ?: null,
 					'locations'=>QueueLocation::where('encounter_code','outpatient')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'patient'=>$patient,
+					'loan_types'=>LoanType::where('type_code','<>', 'folder')->orderBy('type_code')->lists('type_name', 'type_code')->prepend('',''),
 					]);
 	}
 
 	public function requestUpdate(Request $request, $id)
 	{
-			return "X";
 			$loan = Loan::findOrFail($id);
 			$loan->fill($request->input());
 
 			$loan->loan_recur = $request->loan_recur ?: 0;
 
 			$valid = $loan->validate($request->all(), $request->_method);	
+
 			if ($valid->passes()) {
-					if ($request->loan_is_indent) {
-						$loan->type_code='indent';	
-					} else {
-						$loan->type_code='loan';	
-					}
 					$loan->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/loans/ward');

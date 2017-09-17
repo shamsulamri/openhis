@@ -36,12 +36,13 @@ class BedController extends Controller
 
 	public function index(Request $request)
 	{
-			$beds = DB::table('beds as a')
-					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
-					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
-					->leftjoin('bed_statuses as d', 'd.status_code','=', 'a.status_code')
+
+			$beds = Bed::select('*')
+					->leftjoin('wards as b', 'b.ward_code','=', 'beds.ward_code')
+					->leftjoin('ward_classes as c', 'beds.class_code','=', 'c.class_code')
+					->leftjoin('bed_statuses as d', 'd.status_code','=', 'beds.status_code')
 					->orderBy('ward_name')
-					->orderBy('class_name')
+					->orderBy('ward_level')
 					->orderBy('bed_name');
 
 			if (Auth::user()->cannot('system-administrator')) {
@@ -150,8 +151,10 @@ class BedController extends Controller
 			if ($valid->passes()) {
 					$bed->save();
 					$product = Product::find($bed->bed_code);
-					$product->product_name = $bed->bed_name;
-					$product->save();
+					if ($product) {
+							$product->product_name = $bed->bed_name;
+							$product->save();
+					}
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/beds');
 			} else {
@@ -190,19 +193,19 @@ class BedController extends Controller
 	
 	public function search(Request $request)
 	{
-			$beds = DB::table('beds as a')
-					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
-					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
-					->leftjoin('bed_statuses as d', 'd.status_code','=', 'a.status_code')
-					->where('a.ward_code','like', '%'.$request->ward_code.'%')
-					->where('a.class_code','like', '%'.$request->class_code.'%')
+			$beds = Bed::select('*')
+					->leftjoin('wards as b', 'b.ward_code','=', 'beds.ward_code')
+					->leftjoin('ward_classes as c', 'beds.class_code','=', 'c.class_code')
+					->leftjoin('bed_statuses as d', 'd.status_code','=', 'beds.status_code')
+					->where('beds.ward_code','like', '%'.$request->ward_code.'%')
+					->where('beds.class_code','like', '%'.$request->class_code.'%')
 					->where(function ($query) use ($request) {
 							$query->where('bed_name','like','%'.$request->search.'%')
 								  ->orWhere('bed_code', 'like','%'.$request->search.'%');
 					});
 
 			$beds = $beds->orderBy('ward_name')
-						 ->orderBy('class_name')
+						 ->orderBy('ward_level')
 						 ->orderBy('bed_name')
 						 ->paginate($this->paginateValue);
 
@@ -219,14 +222,7 @@ class BedController extends Controller
 
 	public function searchById($id)
 	{
-			$beds = DB::table('beds as a')
-					->leftjoin('wards as b', 'b.ward_code','=', 'a.ward_code')
-					->leftjoin('ward_classes as c', 'a.class_code','=', 'c.class_code')
-					->leftjoin('bed_statuses as d', 'd.status_code','=', 'a.status_code')
-					->where('bed_code','=',$id)
-					->orderBy('ward_name')
-					->orderBy('class_name')
-					->orderBy('bed_name')
+			$beds = Bed::where('bed_code','=',$id)
 					->paginate($this->paginateValue);
 
 			return view('beds.index', [

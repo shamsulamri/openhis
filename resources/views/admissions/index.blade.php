@@ -65,6 +65,8 @@
 	<tr> 
     <th>Date</th>
     <th>Patient</th>
+    <th>Consultant</th>
+    <th>Room</th>
     <th>Bed</th>
 	@can('module-ward')
 	@if ($ward->ward_code != 'mortuary')
@@ -105,15 +107,18 @@
 					<br>
 					<small>{{$admission->patient_mrn}}
 					<br>
-					{{$admission->name}}
-					{{ $admission->team_name }}
 					</small>
 			</td>
 			<td>
-					{{$admission->bed_name}} 
+					{{$admission->name}}
+			</td>
+			<td>
 					@if ($admission->room_name) 
-						/ {{$admission->room_name}} 
+						{{$admission->room_name}} 
 					@endif
+			</td>
+			<td>
+					{{$admission->bed_name}} 
 					@cannot('module-ward')
 					<br>
 					<small>{{$admission->ward_name}}</small>	

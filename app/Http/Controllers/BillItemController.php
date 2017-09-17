@@ -20,6 +20,7 @@ use App\OrderMultiple;
 use Carbon\Carbon;
 use App\FormValue;
 use App\Form;
+use App\ProductPriceTier;
 
 class BillItemController extends Controller
 {
@@ -73,6 +74,52 @@ class BillItemController extends Controller
 			}
 	}
 
+	public function getPriceTier($encounter_id, $product)
+	{
+			$encounter = Encounter::find($encounter_id);
+			$cost = $product->product_cost;
+
+			$value=0;
+			$tiers = ProductPriceTier::where('charge_code','=', $product->charge_code)->get();
+
+			foreach ($tiers as $tier) {
+				if ($cost<=$tier->tier_max && empty($tier->tier_min)) {
+					break;
+				} 
+				if ($cost>$tier->tier_min && $cost<=$tier->tier_max) {
+					break;
+				} 
+				if ($cost>$tier->tier_min && empty($tier->tier_max)) {
+					break;
+				}
+			}
+
+			if ($encounter->encounter_code=='inpatient') {
+					if (!empty($tier->tier_inpatient_multiplier)) {
+							$value = $tier->tier_inpatient_multiplier*$cost;
+					} else {
+							$value = $tier->tier_inpatient;
+					}
+
+					if (!empty($tier->tier_inpatient_limit)) {
+						if ($value>$tier->tier_inpatient_limit) $value = $tier->tier_inpatient_limit;
+					}
+			}
+
+			if ($encounter->encounter_code=='outpatient') {
+					if (!empty($tier->tier_outpatient_multiplier)) {
+							$value = $tier->tier_outpatient_multiplier*$cost;
+					} else {
+							$value = $tier->tier_outpatient;
+					}
+
+					if (!empty($tier->tier_outpatient_limit)) {
+						if ($value>$tier->tier_outpatient_limit) $value = $tier->tier_outpatient_limit;
+					}
+			}
+			return $value;
+
+	}
 	public function compileBill($encounter_id) 
 	{
 
@@ -105,7 +152,16 @@ class BillItemController extends Controller
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->order_quantity_supply;
 					$item->bill_unit_multiplier = $order->profit_multiplier;
-					$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
+
+					$product = Product::find($item->product_code);
+					if (!empty($product->charge_code)) {
+							$sale_price = $this->getPriceTier($encounter_id, $product);
+							$item->bill_unit_price = $sale_price;
+					} else {
+							$item->bill_unit_price = $order->product_sale_price;
+							//$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
+					}
+
 					$item->bill_total = $order->order_quantity_supply*$item->bill_unit_price;
 					$item->bill_total_pregst = $order->order_quantity_supply*$item->bill_unit_price;
 					if ($order->tax_rate) {

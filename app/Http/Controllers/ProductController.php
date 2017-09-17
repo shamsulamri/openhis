@@ -34,6 +34,7 @@ use App\ProductCategory;
 use App\GeneralLedger;
 use App\StockHelper;
 use App\DojoUtility;
+use App\ProductCharge;
 
 class ProductController extends Controller
 {
@@ -97,6 +98,7 @@ class ProductController extends Controller
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
+					'charges' => ProductCharge::all()->sortBy('charge_name')->lists('charge_name', 'charge_code')->prepend('',''),
 					]);
 	}
 
@@ -180,6 +182,7 @@ class ProductController extends Controller
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 					'store_code'=>$store_code,
 					'categories'=>Auth::user()->categoryList(),
+					'charges' => ProductCharge::all()->sortBy('charge_name')->lists('charge_name', 'charge_code')->prepend('',''),
 					]);
 	}
 

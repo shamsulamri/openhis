@@ -29,18 +29,16 @@
 		</div>
 	</div>
 </div>
-@cannot('module-ward')
 <form action='/bed/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<label>&nbsp;Ward</label>
 	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>&nbsp;Class</label>
 	{{ Form::select('class_code', $class, $class_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+	<button class="btn btn-primary pull-right" type="submit" value="Submit"><span class='glyphicon glyphicon-search'></span></button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@endcan
 
 @can('system-administrator')
 <a href='/beds/create' class='btn btn-primary'>Create</a>
@@ -52,8 +50,10 @@
  <thead>
 	<tr> 
     <th>Bed</th>
+    <th>Code</th>
     <th>Class</th> 
     <th>Ward</th> 
+    <th>Level</th> 
     <th>Status</th> 
 	@can('system-administrator')
 	<th></th>
@@ -69,10 +69,16 @@
 					</a>
 			</td>
 			<td>
+					{{$bed->bed_code}}
+			</td>
+			<td>
 					{{$bed->class_name}}
 			</td>
 			<td>
-					{{$bed->ward_name}}
+					{{$bed->ward->ward_name}}
+			</td>
+			<td>
+					{{$bed->ward->ward_level}}
 			</td>
 			<td>
 					@if ($bed->status_name == null)

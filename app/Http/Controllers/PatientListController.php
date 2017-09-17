@@ -36,6 +36,9 @@ class PatientListController extends Controller
 					return redirect('/queue_locations');
 			}
 			$selectedLocation = $request->cookie('queue_location');
+			if (!empty(Auth::user()->location_code)) {
+					$selectedLocation = Auth::user()->location_code;
+			}
 
 			/*
 			$outpatients = DB::table('queues as a')

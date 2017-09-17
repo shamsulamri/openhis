@@ -119,7 +119,8 @@ class OrderHelper
 					$multi = OrderMultiple::where('order_id','=', $order_drug->order_id)->delete();
 					$frequencies = $order_drug->frequency->frequency_value*$order_drug->drug_duration*($order_drug->period->period_mins/1440);
 					
-					if ($frequencies>0) {
+					$is_unit_of_dose = env('UNIT_OF_DOSE');
+					if ($frequencies>0 & $is_unit_of_dose==1) {
 							OrderMultiple::where('order_id',$order_drug->order_id)->delete();
 							for ($i=0; $i<$frequencies; $i++) {
 									$multi = new OrderMultiple();

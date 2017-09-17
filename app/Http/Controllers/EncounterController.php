@@ -69,7 +69,20 @@ class EncounterController extends Controller
 
 			$encounter = new Encounter();
 
-			$locations = Location::whereNotNull('encounter_code')->get();
+			/*
+			$locations = Location::select(DB::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code")
+					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
+					->whereNotNull('encounter_code')
+					->get();
+			 */
+
+			$locations = Location::select(DB::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code, encounter_code"))
+					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
+					->whereNotNull('encounter_code')
+					->orderBy('department_name')
+					->orderBy('location_name')
+					->get();
+
 			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
 							->where('consultant',1)
 							->orderBy('name')
@@ -95,6 +108,7 @@ class EncounterController extends Controller
 										->where('ward_code', $preadmission->ward_code)
 										->where('class_Code', $preadmission->class_code)
 										->limit($preadmission->preadmissions-$preadmission_beds)
+										->orderBy('bed_code')
 										->get();
 
 						foreach($beds as $bed) {
@@ -113,6 +127,15 @@ class EncounterController extends Controller
 							->orderBy('room_name')
 							->get();
 
+			$wards = Ward::select(DB::raw("concat(ward_name, ' - LEVEL ', ward_level) as ward_name, ward_code"))
+							->orderBy('ward_name')
+							->lists('ward_name', 'ward_code');
+
+			$ward_classes = Bed::select(DB::raw('beds.ward_code, class_name, beds.class_code, count(*)'))
+					->leftJoin('ward_classes as b', 'b.class_code', '=', 'beds.class_code')
+					->groupBy(['ward_code','b.class_code'])
+					->get();
+					
 			return view('encounters.create', [
 					'encounter' => $encounter,
 					'patient' => $patient,
@@ -125,12 +148,13 @@ class EncounterController extends Controller
 					'locations' => $locations,
 					'consultants' => $consultants,
 					'teams' => Team::all()->sortBy('team_name')->lists('team_name', 'team_code')->prepend('',''),
-					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'wards' => $wards,
 					'classes' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'beds' => $beds,
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 					'preadmissions'=>$preadmissions,
+					'ward_classes'=>$ward_classes,
 				]);
 	}
 

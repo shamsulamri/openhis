@@ -41,7 +41,9 @@ $on_hand = $stock_helper->getStockCountByStore($line->product_code, $stock_input
 			<small>{{ $line->product_code }}</small>
 		</td>	
 		<td align='center'>
+			@if ($line->product->unitMeasure)
 			{{ $line->product->unitMeasure->unit_shortname }}
+			@endif
 		</td>	
 		<td align='center'>
 			<div class='@if ($on_hand==0) has-error @endif'>
