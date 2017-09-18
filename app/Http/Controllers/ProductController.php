@@ -216,6 +216,7 @@ class ProductController extends Controller
 							'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 							'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 							'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
+							'charges' => ProductCharge::all()->sortBy('charge_name')->lists('charge_name', 'charge_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

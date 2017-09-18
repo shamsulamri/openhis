@@ -82,16 +82,22 @@ class BillItemController extends Controller
 			$value=0;
 			$tiers = ProductPriceTier::where('charge_code','=', $product->charge_code)->get();
 
-			foreach ($tiers as $tier) {
-				if ($cost<=$tier->tier_max && empty($tier->tier_min)) {
-					break;
-				} 
-				if ($cost>$tier->tier_min && $cost<=$tier->tier_max) {
-					break;
-				} 
-				if ($cost>$tier->tier_min && empty($tier->tier_max)) {
-					break;
-				}
+			Log::info('-----------> '.$product->product_code);
+			Log::info('-----------> '.$tiers->count());
+			if ($tiers->count()>0) {
+					foreach ($tiers as $tier) {
+						if ($cost<=$tier->tier_max && empty($tier->tier_min)) {
+							break;
+						} 
+						if ($cost>$tier->tier_min && $cost<=$tier->tier_max) {
+							break;
+						} 
+						if ($cost>$tier->tier_min && empty($tier->tier_max)) {
+							break;
+						}
+					}
+			} else {
+					$tier = $tiers[0];
 			}
 
 			if ($encounter->encounter_code=='inpatient') {

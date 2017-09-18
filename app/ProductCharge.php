@@ -12,6 +12,7 @@ class ProductCharge extends Model
 	protected $table = 'product_charges';
 	protected $fillable = [
 				'charge_code',
+				'charge_surcharge',
 				'charge_name'];
 	
     protected $guarded = ['charge_code'];

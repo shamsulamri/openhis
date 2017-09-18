@@ -22,25 +22,45 @@
     <th>Tier</th>
     <th>Min</th> 
 	<th>Max</th>
+    <th>Outpatient</th> 
+	<th>Inpatient</th>
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
-@foreach ($product_price_tiers as $product_price_tier)
+@foreach ($product_price_tiers as $tier)
 	<tr>
 			<td>
-					<a href='{{ URL::to('product_price_tiers/'. $product_price_tier->tier_id . '/edit') }}'>
-						{{$product_price_tier->charge->charge_name}}
+					<a href='{{ URL::to('product_price_tiers/'. $tier->tier_id . '/edit') }}'>
+						{{$tier->charge->charge_name}}
 					</a>
 			</td>
 			<td>
-					{{$product_price_tier->tier_min}}
+					{{$tier->tier_min}}
 			</td>
 			<td>
-					{{$product_price_tier->tier_max}}
+					{{$tier->tier_max}}
+			</td>
+			<td>
+					@if ($tier->tier_outpatient_multiplier)
+					x {{$tier->tier_outpatient_multiplier}} 
+							@if ($tier->tier_outpatient_limit)
+							(Min {{$tier->tier_outpatient_limit}})
+							@endif
+					@endif
+					{{ $tier->tier_outpatient }}
+			</td>
+			<td>
+					@if ($tier->tier_inpatient_multiplier)
+					x {{$tier->tier_inpatient_multiplier}}
+							@if ($tier->tier_inpatient_limit)
+							(Min {{$tier->tier_inpatient_limit}})
+							@endif
+					@endif
+					{{ $tier->tier_inpatient }}
 			</td>
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('product_price_tiers/delete/'. $product_price_tier->tier_id) }}'>Delete</a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('product_price_tiers/delete/'. $tier->tier_id) }}'>Delete</a>
 			</td>
 	</tr>
 @endforeach

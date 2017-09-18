@@ -93,9 +93,11 @@
 							{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
 						@else
 							{{ $order->order_quantity_supply }}
+							{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_request) }}
 						@endif
 					@else
 					{{ $order->order_quantity_request }} 
+					{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_request) }}
 					@endif
 			</td>
 			<td>

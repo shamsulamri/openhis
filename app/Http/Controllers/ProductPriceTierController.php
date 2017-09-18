@@ -105,9 +105,10 @@ class ProductPriceTierController extends Controller
 	
 	public function search(Request $request)
 	{
-			$product_price_tiers = ProductPriceTier::where('charge_code','like','%'.$request->search.'%')
-					->orWhere('tier_id', 'like','%'.$request->search.'%')
-					->orderBy('charge_code')
+			$product_price_tiers = ProductPriceTier::where('product_price_tiers.charge_code','like','%'.$request->search.'%')
+					->leftJoin('product_charges as b', 'b.charge_code', '=', 'product_price_tiers.charge_code')
+					->orWhere('charge_name', 'like','%'.$request->search.'%')
+					->orderBy('tier_id')
 					->paginate($this->paginateValue);
 
 			return view('product_price_tiers.index', [

@@ -895,7 +895,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::group(['middleware' => 'admin'], function () {
 
 				Route::get('/maintenance', function() {
-						return view('maintenance.maintenance_backup');
+						return view('maintenance.maintenance');
 				});
 				
 				Route::resource('patient_billings', 'PatientBillingController');
