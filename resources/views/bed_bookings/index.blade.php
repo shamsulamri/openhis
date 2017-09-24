@@ -68,12 +68,16 @@
 			@endcan
 			<td align='right'>
 					
+					<a class='btn btn-primary btn-sm pull-right' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $bed_booking->patient_id.'&book_id='.$bed_booking->book_id) }}'>
+						<i class="fa fa-stethoscope"></i>
+					</a>
 					@can('module-ward')
 					@if ($bedVacant>0 && !empty($bed_booking->admission_id))
-					<a class='btn btn-default btn-xs' href='{{ URL::to('admission_beds?move=1&flag=1&admission_id='.$bed_booking->admission_id.'&book_id='.$bed_booking->book_id) }}'>&nbsp; Move &nbsp;</a>
+					<a class='btn btn-default btn-sm' href='{{ URL::to('admission_beds?move=1&flag=1&admission_id='.$bed_booking->admission_id.'&book_id='.$bed_booking->book_id) }}'>&nbsp; Move &nbsp;</a>
 					@endif
 					@endcan
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('bed_bookings/delete/'. $bed_booking->book_id) }}'>Delete</a>
+					<a class='btn btn-danger btn-sm' href='{{ URL::to('bed_bookings/delete/'. $bed_booking->book_id) }}'>Delete</a>
+					&nbsp;
 			</td>
 	</tr>
 @endforeach

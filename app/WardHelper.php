@@ -13,7 +13,7 @@ class WardHelper
 	public $ward_code;
 	public $openConsultationId=0;    
 
-	function __construct($code) {
+	function __construct($code="") {
 		$this->ward_code = $code;
 	}
 
@@ -31,6 +31,20 @@ class WardHelper
 					left join beds b on (a.bed_code = b.bed_code)
 					left join discharges c on (c.encounter_id = a.encounter_id)
 					where ward_code = '".$this->ward_code."'
+					and discharge_id is null";
+
+			$results = DB::select($sql);
+			
+			return $results[0]->total_admission;
+
+	}
+
+	public function todayAdmissions()
+	{
+			$sql = "select count(*) as total_admission from admissions a
+					left join beds b on (a.bed_code = b.bed_code)
+					left join discharges c on (c.encounter_id = a.encounter_id)
+					where a.created_at >= '".DojoUtility::dateWriteFormat(DojoUtility::today())."'
 					and discharge_id is null";
 
 			$results = DB::select($sql);
@@ -67,8 +81,11 @@ class WardHelper
 					left join discharges c on (a.encounter_id = c.encounter_id)
 					left join beds d on (d.bed_code = a.bed_code)
 					where c.discharge_id is not null
-					and b.discharge_id is null
-					and ward_code='".$this->ward_code."'";
+					and b.discharge_id is null";
+
+			if ($this->ward_code) {
+					$sql = $sql." and ward_code='".$this->ward_code."'";
+			}
 
 			$results = DB::select($sql);
 
@@ -102,4 +119,5 @@ class WardHelper
 			return $consultation;
 
 	}
+
 }

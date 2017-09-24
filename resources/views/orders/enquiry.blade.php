@@ -71,6 +71,12 @@
 					</div>
 			</div>
 			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-2 control-label'>Age</label>
+						<div class='col-sm-10'>
+							{{ Form::text('age', $age, ['placeholder'=>'More than specify hours','class'=>'form-control','maxlength'=>'2']) }}
+						</div>
+					</div>
 			</div>
 			<div class="col-xs-4">
 			</div>
@@ -93,6 +99,8 @@
 	<th>Order Date</th>
 	<th>Product</th>
 	<th>Physician</th>
+	<th>Age</th>
+	<th>Turnaround</th>
 	<th>Status</th>
 	</tr>
   </thead>
@@ -117,6 +125,12 @@
 			</td>
 			<td>
 					{{ $order->name }}
+			</td>
+			<td>
+					{{ $order->age }}
+			</td>
+			<td>
+					{{ $order->turnaround }}
 			</td>
 			<td>
 					@if ($order->cancel_id) 

@@ -44,7 +44,7 @@ class BedBookingController extends Controller
 			}
 
 			$bed_bookings = DB::table('bed_bookings as a')
-					->select(['d.ward_code', 'book_id', 'book_date', 'a.created_at', 'a.admission_id','patient_mrn', 'patient_name', 'b.class_name', 'a.class_code','ward_name'])
+					->select(['d.ward_code', 'book_id', 'book_date', 'a.created_at', 'a.admission_id','patient_mrn', 'patient_name', 'b.class_name', 'a.class_code','ward_name', 'c.patient_id'])
 					->leftJoin('ward_classes as b', 'b.class_code','=', 'a.class_code')
 					->leftJoin('patients as c', 'c.patient_id','=', 'a.patient_id')
 					->leftJoin('wards as d', 'd.ward_code', '=', 'a.ward_code')
@@ -160,6 +160,7 @@ class BedBookingController extends Controller
 					'admission_id' => $bed_booking->admission_id,
 					'consultants' => $this->getConsultants(),
 					'priority' => Priority::all()->sortBy('priority_name')->lists('priority_name', 'priority_code')->prepend('',''),
+					'book' => null,
 					]);
 	}
 

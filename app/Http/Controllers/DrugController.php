@@ -117,6 +117,7 @@ class DrugController extends Controller
 			$drugs = DB::table('drugs')
 					->where('drug_generic_name','like','%'.$request->search.'%')
 					->orWhere('drug_code', 'like','%'.$request->search.'%')
+					->orWhere('trade_name', 'like','%'.$request->search.'%')
 					->orderBy('drug_generic_name')
 					->paginate($this->paginateValue);
 

@@ -362,9 +362,21 @@ class OrderController extends Controller
 
 	public function single(Request $request, $product_code)
 	{
+			$encounter_id = Session::get('encounter_id');
+			$order = Order::where('product_code','=', $product_code)
+						->leftJoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
+						->where('encounter_id','=', $encounter_id)
+						->where('order_completed','=','0')
+						->whereNull('cancel_id')
+						->get();
+
+			if ($order->count()>0) {
+					Session::flash('message', 'Product already in the order list.');
+					return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
+			}
+
 			$product = Product::find($product_code);
 			$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));
-			//Session::flash('message', 'Product added to order list.');
 			return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page.'&order_id='.$order_id);
 	}
 
@@ -406,7 +418,7 @@ class OrderController extends Controller
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
-			$orders = Order::select('b.encounter_id','e.product_code', 'product_name', 'orders.order_id','order_completed', 'patient_name', 'patient_mrn', 'orders.created_at as order_date', 'name', 'cancel_id', 'cancel_reason', 'post_id', 'order_report')
+			$orders = Order::select('b.encounter_id', 'e.product_code', 'product_name', 'orders.order_id', 'order_completed', 'patient_name', 'patient_mrn', 'orders.created_at as order_date', 'name', 'cancel_id', 'cancel_reason', 'post_id', 'order_report', DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),DB::raw('TIMEDIFF(now(),orders.created_at) as age'))
 					->leftJoin('encounters as b', 'b.encounter_id', '=', 'orders.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftJoin('products as e', 'e.product_code', '=', 'orders.product_code')
@@ -447,6 +459,10 @@ class OrderController extends Controller
 
 			if (!empty($request->user_id)) {
 					$orders = $orders->where('user_id','=',$request->user_id);
+			}
+
+			if (!empty($request->age)) {
+					//$orders = $orders->having('age','<', $request->age);
 			}
 
 			if (!empty($request->status_code)) {
@@ -491,6 +507,7 @@ class OrderController extends Controller
 					'category_code' => $request->category_code,
 					'status'=> $status,
 					'status_code' => $request->status_code,
+					'age' => $request->age,
 					]);
 	}
 

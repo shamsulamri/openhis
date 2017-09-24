@@ -113,7 +113,7 @@ $header_count=0;
 	<tr>
 			<td width='10'>
 				@if ($admission_task->order_multiple==0)
-					@if (!$admission_task->updated_by && empty($admission_task->cancel_id))
+					@if ($admission_task->order_completed==0 && empty($admission_task->cancel_id))
 					{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed) }}
 					@endif
 				@endif

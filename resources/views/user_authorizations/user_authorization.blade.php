@@ -147,6 +147,13 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('view_progress_note')) has-error @endif'>
+        <label for='view_progress_note' class='col-sm-4 control-label'>View Progress Note</label>
+        <div class='col-sm-8'>
+            {{ Form::checkbox('view_progress_note', '1') }}
+            @if ($errors->has('view_progress_note')) <p class="help-block">{{ $errors->first('view_progress_note') }}</p> @endif
+        </div>
+    </div>
 	<div class='page-header'>
 		<h4>Default Information</h4>
 	</div>

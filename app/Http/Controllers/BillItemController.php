@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use App\FormValue;
 use App\Form;
 use App\ProductPriceTier;
+use App\ProductCategory;
 
 class BillItemController extends Controller
 {
@@ -46,9 +47,11 @@ class BillItemController extends Controller
 						->selectRaw('*, datediff(now(),move_date) as los')
 						->leftjoin('products as b', 'move_to','=', 'product_code')
 						->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
-						->where('encounter_id','=',$id)
-						->get();
+						->where('encounter_id','=',$id);
 
+			Log::info($beds->toSql());
+
+			$beds = $beds->get();
 			foreach ($beds as $bed) {
 					$bed_los = $bed->los;
 					if ($bed_los<=0) $bed_los=1;
@@ -556,4 +559,64 @@ class BillItemController extends Controller
 			$bill_items = BillItem::where('encounter_id','=', $id)->get();
 			return $bill_items;
 	}
+
+	public function enquiry(Request $request)
+	{
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			$charges = Order::select(DB::raw('orders.encounter_id, patient_name, patient_mrn, product_name, d.product_code, (order_quantity_supply*order_unit_price) as total,
+					orders.created_at as order_date'))
+					->leftJoin('encounters as b', 'b.encounter_id', '=', 'orders.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id', '=',  'b.patient_id')
+					->leftJoin('products as d', 'd.product_code', '=', 'orders.product_code')
+					->where('order_completed',1)
+					->orderBy('b.encounter_id', 'desc')
+					->orderBy('orders.order_id');
+
+			if (!empty($request->search)) {
+					if (is_numeric($request->search)) {
+							$charges = $charges->where('orders.encounter_id','=', $request->search);
+					} else {
+							$charges = $charges->where(function ($query) use ($request) {
+									$query->where('patient_mrn','like','%'.$request->search.'%')
+										->orWhere('patient_name', 'like','%'.$request->search.'%');
+							});
+					}
+			}
+
+			if (!empty($request->category_code)) {
+					$charges = $charges->where('d.category_code','=', $request->category_code);
+			}
+
+			if (!empty($date_start) && empty($request->date_end)) {
+				$charges = $charges->where('orders.created_at', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($date_start) && !empty($request->date_end)) {
+				$charges = $charges->where('orders.created_at', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($date_start) && !empty($date_end)) {
+				$charges = $charges->whereBetween('orders.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
+
+			if ($request->export_report) {
+				DojoUtility::export_report($charges->get());
+			}
+
+			$charges = $charges->paginate($this->paginateValue);
+
+			$categories = ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');
+
+			return view('bill_items.enquiry', [
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
+					'charges'=>$charges,
+					'search'=>$request->search,
+					'categories'=>$categories,
+					'category_code'=>$request->category_code,
+			]);
+	}
+
 }

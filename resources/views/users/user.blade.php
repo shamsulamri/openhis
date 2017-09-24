@@ -31,8 +31,15 @@
         </div>
     </div>
 
+	<div class='form-group  @if ($errors->has('department_code')) has-error @endif'>
+		{{ Form::label('department_code', 'Department',['class'=>'col-sm-3 control-label']) }}
+		<div class='col-sm-9'>
+			{{ Form::select('department_code', $departments,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
+			@if ($errors->has('department_code')) <p class="help-block">{{ $errors->first('department_code') }}</p> @endif
+		</div>
+	</div>
     <div class='form-group  @if ($errors->has('consultant')) has-error @endif'>
-        <label for='consultant' class='col-sm-3 control-label'>Consultant<span style='color:red;'> *</span></label>
+        <label for='consultant' class='col-sm-3 control-label'>Consultant</label>
         <div class='col-sm-9'>
             {{ Form::checkbox('consultant', '1', $user->consultant, ['class'=>'checkbox']) }}
             @if ($errors->has('consultant')) <p class="help-block">{{ $errors->first('consultant') }}</p> @endif

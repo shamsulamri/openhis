@@ -116,6 +116,23 @@
 			</div>
 	</div>
 	</h4>
+<h3>Billing Management</h3>
+	<h4>
+	<div class="row">
+			<div class="col-xs-6">
+				<a href="{{ url('/products') }}">Bills</a><br>
+				<a href="{{ url('/payments') }}">Payments</a><br>
+				<a href="{{ url('/payment_credits') }}">Credit Payments</a><br>
+			</div>
+			<div class="col-xs-6">
+			<small>
+				<a href="{{ url('/payment_methods') }}">Payment Methods</a><br>
+				<a href="{{ url('/credit_cards') }}">Credit Cards</a><br>
+			</small>
+			</div>
+	</div>
+	</h4>
+<br>
 <h3>Ward Management</h3>
 	<h4>
 	<div class="row">
@@ -196,7 +213,6 @@
 				<a href="{{ url('/frequencies') }}">Frequencies</a><br>
 				<a href="{{ url('/urgencies') }}">Urgencies</a><br>
 				<a href="{{ url('/relationships') }}">Relationships</a><br>
-				<a href="{{ url('/payment_methods') }}">Payment Methods</a><br>
 				<a href="{{ url('/priorities') }}">Priorities</a><br>
 			</div>
 	</div>

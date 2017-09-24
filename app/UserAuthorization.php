@@ -29,6 +29,7 @@ class UserAuthorization extends Model
 				'loan_function',
 				'store_code',
 				'location_code',
+				'view_progress_note',
 				'identification_prefix',
 				'appointment_function',
 				'system_administrator'];

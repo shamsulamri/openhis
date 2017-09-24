@@ -12,6 +12,10 @@ use Log;
 use DB;
 use Session;
 use Auth;
+use App\DojoUtility;
+use App\User;
+use App\PatientType;
+use App\Sponsor;
 
 class BillController extends Controller
 {
@@ -144,6 +148,81 @@ class BillController extends Controller
 
 			return view('bills.index', [
 					'bills'=>$bills
+			]);
+	}
+
+	public function enquiry(Request $request)
+	{
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			$subquery = "select encounter_id, sum(payment_amount) as total_paid from payments group by encounter_id";
+			$bills = Bill::select(DB::raw('bills.id,patient_name, patient_mrn, bills.encounter_id, d.discharge_date,sponsor_name, bill_grand_total, bill_payment_total, bill_deposit_total, 
+					total_paid, format(bill_grand_total-total_paid,2) as bill_outstanding, name'))
+					->leftJoin('encounters as b', 'b.encounter_id', '=', 'bills.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id', '=',  'b.patient_id')
+					->leftJoin('discharges as d', 'd.encounter_id', '=', 'b.encounter_id')
+					->leftJoin('users as e', 'e.id', '=', 'bills.user_id')
+					->leftJoin(DB::raw('('.$subquery.') f'), function($join) {
+							$join->on('bills.encounter_id','=', 'f.encounter_id');
+					})
+					->leftJoin('sponsors as g', 'g.sponsor_code', '=', 'b.sponsor_code')
+					->orderBy('total_paid');
+
+			if (!empty($request->search)) {
+					$bills = $bills->where(function ($query) use ($request) {
+							$query->where('patient_mrn','like','%'.$request->search.'%')
+								->orWhere('patient_name', 'like','%'.$request->search.'%')
+								->orWhere('bills.encounter_id', 'like','%'.$request->search.'%');
+					});
+			}
+
+			if (!empty($request->user_id)) {
+					$bills = $bills->where('bills.user_id','=', $request->user_id);
+			}
+
+			if (!empty($request->sponsor_code)) {
+					$bills = $bills->where('b.sponsor_code','=', $request->sponsor_code);
+			}
+
+			if (!empty($request->type_code)) {
+					$bills = $bills->where('b.type_code','=', $request->type_code);
+			}
+
+			if (!empty($date_start) && empty($request->date_end)) {
+				$bills = $bills->where('bills.created_at', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($date_start) && !empty($request->date_end)) {
+				$bills = $bills->where('bills.created_at', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($date_start) && !empty($date_end)) {
+				$bills = $bills->whereBetween('bills.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
+
+			if ($request->export_report) {
+				DojoUtility::export_report($bills->get());
+			}
+
+			$bills = $bills->paginate($this->paginateValue);
+
+			$users = User::orderby('name')
+							->where('author_id', 6)
+							->lists('name','id')
+							->prepend('','');
+
+			return view('bills.enquiry', [
+					'bills'=>$bills,
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
+					'search'=>$request->search,
+					'users'=>$users,
+					'user_id'=>$request->user_id,
+					'patient_types' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'type_code' => $request->type_code,
+					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
+					'sponsor_code'=>$request->sponsor_code,
 			]);
 	}
 }

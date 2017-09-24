@@ -24,6 +24,7 @@ use App\StockHelper;
 use App\StockBatch;
 use App\OrderDrug;
 use App\OrderHelper;
+use App\DojoUtility;
 
 class OrderTaskController extends Controller
 {
@@ -101,6 +102,7 @@ class OrderTaskController extends Controller
 					'investigation_date',
 					'product_track_batch',
 					'product_stocked',
+					'e.category_code',
 					];
 			$order_tasks = DB::table('orders as a')
 					->select($fields)
@@ -242,7 +244,11 @@ class OrderTaskController extends Controller
 
 								$order = Order::find($orderId);
 								$order->order_quantity_supply = $request['quantity_'.$order->order_id];
+								$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
 								$order->save();
+								Log::info(DojoUtility::now());
+								Log::info($order);
+
 
 								$stock = new Stock();
 								$stock->order_id = $orderId;

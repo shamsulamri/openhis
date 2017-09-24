@@ -41,4 +41,8 @@ class Deposit extends Model
 			return $this->belongsTo('App\Encounter','encounter_id');
 	}
 	
+	public function payment()
+	{
+			return $this->belongsTo('App\PaymentMethod','payment_code');
+	}
 }

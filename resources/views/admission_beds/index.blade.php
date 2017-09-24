@@ -22,6 +22,10 @@
 		</div>
 	</div>
 	<div class='col-md-8'>
+		<h3>
+		Currently at {{ $current_bed->bed->room->room_name }}, {{ $current_bed->bed->bed_name }} ({{$current_bed->bed->wardClass->class_name }})
+		</h3>
+		<br>
 <form action='/admission_bed/search' method='post'>
 	@can('module-patient')
     <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
@@ -42,6 +46,7 @@
 		<table class="table table-hover">
 		 <thead>
 			<tr> 
+			<th>Room</th>
 			<th>Bed</th>
 			<th>Class</th>
 			<th>Patient</th>
@@ -65,6 +70,9 @@
 			}
 			?>
 			<tr class='{{ $status }}'>
+					<td>
+							{{$admission_bed->room_name}}
+					</td>
 					<td>
 							{{$admission_bed->bed_name}}
 					</td>
@@ -116,11 +124,7 @@
 		</table>
 
 
-		@if (isset($search)) 
-			{{ $admission_beds->appends(['search'=>$search])->render() }}
-			@else
-			{{ $admission_beds->render() }}
-		@endif
+		{{ $admission_beds->appends(['flag'=>$flag, 'admission_id'=>$admission->admission_id])->render() }}
 		<br>
 		@if ($admission_beds->total()>0)
 			{{ $admission_beds->total() }} records found.

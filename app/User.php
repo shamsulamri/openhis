@@ -15,6 +15,7 @@ class User extends Authenticatable
 				'password',
 				'email',
 				'consultant',
+				'department_code',
 				'tax_code',
 				'gst_number',
 				'employee_id',
@@ -33,17 +34,20 @@ class User extends Authenticatable
 				'name'=>'required',
 				'username'=>'required|unique:users',
 				'employee_id'=>'required|unique:users',
+				'department_code'=>'required_if:consultant,==,"1"'
 			];
 
         	if ($method=='PUT') {
 					$rules = [
 						'name'=>'required',
 						'email'=>'required',
+						'department_code'=>'required_if:consultant,==,"1"'
 					];
         	}
 
 			$messages = [
-				'required' => 'This field is required'
+				'required' => 'This field is required',
+				'department_code.required_if' => 'Department required when consultant.',
 			];
 			
 			return validator::make($input, $rules ,$messages);

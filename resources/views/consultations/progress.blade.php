@@ -2,7 +2,11 @@
 @extends('layouts.app')
 
 @section('content')
+@if ($consultation)
 @include('consultations.panel')
+@else
+@include('patients.id_only')
+@endif
 <h1>
 Progress Notes
 </h1>

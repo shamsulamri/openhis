@@ -62,12 +62,14 @@ class EncounterController extends Controller
 
 	public function create(Request $request)
 	{
+			$bed_booking=null;
 			$patient = new Patient();
 			if (empty($request->patient_id)==false) {
 				$patient = Patient::findOrFail($request->patient_id);
 			}
 
 			$encounter = new Encounter();
+
 
 			/*
 			$locations = Location::select(DB::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code")
@@ -83,9 +85,9 @@ class EncounterController extends Controller
 					->orderBy('location_name')
 					->get();
 
-			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+			$consultants = user::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
 							->where('consultant',1)
-							->orderBy('name')
+							->orderby('name')
 							->lists('name','id')
 							->prepend('','');
 
@@ -127,7 +129,7 @@ class EncounterController extends Controller
 							->orderBy('room_name')
 							->get();
 
-			$wards = Ward::select(DB::raw("concat(ward_name, ' - LEVEL ', ward_level) as ward_name, ward_code"))
+			$wards = Ward::select(DB::raw("ward_name, ward_code"))
 							->orderBy('ward_name')
 							->lists('ward_name', 'ward_code');
 
@@ -136,6 +138,12 @@ class EncounterController extends Controller
 					->groupBy(['ward_code','b.class_code'])
 					->get();
 					
+			$ward_code = null;
+			if (!empty($request->book_id)) {
+				$bed_booking = BedBooking::find($request->book_id);
+				$encounter->encounter_code = 'inpatient';
+			}
+
 			return view('encounters.create', [
 					'encounter' => $encounter,
 					'patient' => $patient,
@@ -148,13 +156,14 @@ class EncounterController extends Controller
 					'locations' => $locations,
 					'consultants' => $consultants,
 					'teams' => Team::all()->sortBy('team_name')->lists('team_name', 'team_code')->prepend('',''),
-					'wards' => $wards,
+					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'classes' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'beds' => $beds,
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 					'preadmissions'=>$preadmissions,
 					'ward_classes'=>$ward_classes,
+					'bed_booking'=>$bed_booking,
 				]);
 	}
 
@@ -186,6 +195,19 @@ class EncounterController extends Controller
 
 	public function store(Request $request)
 	{
+			$valid=null;
+
+			if ($request->encounter_code == 'inpatient') {
+					if (empty($request->user_id)) $valid['user_id']='This field is required.';
+					if (empty($request->bed_code)) $valid['bed_code']='This field is required.';
+
+					if (!empty($valid)) {
+							return redirect('/encounters/create?patient_id='.$request->patient_id)
+									->withErrors($valid)
+									->withInput();
+					} 
+			}
+
 			$encounter = new Encounter($request->all());
 			$valid = $encounter->validate($request->all(), $request->_method);
 
@@ -227,7 +249,7 @@ class EncounterController extends Controller
 							$admission->user_id = $request->user_id;
 							$admission->encounter_id = $request->encounter_id;
 							$admission->diet_code='normal';
-							$admission->class_code= $bed->wardClass->class_diet;
+							$admission->class_code='class_normal';
 							$admission->encounter_id = $encounter->encounter_id;
 							//$admission->team_code = $request->team_code;
 							$admission->save();
@@ -366,6 +388,7 @@ class EncounterController extends Controller
 	
 	public function delete($id)
 	{
+			return "X";
 		$encounter = Encounter::findOrFail($id);
 		return view('encounters.destroy', [
 			'encounter'=>$encounter

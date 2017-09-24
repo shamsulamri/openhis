@@ -27,7 +27,7 @@ use App\WardDischarge;
 
 class BedController extends Controller
 {
-	public $paginateValue=10;
+	public $paginateValue=25;
 
 	public function __construct()
 	{
@@ -43,13 +43,14 @@ class BedController extends Controller
 					->leftjoin('bed_statuses as d', 'd.status_code','=', 'beds.status_code')
 					->orderBy('ward_name')
 					->orderBy('ward_level')
-					->orderBy('bed_name');
+					->orderBy('beds.class_code')
+					->orderBy('bed_code');
 
 			if (Auth::user()->cannot('system-administrator')) {
 					if (Auth::user()->can('module-ward')) {
 							$ward_code = $request->cookie('ward');
 							if ($ward_code) {
-									$beds = $beds->where('a.ward_code','=', $ward_code);
+									$beds = $beds->where('beds.ward_code','=', $ward_code);
 							}
 					}
 			}
@@ -62,6 +63,7 @@ class BedController extends Controller
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'ward_code' => null,
 					'class_code' => null,
+					'search'=> null,
 					'bedHelper' => new BedHelper(),
 			]);
 	}
@@ -206,7 +208,8 @@ class BedController extends Controller
 
 			$beds = $beds->orderBy('ward_name')
 						 ->orderBy('ward_level')
-						 ->orderBy('bed_name')
+					 	 ->orderBy('beds.class_code')
+						 ->orderBy('bed_code')
 						 ->paginate($this->paginateValue);
 
 			return view('beds.index', [
@@ -258,7 +261,7 @@ class BedController extends Controller
 			$search = '%'.$request->search.'%';
 
 			$sql = "
-				select bed_name, class_name, ward_name, status_name, patient_name, patient_mrn, room_name
+				select bed_name, class_name, ward_name, status_name, patient_name, patient_mrn, room_name, a.bed_code
 				from beds as a
 				left join wards as b on (a.ward_code = b.ward_code)
 				left join ward_classes as c on (c.class_code = a.class_code)
@@ -318,5 +321,22 @@ class BedController extends Controller
 					'status_code'=>$request->status_code,
 			]);
 
+	}
+
+	public function generate()
+	{
+			$beds = Bed::all();
+			foreach($beds as $bed) {
+					$product = new Product();
+					$product->product_code = $bed->bed_code;
+					$product->product_name = $bed->bed_name.", ".$bed->room['room_name'].", ". $bed->wardClass->class_name .", ". $bed->ward->ward_name;
+					$product->category_code = "srv";
+					$product->product_sold = 1;
+					$product->product_sale_price = $bed->wardClass->class_price;
+					$product->order_form="1";
+					$product->save();
+					//Log::info($product->product_name);
+			}
+			return "Ok";
 	}
 }

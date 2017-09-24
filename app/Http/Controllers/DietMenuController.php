@@ -13,6 +13,7 @@ use App\DietMenu;
 use App\DietClass;
 use App\DietPeriod;
 use App\DietHelper;
+use App\WardHelper;
 use App\Ward;
 use App\Admission;
 use Log;
@@ -308,6 +309,7 @@ class DietMenuController extends Controller
 
 	public function order(Request $request)
 	{
+
 			$diet_code = "normal";
 			
 			if (!empty($request->diet_code)) {
@@ -330,6 +332,7 @@ class DietMenuController extends Controller
 					'diet_classes' => DietClass::where('diet_code',$diet_code)->orderBy('class_position')->get(),
 					'diet_code' => $diet_code,
 					'dietHelper' => new DietHelper(),
+					'wardHelper' => new WardHelper(),
 					'wards' => DietHelper::occupiedWards(),
 					'diet_stats'=>$diet_stats,
 			]);

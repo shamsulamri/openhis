@@ -9,8 +9,8 @@
 	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>Type</label>
 	{{ Form::select('admission_code', $admission_type, $admission_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
-	<a href='#' onclick='javascript:export_report();' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
+	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
 	<input type='hidden' id='export_report' name="export_report" value="0">
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
@@ -58,6 +58,11 @@
 			<td>
 					{{$admission->name }}
 			</td>
+			@if (Auth::user()->authorization->view_progress_note==1)
+			<td>
+				<a class='btn btn-default btn-sm pull-right' href='/admission/progress/{{ $admission->patient_id }}'>Progress</a>
+			</td>
+			@endif
 	</tr>
 @endforeach
 @endif
@@ -76,8 +81,8 @@
 @endif
 
 <script>
-		function export_report() {
-				document.getElementById('export_report').value = "1";
+		function search_now(value) {
+				document.getElementById('export_report').value = value;
 				document.getElementById('form').submit();
 		}
 </script>

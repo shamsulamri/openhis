@@ -14,6 +14,7 @@ class Payment extends Model
 				'encounter_id',
 				'payment_amount',
 				'payment_code',
+				'sponsor_code',
 				'user_id',
 				'patient_id',
 				'payment_description'];

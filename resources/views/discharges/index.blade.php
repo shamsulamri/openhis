@@ -60,7 +60,7 @@
 			if ($discharge->discharge_id>0) {
 				$bill_label = "Final Bill";
 				if ($discharge->id>0) {
-						$bill_label="&nbsp;&nbsp; Close &nbsp;&nbsp;";
+						$bill_label="&nbsp;&nbsp; Posted &nbsp;&nbsp;";
 						$button_type="default";
 				}
 			}

@@ -66,6 +66,9 @@
     <th>Date</th>
     <th>Patient</th>
     <th>Consultant</th>
+	@cannot('module-ward')
+    <th>Ward</th>
+	@endcannot
     <th>Room</th>
     <th>Bed</th>
 	@can('module-ward')
@@ -93,7 +96,7 @@
 	@endcan
 	<tr class='{{ $status }}'>
 			<td>
-					{{ date('d F, H:i', strtotime($admission->created_at)) }}
+					{{ DojoUtility::dateTimeReadFormat($admission->created_at) }}
 					<br>
 					<small>
 					<?php $ago =$dojo->diffForHumans($admission->created_at); ?> 
@@ -101,9 +104,7 @@
 					</small>	
 			</td>
 			<td>
-					<a href='{{ URL::to('admissions/'. $admission->admission_id.'/edit' ) }}'>
 					{{ strtoupper($admission->patient_name) }}
-					</a>
 					<br>
 					<small>{{$admission->patient_mrn}}
 					<br>
@@ -112,6 +113,11 @@
 			<td>
 					{{$admission->name}}
 			</td>
+			@cannot('module-ward')
+			<td>
+					{{$admission->ward_name}}
+			</td>
+			@endcannot
 			<td>
 					@if ($admission->room_name) 
 						{{$admission->room_name}} 
@@ -119,10 +125,6 @@
 			</td>
 			<td>
 					{{$admission->bed_name}} 
-					@cannot('module-ward')
-					<br>
-					<small>{{$admission->ward_name}}</small>	
-					@endcannot
 			</td>
 			@can('module-ward')
 			@if ($ward->ward_code != 'mortuary')
@@ -171,7 +173,7 @@
 								@endif
 						@endif
 						@can('system-administrator')
-							<a class='btn btn-danger ' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
+							<a class='btn btn-danger btn-sm ' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 						@endcan
 			</td>
 			@endif
@@ -187,6 +189,13 @@
 					@endif
 			@endcan
 
+			@can('module-patient')
+			<td>
+			@if (empty($admission->arrival_id))
+					<a class='btn btn-danger pull-right btn-sm' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
+			@endif
+			</td>
+			@endcan
 	</tr>
 @endforeach
 @endif

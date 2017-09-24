@@ -4,3 +4,4 @@ Homestead.json
 .env
 *.swp
 config/host.php
+tags

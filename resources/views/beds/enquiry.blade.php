@@ -87,7 +87,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Code</th>
     <th>Bed</th>
+    <th>Room</th> 
     <th>Class</th> 
     <th>Ward</th> 
     <th>Status</th> 
@@ -100,13 +102,16 @@
 @foreach ($beds as $bed)
 	<tr>
 			<td>
+					{{$bed->bed_code}}
+			</td>
+			<td>
 					{{$bed->bed_name}}
 			</td>
 			<td>
-					{{$bed->class_name}}
+					{{$bed->room_name }}
 			</td>
 			<td>
-					{{$bed->room_name }}
+					{{$bed->class_name}}
 			</td>
 			<td>
 					{{$bed->ward_name}}

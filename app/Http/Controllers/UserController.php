@@ -17,15 +17,24 @@ use App\TaxCode;
 use Auth;
 use Validator;
 use App\QueueLocation;
+use App\Department;
 
 
 class UserController extends Controller
 {
 	public $paginateValue=10;
+	public $locations = NULL;
 
 	public function __construct()
 	{
 			$this->middleware('auth');
+
+			$this->locations = QueueLocation::select(DB::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code, encounter_code"))
+					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
+					->whereNotNull('encounter_code')
+					->orderBy('location_name')
+					->lists('location_name', 'location_code')
+					->prepend('','');
 	}
 
 	public function index()
@@ -43,19 +52,22 @@ class UserController extends Controller
 	{
 			$user = new User();
 
+			/**
 			$locations = QueueLocation::select(DB::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code, encounter_code"))
 					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
 					->whereNotNull('encounter_code')
 					->orderBy('location_name')
 					->lists('location_name', 'location_code')
 					->prepend('','');
+			**/
 
 			return view('users.create', [
 					'user' => $user,
 					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
-					'location' => $locations,
+					'departments' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'location' => $this->locations,
 					]);
 	}
 
@@ -95,6 +107,7 @@ class UserController extends Controller
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					'location' => $locations,
+					'departments' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
 					]);
 	}
 
@@ -106,6 +119,7 @@ class UserController extends Controller
 					'user'=>$user,
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
+					'departments' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
 					]);
 	}
 
@@ -146,6 +160,8 @@ class UserController extends Controller
 							'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 							'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 							'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+							'departments' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+							'location' => $this->locations,
 							])
 							->withErrors($valid);			
 			}

@@ -47,6 +47,20 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+
+
+		Route::resource('payment_credits', 'PaymentCreditController');
+		Route::get('/payment_credits/id/{id}', 'PaymentCreditController@searchById');
+		Route::post('/payment_credit/search', 'PaymentCreditController@search');
+		Route::get('/payment_credit/search', 'PaymentCreditController@search');
+		Route::get('/payment_credits/delete/{id}', 'PaymentCreditController@delete');
+
+		Route::resource('credit_cards', 'CreditCardController');
+		Route::get('/credit_cards/id/{id}', 'CreditCardController@searchById');
+		Route::post('/credit_card/search', 'CreditCardController@search');
+		Route::get('/credit_card/search', 'CreditCardController@search');
+		Route::get('/credit_cards/delete/{id}', 'CreditCardController@delete');
+
 		Route::resource('product_price_tiers', 'ProductPriceTierController');
 		Route::get('/product_price_tiers/id/{id}', 'ProductPriceTierController@searchById');
 		Route::post('/product_price_tier/search', 'ProductPriceTierController@search');
@@ -368,6 +382,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/beds/delete/{id}', 'BedController@delete');
 		Route::get('/bed/enquiry', 'BedController@enquiry');
 		Route::post('/bed/enquiry', 'BedController@enquiry');
+		Route::get('/bed/generate', 'BedController@generate');
 
 		Route::post('/order_task/status', 'OrderTaskController@status');
 		Route::get('/order_tasks/task/{consultation_id}/{location_code}', 'OrderTaskController@task');
@@ -401,6 +416,9 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/admissions/delete/{id}', 'AdmissionController@delete');
 		Route::post('/admission/enquiry', 'AdmissionController@enquiry');
 		Route::get('/admission/enquiry', 'AdmissionController@enquiry');
+		Route::get('/admission/progress/{patient_id}', 'AdmissionController@progress');
+		Route::post('/admission/diet_enquiry', 'AdmissionController@diet_enquiry');
+		Route::get('/admission/diet_enquiry', 'AdmissionController@diet_enquiry');
 
 		Route::group(['middleware' => 'diet_middleware'], function () {
 
@@ -494,6 +512,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/deposit/search', 'DepositController@search');
 				Route::get('/deposit/search', 'DepositController@search');
 				Route::get('/deposits/delete/{id}', 'DepositController@delete');
+				Route::post('/deposit/enquiry', 'DepositController@enquiry');
+				Route::get('/deposit/enquiry', 'DepositController@enquiry');
 
 				Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
 				Route::get('/payments/{id?}', 'PaymentController@index');
@@ -502,6 +522,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/payment/search', 'PaymentController@search');
 				Route::get('/payment/search', 'PaymentController@search');
 				Route::get('/payments/delete/{id}', 'PaymentController@delete');
+				Route::post('/payment/enquiry', 'PaymentController@enquiry');
+				Route::get('/payment/enquiry', 'PaymentController@enquiry');
 
 				Route::resource('bill_items', 'BillItemController',['except'=>['index','show']]);
 				Route::get('/bill_items/{id}', 'BillItemController@index');
@@ -511,6 +533,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/bill_items/generate/{id}', 'BillItemController@generate');
 				Route::get('/bill_items/reload/{id}', 'BillItemController@reload');
 				Route::get('/bill_items/close/{id}', 'BillItemController@close');
+				Route::post('/bill_item/enquiry', 'BillItemController@enquiry');
+				Route::get('/bill_item/enquiry', 'BillItemController@enquiry');
 
 				Route::resource('bills', 'BillController');
 				Route::get('/bills/id/{id}', 'BillController@searchById');
@@ -518,6 +542,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/bill/search', 'BillController@search');
 				Route::get('/bill/search', 'BillController@search');
 				Route::get('/bills/delete/{id}', 'BillController@delete');
+				Route::post('/bill/enquiry', 'BillController@enquiry');
+				Route::get('/bill/enquiry', 'BillController@enquiry');
 				
 		});
 
@@ -536,6 +562,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/patient/search', 'PatientController@search');
 				Route::get('/patients/delete/{id}', 'PatientController@delete');
 				Route::get('/patients/encounter/{id}', 'PatientController@hasActiveEncounter');
+				Route::post('/patient/enquiry', 'PatientController@enquiry');
+				Route::get('/patient/enquiry', 'PatientController@enquiry');
 
 				Route::resource('dependants', 'DependantController', ['except'=>['create','show']]);
 				Route::get('/dependants/create/{id}', 'DependantController@create');

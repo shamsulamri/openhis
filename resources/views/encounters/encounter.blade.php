@@ -85,7 +85,6 @@
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         {{ Form::label('Ward', 'Ward',['class'=>'col-sm-3 control-label']) }}
-		
         <div class='col-sm-9'>
             {{ Form::select('ward_code', $wards, null, ['id'=>'ward_code','onchange'=>'wardChanged()','class'=>'form-control']) }}
         </div>
@@ -98,8 +97,8 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
-        {{ Form::label('Bed', 'Bed',['class'=>'col-sm-3 control-label']) }}
+    <div class='form-group  @if ($errors->has('bed_code')) has-error @endif'>
+        <label for='bed_code' class='col-sm-3 control-label'>Bed<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::select('bed_code', [], null, ['id'=>'bed_code','onchange'=>'','class'=>'form-control']) }}
         </div>
@@ -398,4 +397,17 @@
 													    }
 								  }
 	}
+
+	
+	checkTriage();
+
+	@if (!empty($bed_booking))
+	document.getElementById('ward_code').value = '{{ $bed_booking->ward_code }}';
+	wardChanged();	
+	document.getElementById('class_code').value = '{{ $bed_booking->class_code }}';
+	classChanged();
+	document.getElementById('bed_code').value = '{{ $bed_booking->bed_code }}';
+	document.getElementById('admission_code').value = 'scheduled';
+	document.getElementById('user_id').value = '{{ $bed_booking->user_id }}';
+	@endif
 </script>

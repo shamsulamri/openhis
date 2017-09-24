@@ -33,6 +33,8 @@ use App\DietHelper;
 use App\DietTherapeutic;
 use App\AdmissionTherapeutic;
 use App\Race;
+use App\BedMovement;
+use App\Patient;
 
 class AdmissionController extends Controller
 {
@@ -93,7 +95,8 @@ class AdmissionController extends Controller
 					->leftJoin('diet_classes as m', 'm.class_code', '=', 'a.class_code')
 					->leftJoin('teams as n', 'n.team_code', '=', 'a.team_code')
 					->where('h.ward_code','like', '%'.$ward_code.'%')
-					->whereNull('f.encounter_id');
+					->whereNull('f.encounter_id')
+					->orderBy('admission_id', 'desc');
 					
 			if (Auth::user()->can('module-patient')) {
 					$admissions = $admissions->orderBy('patient_name');
@@ -105,6 +108,7 @@ class AdmissionController extends Controller
 
 			$wardHelper = null;
 			if ($ward) $wardHelper = new WardHelper($ward->ward_code);
+
 
 			return view('admissions.index', [
 					'admissions'=>$admissions,
@@ -392,7 +396,10 @@ class AdmissionController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$admission = Admission::find($id);
+			BedMovement::where('admission_id', $admission->admission_id)->delete();
 			Admission::find($id)->delete();
+			Encounter::find($admission->encounter_id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/admissions');
 	}
@@ -478,18 +485,40 @@ class AdmissionController extends Controller
 			]);
 	}
 
-	public function enquiry(Request $request, $export=FALSE)
+	public function enquiry(Request $request, $export=FALSE, $diet=FALSE)
 	{
 			$ward = $request->ward;
 			$setWard = $request->cookie('ward');
 
-			$fields = [	
+			$fields = [];
+
+			if ($diet) {
+					$fields = [	
 						'admissions.created_at as admission_date',
-						'patient_name','patient_mrn','gender_name', 
+						'c.patient_id', 'patient_name','patient_mrn','gender_name', 
 						'bed_name','ward_name',
 						'room_name',
-						'name',
+						'diet_name','texture_name', 'class_name', 'admissions.diet_description',
+						'alerts'
 					];
+			} else {
+					$fields = [	
+						'admissions.created_at as admission_date',
+						'c.patient_id', 'patient_name','patient_mrn','gender_name', 
+						'bed_name','ward_name',
+						'room_name',
+						'name', 'discharge_id',
+						'alerts'
+					];
+
+			}
+
+			$subquery = "
+				select patient_id, group_concat(alert_description) as alerts
+				from medical_alerts where alert_public=1
+				group by patient_id
+			";
+
 			$admissions = Admission::orderBy('b.patient_id')
 							->select($fields)
 							->leftJoin('encounters as b', 'b.encounter_id','=', 'admissions.encounter_id')
@@ -499,7 +528,15 @@ class AdmissionController extends Controller
 							->leftJoin('admissions as j','j.encounter_id','=','b.encounter_id')
 							->leftJoin('ward_rooms as k', 'k.room_code','=', 'h.room_code')
 							->leftJoin('wards as l','l.ward_code','=','h.ward_code')
-							->leftJoin('users as m','m.id','=','j.user_id');
+							->leftJoin('users as m','m.id','=','j.user_id')
+							->leftJoin('discharges as n', 'n.encounter_id', '=', 'b.encounter_id')
+							->leftJoin('diets as o', 'o.diet_code', '=', 'admissions.diet_code')
+							->leftJoin('diet_textures as p', 'p.texture_code', '=', 'admissions.texture_code')
+							->leftJoin('diet_classes as q', 'q.class_code', '=', 'admissions.class_code')
+							->leftJoin(DB::raw('('.$subquery.') alerts'), function($join) {
+									$join->on('b.patient_id','=', 'alerts.patient_id');
+							})
+							->whereNull('discharge_id');
 
 			if (!empty($request->search)) {
 					$admissions = $admissions->where(function ($query) use ($request) {
@@ -516,13 +553,18 @@ class AdmissionController extends Controller
 					$admissions = $admissions->where('admission_code','=', $request->admission_code);
 			}
 
+			if (!empty($request->diet_code)) {
+					$admissions = $admissions->where('admissions.diet_code','=', $request->diet_code);
+			}
 			if ($request->export_report) {
 				DojoUtility::export_report($admissions->get());
 			}
 
 			$admissions = $admissions->paginate($this->paginateValue);
 
-			return view('admissions.enquiry', [
+			$view = 'admissions.enquiry';
+			if ($diet) $view = 'admissions.diet_enquiry';
+			return view($view, [
 					'admissions'=>$admissions,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward' => $request->ward,
@@ -530,6 +572,27 @@ class AdmissionController extends Controller
 					'admission_code'=>$request->admission_code,
 					'admission_type' => AdmissionType::all()->sortBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 					'admission_code'=>$request->admission_code,
+					'diet'=>$diet,
+					'diets'=>Diet::all()->sortBy('diet_name')->lists('diet_name','diet_code')->prepend('',''),
+					'diet_code'=>$request->diet_code,
 			]);
 	}
+
+	public function diet_enquiry(Request $request, $export=FALSE)
+	{
+			return $this->enquiry($request, $export, TRUE);	
+	}
+
+	public function progress($patient_id) {
+			$notes = Consultation::where('patient_id', $patient_id)
+					->orderBy('created_at','desc')
+					->paginate($this->paginateValue);
+
+			return view('consultations.progress', [
+					'notes'=>$notes,
+					'consultation'=>null,
+					'patient'=>Patient::find($patient_id),
+			]);
+	}
+
 }

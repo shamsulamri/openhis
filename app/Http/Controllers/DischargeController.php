@@ -21,6 +21,7 @@ use App\DojoUtility;
 use App\DischargeType;
 use App\EncounterType;
 use App\DischargeHelper;
+use App\Encounter;
 
 class DischargeController extends Controller
 {
@@ -106,6 +107,18 @@ class DischargeController extends Controller
 
 	public function store(Request $request) 
 	{
+			$encounter = Encounter::find($request->encounter_id);
+			if ($encounter->encounter_code == 'inpatient') {
+					if (empty($request->discharge_summary)) $valid['discharge_summary']='This field is required.';
+					if (empty($request->discharge_diagnosis)) $valid['discharge_diagnosis']='This field is required.';
+
+					if (!empty($valid)) {
+							return redirect('/discharges/create/')
+									->withErrors($valid)
+									->withInput();
+					} 
+			}
+
 			$discharge = new Discharge();
 			$valid = $discharge->validate($request->all(), $request->_method);
 

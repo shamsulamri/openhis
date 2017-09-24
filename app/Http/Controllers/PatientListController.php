@@ -58,6 +58,10 @@ class PatientListController extends Controller
 
 			$location = Location::find($selectedLocation);
 
+			if (!$location) {
+					return redirect('/queue_locations');
+			}
+
 			$selectFields = ['patient_mrn', 'patient_name', 'a.created_at', 'a.encounter_id', 'b.patient_id', 'bed_name', 'ward_name', 'room_name','patient_birthdate', 'gender_name'];
 
 			//$team_member = TeamMember::where('username','=',Auth::user()->username)->first();

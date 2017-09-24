@@ -6,10 +6,6 @@
     font-size: 60%;
 }
 </style>
-@if (Session::has('message'))
-	<br>
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
 <form class='form-inline' action='/order_product/search' method='post' id='form_search'>
 	<div class="row">
 

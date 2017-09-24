@@ -89,6 +89,7 @@ class UserAuthorizationController extends Controller
 			$user_authorization->product_purchase_edit = $request->product_purchase_edit ?: 0;
 			$user_authorization->product_sale_edit = $request->product_sale_edit ?: 0;
 			$user_authorization->appointment_function = $request->appointment_function ?: 0;
+			$user_authorization->view_progress_note = $request->view_progress_note ?: 0;
 
 			$valid = $user_authorization->validate($request->all(), $request->_method);	
 

@@ -40,7 +40,6 @@
 
 	<?php 
 	$status='';
-	$order_product = $product->find($order->product_code);
 	$allocated =  $stock_helper->getStockAllocatedByStore($order->product_code, $location->store_code, $encounter_id); //-$order->order_quantity_request;
 	$available = $stock_helper->getStockCountByStore($order->product_code, $location->store_code);
 	//$available = $available-$allocated;
@@ -48,18 +47,18 @@
 	@if ($order->order_completed==1) 
 			<?php $status='success' ?>
 	@endif
-	@if ($product->product_stocked)
-			@if ($product->product_track_batch==0)
+	@if ($order->product_stocked)
 						@if ($available-$allocated<$order->order_quantity_request)
 								<?php $status = 'danger'; ?>
 						@endif
-			@endif
 	@endif
 	<tr class='{{ $status }}'>
 			<td width='10'>
+				@if ($status != 'danger')
 					@if (!isset($order->cancel_id) && $order->order_completed==0)
 					{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
 					@endif
+				@endif
 			</td>
 			<td>
 					@if (!isset($order->cancel_id) && $order->order_completed==0)
@@ -74,7 +73,7 @@
 							</strike>
 					@endif
 
-					@if ($order_product->category_code=='drugs')
+					@if ($order->category_code=='drugs')
 					<br>
 						{{ $order_helper->getPrescription($order->order_id) }}
 					@endif

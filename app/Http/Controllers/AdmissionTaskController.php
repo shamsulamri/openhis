@@ -21,6 +21,7 @@ use App\QueueLocation;
 use App\Store;
 use Auth;
 use Route;
+use App\DojoUtility;
 
 class AdmissionTaskController extends Controller
 {
@@ -68,6 +69,7 @@ class AdmissionTaskController extends Controller
 					->where('order_completed','=',0)
 					->where('a.product_code','<>','consultation_fee')
 					->whereNull('cancel_id')
+					->whereNull('discharge_id')
 					->whereNotNull('n.post_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');
@@ -293,6 +295,7 @@ class AdmissionTaskController extends Controller
 					if (!empty($order)) {
 							if ($request->$name==1) {
 									$order->order_completed=1;
+									$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
 									$order->updated_by = Auth::user()->id;
 									$order->store_code = $store_code;
 									$order->save();

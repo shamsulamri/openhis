@@ -20,6 +20,22 @@ th, td {
 		</div>
 	</div>
 @endforeach
+	<div class="col-md-4">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Awaiting Discharge</strong></h5>	
+				<h4><strong>{{ $wardHelper->wardDischarge() }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Today Admissions</strong></h5>	
+				<h4><strong>{{ $wardHelper->todayAdmissions() }}</strong></h4>	
+			</div>
+		</div>
+	</div>
 </div>
 <form class='form-inline' action='/diet_orders' method='post' name='myform'>
 	<label>Diet&nbsp;</label>

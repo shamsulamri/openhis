@@ -31,6 +31,7 @@ class Order extends Model
 				'order_total',
 				'order_discharge',
 				'updated_by',
+				'completed_at',
 		];
 	
     protected $guarded = ['order_id'];
@@ -136,4 +137,9 @@ class Order extends Model
 			}	
 	}
 
+
+	public function setCompletedAtAtrribute($value)
+	{
+		$this->attributes['completed_at'] = DojoUtility::dateTimeWriteFormat($value);
+	}
 }

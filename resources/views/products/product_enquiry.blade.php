@@ -63,7 +63,7 @@ $allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $st
 					<div class='form-group'>
 						{{ Form::label('form_code', 'Sale Unit',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							@if ($product->purchaseUnitMeasure)
+							@if ($product->unitMeasure)
             				{{ Form::label('form_code', $product->unitMeasure->unit_name?:"Unit", ['class'=>'form-control']) }}
 							@else
             				{{ Form::label('form_code', "-", ['class'=>'form-control']) }}

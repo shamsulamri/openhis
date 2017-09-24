@@ -30,10 +30,10 @@ class ConsultationController extends Controller
 
 	public function index()
 	{
-			$consultations = DB::table('consultations as a')
-					->leftjoin('patients as b','b.patient_id','=', 'a.patient_id')
-					->where('user_id', Auth::user()->id)
-					->orderBy('a.created_at', 'desc')
+			$consultations = Consultation::orderBy('consultations.created_at','desc')
+					->leftJoin('bills as c', 'c.encounter_id', '=', 'consultations.encounter_id')
+					->where('consultations.user_id', Auth::user()->id)
+					->whereNull('c.id')
 					->paginate($this->paginateValue);
 
 			return view('consultations.index', [
@@ -48,6 +48,7 @@ class ConsultationController extends Controller
 			$notes = Consultation::where('patient_id', $consultation->patient_id)
 					->orderBy('created_at','desc')
 					->paginate($this->paginateValue);
+
 			return view('consultations.progress', [
 					'notes'=>$notes,
 					'consultation'=>$consultation,

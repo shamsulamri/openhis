@@ -264,4 +264,19 @@ class PatientController extends Controller
 			return new Response($file, 200);
 	}
 
+	public function enquiry(Request $request)
+	{
+			$patient = null;
+			if (!empty($request->search)) {
+					$search = $request->search;
+					$search = str_replace('-','',$search);
+					$patient = Patient::where('patient_mrn', 'like','%'.$search.'%')->first();
+			}
+
+			return view('patients.enquiry', [
+					'patient'=>$patient,
+					'search'=>$request->search,
+					]);
+	}
+
 }
