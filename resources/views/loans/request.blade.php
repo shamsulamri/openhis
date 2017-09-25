@@ -15,8 +15,8 @@
 {{ Form::model($loan, ['url'=>$url, 'class'=>'form-horizontal']) }} 
 
 @if ($loan->type_code != 'folder')
-    <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
-        <label for='loan_code' class='col-sm-3 control-label'>Type</label>
+    <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
+        <label for='type_code' class='col-sm-3 control-label'>Type</label>
         <div class='col-sm-9'>
             {{ Form::select('type_code', $loan_types,null, ['class'=>'form-control','maxlength'=>'20']) }}
         </div>
@@ -144,7 +144,6 @@
 	{{ Form::hidden('loan_request_by', null) }}
 	{{ Form::hidden('loan_code', $loan->loan_code) }}
 	{{ Form::hidden('exchange_id', $loan->exchange_id) }}
-	{{ Form::hidden('type_code',$loan->type_code) }}
 		
 	<script>
 		$(function(){

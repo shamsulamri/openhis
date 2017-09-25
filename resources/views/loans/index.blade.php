@@ -4,11 +4,11 @@
 <h1>Request List</h1>
 <form class='form-horizontal' action='/loan/search' method='post'>
 	<div class="row">
-			<div class="col-xs-3">
+			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'><div align='left'>Status</div></label>
+						<label class='col-sm-3 control-label'><div align='left'>Find</div></label>
 						<div class='col-sm-9'>
-							{{ Form::select('loan_code', $loan_status, $loan_code, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::text('search', $search, ['placeholder'=>'Loan Id', 'class'=>'form-control', 'maxlength'=>'5']) }}
 						</div>
 					</div>
 			</div>
@@ -28,7 +28,21 @@
 						</div>
 					</div>
 			</div>
-			<div class="col-xs-1">
+	</div>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Status</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('loan_code', $loan_status, $loan_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+					</div>
+			</div>
+			<div class="col-xs-4">
 					<div class='form-group'>
 						<div class='col-sm-12'>
 							{{ Form::submit('Refresh', ['class'=>'btn btn-primary pull-right']) }}
@@ -47,6 +61,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Id</th>
 	@if ($is_folder)
     <th>Name</th>
     <th>MRN</th>
@@ -57,9 +72,9 @@
 	@endif
     <th>Source</th> 
     <th>Request Date</th> 
-    <th>Status</th> 
     <th>Type</th> 
-    <th>Resolution</th> 
+    <th>Status</th> 
+    <th>Date</th> 
 	@can('system-administrator')
 	<th></th>
 	@endcan
@@ -68,6 +83,9 @@
 	<tbody>
 @foreach ($loans as $loan)
 	<tr>
+			<td>
+				{{ $loan->loan_id }}
+			</td>
 			@if ($is_folder)
 			<td>
 					<a href='{{ URL::to('loans/'. $loan->loan_id . '/edit') }}'>
@@ -106,29 +124,25 @@
 					{{ (DojoUtility::dateTimeReadFormat($loan->request_date )) }}
 			</td>
 			<td>
+					{{$loan->type->type_name}}
+			</td>
+			<td>
 					{{$loan->status->loan_name}}
 					@if ($loan->exchange_id>0)
 						(Exchange)
 					@endif
 			</td>
 			<td>
-					{{$loan->type->type_name}}
-			</td>
-			<td>
-					@if ($loan->loan_code=='exchanged') 
-						{{ (DojoUtility::dateLongFormat($loan->loan_closure_datetime )) }}
-					@endif
-					@if ($loan->loan_code=='return')
-							@if (!empty($loan->loan_closure_datetime))
-								{{ (DojoUtility::dateLongFormat($loan->loan_closure_datetime )) }}
-							@endif
-					@endif
 					@if ($loan->loan_code=='on_loan')
 							@if (!empty($loan->loan_date_start))
-							{{ (DojoUtility::dateLongFormat($loan->loan_date_start )) }}
+							{{ (DojoUtility::dateReadFormat($loan->loan_date_start )) }}
 							@endif
 							@if (!empty($loan->loan_date_end))
-							- {{ (DojoUtility::dateLongFormat($loan->loan_date_end )) }}
+							- {{ (DojoUtility::dateReadFormat($loan->loan_date_end )) }}
+							@endif
+					@else
+							@if (!empty($loan->loan_closure_datetime))
+								{{ (DojoUtility::dateTimeReadFormat($loan->loan_closure_datetime )) }}
 							@endif
 					@endif
 			</td>

@@ -65,11 +65,15 @@ class ProductController extends Controller
 			$products = $products->orderBy('products.created_at','desc')
 							->paginate($this->paginateValue);
 
+			$store_code = Auth::user()->defaultStore($request);
+
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>null,
+					'stockHelper'=>new StockHelper(),
+					'store_code'=>$store_code,
 			]);
 	}
 
@@ -246,14 +250,16 @@ class ProductController extends Controller
 
 			$products = $this->search_query($request, TRUE);
 
+			$store_code = Auth::user()->defaultStore($request);
+
 			return view('products.index', [
 					'products'=>$products,
 					'search'=>$request->search,
 					'loan'=>$loan,
 					'store'=>Auth::user()->storeList()->prepend('All Store','all')->prepend('',''),
 					'categories'=>Auth::user()->categoryList(),
-					'store_code'=>$request->store,
-					'stock_helper'=> new StockHelper(),
+					'store_code'=>$store_code,
+					'stockHelper'=> new StockHelper(),
 					'category_code'=>$request->category_code,
 					]);
 	}
@@ -560,6 +566,7 @@ class ProductController extends Controller
 					['path' => $request->url(), 
 					'query' => $request->query()]
 			);
+
 
 			return view('products.on_hand', [
 					'products'=>$data,

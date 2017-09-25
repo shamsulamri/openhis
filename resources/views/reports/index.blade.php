@@ -63,6 +63,7 @@
 		<a href="{{ url('/purchase_order_lines/enquiry') }}">Purchase Enquiry</a><br>
 		<a href="{{ url('/products/reorder') }}">Product Reorder Enquiry</a><br>
 		<a href="{{ url('/loan/enquiry') }}">Request Enquiry</a><br>
+		<a href="{{ url('/loan/workload') }}">Workload Enquiry</a><br>
 	</div>
 </div>
 </h3>

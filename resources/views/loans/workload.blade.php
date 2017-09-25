@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Request Enquiry</h1>
-<form id='form' action='/loan/enquiry' method='post' class='form-horizontal'>
+<h1>Workload Enquiry</h1>
+<form id='form' action='/loan/workload' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
@@ -80,43 +80,18 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Id</th> 
-    <th>Type</th> 
-    <th>Name</th>
-    <th>Code</th>
-    <th>Quantity</th> 
-    <th>Source</th> 
-    <th>Request Date</th> 
     <th>Status</th> 
+    <th><div align='right'>Count</div></th> 
 	</tr>
   </thead>
 	<tbody>
 @foreach ($loans as $loan)
 	<tr>
 			<td>
-					{{ $loan->loan_id }}
+					{{ $loan->loan_name }}
 			</td>
-			<td>
-					{{ $loan->type_name }}
-			</td>
-			<td>
-					{{$loan->product_name}}
-					{{$loan->patient_name}}
-			</td>
-			<td>
-					{{$loan->item_code}}
-			</td>
-			<td>
-					{{$loan->loan_quantity}}
-			</td>
-			<td>
-					{{$loan->ward_name}}
-			</td>
-			<td>
-					{{ DojoUtility::dateTimeReadFormat($loan->request_date) }}
-			</td>
-			<td>
-					{{$loan->loan_name}}
+			<td align='right'>
+					{{$loan->loan_count}}
 			</td>
 	</tr>
 @endforeach

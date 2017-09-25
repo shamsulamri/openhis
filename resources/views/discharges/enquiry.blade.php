@@ -54,12 +54,15 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<div class='col-sm-12'>
-	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
-	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+						<label for='date_end' class='col-sm-3 control-label'>Flag</label>
+						<div class='col-sm-9'>
+								{{ Form::select('flag_code', $flag,$flag_code, ['class'=>'form-control','maxlength'=>'1']) }}
 						</div>
 					</div>
+					</div>
 			</div>
+	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
+	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
 	</div>
 	<input type='hidden' id='export_report' name="export_report">
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

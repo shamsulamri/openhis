@@ -113,7 +113,6 @@ class LoanController extends Controller
 	public function ward(Request $request)
 	{
 			$loans = Loan::where('ward_code', $request->cookie('ward'))
-							->leftjoin('products as b', 'b.product_code', '=', 'item_code')
 							->where('loan_code','<>', 'return')
 							->where('loan_code', '<>', 'exchanged')
 							->orderBy('loans.created_at', 'desc')
@@ -130,7 +129,7 @@ class LoanController extends Controller
 	public function create()
 	{
 			$loan = new Loan();
-			$loan->type_code='indent';
+
 			return view('loans.create', [
 					'loan' => $loan,
 					'loan_status' => LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('',''),
@@ -184,7 +183,7 @@ class LoanController extends Controller
 					} else if ($loan->loan_code=='cancel') {
 							$loan_status = LoanStatus::whereIn('loan_code',['accept','cancel'])->lists('loan_name', 'loan_code');
 					} else if ($loan->loan_code=='accept') {
-							$loan_status = LoanStatus::whereIn('loan_code',['accept', 'on_loan','cancel'])->lists('loan_name', 'loan_code');
+							$loan_status = LoanStatus::whereIn('loan_code',['on_loan','cancel'])->lists('loan_name', 'loan_code');
 					} else {
 							$loan_status = LoanStatus::whereIn('loan_code',['request', 'on_loan', 'return','lost']);
 							$loan_status = $loan_status->orderBy('loan_name')->lists('loan_name', 'loan_code');
@@ -241,6 +240,8 @@ class LoanController extends Controller
 			$valid = $loan->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					$loan_closure_datetime = ($request->closure_date . ' ' .$request->closure_time);
+					$loan->loan_closure_datetime = $loan_closure_datetime;
 					$loan->save();
 					Session::flash('message', 'Record successfully updated.');
 					if ($loan->loan_code=='accept') {
@@ -304,9 +305,14 @@ class LoanController extends Controller
 					$loans = $loans->where('type_code','<>', 'folder');
 			}
 
+			if (!empty($request->search)) {
+					$loans=$loans->where('loan_id','=',$request->search);
+			}
+
 			if (!empty($request->loan_code)) {
 					$loans=$loans->where('loan_code','=',$request->loan_code);
 			}
+
 			if (!empty($request->ward_code)) {
 					$loans=$loans->where('ward_code','=',$request->ward_code);
 			}
@@ -389,7 +395,6 @@ class LoanController extends Controller
 			$loan->loan_code = 'request';
 			$loan->loan_request_by = Auth::user()->id;
 			$loan->ward_code = $request->cookie('ward');
-			$loan->type_code='indent';
 
 			$is_folder = False;
 			$title="Product Request";
@@ -584,7 +589,7 @@ class LoanController extends Controller
 		$date_start = DojoUtility::dateWriteFormat($request->date_start);
 		$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
-		$loans = Loan::select(DB::raw("item_code, product_name, patient_name, ward_name, loans.created_at as request_date, loan_name, type_name, loan_quantity"))
+		$loans = Loan::select(DB::raw("loan_id, item_code, product_name, patient_name, ward_name, loans.created_at as request_date, loan_name, type_name, loan_quantity"))
 					->leftJoin('wards as b', 'b.ward_code', '=', 'loans.ward_code')
 					->leftJoin('products as c', 'c.product_code', '=', 'loans.item_code')
 					->leftJoin('patients as d', 'd.patient_mrn', '=', 'loans.item_code')
@@ -631,6 +636,71 @@ class LoanController extends Controller
 							->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
 
 		return view('loans.enquiry', [
+				'loans'=>$loans,
+				'search'=>$request->search,
+				'date_start'=>$date_start,
+				'date_end'=>$date_end,
+				'types' => LoanType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+				'type_code'=> $request->type_code,
+				'loan_status'=> $loan_status,
+				'loan_code'=> $request->loan_code,
+				'ward_code'=> $request->ward_code,
+				'wards' => Ward::where('ward_code','<>','mortuary')->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+		]);
+	}
+
+	public function workload(Request $request)
+	{
+		$date_start = DojoUtility::dateWriteFormat($request->date_start);
+		$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+		$loans = Loan::select(DB::raw("count(*) as loan_count, loan_name"))
+					->leftJoin('wards as b', 'b.ward_code', '=', 'loans.ward_code')
+					->leftJoin('products as c', 'c.product_code', '=', 'loans.item_code')
+					->leftJoin('patients as d', 'd.patient_mrn', '=', 'loans.item_code')
+					->leftJoin('ref_loan_statuses as e', 'e.loan_code', '=', 'loans.loan_code')
+					->leftJoin('loan_types as f', 'f.type_code', '=', 'loans.type_code')
+					->groupBy('loan_name');
+
+		if (!empty($request->type_code)) {
+				$loans = $loans->where('loans.type_code', '=' ,$request->type_code);
+		}
+
+		if (!empty($request->ward_code)) {
+				$loans = $loans->where('loans.ward_code', '=' ,$request->ward_code);
+		}
+
+		if (!empty($request->search)) {
+				$loans = $loans->where('item_code', 'like' ,'%'.$request->search.'%');
+		}
+
+		if (!empty($request->loan_code)) {
+				$loans = $loans->where('loans.loan_code', '=' ,$request->loan_code);
+		}
+
+		if (!empty($date_start) && empty($request->date_end)) {
+				$loans = $loans->where('loans.created_at', '>=', $date_start.' 00:00');
+		}
+
+		if (empty($date_start) && !empty($request->date_end)) {
+				$loans = $loans->where('loans.created_at', '<=', $date_end.' 23:59');
+		}
+
+		if (!empty($date_start) && !empty($date_end)) {
+				$loans = $loans->whereBetween('loans.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+		} 
+
+		if ($request->export_report) {
+				DojoUtility::export_report($loans->get());
+		}
+
+		$loans = $loans->paginate($this->paginateValue);
+
+		$types = array(''=>'','loan'=>'Product Loan','indent'=>'Stock Indent', 'folder'=>'Folder');
+		$loan_status = LoanStatus::all()
+							->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('','');
+
+		return view('loans.workload', [
 				'loans'=>$loans,
 				'search'=>$request->search,
 				'date_start'=>$date_start,

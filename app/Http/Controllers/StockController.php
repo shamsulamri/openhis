@@ -32,9 +32,9 @@ class StockController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
-			$store_code = Auth::user()->defaultStore();
+			$store_code = Auth::user()->defaultStore($request);
 			$stocks = Stock::select('move_name', 'stock_datetime', 'e.store_name as store_from', 'f.store_name as store_to', 
 						'product_name', 'products.product_code','stock_quantity', 'stock_value', 'stocks.move_code'
 						)

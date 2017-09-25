@@ -11,7 +11,7 @@ use App\StockInputBatch;
 
 class StockHelper 
 {
-	public function getStockCountByStore($product_code, $store_code) 
+	public function getStockCountByStore($product_code, $store_code=null) 
 	{
 			$value = StockStore::where('product_code',$product_code);
 				

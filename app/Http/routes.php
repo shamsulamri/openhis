@@ -491,6 +491,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/loans/delete/{id}', 'LoanController@delete');
 				Route::get('/loan/enquiry', 'LoanController@enquiry');
 				Route::post('/loan/enquiry', 'LoanController@enquiry');
+				Route::get('/loan/workload', 'LoanController@workload');
+				Route::post('/loan/workload', 'LoanController@workload');
 
 		});
 
@@ -848,6 +850,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/store/search', 'StoreController@search');
 				Route::get('/store/search', 'StoreController@search');
 				Route::get('/stores/delete/{id}', 'StoreController@delete');
+				Route::get('/store/generate', 'StoreController@generate');
 
 				Route::get('/purchase_orders/{id}/json', 'PurchaseOrderController@json');
 				Route::resource('purchase_orders', 'PurchaseOrderController');

@@ -10,6 +10,7 @@ use App\Store;
 use Log;
 use DB;
 use Session;
+use App\Ward;
 
 
 class StoreController extends Controller
@@ -127,5 +128,21 @@ class StoreController extends Controller
 			return view('stores.index', [
 					'stores'=>$stores
 			]);
+	}
+
+	public function generate()
+	{
+			$wards = Ward::all();
+
+			foreach($wards as $ward) {
+				$store = new Store();
+				$store->store_code = $ward->ward_code;
+				$store->store_name = $ward->ward_name." STORE";
+				$store->save();
+
+				$ward->store_code = $store->store_code;
+				$ward->save();
+			}
+			return "Ok";
 	}
 }

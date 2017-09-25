@@ -45,6 +45,7 @@ class Loan extends Model
 			
         	if ($method=='') {
         	    $rules['loan_code'] = 'required';
+        	    $rules['type_code'] = 'required';
         	}
 			
 			$messages = [

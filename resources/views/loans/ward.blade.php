@@ -19,17 +19,27 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Item</th>
-    <th>Quantity</th>
+    <th>Id</th>
     <th>Type</th>
+    <th>Item</th>
+    <th>Code</th>
+    <th>Quantity</th>
+    <th>Request Date</th> 
     <th>Status</th> 
-    <th>Date</th> 
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($loans as $loan)
 	<tr>
+			<td>
+					{{ $loan->loan_id }}
+			</td>
+			<td>
+					@if ($loan->type)
+					{{$loan->type->type_name}}
+					@endif
+			</td>
 			<td>
 
 					<a href='{{ URL::to('loans/request/'. $loan->loan_id . '/edit') }}'>
@@ -38,9 +48,12 @@
 						{{ $loan->getItemName() }}
 					@else
 					<span class='fa fa-glass' aria-hidden='true'></span>
-						{{ $loan->product_name }}
+						{{ $loan->product->product_name }}
 					@endif
 					</a>
+			</td>
+			<td>
+					{{ $loan->product->product_code }}
 			</td>
 			<td>
 					@if ($loan->type_code=='folder')
@@ -50,38 +63,12 @@
 					@endif
 			</td>
 			<td>
-					@if ($loan->type)
-					{{$loan->type->type_name}}
-					@endif
+					{{ DojoUtility::dateReadFormat($loan->created_at) }}
 			</td>
 			<td>
 					{{$loan->status->loan_name}}
 					@if ($loan->exchange_id>0)
 						(Exchange)
-					@endif
-			</td>
-			<td>
-					@if ($loan->loan_code=='exchanged') 
-						{{ (DojoUtility::dateLongFormat($loan->getLoanClosureDateTime() )) }}
-					@endif
-					@if ($loan->loan_code=='exchange') 
-						{{ (DojoUtility::dateLongFormat($loan->created_at )) }}
-					@endif
-					@if ($loan->loan_code=='return')
-							@if (!empty($loan->loan_closure_datetime))
-								{{ (DojoUtility::dateLongFormat($loan->getLoanClosureDateTime() )) }}
-							@endif
-					@endif
-					@if ($loan->loan_code=='request')
-						{{ (DojoUtility::dateLongFormat($loan->created_at )) }}
-					@endif
-					@if ($loan->loan_code=='on_loan')
-							@if (!empty($loan->loan_date_start))
-								{{ DojoUtility::dateLongFormat($loan->loan_date_start)  }}
-							@endif
-							@if (!empty($loan->loan_date_end))
-							-  {{ DojoUtility::dateLongFormat($loan->loan_date_end)  }}
-							@endif
 					@endif
 			</td>
 			<td align='right'>

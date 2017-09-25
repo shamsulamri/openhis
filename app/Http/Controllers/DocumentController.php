@@ -138,7 +138,6 @@ class DocumentController extends Controller
 			Log::info($file);
 			if ($file) {
 					$filename = $document->patient->patient_mrn.'/'.$document->document_uuid;
-					Log::info($filename);
 					Storage::disk('local')->put($filename, File::get($file));
 			}
 	}

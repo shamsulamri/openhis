@@ -49,21 +49,26 @@ $on_hand = $stock_helper->getStockCountByStore($line->product_code, $stock_input
 			<div class='@if ($on_hand==0) has-error @endif'>
 			{{ Form::label('on_hand_'.$line->line_id, $on_hand?:' 0 ', ['id'=>'on_hand_'.$line->line_id,'class'=>'form-control']) }}
 			</div>
+			{{ Form::hidden('on_hand_value_'.$line->line_id, $on_hand) }}
 		</td>	
 		<td>
+    		<div class='@if ($errors->has('quantity_'.$line->line_id)) has-error @endif'>
 		@if ($stock_input->input_close==0)
 			{{ Form::text('quantity_'.$line->line_id, $line->line_quantity, ['id'=>'quantity_'.$line->line_id,'class'=>'form-control', 'onchange'=>'updateValue('.$line->line_id.')']) }}
 		@else
             {{ Form::label('quantity', $line->line_quantity?:' 0 ', ['class'=>'form-control']) }}
 		@endif
+			</div>
 		</td>	
 		<td>
+    		<div class='@if ($errors->has('value_'.$line->line_id)) has-error @endif'>
 			{{ Form::hidden('average_'.$line->line_id, $line->product_average_cost, ['id'=>'average_'.$line->line_id]) }}
 		@if ($stock_input->input_close==0)
 			{{ Form::text('value_'.$line->line_id, $line->line_value, ['class'=>'form-control','id'=>'value_'.$line->line_id]) }}
 		@else
             {{ Form::label('value', $line->line_value?:' 0 ', ['class'=>'form-control']) }}
 		@endif
+			<div>
 		</td>	
 		<td align='center'>
 			<div class='@if ($class=='danger') has-error @endif'>

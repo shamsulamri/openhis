@@ -4,7 +4,7 @@
 @include('products.id')
 <h1>Stock Movements</h1>
 @cannot('module-inventory')
-<h2>{{ $store->store_name }}</h2>
+<h3>{{ $store->store_name }}</h3>
 @endcannot
 <br>
 <div class='row'>

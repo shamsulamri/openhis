@@ -123,7 +123,7 @@
 
 @if ($loan->type_code == 'indent')
     <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
-        <label for='loan_code' class='col-sm-3 control-label'>xxxxStatus<span style='color:red;'> *</span></label>
+        <label for='loan_code' class='col-sm-3 control-label'>Status<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::select('change_status', $loan_status,$loan->loan_code, ['id'=>'loan_code','class'=>'form-control','onchange'=>'statusChanged()']) }}
             @if ($errors->has('loan_code')) <p class="help-block">{{ $errors->first('loan_code') }}</p> @endif
@@ -132,6 +132,7 @@
 @endif
 
 @if ($loan->type_code != 'indent')
+	<!--
 	@if ($loan->loan_code=='exchange' or $loan->loan_code=='exchanged')
     <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
         <label for='loan_code' class='col-sm-3 control-label'>qqqqqStatus<span style='color:red;'> *</span></label>
@@ -141,40 +142,40 @@
         </div>
     </div>
 	@endif
+	-->
 	
-	@if ($loan->loan_code!='on_loan')
-    <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
-        <label for='loan_code' class='col-sm-3 control-label'>Status</label>
-        <div class='col-sm-9'>
-            {{ Form::select('change_status', $loan_status,$loan->loan_code, ['id'=>'loan_code','class'=>'form-control','onchange'=>'statusChanged()']) }}
-            @if ($errors->has('loan_code')) <p class="help-block">{{ $errors->first('loan_code') }}</p> @endif
-        </div>
-    </div>
+	@if (empty($loan->loan_date_start))
+			@if ($loan->loan_code!='on_loan')
+			<div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
+				<label for='loan_code' class='col-sm-3 control-label'>Status</label>
+				<div class='col-sm-9'>
+					{{ Form::select('change_status', $loan_status,$loan->loan_code, ['id'=>'loan_code','class'=>'form-control','onchange'=>'statusChanged()']) }}
+					@if ($errors->has('loan_code')) <p class="help-block">{{ $errors->first('loan_code') }}</p> @endif
+				</div>
+			</div>
+			@endif
+
+			@if ($loan->loan_code=='accept')
+			<div class='form-group  @if ($errors->has('loan_date_start')) has-error @endif'>
+				{{ Form::label('loan_date_start', 'Date Start',['class'=>'col-sm-3 control-label']) }}
+				<div class='col-sm-9'>
+					{{ Form::text('loan_date_start', null, ['class'=>'form-control','placeholder'=>'',]) }}
+					@if ($errors->has('loan_date_start')) <p class="help-block">{{ $errors->first('loan_date_start') }}</p> @endif
+				</div>
+			</div>
+
+			<div class='form-group  @if ($errors->has('loan_date_end')) has-error @endif'>
+				{{ Form::label('loan_date_end', 'Date End',['class'=>'col-sm-3 control-label']) }}
+				<div class='col-sm-9'>
+					{{ Form::text('loan_date_end', null, ['class'=>'form-control','placeholder'=>'',]) }}
+					@if ($errors->has('loan_date_end')) <p class="help-block">{{ $errors->first('loan_date_end') }}</p> @endif
+				</div>
+			</div>
+			@endif
 	@endif
 
-	@if ($loan->loan_code=='accept')
-    <div class='form-group  @if ($errors->has('loan_date_start')) has-error @endif'>
-        {{ Form::label('loan_date_start', 'Date Start',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('loan_date_start', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('loan_date_start')) <p class="help-block">{{ $errors->first('loan_date_start') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('loan_date_end')) has-error @endif'>
-        {{ Form::label('loan_date_end', 'Date End',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('loan_date_end', null, ['class'=>'form-control','placeholder'=>'',]) }}
-			<!--
-			<a href='javascript:set_date_end()' class='btn btn-default btn-xs'>Today</a>
-			<a href='javascript:clear_date_end()' class='btn btn-default btn-xs'>Clear</a>
-			-->
-            @if ($errors->has('loan_date_end')) <p class="help-block">{{ $errors->first('loan_date_end') }}</p> @endif
-        </div>
-    </div>
-	@endif
-
-	@if ($loan->loan_code=='on_loan')
+	<!-- On Loan -->
+	@if (!empty($loan->loan_date_start))
     <div class='form-group  @if ($errors->has('loan_date_start')) has-error @endif'>
         {{ Form::label('loan_date_start', 'Status',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -201,16 +202,16 @@
     </div>
 	@endif
 
-	@if ($loan->loan_code=='on_loan' || $loan->loan_code=='exchange')
+	@if (!empty($loan->loan_date_start) && empty($loan->loan_closure_datetime))
 	<div class='page-header'>
-		<h4>{{ $information }}</h4>
+		<h4>Resolution</h4>
 	</div>
 
-	@if ($loan->loan_code=='on_loan')
+	@if (!empty($loan->loan_date_start))
     <div class='form-group  @if ($errors->has('loan_code')) has-error @endif'>
         <label for='loan_code' class='col-sm-3 control-label'>Status<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
-            {{ Form::select('change_status', $loan_status,null, ['id'=>'loan_code','class'=>'form-control','onchange'=>'statusChanged()']) }}
+            {{ Form::select('change_status', $loan_status,$loan->loan_code, ['id'=>'loan_code','class'=>'form-control','onchange'=>'statusChanged()']) }}
             @if ($errors->has('loan_code')) <p class="help-block">{{ $errors->first('loan_code') }}</p> @endif
         </div>
     </div>
@@ -223,18 +224,6 @@
             @if ($errors->has('loan_closure_description')) <p class="help-block">{{ $errors->first('loan_closure_description') }}</p> @endif
         </div>
     </div>
-
-	<!--
-    <div class='form-group  @if ($errors->has('loan_closure_datetime')) has-error @endif'>
-        {{ Form::label('loan_closure_datetime', 'Date',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('loan_closure_datetime', null, ['class'=>'form-control','placeholder'=>'',]) }}
-			<a href='javascript:set_closure_date()' class='btn btn-default btn-xs'>Today</a>
-			<a href='javascript:clear_return_date()' class='btn btn-default btn-xs'>Clear</a>
-            @if ($errors->has('loan_closure_datetime')) <p class="help-block">{{ $errors->first('loan_closure_datetime') }}</p> @endif
-        </div>
-    </div>
-	-->
 
 	<div class="row">
 			<div class="col-xs-6">
@@ -254,7 +243,7 @@
 						{{ Form::label('Time', 'Time',['class'=>'col-md-6 control-label']) }}
 						<div class='col-md-6'>
 								<div class="input-group clockpicker" data-autoclose="true">
-										{{ Form::text('closure_time', null, ['id'=>'closure_time','class'=>'form-control','data-mask'=>'99:99']) }}
+										{{ Form::text('closure_time', DojoUtility::timeReadFormat($loan->loan_closure_datetime), ['id'=>'closure_time','class'=>'form-control','data-mask'=>'99:99']) }}
 										<span class="input-group-addon">
 											<span class="fa fa-clock-o"></span>
 										</span>

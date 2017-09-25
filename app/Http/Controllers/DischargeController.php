@@ -22,6 +22,7 @@ use App\DischargeType;
 use App\EncounterType;
 use App\DischargeHelper;
 use App\Encounter;
+use App\PatientFlag;
 
 class DischargeController extends Controller
 {
@@ -313,6 +314,10 @@ class DischargeController extends Controller
 					$discharges = $discharges->where('b.encounter_code','=', $request->encounter_code);
 			}
 
+			if (!empty($request->flag_code)) {
+					$discharges = $discharges->where('c.flag_code','=', $request->flag_code);
+			}
+
 			if (!empty($date_start) && empty($request->date_end)) {
 				$discharges = $discharges->where('discharges.created_at', '>=', $date_start.' 00:00');
 			}
@@ -339,6 +344,8 @@ class DischargeController extends Controller
 					'type_code'=>$request->type_code,
 					'encounter_code'=>$request->encounter_code,
 					'dojo' => new DojoUtility(),
+					'flag' => PatientFlag::all()->sortBy('flag_name')->lists('flag_name', 'flag_code')->prepend('',''),
+					'flag_code'=>$request->flag_code,
 					]);
 	}
 }

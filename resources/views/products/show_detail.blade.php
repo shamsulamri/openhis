@@ -79,7 +79,9 @@
 					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
 						{{ Form::label('unit_code', 'UOM',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
+							@if ($product->unitMeasure)
             				{{ Form::label('', $product->unitMeasure->unit_name, ['class'=>'form-control']) }}
+							@endif
 							@if ($errors->has('unit_code')) <p class="help-block">{{ $errors->first('unit_code') }}</p> @endif
 						</div>
 					</div>

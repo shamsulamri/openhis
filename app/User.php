@@ -110,7 +110,7 @@ class User extends Authenticatable
 			return $codes;
 	}
 
-	public function defaultStore() 
+	public function defaultStore($request) 
 	{
 			$default_store=null;
 			if ($this->authorization->store_code) {

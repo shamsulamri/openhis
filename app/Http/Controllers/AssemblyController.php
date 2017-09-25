@@ -159,14 +159,14 @@ class AssemblyController extends Controller
 				
 	}
 
-	public function explode($id)
+	public function explode(Request $request, $id)
 	{
 			$product = Product::find($id);
 
 			return view('assemblies.explode', [
 					'product'=>$product,
 					'store'=>Auth::user()->storeList()->prepend('',''),
-					'store_code'=>Auth::user()->defaultStore(),
+					'store_code'=>Auth::user()->defaultStore($request),
 					'stock_helper'=>new StockHelper(),
 			]);
 	}

@@ -28,6 +28,7 @@ class StockInputLine extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'line_quantity'=>'required',
+				'line_value'=>'required',
 			];
 			
 			//'amount_current'=>'required',

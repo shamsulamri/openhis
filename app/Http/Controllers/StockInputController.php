@@ -222,7 +222,28 @@ class StockInputController extends Controller
 
 	public function save(Request $request, $id)
 	{
+
+		$input = StockInput::find($id);
 		$lines = StockInputLine::where('input_id', $id)->get();
+
+		$valid=null;
+		foreach ($lines as $line) {
+				if (empty($request['value_'.$line->line_id])) {
+						$valid['value_'.$line->line_id]='This field is required.';
+				}
+				if ($input->move_code=='transfer') {
+						if ($request['quantity_'.$line->line_id]>$request['on_hand_value_'.$line->line_id]) {
+								$valid['quantity_'.$line->line_id]='This field is required.';
+						}
+				}
+		}
+
+		if (!empty($valid)) {
+				return redirect('/stock_inputs/input/'.$id)
+							->withErrors($valid)
+							->withInput();
+		}
+
 		foreach ($lines as $line) {
 				$line->line_quantity = $request['quantity_'.$line->line_id];
 				$line->line_value = $request['value_'.$line->line_id];
