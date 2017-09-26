@@ -141,6 +141,12 @@
 	-->
 </div>
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
+	@if ($bed_booking)
+	{{ Form::hidden('book_id', $bed_booking->book_id) }}
+	@endif
+	@if ($appointment)
+	{{ Form::hidden('appointment_id', $appointment->appointment_id) }}
+	@endif
 
 <script>
 	document.getElementById('admission_code').disabled = true;
@@ -409,5 +415,9 @@
 	document.getElementById('bed_code').value = '{{ $bed_booking->bed_code }}';
 	document.getElementById('admission_code').value = 'scheduled';
 	document.getElementById('user_id').value = '{{ $bed_booking->user_id }}';
+	@endif
+
+	@if (!empty($appointment))
+			document.getElementById('location_code').value = '{{ $encounter->location_code }}';
 	@endif
 </script>

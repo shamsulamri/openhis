@@ -22,6 +22,7 @@ use App\User;
 use Auth;
 use App\Ward;
 use App\WardHelper;
+use App\BedHelper;
 use App\EncounterHelper;
 use App\DojoUtility;
 use App\Form;
@@ -120,6 +121,7 @@ class AdmissionController extends Controller
 					'dojo' => new DojoUtility(),
 					'admission_code'=>null,
 					'wardHelper'=> $wardHelper,
+					'bedHelper'=> new BedHelper(),
 			]);
 	}
 

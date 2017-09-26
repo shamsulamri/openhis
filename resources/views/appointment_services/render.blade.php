@@ -119,22 +119,42 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 					<td align='middle' width='80' height='33'>
 					@if (!$cease)
 							@foreach ($block_dates as $block_date)
+								@if (empty($block_date->service_id))
 									@if ( date('d M Y',strtotime($block_date->getBlockDate())) == $day->format('d M Y') && $block_date->block_recur==0)
 											<?php $block_day = True; ?>
-											{{ $block_date->block_name }}
+											<span class="label label-default">{{ $block_date->block_name }}</span>
 									@endif
 									@if ( date('d M',strtotime($block_date->getBlockDate())) == $day->format('d M') && $block_date->block_recur==1)
 											<?php $block_day = True; ?>
-											{{ $block_date->block_name }}
+											<span class="label label-default">{{ $block_date->block_name }}</span>
 									@endif
 									@if ( date('d',strtotime($block_date->getBlockDate())) == $day->format('d') && $block_date->block_recur==2)
 											<?php $block_day = True; ?>
-											{{ $block_date->block_name }}
+											<span class="label label-default">{{ $block_date->block_name }}</span>
 									@endif
 									@if ( date('D',strtotime($block_date->getBlockDate())) == $day->format('D') && $block_date->block_recur==3)
 											<?php $block_day = True; ?>
-											{{ $block_date->block_name }}
+											<span class="label label-default">{{ $block_date->block_name }}</span>
 									@endif
+								@endif
+								@if ($service->service_id == $block_date->service_id)
+									@if ( date('d M Y',strtotime($block_date->getBlockDate())) == $day->format('d M Y') && $block_date->block_recur==0)
+											<?php $block_day = True; ?>
+											<span class="label label-default">{{ $block_date->block_name }}</span>
+									@endif
+									@if ( date('d M',strtotime($block_date->getBlockDate())) == $day->format('d M') && $block_date->block_recur==1)
+											<?php $block_day = True; ?>
+											<span class="label label-default">{{ $block_date->block_name }}</span>
+									@endif
+									@if ( date('d',strtotime($block_date->getBlockDate())) == $day->format('d') && $block_date->block_recur==2)
+											<?php $block_day = True; ?>
+											<span class="label label-default">{{ $block_date->block_name }}</span>
+									@endif
+									@if ( date('D',strtotime($block_date->getBlockDate())) == $day->format('D') && $block_date->block_recur==3)
+											<?php $block_day = True; ?>
+											<span class="label label-default">{{ $block_date->block_name }}</span>
+									@endif
+								@endif
 							@endforeach
 							@if ($day>=$today && $showDay==true && !$block_day)
 								@if ($index===FALSE)

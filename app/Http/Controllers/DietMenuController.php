@@ -16,6 +16,8 @@ use App\DietHelper;
 use App\WardHelper;
 use App\Ward;
 use App\Admission;
+use App\DietCensus;
+use App\DojoUtility;
 use Log;
 
 class DietMenuController extends Controller
@@ -310,6 +312,7 @@ class DietMenuController extends Controller
 	public function order(Request $request)
 	{
 
+			$this->census();
 			$diet_code = "normal";
 			
 			if (!empty($request->diet_code)) {
@@ -369,4 +372,32 @@ class DietMenuController extends Controller
 			return redirect('/diet_menus/menu/'.$menu->class_code.'/'.$menu->period_code.'/'.$menu->week_index.'/'.$menu->day_index.'/'.$menu->diet_code);
 	}
 	
+	public function census()
+	{
+			$sql = "
+				select DATE_FORMAT(now(), '%d/%m/%Y') as census_date, count(*) as census_count, diet_code
+				from admissions
+				group by diet_code
+			";
+
+			$results = DB::select($sql);
+
+	
+			$today = DojoUtility::today();
+			DietCensus::where('census_date', DojoUtility::dateWriteFormat($today))->delete();
+
+			if (!empty($results)) {
+				foreach($results as $result) {
+					$census = new DietCensus();
+					$census->census_date = $result->census_date;
+					$census->census_count = $result->census_count;
+					$census->diet_code = $result->diet_code;
+					$census->save();
+				}
+				return $results;
+			} else {
+				return 0;
+			}
+
+	}
 }

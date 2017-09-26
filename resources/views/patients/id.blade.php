@@ -77,6 +77,11 @@
 <br>
 &nbsp;&nbsp;Label&nbsp;&nbsp;
 </a>
+<a class='btn btn-default'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_label&id={{ $patient->patient_id }}'>
+<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+<br>
+&nbsp;&nbsp;Wrist&nbsp;&nbsp;
+</a>
 @endif
 
 @can('module-discharge')

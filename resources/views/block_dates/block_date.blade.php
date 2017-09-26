@@ -7,6 +7,13 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('service_id')) has-error @endif'>
+        {{ Form::label('service_id', 'Service',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+			{{ Form::select('service_id', $services, null, ['class'=>'form-control','maxlength'=>'10']) }}
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('block_date')) has-error @endif'>
         <label for='block_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
         <div class='col-sm-3'>
@@ -27,6 +34,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('block_recur_annually')) has-error @endif'>
+        {{ Form::label('', '',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9 col-md-offset-3'>
 			{{ Form::radio('block_recur',1, $block_date->block_recur==1) }}
 			<label>Annually</label>
@@ -34,6 +42,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('block_recur_monthly')) has-error @endif'>
+        {{ Form::label('', '',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9 col-md-offset-3'>
 			{{ Form::radio('block_recur',2, $block_date->block_recur==2) }}
 			<label>Monthly</label>
@@ -41,6 +50,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('block_recur_weekly')) has-error @endif'>
+        {{ Form::label('', '',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9 col-md-offset-3'>
 			{{ Form::radio('block_recur',3, $block_date->block_recur==3) }}
 			<label>Weekly</label>

@@ -180,6 +180,9 @@ $header_count=0;
 				@else
 					@if ($admission_task->order_completed==0)
 						@if (empty($admission_task->cancel_id))
+<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=order_label&id={{ $admission_task->order_id }}'>
+Print Label
+</a>
 							<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
 							Cancel
 							</a>

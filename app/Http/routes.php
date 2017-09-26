@@ -47,6 +47,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('diet_censuses', 'DietCensusController');
+		Route::get('/diet_censuses/id/{id}', 'DietCensusController@searchById');
+		Route::post('/diet_census/search', 'DietCensusController@search');
+		Route::get('/diet_census/search', 'DietCensusController@search');
+		Route::get('/diet_censuses/delete/{id}', 'DietCensusController@delete');
+		Route::post('/diet_census/enquiry', 'DietCensusController@enquiry');
+		Route::get('/diet_census/enquiry', 'DietCensusController@enquiry');
+		
 
 
 		Route::resource('payment_credits', 'PaymentCreditController');
@@ -430,6 +438,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 				Route::get('/diet_orders', 'DietMenuController@order');
 				Route::post('/diet_orders', 'DietMenuController@order');
+				Route::get('/diet_order/census', 'DietMenuController@census');
 
 				Route::get('/diet_distribution', 'DietMenuController@distribution');
 				Route::post('/diet_distribution', 'DietMenuController@distribution');

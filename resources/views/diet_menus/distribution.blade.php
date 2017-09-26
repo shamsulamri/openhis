@@ -11,16 +11,41 @@ th,td {
 </style>
 <h1>Diet Distribution</h1>
 <br>
-<form class='form-inline' action='/diet_distribution' method='post' name='myform'>
-	<label>Diet&nbsp;</label>
-	{{ Form::select('diet_code', $diets, $diet_code, ['class'=>'form-control','onchange'=>'reload()']) }}
-	<label>Class&nbsp;</label>
-	{{ Form::select('class_code', $diet_classes, $class_code, ['class'=>'form-control','onchange'=>'reload()']) }}
-	<label>Period&nbsp;</label>
-	{{ Form::select('period_code', $diet_periods, $period_code, ['class'=>'form-control','onchange'=>'reload()']) }}
+<form class='form-horizontal' action='/diet_distribution' method='post' name='myform'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Diet</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('diet_code', $diets, $diet_code, ['class'=>'form-control','onchange'=>'reload()']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Class</label>
+						<div class='col-sm-9'>
+							{{ Form::select('class_code', $diet_classes, $class_code, ['class'=>'form-control','onchange'=>'reload()']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Period</label>
+						<div class='col-sm-9'>
+							{{ Form::select('period_code', $diet_periods, $period_code, ['class'=>'form-control','onchange'=>'reload()']) }}
+						</div>
+					</div>
+			</div>
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">	
 </form>
 
+<a class='btn btn-primary pull-right'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=meal_label'>
+<span class='fa fa-print' aria-hidden='true'></span>
+</a>
+
+<br>
 <br>
 
 <table class='table table-bordered'>

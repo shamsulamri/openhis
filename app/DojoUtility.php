@@ -110,6 +110,17 @@ class DojoUtility
 				Log::info($log);
 		}
 
+
+		public static function thisYear()
+		{
+				return (int)date('Y', strtotime(Carbon::now())); 
+		}
+
+		public static function thisMonth()
+		{
+				return (int)date('m', strtotime(Carbon::now())); 
+		}
+
 		public static function now()
 		{
 				return date('d/m/Y H:i', strtotime(Carbon::now())); 

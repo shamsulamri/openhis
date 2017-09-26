@@ -20,6 +20,7 @@
 		<a href="{{ url('/admission/enquiry') }}">Admission Enquiry</a><br>
 		<a href="{{ url('/discharge/enquiry') }}">Discharge Enquiry</a><br>
 		<a href="{{ url('/admission/diet_enquiry') }}">Diet Enquiry</a><br>
+		<a href="{{ url('/diet_census/enquiry') }}">Diet Census Enquiry</a><br>
 		<a href="{{ url('/bed/enquiry') }}">Bed Enquiry</a><br>
 		<a href="{{ url('/bed_movement/enquiry') }}">Bed Movement History</a><br>
 		<a href="{{ url('/preadmission/enquiry') }}">Preadmission Enquiry</a><br>

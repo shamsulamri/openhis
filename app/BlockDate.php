@@ -15,6 +15,7 @@ class BlockDate extends Model
 				'block_name',
 				'block_date',
 				'block_recur',
+				'service_id',
 		];
 	
     protected $guarded = ['block_code'];

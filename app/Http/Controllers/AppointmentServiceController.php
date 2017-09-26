@@ -207,6 +207,8 @@ class AppointmentServiceController extends Controller
 					$appointment = Appointment::find($appointment_id);
 					$service_path = $service_path.'/'.$appointment_id;
 			}
+			
+			$block_dates = BlockDate::orderBy('block_date')->get();
 
 			return view('appointment_services.render', [
 					'services'=>$services,
@@ -223,7 +225,7 @@ class AppointmentServiceController extends Controller
 					'appointment_id'=>$appointment_id, 
 					'appointment'=>$appointment, 
 					'admission_id'=>$admission_id, 
-					'block_dates'=> BlockDate::all()->sortBy('block_date'),
+					'block_dates'=> $block_dates,
 					]);
 
 	}

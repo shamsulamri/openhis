@@ -462,6 +462,7 @@ class OrderController extends Controller
 			}
 
 			if (!empty($request->age)) {
+					$orders = $orders->where(DB::raw('TIMEDIFF(now(),orders.created_at)'),">",$request->age);
 					//$orders = $orders->having('age','<', $request->age);
 			}
 

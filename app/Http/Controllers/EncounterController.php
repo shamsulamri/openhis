@@ -30,6 +30,7 @@ use App\Team;
 use App\DojoUtility;
 use App\BedBooking;
 use App\WardClass;
+use App\Appointment;
 		
 class EncounterController extends Controller
 {
@@ -144,6 +145,14 @@ class EncounterController extends Controller
 				$encounter->encounter_code = 'inpatient';
 			}
 
+			$appointment = null;
+			if (!empty($request->appointment_id)) {
+				$appointment = Appointment::find($request->appointment_id);
+				$user = User::where('service_id', $appointment->service_id)->first();
+				$encounter->encounter_code = 'outpatient';
+				$encounter->location_code = $user->location_code;
+			}
+
 			return view('encounters.create', [
 					'encounter' => $encounter,
 					'patient' => $patient,
@@ -164,6 +173,7 @@ class EncounterController extends Controller
 					'preadmissions'=>$preadmissions,
 					'ward_classes'=>$ward_classes,
 					'bed_booking'=>$bed_booking,
+					'appointment'=>$appointment,
 				]);
 	}
 

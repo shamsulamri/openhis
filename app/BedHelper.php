@@ -38,6 +38,48 @@ class BedHelper
 	
 	}
 	
+	public function bedOccupancyRate($department=null, $year=null, $month=null)
+	{
+
+			$subquery = "
+						select IF(DATEDIFF(b.created_at,a.created_at)>0,DATEDIFF(b.created_at,a.created_at),1) as days
+						from encounters as a
+						left join discharges as b on (b.encounter_id = a.encounter_id)
+						left join admissions as d on (d.encounter_id = a.encounter_id)
+						left join beds as e on (e.bed_code = d.bed_code)
+						left join wards as f on (f.ward_code = e.ward_code)
+						where a.encounter_code = 'inpatient'
+						and discharge_id is not null
+			";
+
+			$subquery2 = "
+						select count(*) as beds from beds where encounter_code = 'inpatient'
+			";
+
+			if ($department) {
+					$subquery = $subquery . " and f.department_code='".$department."'";
+					$subquery2 = $subquery2 . " and department_code='".$department."'";
+			}
+			if ($year) $subquery = $subquery . " and year(b.created_at)=".$year;
+			if ($month) $subquery = $subquery . " and month(b.created_at)=".$month;
+
+
+			$sql = "
+				select (sum(days)*100)/(beds*365) as bor
+				from (". $subquery . ") as a
+				cross join (". $subquery2 .") as b
+				group by beds";
+
+			$results = DB::select($sql);
+
+			Log::info($sql);
+			if (!empty($results)) {
+				return $results[0]->bor;
+			} else {
+				return 0;
+			}
+	}
+
 	public function totalBed() 
 	{
 			$beds = Bed::count();

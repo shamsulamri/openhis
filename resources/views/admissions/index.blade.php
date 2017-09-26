@@ -21,16 +21,8 @@
 	<div class="col-md-3">
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
-				<h5><strong>Total Bed</strong></h5>	
-				<h4><strong>{{ $wardHelper->totalBed() }}</strong></h4>	
-			</div>
-		</div>
-	</div>
-	<div class="col-md-3">
-		<div class='panel panel-default'>
-			<div class='panel-body' align='middle'>
-				<h5><strong>Bed Available</strong></h5>	
-				<h4><strong>{{ $wardHelper->bedAvailable() }}</strong></h4>	
+				<h5><strong>Available / Total</strong></h5>	
+				<h4><strong>{{ $wardHelper->bedAvailable() }} / {{ $wardHelper->totalBed() }}</strong></h4>	
 			</div>
 		</div>
 	</div>
@@ -39,6 +31,14 @@
 			<div class='panel-body' align='middle'>
 				<h5><strong>Awaiting Discharge</strong></h5>	
 				<h4><strong>{{ $wardHelper->wardDischarge() }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Bed Occupancy Rate</strong></h5>	
+				<h4><strong>{{ number_format($bedHelper->bedOccupancyRate($ward->department->department_code, DojoUtility::thisYear(), DojoUtility::thisMonth()),2) }}%</strong></h4>	
 			</div>
 		</div>
 	</div>
@@ -157,8 +157,10 @@
 							<a class='btn btn-default btn-lg' href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}' title='Ward discharge'><span class='fa fa-sign-out' aria-hidden='true'></span></a>
 						@else
 								@if (!is_null($admission->arrival_id)) 
+								<!--
 								<a class='btn btn-default btn-lg' href="{{ URL::to('loans/request/'. $admission->patient_mrn.'?type=folder') }}" title='Folder request'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
 		</a>
+-->
 								<a class='btn btn-default btn-lg' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'><span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
 		</a>
 								<a class='btn btn-default btn-lg' title='Forms' href='{{ URL::to('form/results/'. $admission->encounter_id) }}'><span class='fa fa-table' aria-hidden='true'></span></a>
@@ -169,7 +171,11 @@
 										<a class='btn btn-default btn-lg' title='Consultation' href='{{ URL::to('consultations/create?encounter_id='. $admission->encounter_id) }}'><span class='fa fa-stethoscope' aria-hidden='true'></span></a>
 										@else
 										<a class='btn btn-warning btn-lg' href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'><span class='fa fa-stethoscope' aria-hidden='true'></span></a>
+
 									@endif
+<a class='btn btn-default btn-lg'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=consent_form&id={{ $admission->patient_id }}'>
+<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+</a>
 								@endif
 						@endif
 						@can('system-administrator')

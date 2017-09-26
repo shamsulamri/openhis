@@ -128,4 +128,5 @@ class DietController extends Controller
 					'diets'=>$diets
 			]);
 	}
+
 }

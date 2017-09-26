@@ -264,7 +264,7 @@ class AppointmentController extends Controller
 			}
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
-			$appointment_status = array(''=>'','cancel'=>'Cancel');
+			$appointment_status = array(''=>'','cancel'=>'Cancel','attend'=>'Attend');
 			$appointments = Appointment::select('appointment_datetime', 'patient_name', 'patient_mrn', 'patient_phone_mobile', 'patient_phone_home', 'service_name', 'appointment_cancel', 'appointment_description')
 					->leftJoin('patients as b', 'appointments.patient_id', '=', 'b.patient_id')
 					->leftJoin('appointment_services as c', 'appointments.service_id', '=', 'c.service_id')
@@ -294,8 +294,12 @@ class AppointmentController extends Controller
 				$appointments = $appointments->whereBetween('appointment_datetime', array($date_start.' 00:00', $date_end.' 23:59'));
 			} 
 
-			if (!empty($request->status_code)) {
+			if ($request->status_code=='cancel') {
 					$appointments = $appointments->onlyTrashed();
+			}
+
+			if ($request->status_code=='cancel') {
+					$appointments = $appointments->whereNotNull('appointment_id');
 			}
 
 			if ($request->export_report) {
