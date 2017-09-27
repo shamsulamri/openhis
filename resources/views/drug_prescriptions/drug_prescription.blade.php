@@ -55,6 +55,7 @@
         </div>
     </div>
 
+	<!--
     <div class='form-group  @if ($errors->has('instruction_code')) has-error @endif'>
         {{ Form::label('instruction_code', 'Instruction',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
@@ -86,6 +87,7 @@
             @if ($errors->has('indication_code')) <p class="help-block">{{ $errors->first('indication_code') }}</p> @endif
         </div>
     </div>
+	-->
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">

@@ -36,6 +36,7 @@ use App\AdmissionTherapeutic;
 use App\Race;
 use App\BedMovement;
 use App\Patient;
+use App\PatientClassification;
 
 class AdmissionController extends Controller
 {
@@ -374,6 +375,36 @@ class AdmissionController extends Controller
 					'diet_textures' => DietTexture::all()->sortBy('texture_name'),
 					'therapeutic_values'=>$therapeutic_values,
 					]);
+	}
+
+	public function classification()
+	{
+
+			$consultation=Consultation::find(Session::get('consultation_id'));
+			$encounter = $consultation->encounter;
+			$admission = $consultation->encounter->admission;
+
+			$therapeutic_values = AdmissionTherapeutic::select('b.therapeutic_code','therapeutic_name', 'therapeutic_value')
+									->leftJoin('diet_therapeutics as b', 'b.therapeutic_code','=', 'admission_therapeutics.therapeutic_code')
+									->where('admission_id',$admission->admission_id)
+									->get()
+									->keyBy('therapeutic_code');
+
+			return view('admissions.classification', [
+					'admission'=>$admission,
+					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
+					'classification'=>PatientClassification::all()->sortBy('classification_name')->lists('classification_name', 'classification_code'),
+					]);
+	}
+
+	public function updateClassification(Request $request) 
+	{
+			$admission = Admission::findOrFail($request->admission_id);
+			$admission->classification_code = $request->classification_code;
+			$admission->save();
+			Session::flash('message', 'Patient classification updated.');
+			return redirect('admission/classification');
 	}
 
 	public function removeNilByMouth($admission_id)

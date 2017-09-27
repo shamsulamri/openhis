@@ -18,6 +18,7 @@
 	<tr> 
     <th>Code</th> 
     <th>Name</th> 
+    <th>Other</th> 
     <th>Category</th> 
     <th>UOM</th> 
     <th><div align='right'>On Hand</div></th> 
@@ -49,7 +50,12 @@ $allocated=0;
 					</a>
 			</td>
 			<td>
+					{{ $product->product_name_other?:"-" }}
+			</td>
+			<td>
+					@if ($product->category)
 					{{ $product->category->category_name }}
+					@endif
 			</td>
 			<td>
 						@if ($product->product) 

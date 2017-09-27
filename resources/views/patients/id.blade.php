@@ -70,7 +70,7 @@
 <a class='btn btn-default'  href='{{ URL::to('loans/request/'. $patient->patient_mrn.'?type=folder') }}'>
 <span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
 <br>
-	&nbsp;&nbsp;Folder&nbsp;&nbsp;
+&nbsp;&nbsp;Folder&nbsp;&nbsp;
 </a>
 <a class='btn btn-default'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}'>
 <span class='glyphicon glyphicon-print' aria-hidden='true'></span>
@@ -85,6 +85,9 @@
 @endif
 
 @can('module-discharge')
+		<a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
+								<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography
+		</a>
 		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
 				<span class='fa fa-money' aria-hidden='true'></span>
 				<br>
@@ -97,6 +100,11 @@
 				Deposit 
 		</a>
 		@endif
+		<a class='btn btn-default'  href='{{ URL::to('refund/transactions/'. $patient->patient_id) }}'>
+				<span class='fa fa-money' aria-hidden='true'></span>
+				<br>
+				Refund 
+		</a>
 @endcan
 
 @can('module-medical-record')

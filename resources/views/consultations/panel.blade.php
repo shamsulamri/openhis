@@ -55,6 +55,9 @@
 			<li><a href="{{ URL::to('obstetric') }}">Obstetric History</a></li>
 			<li><a href="{{ URL::to('newborns') }}">Newborn Registration</a></li>
 			@endif
+			@if ($consultation->encounter->encounter_code=='inpatient')
+			<li><a href="{{ URL::to('admission/classification') }}">Patient Classification</a></li>
+			@endif
 		  </ul>
 		</div>
 </div>

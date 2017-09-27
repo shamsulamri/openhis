@@ -19,10 +19,7 @@ class DrugPrescription extends Model
 				'drug_duration',
 				'period_code',
 				'drug_total_unit',
-				'instruction_code',
-				'special_code',
-				'caution_code',
-				'indication_code'];
+		];
 	
     protected $guarded = ['prescription_id'];
     protected $primaryKey = 'prescription_id';

@@ -2,19 +2,16 @@
 
 @section('content')
 @include('patients.id')
-<h1>Deposit Collection</h1>
-
-<a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
-<a href='/deposits/create/{{ $encounter->encounter_id }}' class='btn btn-primary'>Create</a>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=deposit&id={{ $encounter->encounter_id }}" role="button">Print Deposit</a> 
-<br>
-<br>
+<h1>Deposit Transactions
+<a href='/deposits/create/{{ $encounter->encounter_id }}' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+</h1>
 @if ($deposits->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Method</th>
+    <th>Description</th>
     <th>Date</th> 
-    <th>Payment Method</th>
     <th>Amount</th> 
 	<th></th>
 	</tr>
@@ -23,18 +20,26 @@
 @foreach ($deposits as $deposit)
 	<tr>
 			<td>
-					{{ (DojoUtility::dateLongFormat($deposit->created_at)) }}
-			</td>
-			<td>
 					<a href='{{ URL::to('deposits/'. $deposit->deposit_id . '/edit') }}'>
 						{{$deposit->payment_name}}
 					</a>
 			</td>
 			<td>
-					{{$deposit->deposit_amount}}
+					{{$deposit->deposit_description}}
+			</td>
+			<td>
+					{{ DojoUtility::dateTimeReadFormat($deposit->created_at) }}
+			</td>
+			<td>
+					{{ number_format($deposit->deposit_amount,2) }}
 			</td>
 			<td align='right'>
+				<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=deposit_receipt&id={{ $deposit->deposit_id }}'>
+				Print Receipt
+				</a>
+			@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('deposits/delete/'. $deposit->deposit_id) }}'>Delete</a>
+			@endcan
 			</td>
 	</tr>
 @endforeach

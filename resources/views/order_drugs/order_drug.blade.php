@@ -151,6 +151,7 @@
 					<div class='form-group  @if ($errors->has('label')) has-error @endif'>
 						{{ Form::label('instruction', 'Instruction',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
+						@if ($product->drug)
 							@if ($product->drug->instruction)
 							- {{ $product->drug->instruction->instruction_english }}
 							<br>
@@ -158,6 +159,7 @@
 							@else
 							NA
 							@endif
+						@endif
 						</div>
 					</div>
         </div>
@@ -168,6 +170,7 @@
 					<div class='form-group  @if ($errors->has('label')) has-error @endif'>
 						{{ Form::label('special', 'Special Instruction',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
+						@if ($product->drug)
 							@if ($product->drug->special)
 							- {{ $product->drug->special->special_instruction_english }}
 							<br>
@@ -175,6 +178,7 @@
 							@else
 							NA
 							@endif
+						@endif
 						</div>
 					</div>
         </div>
@@ -185,6 +189,7 @@
 					<div class='form-group  @if ($errors->has('label')) has-error @endif'>
 						{{ Form::label('caution', 'Caution',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
+						@if ($product->drug)
 							@if ($product->drug->caution)
 							- {{ $product->drug->caution->caution_english }}
 							<br>
@@ -192,6 +197,7 @@
 							@else
 							NA
 							@endif
+						@endif
 						</div>
 					</div>
         </div>

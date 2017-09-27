@@ -170,6 +170,15 @@ class DrugPrescriptionController extends Controller
 					->where('prescription_id','=',$id)
 					->paginate($this->paginateValue);
 
+			$drug_prescriptions = DB::table('drug_prescriptions as a')
+					->select('prescription_id', 'product_name', 'drug_code','drug_dosage', 'route_name','frequency_name', 'dosage_name')
+					->leftjoin('products as b','b.product_code','=',  'a.drug_code')
+					->leftjoin('drug_routes as c','c.route_code','=',  'a.route_code')
+					->leftjoin('drug_frequencies as d','d.frequency_code','=',  'a.frequency_code')
+					->leftjoin('drug_dosages as e', 'e.dosage_code','=', 'a.dosage_code')
+					->where('prescription_id', '=', $id)
+					->paginate($this->paginateValue);
+
 			return view('drug_prescriptions.index', [
 					'drug_prescriptions'=>$drug_prescriptions
 			]);

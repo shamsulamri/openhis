@@ -1,4 +1,4 @@
-
+@if (count($encounter)>0)
 	@if ($billHelper->paymentOutstanding($patient->patient_id, $encounter_id)>0)
     <div class='form-group  @if ($errors->has('payment_outstanding')) has-error @endif'>
         <label class='col-sm-2 control-label'><br>Balance</label>
@@ -254,4 +254,8 @@
 	}
 
 	paymentChanged();
+@else
+	<br>			
+	<h3>Patient does not have any encounters.</h3>
+@endif
 </script>

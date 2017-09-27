@@ -47,6 +47,24 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('patient_classifications', 'PatientClassificationController');
+		Route::get('/patient_classifications/id/{id}', 'PatientClassificationController@searchById');
+		Route::post('/patient_classification/search', 'PatientClassificationController@search');
+		Route::get('/patient_classification/search', 'PatientClassificationController@search');
+		Route::get('/patient_classifications/delete/{id}', 'PatientClassificationController@delete');
+		Route::get('/admission/classification', 'AdmissionController@classification');
+		Route::post('/admission/classification', 'AdmissionController@updateClassification');
+		
+
+
+		Route::resource('refunds', 'RefundController',['except'=>['create']]);
+		Route::get('/refunds/create/{patient_id}', 'RefundController@create');
+		Route::get('/refunds/id/{id}', 'RefundController@searchById');
+		Route::post('/refund/search', 'RefundController@search');
+		Route::get('/refund/search', 'RefundController@search');
+		Route::get('/refunds/delete/{id}', 'RefundController@delete');
+		Route::get('/refund/transactions/{patient_id}', 'RefundController@transactions');
+
 		Route::resource('diet_censuses', 'DietCensusController');
 		Route::get('/diet_censuses/id/{id}', 'DietCensusController@searchById');
 		Route::post('/diet_census/search', 'DietCensusController@search');
@@ -54,8 +72,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/diet_censuses/delete/{id}', 'DietCensusController@delete');
 		Route::post('/diet_census/enquiry', 'DietCensusController@enquiry');
 		Route::get('/diet_census/enquiry', 'DietCensusController@enquiry');
-		
-
 
 		Route::resource('payment_credits', 'PaymentCreditController');
 		Route::get('/payment_credits/id/{id}', 'PaymentCreditController@searchById');
@@ -74,7 +90,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/product_price_tier/search', 'ProductPriceTierController@search');
 		Route::get('/product_price_tier/search', 'ProductPriceTierController@search');
 		Route::get('/product_price_tiers/delete/{id}', 'ProductPriceTierController@delete');
-		
 
 		Route::resource('product_charges', 'ProductChargeController');
 		Route::get('/product_charges/id/{id}', 'ProductChargeController@searchById');
@@ -93,7 +108,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/bed_transaction/search', 'BedTransactionController@search');
 		Route::get('/bed_transaction/search', 'BedTransactionController@search');
 		Route::get('/bed_transactions/delete/{id}', 'BedTransactionController@delete');
-		
 
 		Route::resource('priorities', 'PriorityController');
 		Route::get('/priorities/id/{id}', 'PriorityController@searchById');

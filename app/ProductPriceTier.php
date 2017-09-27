@@ -17,7 +17,7 @@ class ProductPriceTier extends Model
 				'tier_outpatient',
 				'tier_inpatient',
 				'tier_outpatient_multiplier',
-				'tier_inpatient_mulitplier',
+				'tier_inpatient_multiplier',
 				'tier_outpatient_limit',
 				'tier_inpatient_limit'];
 	

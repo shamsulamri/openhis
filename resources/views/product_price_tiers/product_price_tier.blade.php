@@ -61,11 +61,11 @@
     </div>
 
 
-    <div class='form-group  @if ($errors->has('tier_inpatient_mulitplier')) has-error @endif'>
-        {{ Form::label('tier_inpatient_mulitplier', 'tier_inpatient_mulitplier',['class'=>'col-sm-2 control-label']) }}
+    <div class='form-group  @if ($errors->has('tier_inpatient_multiplier')) has-error @endif'>
+        {{ Form::label('tier_inpatient_multiplier', 'tier_inpatient_multiplier',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('tier_inpatient_mulitplier', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('tier_inpatient_mulitplier')) <p class="help-block">{{ $errors->first('tier_inpatient_mulitplier') }}</p> @endif
+            {{ Form::text('tier_inpatient_multiplier', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('tier_inpatient_multiplier')) <p class="help-block">{{ $errors->first('tier_inpatient_multiplier') }}</p> @endif
         </div>
     </div>
 

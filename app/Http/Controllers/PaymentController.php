@@ -67,7 +67,7 @@ class PaymentController extends Controller
 					->paginate($this->paginateValue);
 
 			if (count($payments)==0) {
-					return redirect('/payments/create/'.$id);
+					//return redirect('/payments/create/'.$id);
 			}
 
 			$patient = Patient::find($id);
@@ -119,7 +119,6 @@ class PaymentController extends Controller
 
 	public function store(Request $request) 
 	{
-
 
 			$payment_credit = new PaymentCredit();
 			$valid = $payment_credit->validate($request->all(), $request->_method);

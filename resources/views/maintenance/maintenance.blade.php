@@ -25,6 +25,7 @@
 				<a href="{{ url('/patient_types') }}">Patient Types</a><br>
 				<a href="{{ url('/encounter_types') }}">Encounter Types</a><br>
 				<a href="{{ url('/patient_flags') }}">Patient Flags</a><br>
+				<a href="{{ url('/patient_classifications') }}">Patient Classifications</a><br>
 				<!--
 				<a href="{{ url('/ward_discharges') }}">Ward Discharges</a><br>
 				<a href="{{ url('/ward_arrivals') }}">Ward Arrivals</a><br>
@@ -122,6 +123,7 @@
 			<div class="col-xs-6">
 				<a href="{{ url('/products') }}">Bills</a><br>
 				<a href="{{ url('/payments') }}">Payments</a><br>
+				<a href="{{ url('/refunds') }}">Refunds</a><br>
 				<a href="{{ url('/payment_credits') }}">Credit Payments</a><br>
 			</div>
 			<div class="col-xs-6">

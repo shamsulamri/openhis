@@ -135,6 +135,10 @@ class OrderDrugController extends Controller
 					->orderBy('frequency_name')
 					->lists('frequency_name', 'd.frequency_code')->prepend('','');
 
+			if (empty($frequencies)) {
+					$frequencies = Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('','');
+			}
+
 
 				//	'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 			$indications = DrugDisease::where('drug_code','=', $product_code)->distinct()->get();
