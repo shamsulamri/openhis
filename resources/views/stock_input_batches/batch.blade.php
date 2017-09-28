@@ -11,8 +11,9 @@
 		<table class="table table-hover">
 			<thead>
 			<tr>
-				<th width='35%'>Number</th>
-				<th width='35%'><div align='center'>Expiry Date<div></th>
+				<th width='30%'>Number</th>
+				<th width='30%'><div align='center'>Expiry Date<div></th>
+				<th width='20%'><div align='center'>On Hand<div></th>
 				<th width='20%'><div align='center'>Quantity<div></th>
 				<th></th>
 			</tr>
@@ -29,6 +30,8 @@
 					</div>
             		@if ($errors->has('batch_expiry_date')) <p class="help-block">{{ $errors->first('batch_expiry_date') }}</p> @endif
 				</td>
+				<td>
+				</td>
 				<td class='@if ($errors->has('batch_quantity')) has-error @endif'>
 						{{ Form::text('batch_quantity', null,['placeholder'=>'Quantity', 'class'=>'form-control']) }}
             			@if ($errors->has('batch_quantity')) <p class="help-block">{{ $errors->first('batch_quantity') }}</p> @endif
@@ -44,10 +47,13 @@
 	@foreach ($batches as $batch)	
 			<tr>
 				<td>
-						{{ Form::label('batch_number', $batch->batch_number, ['class'=>'form-control','placeholder'=>'',]) }}
+						{{ Form::label('batch_number', $batch->batch_number, ['class'=>'form-control']) }}
 				</td>
 				<td>
 						{{ Form::label('batch_expiry_date', DojoUtility::dateReadFormat($batch->batch_expiry_date), ['class'=>'form-control','placeholder'=>'',]) }}
+				</td>
+				<td>
+						{{ Form::label('batch_number', $stock_helper->getBatchTotal($product->product_code, $stock_input->store_code, $batch->batch_number)?:"-" , ['class'=>'form-control']) }}
 				</td>
 				<td>
 						{{ Form::text('batch_quantity_'.$batch->batch_id, $batch->batch_quantity, ['class'=>'form-control']) }}

@@ -62,7 +62,11 @@ $on_hand = $stock_helper->getStockCountByStore($line->product_code, $stock_input
 		</td>	
 		<td>
     		<div class='@if ($errors->has('value_'.$line->line_id)) has-error @endif'>
+			@if ($line->line_quantity==0)
 			{{ Form::hidden('average_'.$line->line_id, $line->product_average_cost, ['id'=>'average_'.$line->line_id]) }}
+			@else
+			{{ Form::hidden('average_'.$line->line_id, $line->line_value/$line->line_quantity, ['id'=>'average_'.$line->line_id]) }}
+			@endif
 		@if ($stock_input->input_close==0)
 			{{ Form::text('value_'.$line->line_id, $line->line_value, ['class'=>'form-control','id'=>'value_'.$line->line_id]) }}
 		@else

@@ -40,7 +40,7 @@ class StockInputController extends Controller
 
 	public function index()
 	{
-			$stock_inputs = StockInput::where('username', Auth::user()->username)
+			$stock_inputs = StockInput::where('user_id', Auth::user()->id)
 					->orderBy('input_id','desc')
 					->paginate($this->paginateValue);
 			return view('stock_inputs.index', [
@@ -84,7 +84,7 @@ class StockInputController extends Controller
 							}
 					}
 					$stock_input->input_id = $request->input_id;
-					$stock_input->username = Auth::user()->username;
+					$stock_input->user_id = Auth::user()->id;
 					$stock_input->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/stock_inputs/show/'.$stock_input->input_id);
@@ -371,7 +371,9 @@ class StockInputController extends Controller
 				/** Update stock batches **/
 				if ($stock->product->product_track_batch==1) {
 					if ($stock->move_code=='take') {
-							StockBatch::where('product_code','=', $stock->product_code)->delete();
+							StockBatch::where('product_code','=', $stock->product_code)
+									->where('store_code', '=', $stock->store_code)
+									->delete();
 					}
 					$line_batches = StockInputBatch::where('input_id', $line->input_id)->get();
 					foreach($line_batches as $batch) {
@@ -403,6 +405,19 @@ class StockInputController extends Controller
 									$new_batch->batch_number = $batch->batch_number;
 									$new_batch->batch_quantity = $batch->batch_quantity*$conversion;
 									$new_batch->expiry_date = $batch->batch_expiry_date;
+
+									switch($stock->move_code) {
+											case "dispose":
+													$new_batch->batch_quantity = -($batch->batch_quantity);
+													break;
+											case "return":
+													$new_batch->batch_quantity = -($batch->batch_quantity);
+													break;
+											case "loan_out":
+													$new_batch->batch_quantity = -($batch->batch_quantity);
+													break;
+									}
+
 									$new_batch->save();
 							}
 					}

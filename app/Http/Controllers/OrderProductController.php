@@ -159,8 +159,10 @@ class OrderProductController extends Controller
 				$order_product_single = Product::find($request->search);
 				if ($order_product_single) {
 						if ($order_product_single->product_sold==1) {
-								OrderHelper::orderItem($order_product_single, $request->cookie('ward'));
-								return redirect('/order_product/search');
+								$response = OrderHelper::orderItem($order_product_single, $request->cookie('ward'));
+								if ($response>0) {
+										return redirect('/order_product/search');
+								}
 						}
 				}
 
@@ -174,7 +176,8 @@ class OrderProductController extends Controller
 					->where('product_sold','1')
 					->where(function ($query) use ($request) {
 						$query->where('product_name','like','%'.$request->search.'%')
-							->orWhere('product_name_other','like','%'.$request->search.'%');
+							->orWhere('product_name_other','like','%'.$request->search.'%')
+							->orWhere('product_code','like','%'.$request->search.'%');
 					});
 
 				if (!empty($request->categories)) {

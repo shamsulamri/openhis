@@ -15,6 +15,7 @@ class Refund extends Model
 	protected $table = 'refunds';
 	protected $fillable = [
 				'patient_id',
+				'user_id',
 				'refund_reference',
 				'refund_type',
 				'refund_amount',

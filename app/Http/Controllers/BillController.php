@@ -16,6 +16,7 @@ use App\DojoUtility;
 use App\User;
 use App\PatientType;
 use App\Sponsor;
+use App\BillAging;
 
 class BillController extends Controller
 {
@@ -224,5 +225,45 @@ class BillController extends Controller
 					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					'sponsor_code'=>$request->sponsor_code,
 			]);
+	}
+
+	public function aging()
+	{
+			$sql = "
+				select a.encounter_id, sponsor_code, (bill_grand_total - IFNULL(total_paid,0)) as age_amount, DATEDIFF(now(),a.created_at) as age_days
+				from bills as a
+				left join (
+				select sum(payment_amount) as total_paid, encounter_id from payments
+				group by encounter_id
+				) as b on (a.encounter_id = b.encounter_id)
+				left join encounters as c on (c.encounter_id = a.encounter_id)
+			";
+
+			$results = DB::select($sql);
+
+	
+			$today = DojoUtility::today();
+			BillAging::truncate();
+
+			if (!empty($results)) {
+				foreach($results as $result) {
+					$age = new BillAging();
+					$age->encounter_id = $result->encounter_id;
+					$age->sponsor_code = $result->sponsor_code;
+					$age->age_amount = $result->age_amount?:0;
+					$age->age_days = $result->age_days;
+					if ($age->age_days<0) $age->age_days=0;
+
+					if ($age->age_days>=0 & $age->age_days<=30) $age->age_group = 1;
+					if ($age->age_days>=31 & $age->age_days<=60) $age->age_group = 2;
+					if ($age->age_days>=61 & $age->age_days<=90) $age->age_group = 3;
+					if ($age->age_days>=91 & $age->age_days<=120) $age->age_group = 4;
+					if ($age->age_days>=121) $age->age_group = 5;
+					$age->save();
+				}
+			} 
+
+			return redirect('/bill_aging/enquiry');
+
 	}
 }

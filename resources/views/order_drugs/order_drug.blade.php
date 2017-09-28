@@ -146,6 +146,7 @@
         </div>
     </div>
 
+	@if ($product->drug)
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
 					<div class='form-group  @if ($errors->has('label')) has-error @endif'>
@@ -202,6 +203,7 @@
 					</div>
         </div>
     </div>
+	@endif
 
     {{ Form::hidden('consultation_id', $consultation->consultation_id, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
     {{ Form::hidden('product_code', $product->product_code, ['class'=>'form-control input-sm','placeholder'=>'',]) }}

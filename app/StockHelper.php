@@ -21,6 +21,8 @@ class StockHelper
 
 			$value = $value->sum('stock_quantity');
 			
+			if (empty($value)) $value =0;
+
 			return floatval($value);
 	}
 
@@ -171,7 +173,7 @@ class StockHelper
 
 			$product = Product::find($product_code);
 			$product->product_on_hand = $total;
-			$product->product_average_cost = $this->updateAverageCost($product_code);
+			//$product->product_average_cost = $this->updateAverageCost($product_code);
 
 			$product->save();		
 
@@ -250,6 +252,16 @@ class StockHelper
 						->get();
 
 			return $batches;
+	}
+
+	public function getBatchTotal($product_code, $store_code, $batch_number)
+	{
+			$total = StockBatch::where('product_code','=', $product_code)
+						->where('store_code','=', $store_code)
+						->where('batch_number','=', $batch_number)
+						->sum('batch_quantity');
+
+			return $total;
 	}
 
 	public function moveStock($stock) 

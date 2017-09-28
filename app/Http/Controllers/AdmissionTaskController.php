@@ -65,11 +65,12 @@ class AdmissionTaskController extends Controller
 					->leftjoin('discharges as j', 'j.encounter_id','=','b.encounter_id')
 					->leftjoin('consultations as k', 'k.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'k.consultation_id')
+					->leftjoin('ward_discharges as o', 'o.encounter_id', '=', 'b.encounter_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('order_completed','=',0)
 					->where('a.product_code','<>','consultation_fee')
 					->whereNull('cancel_id')
-					->whereNull('discharge_id')
+					->whereNull('o.discharge_id')
 					->whereNotNull('n.post_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');

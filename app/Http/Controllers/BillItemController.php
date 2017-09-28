@@ -81,12 +81,11 @@ class BillItemController extends Controller
 	{
 			$encounter = Encounter::find($encounter_id);
 			$cost = $product->product_cost;
+			if ($cost==0) $cost=$product->product_sale_price;
 
 			$value=0;
 			$tiers = ProductPriceTier::where('charge_code','=', $product->charge_code)->get();
 
-			Log::info('-----------> '.$product->product_code);
-			Log::info('-----------> '.$tiers->count());
 			if ($tiers->count()>0) {
 					foreach ($tiers as $tier) {
 						if ($cost<=$tier->tier_max && empty($tier->tier_min)) {
@@ -126,6 +125,7 @@ class BillItemController extends Controller
 						if ($value>$tier->tier_outpatient_limit) $value = $tier->tier_outpatient_limit;
 					}
 			}
+
 			return $value;
 
 	}

@@ -16,6 +16,7 @@ class StockInput extends Model
 				'store_code_transfer',
 				'input_description',
 				'input_close',
+				'user_id',
 				'store_code'];
 	
     protected $guarded = ['input_id'];
@@ -56,5 +57,10 @@ class StockInput extends Model
 	public function purchase()
 	{
 		return $this->belongsTo('App\PurchaseOrder', 'purchase_id');
+	}
+
+	public function user()
+	{
+			return $this->belongsTo('App\User', 'user_id','id');
 	}
 }

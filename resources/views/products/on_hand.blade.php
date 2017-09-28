@@ -2,13 +2,33 @@
 
 @section('content')
 <h1>Stock On Hand Enquiry</h1>
-<form id='form' action='/products/on_hand' method='post' class='form-inline'>
-	<label>Product</label>
-	<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<label>Category</label>
-	{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Store</label>
-	{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+<form id='form' action='/products/on_hand' method='post' class='form-horizontal'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Product</div></label>
+						<div class='col-sm-9'>
+							<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Category</label>
+						<div class='col-sm-9'>
+							{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Store</label>
+						<div class='col-sm-9'>
+							{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+	</div>
 	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
 	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
 	<input type='hidden' id='export_report' name="export_report">
@@ -21,7 +41,7 @@
  <thead>
 	<tr> 
     <th>Name</th> 
-    <th width='100'><div align='right'>Store</div></th> 
+    <th>Store</th> 
     <th width='100'><div align='right'>On Hand</div></th> 
     <th width='50'><div align='right'>Allocated</div></th> 
     <th width='50'><div align='right'>Available</div></th> 
@@ -48,7 +68,7 @@ $allocated=0;
 					<br>
 					{{$product->product_code}}
 			</td>
-			<td align='right'>
+			<td>
 				{{ $product->store_name }}
 			</td>
 			<td align='right'>

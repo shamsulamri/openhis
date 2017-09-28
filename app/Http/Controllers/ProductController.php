@@ -325,20 +325,21 @@ class ProductController extends Controller
 
 	public function searchById(Request $request, $id)
 	{
-			$products = DB::table('products')
-					->where('product_code','=',$id)
+			$products = Product::where('product_code','=',$id)
 					->paginate($this->paginateValue);
 
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 			if (!$product_authorization->get()->isEmpty()) {
 					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 			}
+
+			$store_code = Auth::user()->defaultStore($request);
 			return view('products.index', [
 					'products'=>$products,
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					'store_code'=>null,
-					'stock_helper'=>new StockHelper(),
-					'default_store'=>Auth::user()->defaultStore(),
+					'store_code'=>$store_code,
+					'stockHelper'=>new StockHelper(),
+					'default_store'=>Auth::user()->defaultStore($request),
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>$request->category_code,
 			]);

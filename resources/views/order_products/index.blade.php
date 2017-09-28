@@ -51,6 +51,10 @@
 									</td>
 									<td>
 										{{ ucfirst(strtoupper($order_product->product_name)) }}
+										<br>
+										<small>
+										{{ $order_product->product_code }}
+										</small>
 										@if ($tab=='drug')
 											<!--
 											<p class='pull-right'>
@@ -75,7 +79,7 @@
 										@endif
 									</td>
 									<td width='10'>
-										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}' class='btn btn-primary btn-xs'>
+										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}' class='btn btn-primary'>
 											<span class='glyphicon glyphicon-plus'></span>
 										</a>
 									</td>

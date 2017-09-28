@@ -155,8 +155,6 @@ class StockInputBatchController extends Controller
 						$new->line_id = $line_id;
 						$new->input_id = $line->input_id;
 						$new->save();
-						Log::info($batch->expiry_date);
-						Log::info($new->batch_expiry_date);
 				}
 				$batches = StockInputBatch::where('line_id',$line_id)->get();
 			}
@@ -169,6 +167,7 @@ class StockInputBatchController extends Controller
 					'line_id'=>$line_id,
 					'line'=>$line,
 					'input_id'=>$line->input_id,
+					'stock_input'=>$stock_input,
 			]);
 	}
 

@@ -95,8 +95,8 @@
 							{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_request) }}
 						@endif
 					@else
-					{{ $order->order_quantity_request }} 
-					{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_request) }}
+					{{ $order->order_quantity_supply }} 
+					{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_supply) }}
 					@endif
 			</td>
 			<td>

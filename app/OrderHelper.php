@@ -48,6 +48,10 @@ class OrderHelper
 			if ($admission) {
 				$order->admission_id = $admission->admission_id;
 				$order->ward_code = $admission->bed->ward_code;
+				$order->store_code = $admission->bed->ward->store_code;
+			} else {
+				$location = QueueLocation::find($order->location_code);
+				if ($location) $order->store_code = $location->store_code;
 			}
 
 			$order->product_code = $product->product_code;
@@ -61,15 +65,32 @@ class OrderHelper
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 			$order->location_code = $product->location_code;
 
-			$location = QueueLocation::find($order->location_code);
-			$order->store_code = $location->store_code;
+
+			$stock_helper = new StockHelper();
+			//if ($stock_helper->getStockCountByStore($product->product_code,$order->store_code)>0) {
 
 			if ($product->product_drop_charge==1) {
-					$ward = Ward::where('ward_code', $ward_code)->first();
-					$order->store_code = $ward->store_code;
-					$order->order_completed=1;
+					if ($stock_helper->getStockCountByStore($product->product_code,$order->store_code)==0) {
+						return -1;
+					}
+						$ward = Ward::where('ward_code', $ward_code)->first();
+						$order->store_code = $ward->store_code;
+						$order->order_completed=1;
+						$order->save();
+
+						$stock = new Stock();
+						$stock->order_id = $order->order_id;
+						$stock->product_code = $order->product_code;
+						$stock->stock_quantity = -($order->order_quantity_supply);
+						$stock->store_code = $order->store_code;
+						$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
+						$stock->move_code = 'sale';
+						$stock->save();
+
+						$stock_helper->updateAllStockOnHand($order->product_code);
+			} else {
+				$order->save();
 			}
-			$order->save();
 
 			if ($product->order_form==2) {
 					$order_drug = new OrderDrug();
@@ -110,6 +131,8 @@ class OrderHelper
 					$order_investigation->save();
 			}
 			return $order->order_id;
+			//}
+			//return -1;
 	}	
 
 	public static function createDrugServings($order_drug) 

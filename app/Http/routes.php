@@ -47,6 +47,16 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('bill_agings', 'BillAgingController');
+		Route::get('/bill_agings/id/{id}', 'BillAgingController@searchById');
+		Route::post('/bill_aging/search', 'BillAgingController@search');
+		Route::get('/bill_aging/search', 'BillAgingController@search');
+		Route::get('/bill_agings/delete/{id}', 'BillAgingController@delete');
+		Route::post('/bill_aging/enquiry', 'BillAgingController@enquiry');
+		Route::get('/bill_aging/enquiry', 'BillAgingController@enquiry');
+		
+
+
 		Route::resource('patient_classifications', 'PatientClassificationController');
 		Route::get('/patient_classifications/id/{id}', 'PatientClassificationController@searchById');
 		Route::post('/patient_classification/search', 'PatientClassificationController@search');
@@ -54,8 +64,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/patient_classifications/delete/{id}', 'PatientClassificationController@delete');
 		Route::get('/admission/classification', 'AdmissionController@classification');
 		Route::post('/admission/classification', 'AdmissionController@updateClassification');
-		
-
 
 		Route::resource('refunds', 'RefundController',['except'=>['create']]);
 		Route::get('/refunds/create/{patient_id}', 'RefundController@create');
@@ -64,6 +72,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/refund/search', 'RefundController@search');
 		Route::get('/refunds/delete/{id}', 'RefundController@delete');
 		Route::get('/refund/transactions/{patient_id}', 'RefundController@transactions');
+		Route::post('/refund/enquiry', 'RefundController@enquiry');
+		Route::get('/refund/enquiry', 'RefundController@enquiry');
 
 		Route::resource('diet_censuses', 'DietCensusController');
 		Route::get('/diet_censuses/id/{id}', 'DietCensusController@searchById');
@@ -569,6 +579,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/bills/delete/{id}', 'BillController@delete');
 				Route::post('/bill/enquiry', 'BillController@enquiry');
 				Route::get('/bill/enquiry', 'BillController@enquiry');
+				Route::get('/bill/aging', 'BillController@aging');
 				
 		});
 

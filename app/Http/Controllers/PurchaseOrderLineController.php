@@ -200,8 +200,15 @@ class PurchaseOrderLineController extends Controller
 			$purchase_order_lines = PurchaseOrderLine::where('purchase_id',$id)
 										->get();
 
+			$stock_input = StockInput::where('purchase_id',$id)
+					->where('input_close',0)
+					->first();
+			if ($stock_input) {
+					return redirect('stock_inputs/show/'.$stock_input->input_id);
+			}
+
 			$stock_input = new StockInput();
-			$stock_input->username = Auth::user()->username;
+			$stock_input->user_id = Auth::user()->id;
 			$stock_input->move_code = 'receive';
 			$stock_input->store_code = 'main';
 			$stock_input->purchase_id = $id;
@@ -212,14 +219,16 @@ class PurchaseOrderLineController extends Controller
 
 			foreach($purchase_order_lines as $line) {
 				$total_receive = $stock_helper->stockReceiveSum($line->line_id);
-				Log::info('Total: '.$total_receive);
+
+				$poline = PurchaseOrderLine::find($line->line_id);
 
 				$input_line = new StockInputLine();
 				$input_line->input_id = $stock_input->input_id;
 				$input_line->po_line_id = $line->line_id;
 				$input_line->product_code = $line->product_code;
-				$input_line->line_value = $line->line_total;
+				//$input_line->line_value = $line->line_total;
 				$input_line->line_quantity = $line->line_quantity_ordered-$total_receive;
+				$input_line->line_value = $poline->line_price*$input_line->line_quantity;
 				$input_line->save();
 			}
 

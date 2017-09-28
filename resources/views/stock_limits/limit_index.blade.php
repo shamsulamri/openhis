@@ -5,10 +5,10 @@
 <h1>Stock Limits</h1>
 <br>
     <div class='form-group'>
-        <div class='col-sm-3 col-sm-offset-3'>
+        <div class='col-sm-3 col-sm-offset-4'>
 			<label>Min</label>
         </div>
-        <div class='col-sm-6'>
+        <div class='col-sm-5'>
 			<label>Max</label>
         </div>
     </div>
@@ -23,7 +23,7 @@
 	}
 	?>
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
-		<label for='store_code' class='col-sm-3 control-label'>
+		<label for='store_code' class='col-sm-4 control-label'>
 			@if ($store->store)
 			{{ $store->store->store_name }}
 			@else
@@ -39,7 +39,7 @@
     </div>
 @endforeach
     <div class='form-group'>
-        <div class="col-sm-offset-3 col-sm-9">
+        <div class="col-sm-offset-4 col-sm-8">
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

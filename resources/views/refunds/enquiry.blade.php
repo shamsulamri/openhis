@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Deposit List</h1>
-<form id='form' action='/deposit/enquiry' method='post' class='form-horizontal'>
+<h1>Refund Enquiry</h1>
+
+<form id='form' action='/refund/enquiry' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
@@ -38,13 +39,15 @@
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label  class='col-sm-3 control-label'><div align='left'>Method</div></label>
+						<label class='col-sm-3 control-label'><div align='left'>User</div></label>
 						<div class='col-sm-9'>
-							{{ Form::select('payment_code', $payment_methods,$payment_code, ['id'=>'payment_code','onchange'=>'paymentChanged()','class'=>'form-control']) }}
+							{{ Form::select('user_id', $users,$user_id, ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-4">
+					<div class='form-group'>
+					</div>
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
@@ -59,49 +62,50 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-<br>
-@if ($deposits->total()>0)
+@if ($refunds->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Patient</th> 
-    <th>Encounter Id</th>
-    <th>Deposit Date</th> 
-    <th>Payment Method</th>
-    <th><div align='right'>Deposit</div></th> 
-    <th><div align='right'>Current Charges</div></th> 
+    <th>Patient</th>
+    <th>Against</th>
+    <th>Document Id</th> 
+    <th>Date</th>
+    <th>Description</th> 
+    <th>User</th> 
+    <th>Amount</th> 
 	</tr>
   </thead>
 	<tbody>
-@foreach ($deposits as $deposit)
+@foreach ($refunds as $refund)
 	<tr>
 			<td>
-					{{$deposit->patient_name}}
+					{{$refund->patient_name}}
 					<br>
 					<small>
-					{{$deposit->patient_mrn}}
+					{{$refund->patient_mrn}}
 					</small>
 			</td>
 			<td>
-					{{$deposit->encounter_id}}
-			</td>
-			<td>
-					{{ (DojoUtility::dateTimeReadFormat($deposit->deposit_date)) }}
-			</td>
-			<td>
-					{{$deposit->payment_name}}
-			</td>
-			<td align='right'>
-					{{ number_format($deposit->total_deposit,2) }}
-			</td>
-			<td align='right'>
-					@if ($deposit->current_charges>$deposit->total_deposit)
-					<span class="label label-danger">
-					{{ number_format($deposit->current_charges, 2) }}
-					</span>
+					@if ($refund->refund_type==1)
+						Bill
 					@else
-					{{ number_format($deposit->current_charges, 2) }}
+						Deposit
 					@endif
+			</td>
+			<td>
+					{{$refund->refund_reference}}
+			</td>
+			<td>
+					{{ DojoUtility::dateTimeReadFormat($refund->created_at) }}
+			</td>
+			<td>
+					{{$refund->refund_description?:"-"}}
+			</td>
+			<td>
+					{{$refund->name}}
+			</td>
+			<td>
+					{{ number_format($refund->refund_amount,2) }}
 			</td>
 	</tr>
 @endforeach
@@ -109,13 +113,13 @@
 </tbody>
 </table>
 @if (isset($search)) 
-	{{ $deposits->appends(['search'=>$search])->render() }}
+	{{ $refunds->appends(['search'=>$search])->render() }}
 	@else
-	{{ $deposits->render() }}
+	{{ $refunds->render() }}
 @endif
 <br>
-@if ($deposits->total()>0)
-	{{ $deposits->total() }} records found.
+@if ($refunds->total()>0)
+	{{ $refunds->total() }} records found.
 @else
 	No record found.
 @endif

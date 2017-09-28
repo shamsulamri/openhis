@@ -135,7 +135,7 @@ class OrderDrugController extends Controller
 					->orderBy('frequency_name')
 					->lists('frequency_name', 'd.frequency_code')->prepend('','');
 
-			if (empty($frequencies)) {
+			if (count($frequencies)==1) {
 					$frequencies = Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('','');
 			}
 
