@@ -58,7 +58,8 @@ class LoanController extends Controller
 
 			if (!empty($request->type)) $type=$request->type;
 
-			$loans = Loan::select('*','loans.created_at as request_date')->orderBy('loan_id');
+			$loans = Loan::select('*','loans.created_at as request_date');
+
 
 			if ($type=='folder') {
 					$is_folder=True;
@@ -82,8 +83,7 @@ class LoanController extends Controller
 
 					$loans = $loans->where('loans.type_code','<>', 'folder')
 							->where('loans.loan_code','<>','return')
-							->where('loans.loan_code','<>','exchanged')
-							->orderBy('loan_id');
+							->where('loans.loan_code','<>','exchanged');
 			}
 
 			$loans = $loans->leftJoin('products as b', 'b.product_code', '=', 'loans.item_code');
@@ -92,9 +92,8 @@ class LoanController extends Controller
 					$loans = $loans->whereIn('b.category_code',$product_authorization->pluck('category_code'));
 			}
 
-			$loans = $loans->orderBy('loans.created_at', 'desc')
+			$loans = $loans->orderBy('loan_id', 'desc')
 							->paginate($this->paginateValue);
-
 
 			return view('loans.index', [
 					'loans'=>$loans,
@@ -474,6 +473,7 @@ class LoanController extends Controller
 			if ($valid->passes()) {
 					$loan = new Loan($request->all());
 					$loan->loan_id = $request->loan_id;
+					$loan->loan_quantity_request = $loan->loan_quantity;
 					$loan->exchange_id = $request->exchange_id;
 					if ($request->type_code=='folder') {
 							$loan->type_code=$request->type_code;

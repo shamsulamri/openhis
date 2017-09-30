@@ -23,7 +23,8 @@
     <th>Type</th>
     <th>Item</th>
     <th>Code</th>
-    <th>Quantity</th>
+    <th>Request</th>
+    <th>Supply</th>
     <th>Request Date</th> 
     <th>Status</th> 
 	<th></th>
@@ -59,7 +60,16 @@
 					@if ($loan->type_code=='folder')
 						-
 					@else
+						{{$loan->loan_quantity_request }}
+					@endif
+			</td>
+			<td>
+					@if ($loan->type_code=='folder')
+						-
+					@else
+						@if ($loan->loan_code != 'request')
 						{{$loan->loan_quantity }}
+						@endif
 					@endif
 			</td>
 			<td>

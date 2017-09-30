@@ -23,13 +23,22 @@ use App\Relationship;
 use App\State;
 use App\City;
 use App\PatientFlag;
-use App\PatientDependant;
-use App\Encounter;
 use App\EncounterHelper;
 use App\Postcode;
 use Carbon\Carbon;
 use App\AMQPHelper as Amqp;
-
+use App\Encounter;
+use App\Admission;
+use App\Appointment;
+use App\BedBooking;
+use App\Bed;
+use App\Consultation;
+use App\Dependant;
+use App\MedicalAlert;
+use App\FormValue;
+use App\Newborn;
+use App\PatientDependant;
+use App\Refund;
 
 class PatientController extends Controller
 {
@@ -279,4 +288,37 @@ class PatientController extends Controller
 					]);
 	}
 
+	public function merge(Request $request, $id)
+	{
+			$patient = Patient::find($id);
+			$duplicate_patient = Patient::where('patient_mrn',$request->duplicate_id)->first();
+
+			if ($request->target_id) {
+					$this->mergeRecord($patient->patient_id, $request->target_id);
+					Session::flash('message', 'Record successfully merged.');
+					return redirect('/patient/merge/'.$patient->patient_id);
+			}
+			return view('patients.merge', [
+					'patient'=>$patient,
+					'duplicate_patient'=>$duplicate_patient,
+					'duplicate_id'=>$request->duplicate_id,
+			]);
+
+	}
+
+
+	public function mergeRecord($origin_id, $duplicate_id)
+	{
+		Encounter::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		Appointment::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		BedBooking::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		Consultation::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		MedicalAlert::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		FormValue::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		Newborn::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		PatientDependant::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		Refund::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+
+		$this->destroy($duplicate_id);
+	}
 }

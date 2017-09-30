@@ -118,7 +118,7 @@ class BedBookingController extends Controller
 			$title = "Bed Reservation";
 			if ($request->book=='preadmission') $title = "Preadmission";
 
-			$limit = env('RESERVATION_LIMIT');
+			$limit = Config::get('host.reservation_limit');
 			if ($count>=$limit) {
 					$valid=null;
 					$valid['book_date']='Booking limit reached. Please choose a new date.';

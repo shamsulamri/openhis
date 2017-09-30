@@ -600,6 +600,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/patients/encounter/{id}', 'PatientController@hasActiveEncounter');
 				Route::post('/patient/enquiry', 'PatientController@enquiry');
 				Route::get('/patient/enquiry', 'PatientController@enquiry');
+				Route::get('/patient/merge/{id}', 'PatientController@merge');
+				Route::post('/patient/merge/{id}', 'PatientController@merge');
 
 				Route::resource('dependants', 'DependantController', ['except'=>['create','show']]);
 				Route::get('/dependants/create/{id}', 'DependantController@create');

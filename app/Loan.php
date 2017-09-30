@@ -17,6 +17,7 @@ class Loan extends Model
 				'type_code',
 				'location_code',
 				'loan_quantity',
+				'loan_quantity_request',
 				'loan_date_start',
 				'loan_date_end',
 				'loan_recur',

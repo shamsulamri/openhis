@@ -67,17 +67,12 @@
 		<br>
 		Preadmission 
 </a>
-<a class='btn btn-default'  href='{{ URL::to('loans/request/'. $patient->patient_mrn.'?type=folder') }}'>
-<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
-<br>
-&nbsp;&nbsp;Folder&nbsp;&nbsp;
-</a>
-<a class='btn btn-default'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}'>
+<a class='btn btn-default'  target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}">
 <span class='glyphicon glyphicon-print' aria-hidden='true'></span>
 <br>
 &nbsp;&nbsp;Label&nbsp;&nbsp;
 </a>
-<a class='btn btn-default'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_label&id={{ $patient->patient_id }}'>
+<a class='btn btn-default'  target="_blank" href="{{ Config::get('host.report_server')  }}/ReportServlet?report=wrist_label&id={{ $patient->patient_id }}">
 <span class='glyphicon glyphicon-print' aria-hidden='true'></span>
 <br>
 &nbsp;&nbsp;Wrist&nbsp;&nbsp;
@@ -117,9 +112,14 @@
 		Dependants
 </a>
 <a class='btn btn-default'  href='{{ URL::to('documents?patient_mrn='. $patient->patient_mrn.'&from=view') }}'>
-		<span class='glyphicon glyphicon-duplicate' aria-hidden='true'></span>
+		<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
 		<br>
 	Medical Record 
+</a>
+<a class='btn btn-default'  href='{{ URL::to('patient/merge/'. $patient->patient_id) }}'>
+<span class='glyphicon glyphicon-duplicate' aria-hidden='true'></span>
+<br>
+&nbsp;&nbsp;Merge&nbsp;&nbsp;
 </a>
 @endcan
 
