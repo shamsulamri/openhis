@@ -80,6 +80,11 @@ class AdmissionController extends Controller
 					$ward_code = $request->cookie('ward');
 					$setWard = $request->cookie('ward');
 					$ward = Ward::where('ward_code', $ward_code)->first();
+
+					if (!$ward) {
+							Session::flash('message', 'Ward not set. Please select your ward.');
+							return redirect('/wards');
+					}
 			} 
 
 			$admissions = DB::table('admissions as a')
