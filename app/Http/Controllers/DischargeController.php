@@ -94,6 +94,12 @@ class DischargeController extends Controller
 				$discharge_type = Type::where('is_mortuary',1)->orderBy('type_name')->lists('type_name', 'type_code')->prepend('','');
 			}
 
+			$fees = Order::where('category_code','consultation')
+					->leftJoin('products as b', 'b.product_code', '=','orders.product_code')
+					->leftJoin('order_cancellations as c', 'c.order_id', '=', 'orders.order_id')
+					->whereNull('cancel_id')
+					->count();
+
 			return view('discharges.create', [
 					'discharge' => $discharge,
 					'type' => $discharge_type,
@@ -103,6 +109,7 @@ class DischargeController extends Controller
 					'consultOption' => 'consultation',
 					'discharge_orders' => $discharge_orders,
 					'minYear' => Carbon::now()->year,
+					'fees'=>$fees,
 					]);
 	}
 

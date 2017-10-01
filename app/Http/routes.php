@@ -47,6 +47,9 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+
+		Route::get('/amqp', 'OrderController@amqp');
+
 		Route::resource('bill_agings', 'BillAgingController');
 		Route::get('/bill_agings/id/{id}', 'BillAgingController@searchById');
 		Route::post('/bill_aging/search', 'BillAgingController@search');

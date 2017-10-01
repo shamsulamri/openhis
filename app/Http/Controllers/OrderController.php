@@ -26,6 +26,7 @@ use App\StockHelper;
 use App\OrderMultiple;
 use App\User;
 use App\ProductCategory;
+use App\AMQPHelper as Amqp;
 
 class OrderController extends Controller
 {
@@ -85,7 +86,6 @@ class OrderController extends Controller
 
 			return view('orders.show', [
 				'order'=>$order,
-				'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
 				'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 				'consultation' => $consultation,
 				'patient'=>$consultation->encounter->patient,
@@ -184,17 +184,6 @@ class OrderController extends Controller
 					$order->order_id = $request->order_id;
 					$order->order_sale_price = $product->product_sale_price;
 					$order->user_id = Auth::user()->id;
-
-
-					if ($product->product_drop_charge==1) {
-							$ward_code = $request->cookie('ward');
-							$ward = Ward::where('ward_code', $ward_code)->first();
-							$order->store_code = $ward->store_code;
-							$order->order_completed = 1;
-							$helper = new StockHelper();
-							$helper->updateAllStockOnHand($order->product_code);
-					}
-
 					$order->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/orders');
@@ -231,7 +220,6 @@ class OrderController extends Controller
 			} else {
 				return view('orders.edit', [
 					'order'=>$order,
-					'product' => Product::all()->sortBy('product_name')->lists('product_name', 'product_code')->prepend('',''),
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'consultation' => $consultation,
 					'patient'=>$consultation->encounter->patient,
@@ -255,14 +243,6 @@ class OrderController extends Controller
 			$product = Product::find($order->product_code);
 
 			if ($valid->passes()) {
-					if ($product->product_drop_charge==1) {
-							$ward_code = $request->cookie('ward');
-							$ward = Ward::where('ward_code', $ward_code)->first();
-							$order->store_code = $ward->store_code;
-							$order->order_completed = 1;
-							$helper = new StockHelper();
-							$helper->updateAllStockOnHand($order->product_code);
-					}
 					$order->order_quantity_supply = $order->order_quantity_request;
 					$order->save();
 					Session::flash('message', 'Record successfully updated.');
@@ -525,5 +505,11 @@ class OrderController extends Controller
 							->lists('name','id')
 							->prepend('','');
 			return $consultants;
+	}
+
+	public function amqp()
+	{
+				Amqp::pushMessage("lab","Test");
+				return "X";
 	}
 }

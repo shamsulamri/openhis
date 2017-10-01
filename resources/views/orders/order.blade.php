@@ -20,6 +20,16 @@
         </div>
     </div>
 
+	@if ($product->category_code=='consultation')
+   <div class='form-group  @if ($errors->has('order_sale_price')) has-error @endif'>
+        <label for='order_sale_price' class='col-sm-3 control-label'>Price<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+            {{ Form::text('order_sale_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_sale_price')) <p class="help-block">{{ $errors->first('order_sale_price') }}</p> @endif
+        </div>
+    </div>
+	@endif
+
     <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
         {{ Form::label('Description', 'Description',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
