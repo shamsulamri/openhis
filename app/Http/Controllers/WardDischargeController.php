@@ -46,13 +46,14 @@ class WardDischargeController extends Controller
 			$ward_discharge->encounter_id = $encounter_id;
 
 			$orders = Order::where('encounter_id',$encounter_id)
+						->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
 						->where('order_is_discharge',1)
-						->where('product_code','<>','consultation_fee')
+						->where('category_code','<>','consultation')
 						->get();
 
-			$mc = MedicalCertificate::where('encounter_id', $encounter_id)->get();
+			$mc = MedicalCertificate::where('encounter_id', $encounter_id)->first();
 
-			$bill = Bill::where('encounter_id', $encounter_id)->get();
+			$bill = Bill::where('encounter_id', $encounter_id)->first();
 
 			/**
 			$appointments = Appointment::where('admission_id', $admission_id)

@@ -21,6 +21,7 @@ use App\DojoUtility;
 use Auth;
 use App\User;
 use App\Priority;
+use Config;
 
 class BedBookingController extends Controller
 {

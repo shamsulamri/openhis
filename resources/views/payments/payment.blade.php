@@ -1,12 +1,16 @@
 @if (count($encounter)>0)
-	@if ($billHelper->paymentOutstanding($patient->patient_id, $encounter_id)>0)
+	<br>
     <div class='form-group  @if ($errors->has('payment_outstanding')) has-error @endif'>
-        <label class='col-sm-2 control-label'><br>Balance</label>
+        <label class='col-sm-2 control-label'>Balance</label>
         <div class='col-sm-10'>
-        	<h1>{{ $billHelper->paymentOutstanding($patient->patient_id, $encounter_id) }}</h1>
+	<?php $balance = $billHelper->paymentOutstanding($patient->patient_id, $encounter_id); ?>
+	@if ($balance>0)
+			{{ Form::label('pay', number_format($balance,2), ['class'=>'form-control']) }}
+	@else
+			{{ Form::label('pay', '-', ['class'=>'form-control']) }}
+	@endif
         </div>
     </div>
-	@endif
 
 	@if ($encounter_id>0)
     <div class='form-group  @if ($errors->has('encounter_id')) has-error @endif'>
@@ -42,6 +46,7 @@
 						</div>
 					</div>
 			</div>
+			<!--
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('sponsor_code')) has-error @endif'>
 						<label for='sponsor_code' class='col-sm-4 control-label'>Sponsor</label>
@@ -51,6 +56,7 @@
 						</div>
 					</div>
 			</div>
+			-->
 	</div>
 
 

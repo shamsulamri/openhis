@@ -27,7 +27,7 @@ class BillHelper
 					->sum('deposit_amount');
 			
 			log::info($deposit_total);
-			return $bill_grand_total+$deposit_total-$payment_total;
+			return $bill_grand_total-$deposit_total-$payment_total;
 	}
 
 	public function agingPatient($group) {

@@ -124,10 +124,10 @@
 					<div align='right'>
 					@if ($bill->bill_outstanding>0)
 					<span class="label label-danger">
-					{{ number_format($bill->bill_outstanding, 2) }}
+					{{ $bill->bill_outstanding }}
 					</span>
 					@else
-					{{ number_format($bill->bill_outstanding, 2) }}
+					{{ $bill->bill_outstanding }}
 					@endif
 					</div>
 			</td>

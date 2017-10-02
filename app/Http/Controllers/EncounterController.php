@@ -119,9 +119,6 @@ class EncounterController extends Controller
 								$bed->save();
 						}		
 				}
-
-				Log::info($preadmission_beds);
-
 			}
 
 			$beds =  Bed::leftJoin('ward_rooms as b', 'b.room_code', '=', 'beds.room_code')
@@ -398,7 +395,6 @@ class EncounterController extends Controller
 	
 	public function delete($id)
 	{
-			return "X";
 		$encounter = Encounter::findOrFail($id);
 		return view('encounters.destroy', [
 			'encounter'=>$encounter

@@ -167,8 +167,7 @@ class BillController extends Controller
 					->leftJoin(DB::raw('('.$subquery.') f'), function($join) {
 							$join->on('bills.encounter_id','=', 'f.encounter_id');
 					})
-					->leftJoin('sponsors as g', 'g.sponsor_code', '=', 'b.sponsor_code')
-					->orderBy('total_paid');
+					->leftJoin('sponsors as g', 'g.sponsor_code', '=', 'b.sponsor_code');
 
 			if (!empty($request->search)) {
 					$bills = $bills->where(function ($query) use ($request) {
@@ -206,6 +205,7 @@ class BillController extends Controller
 				DojoUtility::export_report($bills->get());
 			}
 
+			$bills = $bills->orderBy('bill_outstanding','desc');
 			$bills = $bills->paginate($this->paginateValue);
 
 			$users = User::orderby('name')

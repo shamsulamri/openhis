@@ -136,7 +136,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$sql = sprintf("
-				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, product_sale_price, profit_multiplier
+				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, profit_multiplier
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.tax_code 
@@ -167,7 +167,7 @@ class BillItemController extends Controller
 							$sale_price = $this->getPriceTier($encounter_id, $product);
 							$item->bill_unit_price = $sale_price;
 					} else {
-							$item->bill_unit_price = $order->product_sale_price;
+							$item->bill_unit_price = $order->order_sale_price;
 							//$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
 					}
 
@@ -186,7 +186,7 @@ class BillItemController extends Controller
 			$this->bedBills($encounter_id);
 			$this->multipleOrders($encounter_id);
 			$this->forms($encounter_id);
-			$this->outstandingCharges($encounter_id);
+			//$this->outstandingCharges($encounter_id);
 	}
 
 	public function multipleOrders($id) 

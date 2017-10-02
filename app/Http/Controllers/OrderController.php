@@ -112,7 +112,7 @@ class OrderController extends Controller
 					'order_completed',
 					'order_report',
 					'category_name',
-					'product_drop_charge',
+					'product_edit_price',
 					];
 
 			$orders = DB::table('orders as a')
@@ -241,6 +241,9 @@ class OrderController extends Controller
 			$valid = $order->validate($request->all(), $request->_method);	
 
 			$product = Product::find($order->product_code);
+			if ($product->product_edit_price==1) {
+				$order->order_unit_price = $order->order_sale_price;
+			}
 
 			if ($valid->passes()) {
 					$order->order_quantity_supply = $order->order_quantity_request;

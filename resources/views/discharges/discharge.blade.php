@@ -71,7 +71,7 @@
         		{{ Form::label('mc', $mc->mc_time_end,['class'=>'control-label']) }}
 				@endif
 				<br>
-        		{{ Form::label('mc', 'Serial Number: '.$mc->mc_identification,['class'=>'control-label']) }}
+        		{{ Form::label('mc', 'Serial Number: '.$mc->mc_id,['class'=>'control-label']) }}
 				@else
         		{{ Form::label('mc', 'None',['class'=>'control-label']) }}
 		@endif
@@ -81,12 +81,13 @@
 
     <div class='form-group'>
         {{ Form::label('discharge_orders', 'Discharge Orders',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
+        <div class='col-sm-9 control-label'>
 		@if (count($discharge_orders)>0)
+				<div align='left'>
 			@foreach ($discharge_orders as $order)
-        		{{ Form::label('product', $order->product_name,['class'=>'control-label']) }}
-				<br>
+        		{{ Form::label('product', "- ".strtoupper($order->product_name)) }}<br>
 			@endforeach
+				</div>
 			<br>
 		@else
 			<div class='alert alert-warning'>

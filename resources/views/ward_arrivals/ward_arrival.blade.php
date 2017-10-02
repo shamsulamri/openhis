@@ -5,6 +5,8 @@
             {{ Form::select('bed_code', $beds, $encounter->bed_code, ['id'=>'bed_code','onchange'=>'','class'=>'form-control']) }}
         </div>
     </div>
+
+	<!--
     <div class='form-group  @if ($errors->has('arrival_description')) has-error @endif'>
         {{ Form::label('room', 'Room',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -15,6 +17,7 @@
 			@endif
         </div>
     </div>
+	-->
 
 
     <div class='form-group  @if ($errors->has('arrival_description')) has-error @endif'>

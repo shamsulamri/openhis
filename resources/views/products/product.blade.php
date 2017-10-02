@@ -306,10 +306,10 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_drop_charge')) has-error @endif'>
+					<div class='form-group  @if ($errors->has('product_edit_price')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_drop_charge', '1') }} <label>Automatically Drop Charge</label><br>The item will be charged automatically upon ordering
-							@if ($errors->has('product_drop_charge')) <p class="help-block">{{ $errors->first('product_drop_charge') }}</p> @endif
+							{{ Form::checkbox('product_edit_price', '1') }} <label>Allow price edit</label><br>Allow the user to edit the sale price during ordering
+							@if ($errors->has('product_edit_price')) <p class="help-block">{{ $errors->first('product_edit_price') }}</p> @endif
 						</div>
 					</div>
 			</div>

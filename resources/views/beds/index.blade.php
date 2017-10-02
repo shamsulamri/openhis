@@ -70,6 +70,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Room</th>
     <th>Bed</th>
     <th>Code</th>
     <th>Class</th> 
@@ -84,6 +85,9 @@
 	<tbody>
 @foreach ($beds as $bed)
 	<tr>
+			<td>
+					{{$bed->room->room_name}}
+			</td>
 			<td>
 					<a href='{{ URL::to('beds/'. $bed->bed_code . '/edit') }}'>
 						{{$bed->bed_name}}

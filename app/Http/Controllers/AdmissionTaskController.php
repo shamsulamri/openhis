@@ -192,7 +192,16 @@ class AdmissionTaskController extends Controller
 			} else {
 					$ward_code=$request->cookie('ward');
 			}
-			$location_code = $request->cookie('queue_location');
+
+			//$location_code = $request->cookie('queue_location');
+
+			if (!empty(Auth::user()->authorization->location_code)) {
+				$location_code = Auth::user()->authorization->location_code;
+			} else {
+				$location_code = $request->cookie('queue_location');
+			}
+
+			$location = QueueLocation::find($location_code);
 
 			$admission_tasks = DB::table('orders as a')
 					->select('a.order_id', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by','cancel_id')

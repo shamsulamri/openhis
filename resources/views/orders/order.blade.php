@@ -20,7 +20,7 @@
         </div>
     </div>
 
-	@if ($product->category_code=='consultation')
+	@if ($product->product_edit_price==1)
    <div class='form-group  @if ($errors->has('order_sale_price')) has-error @endif'>
         <label for='order_sale_price' class='col-sm-3 control-label'>Price<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -58,7 +58,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-default" href="/orders" role="button">Cancel</a>
+            <a class="btn btn-default" href="/orders" role="button">Back</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>

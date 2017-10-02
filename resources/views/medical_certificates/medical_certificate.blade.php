@@ -60,6 +60,7 @@
 	</div>
 
 
+	<!--
     <div class='form-group  @if ($errors->has('mc_identification')) has-error @endif'>
         <label for='mc_identification' class='col-sm-2 control-label'>Serial Number</label>
         <div class='col-sm-10'>
@@ -67,6 +68,7 @@
             @if ($errors->has('mc_identification')) <p class="help-block">{{ $errors->first('mc_identification') }}</p> @endif
         </div>
     </div>
+	-->
 
     <div class='form-group  @if ($errors->has('mc_notes')) has-error @endif'>
         {{ Form::label('mc_notes', 'Description',['class'=>'col-sm-2 control-label']) }}

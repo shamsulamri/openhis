@@ -81,11 +81,11 @@ $header_count=0;
 			@endif
 			<?php $header_count=0; ?>
 			<tr>
-					<th colspan=3>
+					<th colspan=4>
 						{{strtoupper($admission_task->product_name)}} (<span id='{{ $admission_task->product_code }}'>#</span>)
 
 					</th>
-					<th colspan=4>
+					<th colspan=3>
 						{!! $order_helper->drugDescription($admission_task->order_id, "") !!}
 
 					</th>

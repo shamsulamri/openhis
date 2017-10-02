@@ -23,6 +23,7 @@ use App\EncounterType;
 use App\DischargeHelper;
 use App\Encounter;
 use App\PatientFlag;
+use App\OrderHelper;
 
 class DischargeController extends Controller
 {
@@ -146,6 +147,8 @@ class DischargeController extends Controller
 					$post = new OrderPost();
 					$post->consultation_id = $consultation->consultation_id;
 					$post->save();
+
+					OrderHelper::dropCharge($consultation->consultation_id);
 					
 					Order::where('consultation_id','=',$consultation->consultation_id)
 							->where('post_id','=',0)

@@ -19,6 +19,7 @@ use App\DojoUtility;
 use App\DiagnosticOrder;
 use App\AMQPHelper as Amqp;
 use App\StockHelper;
+use App\OrderHelper;
 
 class ConsultationController extends Controller
 {
@@ -163,7 +164,7 @@ class ConsultationController extends Controller
 			$post->save();
 
 			$this->postDiagnosticOrder($consultation);
-			$this->dropCharge($id);
+			OrderHelper::dropCharge($id);
 
 			Order::where('consultation_id','=',$id)
 					->where('post_id','=',0)
@@ -177,44 +178,6 @@ class ConsultationController extends Controller
 			}
 	}
 
-	public function dropCharge($consultation_id) 
-	{
-		$orders = Order::where('consultation_id',$consultation_id)
-					->leftJoin('products as c', 'c.product_code', '=', 'orders.product_code')
-					->where('product_drop_charge',1)
-					->get();
-
-		$stock_helper = new StockHelper();
-
-		foreach($orders as $order) {
-			if ($order->product->product_drop_charge==1) {
-				if ($order->product->product_stocked==1) {
-					if ($stock_helper->getStockCountByStore($product->product_code,$order->store_code)>0) {
-						$ward = Ward::where('ward_code', $ward_code)->first();
-						$order->store_code = $ward->store_code;
-					}
-				}
-					
-				if (!$order->orderCancel) {
-						$order->order_completed=1;
-						$order->save();
-				}
-
-				if ($order->product->product_stocked==1) {
-						$stock = new Stock();
-						$stock->order_id = $order->order_id;
-						$stock->product_code = $order->product_code;
-						$stock->stock_quantity = -($order->order_quantity_supply);
-						$stock->store_code = $order->store_code;
-						$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
-						$stock->move_code = 'sale';
-						$stock->save();
-
-						$stock_helper->updateAllStockOnHand($order->product_code);
-				}
-			}
-		}
-	}
 	public function postDiagnosticOrder($consultation)
 	{
 			$id = Session::get('consultation_id');

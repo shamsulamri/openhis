@@ -42,10 +42,16 @@ class WardArrivalController extends Controller
 			$ward_code = $request->cookie('ward');
 
 			$bed = Bed::find($encounter->admission->bed_code);
-			$beds = Bed::where('status_code','01')
+			$bed_name = $bed->bed_name.' ('.$bed->room->room_name.')';
+
+			$beds = Bed::select(DB::raw("concat(bed_name, ' (', room_name, ')') as bed_name, bed_code"))
+						->leftJoin('ward_rooms as b', 'b.room_code', '=', 'beds.room_code')
+						->where('status_code','01')
 						->where('ward_code', $ward_code)
+						->where('class_code', $bed->class_code)
 						->orderBy('bed_name')
-						->lists('bed_name', 'bed_code')->prepend($bed->bed_name,$bed->bed_code);
+						->lists('bed_name', 'bed_code')
+						->prepend($bed_name,$bed->bed_code);
 
 			return view('ward_arrivals.create', [
 					'ward_arrival' => $ward_arrival,

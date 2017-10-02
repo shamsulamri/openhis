@@ -44,7 +44,9 @@
 					{{$queue->location_name}}
 			</td>
 			<td align='right'>
+					<!--
 					<a class='btn btn-default btn-lg' href='{{ URL::to('loans/request/'. $queue->patient_mrn.'?type=folder'.'&location_code='.$queue->location_code) }}'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></a>
+					-->
 
 					@can('module-consultation')
 					<a class='btn btn-default btn-lg' title='Consultation' href='{{ URL::to('consultations/create?encounter_id='. $queue->encounter_id) }}'><span class='fa fa-stethoscope' aria-hidden='true'></span></a>

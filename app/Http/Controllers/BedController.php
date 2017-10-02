@@ -207,8 +207,7 @@ class BedController extends Controller
 					});
 
 			$beds = $beds->orderBy('ward_name')
-						 ->orderBy('ward_level')
-					 	 ->orderBy('beds.class_code')
+						 ->orderBy('beds.room_code')
 						 ->orderBy('bed_code')
 						 ->paginate($this->paginateValue);
 

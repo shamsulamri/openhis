@@ -13,6 +13,7 @@ use Auth;
 use Log;
 use App\Ward;
 use App\QueueLocation;
+use Config;
 
 class OrderHelper 
 {
@@ -58,9 +59,9 @@ class OrderHelper
 			$order->order_quantity_request = 1;
 			$order->order_unit_price = $product->product_sale_price; 
 			if ($product->tax) {
-				$order->order_sale_price = number_format($product->product_sale_price * (1+($product->tax->tax_rate/100)),2);
+				$order->order_sale_price = $product->product_sale_price * (1+($product->tax->tax_rate/100));
 			} else {
-				$order->order_sale_price = number_format($product->product_sale_price,2);
+				$order->order_sale_price = $product->product_sale_price;
 			}	
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 			$order->location_code = $product->location_code;
@@ -104,6 +105,9 @@ class OrderHelper
 					$order_investigation->investigation_date = date('d/m/Y');
 					$order_investigation->save();
 			}
+
+			Log::info("------------------------------");
+			Log::info($order);
 			return $order->order_id;
 			//}
 			//return -1;
@@ -210,6 +214,45 @@ class OrderHelper
 					return $prefix.$description;
 			}
 		}
+
+	public static function dropCharge($consultation_id) 
+	{
+		$orders = Order::where('consultation_id',$consultation_id)
+					->leftJoin('products as c', 'c.product_code', '=', 'orders.product_code')
+					->where('c.location_code', 'none')
+					->get();
+
+		$stock_helper = new StockHelper();
+
+		foreach($orders as $order) {
+			if ($order->product->location_code=='none') {
+				if ($order->product->product_stocked==1) {
+					if ($stock_helper->getStockCountByStore($order->product_code,$order->store_code)>0) {
+						$ward = Ward::where('ward_code', $ward_code)->first();
+						$order->store_code = $ward->store_code;
+					}
+				}
+					
+				if (!$order->orderCancel) {
+						$order->order_completed=1;
+						$order->save();
+				}
+
+				if ($order->product->product_stocked==1) {
+						$stock = new Stock();
+						$stock->order_id = $order->order_id;
+						$stock->product_code = $order->product_code;
+						$stock->stock_quantity = -($order->order_quantity_supply);
+						$stock->store_code = $order->store_code;
+						$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
+						$stock->move_code = 'sale';
+						$stock->save();
+
+						$stock_helper->updateAllStockOnHand($order->product_code);
+				}
+			}
+		}
+	}
 }
 
 ?>

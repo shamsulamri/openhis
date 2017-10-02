@@ -15,6 +15,7 @@ use App\Bill;
 use App\Deposit;
 use App\DojoUtility;
 use App\User;
+use Auth;
 
 class RefundController extends Controller
 {

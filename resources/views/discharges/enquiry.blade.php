@@ -63,15 +63,9 @@
 			</div>
 	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
 	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
-	</div>
 	<input type='hidden' id='export_report' name="export_report">
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
-@can('system-administrator')
-<a href='/discharges/create' class='btn btn-primary'>Create</a>
-<br>
-@endcan
 <br>
 @if ($discharges->total()>0)
 <table class="table table-hover">

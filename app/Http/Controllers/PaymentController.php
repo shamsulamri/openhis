@@ -169,12 +169,14 @@ class PaymentController extends Controller
 				$credit = PaymentCredit::where('payment_id', $id)->first();
 			}
 
+			$encounter = Encounter::find($payment->encounter_id);
 			return view('payments.edit', [
 					'payment'=>$payment,
 					'payment_methods' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
 					'patient' => $patient,
 					'billHelper' => new BillHelper(),
 					'encounter_id' => $payment->encounter_id,
+					'encounter'=>$encounter,
 					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					'card' => CreditCard::all()->sortBy('card_name')->lists('card_name', 'card_code')->prepend('',''),
 					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),

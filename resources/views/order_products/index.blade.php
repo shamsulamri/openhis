@@ -20,13 +20,13 @@
 	</div>
 	@if (count($categories)>2)
 	<br>
-	{{ Form::select('categories', $categories, $category_code, ['class'=>'form-control']) }}
+	{{ Form::select('categories', $categories, $category_code, ['id'=>'categories','class'=>'form-control']) }}
 	@endif
 	@can('module-consultation')
 	<br>	
 	<div class="row">
 			<div class="col-xs-12">
-			<h4>Order Sets</h4>
+			<h4>Order Set</h4>
             {{ Form::select('set_code', $sets,$set_value, ['class'=>'form-control','maxlength'=>'10','onchange'=>'orderSet()','id'=>'orderset']) }}
 			</div>
 	</div>
@@ -116,6 +116,7 @@
 	@endif
 
 	function orderSet() {
+			document.getElementById('categories').selectedIndex=0;
 			document.getElementById('search').value="";
 			document.forms['form_search'].submit();
 	}

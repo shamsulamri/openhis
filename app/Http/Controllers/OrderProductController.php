@@ -197,10 +197,17 @@ class OrderProductController extends Controller
 							->where('set_code','=',$request->set_code)
 							->pluck('product_code');
 
-				$order_products = DB::table('products')
-					->whereIn('product_code', $orderSets)
-					->orderBy('product_name')
-					->paginate($this->paginateValue);
+				if (!empty($request->categories)) {
+						$order_products = DB::table('products')
+							->where('category_code',$request->categories)
+							->orderBy('product_name')
+							->paginate($this->paginateValue);
+				} else {
+						$order_products = DB::table('products')
+							->whereIn('product_code', $orderSets)
+							->orderBy('product_name')
+							->paginate($this->paginateValue);
+				}
 			}
 
 			$consultation_id = Session::get('consultation_id'); //$request->consultation_id;
