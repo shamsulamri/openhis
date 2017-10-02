@@ -146,7 +146,7 @@
 								@endif
 							@else
 								<span class="label label-success">Completed</span>
-								@if (!empty($order->report==0))
+								@if (!empty($order->order_report))
 									<span class="label label-primary">Reported</span>
 								@endif
 							@endif

@@ -159,7 +159,7 @@ class BillController extends Controller
 
 			$subquery = "select encounter_id, sum(payment_amount) as total_paid from payments group by encounter_id";
 			$bills = Bill::select(DB::raw('bills.id,patient_name, patient_mrn, bills.encounter_id, d.discharge_date,sponsor_name, bill_grand_total, bill_payment_total, bill_deposit_total, 
-					total_paid, format(bill_grand_total-total_paid,2) as bill_outstanding, name'))
+					total_paid, format(bill_grand_total-bill_deposit_total-IFNULL(0,total_paid),2) as bill_outstanding, name'))
 					->leftJoin('encounters as b', 'b.encounter_id', '=', 'bills.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=',  'b.patient_id')
 					->leftJoin('discharges as d', 'd.encounter_id', '=', 'b.encounter_id')

@@ -98,6 +98,7 @@ class DischargeController extends Controller
 			$fees = Order::where('category_code','consultation')
 					->leftJoin('products as b', 'b.product_code', '=','orders.product_code')
 					->leftJoin('order_cancellations as c', 'c.order_id', '=', 'orders.order_id')
+					->where('encounter_id','=', $consultation->encounter_id)
 					->whereNull('cancel_id')
 					->count();
 
