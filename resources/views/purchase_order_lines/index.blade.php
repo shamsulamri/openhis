@@ -130,7 +130,7 @@ $count=0;
 			@endif
 			</td>
 			<td width='10' align='right'>
-					@if (!empty($purchase_order_line->tax_code))
+					@if (!empty($purchase_order_line->purchase_tax_code))
 					{{ $purchase_order_line->product->purchase_tax->tax_shortname }}&nbsp;({{ number_format($purchase_order_line->product->purchase_tax->tax_rate) }}%)
 					@endif
 			</td>
