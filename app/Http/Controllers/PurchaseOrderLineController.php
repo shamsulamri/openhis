@@ -128,9 +128,10 @@ class PurchaseOrderLineController extends Controller
 			if ($valid->passes()) {
 					$purchase_order_line->line_total=$purchase_order_line->line_quantity_ordered*$purchase_order_line->line_price;
 					$purchase_order_line->line_total_gst= $purchase_order_line->line_total;
-					if (!empty($product->purhcase_tax_code)) {
-							$purchase_order_line->line_gst=$purchase_order_line->line_total_gst*(1+($product->purchase_tax->tax_rate/100));
+					if (!empty($product->purchase_tax_code)) {
+							$purchase_order_line->line_total_gst=$purchase_order_line->line_total_gst*(1+($product->purchase_tax->tax_rate/100));
 					}
+
 					$purchase_order_line->save();
 
 					$product->product_purchase_price = $purchase_order_line->line_price;
