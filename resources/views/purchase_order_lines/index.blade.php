@@ -129,12 +129,15 @@ $count=0;
 					</s>
 			@endif
 			</td>
-			<td width='10' align='right'>
-					@if (!empty($purchase_order_line->purchase_tax_code))
-					{{ $purchase_order_line->product->purchase_tax->tax_shortname }}&nbsp;({{ number_format($purchase_order_line->product->purchase_tax->tax_rate) }}%)
+			<td width='100' align='right'>
+					@if (!empty($purchase_order_line->tax_code))
+							{{ $purchase_order_line->product->purchase_tax->tax_name }}
+							@if ($purchase_order_line->product->purchase_tax->tax_rate>0) 
+								<br>({{ number_format($purchase_order_line->product->purchase_tax->tax_rate) }}%)
+							@endif
 					@endif
 			</td>
-			<td width='80' align='right'>
+			<td width='50' align='right'>
 					{{ number_format($purchase_order_line->line_quantity_ordered) }} 
 					{{ $purchase_order_line->product->getPurchaseUnitShortname() }}
 			</td>
