@@ -21,16 +21,16 @@ audio {
 @else
 <h1>Outpatient Tasks</h1>
 @endif
-<!--
+<h3>{{ $location->location_name }}</h3>
 <form action='/order_queue/search' method='post'>
+	<!--
 	{{ Form::select('locations', $locations, $location, ['class'=>'form-control','maxlength'=>'10']) }}
+	-->
 	{{ Form::select('encounter_code', $encounters, $encounter_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<br>
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 </form>
--->
-<h3>{{ $location->location_name }}</h3>
 
 <br>
 @if ($order_queues->total()>0)
@@ -45,7 +45,6 @@ audio {
   </thead>
 	<tbody>
 @foreach ($order_queues as $order)
-
 	<tr>
 			<td>
 			@if ($is_discharge)
@@ -73,7 +72,9 @@ audio {
 					<small>{{ $order->patient_mrn }}</small>
 			</td>
 			<td>
-					{{ $order->location_name }}{{ $order->bed_name }}
+					{{ $order->ward_name }}
+					{{ $order->location_name }} 
+					@if ($order->bed_name)	/ {{ $order->bed_name }} @endif
 			</td>
 			<td align='right'>
 					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}' class='btn btn-primary btn-xs'>

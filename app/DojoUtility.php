@@ -249,7 +249,7 @@ class DojoUtility
 						$newvalue = ($newFloat+0.1);
 				}
 				 
-				return $newvalue;
+				return number_format($newvalue,2);
 		}
 }
 

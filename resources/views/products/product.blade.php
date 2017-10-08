@@ -314,6 +314,18 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_drop_charge')) has-error @endif'>
+						<div class='col-sm-offset-4 col-sm-8'>
+							{{ Form::checkbox('product_drop_charge', '1') }} <label>Drop Charge</label><br>Item will be automatically charge upon ordering.
+							@if ($errors->has('product_drop_charge')) <p class="help-block">{{ $errors->first('product_drop_charge') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+			</div>
+	</div>
 	@endcan
 
 	<div class="row">

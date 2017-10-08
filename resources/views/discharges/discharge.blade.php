@@ -59,7 +59,8 @@
 	@if ($consultation->encounter->encounter_code != 'mortuary')
     <div class='form-group'>
         {{ Form::label('mc', 'Medical Certificate',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
+        <div class='col-sm-9 control-label'>
+			<div align='left'>
 		@if ($mc)
         		{{ Form::label('product', DojoUtility::dateLongFormat($mc->mc_start),['class'=>'control-label']) }}
 				@if (!empty($mc->mc_end))
@@ -73,8 +74,9 @@
 				<br>
         		{{ Form::label('mc', 'Serial Number: '.$mc->mc_id,['class'=>'control-label']) }}
 				@else
-        		{{ Form::label('mc', 'None',['class'=>'control-label']) }}
+				<span class='label label-warning'>No medical certificate.</span>
 		@endif
+        	</div>
         </div>
     </div>
 	@endif
@@ -82,18 +84,16 @@
     <div class='form-group'>
         {{ Form::label('discharge_orders', 'Discharge Orders',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9 control-label'>
-		@if (count($discharge_orders)>0)
 				<div align='left'>
+		@if (count($discharge_orders)>0)
 			@foreach ($discharge_orders as $order)
         		{{ Form::label('product', "- ".strtoupper($order->product_name)) }}<br>
 			@endforeach
-				</div>
 			<br>
 		@else
-			<div class='alert alert-warning'>
-			<strong>Warning !</strong> No discharge order.
-			</div>
+					<span class='label label-warning'>No discharge order.</span>
 		@endif
+				</div>
         </div>
     </div>
 

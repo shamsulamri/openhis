@@ -92,6 +92,9 @@ class OrderTaskController extends Controller
 
 			$fields = ['patient_name', 'product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'a.post_id', 'a.created_at','order_is_discharge',
 					'i.location_name',	
+					'a.store_code',
+					'product_stocked',
+					'product_track_batch',
 					'cancel_id',
 					'order_quantity_request',
 					'order_quantity_supply',
@@ -136,6 +139,11 @@ class OrderTaskController extends Controller
 							$ids .= (string)$task->order_id.",";
 					}
 			}
+
+			$store=null;
+			if (count($order_tasks)>0) {
+				$store = Store::find($order_tasks[0]->store_code);
+			}
 			
 			return view('order_tasks.index', [
 					'order_tasks'=>$order_tasks,
@@ -147,6 +155,7 @@ class OrderTaskController extends Controller
 					'product'=> new Product(),
 					'stock_helper'=> new StockHelper(),
 					'order_helper'=> new OrderHelper(),
+					'store'=>$store,
 			]);
 	}
 	public function edit($id) 

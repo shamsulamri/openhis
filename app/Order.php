@@ -98,6 +98,11 @@ class Order extends Model
 			return $this->belongsTo('App\Product', 'product_code');
 	}
 
+	public function store()
+	{
+			return $this->belongsTo('App\Store', 'store_code');
+	}
+
 	public function orderCancel()
 	{
 			return $this->hasOne('App\OrderCancellation','order_id');
@@ -111,6 +116,11 @@ class Order extends Model
 	public function user()
 	{
 			return $this->belongsTo('App\User', 'user_id','id');
+	}
+
+	public function admission()
+	{
+			return $this->belongsTo('App\Admission', 'admission_id');
 	}
 
 	public static function boot()

@@ -3,10 +3,10 @@
 @section('content')
 <h1>Admission List</h1>
 @can('module-ward')
-@if ($ward)
-<h3>{{ $ward->ward_name }}</h3>
-<br>
-@endif
+		@if ($ward)
+		<h3>{{ $ward->ward_name }}</h3>
+		<br>
+		@endif
 @endcan
 @can('module-ward')
 <div class="row">

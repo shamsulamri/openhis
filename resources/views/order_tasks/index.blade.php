@@ -3,6 +3,9 @@
 @section('content')
 @include('patients.id')
 <h1>Order Task</h1>
+@if ($store)
+<h3>Store: {{ $store->store_name }}</h3>
+@endif
 <br>
 <form action='/order_task/status' method='post'>
 	<div class="row">
@@ -20,7 +23,6 @@
 			</div>
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-<br>
 
 @if ($order_tasks->total()>0)
 <table class="table">
@@ -28,6 +30,8 @@
 	<tr> 
     <th></th>
     <th>Product</th>
+    <th>On Hand</th>
+    <th>Allocated</th>
     <th>Available</th>
     <th>Quantity</th>
     <th>Ordered By</th>
@@ -40,15 +44,15 @@
 
 	<?php 
 	$status='';
-	$allocated =  $stock_helper->getStockAllocatedByStore($order->product_code, $location->store_code, $encounter_id); //-$order->order_quantity_request;
-	$available = $stock_helper->getStockCountByStore($order->product_code, $location->store_code);
-	//$available = $available-$allocated;
+	$allocated =  $stock_helper->getStockAllocatedByStore($order->product_code, $order->store_code, $encounter_id); //-$order->order_quantity_request;
+	$on_hand = $stock_helper->getStockCountByStore($order->product_code, $order->store_code);
+	$available = $on_hand-$allocated;
 	?>
 	@if ($order->order_completed==1) 
 			<?php $status='success' ?>
 	@endif
 	@if ($order->product_stocked)
-						@if ($available-$allocated<$order->order_quantity_request)
+						@if ($on_hand-$allocated<$order->order_quantity_request)
 								<?php $status = 'danger'; ?>
 						@endif
 	@endif
@@ -78,13 +82,31 @@
 						{{ $order_helper->getPrescription($order->order_id) }}
 					@endif
 
-					@if ($status=='danger')
+					@if ($status=='danger' & $order->product_track_batch==0)
 						<br>
-						<span class='label label-danger'>Insufficient amount.</span>
+						<span class='label label-danger'>Insufficient supply.</span>
 					@endif
 			</td>
 			<td>
-					{{ $available }} @if($allocated!=0) ({{ $allocated }}) @endif
+			@if ($order->product_stocked)
+					{{ $on_hand }} 
+			@else 
+					-
+			@endif
+			</td>
+			<td>
+			@if ($order->product_stocked)
+					{{ $allocated }} 
+			@else 
+					-
+			@endif
+			</td>
+			<td>
+			@if ($order->product_stocked)
+					{{ $available }}
+			@else 
+					-
+			@endif
 			</td>
 			<td width='100'>
 					@if ($order->product_track_batch==0 && $order->product_stocked==1)
@@ -115,7 +137,7 @@
 	</tr>
 	@if ($order->product_track_batch && $order->order_completed==0)
 <?php
-	$batches = $stock_helper->getBatches($order->product_code, $location->store_code);
+	$batches = $stock_helper->getBatches($order->product_code, $order->store_code);
 	$order_request = $order->order_quantity_request;
 	$total_quantity = 0;
 ?>
@@ -170,10 +192,7 @@
 						@endif
 						</table>
 				</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<td colspan=6></td>
 			</tr>
 			@endif
 	@endif

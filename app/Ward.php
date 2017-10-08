@@ -27,6 +27,7 @@ class Ward extends Model
 
 	public function validate($input, $method) {
 			$rules = [
+				'department_code'=>'required',
 				'ward_name'=>'required',
 				'ward_level'=>'numeric',
 			];

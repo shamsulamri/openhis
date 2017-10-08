@@ -28,6 +28,8 @@ class QueueLocation extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'location_name'=>'required',
+				'store_code'=>'required',
+				'encounter_code'=>'required',
 			];
 
 			

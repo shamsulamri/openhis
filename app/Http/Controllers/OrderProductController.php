@@ -24,6 +24,7 @@ use App\ProductAuthorization;
 use App\OrderHelper;
 use Auth;
 use Gate;
+use App\StockHelper;
 
 class OrderProductController extends Controller
 {
@@ -156,13 +157,26 @@ class OrderProductController extends Controller
 			}
 			 */
 			if (!empty($request->search)) {
-				$order_product_single = Product::find($request->search);
-				if ($order_product_single) {
-						if ($order_product_single->product_sold==1) {
-								$response = OrderHelper::orderItem($order_product_single, $request->cookie('ward'));
-								if ($response>0) {
-										return redirect('/order_product/search');
+				$product = Product::find($request->search);
+				if ($product) {
+						if ($product->product_sold==1 && $product->product_drop_charge == 1) {
+
+							if ($product->product_stocked==1) {
+								$stock_helper = new StockHelper();
+								$store_code = OrderHelper::getStoreAffected($product);
+								$allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $store_code);
+								$on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_code);
+
+								if ($on_hand-$allocated>0) {
+										$response = OrderHelper::orderItem($product, $request->cookie('ward'));
 								}
+							} else {
+										$response = OrderHelper::orderItem($product, $request->cookie('ward'));
+							}
+
+							if ($response>0) {
+									return redirect('/order_product/search');
+							}
 						}
 				}
 

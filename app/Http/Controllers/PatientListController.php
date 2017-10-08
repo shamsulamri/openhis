@@ -31,15 +31,16 @@ class PatientListController extends Controller
 
 	public function index(Request $request)
 	{
-			if (empty($request->cookie('queue_location'))) {
+			if (empty($request->cookie('queue_location')) & empty(Auth::user()->location_code)) {
 					Session::flash('message', 'Location not set. Please select your location or room.');
 					return redirect('/queue_locations');
 			}
-			$selectedLocation = $request->cookie('queue_location');
-			if (!empty(Auth::user()->location_code)) {
+
+			if (!empty($request->cookie('queue_location'))) {
+					$selectedLocation = $request->cookie('queue_location');
+			} else {
 					$selectedLocation = Auth::user()->location_code;
 			}
-
 			/*
 			$outpatients = DB::table('queues as a')
 					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id')

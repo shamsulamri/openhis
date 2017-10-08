@@ -8,6 +8,7 @@ use App\OrderMultiple;
 use App\EncounterHelper;
 use App\Order;
 use App\OrderPost;
+use App\Queue;
 use Session;
 use Auth;
 use Log;
@@ -33,27 +34,53 @@ class OrderHelper
 	{
 			$drug = OrderDrug::where('order_id', $order_id)->first();
 
-			$value = $drug->drug_dosage." ".$drug->dosage->dosage_name;
-			$value = $value.", ".$drug->route_code.", ".$drug->frequency_code;
-			$value = $value.", ".$drug->drug_duration." ".$drug->period_code;
+			$value = "";
+			if ($drug->dosage) $value = $drug->drug_dosage." ".$drug->dosage->dosage_name;
+			if ($drug->route_code) $value = $value.", ".$drug->route_code.", ".$drug->frequency_code;
+			if ($drug->drug_duration) $value = $value.", ".$drug->drug_duration;
+			if ($drug->period_code) $value = $value." ".$drug->period_code;
 			return $value;
+	}
+
+	public static function getStoreAffected($product)
+	{
+			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
+			$encounter = Encounter::find(Session::get('encounter_id'));
+
+			$store_code = null;
+			if ($admission) {
+					Log::info("wwwwwwwwwwwwwwwwwwwwwwwwwwww");
+					Log::info($admission);
+				$store_code = $admission->bed->ward->store_code;
+			} else {
+				$location = Queue::where('encounter_id', '=', $encounter->encounter_id)->first()->location;
+				if ($location) $store_code = $location->store_code;
+			}
+
+			/*** Overide route ***/
+			if ($product->product_stocked==1) {
+					$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
+								->where('category_code', $product->category_code)
+								->first();
+
+					if ($route) {
+						$store_code = $route->store_code;
+					}
+			} else {
+				$store_code = null;
+			}
+
+			return $store_code;
 	}
 
 	public static function orderItem($product, $ward_code) 
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
+
 			$order = new Order();
 			$order->consultation_id = Session::get('consultation_id');
 			$order->encounter_id = Session::get('encounter_id');
 			$order->user_id = Auth::user()->id;
-			if ($admission) {
-				$order->admission_id = $admission->admission_id;
-				$order->ward_code = $admission->bed->ward_code;
-				$order->store_code = $admission->bed->ward->store_code;
-			} else {
-				$location = QueueLocation::find($order->location_code);
-				if ($location) $order->store_code = $location->store_code;
-			}
 
 			$order->product_code = $product->product_code;
 			$order->order_quantity_request = 1;
@@ -65,6 +92,11 @@ class OrderHelper
 			}	
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 			$order->location_code = $product->location_code;
+			$order->store_code = (new self)->getStoreAffected($product);
+			if ($admission) {
+					$order->admission_id = $admission->admission_id;
+					$order->ward_code = $admission->bed->ward_code;
+			}
 			$order->save();
 
 			if ($product->order_form==2) {
@@ -115,28 +147,31 @@ class OrderHelper
 
 	public static function createDrugServings($order_drug) 
 	{
-		if ($order_drug->order->consultation->encounter->encounter_code == 'inpatient') {
-				if (!empty($order_drug->period->period_mins) && !empty($order_drug->frequency->frequency_value)) {
-					$multi = OrderMultiple::where('order_id','=', $order_drug->order_id)->delete();
-					$frequencies = $order_drug->frequency->frequency_value*$order_drug->drug_duration*($order_drug->period->period_mins/1440);
-					
-					$is_unit_of_dose = Config::get('host.unit_of_dose');
-					if ($frequencies>0 & $is_unit_of_dose==1) {
-							OrderMultiple::where('order_id',$order_drug->order_id)->delete();
-							for ($i=0; $i<$frequencies; $i++) {
-									$multi = new OrderMultiple();
-									$multi->order_id = $order_drug->order_id;
-									$multi->save();
+		$unit_of_dose = Config::get('host.unit_of_dose');
+		if ($unit_of_dose==1) {
+				if ($order_drug->order->consultation->encounter->encounter_code == 'inpatient') {
+						if (!empty($order_drug->period->period_mins) && !empty($order_drug->frequency->frequency_value)) {
+							$multi = OrderMultiple::where('order_id','=', $order_drug->order_id)->delete();
+							$frequencies = $order_drug->frequency->frequency_value*$order_drug->drug_duration*($order_drug->period->period_mins/1440);
+							
+							$is_unit_of_dose = Config::get('host.unit_of_dose');
+							if ($frequencies>0 & $is_unit_of_dose==1) {
+									OrderMultiple::where('order_id',$order_drug->order_id)->delete();
+									for ($i=0; $i<$frequencies; $i++) {
+											$multi = new OrderMultiple();
+											$multi->order_id = $order_drug->order_id;
+											$multi->save();
+									}
+									Log::info($order_drug->order_id);
+									$order = Order::find($order_drug->order_id);
+									$order->order_multiple=1;
+									$order->save();
+							} else {
+									$order = Order::find($order_drug->order_id);
+									$order->order_multiple=0;
+									$order->save();
 							}
-							Log::info($order_drug->order_id);
-							$order = Order::find($order_drug->order_id);
-							$order->order_multiple=1;
-							$order->save();
-					} else {
-							$order = Order::find($order_drug->order_id);
-							$order->order_multiple=0;
-							$order->save();
-					}
+						}
 				}
 		}
 	}
@@ -226,12 +261,14 @@ class OrderHelper
 
 		foreach($orders as $order) {
 			if ($order->product->location_code=='none') {
-				if ($order->product->product_stocked==1) {
+				/**
+				if ($order->product->product_stocked==1 & $order->product_drop_charge==1) {
 					if ($stock_helper->getStockCountByStore($order->product_code,$order->store_code)>0) {
 						$ward = Ward::where('ward_code', $ward_code)->first();
 						$order->store_code = $ward->store_code;
 					}
 				}
+				**/
 					
 				if (!$order->orderCancel) {
 						$order->order_completed=1;

@@ -148,7 +148,7 @@ class ConsultationController extends Controller
 	{
 			$id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail($id);
-			if ($consultation->encounter->encounter_code=='outpatient') {
+			if ($consultation->encounter->encounter_code=='outpatient' or $consultation->encounter->encounter_code=='emergency') {
 					if (Auth::user()->consultant) {
 						$consultation->consultation_status = 1;
 					} else {

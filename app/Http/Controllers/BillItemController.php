@@ -22,6 +22,7 @@ use App\FormValue;
 use App\Form;
 use App\ProductPriceTier;
 use App\ProductCategory;
+use App\BillDiscount;
 
 class BillItemController extends Controller
 {
@@ -62,11 +63,11 @@ class BillItemController extends Controller
 					$item->tax_rate = $bed->tax_rate;
 					$item->bill_quantity = $bed_los;
 					$item->bill_unit_price = $bed->product_sale_price;
-					$item->bill_total_pregst = $item->bill_unit_price*$item->bill_quantity;
-					$item->bill_total = $item->bill_unit_price*$item->bill_quantity;
+					$item->bill_amount_pregst = $item->bill_unit_price*$item->bill_quantity;
+					$item->bill_amount = $item->bill_unit_price*$item->bill_quantity;
 
 					if ($bed->tax_rate) {
-						$item->bill_total = $item->bill_total*(($bed->tax_rate/100)+1);
+						$item->bill_amount = $item->bill_amount*(($bed->tax_rate/100)+1);
 					}
 
 					try {
@@ -114,11 +115,11 @@ class BillItemController extends Controller
 					}
 			}
 
-			if ($encounter->encounter_code=='outpatient') {
+			if ($encounter->encounter_code=='outpatient' or $encounter->encounter_code=='emergency') {
 					if (!empty($tier->tier_outpatient_multiplier)) {
 							$value = $tier->tier_outpatient_multiplier*$cost;
 					} else {
-							$value = $tier->tier_outpatient;
+							$value = $cost;
 					}
 
 					if (!empty($tier->tier_outpatient_limit)) {
@@ -136,7 +137,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$sql = sprintf("
-				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, profit_multiplier
+				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, profit_multiplier, a.order_id
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.tax_code 
@@ -155,6 +156,7 @@ class BillItemController extends Controller
 
 			foreach ($orders as $order) {
 					$item = new BillItem();
+					$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
 					$item->tax_code = $order->tax_code;
@@ -171,10 +173,10 @@ class BillItemController extends Controller
 							//$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
 					}
 
-					$item->bill_total = $order->order_quantity_supply*$item->bill_unit_price;
-					$item->bill_total_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+					$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
+					$item->bill_amount_pregst = $order->order_quantity_supply*$item->bill_unit_price;
 					if ($order->tax_rate) {
-						$item->bill_total = $item->bill_total*(($order->tax_rate/100)+1);
+						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
 					try {
 							$item->save();
@@ -216,10 +218,10 @@ class BillItemController extends Controller
 				$item->bill_quantity = $order->order_quantity_supply;
 				$item->bill_unit_multiplier = $order->profit_multiplier;
 				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
-				$item->bill_total = $order->order_quantity_supply*$item->bill_unit_price;
-				$item->bill_total_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_amount_pregst = $order->order_quantity_supply*$item->bill_unit_price;
 				if ($order->tax_rate) {
-						$item->bill_total = $item->bill_total*(($order->tax_rate/100)+1);
+						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 				}
 
 				try {
@@ -256,10 +258,10 @@ class BillItemController extends Controller
 				$item->bill_quantity = $order->order_quantity_supply;
 				$item->bill_unit_multiplier = $order->profit_multiplier;
 				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
-				$item->bill_total = $order->order_quantity_supply*$item->bill_unit_price;
-				$item->bill_total_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_amount_pregst = $order->order_quantity_supply*$item->bill_unit_price;
 				if ($order->tax_rate) {
-						$item->bill_total = $item->bill_total*(($order->tax_rate/100)+1);
+						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 				}
 
 				try {
@@ -282,8 +284,8 @@ class BillItemController extends Controller
 				$item->product_code = 'others';
 				$item->bill_quantity = 1;
 				$item->bill_unit_price = $outstanding; 
-				$item->bill_total = $outstanding;
-				$item->bill_total_pregst = $outstanding;
+				$item->bill_amount = $outstanding;
+				$item->bill_amount_pregst = $outstanding;
 				$item->save();
 				Log::info($item);
 			}
@@ -294,9 +296,10 @@ class BillItemController extends Controller
 			$encounter = Encounter::find($id);
 
 			$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_total','bill_total_pregst','bill_exempted')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
+					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
 					->orderBy('product_name');
 
@@ -306,9 +309,10 @@ class BillItemController extends Controller
 			if ($bills->total()==0) {
 				$bills=$this->compileBill($id);
 			$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_total','bill_total_pregst','bill_exempted')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
+					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
@@ -323,7 +327,7 @@ class BillItemController extends Controller
 
 			$bill_grand_total = DB::table('bill_items')
 					->where('encounter_id','=', $id)
-					->sum('bill_total');
+					->sum('bill_amount');
 
 			if (empty($bill_grand_total)) {
 					$bill_grand_total=0;
@@ -333,7 +337,7 @@ class BillItemController extends Controller
 
 
 			$gst_total = DB::table('bill_items as a')
-					->selectRaw('sum(bill_total_pregst) as gst_amount, format(sum(bill_total_pregst*(tax_rate/100)),2) as gst_sum, tax_code')
+					->selectRaw('sum(bill_amount_pregst) as gst_amount, format(sum(bill_amount_pregst*(tax_rate/100)),2) as gst_sum, tax_code')
 					->where('encounter_id','=', $id)
 					->whereNotNull('tax_code')
 					->groupBy('tax_code')
@@ -394,10 +398,13 @@ class BillItemController extends Controller
 									->count();
 			**/
 
+			$bill_discount=BillDiscount::where('encounter_id', $id)->first();
+
 			return view('bill_items.index', [
 					'bills'=>$bills,
 					'billPosted'=>$billPosted,
 					'bill_grand_total'=>$bill_grand_total,
+					'bill_total'=>$bill_grand_total,
 					'patient' => $encounter->patient,
 					'payments' => $payments,
 					'payment_total' => $payment_total,
@@ -409,6 +416,7 @@ class BillItemController extends Controller
 					'bill_outstanding' => $bill_outstanding,
 					'pending' => $pending,
 					'incomplete_orders'=>$incomplete_orders,
+					'bill_discount'=>$bill_discount,
 			]);
 	}
 
@@ -462,21 +470,21 @@ class BillItemController extends Controller
 			switch ($product->category_code) {
 					case "drugs":
 						if ($product->product_unit_charge==1) {
-							$bill->bill_total = $bill->bill_quantity*$bill->bill_unit_price;
+							$bill->bill_amount = $bill->bill_quantity*$bill->bill_unit_price;
 						} else {
-							$bill->bill_total = $bill->bill_unit_price;
+							$bill->bill_amount = $bill->bill_unit_price;
 						}
 						break;
 					default:
-						$bill->bill_total = $bill->bill_quantity*$bill->bill_unit_price;
+						$bill->bill_amount = $bill->bill_quantity*$bill->bill_unit_price;
 			}
 
 			if ($bill->product->tax_code) {
-					$bill->bill_total = $bill->bill_total * (1+($bill->product->tax->tax_rate/100));
+					$bill->bill_amount = $bill->bill_amount * (1+($bill->product->tax->tax_rate/100));
 			}
 
 			if ($bill->bill_discount>0) {
-					$bill->bill_total = $bill->bill_total * (1-($bill->bill_discount/100));
+					$bill->bill_amount = $bill->bill_amount * (1-($bill->bill_discount/100));
 			}
 
 
@@ -484,7 +492,7 @@ class BillItemController extends Controller
 
 			if ($valid->passes()) {
 				$bill->bill_exempted = $request->bill_exempted ?: 0;
-				if ($bill->bill_exempted) $bill->bill_total=0;
+				if ($bill->bill_exempted) $bill->bill_amount=0;
 				$bill->save();
 				Session::flash('message', 'Record successfully updated.');
 				return redirect('/bill_items/'.$bill->encounter_id);

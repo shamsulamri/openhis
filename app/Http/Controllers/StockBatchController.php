@@ -11,6 +11,7 @@ use Log;
 use DB;
 use Session;
 use App\DojoUtility;
+use Auth;
 
 class StockBatchController extends Controller
 {
@@ -45,6 +46,8 @@ class StockBatchController extends Controller
 					'stock_batches'=>$stock_batches,
 					'status'=>$this->batch_status,
 					'status_code'=>null,
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'store_code'=>null,
 			]);
 	}
 
@@ -143,6 +146,10 @@ class StockBatchController extends Controller
 					$stock_batches = $stock_batches->havingRaw('sum(batch_quantity)<=0');
 			}
 
+			if (!empty($request->store)) {
+				$stock_batches = $stock_batches->where('stock_batches.store_code', '=', $request->store);
+			}
+
 			if ($request->export_report) {
 				DojoUtility::export_report($stock_batches->get());
 			}
@@ -153,6 +160,8 @@ class StockBatchController extends Controller
 					'search'=>$request->search,
 					'status'=>$this->batch_status,
 					'status_code'=>$request->status_code,
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'store_code'=>$request->store,
 					]);
 	}
 

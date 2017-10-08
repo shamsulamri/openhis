@@ -242,6 +242,7 @@ if ($_COOKIE['his-navbar']==1) {
 								<h4>&nbsp;Ward</h4>
 						</div>
 						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-users'></i><span class='nav-label'>Admissions</a></li>
+						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-question-circle-o'></i><span class='nav-label'>Outpatient Tasks</span></a></li>
 						<li><a title="Inpatient Tasks" href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Admission Tasks</a></li>
 						@if (!empty($ward->ward_code))
 								@if ($ward->ward_code != 'mortuary')

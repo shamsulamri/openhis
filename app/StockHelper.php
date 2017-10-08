@@ -41,10 +41,19 @@ class StockHelper
 					$allocated = $allocated->where('orders.store_code', $store_code);
 			}
 
+					Log::info($allocated->toSql());
 			$allocated = $allocated->sum('order_quantity_request');
 
 			return floatval($allocated);
 
+	}
+
+	public function getStockAvailable($product_code, $store_code) 
+	{
+			$value = $this->getStockCountByStore($product_code, $store_code)-$this->getStockAllocatedByStore($product_code, $store_code);
+			if ($value<0) $value=0;
+
+			return $value;
 	}
 
 	public function onPurchase($product_code)
@@ -173,7 +182,7 @@ class StockHelper
 
 			$product = Product::find($product_code);
 			$product->product_on_hand = $total;
-			//$product->product_average_cost = $this->updateAverageCost($product_code);
+			$product->product_average_cost = $this->updateAverageCost($product_code);
 
 			$product->save();		
 

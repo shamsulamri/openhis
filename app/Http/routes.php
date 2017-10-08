@@ -48,6 +48,22 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('bill_discounts', 'BillDiscountController', ['except'=>['create']]);
+		Route::get('/bill_discounts/create/{encounter_id}', 'BillDiscountController@create');
+		Route::get('/bill_discounts/id/{id}', 'BillDiscountController@searchById');
+		Route::post('/bill_discount/search', 'BillDiscountController@search');
+		Route::get('/bill_discount/search', 'BillDiscountController@search');
+		Route::get('/bill_discounts/delete/{id}', 'BillDiscountController@delete');
+
+		Route::post('/order/enquiry', 'OrderController@enquiry');
+		Route::get('/order/enquiry', 'OrderController@enquiry');
+
+		Route::resource('order_routes', 'OrderRouteController');
+		Route::get('/order_routes/id/{id}', 'OrderRouteController@searchById');
+		Route::post('/order_route/search', 'OrderRouteController@search');
+		Route::get('/order_route/search', 'OrderRouteController@search');
+		Route::get('/order_routes/delete/{id}', 'OrderRouteController@delete');
+
 		Route::get('/amqp', 'OrderController@amqp');
 
 		Route::resource('bill_agings', 'BillAgingController');
@@ -532,13 +548,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 		});
 
-		Route::group(['middleware' => 'support'], function () {
-
 				Route::resource('order_queues', 'OrderQueueController');
 				Route::get('/order_queues/id/{id}', 'OrderQueueController@searchById');
 				Route::post('/order_queue/search', 'OrderQueueController@search');
 				Route::get('/order_queue/search', 'OrderQueueController@search');
 				Route::get('/order_queues/delete/{id}', 'OrderQueueController@delete');
+		Route::group(['middleware' => 'support'], function () {
+
 		});
 
 		Route::group(['middleware' => 'discharge'], function () {
@@ -710,8 +726,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/order/search', 'OrderController@search');
 				Route::get('/orders/delete/{id}', 'OrderController@delete');
 				Route::post('/orders/diagnostic_report/{id}', 'OrderController@updateDiagnosticReport');
-				Route::post('/order/enquiry', 'OrderController@enquiry');
-				Route::get('/order/enquiry', 'OrderController@enquiry');
+				Route::get('/orders/cancel_single/{id}', 'OrderController@cancelSingle');
 
 				Route::resource('order_investigations', 'OrderInvestigationController');
 				Route::get('/order_investigations/create/{code}', 'OrderInvestigationController@create');

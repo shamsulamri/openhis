@@ -7,27 +7,24 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class Bill extends Model
+class OrderRoute extends Model
 {
-	protected $table = 'bills';
+	protected $table = 'order_routes';
 	protected $fillable = [
-				'encounter_id',
-				'bill_total',
-				'bill_discount',
-				'bill_grand_total',
-				'bill_payment_total',
-				'bill_deposit_total',
-				'bill_outstanding',
-				'user_id',
-				'bill_change'];
+				'encounter_code',
+				'category_code',
+				'store_code'];
 	
-    protected $guarded = ['id'];
-    protected $primaryKey = 'id';
+    protected $guarded = ['route_id'];
+    protected $primaryKey = 'route_id';
     public $incrementing = true;
+    
 
 	public function validate($input, $method) {
 			$rules = [
-				'encounter_id'=>'required',
+				'encounter_code'=>'required',
+				'category_code'=>'required',
+				'store_code'=>'required',
 			];
 
 			

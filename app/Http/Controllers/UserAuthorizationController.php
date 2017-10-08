@@ -81,6 +81,7 @@ class UserAuthorizationController extends Controller
 			$user_authorization->module_discharge = $request->module_discharge ?: 0;
 			$user_authorization->module_diet = $request->module_diet ?: 0;
 			$user_authorization->module_medical_record = $request->module_medical_record ?: 0;
+			$user_authorization->module_support = $request->module_support ?: 0;
 			$user_authorization->patient_list = $request->patient_list ?: 0;
 			$user_authorization->product_list = $request->product_list ?: 0;
 			$user_authorization->loan_function = $request->loan_function ?: 0;

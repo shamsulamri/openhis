@@ -96,14 +96,14 @@ class OrderInvestigationController extends Controller
 			}
 	}
 
-	public function edit($id) 
+	public function edit(Request $request, $id) 
 	{
 			$order_investigation = OrderInvestigation::findOrFail($id);
 			$consultation = Consultation::find($order_investigation->order->consultation_id);
 
 			$product = DB::table('products')
 						->select('product_name','product_code')
-						->where('product_code','=',$order_investigation->order->product_code)->get();
+						->where('product_code','=',$order_investigation->order->product_code)->first();
 			
 			return view('order_investigations.edit', [
 					'order_investigation'=>$order_investigation,
@@ -116,6 +116,7 @@ class OrderInvestigationController extends Controller
 					'tab' => 'order',
 					'consultOption' => 'consultation',
 					'order' => $order_investigation->order,
+					'order_single'=>$request->order_single,
 					]);
 	}
 

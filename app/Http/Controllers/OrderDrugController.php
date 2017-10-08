@@ -116,7 +116,7 @@ class OrderDrugController extends Controller
 			}
 	}
 
-	public function edit($id) 
+	public function edit(Request $request, $id) 
 	{
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 			$order_drug = OrderDrug::findOrFail($id);
@@ -143,8 +143,7 @@ class OrderDrugController extends Controller
 				//	'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 			$indications = DrugDisease::where('drug_code','=', $product_code)->distinct()->get();
 			$stock_helper = new StockHelper();
-
-			$allocated = $stock_helper->getStockAllocatedByStore($product_code, null, $order_drug->order->encounter_id);
+			$available = $stock_helper->getStockAvailable($product_code, $order_drug->order->store_code);
 
 			return view('order_drugs.edit', [
 					'order_drug'=>$order_drug,
@@ -162,7 +161,8 @@ class OrderDrugController extends Controller
 					'order'=>$order_drug->order,
 					'prescriptions'=>$prescriptions,
 					'indications'=>$indications,
-					'allocated'=>$allocated,
+					'available'=>$available,
+					'order_single'=>$request->order_single,
 					]);
 	}
 
@@ -177,20 +177,20 @@ class OrderDrugController extends Controller
 			$product= Product::find($order->product_code);
 			$order->fill($request->input());
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
+			$order->order_quantity_request = $request->order_quantity_request;
 			$order->order_quantity_supply = $request->order_quantity_request;
 			$order->order_total = $product->product_sale_price*$order->order_quantity_request;
-			$order->save();
 
 			$stock_helper = new StockHelper();
-			$on_hand = $stock_helper->getStockCountByStore($order->product_code, null);
-			$allocated = $stock_helper->getStockAllocatedByStore($order->product_code, null, $order->encounter_id);
+			$allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $order_drug->order->store_code, $order_drug->order->encounter_id);
+			$on_hand = $stock_helper->getStockCountByStore($product->product_code, $order_drug->order->store_code);
+
 
 			$valid=null;
 
-			//$order->save();
 			
 			$valid = $order_drug->validate($request->all(), $request->_method);	
-			if ($on_hand-$allocated<$order->order_quantity_request) {
+			if ($order->order_quantity_request>$on_hand-$allocated) {
 					//$valid['order_quantity_request']='Insufficient quantity.'; 
 					$valid->getMessageBag()->add('order_quantity_request', 'Insufficient quantity.');
 					return redirect('/order_drugs/'.$id.'/edit')
@@ -198,6 +198,7 @@ class OrderDrugController extends Controller
 							->withInput();
 			}
 
+			//$order->save();
 			/**
 			if (!empty($valid)) {
 					return redirect('/order_drugs/'.$id.'/edit')
@@ -207,6 +208,7 @@ class OrderDrugController extends Controller
 			**/
 
 			if ($valid->passes()) {
+					$order->save();
 					$order_drug->save();
 					OrderHelper::createDrugServings($order_drug);
 

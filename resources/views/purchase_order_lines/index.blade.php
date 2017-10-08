@@ -2,7 +2,9 @@
 
 @section('content')
 <?php 
-$grandTotal=0.0; 
+$total_after_gst=0.0; 
+$total_gst=0.0;
+$total_before_gst=0.0;
 $count=0;
 ?>
 @if ($purchase_order->purchase_posted==1)
@@ -33,11 +35,13 @@ $count=0;
 @foreach ($purchase_order_lines as $purchase_order_line)
 	<?php 
 		if (empty($purchase_order_line->deleted_at)) {
-			$grandTotal += $purchase_order_line->line_total_gst;
+			$total_after_gst += $purchase_order_line->line_total_gst;
+			$total_before_gst += $purchase_order_line->line_total;
+			$total_gst += $purchase_order_line->line_total_gst-$purchase_order_line->line_total;
 		}
 	?>
 @endforeach
-@if ($grandTotal>0 && $purchase_order->purchase_posted==0)
+@if ($total_after_gst>0 && $purchase_order->purchase_posted==0)
 		<a href='/purchase_order/post?purchase_id={{ $purchase_id }}' class='btn btn-primary'>Post Purchase Order</a>
 @endif
 		<a class="btn btn-warning pull-right" target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=purchase_order&id={{ $purchase_id }}" role="button">Print</a> 
@@ -68,7 +72,7 @@ $count=0;
 						<h4 class='text-navy'>{{ $purchase_order->invoice_number }}</h4>
 						<span><strong>Invoice Date:</strong> {{ date('d/m/Y', strtotime(str_replace('/','-',$purchase_order->invoice_date))) }}</span><br>
 				@else	
-				<strong>Purchase ID:</strong> {{ $purchase_order->purchase_id }}<br>
+				<strong>Purchase ID:</strong> {{ $purchase_order->purchase_order_number }}<br>
 				<strong>Purchase Date:</strong> {{ date('d/m/Y', strtotime(str_replace('/','-',$purchase_order->purchase_date))) }}
 				@endif
 				</div>
@@ -89,10 +93,12 @@ $count=0;
 	-->
     <th>Product</th>
     <th><div align='right'>Tax</div></th> 
-    <th><div align='right'>#</div></th> 
+    <th><div align='right'>Qty</div></th> 
     <th><div align='right'>Unit Price</div></th> 
-    <th><div align='right'>Total</div></th> 
+    <th><div align='right'>Amount</div></th> 
+	<!--
     <th><div align='right'>Total GST</div></th> 
+	-->
 	@if ($purchase_order->purchase_received==0)
 	<th></th>
 	@endif
@@ -147,9 +153,11 @@ $count=0;
 			<td width='10' align='right'>
 					{{ number_format($purchase_order_line->line_total,2) }}
 			</td>
+			<!--
 			<td width='50' align='right'>
 					{{ number_format($purchase_order_line->line_total_gst,2) }}
 			</td>
+			-->
 			<td align='right' width='20'>
 					@if ($purchase_order->purchase_received==0)
 					@if (empty($purchase_order_line->deleted_at))
@@ -160,10 +168,20 @@ $count=0;
 	</tr>
 @endforeach
 @endif
-@if ($grandTotal>0)
+@if ($total_after_gst>0)
 	<tr>
-		<td colspan='5' align='right'><br><strong>Grand Total</strong></td>
-		<td width='20' align='right'><br>{{ number_format($grandTotal,2) }}</td>
+		<td colspan='4' align='right'><strong>Total Before GST</strong></td>
+		<td width='20' align='right'>{{ number_format($total_before_gst,2) }}</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td colspan='4' align='right'><strong>Total GST</strong></td>
+		<td width='20' align='right'>{{ number_format($total_gst,2) }}</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td colspan='4' align='right'><strong>Total After GST</strong></td>
+		<td width='20' align='right'>{{ number_format($total_after_gst,2) }}</td>
 		<td></td>
 	</tr>
 @endif

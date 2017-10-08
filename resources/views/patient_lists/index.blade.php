@@ -2,6 +2,7 @@
 
 @section('content')
 <h1>Patient List</h1>
+<h4>{{ $location->location_name }}</h4>
 @if ($hasOpenOrders->count()>0)
 <div class="alert alert-danger" role="alert">You have unposted order in {{ $hasOpenOrders->count() }} consultation(s). Please close pending consultation to post the order.
 	<br>

@@ -252,6 +252,7 @@
 					document.getElementById('ward_code').value = 'daycare';
 					document.getElementById('bed_code').disabled = false;
 					document.getElementById('admission_code').value = 'scheduled';
+					document.getElementById('referral_code').disabled = true;
 
 					var wardSelect = document.getElementById('ward_code');
 					addList(wardSelect,'daycare', 'Daycare');
@@ -280,15 +281,17 @@
 						hide(document.querySelectorAll('.target'));
 						document.getElementById('location_code').disabled = false;
 					} else {
-							show(document.querySelectorAll('.target'));
-							if (document.getElementById('triage').value != '') {
-								document.getElementById('ward_code').value = 'observation';
-								document.getElementById('bed_code').disabled = false;
-								document.getElementById('ward_code').disabled = false;
-								wardChanged();
-							}
-						checkPatientType();
-						return;
+						if (document.getElementById('triage').value == 'yellow') {
+									show(document.querySelectorAll('.target'));
+									if (document.getElementById('triage').value != '') {
+										document.getElementById('ward_code').value = 'observation';
+										document.getElementById('bed_code').disabled = false;
+										document.getElementById('ward_code').disabled = false;
+										wardChanged();
+									}
+								checkPatientType();
+								return;
+						}
 					}
 
 			}

@@ -90,12 +90,9 @@ class WardController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/wards/id/'.$id);
 			} else {
-					return view('wards.edit', [
-							'ward'=>$ward,
-					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
-					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
-							])
-							->withErrors($valid);			
+					return redirect('wards/'.$id.'/edit')
+							->withErrors($valid)
+							->withInput();
 			}
 	}
 	

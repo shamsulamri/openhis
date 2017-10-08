@@ -1,7 +1,19 @@
+	
+	<h3>{{ $product->product_name }}</h3>
+@if ($order->store)
+<div class="alert @if ($available==0) alert-danger @else alert-success @endif">
+	Available: {{ $available }} ({{ $order->store->store_name }})
+</div>
+@endif
+
     <div class='form-group'>
-        {{ Form::label('product', 'Product',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::label('product_name', $product->product_name, ['class'=>'form-control','placeholder'=>'',]) }}
+        <div class="col-sm-offset-3 col-sm-9">
+			@if (empty($order_single))
+            <a class="btn btn-default" href="/orders" role="button">Back</a>
+			@else
+            <a class="btn btn-default" href="/orders/cancel_single/{{ $order->order_id }}" role="button">Cancel</a>
+			@endif
+            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
 
@@ -33,7 +45,7 @@
     <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
         {{ Form::label('Description', 'Description',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::textarea('order_description', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'65535']) }}
+            {{ Form::textarea('order_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'3']) }}
             @if ($errors->has('order_description')) <p class="help-block">{{ $errors->first('order_description') }}</p> @endif
         </div>
     </div>
@@ -56,11 +68,6 @@
     </div>
 	-->
 
-    <div class='form-group'>
-        <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-default" href="/orders" role="button">Back</a>
-            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
-        </div>
-    </div>
-            {{ Form::hidden('consultation_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            {{ Form::hidden('product_code', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::hidden('consultation_id', null) }}
+            {{ Form::hidden('product_code', null) }}
+            {{ Form::hidden('order_single', $order_single) }}

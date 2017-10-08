@@ -130,7 +130,7 @@ class OrderController extends Controller
 				$orders = $orders->where('a.location_code','=', $location_code);
 			} 
 
-			$orders = $orders->paginate($this->paginateValue);
+			$orders = $orders->paginate(20);
 
 			return view('orders.index', [
 					'orders'=>$orders,
@@ -202,7 +202,7 @@ class OrderController extends Controller
 			$order->save();
 	}
 
-	public function edit($id) 
+	public function edit(Request $request, $id) 
 	{
 			$encounter= Encounter::find(Session::get('encounter_id'));
 			$consultation = new Consultation();
@@ -213,11 +213,17 @@ class OrderController extends Controller
 
 			$product = Product::find($order->product_code);
 			$current_id = Consultation::orderBy('created_at','desc')->limit(1)->get()[0]->consultation_id;
+
 		 	if ($product->order_form == '2') {
-					return redirect('/order_drugs/'.$order->orderDrug->id.'/edit');
+					return redirect('/order_drugs/'.$order->orderDrug->id.'/edit?order_single='.$request->order_single);
 			} elseif ($product->order_form == '3') {
-					return redirect('/order_investigations/'.$order->orderInvestigation->id.'/edit');
+					return redirect('/order_investigations/'.$order->orderInvestigation->id.'/edit?order_single='.$request->order_single);
 			} else {
+
+				$stock_helper = new StockHelper();
+				$available = $stock_helper->getStockAvailable($order->product_code, $order->store_code);
+
+
 				return view('orders.edit', [
 					'order'=>$order,
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
@@ -226,8 +232,24 @@ class OrderController extends Controller
 					'tab'=>'order',
 					'product'=>$product,
 					'current_id'=>$current_id,
+					'available'=>$available,
+					'order_single'=>$request->order_single,
 					]);
 			}
+	}
+
+	public function validateOrder($request, $order) 
+	{
+			$stock_helper = new StockHelper();
+			$on_hand = $stock_helper->getStockCountByStore($order->product_code, $order->store_code);
+			$allocated = $stock_helper->getStockAllocatedByStore($order->product_code, $order->store_code, Session::get('encounter_id'));
+
+			$valid = null;
+			if ($order->order_quantity_request>$on_hand-$allocated) {
+					$valid = $order->validate($request->all(), $request->_method);	
+					$valid->getMessageBag()->add('order_quantity_request', 'Insufficient quantity.');
+			}
+			return $valid;
 	}
 
 	public function update(Request $request, $id) 
@@ -238,12 +260,19 @@ class OrderController extends Controller
 			$order->order_completed = $request->order_completed ?: 0;
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
 
-			$valid = $order->validate($request->all(), $request->_method);	
-
 			$product = Product::find($order->product_code);
 			if ($product->product_edit_price==1) {
 				$order->order_unit_price = $order->order_sale_price;
 			}
+
+			$valid = $this->validateOrder($request, $order);
+			if ($valid) {
+					return redirect('/orders/'.$order->order_id.'/edit')
+							->withErrors($valid)
+							->withInput();
+			}
+
+			$valid = $order->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
 					$order->order_quantity_supply = $order->order_quantity_request;
@@ -272,6 +301,7 @@ class OrderController extends Controller
 			]);
 
 	}
+
 	public function destroy($id)
 	{	
 			$order = Order::find($id);
@@ -281,6 +311,13 @@ class OrderController extends Controller
 			return redirect('/orders/');
 	}
 	
+	public function cancelSingle($id)
+	{
+			$this->destroy($id);
+			Session::flash('message', 'Record deleted.');
+			return redirect('/orders/');
+	}
+
 	public function search(Request $request)
 	{
 			$orders = DB::table('orders')
@@ -415,10 +452,13 @@ class OrderController extends Controller
 					->orderBy('b.encounter_id');
 
 			if (!empty($request->search)) {
-					$orders = $orders->where('patient_name','like','%'.$request->search.'%')
-							->orWhere('patient_mrn', 'like','%'.$request->search.'%')
-							->orWhere('b.encounter_id', 'like','%'.$request->search.'%');
+					$orders= $orders->where(function ($query) use ($request) {
+						$query->where('patient_name','like','%'.$request->search.'%')
+							->orWhere('patient_mrn','like','%'.$request->search.'%')
+							->orWhere('b.encounter_id','like','%'.$request->search.'%');
+					});
 			}
+
 
 			if (!empty($request->date_start) && empty($request->date_end)) {
 				$orders = $orders->where('orders.created_at', '>=', $date_start.' 00:00');
@@ -469,6 +509,9 @@ class OrderController extends Controller
 							case "completed":
 									$orders = $orders->where('order_completed','=',1);
 									break;
+							case "incomplete":
+									$orders = $orders->where('order_completed','=',0);
+									break;
 							case "reported":
 									$orders = $orders->whereNotNull('order_report');
 									break;
@@ -481,7 +524,7 @@ class OrderController extends Controller
 			$orders = $orders->paginate($this->paginateValue);
 
 			$categories = ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');
-			$status = array(''=>'','posted'=>'Posted','unposted'=>'Unposted','cancel'=>'Cancel', 'completed'=>'Completed','reported'=>'Reported');
+			$status = array(''=>'','posted'=>'Posted','unposted'=>'Unposted','cancel'=>'Cancel','incomplete'=>'Incomplete', 'completed'=>'Completed','reported'=>'Reported');
 
 			return view('orders.enquiry', [
 					'orders'=>$orders,

@@ -24,9 +24,12 @@ Interim Bill
 @if (!$billPosted)
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
 <p class='pull-right'>&nbsp;</p>
-@endif
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Tax Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Interim Bill</a> 
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Simple Invoice</a> 
+@else
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_invoice&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Tax Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple_invoice&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Simple Invoice</a> 
+@endif
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Medical Certificate</a>
 <br>
@@ -34,10 +37,10 @@ Interim Bill
 <table class="table table-condensed">
  <thead>
 	<tr> 
+    <th>Code</th> 
     <th>Item</th> 
     <th><div align='right'>Tax</div></th> 
-    <th><div align='right'>Rate</div></th> 
-    <th><div align='right'>#</div></th> 
+    <th><div align='right'>Qty</div></th> 
     <th><div align='right'>Unit Price</div></th> 
     <th><div align='right'>Discount</div></th> 
     <th><div align='right'>Total</div></th> 
@@ -50,6 +53,9 @@ Interim Bill
 		@foreach ($bills as $bill)
 			<tr>
 					<td>
+						{{ $bill->product_code }}
+					</td>
+					<td>
 							@if (!$billPosted)
 							<a href='{{ URL::to('bill_items/'. $bill->bill_id . '/edit') }}'>
 							@endif
@@ -60,12 +66,6 @@ Interim Bill
 					</td>
 					<td align='right' width='50'>
 							{{ $bill->tax_code }}
-					</td>
-					<td align='right' width='50'>
-							<?php if ($bill->tax_rate>0) { ?>
-							{{ floatval($bill->tax_rate) }}
-							%
-							<?php } ?>
 					</td>
 					<td align='right' width='50'>
 							{{$bill->bill_quantity}}
@@ -82,7 +82,7 @@ Interim Bill
 							<?php } ?>
 					</td>
 					<td align='right' width='80'>
-							{{ number_format($bill->bill_total,2) }}
+							{{ number_format($bill->bill_amount,2) }}
 					</td>
 					@can('system-administrator')
 					<td align='right' width='80'>
@@ -94,16 +94,55 @@ Interim Bill
 			</tr>
 		@endforeach
 	<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td colspan=6 align='right'>
+					<strong>Total</strong>
+			</td>
 			<td align='right'>
+					<strong>{{number_format($bill_total,2)}}<strong>
+			</td>
+			@can('system-administrator')
+			<td align='right'>
+			</td>
+			@endcan
+	</tr>
+	<tr>
+			<td colspan=6 align='right'>
+					<strong>Discount</strong>
+			</td>
+			<td align='right'>
+				
+			
+			@if (!$billPosted)
+				@if ($bill_discount)
+					<strong><a href="{{ URL::to('bill_discounts/'.$bill_discount->discount_id) }}/edit">{{ $bill_discount->discount_amount }}%</a><strong>
+				@else
+					<strong><a href="{{ URL::to('bill_discounts/create/'.$bill->encounter_id) }}">None</a><strong>
+				@endif
+			@else
+				@if ($bill_discount)
+					<strong>{{ $bill_discount->discount_amount }}%<strong>
+				@else
+					<strong>None</strong>
+				@endif
+			@endif
+
+			</td>
+			@can('system-administrator')
+			<td align='right'>
+			</td>
+			@endcan
+	</tr>
+	<tr>
+			<td colspan=6 align='right'>
 					<strong>Grand Total</strong>
 			</td>
 			<td align='right'>
-					<strong>{{number_format($bill_grand_total,2)}}<strong>
+			<?php
+			if ($bill_discount) {
+				$bill_grand_total = $bill_grand_total*(1-($bill_discount->discount_amount/100));
+			}
+			?>
+					<strong>{{ number_format(DojoUtility::roundUp($bill_grand_total),2) }}<strong>
 			</td>
 			@can('system-administrator')
 			<td align='right'>
@@ -123,9 +162,7 @@ Interim Bill
 			<th><div align='right'>GST (RM)</div></th> 
 			</tr>
 		</thead>
-	@if (count($gst_total)>0)
 		@foreach ($gst_total as $gst)
-			@if ($gst->gst_sum>0)
 			<tr>
 					<td>{{ $gst->tax_code}}</td>
 					<td>
@@ -139,9 +176,7 @@ Interim Bill
 						</div>
 					</td>
 			</tr>
-			@endif
 		@endforeach
-	@endif
 		</table>
 			</div>
 		</div>
@@ -250,7 +285,8 @@ Interim Bill
 				</div>
 			</td>
 			<td align='right' width='100'>
-					<strong>{{number_format($bill_grand_total-$payment_total+$deposit_total,2)}}</strong>
+			<?php $bill_outstanding = $bill_grand_total-$payment_total-$deposit_total; ?>
+					<strong>{{DojoUtility::roundUp($bill_outstanding)}}</strong>
 			</td>
 			@if (!$billPosted)
 			<td width='90'>
@@ -298,12 +334,16 @@ Interim Bill
 				</td>
 		</tr>
 	</table>
-            {{ Form::hidden('encounter_id', $encounter_id, ['id'=>'encounter_id','class'=>'form-control','placeholder'=>'',]) }}
-            {{ Form::hidden('bill_grand_total', $bill_grand_total, ['class'=>'form-control','placeholder'=>'',]) }}
-            {{ Form::hidden('bill_payment_total', $payment_total, ['class'=>'form-control','placeholder'=>'',]) }}
-            {{ Form::hidden('bill_deposit_total', $deposit_total, ['class'=>'form-control','placeholder'=>'',]) }}
-            {{ Form::hidden('bill_outstanding', $bill_outstanding, ['class'=>'form-control','placeholder'=>'',]) }}
-            {{ Form::hidden('bill_change', $bill_change, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::hidden('encounter_id', $encounter_id, ['id'=>'encounter_id']) }}
+            {{ Form::hidden('bill_grand_total', DojoUtility::roundUp($bill_grand_total)) }}
+            {{ Form::hidden('bill_payment_total', $payment_total) }}
+            {{ Form::hidden('bill_deposit_total', $deposit_total) }}
+            {{ Form::hidden('bill_outstanding', DojoUtility::roundUp($bill_outstanding)) }}
+            {{ Form::hidden('bill_change', $bill_change) }}
+            {{ Form::hidden('bill_total', $bill_total) }}
+			@if ($bill_discount)
+            {{ Form::hidden('bill_discount', $bill_discount->discount_amount) }}
+			@endif
             {{ Form::submit('Submit', ['class'=>'btn btn-primary btn-sm pull-right','id'=>'button_post']) }}
 			<br>
 			<br>

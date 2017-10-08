@@ -7,27 +7,22 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 
-class Bill extends Model
+class BillDiscount extends Model
 {
-	protected $table = 'bills';
+	protected $table = 'bill_discounts';
 	protected $fillable = [
 				'encounter_id',
-				'bill_total',
-				'bill_discount',
-				'bill_grand_total',
-				'bill_payment_total',
-				'bill_deposit_total',
-				'bill_outstanding',
-				'user_id',
-				'bill_change'];
+				'discount_amount'];
 	
-    protected $guarded = ['id'];
-    protected $primaryKey = 'id';
+    protected $guarded = ['discount_id'];
+    protected $primaryKey = 'discount_id';
     public $incrementing = true;
+    
 
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
+				'discount_amount'=>'required',
 			];
 
 			

@@ -1,26 +1,26 @@
 
 	<h3>{{ $product->product_name }}</h3>
-	<h5>{{ $product->product_code }}</h5>
-	<h5>Stock On Hand: {{ $product->product_on_hand -$allocated}}</h5>
-	
+	<div class="alert @if ($available==0) alert-danger @else alert-success @endif">
+			Available: {{ $available }} ({{ $order_drug->order->store->store_name }})
+	</div>
 	<!--
 	@if ($errors)
 		@foreach($errors->all() as $message)
 				{{ $message }}
 		@endforeach
 	@endif
+	-->
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
 			@if (empty($order->product_code))
-            <a class="btn btn-default" href="/order_products" role="button">Cancel</a>
+            <a class="btn btn-default" href="/order_products" role="button">Back</a>
 			@else
-            <a class="btn btn-default" href="/orders" role="button">Cancel</a>
+            <a class="btn btn-default" href="/orders" role="button">Back</a>
 			@endif
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
-	-->
 
 	<!--
     <div class='form-group'>
@@ -35,15 +35,11 @@
     </div>
 	-->
 
-	<br>
+
     <div class='form-group'>
-        <div class="col-sm-offset-3 col-sm-9">
-			@if (empty($order->product_code))
-            <a class="btn btn-default" href="/order_products" role="button">Cancel</a>
-			@else
-            <a class="btn btn-default" href="/orders" role="button">Cancel</a>
-			@endif
-            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+        {{ Form::label('product_code', 'Code',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::label('product_code', $product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
 
@@ -130,6 +126,7 @@
 			</div>
 	</div>
 
+@if ($product->drug)
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
 					<div class='form-group  @if ($errors->has('label')) has-error @endif'>
@@ -146,7 +143,6 @@
         </div>
     </div>
 
-	@if ($product->drug)
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
 					<div class='form-group  @if ($errors->has('label')) has-error @endif'>
@@ -226,9 +222,16 @@
 			frequency = getFrequencyValue(document.getElementById('frequency').value) 
 			period = getPeriodValue(document.getElementById('period').value) 
 			duration = document.getElementById('duration').value;
-			total = frequency*duration*period*dosage;
-			document.getElementById('total').value=total;
+			total = frequency*dosage;
+			if (duration>0) total = total*duration*period;
+			if (isNumber(total)==true) {
+				document.getElementById('total').value=total;
+			}
 			@endif
+	}
+
+	function isNumber(n) {
+			return !isNaN(parseFloat(n)) && isFinite(n);
 	}
 
 	function changePrescription() {

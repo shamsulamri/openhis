@@ -1,19 +1,30 @@
-	<h3>{{ $product[0]->product_name }}</h3>
-	<br>
+	<h3>{{ $product->product_name }}</h3>
+    <div class='form-group'>
+        <div class="col-sm-offset-3 col-sm-9">
+			@if (empty($order_single))
+            <a class="btn btn-default" href="/orders" role="button">Back</a>
+			@else
+            <a class="btn btn-default" href="/orders/cancel_single/{{ $order->order_id }}" role="button">Cancel</a>
+			@endif
+            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+        </div>
+    </div>
+
 	<div class="row">
-			<div class="col-xs-12">
-					<div class='form-group  @if ($errors->has('investigation_date')) has-error @endif'>
-						<label for='investigation_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
+			<div class="col-xs-6">
+					<div class='form-group'>
+						{{ Form::label('product_code', 'Code',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
-							{{ $order->investigation_date }}
-							<div class="input-group date">
-								<input data-mask="99/99/9999" name="investigation_date" id="investigation_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($order_investigation->investigation_date) }}">
-								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-							</div>
-							<!--
-							<input id="investigation_date" name="investigation_date" type="text">
-							-->
-							@if ($errors->has('investigation_date')) <p class="help-block">{{ $errors->first('investigation_date') }}</p> @endif
+							{{ Form::label('product_code', $product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('urgency_code')) has-error @endif'>
+						{{ Form::label('urgency_code', 'Urgency',['class'=>'col-sm-3 control-label']) }}
+						<div class='col-sm-9'>
+							{{ Form::select('urgency_code', $urgency,null, ['class'=>'form-control input-sm','maxlength'=>'20']) }}
+							@if ($errors->has('urgency_code')) <p class="help-block">{{ $errors->first('urgency_code') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -21,11 +32,14 @@
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('urgency_code')) has-error @endif'>
-						{{ Form::label('urgency_code', 'Urgency',['class'=>'col-sm-3 control-label']) }}
+					<div class='form-group  @if ($errors->has('order_quantity_request')) has-error @endif'>
+						<label for='investigation_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
 						<div class='col-sm-9'>
-							{{ Form::select('urgency_code', $urgency,null, ['class'=>'form-control input-sm','maxlength'=>'20']) }}
-							@if ($errors->has('urgency_code')) <p class="help-block">{{ $errors->first('urgency_code') }}</p> @endif
+							<div class="input-group date">
+								<input data-mask="99/99/9999" name="investigation_date" id="investigation_date" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($order_investigation->investigation_date) }}">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
+							@if ($errors->has('investigation_date')) <p class="help-block">{{ $errors->first('investigation_date') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -89,19 +103,8 @@
 			</div>
 	</div>
 
-    <div class='form-group'>
-        <div class="col-sm-offset-3 col-sm-9">
-			@if (empty($order->product_code))
-            <a class="btn btn-default" href="/order_products" role="button">Cancel</a>
-			@else
-            <a class="btn btn-default" href="/orders" role="button">Cancel</a>
-			@endif
-            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
-        </div>
-    </div>
-
     {{ Form::hidden('consultation_id', $consultation->consultation_id, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
-    {{ Form::hidden('product_code', $product[0]->product_code, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
+    {{ Form::hidden('product_code', $product->product_code, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
 	<script>
 		$(function(){
 				/*

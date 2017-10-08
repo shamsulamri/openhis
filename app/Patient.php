@@ -341,10 +341,9 @@ class Patient extends Model
 							->first();
 			
 			if ($encounter) {
-					Log::info('--->'.$encounter);
 					if ($encounter->discharge) { 
 							if (!$encounter->bill) { 
-									return "Clinically Discharge";
+									return "Billing process...";
 							}
 					} else {
 							if ($encounter->admission) {

@@ -16,7 +16,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
-        {{ Form::label('encounter_code', 'Encounter',['class'=>'col-sm-3 control-label']) }}
+        <label for='encounter_code' class='col-sm-3 control-label'>Encounter<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::select('encounter_code', $encounter,null, ['class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
@@ -24,7 +24,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
-        {{ Form::label('store_code', 'Store',['class'=>'col-sm-3 control-label']) }}
+        <label for='store_code' class='col-sm-3 control-label'>Store<span style='color:red;'> *</span></label>
 		<div class='col-sm-9'>
 			{{ Form::select('store_code', $store, null, ['class'=>'form-control','maxlength'=>'10']) }}
 			@if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif

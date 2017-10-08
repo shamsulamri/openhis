@@ -83,6 +83,8 @@ class ProductController extends Controller
 			$product->order_form=1;
 			$product->status_code='active';
 			$product->form_code='generic';
+			$product->location_code = 'none';
+			$product->tax_code= 'ES';
 
 			$categories = Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');
 
@@ -202,6 +204,7 @@ class ProductController extends Controller
 			$product->product_dismantle_material = $request->product_dismantle_material ?: 0;
 			$product->product_edit_price = $request->product_edit_price ?: 0;
 			$product->product_track_batch = $request->product_track_batch ?: 0;
+			$product->product_drop_charge = $request->product_drop_charge ?: 0;
 
 			$valid = $product->validate($request->all(), $request->_method);	
 

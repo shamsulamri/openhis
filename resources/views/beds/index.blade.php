@@ -86,7 +86,11 @@
 @foreach ($beds as $bed)
 	<tr>
 			<td>
+					@if ($bed->room)
 					{{$bed->room->room_name}}
+					@else
+					-
+					@endif
 			</td>
 			<td>
 					<a href='{{ URL::to('beds/'. $bed->bed_code . '/edit') }}'>
