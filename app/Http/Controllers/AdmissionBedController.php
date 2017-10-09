@@ -86,7 +86,9 @@ class AdmissionBedController extends Controller
 			return view('admission_beds.index', [
 					'admission_beds'=>$admission_beds,
 					'wards' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'wards2' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->get(),
+					'wards2' => Ward::where('encounter_code','=', $encounter->encounter_code)
+								->orWhere('encounter_code','=','daycare')
+								->orderBy('ward_name')->get(),
 					'ward_code'=>$ward_code,
 					'ward_class' => $ward_class,
 					'admission' => $admission,
@@ -272,7 +274,6 @@ class AdmissionBedController extends Controller
 					->leftJoin('ward_rooms as h', 'h.room_code', '=', 'a.room_code')
 					->where('a.class_code','like','%'.$request->ward_class.'%')
 					->where('a.ward_code','like','%'.$request->ward_code.'%')
-					->where('a.encounter_code','=', $encounter->encounter_code)
 					->whereNull('discharge_id')
 					->orderBy('room_name')
 					->orderBy('bed_name')
@@ -287,7 +288,9 @@ class AdmissionBedController extends Controller
 			return view('admission_beds.index', [
 					'admission_beds'=>$admission_beds,
 					'wards' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'wards2' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->get(),
+					'wards2' => Ward::where('encounter_code','=', $encounter->encounter_code)
+								->orWhere('encounter_code','=', 'daycare')
+								->orderBy('ward_name')->get(),
 					'ward_code'=>$request->ward_code,
 					'ward_class'=>$request->ward_class,
 					'admission' => $admission,

@@ -205,6 +205,8 @@ class ProductController extends Controller
 			$product->product_edit_price = $request->product_edit_price ?: 0;
 			$product->product_track_batch = $request->product_track_batch ?: 0;
 			$product->product_drop_charge = $request->product_drop_charge ?: 0;
+			$product->product_unit_charge = $request->product_unit_charge ?: 0;
+			$product->product_local_store = $request->product_local_store ?: 0;
 
 			$valid = $product->validate($request->all(), $request->_method);	
 
@@ -532,13 +534,13 @@ class ProductController extends Controller
 				left join products as b on (a.product_code = b.product_code)
 				left join stores as c on (c.store_code = a.store_code)
 				left join (
-						select sum(order_quantity_request) as allocated, store_code
+						select sum(order_quantity_request) as allocated, store_code, product_code
 						from orders as a
 						left join order_cancellations as b on (a.order_id = b.order_id)
 						where order_completed=0
 						and cancel_id is null
-						group by store_code
-				) as d on (d.store_code = a.store_code)
+						group by store_code, product_code
+				) as d on (d.store_code = a.store_code and d.product_code = a.product_code)
 				left join ref_unit_measures as e on (e.unit_code = b.unit_code)
 			";
 

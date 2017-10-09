@@ -161,6 +161,7 @@ class OrderProductController extends Controller
 				if ($product) {
 						if ($product->product_sold==1 && $product->product_drop_charge == 1) {
 
+							$response=0;
 							if ($product->product_stocked==1) {
 								$stock_helper = new StockHelper();
 								$store_code = OrderHelper::getStoreAffected($product);

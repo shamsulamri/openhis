@@ -375,7 +375,9 @@ class StockInputController extends Controller
 									->where('store_code', '=', $stock->store_code)
 									->delete();
 					}
-					$line_batches = StockInputBatch::where('input_id', $line->input_id)->get();
+					$line_batches = StockInputBatch::where('input_id', $line->input_id)
+							->where('product_code', $line->product_code)
+							->get();
 					foreach($line_batches as $batch) {
 							$conversion=1;
 							if ($stock_input->move_code == 'receive') $conversion = $batch->StockInputLine->product->product_conversion_unit;

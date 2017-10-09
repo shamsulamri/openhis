@@ -112,13 +112,6 @@ $header_count=0;
 	@endif
 			<tr>
 			<td width='10'>
-				@if ($admission_task->order_multiple==0 && $admission_task->category_code !='drugs')
-					@if ($admission_task->order_completed==0 && empty($admission_task->cancel_id))
-					{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed) }}
-					@endif
-				@else 
-					-
-				@endif
 			</td>
 			@if ($group_by=='order')
 			<td width='150'>
@@ -137,9 +130,7 @@ $header_count=0;
 			<td>
 				@if ($group_by=='patient')
 
-					<a href='{{ URL::to('admission_tasks/'. $admission_task->order_id . '/edit') }}' >
 						{{strtoupper($admission_task->product_name)}}
-					</a>
 					<strong>
 						{!! $order_helper->drugDescription($admission_task->order_id, " - ") !!}
 					</strong>
@@ -154,9 +145,7 @@ $header_count=0;
 						@endforeach
 					@endif
 				@else
-					<a href='{{ URL::to('admission_tasks/'. $admission_task->order_id . '/edit') }}' >
 					{{strtoupper($admission_task->patient_name)}}
-					</a>
 					@if ($admission_task->order_multiple==1)
 						<br>
 						<?php

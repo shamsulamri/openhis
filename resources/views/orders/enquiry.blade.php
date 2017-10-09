@@ -98,7 +98,7 @@
     <th>Patient</th>
 	<th>Order Date</th>
 	<th>Product</th>
-	<th>Physician</th>
+	<th>User</th>
 	<th>Age</th>
 	<th>Turnaround</th>
 	<th>Status</th>
@@ -157,11 +157,7 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $orders->appends(['search'=>$search])->render() }}
-	@else
-	{{ $orders->render() }}
-@endif
+{{ $orders->appends(['search'=>$search,'ward_code'=>$ward_code, 'user_id'=>$user_id,'date_start'=>$date_start, 'date_end'=>$date_end, 'category_code'=>$category_code,'age'=>$age])->render() }}
 <br>
 @if ($orders->total()>0)
 	{{ $orders->total() }} records found.

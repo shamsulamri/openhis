@@ -263,6 +263,18 @@ class StockHelper
 			return $batches;
 	}
 
+	public function getFirstBatch($product_code, $store_code)
+	{
+			$batch = StockBatch::selectRaw('sum(batch_quantity) as batch_quantity, expiry_date,product_code, batch_number')
+						->where('product_code','=', $product_code)
+						->where('store_code','=', $store_code)
+						->having('batch_quantity','>',0)
+						->groupBy('batch_number')
+						->orderBy('expiry_date')
+						->first();
+
+			return $batch;
+	}
 	public function getBatchTotal($product_code, $store_code, $batch_number)
 	{
 			$total = StockBatch::where('product_code','=', $product_code)

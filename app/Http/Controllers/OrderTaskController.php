@@ -96,6 +96,7 @@ class OrderTaskController extends Controller
 					'product_stocked',
 					'product_track_batch',
 					'cancel_id',
+					'ward_name',
 					'order_quantity_request',
 					'order_quantity_supply',
 					'a.created_at',
@@ -120,8 +121,11 @@ class OrderTaskController extends Controller
 					->leftjoin('queue_locations as i', 'i.location_code', '=', 'h.location_code')
 					->leftjoin('order_posts as j', 'j.post_id', '=', 'a.post_id')
 					->leftjoin('users as k','k.id','=', 'a.user_id')
+					->leftjoin('wards as m','m.ward_code','=', 'a.ward_code')
 					->where('c.encounter_id','=', $encounter_id)
 					->where('a.location_code','=',$location_code)
+					->where('order_completed','=',0)
+					->where('a.post_id','>',0)
 					->whereNull('cancel_id')
 					->orderBy('cancel_id')
 					->orderBy('a.post_id')
@@ -278,7 +282,8 @@ class OrderTaskController extends Controller
 									$order->save();
 									Log::info("-----------------------------");
 									Log::info($order->order_quantity_supply);
-								} 							} else {
+								} 							
+							} else {
 								OrderTask::where('order_id', $orderId)->update(['store_code'=>null]);				
 							}
 							$order = OrderTask::find($orderId);

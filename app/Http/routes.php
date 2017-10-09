@@ -55,8 +55,10 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/bill_discount/search', 'BillDiscountController@search');
 		Route::get('/bill_discounts/delete/{id}', 'BillDiscountController@delete');
 
+
 		Route::post('/order/enquiry', 'OrderController@enquiry');
 		Route::get('/order/enquiry', 'OrderController@enquiry');
+		Route::get('/order/drop/{id}', 'OrderController@drop');
 
 		Route::resource('order_routes', 'OrderRouteController');
 		Route::get('/order_routes/id/{id}', 'OrderRouteController@searchById');
@@ -843,6 +845,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/stocks/id/{id}', 'StockController@searchById');
 				Route::post('/stock/search', 'StockController@search');
 				Route::get('/stock/search', 'StockController@search');
+				Route::get('/stock/reset', 'StockController@reset');
 				
 		});
 

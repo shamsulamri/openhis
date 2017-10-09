@@ -98,7 +98,7 @@ Interim Bill
 					<strong>Total</strong>
 			</td>
 			<td align='right'>
-					<strong>{{number_format($bill_total,2)}}<strong>
+					<strong>{{$bill_total}}<strong>
 			</td>
 			@can('system-administrator')
 			<td align='right'>

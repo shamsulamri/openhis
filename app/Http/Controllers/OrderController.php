@@ -122,8 +122,13 @@ class OrderController extends Controller
 					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
 					->where('a.encounter_id','=',Session::get('encounter_id'))
+					->where('a.user_id','=',Auth::user()->id)
 					->orderBy('b.category_code')
 					->orderBy('a.created_at', 'desc');
+
+			if ($encounter->admission) {
+				$orders = $orders->where('ward_code', $encounter->admission->bed->ward_code);
+			}
 
 			if (!empty(Auth::user()->authorization->location_code)) {
 				$location_code = Auth::user()->authorization->location_code;
@@ -241,13 +246,16 @@ class OrderController extends Controller
 	public function validateOrder($request, $order) 
 	{
 			$stock_helper = new StockHelper();
-			$on_hand = $stock_helper->getStockCountByStore($order->product_code, $order->store_code);
-			$allocated = $stock_helper->getStockAllocatedByStore($order->product_code, $order->store_code, Session::get('encounter_id'));
-
+			$product = Product::find($order->product_code);
 			$valid = null;
-			if ($order->order_quantity_request>$on_hand-$allocated) {
-					$valid = $order->validate($request->all(), $request->_method);	
-					$valid->getMessageBag()->add('order_quantity_request', 'Insufficient quantity.');
+			if ($product->product_stocked==1) {
+					$on_hand = $stock_helper->getStockCountByStore($order->product_code, $order->store_code);
+					$allocated = $stock_helper->getStockAllocatedByStore($order->product_code, $order->store_code, Session::get('encounter_id'));
+
+					if ($order->order_quantity_request>$on_hand-$allocated) {
+							$valid = $order->validate($request->all(), $request->_method);	
+							$valid->getMessageBag()->add('order_quantity_request', 'Insufficient quantity.');
+					}
 			}
 			return $valid;
 	}
@@ -390,9 +398,12 @@ class OrderController extends Controller
 						->whereNull('cancel_id')
 						->get();
 
-			if ($order->count()>0) {
-					Session::flash('message', 'Product already in the order list.');
-					return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
+			$encounter = Encounter::find($encounter_id);
+			if (!$encounter->admission) {
+					if ($order->count()>0) {
+							Session::flash('message', 'Product already in the order list.');
+							return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
+					}
 			}
 
 			$product = Product::find($product_code);
@@ -557,5 +568,12 @@ class OrderController extends Controller
 	{
 				Amqp::pushMessage("lab","Test");
 				return "X";
+	}
+
+	public function drop($consultation_id)
+	{
+			$helper = new OrderHelper();
+			$helper->dropCharge($consultation_id);
+			return "Ok";
 	}
 }

@@ -76,6 +76,7 @@
 							{{$order->product_name}}
 							</strike>
 					@endif
+					<br>{{$order->product_code}}
 
 					@if ($order->category_code=='drugs')
 					<br>
@@ -123,6 +124,8 @@
 			</td>
 			<td>
 					{{ $order->name }}
+					<br>
+					{{ $order->ward_name}}
 			</td>
 			<td>
 					{{ (DojoUtility::dateReadFormat($order->investigation_date)) }}

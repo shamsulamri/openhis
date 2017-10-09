@@ -157,6 +157,7 @@ if ($_COOKIE['his-navbar']==1) {
                 </li>
 				@can('system-administrator')
 					<li><a title="Maintenance" href="{{ url('/maintenance') }}"><i class='glyphicon glyphicon-cog'></i><span class='nav-label'>Maintenance</span></a></li>
+					<li><a href="{{ url('/reports') }}"><i class="fa fa-bar-chart"></i><span class='nav-label'>Reports</span></a></li>
 				@endcan
 						<div class="dropdown profile-element"> 
 							<br>

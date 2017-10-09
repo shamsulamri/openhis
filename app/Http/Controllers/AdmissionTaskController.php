@@ -95,7 +95,7 @@ class AdmissionTaskController extends Controller
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'category' => '',
-					'group_by' => 'order',
+					'group_by' => 'patient',
 					'order_ids' => $order_ids,
 					'show_all' => null,
 					'ward_code'=>$ward_code,
@@ -216,9 +216,12 @@ class AdmissionTaskController extends Controller
 					->leftjoin('order_cancellations as j', 'j.order_id', '=', 'a.order_id')
 					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
 					->where('b.encounter_code','<>', 'outpatient')
-					->where('d.category_code','like', '%'.$request->categories.'%')
 					->where('a.product_code','<>','consultation_fee')
 					->whereNull('cancel_id');
+
+			if ($request->categories) {
+				$admission_tasks = $admission_task->where('d.category_code','like', '%'.$request->categories.'%');
+			}
 
 			//->whereNull('discharge_id')
 			

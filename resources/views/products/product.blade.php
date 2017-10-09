@@ -106,10 +106,11 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_track_batch')) has-error @endif'>
+					<div class='form-group  @if ($errors->has('product_bom')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_track_batch', '1') }} <label>Batch Tracked</label><br>Batch number required during stock movement.
-							@if ($errors->has('product_track_batch')) <p class="help-block">{{ $errors->first('product_track_batch') }}</p> @endif
+							{{ Form::checkbox('product_bom', '1') }} <label>Bill of Materials</label><br>
+							This product contains parts to make end product.
+							@if ($errors->has('product_bom')) <p class="help-block">{{ $errors->first('product_bom') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -117,11 +118,10 @@
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_bom')) has-error @endif'>
+					<div class='form-group  @if ($errors->has('product_local_store')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_bom', '1') }} <label>Bill of Materials</label><br>
-							This product contains parts to make end product.
-							@if ($errors->has('product_bom')) <p class="help-block">{{ $errors->first('product_bom') }}</p> @endif
+							{{ Form::checkbox('product_local_store', '1') }} <label>Local Store</label><br>Stock deduct from local store when consumed.
+							@if ($errors->has('product_local_store')) <p class="help-block">{{ $errors->first('product_local_store') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -132,6 +132,18 @@
 							@if ($errors->has('product_dismantle_material')) <p class="help-block">{{ $errors->first('product_dismantle_material') }}</p> @endif
 						</div>
 					</div>
+			</div>
+	</div>
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_track_batch')) has-error @endif'>
+						<div class='col-sm-offset-4 col-sm-8'>
+							{{ Form::checkbox('product_track_batch', '1') }} <label>Batch Tracked</label><br>Batch number required during stock movement.
+							@if ($errors->has('product_track_batch')) <p class="help-block">{{ $errors->first('product_track_batch') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
 			</div>
 	</div>
 	@else

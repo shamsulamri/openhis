@@ -110,11 +110,11 @@
 					@if ($stock->move_code=='adjust')
 					{{ number_format($stock->stock_quantity) }}
 					@else
-					{{ number_format(abs($stock->stock_quantity)) }}
+					{{ number_format($stock->stock_quantity) }}
 					@endif
 			</td>
 			<td align='right'>
-					{{ number_format(abs($stock->stock_value),2) }}
+					{{ number_format($stock->stock_value,2) }}
 			</td>
 			@can('system-administrator')
 			<td align='right'>

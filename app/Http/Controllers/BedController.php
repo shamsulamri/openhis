@@ -234,6 +234,7 @@ class BedController extends Controller
 					'ward_code' => null,
 					'class_code' => null,
 					'bedHelper' => new BedHelper(),
+					'search'=>null,
 			]);
 	}
 

@@ -57,9 +57,7 @@
 					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/show/'. $stock_input->input_id) }}'>Resume</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('stock_inputs/delete/'. $stock_input->input_id) }}'>Delete</a>
 					@else
-							<!--
 					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/show/'. $stock_input->input_id . '/edit') }}'>View</a>			
--->
 					@endif
 			@can('system-administrator')
 					<a class='btn btn-default btn-xs' href='{{ URL::to('stock_inputs/'. $stock_input->input_id . '/edit') }}'>Edit</a>			

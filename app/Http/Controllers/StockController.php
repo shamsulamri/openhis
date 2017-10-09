@@ -547,4 +547,14 @@ class StockController extends Controller
 			return $default_store;
 	}
 
+	public function reset()
+	{
+			$products = DB::table('stocks')->distinct()->get(['product_code']);
+			
+			$helper = new StockHelper();
+			foreach($products as $product) {
+				$helper->updateAllStockOnHand($product->product_code);
+			}
+			return "X";
+	}
 }

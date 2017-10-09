@@ -49,8 +49,6 @@ class OrderHelper
 
 			$store_code = null;
 			if ($admission) {
-					Log::info("wwwwwwwwwwwwwwwwwwwwwwwwwwww");
-					Log::info($admission);
 				$store_code = $admission->bed->ward->store_code;
 			} else {
 				$location = Queue::where('encounter_id', '=', $encounter->encounter_id)->first()->location;
@@ -59,13 +57,25 @@ class OrderHelper
 
 			/*** Overide route ***/
 			if ($product->product_stocked==1) {
+				if ($product->product_local_store==0) {
 					$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
-								->where('category_code', $product->category_code)
-								->first();
+							->where('category_code', $product->category_code)
+							->first();
+
+					if ($admission) {
+						$route_ward = OrderRoute::where('encounter_code', $encounter->encounter_code)
+							->where('category_code', $product->category_code)
+							->where('ward_code', $admission->bed->ward->ward_code)
+							->first();
+						if ($route_ward) {
+							$route = $route_ward;
+						}
+					}
 
 					if ($route) {
 						$store_code = $route->store_code;
 					}
+				}
 			} else {
 				$store_code = null;
 			}
@@ -141,8 +151,7 @@ class OrderHelper
 			Log::info("------------------------------");
 			Log::info($order);
 			return $order->order_id;
-			//}
-			//return -1;
+
 	}	
 
 	public static function createDrugServings($order_drug) 
@@ -246,21 +255,33 @@ class OrderHelper
 						$description .= $order_drug->drug_duration." ".strtolower($order_drug->period->period_name);
 					}
 
+					$description = trim($description);
+					if (substr($description,strlen($description)-1,1)==',') {
+						$description = substr($description,0,strlen($description)-1);
+					}
+
+					if (empty($description)) return "";
+
 					return $prefix.$description;
 			}
 		}
 
 	public static function dropCharge($consultation_id) 
 	{
+		Log::info("------- Drop -------------");
 		$orders = Order::where('consultation_id',$consultation_id)
 					->leftJoin('products as c', 'c.product_code', '=', 'orders.product_code')
-					->where('c.location_code', 'none')
 					->get();
 
 		$stock_helper = new StockHelper();
 
 		foreach($orders as $order) {
-			if ($order->product->location_code=='none') {
+
+			$drop_now = false;
+
+			if ($order->product->location_code=='none') $drop_now = true;
+			if ($order->product_drop_charge==1) $drop_now = true;
+
 				/**
 				if ($order->product->product_stocked==1 & $order->product_drop_charge==1) {
 					if ($stock_helper->getStockCountByStore($order->product_code,$order->store_code)>0) {
@@ -270,6 +291,7 @@ class OrderHelper
 				}
 				**/
 					
+			if ($drop_now) {
 				if (!$order->orderCancel) {
 						$order->order_completed=1;
 						$order->save();
@@ -286,6 +308,23 @@ class OrderHelper
 						$stock->save();
 
 						$stock_helper->updateAllStockOnHand($order->product_code);
+
+						if ($stock->product->product_track_batch==1) {
+
+								$batch = $stock_helper->getFirstBatch($stock->product_code, $stock->store_code);
+
+								$stock_batch = new StockBatch();
+								$stock_batch->stock_id = $stock->stock_id;
+								$stock_batch->store_code = $stock->store_code;
+								$stock_batch->product_code = $stock->product_code;
+								$stock_batch->batch_number = $batch->batch_number;
+								$stock_batch->expiry_date = $batch->expiry_date;
+								$stock_batch->batch_quantity = $stock->stock_quantity;
+								$stock_batch->save();
+
+
+						} 							
+
 				}
 			}
 		}
