@@ -59,7 +59,7 @@
 	<div class="col-xs-6">
 		<a href="{{ url('/products/enquiry') }}">Product Enquiry</a><br>
 		<a href="{{ url('/products/on_hand') }}">Stock On Hand Enquiry</a><br>
-		<a href="{{ url('/stocks') }}">Stock Movement Enquiry</a><br>
+		<a href="{{ url('/stocks/enquiry') }}">Stock Movement Enquiry</a><br>
 		<a href="{{ url('/stock_batches') }}">Batch Number Enquiry</a><br>
 		<a href="{{ url('/purchase_order_lines/enquiry') }}">Purchase Enquiry</a><br>
 		<a href="{{ url('/products/reorder') }}">Product Reorder Enquiry</a><br>

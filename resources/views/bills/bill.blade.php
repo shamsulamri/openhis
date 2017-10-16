@@ -1,4 +1,3 @@
-
     <div class='form-group  @if ($errors->has('encounter_id')) has-error @endif'>
         <label for='encounter_id' class='col-sm-3 control-label'>encounter_id<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>

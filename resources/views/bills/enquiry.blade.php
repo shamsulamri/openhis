@@ -87,7 +87,9 @@
 @foreach ($bills as $bill)
 	<tr>
 			<td>
+					<a href='/bill_item/enquiry?search={{ $bill->encounter_id }}'>
 					{{$bill->patient_name}}
+					</a>
 					<br>
 					<small>
 					{{$bill->patient_mrn}}

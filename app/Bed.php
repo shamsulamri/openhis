@@ -19,6 +19,7 @@ class Bed extends Model
 				'status_code',
 				'bed_name',
 				'gender_code',
+				'bed_transit',
 				'department_code'];
 	
     protected $guarded = ['bed_code'];

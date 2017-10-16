@@ -291,6 +291,15 @@ class OrderHelper
 				}
 				**/
 					
+			if ($order->order_is_discharge==1) {
+					$route = OrderRoute::where('encounter_code', $order->consultation->encounter->encounter_code)
+							->where('category_code', $order->product->category_code)
+							->first();
+					if ($route) {
+							$drop_now = false;
+					}
+			}
+
 			if ($drop_now) {
 				if (!$order->orderCancel) {
 						$order->order_completed=1;
@@ -313,14 +322,16 @@ class OrderHelper
 
 								$batch = $stock_helper->getFirstBatch($stock->product_code, $stock->store_code);
 
-								$stock_batch = new StockBatch();
-								$stock_batch->stock_id = $stock->stock_id;
-								$stock_batch->store_code = $stock->store_code;
-								$stock_batch->product_code = $stock->product_code;
-								$stock_batch->batch_number = $batch->batch_number;
-								$stock_batch->expiry_date = $batch->expiry_date;
-								$stock_batch->batch_quantity = $stock->stock_quantity;
-								$stock_batch->save();
+								if ($batch) {
+										$stock_batch = new StockBatch();
+										$stock_batch->stock_id = $stock->stock_id;
+										$stock_batch->store_code = $stock->store_code;
+										$stock_batch->product_code = $stock->product_code;
+										$stock_batch->batch_number = $batch->batch_number;
+										$stock_batch->expiry_date = $batch->expiry_date;
+										$stock_batch->batch_quantity = $stock->stock_quantity;
+										$stock_batch->save();
+								}
 
 
 						} 							

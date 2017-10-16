@@ -15,6 +15,7 @@ use App\Encounter;
 use Auth;
 use App\DojoUtility;
 use App\User;
+use App\EncounterType;
 
 class QueueController extends Controller
 {
@@ -28,6 +29,7 @@ class QueueController extends Controller
 	public function index(Request $request)
 	{
 			$selectedLocation = $request->cookie('queue_location');
+			$location = Location::find($selectedLocation);
 
 			$queues = DB::table('queues as a')
 					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.location_code', 'a.created_at', 'a.encounter_id')
@@ -35,19 +37,25 @@ class QueueController extends Controller
 					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->where('b.encounter_code', $location->encounter_code)
 					->whereNull('discharge_id')
 					->whereNull('a.deleted_at')
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 
-			$location = Location::find($selectedLocation);
+			$locations = Location::whereNotNull('encounter_code')
+							->where('encounter_code', $location->encounter_code)
+							->orderBy('location_name')
+							->lists('location_name', 'location_code')->prepend('','');
 			
 			return view('queues.index', [
 					'queues'=>$queues,
-					'locations' => Location::whereNotNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'locations' => $locations,
+					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'location' => $location,
-					'selectedLocation' => "",
+					'selectedLocation' => null,
 					'dojo'=>new DojoUtility(),
+					'encounter_code'=>$location->encounter_code,
 			]);
 	}
 
@@ -159,8 +167,13 @@ class QueueController extends Controller
 					->where('a.location_code','like','%'.$request->locations.'%')
 					->where('patient_name', 'like','%'.$request->search.'%')
 					->whereNull('discharge_id')
-					->orderBy('a.created_at')
-					->paginate($this->paginateValue);
+					->orderBy('a.created_at');
+
+			if ($request->encounter_code) {
+					$queues = $queues->where('b.encounter_code', $request->encounter_code);
+			}
+
+			$queues = $queues->paginate($this->paginateValue);
 
 			$location = Location::find($request->cookie('queue_location'));
 			
@@ -171,6 +184,8 @@ class QueueController extends Controller
 					'search' => $request->search,
 					'selectedLocation' => $selectedLocation,
 					'dojo'=>new DojoUtility(),
+					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'encounter_code'=>$request->encounter_code,
 				]);
 	}
 

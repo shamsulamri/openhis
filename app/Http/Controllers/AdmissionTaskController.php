@@ -204,7 +204,7 @@ class AdmissionTaskController extends Controller
 			$location = QueueLocation::find($location_code);
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by','cancel_id')
+					->select('a.order_id', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by','cancel_id','category_code')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')

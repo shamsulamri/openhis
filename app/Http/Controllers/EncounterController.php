@@ -31,6 +31,7 @@ use App\DojoUtility;
 use App\BedBooking;
 use App\WardClass;
 use App\Appointment;
+use App\BedCharge;
 		
 class EncounterController extends Controller
 {
@@ -271,6 +272,12 @@ class EncounterController extends Controller
 							$bed_movement->transaction_code = 'admission';
 							$bed_movement->save();
 
+							$bed_charge = new BedCharge();
+							$bed_charge->encounter_id = $encounter->encounter_id;
+							$bed_charge->bed_code = $admission->bed_code;
+							$bed_charge->bed_start = date('d/m/Y');
+							$bed_charge->save();
+
 							Session::flash('message', 'Record successfully created.');
 							return redirect('/admissions');
 					}
@@ -332,6 +339,7 @@ class EncounterController extends Controller
 			}
 	}
 
+
 	public function edit($id) 
 	{
 			$encounter = Encounter::findOrFail($id);
@@ -342,6 +350,7 @@ class EncounterController extends Controller
 					'triage' => Triage::all()->sortBy('triage_name')->lists('triage_name', 'triage_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
 					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					]);
 	}
 

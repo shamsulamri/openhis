@@ -1,5 +1,6 @@
 
 	<h3>{{ $product->product_name }}</h3>
+	<h5>{{ $product->product_code }}</h5>
 	<div class="alert @if ($available==0) alert-danger @else alert-success @endif">
 			Available: {{ $available }} ({{ $order_drug->order->store->store_name }})
 	</div>
@@ -33,7 +34,6 @@
 			</select>
         </div>
     </div>
-	-->
 
 
     <div class='form-group'>
@@ -42,6 +42,7 @@
             {{ Form::label('product_code', $product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
+	-->
 
 	<div class="row">
 			<div class="col-xs-6">

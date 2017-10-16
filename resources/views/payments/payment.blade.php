@@ -1,4 +1,3 @@
-@if (count($encounter)>0)
 	<br>
     <div class='form-group  @if ($errors->has('payment_outstanding')) has-error @endif'>
         <label class='col-sm-2 control-label'>Balance</label>
@@ -98,7 +97,7 @@
 					<div class='form-group  @if ($errors->has('credit_number')) has-error @endif'>
 						<label for='credit_number' class='col-sm-4 control-label'>Card Number</label>
 						<div class='col-sm-8'>
-							{{ Form::text('credit_number', $credit->credit_number, ['class'=>'form-control','placeholder'=>'','maxlength'=>'16']) }}
+							{{ Form::text('credit_number', $credit->credit_number, ['class'=>'form-control','placeholder'=>'','maxlength'=>'21']) }}
 							@if ($errors->has('credit_number')) <p class="help-block">{{ $errors->first('credit_number') }}</p> @endif
 						</div>
 					</div>
@@ -260,8 +259,4 @@
 	}
 
 	paymentChanged();
-@else
-	<br>			
-	<h3>Patient does not have any encounters.</h3>
-@endif
 </script>

@@ -403,7 +403,7 @@ class StockController extends Controller
 			return redirect('/stocks/'.$stock->product_code);
 	}
 	
-	public function search(Request $request)
+	public function enquiry(Request $request)
 	{
 			$stocks = Stock::select('move_name', 'stock_datetime', 'e.store_name as store_from', 'f.store_name as store_to', 
 						'product_name', 'products.product_code','stock_quantity', 'stock_value', 'stocks.move_code'

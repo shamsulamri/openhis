@@ -4,7 +4,7 @@
 <?php
 $multiple_ids="";
 ?>
-<h1>Inpatient Tasks</h1>
+<h1>Admission Tasks</h1>
 @if (Auth::user()->authorization->module_support!=1)
 <h3>{{ $ward->ward_name }}</h3>
 @else
@@ -112,6 +112,13 @@ $header_count=0;
 	@endif
 			<tr>
 			<td width='10'>
+				@if ($admission_task->category_code != 'drugs')
+						@if ($admission_task->order_multiple==0)
+								@if (!$admission_task->updated_by && empty($admission_task->cancel_id))
+								{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed) }}
+								@endif
+						@endif
+				@endif
 			</td>
 			@if ($group_by=='order')
 			<td width='150'>

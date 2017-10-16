@@ -12,6 +12,7 @@ class Sponsor extends Model
 	protected $table = 'sponsors';
 	protected $fillable = [
 				'sponsor_name',
+				'sponsor_company_number',
 				'sponsor_street_1',
 				'sponsor_street_2',
 				'sponsor_city',
@@ -28,6 +29,7 @@ class Sponsor extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'sponsor_name'=>'required',
+				'sponsor_company_number'=>'required',
 			];
 
 			

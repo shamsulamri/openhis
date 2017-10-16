@@ -20,6 +20,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Encounter Id</th>
     <th>Admission Date</th>
     <th>Patient</th>
     <th>Gender</th>
@@ -33,6 +34,9 @@
 	$status='';
 	?>
 	<tr class='{{ $status }}'>
+			<td>
+					{{ $admission->encounter_id }}
+			</td>
 			<td>
 					{{ DojoUtility::dateTimeReadFormat($admission->admission_date) }}
 					<br>

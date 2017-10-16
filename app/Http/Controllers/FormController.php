@@ -84,6 +84,8 @@ class FormController extends Controller
 
 			$valid = $form->validate($request->all(), $request->_method);	
 
+			$form->form_visible = $request->form_visible ?: 0;
+
 			if ($valid->passes()) {
 					$form->save();
 					Session::flash('message', 'Record successfully updated.');

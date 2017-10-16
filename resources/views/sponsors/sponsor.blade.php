@@ -7,6 +7,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('sponsor_company_number')) has-error @endif'>
+        <label for='sponsor_company_number' class='col-sm-2 control-label'>Company Number<span style='color:red;'> *</span></label>
+        <div class='col-sm-10'>
+            {{ Form::text('sponsor_company_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+            @if ($errors->has('sponsor_company_number')) <p class="help-block">{{ $errors->first('sponsor_company_number') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('sponsor_street_1')) has-error @endif'>
         {{ Form::label('sponsor_street_1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>

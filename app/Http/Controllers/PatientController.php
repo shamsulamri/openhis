@@ -55,6 +55,7 @@ class PatientController extends Controller
 			//Amqp::pushMessage('lab','This is a new message');
 
 			$patients = Patient::orderBy('patient_id','desc')
+					->whereNotNull('patient_mrn')
 					->paginate($this->paginateValue);
 			/**
 					->where('patient_mrn','=','999')

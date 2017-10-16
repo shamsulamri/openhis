@@ -14,6 +14,7 @@ use App\QueueLocation;
 use App\EncounterType;
 use Carbon\Carbon;
 use Auth;
+use App\Order;
 
 class OrderQueueController extends Controller
 {
@@ -81,22 +82,55 @@ class OrderQueueController extends Controller
 					->leftjoin('wards as p','p.ward_code', '=', 'l.ward_code')
 					->where('investigation_date','<=', Carbon::today())
 					->where('a.location_code','=',$location_code)
+					//->where('c.encounter_code', '!=', 'inpatient')
 					->whereNull('cancel_id')
-					->where('c.encounter_code', '!=', 'inpatient')
 					->whereNotNull('n.post_id')
 					->groupBy('a.encounter_id');
 
+			$order_queues = Order::groupBy('orders.encounter_id')
+					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
+					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
+					->where('orders.location_code','=',$location_code)
+					->where('order_completed','=',0)
+					->whereNull('cancel_id')
+					->whereNotNull('n.post_id');
+
 			if ($request->discharge) {
-					$order_queues = $order_queues->where('order_completed', '=', 1);
+					$order_queues = $order_queues->leftjoin('discharges as q', 'q.encounter_id', '=', 'orders.encounter_id')
+									->whereNotNull('discharge_id')
+									->where('investigation_date','>=', Carbon::today());
 			} else {
-					$order_queues = $order_queues->where('order_completed', '=', 0);
+					$order_queues = $order_queues->where('investigation_date','<=', Carbon::today());
 			}
+
+			/*
+			$order_queues = Order::selectRaw('*, count(*) as order_count')
+					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
+					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
+					->where('orders.location_code','=',$location_code)
+					->whereNull('cancel_id')
+					->whereNotNull('n.post_id')
+					->groupBy('orders.encounter_id');
+			 */
+					
+
 
 			$order_queues = $order_queues->paginate($this->paginateValue);
 
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
 			//return $locations;
 			
+			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed');
+
+			$is_discharge = null;
+			if (!empty($request->discharge)) $is_discharge=true;
+
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,
@@ -104,8 +138,10 @@ class OrderQueueController extends Controller
 					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'location'=>$location,
 					'encounter_code'=>null,
-					'is_discharge'=>$request->discharge,
+					'is_discharge'=>$is_discharge,
 					'count'=>$request->count,
+					'status'=>$status,
+					'status_code'=>null,
 					]);
 	}
 
@@ -251,6 +287,7 @@ class OrderQueueController extends Controller
 			}
 			$location = QueueLocation::find($location_code);
 
+			/*
 			$fields = ['a.order_id',
 					'patient_name', 
 					'patient_mrn',	
@@ -263,6 +300,7 @@ class OrderQueueController extends Controller
 					'k.location_name',
 					'o.id as bill_id',
 					'investigation_date',
+					'ward_name',
 					];
 
 			$order_queues = DB::table('orders as a')
@@ -280,22 +318,49 @@ class OrderQueueController extends Controller
 					->leftjoin('order_investigations as m', 'm.order_id', '=', 'a.order_id')
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
 					->leftjoin('bills as o','o.encounter_id', '=', 'c.encounter_id')
+					->leftjoin('wards as p','p.ward_code', '=', 'l.ward_code')
 					->where('investigation_date','<=', Carbon::today())
 					->where('a.location_code','=',$location_code)
 					->whereNull('cancel_id')
-					->where('c.encounter_code', '!=', 'inpatient')
+					//->where('c.encounter_code', '!=', 'inpatient')
 					->whereNotNull('n.post_id')
 					->where('c.encounter_code','=', $request->encounter_code)
 					->groupBy('a.encounter_id');
+			 */
+
+			$order_queues = Order::groupBy('orders.encounter_id')
+					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
+					->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
+					->where('investigation_date','<=', Carbon::today())
+					->where('orders.location_code','=',$location_code)
+					->whereNull('cancel_id')
+					->whereNotNull('n.post_id');
+
+			if (!empty($request->encounter_code)) {
+					$order_queues = $order_queues->where('c.encounter_code','=', $request->encounter_code);
+			}
+
+			if ($request->status_code =='incomplete') {
+					$order_queues = $order_queues->where('order_completed', '=', 0);
+			} 
+			if ($request->status_code =='completed') {
+					$order_queues = $order_queues->where('order_completed', '=', 1);
+			} 
 
 			if ($request->discharge) {
-					$order_queues = $order_queues->where('order_completed', '=', 1);
+					$order_queues = $order_queues->leftjoin('discharges as q', 'q.encounter_id', '=', 'orders.encounter_id')
+									->whereNotNull('discharge_id')
+									->where('investigation_date','>=', Carbon::today());
 			} else {
-					$order_queues = $order_queues->where('order_completed', '=', 0);
+					$order_queues = $order_queues->where('investigation_date','<=', Carbon::today());
 			}
 
 			$order_queues = $order_queues->paginate($this->paginateValue);
 
+			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed');
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
 			//return $locations;
 			
@@ -309,6 +374,8 @@ class OrderQueueController extends Controller
 					'is_discharge'=>$request->discharge,
 					'count'=>$request->count,
 					'encounter_code'=>$request->encounter_code,
+					'status'=>$status,
+					'status_code'=>$request->status_code,
 					]);
 	}
 }

@@ -25,7 +25,6 @@
     <th>MRN</th> 
     <th>Name</th>
     <th>Identification</th>
-    <th>Registration Date</th>
     <th>Encounter</th>
     <th></th>
     <th></th>
@@ -48,9 +47,6 @@
 			</td>
 			<td>
 					{{ $patient->patient_new_ic }}
-			</td>
-			<td>
-					{{ DojoUtility::dateDMYOnly($patient->created_at) }}
 			</td>
 			<td>
 					@if (!empty($current_encounter))

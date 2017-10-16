@@ -12,6 +12,7 @@ class Form extends Model
 	protected $table = 'forms';
 	protected $fillable = [
 				'form_code',
+				'form_visible',
 				'form_name'];
 	
     protected $guarded = ['form_code'];

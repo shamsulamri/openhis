@@ -57,11 +57,7 @@ $allocated=0;
 ?>
 	<tr>
 			<td>
-					@can('product_information_edit')
-					<a href='{{ URL::to('products/'. $product->product_code . '/edit') }}'>
-					@else
-					<a href='{{ URL::to('products/'. $product->product_code.'?detail=true') }}'>
-					@endcan
+					<a href='{{ URL::to('stocks/enquiry?search='. $product->product_code. '&store_code='.$product->store_code) }}'>
 						{{ $product->product_name }} 
 						@if ($product->unit_shortname) 
 						({{ $product->unit_shortname }}) 

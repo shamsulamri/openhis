@@ -33,7 +33,23 @@ Interim Bill
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Medical Certificate</a>
 <br>
-<br>
+<!-- Bill Method -->
+<div class="widget style1 gray-bg">
+<h4>Billing Method</h4>
+@if ($encounter->sponsor)
+	<h4>
+	<strong>
+	<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>
+	{{ $encounter->sponsor->sponsor_name }}
+	</a>
+	</strong>
+	</h4>
+	Membership Number: {{ $encounter->sponsor_id}}
+	@else
+	<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>Public</a>
+@endif
+</div>
+<div class="widget style1 gray-bg">
 <table class="table table-condensed">
  <thead>
 	<tr> 
@@ -53,7 +69,13 @@ Interim Bill
 		@foreach ($bills as $bill)
 			<tr>
 					<td>
+							@if ($bill->product_non_claimable)
+								<span class='label label-danger'>
+							@endif
 						{{ $bill->product_code }}
+							@if ($bill->product_non_claimable)
+								</span>
+							@endif
 					</td>
 					<td>
 							@if (!$billPosted)
@@ -98,7 +120,7 @@ Interim Bill
 					<strong>Total</strong>
 			</td>
 			<td align='right'>
-					<strong>{{$bill_total}}<strong>
+					<strong>{{ number_format($bill_total,2) }}<strong>
 			</td>
 			@can('system-administrator')
 			<td align='right'>
@@ -151,7 +173,9 @@ Interim Bill
 	</tr>
 </tbody>
 </table>
+</div>
 <!-- GST Summary -->
+<div class="widget style1 gray-bg">
 		<div class='row'>
 			<div class='col-md-5'>
 		<table class='table table-condensed'>
@@ -185,18 +209,10 @@ Interim Bill
 	<h4>No GST detail</h4>
 	<br>
 @endif
+</div>
 <!-- Payments -->
 <div class="widget style1 gray-bg">
 
-@if ($encounter->sponsor)
-	<h4>Sponsor</h4>
-	<h4>
-	<strong>
-	{{ $encounter->sponsor->sponsor_name }}
-	</strong>
-	</h4>
-	<hr>
-@endif
 <h4>Payments
 @if (!$billPosted)
 <a href='/payments/create/{{ $patient->patient_id }}/{{ $encounter_id }}' class='btn btn-primary btn-sm pull-right'>New Payment</a>

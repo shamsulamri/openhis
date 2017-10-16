@@ -159,7 +159,7 @@ class BillController extends Controller
 
 			$subquery = "select encounter_id, sum(payment_amount) as total_paid from payments group by encounter_id";
 			$bills = Bill::select(DB::raw('bills.id,patient_name, patient_mrn, bills.encounter_id, d.discharge_date,sponsor_name, bill_grand_total, bill_payment_total, bill_deposit_total, 
-					total_paid, format(bill_grand_total-bill_deposit_total-IFNULL(0,total_paid),2) as bill_outstanding, name'))
+					total_paid, format(bill_grand_total-IFNULL(bill_deposit_total,0)-IFNULL(total_paid,0),2) as bill_outstanding, name'))
 					->leftJoin('encounters as b', 'b.encounter_id', '=', 'bills.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=',  'b.patient_id')
 					->leftJoin('discharges as d', 'd.encounter_id', '=', 'b.encounter_id')
@@ -168,6 +168,7 @@ class BillController extends Controller
 							$join->on('bills.encounter_id','=', 'f.encounter_id');
 					})
 					->leftJoin('sponsors as g', 'g.sponsor_code', '=', 'b.sponsor_code');
+
 
 			if (!empty($request->search)) {
 					$bills = $bills->where(function ($query) use ($request) {
@@ -265,5 +266,43 @@ class BillController extends Controller
 
 			return redirect('/bill_aging/enquiry');
 
+	}
+
+	public function billEdit($id) 
+	{
+			$encounter = Encounter::findOrFail($id);
+			return view('bills.bill_edit', [
+					'encounter'	=> $encounter,
+					'patient'	=> $encounter->patient,
+					'patient_type' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
+			]);
+	}
+
+	public function billUpdate(Request $request, $id)
+	{
+			$encounter = Encounter::findOrFail($id);
+			$encounter->fill($request->input());
+			$valid = $encounter->validate($request->all(), $request->_method);	
+
+			if ($valid->passes()) {
+					if ($encounter->type_code=='public') {
+						$encounter->sponsor_code = null;
+						$encounter->sponsor_id=null;
+					}
+					$encounter->save();
+
+					DB::table('bill_items')
+						->where('encounter_id','=',$encounter->encounter_id)
+						->delete();
+
+					Session::flash('message', 'Record successfully updated.');
+					return redirect('/bill_items/'.$encounter->encounter_id);
+			} else {
+					//return $valid->messages();
+					return redirect('/bill/bill_edit/'.$id)
+							->withErrors($valid)
+							->withInput();
+			}
 	}
 }

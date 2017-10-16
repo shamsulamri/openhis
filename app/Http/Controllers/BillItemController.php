@@ -23,6 +23,7 @@ use App\Form;
 use App\ProductPriceTier;
 use App\ProductCategory;
 use App\BillDiscount;
+use App\BedMovement;
 
 class BillItemController extends Controller
 {
@@ -43,21 +44,24 @@ class BillItemController extends Controller
 			return redirect('/bill_items/'.$id);
 	}
 
-	public function bedBills($id) {
-			$beds = DB::table('bed_movements as a')
-						->selectRaw('*, datediff(now(),move_date) as los')
-						->leftjoin('products as b', 'move_to','=', 'product_code')
-						->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
-						->where('encounter_id','=',$id);
+	public function bedBills($encounter_id) {
+			$sql = "
+				select bed_code, datediff(bed_start, bed_stop) as los, product_code, c.tax_code, tax_rate, product_sale_price
+				from bed_charges as a
+				left join products as b on (a.bed_code = product_code)
+				left join tax_codes as c on (c.tax_code = b.tax_code)
+				left join discharges as d on (d.encounter_id = a.encounter_id)
+				where a.encounter_id=%d
+			";
 
-			Log::info($beds->toSql());
+			$sql = sprintf($sql, $encounter_id);
+			$beds = DB::select($sql);
 
-			$beds = $beds->get();
 			foreach ($beds as $bed) {
 					$bed_los = $bed->los;
 					if ($bed_los<=0) $bed_los=1;
 					$item = new BillItem();
-					$item->encounter_id = $id;
+					$item->encounter_id = $encounter_id;
 					$item->product_code = $bed->product_code;
 					$item->tax_code = $bed->tax_code;
 					$item->tax_rate = $bed->tax_rate;
@@ -70,11 +74,33 @@ class BillItemController extends Controller
 						$item->bill_amount = $item->bill_amount*(($bed->tax_rate/100)+1);
 					}
 
-					try {
-							$item->save();
-					} catch (\Exception $e) {
-							\Log::info($e->getMessage());
+					$item->save();
+
+					$merge_item = new BillItem();
+					$merge_item->encounter_id = $item->encounter_id;
+					$merge_item->product_code = $item->product_code;
+					$merge_item->tax_code = $item->tax_code;
+					$merge_item->tax_rate = $item->tax_rate;
+					$merge_item->bill_unit_price = $item->bill_unit_price;
+
+					$bill_items = BillItem::where('product_code',$item->product_code)
+							->where('encounter_id', '=', $encounter_id)
+							->get();
+
+					/*** Sum-up selected fields ***/
+					foreach($bill_items as $bill_item) {
+						$merge_item->bill_quantity += $bill_item->bill_quantity;
+						$merge_item->bill_amount_pregst += $item->bill_amount_pregst;
+						$merge_item->bill_amount += $item->bill_amount;
 					}
+
+					/*** Remove duplicate beds ***/
+					BillItem::where('product_code', $merge_item->product_code)
+							->where('encounter_id', $encounter_id)
+							->delete();
+
+					/*** Save merge beds ***/
+					$merge_item->save();
 			}
 	}
 
@@ -103,7 +129,8 @@ class BillItemController extends Controller
 					$tier = $tiers[0];
 			}
 
-			if ($encounter->encounter_code=='inpatient') {
+			//if ($encounter->encounter_code=='inpatient') {
+			if ($encounter->type_code=='sponsored') {
 					if (!empty($tier->tier_inpatient_multiplier)) {
 							$value = $tier->tier_inpatient_multiplier*$cost;
 					} else {
@@ -115,7 +142,8 @@ class BillItemController extends Controller
 					}
 			}
 
-			if ($encounter->encounter_code=='outpatient' or $encounter->encounter_code=='emergency') {
+			//if ($encounter->encounter_code=='outpatient' or $encounter->encounter_code=='emergency') {
+			if ($encounter->type_code=='public') {
 					if (!empty($tier->tier_outpatient_multiplier)) {
 							$value = $tier->tier_outpatient_multiplier*$cost;
 					} else {
@@ -132,7 +160,6 @@ class BillItemController extends Controller
 	}
 	public function compileBill($encounter_id) 
 	{
-
 			$encounter = Encounter::find($encounter_id);
 			$patient_id = $encounter->patient_id;
 
@@ -249,6 +276,7 @@ class BillItemController extends Controller
 			
 			$orders = DB::select($sql);
 
+			Log::info($sql);
 			foreach ($orders as $order) {
 				$item = new BillItem();
 				$item->encounter_id = $encounter_id;
@@ -295,12 +323,17 @@ class BillItemController extends Controller
 	{
 			$encounter = Encounter::find($id);
 
+			$raw = "
+sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_amount_pregst) as bill_amount_pregst, bill_id,a.encounter_id,a.product_code,product_name,a.tax_code,a.tax_rate,bill_discount,bill_unit_price,bill_exempted, order_completed, product_non_claimable
+				";
 			$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed', 'product_non_claimable')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
+					->orderBy('b.category_code')
+					->orderBy('product_code')
 					->orderBy('product_name');
 
 			$bills = $bills->paginate($this->paginateValue);
@@ -309,11 +342,13 @@ class BillItemController extends Controller
 			if ($bills->total()==0) {
 				$bills=$this->compileBill($id);
 			$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed', 'product_non_claimable')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=', $id)
+					->orderBy('b.category_code')
+					->orderBy('product_code')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
 			}
@@ -332,7 +367,7 @@ class BillItemController extends Controller
 			if (empty($bill_grand_total)) {
 					$bill_grand_total=0;
 			} else {
-					$bill_grand_total = DojoUtility::roundUp($bill_grand_total);
+					//$bill_grand_total = DojoUtility::roundUp($bill_grand_total);
 			}
 
 

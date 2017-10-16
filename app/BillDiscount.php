@@ -22,7 +22,6 @@ class BillDiscount extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
-				'discount_amount'=>'required',
 			];
 
 			

@@ -124,9 +124,9 @@ class OrderTaskController extends Controller
 					->leftjoin('wards as m','m.ward_code','=', 'a.ward_code')
 					->where('c.encounter_id','=', $encounter_id)
 					->where('a.location_code','=',$location_code)
-					->where('order_completed','=',0)
 					->where('a.post_id','>',0)
 					->whereNull('cancel_id')
+					->orderBy('order_completed')
 					->orderBy('cancel_id')
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
@@ -262,27 +262,26 @@ class OrderTaskController extends Controller
 								Log::info(DojoUtility::now());
 								Log::info($order);
 
+								if ($order->product->product_stocked==1) {
+										$stock = new Stock();
+										$stock->order_id = $orderId;
+										$stock->product_code = $order->product_code;
+										$stock->stock_quantity = -($order->order_quantity_supply);
+										$stock->store_code = $store_code;
+										$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
+										$stock->move_code = 'sale';
+										$stock->save();
 
-								$stock = new Stock();
-								$stock->order_id = $orderId;
-								$stock->product_code = $order->product_code;
-							  	$stock->stock_quantity = -($order->order_quantity_supply);
-								$stock->store_code = $store_code;
-								$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
-								$stock->move_code = 'sale';
-								$stock->save();
+										if ($stock->product->product_track_batch==1) {
+											$total_quantity = $this->statusBatch($request, $stock);
+											$stock->stock_quantity = -$total_quantity;
+											$stock->stock_value = $order->product->product_average_cost*$total_quantity;
+											$stock->save();
 
-								if ($stock->product->product_track_batch==1) {
-									$total_quantity = $this->statusBatch($request, $stock);
-									$stock->stock_quantity = -$total_quantity;
-									$stock->stock_value = $order->product->product_average_cost*$total_quantity;
-									$stock->save();
-
-									$order->order_quantity_supply = $total_quantity;
-									$order->save();
-									Log::info("-----------------------------");
-									Log::info($order->order_quantity_supply);
-								} 							
+											$order->order_quantity_supply = $total_quantity;
+											$order->save();
+										} 							
+								}
 							} else {
 								OrderTask::where('order_id', $orderId)->update(['store_code'=>null]);				
 							}

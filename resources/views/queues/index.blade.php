@@ -2,12 +2,32 @@
 
 @section('content')
 <h1>Queue List</h1>
-<form action='/queue/search' method='post' name='myform'>
+<form action='/queue/search' method='post' name='myform' class='form-horizontal'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Encounter</div></label>
+						<div class='col-sm-9'>
+								{{ Form::select('encounter_code', $encounters, $encounter_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Location</label>
+						<div class='col-sm-9'>
+								{{ Form::select('locations', $locations, $selectedLocation, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+			</div>
+	</div>
 	<!--
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<br>
 	-->
-	{{ Form::select('locations', $locations, $selectedLocation, ['class'=>'form-control','maxlength'=>'10','onchange'=>'reload()']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>

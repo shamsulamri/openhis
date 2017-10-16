@@ -101,11 +101,13 @@ class OrderController extends Controller
 	{
 			$encounter= Encounter::find(Session::get('encounter_id'));
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+
 			$fields = ['product_name', 
 					'a.product_code', 
 					'cancel_id', 
 					'a.order_id', 
 					'a.user_id', 
+					'order_quantity_request',
 					'post_id', 
 					'd.created_at',
 					'order_is_discharge',
@@ -115,6 +117,11 @@ class OrderController extends Controller
 					'product_edit_price',
 					];
 
+			$sql_raw= "sum(order_quantity_request) as quantity_total, product_name, a.product_code, cancel_id, a.order_id, a.user_id, post_id, d.created_at,order_is_discharge,order_completed,order_report,category_name,product_edit_price";
+
+
+					//->selectRaw($sql_raw)
+					//->groupBy('a.product_code')
 			$orders = DB::table('orders as a')
 					->select($fields)
 					->join('products as b','a.product_code','=','b.product_code')
@@ -487,6 +494,10 @@ class OrderController extends Controller
 					$orders = $orders->where('orders.ward_code','=',$request->ward_code);
 			}
 
+			if (!empty($request->encounter_id)) {
+					$orders = $orders->where('orders.encounter_id','=',$request->encounter_id);
+			}
+
 			if (!empty($request->category_code)) {
 					$orders = $orders->where('e.category_code','=',$request->category_code);
 			} else {
@@ -551,6 +562,7 @@ class OrderController extends Controller
 					'status'=> $status,
 					'status_code' => $request->status_code,
 					'age' => $request->age,
+					'encounter_id' => $request->encounter_id,
 					]);
 	}
 

@@ -207,6 +207,7 @@ class ProductController extends Controller
 			$product->product_drop_charge = $request->product_drop_charge ?: 0;
 			$product->product_unit_charge = $request->product_unit_charge ?: 0;
 			$product->product_local_store = $request->product_local_store ?: 0;
+			$product->product_non_claimable = $request->product_non_claimable ?: 0;
 
 			$valid = $product->validate($request->all(), $request->_method);	
 
@@ -529,7 +530,7 @@ class ProductController extends Controller
 	{
 			$sql = "
 				select 	product_name, a.product_code, store_name, a.stock_quantity, allocated, (a.stock_quantity-allocated) as available, 
-						b.product_average_cost, (b.product_average_cost*a.stock_quantity) as total_cost, unit_shortname
+						b.product_average_cost, (b.product_average_cost*a.stock_quantity) as total_cost, unit_shortname, c.store_code
 				from stock_stores as a
 				left join products as b on (a.product_code = b.product_code)
 				left join stores as c on (c.store_code = a.store_code)

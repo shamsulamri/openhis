@@ -22,8 +22,10 @@
     <th>Name</th>
     <th>Code</th> 
     <th>Department</th>
+	<!--
     <th>Gender</th>
     <th>Level</th>
+	-->
 	<th></th>
 	</tr>
   </thead>
@@ -43,6 +45,7 @@
 					{{$ward->department->department_name}}
 					@endif
 			</td>
+			<!--
 			<td>
 					@if ($ward->gender)
 					{{$ward->gender->gender_name}}
@@ -51,6 +54,7 @@
 			<td>
 					{{$ward->ward_level}}
 			</td>
+			-->
 			<td align='right'>
 					<a class='btn btn-warning btn-xs' href='{{ URL::to('wards/set/'. $ward->ward_code) }}'>Set Ward</a>
 					@can('system-administrator')

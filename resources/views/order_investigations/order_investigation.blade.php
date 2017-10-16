@@ -1,4 +1,5 @@
 	<h3>{{ $product->product_name }}</h3>
+	<h5>{{ $product->product_code }}</h5>
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
 			@if (empty($order_single))
@@ -9,26 +10,6 @@
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
-
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group'>
-						{{ Form::label('product_code', 'Code',['class'=>'col-sm-3 control-label']) }}
-						<div class='col-sm-9'>
-							{{ Form::label('product_code', $product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('urgency_code')) has-error @endif'>
-						{{ Form::label('urgency_code', 'Urgency',['class'=>'col-sm-3 control-label']) }}
-						<div class='col-sm-9'>
-							{{ Form::select('urgency_code', $urgency,null, ['class'=>'form-control input-sm','maxlength'=>'20']) }}
-							@if ($errors->has('urgency_code')) <p class="help-block">{{ $errors->first('urgency_code') }}</p> @endif
-						</div>
-					</div>
-			</div>
-	</div>
 
 	<div class="row">
 			<div class="col-xs-6">
@@ -44,11 +25,11 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('order_quantity_request')) has-error @endif'>
-						<label for='order_quantity_request' class='col-sm-3 control-label'>Quantity<span style='color:red;'> *</span></label>
+					<div class='form-group  @if ($errors->has('urgency_code')) has-error @endif'>
+						{{ Form::label('urgency_code', 'Urgency',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
-							{{ Form::text('order_quantity_request', $order->order_quantity_request, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
-							@if ($errors->has('order_quantity_request')) <p class="help-block">{{ $errors->first('order_quantity_request') }}</p> @endif
+							{{ Form::select('urgency_code', $urgency,null, ['class'=>'form-control input-sm','maxlength'=>'20']) }}
+							@if ($errors->has('urgency_code')) <p class="help-block">{{ $errors->first('urgency_code') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -74,14 +55,28 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('frequency_code')) has-error @endif'>
+						{{ Form::label('frequency_code', 'Frequency',['class'=>'col-sm-3 control-label']) }}
+						<div class='col-sm-9'>
+							{{ Form::select('frequency_code', $frequency,null, ['class'=>'form-control input-sm','maxlength'=>'20']) }}
+							@if ($errors->has('frequency_code')) <p class="help-block">{{ $errors->first('frequency_code') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('order_quantity_request')) has-error @endif'>
+						<label for='order_quantity_request' class='col-sm-3 control-label'>Quantity<span style='color:red;'> *</span></label>
+						<div class='col-sm-9'>
+							{{ Form::text('order_quantity_request', $order->order_quantity_request, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
+							@if ($errors->has('order_quantity_request')) <p class="help-block">{{ $errors->first('order_quantity_request') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
 
-    <div class='form-group  @if ($errors->has('frequency_code')) has-error @endif'>
-        {{ Form::label('frequency_code', 'Frequency',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::select('frequency_code', $frequency,null, ['class'=>'form-control input-sm','maxlength'=>'20']) }}
-            @if ($errors->has('frequency_code')) <p class="help-block">{{ $errors->first('frequency_code') }}</p> @endif
-        </div>
-    </div>
+
 
     <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
         {{ Form::label('Description', 'Description',['class'=>'col-sm-3 control-label']) }}

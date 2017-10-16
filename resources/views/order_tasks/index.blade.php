@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.id')
+@include('patients.id_only')
 <h1>Order Task</h1>
 @if ($store)
 <h3>Store: {{ $store->store_name }}</h3>
@@ -34,7 +34,7 @@
     <th>Allocated</th>
     <th>Available</th>
     <th>Quantity</th>
-    <th>Ordered By</th>
+    <th>Orderer</th>
     <th>Date</th>
 	<th></th>
 	</tr>
@@ -65,12 +65,10 @@
 				@endif
 			</td>
 			<td>
-					@if (!isset($order->cancel_id) && $order->order_completed==0)
+					@if (!isset($order->cancel_id))
 							<a href='{{ URL::to('order_tasks/'. $order->order_id . '/edit') }}'>
 							{{$order->product_name}}
 							</a>
-					@elseif (!isset($order->cancel_id) && $order->order_completed==1)
-							{{$order->product_name}}
 					@else
 							<strike>
 							{{$order->product_name}}

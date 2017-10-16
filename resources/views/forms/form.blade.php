@@ -6,6 +6,12 @@
             @if ($errors->has('form_name')) <p class="help-block">{{ $errors->first('form_name') }}</p> @endif
         </div>
     </div>
+    <div class='form-group  @if ($errors->has('form_visible')) has-error @endif'>
+        <label for='form_visible' class='col-sm-3 control-label'>Visible<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+			{{ Form::checkbox('form_visible', '1') }} 
+        </div>
+    </div>
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">

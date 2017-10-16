@@ -13,7 +13,7 @@ class BillHelper
 	{
 			$bill_grand_total = DB::table('bill_items')
 					->where('encounter_id','=', $encounter_id)
-					->sum('bill_total');
+					->sum('bill_amount');
 
 			$payment_total = DB::table('payments as a')
 					->where('patient_id','=', $patient_id)

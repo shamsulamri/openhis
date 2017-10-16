@@ -44,4 +44,5 @@ class Queue extends Model
 	{
 			return $this->belongsTo('App\Encounter', 'encounter_id', 'encounter_id');
 	}
+
 }

@@ -546,7 +546,7 @@ class AdmissionController extends Controller
 						'bed_name','ward_name',
 						'room_name',
 						'name', 'discharge_id',
-						'alerts'
+						'alerts', 'b.encounter_id',
 					];
 
 			}

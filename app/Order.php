@@ -93,6 +93,11 @@ class Order extends Model
 			return $this->belongsTo('App\Consultation','consultation_id');
 	}
 
+	public function location()
+	{
+			return $this->belongsTo('App\QueueLocation','location_code');
+	}
+
 	public function product()
 	{
 			return $this->belongsTo('App\Product', 'product_code');

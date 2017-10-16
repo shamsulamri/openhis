@@ -3,10 +3,33 @@
 @section('content')
 <h1>Discharge List</h1>
 <br>
-<form action='/discharge/search' method='post' class='form-inline'>
-	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<label>Discharge Type</label>
-	{{ Form::select('type_code', $discharge_types, $type_code, ['class'=>'form-control','maxlength'=>'10']) }}
+<form action='/discharge/search' method='post' class='form-horizontal'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Find</div></label>
+						<div class='col-sm-9'>
+							<input type='text' class='form-control' placeholder="Patient name or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Encounter</label>
+						<div class='col-sm-9'>
+								{{ Form::select('encounter_code', $encounters, $encounter_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Outcome</label>
+						<div class='col-sm-9'>
+								{{ Form::select('type_code', $discharge_types, $type_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+	</div>
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
@@ -29,7 +52,7 @@
 					{{ (DojoUtility::dateLongFormat($discharge->created_at)) }}
 					<br>
 					<small>
-					<?php $ago =$dojo->diffForHumans($discharge->created_at); ?> 
+					<?php $ago =DojoUtility::diffForHumans($discharge->created_at); ?> 
 					{{ $ago }}
 					</small>	
 					<!--

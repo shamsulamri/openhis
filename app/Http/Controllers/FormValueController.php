@@ -162,12 +162,14 @@ class FormValueController extends Controller
 
 			if (empty($request->search)) {
 					$forms = DB::table('forms')
+							->where('form_visible',1)
 							->orderBy('form_name')
 							->whereNotIn('form_code', $form_codes->pluck('form_code'))
 							->paginate($this->paginateValue);
 			} else {
 					$forms = DB::table('forms')
 							->where('form_name','like','%'.$request->search.'%')
+							->where('form_visible',1)
 							->orWhere('form_code', 'like','%'.$request->search.'%')
 							->orderBy('form_name')
 							->whereNotIn('form_code', $form_codes->pluck('form_code'))

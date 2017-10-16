@@ -48,6 +48,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('bed_charges', 'BedChargeController');
+		Route::get('/bed_charges/id/{id}', 'BedChargeController@searchById');
+		Route::post('/bed_charge/search', 'BedChargeController@search');
+		Route::get('/bed_charge/search', 'BedChargeController@search');
+		Route::get('/bed_charges/delete/{id}', 'BedChargeController@delete');
+
 		Route::resource('bill_discounts', 'BillDiscountController', ['except'=>['create']]);
 		Route::get('/bill_discounts/create/{encounter_id}', 'BillDiscountController@create');
 		Route::get('/bill_discounts/id/{id}', 'BillDiscountController@searchById');
@@ -601,7 +607,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/bill/enquiry', 'BillController@enquiry');
 				Route::get('/bill/enquiry', 'BillController@enquiry');
 				Route::get('/bill/aging', 'BillController@aging');
-				
+				Route::get('/bill/bill_edit/{id}', 'BillController@billEdit');
+				Route::post('/bill/bill_update/{id}', 'BillController@billUpdate');
 		});
 
 		Route::group(['middleware' => 'patient_list_middleware'], function () {
@@ -836,6 +843,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/product/search', 'ProductController@search');
 				Route::get('/products/delete/{id}', 'ProductController@delete');
 
+				Route::post('/stocks/enquiry', 'StockController@enquiry');
+				Route::get('/stocks/enquiry', 'StockController@enquiry');
 				Route::get('/stocks/total/{product_code}', 'StockController@updateTotalOnHand');
 				Route::get('/stocks/delete/{id}', 'StockController@delete');
 				Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);

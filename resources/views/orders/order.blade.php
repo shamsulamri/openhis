@@ -1,5 +1,6 @@
 	
-	<h3>{{ $product->product_name }}</h3>
+<h3>{{ $product->product_name }}</h3>
+<h5>{{ $product->product_code }}</h5>
 @if ($order->store)
 <div class="alert @if ($available==0) alert-danger @else alert-success @endif">
 	Available: {{ $available }} ({{ $order->store->store_name }})
@@ -14,13 +15,6 @@
             <a class="btn btn-default" href="/orders/cancel_single/{{ $order->order_id }}" role="button">Cancel</a>
 			@endif
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
-        </div>
-    </div>
-
-    <div class='form-group'>
-        {{ Form::label('product_code', 'Code',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::label('product_code', $product->product_code, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
 

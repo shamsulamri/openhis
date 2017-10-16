@@ -36,11 +36,21 @@ $category='';
 			<td colspan=2>
 			{{ $order->category_name }}
 			</td>
+			<td>
+			<div align='right'>
+			U
+			</div>
+			</td>
+			<td width='10'>
+			</td>
 	</tr>
 		<?php $category=$order->category_name; ?>	
 	@endif
 	<tr>
 			
+			<td width=10>
+					{{ $order->product_code }}
+			</td>
 			<td>
 			@if (isset($order->cancel_id)) 
 					<a href='{{ URL::to('order_cancellations/'. $order->cancel_id) }}'>
@@ -61,6 +71,11 @@ $category='';
 					</a>
 			@endif
 			
+			</td>
+			<td width='10'>
+				<div align='right'>
+				{{ $order->order_quantity_request }}
+				</div>
 			</td>
 			<td align='right'>
 				@if ($order->order_completed==0) 

@@ -14,6 +14,7 @@ use App\Encounter;
 use App\Bed;
 use App\Admission;
 use App\BedMovement;
+use App\BedCharge;
 
 class WardArrivalController extends Controller
 {
@@ -85,6 +86,13 @@ class WardArrivalController extends Controller
 			$bed_movement->move_from = $request->bed_code;
 			$bed_movement->move_to = $request->bed_code;
 			$bed_movement->save();
+
+			$bed_charge = BedCharge::where('bed_code',$bed_assigned->bed_code)
+							->where('encounter_id', $encounter->encounter_id)
+							->first();
+			$bed_charge->bed_code = $request->bed_code;
+			$bed_charge->save();
+							
 
 			if ($valid->passes()) {
 					$ward_arrival = new WardArrival($request->all());

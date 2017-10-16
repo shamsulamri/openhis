@@ -24,6 +24,7 @@ use App\DrugPrescription;
 use App\OrderMultiple;
 use App\OrderHelper;
 use App\StockHelper;
+use App\OrderRoute;
 
 class OrderDrugController extends Controller
 {
@@ -181,9 +182,17 @@ class OrderDrugController extends Controller
 			$order->order_quantity_supply = $request->order_quantity_request;
 			$order->order_total = $product->product_sale_price*$order->order_quantity_request;
 
+			if ($request->order_is_discharge==1) {
+					$route = OrderRoute::where('encounter_code', $order->consultation->encounter->encounter_code)
+							->where('category_code', $product->category_code)
+							->first();
+					if ($route) {
+							$order->store_code = $route->store_code;
+					}
+			}
 			$stock_helper = new StockHelper();
-			$allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $order_drug->order->store_code, $order_drug->order->encounter_id);
-			$on_hand = $stock_helper->getStockCountByStore($product->product_code, $order_drug->order->store_code);
+			$allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $order->store_code, $order_drug->order->encounter_id);
+			$on_hand = $stock_helper->getStockCountByStore($product->product_code, $order->store_code);
 
 
 			$valid=null;

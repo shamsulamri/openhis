@@ -165,6 +165,7 @@ class Patient extends Model
 		return DojoUtility::dateReadFormat($value);
 	}
 
+	/**
 	public function getPatientMrnAttribute($value)
 	{
 			if (is_null($value)) {
@@ -173,13 +174,14 @@ class Patient extends Model
 					return $value;
 			}
 	}
+	**/
 
 	public function getMRN()
 	{
-			$mrn = $this->patient_mrn;
-			if (is_null($mrn)) {
+			if (!$this->attributes['patient_mrn']) {
 					return "-";
 			} else {
+					$mrn = $this->attributes['patient_mrn'];
 					return substr($mrn,0,2).'-'.substr($mrn,2,8).'-'.substr($mrn,10,4);
 			}
 	}
@@ -250,7 +252,7 @@ class Patient extends Model
 						->where('b.patient_id','=',$this->patient_id)
 						->sum('bill_outstanding');
 
-			$sql = "select (sum(IFNULL(bill_payment_total,0)-IFNULL(bill_change,0)-bill_grand_total) + IFNULL(nonenc_payment,0)) as outstanding
+			$sql = "select (sum(IFNULL(bill_payment_total,0)-IFNULL(bill_change,0)-bill_total) + IFNULL(nonenc_payment,0)) as outstanding
 						from bills as a
 						left join encounters b on (a.encounter_id=b.encounter_id)
 						left join (
@@ -364,10 +366,10 @@ class Patient extends Model
 
 			static::created(function($patient)
 			{
-					$prefix = config('host.mrn_prefix') . date('Ymd', strtotime(Carbon::now()));
-					$mrn = $prefix.str_pad(Patient::where('created_at','>=', Carbon::today())->count(), 4, '0', STR_PAD_LEFT);
-					$patient->patient_mrn = $mrn;
-					$patient->save();
+					//$prefix = config('host.mrn_prefix') . date('Ymd', strtotime(Carbon::now()));
+					//$mrn = $prefix.str_pad(Patient::where('created_at','>=', Carbon::today())->count(), 4, '0', STR_PAD_LEFT);
+					//$patient->patient_mrn = $mrn;
+					//$patient->save();
 			});
 	}
 

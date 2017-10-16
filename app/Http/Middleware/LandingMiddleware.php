@@ -20,6 +20,10 @@ class LandingMiddleware
 				return redirect('/maintenance');
 		} 		
 
+		if ($request->user()->can('module-support')) {
+				return redirect('/order_queues');
+		} 		
+
 		if ($request->user()->can('module-patient')) {
 				return redirect('/patients');
 		} 		
@@ -34,10 +38,6 @@ class LandingMiddleware
 
 		if ($request->user()->can('module-diet')) {
 				return redirect('/diet_orders');
-		} 		
-
-		if ($request->user()->can('module-support')) {
-				return redirect('/order_queues');
 		} 		
 
 		if ($request->user()->can('module-inventory')) {

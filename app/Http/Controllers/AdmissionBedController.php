@@ -21,6 +21,7 @@ use App\Admission;
 use App\BedMovement;
 use App\BedBooking;
 use App\Bed;
+use App\BedCharge;
 
 class AdmissionBedController extends Controller
 {
@@ -307,11 +308,21 @@ class AdmissionBedController extends Controller
 	public function move(Request $request,$admission_id, $bed_code)
 	{
 			$admission = Admission::find($admission_id);
+			$new_bed = Bed::find($bed_code);
 			
 			/** Set current bed to housekeeping **/
-			$bed = Bed::find($admission->bed_code);
-			$bed->status_code = "02";
-			$bed->save();
+			$current_bed = Bed::find($admission->bed_code);
+			$current_bed->status_code = "02";
+			$current_bed->save();
+
+			if ($current_bed->bed_transit==1) {
+				$current_bed_charge = BedCharge::where('encounter_id',$admission->encounter_id)
+						->where('bed_code', $current_bed->bed_code)
+						->whereNull('bed_stop')
+						->first();
+				$current_bed_charge->bed_stop = date('d/m/Y');
+				$current_bed_charge->save();
+			}
 			/**/
 
 			$bed_movement = new BedMovement();
@@ -320,6 +331,7 @@ class AdmissionBedController extends Controller
 			$bed_movement->move_from = $admission->bed_code;
 			$bed_movement->move_to = $bed_code;
 			$bed_movement->move_date = date('d/m/Y');
+
 			if ($bed_movement->move_from == $bed_movement->move_to) { 
 				$transaction = "admission";
 			} else {
@@ -336,16 +348,43 @@ class AdmissionBedController extends Controller
 			$bed_movement->transaction_code = $transaction;
 			$bed_movement->save();
 			
-			$bed = Bed::where('bed_code', '=',$bed_code)->first();
-		
+			/** Update admission table **/
 			$admission->bed_code = $bed_code;
-			//$admission->class_code = $bed->class_code; 
 			$admission->save();
 
 			/** Set new bed to occupiied **/
-			$bed = Bed::find($bed_code);
-			$bed->status_code = '03';
-			$bed->save();
+			$new_bed->status_code = '03';
+			$new_bed->save();
+
+			if ($new_bed->bed_transit==0) {
+				$open_bed = BedCharge::where('encounter_id',$admission->encounter_id)
+							->whereNull('bed_stop')
+							->first();
+				if ($open_bed->bed_code != $new_bed->bed_code) {
+						$open_bed->bed_stop = date('d/m/Y');
+						$open_bed->save();
+				}
+			}
+
+			/** Is returning bed ? **/
+			$return_bed = BedCharge::where('encounter_id',$admission->encounter_id)
+				->whereNull('bed_stop')
+				->first();
+
+			$add_bed=false;
+
+			if (!$return_bed) $add_bed=true;
+			if ($return_bed) {
+				if ($new_bed->bed_code != $return_bed->bed_code) $add_bed=true;
+			}
+
+			if ($add_bed) {
+						$new_bed_charge = new BedCharge();
+						$new_bed_charge->encounter_id = $admission->encounter_id;
+						$new_bed_charge->bed_code = $new_bed->bed_code;
+						$new_bed_charge->bed_start = date('d/m/Y');
+						$new_bed_charge->save();
+			}
 
 			if (!empty($request->book_id)) {
 				BedBooking::find($request->book_id)->delete();	

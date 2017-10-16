@@ -24,7 +24,7 @@
 					<div class='form-group'>
 						<label for='date_end' class='col-sm-3 control-label'>Outcome</label>
 						<div class='col-sm-9'>
-							{{ Form::select('type_code', $discharge_types, $type_code, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::select('outcome_code', $discharge_types, $outcome_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
@@ -59,8 +59,27 @@
 								{{ Form::select('flag_code', $flag,$flag_code, ['class'=>'form-control','maxlength'=>'1']) }}
 						</div>
 					</div>
+			</div>
+	</div>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Type</div></label>
+						<div class='col-sm-9'>
+								{{ Form::select('type_code', $patient_types,$type_code, ['class'=>'form-control','maxlength'=>'1']) }}
+						</div>
 					</div>
 			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+					</div>
+			</div>
+	</div>
+
 	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
 	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
 	<input type='hidden' id='export_report' name="export_report">

@@ -148,6 +148,8 @@ class BedController extends Controller
 			$bed->fill($request->input());
 
 
+			$bed->bed_transit = $request->bed_transit ?: 0;
+
 			$valid = $bed->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {

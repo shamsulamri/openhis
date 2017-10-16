@@ -56,14 +56,13 @@
 					</div>
 			</div>
 	</div>
+<a href='/beds/create' class='btn btn-primary'>Create</a>
 	<button class="btn btn-primary pull-right" type="submit" value="Submit"><span class='glyphicon glyphicon-search'></span></button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
 
 @can('system-administrator')
-<a href='/beds/create' class='btn btn-primary'>Create</a>
-<br>
 <br>
 @endcan
 @if ($beds->total()>0)

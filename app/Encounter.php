@@ -44,8 +44,6 @@ class Encounter extends Model
 				'sponsor_id'=>'required_if:type_code,==,"sponsored"'
 			];
 
-
-
 			$messages = [
 				'required' => 'This field is required'
 			];
@@ -106,6 +104,19 @@ class Encounter extends Model
 			{
 				$encounter->admission()->delete();
 				$encounter->consultation()->delete();
+			});
+
+			static::created(function($encounter)
+			{
+					//Log::info("ENCOUNTER CREATED!!!!!!!!!!");
+					//Log::info($encounter->patient);
+					if (!$encounter->patient->patient_mrn) {
+							$patient = $encounter->patient;
+							$prefix = config('host.mrn_prefix') . date('Ymd', strtotime(Carbon::now()));
+							$mrn = $prefix.str_pad(Patient::where('created_at','>=', Carbon::today())->count(), 4, '0', STR_PAD_LEFT);
+							$patient->patient_mrn = $mrn;
+							$patient->save();
+					}
 			});
 	}
 	

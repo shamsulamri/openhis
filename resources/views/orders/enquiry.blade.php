@@ -79,6 +79,12 @@
 					</div>
 			</div>
 			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-2 control-label'>Id</label>
+						<div class='col-sm-10'>
+							{{ Form::text('encounter_id', $encounter_id, ['placeholder'=>'Encounter Id','class'=>'form-control','maxlength'=>'2']) }}
+						</div>
+					</div>
 			</div>
 	</div>
 	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
@@ -157,7 +163,17 @@
 @endif
 </tbody>
 </table>
-{{ $orders->appends(['search'=>$search,'ward_code'=>$ward_code, 'user_id'=>$user_id,'date_start'=>$date_start, 'date_end'=>$date_end, 'category_code'=>$category_code,'age'=>$age])->render() }}
+{{ $orders->appends([
+		'search'=>$search,
+		'ward_code'=>$ward_code, 
+		'user_id'=>$user_id,
+		'date_start'=>$date_start, 
+		'date_end'=>$date_end, 
+		'category_code'=>$category_code,
+		'age'=>$age,
+		'encounter_id'=>$encounter_id,
+		'status_code'=>$status_code,
+])->render() }}
 <br>
 @if ($orders->total()>0)
 	{{ $orders->total() }} records found.

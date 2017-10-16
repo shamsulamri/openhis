@@ -24,6 +24,8 @@ use App\DischargeHelper;
 use App\Encounter;
 use App\PatientFlag;
 use App\OrderHelper;
+use App\BedCharge;
+use App\PatientType;
 
 class DischargeController extends Controller
 {
@@ -57,6 +59,8 @@ class DischargeController extends Controller
 					'type_code'=>null,
 					'dojo' => new DojoUtility(),
 					'dischargeHelper' => new DischargeHelper(),
+					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'encounter_code'=>null,
 			]);
 	}
 
@@ -85,7 +89,7 @@ class DischargeController extends Controller
 					->leftJoin('encounters as d', 'd.encounter_id','=','c.encounter_id')
 					->where('order_is_discharge',1)
 					->where('d.encounter_id', $consultation->encounter_id)
-					->where('a.product_code','<>','consultation_fee')
+					->where('b.category_code','<>','consultation')
 					->get();
 
 			$mc = $consultation->medical_certificate;
@@ -99,6 +103,7 @@ class DischargeController extends Controller
 					->leftJoin('products as b', 'b.product_code', '=','orders.product_code')
 					->leftJoin('order_cancellations as c', 'c.order_id', '=', 'orders.order_id')
 					->where('encounter_id','=', $consultation->encounter_id)
+					->where('orders.user_id','=', Auth::user()->id)
 					->whereNull('cancel_id')
 					->count();
 
@@ -136,6 +141,14 @@ class DischargeController extends Controller
 					$discharge = new Discharge($request->all());
 					$discharge->discharge_id = $request->discharge_id;
 					$discharge->save();
+
+					if ($encounter->admission) {
+							$bed_charge = BedCharge::where('encounter_id', $discharge->encounter_id)
+									->whereNull('bed_stop')
+									->first();
+							$bed_charge->bed_stop = date('d/m/Y');
+							$bed_charge->save();
+					}
 
 					DB::table('bill_items')
 						->where('encounter_id','=',$discharge->encounter_id)
@@ -255,6 +268,10 @@ class DischargeController extends Controller
 					$discharges = $discharges->where('a.type_code','=', $request->type_code);
 			}
 
+			if (!empty($request->encounter_code)) {
+					$discharges = $discharges->where('b.encounter_code','=', $request->encounter_code);
+			}
+
 			$discharges = $discharges->paginate($this->paginateValue);
 
 			return view('discharges.index', [
@@ -262,7 +279,9 @@ class DischargeController extends Controller
 					'search'=>$request->search,
 					'discharge_types' => DischargeType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'type_code'=>$request->type_code,
-					'dojo' => new DojoUtility(),
+					'dischargeHelper' => new DischargeHelper(),
+					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'encounter_code'=>$request->encounter_code,
 					]);
 	}
 
@@ -317,8 +336,8 @@ class DischargeController extends Controller
 					});
 			}
 
-			if (!empty($request->type_code)) {
-					$discharges = $discharges->where('discharges.type_code','=', $request->type_code);
+			if (!empty($request->outcome_code)) {
+					$discharges = $discharges->where('discharges.type_code','=', $request->outcome_code);
 			}
 
 			if (!empty($request->encounter_code)) {
@@ -327,6 +346,10 @@ class DischargeController extends Controller
 
 			if (!empty($request->flag_code)) {
 					$discharges = $discharges->where('c.flag_code','=', $request->flag_code);
+			}
+
+			if (!empty($request->type_code)) {
+					$discharges = $discharges->where('b.type_code','=', $request->type_code);
 			}
 
 			if (!empty($date_start) && empty($request->date_end)) {
@@ -352,11 +375,13 @@ class DischargeController extends Controller
 					'search'=>$request->search,
 					'discharge_types' => DischargeType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'encounter_types' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
-					'type_code'=>$request->type_code,
+					'outcome_code'=>$request->outcome_code,
 					'encounter_code'=>$request->encounter_code,
 					'dojo' => new DojoUtility(),
 					'flag' => PatientFlag::all()->sortBy('flag_name')->lists('flag_name', 'flag_code')->prepend('',''),
 					'flag_code'=>$request->flag_code,
+					'patient_types' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'type_code' => $request->type_code,
 					]);
 	}
 }

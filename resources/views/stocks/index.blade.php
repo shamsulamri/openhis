@@ -3,7 +3,7 @@
 @section('content')
 <h1>Stock Movement Enquiry</h1>
 <br>
-<form id='form' action='/stock/search' method='post' class='form-horizontal'>
+<form id='form' action='/stocks/enquiry' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
@@ -97,7 +97,11 @@
 			<td>
 					{{ $stock->store_from }}
 					@if ($stock->store_to)
-					<br>to
+						@if ($stock->stock_quantity<0)
+							<br>to
+						@else
+							<br>from
+						@endif
 					{{ $stock->store_to }}
 					@endif
 			</td>
