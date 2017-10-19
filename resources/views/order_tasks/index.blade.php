@@ -3,8 +3,9 @@
 @section('content')
 @include('patients.id_only')
 <h1>Order Task</h1>
-@if ($store)
-<h3>Store: {{ $store->store_name }}</h3>
+<h3>{{ $location->location_name }}</h3>
+@if (!empty($location->store))
+<h5>{{ $location->store->store_name }}</h5>
 @endif
 <br>
 <form action='/order_task/status' method='post'>
@@ -12,14 +13,14 @@
 			<div class="col-xs-6">
 					<button class="btn btn-primary" type="submit" value="Submit">Update Status</button>
 					@can('module-order')
+					<!--
 					<a class='btn btn-primary' href='/orders/make'>Edit Orders</a>
+					-->
 					@endcan
 			</div>
 			<div align="right" class="col-xs-6">
-			@if ($location->location_code == 'pharmacy')
 					<a class="btn btn-primary pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Drug Label</a>
-			@endif
 			</div>
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

@@ -15,6 +15,7 @@ use App\EncounterType;
 use Carbon\Carbon;
 use Auth;
 use App\Order;
+use Gate;
 
 class OrderQueueController extends Controller
 {
@@ -47,6 +48,7 @@ class OrderQueueController extends Controller
 			} else {
 				$location_code = $request->cookie('queue_location');
 			}
+
 			$location = QueueLocation::find($location_code);
 
 			$fields = ['a.order_id',
@@ -126,7 +128,7 @@ class OrderQueueController extends Controller
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
 			//return $locations;
 			
-			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed');
+			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed', 'unreported'=>'Unreported');
 
 			$is_discharge = null;
 			if (!empty($request->discharge)) $is_discharge=true;
@@ -280,6 +282,7 @@ class OrderQueueController extends Controller
 					return redirect('queue_locations');
 			}
 
+			//if (empty($request->cookie('queue_location'))) {
 			if (!empty(Auth::user()->authorization->location_code)) {
 				$location_code = Auth::user()->authorization->location_code;
 			} else {
@@ -346,6 +349,10 @@ class OrderQueueController extends Controller
 			if ($request->status_code =='incomplete') {
 					$order_queues = $order_queues->where('order_completed', '=', 0);
 			} 
+
+			if ($request->status_code =='unreported') {
+					$order_queues = $order_queues->whereNull('order_report');
+			} 
 			if ($request->status_code =='completed') {
 					$order_queues = $order_queues->where('order_completed', '=', 1);
 			} 
@@ -360,7 +367,7 @@ class OrderQueueController extends Controller
 
 			$order_queues = $order_queues->paginate($this->paginateValue);
 
-			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed');
+			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed', 'unreported'=>'Unreported');
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
 			//return $locations;
 			

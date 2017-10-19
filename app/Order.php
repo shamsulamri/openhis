@@ -148,7 +148,7 @@ class Order extends Model
 
 			if ($changed) 
 			{
-				Log::info("Push to rabbit");
+				//Log::info("Changed!!!!");
 			}	
 	}
 

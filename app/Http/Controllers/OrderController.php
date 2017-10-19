@@ -128,19 +128,28 @@ class OrderController extends Controller
 					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
 					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
-					->where('a.encounter_id','=',Session::get('encounter_id'))
-					->where('a.user_id','=',Auth::user()->id)
+					->where('a.encounter_id','=',$encounter->encounter_id)
 					->orderBy('b.category_code')
 					->orderBy('a.created_at', 'desc');
+
+			if (Auth::user()->authorization->module_support != 1) {
+					$orders = $orders->where('a.user_id','=',Auth::user()->id);
+			}
 
 			if ($encounter->admission) {
 				$orders = $orders->where('ward_code', $encounter->admission->bed->ward_code);
 			}
 
+			/*
 			if (!empty(Auth::user()->authorization->location_code)) {
 				$location_code = Auth::user()->authorization->location_code;
 				$orders = $orders->where('a.location_code','=', $location_code);
 			} 
+			 */
+
+			if (Auth::user()->authorization->module_support == 1) {
+					$orders = $orders->where('a.location_code','=', $request->cookie('queue_location'));
+			}
 
 			$orders = $orders->paginate(20);
 
@@ -208,7 +217,6 @@ class OrderController extends Controller
 
 	public function updateDiagnosticReport(Request $request, $id) 
 	{
-			Log::info($request);
 			$order = Order::find($id);
 			$order->order_diagnostic_report = $request->report;
 			$order->save();
@@ -278,6 +286,7 @@ class OrderController extends Controller
 			$product = Product::find($order->product_code);
 			if ($product->product_edit_price==1) {
 				$order->order_unit_price = $order->order_sale_price;
+				$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 			}
 
 			$valid = $this->validateOrder($request, $order);
@@ -367,7 +376,7 @@ class OrderController extends Controller
 
 			if ($changed) 
 			{
-				Log::info("save !!!!!");
+				//Log::info("save !!!!!");
 			}	
 	}
 
@@ -406,12 +415,12 @@ class OrderController extends Controller
 						->get();
 
 			$encounter = Encounter::find($encounter_id);
-			if (!$encounter->admission) {
+			//if (!$encounter->admission) {
 					if ($order->count()>0) {
 							Session::flash('message', 'Product already in the order list.');
 							return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
 					}
-			}
+			//}
 
 			$product = Product::find($product_code);
 			$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));
@@ -427,6 +436,7 @@ class OrderController extends Controller
 	{
 			$encounter= Encounter::find(Session::get('encounter_id'));
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+
 			$fields = ['product_name', 
 					'a.product_code', 
 					'cancel_id', 

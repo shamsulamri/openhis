@@ -7,14 +7,6 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('department_code')) has-error @endif'>
-        {{ Form::label('department_code', 'Deparment',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::select('department_code', $department,null, ['class'=>'form-control','maxlength'=>'20']) }}
-            @if ($errors->has('department_code')) <p class="help-block">{{ $errors->first('department_code') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
         <label for='encounter_code' class='col-sm-3 control-label'>Encounter<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -31,6 +23,14 @@
 		</div>
     </div>
 
+    <div class='form-group  @if ($errors->has('department_code')) has-error @endif'>
+        {{ Form::label('department_code', 'Deparment',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::select('department_code', $department,null, ['class'=>'form-control','maxlength'=>'20']) }}
+            @if ($errors->has('department_code')) <p class="help-block">{{ $errors->first('department_code') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('user_id')) has-error @endif'>
         <label for='user_id' class='col-sm-3 control-label'>Consultant</label>
         <div class='col-sm-9'>
@@ -39,6 +39,7 @@
         </div>
     </div>
 
+	<!--
     <div class='form-group  @if ($errors->has('location_level')) has-error @endif'>
         <label for='location_level' class='col-sm-3 control-label'>Level</label>
         <div class='col-sm-9'>
@@ -54,6 +55,7 @@
             @if ($errors->has('location_is_pool')) <p class="help-block">{{ $errors->first('location_is_pool') }}</p> @endif
         </div>
     </div>
+	-->
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">

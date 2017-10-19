@@ -64,7 +64,7 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
-						{{ Form::label('location_code', 'Receive by',['class'=>'col-sm-4 control-label']) }}
+						{{ Form::label('location_code', 'Order Route',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
 							{{ Form::select('location_code', $location,null, ['class'=>'form-control','maxlength'=>'20']) }}
 							@if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif

@@ -115,7 +115,7 @@ class ConsultationProcedureController extends Controller
 					}
 					$consultation_procedure->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/consultation_procedures');
+					return redirect('/consultation_procedures/');
 			} else {
 					return view('consultation_procedures.edit', [
 							'consultation_procedure'=>$consultation_procedure,
@@ -162,7 +162,7 @@ class ConsultationProcedureController extends Controller
 	{	
 			ConsultationProcedure::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/consultation_procedures');
+			return redirect('/consultation_procedures/');
 	}
 	
 	public function search(Request $request)

@@ -49,7 +49,9 @@ $category='';
 	<tr>
 			
 			<td width=10>
+				@if ($order->order_completed==1) <span class='label label-success'>@endif
 					{{ $order->product_code }}
+				@if ($order->order_completed==1) </span>@endif
 			</td>
 			<td>
 			@if (isset($order->cancel_id)) 
@@ -66,11 +68,13 @@ $category='';
 					</a>
 			@else
 						<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>
-						<span class='glyphicon glyphicon-ok'></span>
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>
 			@endif
-			
+			@if ($order->order_report)	
+			<br>
+			{{ $order->order_report }}
+			@endif
 			</td>
 			<td width='10'>
 				<div align='right'>
@@ -98,7 +102,9 @@ $category='';
 					@endif
 				@else
 					@if ($order->order_report != '')
+					<!--
 					<a class='btn btn-default btn-xs' href='{{ URL::to('orders/'. $order->order_id .'/show') }}'>View Report</a>
+					-->
 					@endif
 				@endif
 			</td>

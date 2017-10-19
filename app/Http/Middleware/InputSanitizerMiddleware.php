@@ -18,8 +18,6 @@ class InputSanitizerMiddleware
     {
 			$input = $request->input();
 
-			Log::info("----");
-			Log::info($input);
 			array_walk_recursive($input, function(&$value) {
 				if (empty($value)) {
 					//$value = StringHelper::trimNull($value);
@@ -27,7 +25,6 @@ class InputSanitizerMiddleware
 				}
 			});
 
-			Log::info($input);
 			$request->replace($input);
 
 			return $next($request);

@@ -36,7 +36,7 @@ class ConsultationDiagnosisController extends Controller
 
 
 			if ($consultation_diagnoses->count()==0) {
-					return $this->create($consultation_diagnoses);
+					return $this->create();
 			} else {
 					return view('consultation_diagnoses.index', [
 							'consultation_diagnoses'=>$consultation_diagnoses,
@@ -85,7 +85,7 @@ class ConsultationDiagnosisController extends Controller
 					}
 					$consultation_diagnosis->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/consultation_diagnoses/');
+					return redirect('/consultation_diagnoses');
 			} else {
 					return redirect('/consultation_diagnoses/create')
 							->withErrors($valid)

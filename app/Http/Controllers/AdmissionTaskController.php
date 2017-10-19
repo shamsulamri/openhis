@@ -22,6 +22,7 @@ use App\Store;
 use Auth;
 use Route;
 use App\DojoUtility;
+use App\StockHelper;
 
 class AdmissionTaskController extends Controller
 {
@@ -69,6 +70,8 @@ class AdmissionTaskController extends Controller
 					->where('b.encounter_code','=', 'inpatient')
 					->where('order_completed','=',0)
 					->where('a.product_code','<>','consultation_fee')
+					->where('d.product_drop_charge','=',0)
+					->where('a.ward_code','=', $ward_code)
 					->whereNull('cancel_id')
 					->whereNull('o.discharge_id')
 					->whereNotNull('n.post_id')
@@ -77,11 +80,13 @@ class AdmissionTaskController extends Controller
 
 			//->whereNull('discharge_id')
 
+			/**
 			if (Auth::user()->authorization->module_support==1) {
 					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
 			} else {
 					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
 			}
+			**/
 
 			$order_ids = $admission_tasks->implode('order_id',',');
 			
@@ -217,14 +222,17 @@ class AdmissionTaskController extends Controller
 					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('a.product_code','<>','consultation_fee')
+					->where('d.product_drop_charge','=',0)
+					->where('a.ward_code','=', $ward_code)
 					->whereNull('cancel_id');
 
 			if ($request->categories) {
-				$admission_tasks = $admission_task->where('d.category_code','like', '%'.$request->categories.'%');
+				$admission_tasks = $admission_tasks->where('d.category_code','like', '%'.$request->categories.'%');
 			}
 
 			//->whereNull('discharge_id')
 			
+			/**
 			if (Auth::user()->authorization->module_support==1) {
 					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
 					if (!empty($ward_code)) { 
@@ -233,6 +241,7 @@ class AdmissionTaskController extends Controller
 			} else {
 					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
 			}
+			**/
 
 			if (empty($request->show_all)) {
 					$admission_tasks = $admission_tasks->where('order_completed','=',0);
@@ -311,7 +320,13 @@ class AdmissionTaskController extends Controller
 									$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
 									$order->updated_by = Auth::user()->id;
 									$order->store_code = $store_code;
+									$order->location_code = null;
 									$order->save();
+
+									if ($order->product->product_stocked==1) {
+											$stock_helper = new StockHelper();
+											$stock_helper->updateStockBatch($order);
+									}
 							} 
 					}
 					/*
@@ -359,7 +374,8 @@ class AdmissionTaskController extends Controller
 					 */
 			}
 
-			return redirect()->action('AdmissionTaskController@search', $request);
+			return redirect('/admission_tasks');
+			//return redirect()->action('AdmissionTaskController@search', $request);
 	}
 
 }

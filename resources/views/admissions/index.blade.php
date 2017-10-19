@@ -167,9 +167,6 @@
 									<?php
 										$consultation = $wardHelper->hasOpenConsultation($admission->patient_id, $admission->encounter_id, Auth::user()->id);
 									?>
-<a class='btn btn-default btn-lg'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=consent_form&id={{ $admission->patient_id }}'>
-<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
-</a>
 								@endif
 						@endif
 									@if (empty($consultation))
@@ -178,6 +175,12 @@
 										<a class='btn btn-warning btn-lg' href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'><span class='fa fa-stethoscope' aria-hidden='true'></span></a>
 
 									@endif
+<a class='btn btn-default btn-lg' title='Label'  target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $admission->patient_id }}">
+<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+</a>
+<a class='btn btn-default btn-lg' title='Wrist'  target="_blank" href="{{ Config::get('host.report_server')  }}/ReportServlet?report=wrist_label&id={{ $admission->patient_id }}">
+<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+</a>
 						@can('system-administrator')
 							<a class='btn btn-danger btn-sm ' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 						@endcan

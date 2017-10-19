@@ -12,7 +12,9 @@ Interim Bill
 @if ($encounter->discharge)
 	@if (!$encounter->bill)
 		@if ($incomplete_orders>0 && $encounter->discharge->discharge_id)
-		<div class='alert alert-danger' role='alert'>Patient has {{ $incomplete_orders }} incomplete order(s)</div>
+		<div class='alert alert-danger' role='alert'>Patient has {{ $incomplete_orders }} incomplete order(s)
+<a href='/order/enquiry?encounter_id={{ $encounter->encounter_id }}&status_code=incomplete' class='pull-right'>Show incomplete orders</a>
+</div>
 		@else
 		<br>
 		@endif

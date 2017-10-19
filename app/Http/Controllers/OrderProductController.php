@@ -37,9 +37,11 @@ class OrderProductController extends Controller
 
 	public function index()
 	{
+			/*
 			if (Gate::allows('module-consultation')) {
 					return redirect('/order_product/drug');
 			}
+			 */
 			$order_products = DB::table('products')
 					->orderBy('product_name')
 					->paginate($this->paginateValue);
@@ -52,7 +54,7 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
-					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history'),
+					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history')->prepend('',''),
 					'set_value' => '',
 					'search' => '',
 					'categories' => $this->getCategories(),
@@ -151,11 +153,13 @@ class OrderProductController extends Controller
 	
 	public function search(Request $request)
 	{
-			/*
-			if ($request->set_code=='drug_history') {
-				return redirect('/order_product/drug');
+			if (empty($request->search)) {
+					if ($request->set_code=='drug_history') {
+						$this->drugHistory($request);
+						//return redirect('/order_product/drug');
+					}
 			}
-			 */
+
 			if (!empty($request->search)) {
 				$product = Product::find($request->search);
 				if ($product) {
@@ -164,7 +168,9 @@ class OrderProductController extends Controller
 							$response=0;
 							if ($product->product_stocked==1) {
 								$stock_helper = new StockHelper();
-								$store_code = OrderHelper::getStoreAffected($product);
+								//$store_code = OrderHelper::getStoreAffected($product);
+								$store_code = OrderHelper::getTargetStore($product);
+
 								$allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $store_code);
 								$on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_code);
 
@@ -232,6 +238,7 @@ class OrderProductController extends Controller
 			if (!empty($request->order_id)) {
 				$order_id = $request->order_id;
 			}
+
 			return view('order_products.index', [
 					'order_products'=>$order_products,
 					'search'=>$request->search,
@@ -239,7 +246,7 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
-					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history'),
+					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history')->prepend('',''),
 					'set_value' => $request->set_code,
 					'page' => $request->page,
 					'categories' => $this->getCategories(),
@@ -250,11 +257,12 @@ class OrderProductController extends Controller
 
 	public function drugHistory(Request $request)
 	{
+			return $request->set_code;
 			$consultation_id = Session::get('consultation_id'); //$request->consultation_id;
 			$consultation = Consultation::findOrFail($consultation_id);
 
 			$order_products = DB::table('orders as a')
-					->select('a.order_id','a.product_code', 'product_name', 'b.created_at', 'drug_strength', 'unit_name', 'drug_dosage', 'dosage_name', 'route_name', 'frequency_name','drug_duration', 'period_name')
+					->select('a.order_id','a.product_code', 'product_name', 'b.created_at', 'drug_strength', 'unit_name', 'drug_dosage', 'dosage_name', 'route_name', 'frequency_name','drug_duration', 'period_name', 'product_stocked', 'product_on_hand')
 					->leftJoin('encounters as b', 'a.encounter_id','=', 'b.encounter_id')
 					->leftJoin('products as c', 'c.product_code', '=', 'a.product_code')
 					->leftJoin('order_drugs as d', 'd.order_id', '=', 'a.order_id')
@@ -276,7 +284,7 @@ class OrderProductController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'drug',
 					'consultOption' => 'consultation',
-					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history'),
+					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history')->prepend('',''),
 					'categories' => $this->getCategories(),
 					'category_code'=> null,
 					'set_value' => $request->set_code,

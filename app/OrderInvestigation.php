@@ -72,7 +72,7 @@ class OrderInvestigation extends Model
 
 			if ($changed) 
 			{
-					Log::info("Order investigation updated");
+					//Log::info("Order investigation updated");
 			}	
 	}
 }

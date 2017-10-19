@@ -13,7 +13,8 @@ class OrderRoute extends Model
 	protected $fillable = [
 				'encounter_code',
 				'category_code',
-				'store_code'];
+				'location_code',
+				'ward_code'];
 	
     protected $guarded = ['route_id'];
     protected $primaryKey = 'route_id';

@@ -85,7 +85,6 @@ class OrderInvestigationController extends Controller
 					$order_investigation = new OrderInvestigation($request->all());
 					$order_investigation->order_id = $order->order_id;
 					$order_investigation->save();
-					Log::info($order_investigation->investigation_date);
 
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/orders');
@@ -164,6 +163,7 @@ class OrderInvestigationController extends Controller
 			$order = Order::find($order_investigation->order_id);
 			$order->fill($request->input());
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
+			$order->order_completed = $request->order_completed ?: 0;
 			$order->save();
 			
 			$valid = $order_investigation->validate($request->all(), $request->_method);	

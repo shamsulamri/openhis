@@ -158,13 +158,14 @@ class BillItemController extends Controller
 			return $value;
 
 	}
+
 	public function compileBill($encounter_id) 
 	{
 			$encounter = Encounter::find($encounter_id);
 			$patient_id = $encounter->patient_id;
 
 			$sql = sprintf("
-				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, profit_multiplier, a.order_id
+				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, profit_multiplier, a.order_id, sum(order_total) as order_total
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.tax_code 
@@ -173,6 +174,7 @@ class BillItemController extends Controller
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				where order_completed = 1 
+				and b.category_code<>'consultation'
 				and h.patient_id = %d
 				and bill_id is null 
 				and order_multiple=0
@@ -180,8 +182,13 @@ class BillItemController extends Controller
 			", $patient_id);
 
 			$orders = DB::select($sql);
+			Log::info($sql);
 
 			foreach ($orders as $order) {
+					if ($order->product_code == '13000001') {
+							Log::info($order->product_code);
+							Log::info($order->order_total);
+					}
 					$item = new BillItem();
 					$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
@@ -201,7 +208,68 @@ class BillItemController extends Controller
 					}
 
 					$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
-					$item->bill_amount_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+					$item->bill_amount_pregst = $item->bill_amount;
+					if ($order->tax_rate) {
+						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
+					}
+					try {
+							$item->save();
+					} catch (\Exception $e) {
+							\Log::info($e->getMessage());
+					}
+			}
+
+			$this->bedBills($encounter_id);
+			$this->multipleOrders($encounter_id);
+			$this->forms($encounter_id);
+			$this->compileConsultation($encounter_id);
+			//$this->outstandingCharges($encounter_id);
+	}
+
+	public function compileConsultation($encounter_id) 
+	{
+			$encounter = Encounter::find($encounter_id);
+			$patient_id = $encounter->patient_id;
+
+			$sql = sprintf("
+				select a.product_code, order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, profit_multiplier, a.order_id, order_total
+				from orders as a
+				left join products as b on b.product_code = a.product_code 
+				left join tax_codes as c on c.tax_code = b.tax_code 
+				left join bill_items as f on (f.encounter_id=a.encounter_id and f.product_code = a.product_code)
+				left join encounters as g on (g.encounter_id=a.encounter_id)
+				left join patients as h on (h.patient_id = g.patient_id)
+				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				where order_completed = 1 
+				and b.category_code='consultation'
+				and h.patient_id = %d
+				and bill_id is null 
+				and order_multiple=0
+			", $patient_id);
+
+			$orders = DB::select($sql);
+			Log::info($sql);
+
+			foreach ($orders as $order) {
+					$item = new BillItem();
+					$item->order_id = $order->order_id;
+					$item->encounter_id = $encounter_id;
+					$item->product_code = $order->product_code;
+					$item->tax_code = $order->tax_code;
+					$item->tax_rate = $order->tax_rate;
+					$item->bill_quantity = $order->order_quantity_supply;
+					$item->bill_unit_multiplier = $order->profit_multiplier;
+
+					$product = Product::find($item->product_code);
+					if (!empty($product->charge_code)) {
+							$sale_price = $this->getPriceTier($encounter_id, $product);
+							$item->bill_unit_price = $sale_price;
+					} else {
+							$item->bill_unit_price = $order->order_sale_price;
+					}
+
+					$item->bill_amount = $order->order_total;
+					$item->bill_amount_pregst = $item->bill_amount;
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
@@ -217,7 +285,6 @@ class BillItemController extends Controller
 			$this->forms($encounter_id);
 			//$this->outstandingCharges($encounter_id);
 	}
-
 	public function multipleOrders($id) 
 	{
 			$sql = sprintf("

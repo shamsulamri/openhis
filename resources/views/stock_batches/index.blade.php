@@ -6,9 +6,9 @@
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'><div align='left'>Batch</div></label>
+						<label class='col-sm-3 control-label'><div align='left'>Find</div></label>
 						<div class='col-sm-9'>
-							<input type='text' class='form-control' placeholder="Batch Number" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+							<input type='text' class='form-control' placeholder="Batch number or product code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 						</div>
 					</div>
 			</div>

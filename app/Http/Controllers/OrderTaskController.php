@@ -78,6 +78,7 @@ class OrderTaskController extends Controller
 			Session::set('encounter_id', $encounter_id);
 			$encounter = Encounter::find($encounter_id);
 
+			//if (empty($request->cookie('queue_location'))) {
 			if (!empty(Auth::user()->authorization->location_code)) {
 				$location_code = Auth::user()->authorization->location_code;
 			} else {
@@ -124,6 +125,7 @@ class OrderTaskController extends Controller
 					->leftjoin('wards as m','m.ward_code','=', 'a.ward_code')
 					->where('c.encounter_id','=', $encounter_id)
 					->where('a.location_code','=',$location_code)
+					->where('e.product_local_store','=',0)
 					->where('a.post_id','>',0)
 					->whereNull('cancel_id')
 					->orderBy('order_completed')
@@ -160,6 +162,7 @@ class OrderTaskController extends Controller
 					'stock_helper'=> new StockHelper(),
 					'order_helper'=> new OrderHelper(),
 					'store'=>$store,
+					'consultation_id'=>$consultation->consultation_id,
 			]);
 	}
 	public function edit($id) 
@@ -258,9 +261,8 @@ class OrderTaskController extends Controller
 								$order = Order::find($orderId);
 								$order->order_quantity_supply = $request['quantity_'.$order->order_id];
 								$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
+								$order->updated_by = Auth::user()->id;
 								$order->save();
-								Log::info(DojoUtility::now());
-								Log::info($order);
 
 								if ($order->product->product_stocked==1) {
 										$stock = new Stock();

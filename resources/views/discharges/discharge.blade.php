@@ -24,6 +24,15 @@
             @if ($errors->has('discharge_summary')) <p class="help-block">{{ $errors->first('discharge_summary') }}</p> @endif
         </div>
     </div>
+	@else
+
+    <div class='form-group  @if ($errors->has('discharge_summary')) has-error @endif'>
+        {{ Form::label('discharge_summary', 'Summary',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::textarea('discharge_summary', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+            @if ($errors->has('discharge_summary')) <p class="help-block">{{ $errors->first('discharge_summary') }}</p> @endif
+        </div>
+    </div>
 	@endif
 
 

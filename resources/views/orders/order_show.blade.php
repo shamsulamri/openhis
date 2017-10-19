@@ -2,6 +2,9 @@
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-warning" href="/orders" role="button">Back</a>
+<a class='btn btn-default pull-right'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=consent_form&id={{ $order->order_id }}'>
+<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+</a>
         </div>
     </div>
 	<div class='form-group'>

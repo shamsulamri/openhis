@@ -30,7 +30,6 @@
 	-->
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
-<br>
 @if ($queues->total()>0)
 <table class="table table-hover">
  <thead>

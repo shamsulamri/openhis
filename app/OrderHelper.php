@@ -42,7 +42,8 @@ class OrderHelper
 			return $value;
 	}
 
-	public static function getStoreAffected($product)
+	/**
+	public static function getStoreAffected2($product)
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 			$encounter = Encounter::find(Session::get('encounter_id'));
@@ -55,7 +56,6 @@ class OrderHelper
 				if ($location) $store_code = $location->store_code;
 			}
 
-			/*** Overide route ***/
 			if ($product->product_stocked==1) {
 				if ($product->product_local_store==0) {
 					$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
@@ -82,6 +82,92 @@ class OrderHelper
 
 			return $store_code;
 	}
+	**/
+
+	public static function getTargetLocation($product)
+	{
+			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
+			$encounter = Encounter::find(Session::get('encounter_id'));
+
+			/*** Default Route ***/
+			$target_location=$product->location_code;
+
+			/*** Overriding Route ***/
+			$route = null;
+			if ($admission) {
+						$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
+								->where('category_code', $product->category_code)
+								->where('ward_code', $admission->bed->ward->ward_code)
+								->first();
+						if (empty($route)) {
+								$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
+										->where('category_code', $product->category_code)
+										->first();
+						}
+			} else {
+						$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
+								->where('category_code', $product->category_code)
+								->first();
+			}
+
+			if ($route) {
+					$target_location = $route->location_code;
+			}
+
+			return $target_location;
+	}
+
+	public static function getTargetStore($product)
+	{
+			$store_code = null;
+			if ($product->product_stocked==1) {
+					$encounter = Encounter::find(Session::get('encounter_id'));
+					$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
+					$location_code = (new self)->getTargetLocation($product);
+
+					if (!empty($location_code)) {
+								$store_code = QueueLocation::find($location_code)->store_code;
+					} else {
+								$store_code = (new self)->getLocalStore($encounter, $admission);
+					}
+
+					if ($product->product_local_store==1) {
+								$store_code = (new self)->getLocalStore($encounter, $admission);
+					}
+			}
+
+			return $store_code;
+	}
+
+	public static function getLocalStore($encounter, $admission)
+	{
+				$store_code = null;
+				if ($admission) {
+						$store_code = $admission->bed->ward->store_code;
+				} else {
+						$location = Queue::where('encounter_id', '=', $encounter->encounter_id)->first()->location;
+						if ($location) $store_code = $location->store_code;
+				}
+				return $store_code;
+	}
+
+	/**
+	public static function getTargetLocation2($product)
+	{
+			$encounter = Encounter::find(Session::get('encounter_id'));
+
+			$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
+					->where('category_code', $product->category_code)
+					->first();
+
+			$target=$product->location_code;
+			if ($route) {
+					$target = $route->location_code;
+			}
+
+			return $target;
+	}
+	**/
 
 	public static function orderItem($product, $ward_code) 
 	{
@@ -101,8 +187,12 @@ class OrderHelper
 				$order->order_sale_price = $product->product_sale_price;
 			}	
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
-			$order->location_code = $product->location_code;
-			$order->store_code = (new self)->getStoreAffected($product);
+			//$order->location_code = $product->location_code;
+			$location_code = (new self)->getTargetLocation($product);
+			$order->location_code = $location_code;
+			//$order->store_code = (new self)->getStoreAffected($product);
+			$order->store_code = (new self)->getTargetStore($product);
+
 			if ($admission) {
 					$order->admission_id = $admission->admission_id;
 					$order->ward_code = $admission->bed->ward_code;
@@ -138,7 +228,6 @@ class OrderHelper
 					OrderHelper::createDrugServings($order_drug);
 					$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 					$order->save();
-					Log::info($order);
 			}
 
 			if ($product->order_form=3) {
@@ -148,8 +237,6 @@ class OrderHelper
 					$order_investigation->save();
 			}
 
-			Log::info("------------------------------");
-			Log::info($order);
 			return $order->order_id;
 
 	}	
@@ -171,7 +258,6 @@ class OrderHelper
 											$multi->order_id = $order_drug->order_id;
 											$multi->save();
 									}
-									Log::info($order_drug->order_id);
 									$order = Order::find($order_drug->order_id);
 									$order->order_multiple=1;
 									$order->save();
@@ -198,7 +284,6 @@ class OrderHelper
 							$multi->order_id = $order_investigation->order_id;
 							$multi->save();
 					}
-					Log::info($order_investigation->order_id);
 					$order = Order::find($order_investigation->order_id);
 					$order->order_multiple=1;
 					$order->save();
@@ -268,7 +353,6 @@ class OrderHelper
 
 	public static function dropCharge($consultation_id) 
 	{
-		Log::info("------- Drop -------------");
 		$orders = Order::where('consultation_id',$consultation_id)
 					->leftJoin('products as c', 'c.product_code', '=', 'orders.product_code')
 					->get();
@@ -307,6 +391,8 @@ class OrderHelper
 				}
 
 				if ($order->product->product_stocked==1) {
+						$stock_helper->updateStockBatch($order);
+						/*
 						$stock = new Stock();
 						$stock->order_id = $order->order_id;
 						$stock->product_code = $order->product_code;
@@ -335,6 +421,7 @@ class OrderHelper
 
 
 						} 							
+						*/
 
 				}
 			}

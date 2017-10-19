@@ -34,9 +34,9 @@
 <!--
 <br>
 	<a href='/order_product/drug' class='btn btn-default btn-xs'>Drug History</a>
+	<input type='hidden' name='set_value' value="{{ $set_value }}">
 -->
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-	<input type='hidden' name='set_value' value="{{ $set_value }}">
 </form>
 <br>
 @if (!is_null($order_products))
@@ -53,7 +53,10 @@
 										{{ ucfirst(strtoupper($order_product->product_name)) }}
 										<br>
 										<small>
-										{{ $order_product->product_code }}
+										{{ $order_product->product_code }} 
+										@if (!empty($order_product->category))
+										({{ $order_product->category->category_name }})
+										@endif
 										</small>
 										@if ($tab=='drug')
 											<!--
@@ -79,7 +82,13 @@
 										@endif
 									</td>
 									<td width='10'>
-										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}' class='btn btn-primary'>
+<?php
+	$button_status="btn-primary";
+	if ($order_product->product_stocked==1) {
+			if ($order_product->product_on_hand==0) $button_status = "btn-default disabled";
+	}
+?>
+										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}' class='btn {{ $button_status }}'>
 											<span class='glyphicon glyphicon-plus'></span>
 										</a>
 									</td>

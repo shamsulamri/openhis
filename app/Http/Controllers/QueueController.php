@@ -156,7 +156,6 @@ class QueueController extends Controller
 	
 	public function search(Request $request)
 	{
-			$selectedLocation = $request->locations;
 
 			$queues = DB::table('queues as a')
 					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'a.location_code')
@@ -175,11 +174,21 @@ class QueueController extends Controller
 
 			$queues = $queues->paginate($this->paginateValue);
 
-			$location = Location::find($request->cookie('queue_location'));
+			//$location = Location::find($request->cookie('queue_location'));
+			if (!empty($request->location)) {
+				$selectedLocation = $request->cookie('queue_location');
+			} else {
+				$selectedLocation = $request->locations;
+			}
+			$location = Location::find($selectedLocation);
+			$locations = Location::whereNotNull('encounter_code')
+							->where('encounter_code', $request->encounter_code)
+							->orderBy('location_name')
+							->lists('location_name', 'location_code')->prepend('','');
 			
 			return view('queues.index', [
 					'queues'=>$queues,
-					'locations' => Location::whereNotNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'locations' => $locations,
 					'location' => $location,
 					'search' => $request->search,
 					'selectedLocation' => $selectedLocation,

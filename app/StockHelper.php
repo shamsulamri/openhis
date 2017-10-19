@@ -41,7 +41,6 @@ class StockHelper
 					$allocated = $allocated->where('orders.store_code', $store_code);
 			}
 
-					Log::info($allocated->toSql());
 			$allocated = $allocated->sum('order_quantity_request');
 
 			return floatval($allocated);
@@ -94,7 +93,6 @@ class StockHelper
 							->where('store_code','=',$store_code)
 							->sum('stock_quantity');
 
-			Log::info("ON HAND: ".$stock_on_hand);
 			if ($stock_on_hand>0) {
 					$stock_store = StockStore::where('product_code','=', $product_code)
 									->where('store_code','=', $store_code)
@@ -201,7 +199,6 @@ class StockHelper
 
 	public function stockReceive($id, $quantity, $store_code, $batch_number, $delivery_number, $invoice_number, $expiry_date)
 	{
-			Log::info($expiry_date);
 			$item = PurchaseOrderLine::find($id);
 
 			$product = Product::find($item->product_code);
@@ -226,7 +223,6 @@ class StockHelper
 			}
 			$stock->stock_description = "Purchase id: ".$item->purchase_id;
 			$stock->save();
-			Log::info($stock);
 
 			if ($product->product_track_batch==1) {
 					$batch = new StockBatch();
@@ -399,5 +395,36 @@ class StockHelper
 			return $count;
 	}
 
+	public function updateStockBatch($order) 
+	{
+		$stock = new Stock();
+		$stock->order_id = $order->order_id;
+		$stock->product_code = $order->product_code;
+		$stock->stock_quantity = -($order->order_quantity_supply);
+		$stock->store_code = $order->store_code;
+		$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
+		$stock->move_code = 'sale';
+		$stock->save();
+
+		$this->updateAllStockOnHand($order->product_code);
+
+		if ($stock->product->product_track_batch==1) {
+
+				$batch = $this->getFirstBatch($stock->product_code, $stock->store_code);
+
+				if ($batch) {
+						$stock_batch = new StockBatch();
+						$stock_batch->stock_id = $stock->stock_id;
+						$stock_batch->store_code = $stock->store_code;
+						$stock_batch->product_code = $stock->product_code;
+						$stock_batch->batch_number = $batch->batch_number;
+						$stock_batch->expiry_date = $batch->expiry_date;
+						$stock_batch->batch_quantity = $stock->stock_quantity;
+						$stock_batch->save();
+				}
+
+
+		} 							
+	}
 }
 

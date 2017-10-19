@@ -1,3 +1,5 @@
+
+<h4>{{ $location->location_name }}</h4>
 @if ($outpatient_lists->total()>0)
 <table class="table table-hover">
 		<thead>

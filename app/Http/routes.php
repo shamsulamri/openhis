@@ -725,7 +725,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::group(['middleware' => 'order'], function () {
 				Route::get('/orders/single/{product_code}', 'OrderController@single');
 				Route::get('/orders/task', 'OrderController@task');
-				Route::get('/orders/make/{encounter_id?}', 'OrderController@make');
+				Route::get('/orders/make', 'OrderController@make');
 				Route::post('/orders/multiple', 'OrderController@multiple');
 				Route::resource('orders', 'OrderController', ['except'=>[ 'create', 'show']]);
 				Route::get('/orders/{id}/show', 'OrderController@show');
@@ -790,14 +790,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/consultations/delete/{id}', 'ConsultationController@delete');
 
 				Route::resource('consultation_diagnoses', 'ConsultationDiagnosisController');
-				Route::get('/consultation_diagnoses/{consultation_id}', 'ConsultationDiagnosisController@index');
 				Route::get('/consultation_diagnoses/id/{id}', 'ConsultationDiagnosisController@searchById');
 				Route::post('/consultation_diagnosis/search', 'ConsultationDiagnosisController@search');
 				Route::get('/consultation_diagnosis/search', 'ConsultationDiagnosisController@search');
 				Route::get('/consultation_diagnoses/delete/{id}', 'ConsultationDiagnosisController@delete');
 
 				Route::resource('consultation_procedures', 'ConsultationProcedureController');
-				Route::get('/consultation_procedures/{consultation_id}', 'ConsultationProcedureController@index');
 				Route::get('/consultation_procedures/id/{id}', 'ConsultationProcedureController@searchById');
 				Route::post('/consultation_procedure/search', 'ConsultationProcedureController@search');
 				Route::get('/consultation_procedure/search', 'ConsultationProcedureController@search');
