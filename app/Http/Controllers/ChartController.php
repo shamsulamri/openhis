@@ -17,6 +17,7 @@ use App\Form;
 use App\FormProperty;
 use App\Encounter;
 use App\Consultation;
+use App\Graph;
 
 class ChartController extends Controller
 {
@@ -100,4 +101,43 @@ class ChartController extends Controller
 			]);
 	}
 
+	public function partograph($encounter_id)
+	{
+			$encounter = Encounter::find($encounter_id);
+
+			$graph = new Graph();
+			$graph->width=800;
+			$graph->height=200;
+			$graph->margin_left=50;
+			$graph->margin_top=20;
+
+			$Graph = new Graph();
+			$Graph->width=800;
+			$Graph->height=200;
+			$Graph->margin_left=50;
+			$Graph->margin_top=20;
+
+			$graph_values = FormValue::select('form_value', 'created_at')	
+						->where('form_code','=','partograph')
+						->where('encounter_id', '=', $encounter_id)
+						->orderBy('created_at')
+						->get();
+
+			$consultation = null;
+			if (Session::get('consultation_id')) {
+				$consultation = Consultation::find(Session::get('consultation_id'));
+			}
+
+			$form = Form::find('partograph');
+
+			return view('charts.partograph', [
+				'graph'=>$graph,
+				'graph_values'=>$graph_values,
+				'Graph'=>$Graph,
+				'patient'=>$encounter->patient,
+				'consultation'=>$consultation,
+				'encounter_id'=>$encounter_id,
+				'form'=>$form,
+			]);
+	}
 }

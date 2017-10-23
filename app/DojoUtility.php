@@ -164,6 +164,20 @@ class DojoUtility
 				return Carbon::createFromTimeStamp(strtotime($date))->diffForHumans();
 		}
 
+		public static function diffInMinutes($date) 
+		{
+				return Carbon::createFromTimeStamp(strtotime($date))->diffInMinutes();
+		}
+
+		public static function diffInMinutesBetweenDates($dateStart, $dateEnd)
+		{
+				$end = Carbon::parse($dateEnd);
+				$start = Carbon::parse($dateStart);
+				$mins = $end->diffInMinutes($start);
+
+				return $mins;
+		}
+
 		public static function removeTrailingZeros($value) 
 		{
 				return str_replace(".00","",$value);
@@ -250,6 +264,10 @@ class DojoUtility
 				}
 				 
 				return $newvalue;
+		}
+
+		public static function round_five($num) {
+				    return round($num*2,-1)/2;
 		}
 }
 

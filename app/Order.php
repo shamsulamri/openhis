@@ -27,6 +27,7 @@ class Order extends Model
 				'store_code',
 				'location_code',
 				'order_sale_price',
+				'order_discount',
 				'order_unit_price',
 				'order_total',
 				'order_discharge',

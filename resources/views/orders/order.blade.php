@@ -34,6 +34,14 @@
             @if ($errors->has('order_sale_price')) <p class="help-block">{{ $errors->first('order_sale_price') }}</p> @endif
         </div>
     </div>
+
+   <div class='form-group  @if ($errors->has('order_discount')) has-error @endif'>
+        <label for='order_discount' class='col-sm-3 control-label'>Discount</label>
+        <div class='col-sm-9'>
+            {{ Form::text('order_discount', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_discount')) <p class="help-block">{{ $errors->first('order_discount') }}</p> @endif
+        </div>
+    </div>
 	@endif
 
     <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>

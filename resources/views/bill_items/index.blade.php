@@ -58,17 +58,29 @@ Interim Bill
     <th>Code</th> 
     <th>Item</th> 
     <th><div align='right'>Tax</div></th> 
+    <th><div align='right'>Discount</div></th> 
     <th><div align='right'>Qty</div></th> 
     <th><div align='right'>Unit Price</div></th> 
-    <th><div align='right'>Discount</div></th> 
     <th><div align='right'>Total</div></th> 
+    <th><div align='right'>Total GST</div></th> 
 	@can('system-administrator')	
 	<th></th>
 	@endcan
 	</tr>
 </thead>
 	<tbody>
+<?php $category=""; ?>
 		@foreach ($bills as $bill)
+@if ($category != $bill->category_name)
+<tr>
+	<td colspan=9>
+<strong>
+{{ $bill->category_name }}
+</strong>
+	</td>
+</tr>
+<?php $category = $bill->category_name; ?>
+@endif
 			<tr>
 					<td>
 							@if ($bill->product_non_claimable)
@@ -84,6 +96,9 @@ Interim Bill
 							<a href='{{ URL::to('bill_items/'. $bill->bill_id . '/edit') }}'>
 							@endif
 							{{ strtoupper($bill->product_name) }}
+							@if ($bill->category_code=='consultation')
+								({{ strtoupper($bill->name) }})
+							@endif
 							@if (!$billPosted)
 							</a>
 							@endif
@@ -92,18 +107,21 @@ Interim Bill
 							{{ $bill->tax_code }}
 					</td>
 					<td align='right' width='50'>
-							{{$bill->bill_quantity}}
-					</td>
-					<td align='right' width='100'>
-							{{ number_format($bill->bill_unit_price,2) }}
-					</td>
-					<td align='right' width='100'>
 						<?php if ($bill->bill_discount>0) { ?>
 							{{ floatval($bill->bill_discount) }} %
 						<?php } ?>
 							<?php if ($bill->bill_exempted==1) { ?>
 								Exempted
 							<?php } ?>
+					</td>
+					<td align='right' width='50'>
+							{{$bill->bill_quantity}}
+					</td>
+					<td align='right' width='100'>
+							{{ number_format($bill->bill_unit_price,2) }}
+					</td>
+					<td align='right' width='80'>
+							{{ number_format($bill->bill_amount_pregst,2) }}
 					</td>
 					<td align='right' width='80'>
 							{{ number_format($bill->bill_amount,2) }}
@@ -118,7 +136,7 @@ Interim Bill
 			</tr>
 		@endforeach
 	<tr>
-			<td colspan=6 align='right'>
+			<td colspan=7 align='right'>
 					<strong>Total</strong>
 			</td>
 			<td align='right'>
@@ -130,7 +148,7 @@ Interim Bill
 			@endcan
 	</tr>
 	<tr>
-			<td colspan=6 align='right'>
+			<td colspan=7 align='right'>
 					<strong>Discount</strong>
 			</td>
 			<td align='right'>
@@ -157,7 +175,7 @@ Interim Bill
 			@endcan
 	</tr>
 	<tr>
-			<td colspan=6 align='right'>
+			<td colspan=7 align='right'>
 					<strong>Grand Total</strong>
 			</td>
 			<td align='right'>

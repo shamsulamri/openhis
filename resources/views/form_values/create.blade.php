@@ -8,15 +8,20 @@
 @endif
 <h1>
 @if ($value_id)
-	Edit
+	Edit Reading
 @else
-	New
+	New Reading
 @endif
-{{ $form->form_name }}
 </h1>
 <br>
 
 {{ Form::model(null, ['id'=>'myForm','url'=>'form/entry', 'class'=>'form-horizontal']) }} 
+    <div class='form-group'>
+        <label for='form_name' class='col-sm-3 control-label'>Form</label>
+        <div class='col-sm-9'>
+      		<label for='form_name' class='control-label'>{{ $form->form_name }}</label>
+        </div>
+    </div>
 @foreach ($properties as $property)
 	<?php
 			$value = null;
@@ -27,9 +32,11 @@
     <div class='form-group'>
 				@if ($property->property->property_type == "header")
 					<div class='col-sm-12'>
-					<h2>
-					{{ $property->property_label }}
-					</h2>
+					<br>
+					<h3>
+					{{ $property->property->property_name }}
+					<hr>
+					</h3>
 					</div>
 				@else
         <label for='{{ $property->property->property_code }}' class='col-sm-3 control-label'>{{ $property->property->property_name }}</label>
