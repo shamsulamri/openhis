@@ -178,6 +178,15 @@ class DojoUtility
 				return $mins;
 		}
 
+		public static function diffInMonthsBetweenDates($dateStart, $dateEnd)
+		{
+				$end = Carbon::parse($dateEnd);
+				$start = Carbon::parse($dateStart);
+				$mins = $end->diffInMonths($start);
+
+				return $mins;
+		}
+
 		public static function removeTrailingZeros($value) 
 		{
 				return str_replace(".00","",$value);

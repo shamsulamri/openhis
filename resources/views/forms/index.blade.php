@@ -36,7 +36,7 @@
 					{{$form->form_code}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-default btn-xs' href='{{ URL::to('forms/'. $form->form_code) }}'>Assets</a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('forms/'. $form->form_code) }}'>Properties</a>
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('forms/delete/'. $form->form_code) }}'>Delete</a>
 					@endcan

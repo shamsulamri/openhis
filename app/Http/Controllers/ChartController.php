@@ -101,6 +101,7 @@ class ChartController extends Controller
 			]);
 	}
 
+	/**
 	public function partograph($encounter_id)
 	{
 			$encounter = Encounter::find($encounter_id);
@@ -131,6 +132,149 @@ class ChartController extends Controller
 			$form = Form::find('partograph');
 
 			return view('charts.partograph', [
+				'graph'=>$graph,
+				'graph_values'=>$graph_values,
+				'Graph'=>$Graph,
+				'patient'=>$encounter->patient,
+				'consultation'=>$consultation,
+				'encounter_id'=>$encounter_id,
+				'form'=>$form,
+			]);
+	}
+
+	public function vitalSign($encounter_id)
+	{
+			$encounter = Encounter::find($encounter_id);
+
+			$graph = new Graph();
+			$graph->width=800;
+			$graph->height=200;
+			$graph->margin_left=50;
+			$graph->margin_top=20;
+
+			$Graph = new Graph();
+			$Graph->width=800;
+			$Graph->height=200;
+			$Graph->margin_left=50;
+			$Graph->margin_top=20;
+
+			$form_code = 'vital_signs';
+			$graph_values = FormValue::select('form_value', 'created_at')	
+						->where('form_code','=',$form_code)
+						->where('encounter_id', '=', $encounter_id)
+						->orderBy('created_at')
+						->get();
+
+			$consultation = null;
+			if (Session::get('consultation_id')) {
+				$consultation = Consultation::find(Session::get('consultation_id'));
+			}
+
+			$form = Form::find($form_code);
+
+			return view('charts.vital_sign', [
+				'graph'=>$graph,
+				'graph_values'=>$graph_values,
+				'Graph'=>$Graph,
+				'patient'=>$encounter->patient,
+				'consultation'=>$consultation,
+				'encounter_id'=>$encounter_id,
+				'form'=>$form,
+			]);
+	}
+
+	public function growthChart($encounter_id)
+	{
+			$encounter = Encounter::find($encounter_id);
+
+			$graph = new Graph();
+			$graph->width=800;
+			$graph->height=200;
+			$graph->margin_left=50;
+			$graph->margin_top=20;
+
+			$Graph = new Graph();
+			$Graph->width=800;
+			$Graph->height=200;
+			$Graph->margin_left=50;
+			$Graph->margin_top=20;
+
+			$form_code = 'growth_chart';
+			$graph_values = FormValue::select('form_value', 'created_at')	
+						->where('form_code','=',$form_code)
+						->where('encounter_id', '=', $encounter_id)
+						->orderBy('created_at')
+						->get();
+
+			$consultation = null;
+			if (Session::get('consultation_id')) {
+				$consultation = Consultation::find(Session::get('consultation_id'));
+			}
+
+			$form = Form::find($form_code);
+
+			return view('charts.growth_chart', [
+				'graph'=>$graph,
+				'graph_values'=>$graph_values,
+				'Graph'=>$Graph,
+				'patient'=>$encounter->patient,
+				'consultation'=>$consultation,
+				'encounter_id'=>$encounter_id,
+				'form'=>$form,
+			]);
+	}
+	**/
+	public function graph($form_code, $encounter_id)
+	{
+			$encounter = Encounter::find($encounter_id);
+
+			$graph = new Graph();
+			$graph->width=800;
+			$graph->height=200;
+			$graph->margin_left=50;
+			$graph->margin_top=20;
+
+			$Graph = new Graph();
+			$Graph->width=800;
+			$Graph->height=200;
+			$Graph->margin_left=50;
+			$Graph->margin_top=20;
+
+			$form = Form::find($form_code);
+			$blade = 'charts.'.$form_code;
+			/*
+			$graph_values = FormValue::select('form_value', 'created_at')	
+						->where('form_code','=',$form_code)
+						->where('encounter_id', '=', $encounter_id)
+						->orderBy('created_at', 'desc')
+						->get();
+			 */
+
+			$n_results = 48;
+			if (!empty($form->form_results)) $n_results = $form->form_results;
+
+			$sql = "select * from (
+							select value_id, form_value, created_at from form_values
+							where form_code = '%s'
+							and encounter_id = %d
+							order by value_id desc 
+							limit %d
+					) as x
+					order by value_id
+			";
+
+			$sql = sprintf($sql, $form_code, $encounter_id, $n_results);
+
+			$graph_values = DB::select($sql);
+
+
+			$consultation = null;
+			if (Session::get('consultation_id')) {
+				$consultation = Consultation::find(Session::get('consultation_id'));
+			}
+
+
+			return view($blade, [
 				'graph'=>$graph,
 				'graph_values'=>$graph_values,
 				'Graph'=>$Graph,

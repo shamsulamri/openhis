@@ -13,6 +13,8 @@ class Form extends Model
 	protected $fillable = [
 				'form_code',
 				'form_visible',
+				'form_results',
+				'form_has_graph',
 				'form_name'];
 	
     protected $guarded = ['form_code'];

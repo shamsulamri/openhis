@@ -85,6 +85,7 @@ class FormController extends Controller
 			$valid = $form->validate($request->all(), $request->_method);	
 
 			$form->form_visible = $request->form_visible ?: 0;
+			$form->form_has_graph = $request->form_has_graph ?: 0;
 
 			if ($valid->passes()) {
 					$form->save();

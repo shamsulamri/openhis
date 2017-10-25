@@ -290,6 +290,9 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		
 		Route::get('/chart/line/{form_code}/{encounter_id}', 'ChartController@line');
 		Route::get('/partograph/{encounter_id}', 'ChartController@partograph');
+		Route::get('/vital_signs/{encounter_id}', 'ChartController@vitalSign');
+		Route::get('/growth_chart/{encounter_id}', 'ChartController@growthChart');
+		Route::get('/graph/{form_code}/{encounter_id}', 'ChartController@graph');
 
 		Route::get('/team/add/{id}/{team_code}', 'TeamController@addMember');
 		Route::resource('teams', 'TeamController');

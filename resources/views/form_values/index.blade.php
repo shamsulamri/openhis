@@ -10,12 +10,14 @@
 <a href='{{ URL::to('form/results',[$encounter_id]) }}'>Forms</a> / {{ $form->form_name }}
 </h1>
 <br>
-<a href='/form/{{ $form->form_code }}/{{ $patient->patient_id }}/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
-@if ($form->form_code == 'partograph')
-<a href='/partograph/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-line-chart'></span> Partograph</a>
-@else
-<a href='/chart/line/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-line-chart'></span> Chart</a>
+@if ($form->form_has_graph)
+<a href='/graph/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-line-chart'></span> {{ $form->form_name }}</a>
 @endif
+
+<a href='/form/{{ $form->form_code }}/{{ $patient->patient_id }}/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+<!--
+<a href='/chart/line/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-line-chart'></span> Chart</a>
+-->
 <a href='/form/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-table'></span> Table</a>
 <br>
 <br>

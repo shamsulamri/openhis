@@ -34,10 +34,10 @@ for (x=0;x<x_tick_count+1;x++) {
 		ctx.stroke();
 		
 		@if (!$graph->x_tick_hide)
-				ctx.fillText(x, x*x_tick_scale+margin_left-5,canvas_height-5);
+				ctx.fillText(x, x*x_tick_scale+margin_left-5,canvas_height-margin_top+15);
 		@endif
 }
-ctx.fillText("{{ $graph->x_axis_title }}", {{ ($graph->width-$graph->margin_left)/2 }}, {{ $graph->height }});
+ctx.fillText("{{ $graph->x_axis_title }}", {{ ($graph->width-$graph->margin_left)/2 }}, canvas_height-margin_top+35);
 ctx.textAlign="center";
 
 for (y=0;y<y_tick_count+1;y++) {
@@ -137,6 +137,40 @@ function line(ctx,x,y, x2, y2, width) {
 
 		ctx.moveTo(x,y);
 		ctx.lineTo(x2, y2);
+		ctx.strokeStyle="#000000";
+		ctx.lineWidth=width;
+		ctx.stroke(); 
+}
+
+function curve(ctx,x,y,x1,y1, x2, y2, width) {
+		ctx.beginPath();
+		x = x*x_tick_scale;
+		x = x + margin_left;
+		x1 = x1*x_tick_scale;
+		x1 = x1 + margin_left;
+		x2 = x2*x_tick_scale;
+		x2 = x2 + margin_left;
+
+		y = y-y_tick_min;
+		y = y/y_tick_multiplier;
+		y = y_tick_count-y;
+		y = y*y_tick_scale;
+		y = y + margin_top;
+
+		y1 = y1-y_tick_min;
+		y1 = y1/y_tick_multiplier;
+		y1 = y_tick_count-y1;
+		y1 = y1*y_tick_scale;
+		y1 = y1 + margin_top;
+
+		y2 = y2-y_tick_min;
+		y2 = y2/y_tick_multiplier;
+		y2 = y_tick_count-y2;
+		y2 = y2*y_tick_scale;
+		y2 = y2 + margin_top;
+
+		ctx.moveTo(x,y);
+		ctx.quadraticCurveTo(x1, y1, x2, y2);
 		ctx.strokeStyle="#000000";
 		ctx.lineWidth=width;
 		ctx.stroke(); 
