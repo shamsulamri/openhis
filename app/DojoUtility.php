@@ -26,6 +26,15 @@ class DojoUtility
 				}
 		}
 
+		public static function dateDayMonthFormat($value)
+		{
+				if (!empty($value)) {
+					return Carbon::parse($value)->format('d/m');
+				} else {
+					return null;
+				}
+		}
+
 		public static function dateLongFormat($value)
 		{
 				if (!empty($value)) {
@@ -65,6 +74,18 @@ class DojoUtility
 				}
 		}
 
+		public static function dateYMDOnly($value)
+		{
+				if (!empty($value)) {
+					if (strlen($value)>10) {
+						return Carbon::parse($value)->format('Ymd');
+					} else {
+						return Carbon::parse($value)->format('Ymd');
+					}
+				} else {
+					return null;
+				}
+		}
 		public static function validateDate($date)
 		{
 				$d = DateTime::createFromFormat('d/m/Y', $date);
@@ -167,6 +188,11 @@ class DojoUtility
 		public static function diffInMinutes($date) 
 		{
 				return Carbon::createFromTimeStamp(strtotime($date))->diffInMinutes();
+		}
+
+		public static function diffInDays($date) 
+		{
+				return Carbon::createFromTimeStamp(strtotime($date))->diffInDays();
 		}
 
 		public static function diffInMinutesBetweenDates($dateStart, $dateEnd)

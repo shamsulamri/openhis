@@ -311,4 +311,47 @@ class ConsultationController extends Controller
 					'consultations'=>$consultations
 			]);
 	}
+
+	public function medicationAdministrationRecord() {
+			$id = Session::get('consultation_id');
+			$consultation = Consultation::find($id);
+
+			$fields = ['product_name', 
+					'a.product_code', 
+					'cancel_id', 
+					'a.order_id', 
+					'a.user_id', 
+					'order_quantity_request',
+					'post_id', 
+					'd.created_at',
+					'order_is_discharge',
+					'order_completed',
+					'order_report',
+					'category_name',
+					'product_edit_price',
+					'frequency_value',
+					];
+
+			$drugs = DB::table('orders as a')
+					->select($fields)
+					->join('products as b','a.product_code','=','b.product_code')
+					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
+					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
+					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
+					->leftjoin('order_drugs as f', 'f.order_id', '=', 'a.order_id')
+					->leftjoin('drug_frequencies as g', 'g.frequency_code', '=', 'f.frequency_code')
+					->where('a.encounter_id','=',$consultation->encounter_id)
+					->where('b.category_code','=','drugs')
+					->orderBy('b.category_code')
+					->orderBy('a.created_at', 'desc')
+					->get();
+
+			return view('consultations.mar', [
+					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
+					'consultOption'=>'consultation',
+					'admission'=>$consultation->encounter->admission,
+					'drugs'=>$drugs,
+					]);
+	}
 }

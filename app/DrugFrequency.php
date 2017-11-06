@@ -13,6 +13,7 @@ class DrugFrequency extends Model
 	protected $fillable = [
 				'frequency_name',
 				'frequency_label',
+				'frequency_mar',
 				'frequency_value'];
 	
     protected $guarded = ['frequency_code'];

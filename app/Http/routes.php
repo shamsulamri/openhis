@@ -47,6 +47,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('medication_records', 'MedicationRecordController');
+		Route::get('/medication_records/id/{id}', 'MedicationRecordController@searchById');
+		Route::post('/medication_record/search', 'MedicationRecordController@search');
+		Route::get('/medication_record/search', 'MedicationRecordController@search');
+		Route::get('/medication_records/delete/{id}', 'MedicationRecordController@delete');
+		Route::get('/medication_record/mar/{encounter_id?}', 'MedicationRecordController@medicationAdministrationRecord');
+		Route::get('/medication_record/record/{order_id}/{index}/{slot}', 'MedicationRecordController@marRecord');
+		
 
 		Route::resource('bed_charges', 'BedChargeController');
 		Route::get('/bed_charges/id/{id}', 'BedChargeController@searchById');
@@ -804,6 +812,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/consultation_procedure/search', 'ConsultationProcedureController@search');
 				Route::get('/consultation_procedure/search', 'ConsultationProcedureController@search');
 				Route::get('/consultation_procedures/delete/{id}', 'ConsultationProcedureController@delete');
+
 
 				Route::resource('medical_alerts', 'MedicalAlertController');
 				Route::get('/medical_alerts/{id}', 'MedicalAlertController@index');

@@ -150,37 +150,47 @@
 			@if ($setWard == $ward->ward_code)
 			<td align='right'>
 						@if (is_null($admission->arrival_id) && empty($admission->discharge_id))
-							<a class='btn btn-default btn-lg' href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}' title='Log arrival'><span class='fa fa-sign-in' aria-hidden='true'></span>
+							<a class='btn btn-default' href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}' title='Log arrival'><span class='fa fa-sign-in' aria-hidden='true'></span>
 </a>
 						@endif
 						@if (!empty($admission->discharge_id))
-							<a class='btn btn-default btn-lg' href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}' title='Ward discharge'><span class='fa fa-sign-out' aria-hidden='true'></span></a>
+							<a class='btn btn-warning' href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}' title='Ward discharge'><span class='fa fa-sign-out' aria-hidden='true'></span></a>
 						@else
 								@if (!is_null($admission->arrival_id)) 
 								<!--
-								<a class='btn btn-default btn-lg' href="{{ URL::to('loans/request/'. $admission->patient_mrn.'?type=folder') }}" title='Folder request'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
+								<a class='btn btn-default ' href="{{ URL::to('loans/request/'. $admission->patient_mrn.'?type=folder') }}" title='Folder request'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
 		</a>
 -->
-								<a class='btn btn-default btn-lg' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'><span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
-		</a>
-								<a class='btn btn-default btn-lg' title='Forms' href='{{ URL::to('form/results/'. $admission->encounter_id) }}'><span class='fa fa-table' aria-hidden='true'></span></a>
+								<a class='btn btn-default' href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'>
+									<span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
+								</a>
+								<a class='btn btn-default' title='Forms' href='{{ URL::to('form/results/'. $admission->encounter_id) }}'>
+									<span class='fa fa-table' aria-hidden='true'></span>
+								</a>
+								<a class='btn btn-default' title='MAR' href='{{ URL::to('medication_record/mar/'. $admission->encounter_id) }}'>
+									<span class='fa fa-table' aria-hidden='true'></span>
+								</a>
 									<?php
 										$consultation = $wardHelper->hasOpenConsultation($admission->patient_id, $admission->encounter_id, Auth::user()->id);
 									?>
 								@endif
+								<a class='btn btn-default' title='Label'  target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $admission->patient_id }}">
+									<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+								</a>
+								<a class='btn btn-default' title='Wrist'  target="_blank" href="{{ Config::get('host.report_server')  }}/ReportServlet?report=wrist_label&id={{ $admission->patient_id }}">
+										<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+								</a>
 						@endif
-									@if (empty($consultation))
-										<a class='btn btn-default btn-lg' title='Consultation' href='{{ URL::to('consultations/create?encounter_id='. $admission->encounter_id) }}'><span class='fa fa-stethoscope' aria-hidden='true'></span></a>
-										@else
-										<a class='btn btn-warning btn-lg' href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'><span class='fa fa-stethoscope' aria-hidden='true'></span></a>
+						@if (empty($consultation))
+						<a class='btn btn-default' title='Consultation' href='{{ URL::to('consultations/create?encounter_id='. $admission->encounter_id) }}'>
+							<span class='fa fa-stethoscope' aria-hidden='true'></span>
+						</a>
+						@else
+						<a class='btn btn-warning ' href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'>
+							<span class='fa fa-stethoscope' aria-hidden='true'></span>
+						</a>
 
-									@endif
-<a class='btn btn-default btn-lg' title='Label'  target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $admission->patient_id }}">
-<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
-</a>
-<a class='btn btn-default btn-lg' title='Wrist'  target="_blank" href="{{ Config::get('host.report_server')  }}/ReportServlet?report=wrist_label&id={{ $admission->patient_id }}">
-<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
-</a>
+						@endif
 						@can('system-administrator')
 							<a class='btn btn-danger btn-sm ' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 						@endcan
