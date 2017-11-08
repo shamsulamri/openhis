@@ -15,9 +15,16 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
+		@if ($is_drug)	
+            <a class="btn btn-default" href="/medication_record/mar" role="button">Cancel</a>
+		@else
             <a class="btn btn-default" href="/orders" role="button">Cancel</a>
+		@endif
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
 
     {{ Form::hidden('order_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
+	@if (!empty($is_drug))
+    {{ Form::hidden('is_drug', $is_drug, ['class'=>'form-control','placeholder'=>'',]) }}
+	@endif

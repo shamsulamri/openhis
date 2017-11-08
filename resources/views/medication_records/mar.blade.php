@@ -13,12 +13,34 @@ Medication Administration Record
 <table class='table table-condensed'>
 	<tbody>
 @foreach ($drugs as $drug)
+<?php
+$frequency_count = count(explode(';',$drug->frequency_mar));
+?>
 <br>
 	<tr>
 		<td width='30%'>
+			@if ($drug->cancel_id) <strike> @endif
+			<h4>
+
 			{{ $drug->product_name }}
+			<small>
 			<br>
 			{{ $order_helper->getPrescription($drug->order_id) }}
+			<br>
+			{{ DojoUtility::dateTimeReadFormat($drug->created_at) }}
+			<br>
+			{{ $drug->name }}
+			</small>
+			</h4>
+			@if ($drug->cancel_id) </strike> @endif
+			@if (!$drug->cancel_id)
+			<a class='btn btn-danger btn-xs' href='{{ URL::to('/order_cancellations/create/'. $drug->order_id.'?drug=true') }}'>Stop</a>
+			@endif
+			@if ($drug->cancel_id)
+				<span class='label label-warning'>
+				Cancel
+				</span>
+			@endif
 		</td>
 		<td>
 		<!-- Adminstrations -->
@@ -39,12 +61,12 @@ Medication Administration Record
 				@endfor
 			</tr>
 			<!-- End -->
-			@for ($f=0;$f<$drug->frequency_value;$f++)
+			@for ($f=0;$f<$frequency_count;$f++)
 			<tr>
-				<td width='10%'>
+				<td width='10%' align='center'>
 					{{ explode(";",$drug->frequency_mar)[$f] }}
 				</td>
-				<?php $time = $time+(24/$drug->frequency_value); ?>
+				<?php $time = $time+(24/$frequency_count); ?>
 				@for ($i=0; $i<5; $i++)
 				<?php
 					$date_value = DojoUtility::addDays(DojoUtility::dateReadFormat($start_date), $i);
@@ -57,10 +79,14 @@ Medication Administration Record
 				<br>by 
 				{{ $mars[$date_slot]->username }}
 			@else
-					@if ($date_value>=$now)
-					<a href='/medication_record/record/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
-						&nbsp;?&nbsp;
-					</a>
+					@if ($date_value>=$entry_start & $date_value<=$entry_end)
+						@if (!$drug->cancel_id)
+							<a href='/medication_record/record/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
+								&nbsp;?&nbsp;
+							</a>
+						@else
+							-
+						@endif
 					@else 
 						-
 					@endif

@@ -154,8 +154,8 @@ class MedicationRecordController extends Controller
 					'order_report',
 					'category_name',
 					'product_edit_price',
-					'frequency_value',
 					'frequency_mar',
+					'name',
 					];
 
 			$drugs = DB::table('orders as a')
@@ -166,6 +166,8 @@ class MedicationRecordController extends Controller
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
 					->leftjoin('order_drugs as f', 'f.order_id', '=', 'a.order_id')
 					->leftjoin('drug_frequencies as g', 'g.frequency_code', '=', 'f.frequency_code')
+					->leftjoin('users as h', 'h.id', '=', 'a.user_id')
+					->where('a.post_id','>',0)
 					->where('a.encounter_id','=',$encounter_id)
 					->where('b.category_code','=','drugs')
 					->orderBy('b.category_code')
@@ -202,7 +204,8 @@ class MedicationRecordController extends Controller
 					'mars'=>$mars,
 					'mar_values'=>$mar_values,
 					'start_date'=>$start_date,
-					'now'=>Carbon::now(),
+					'entry_start'=>Carbon::now(),
+					'entry_end'=>Carbon::now()->addDays(1),
 					'order_helper'=>new OrderHelper(),
 					]);
 	}

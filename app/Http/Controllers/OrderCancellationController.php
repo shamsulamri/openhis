@@ -33,17 +33,25 @@ class OrderCancellationController extends Controller
 			]);
 	}
 
-	public function create($id)
+	public function create(Request $request, $id)
 	{
 			$order_cancellation = new OrderCancellation();
 			$order_cancellation->order_id = $id;
 
-			return view('order_cancellations.create', [
+			$is_drug = False;
+			$create_file = 'create';
+			if (!empty($request->drug)) {
+				$is_drug=True;
+				$create_file = 'create_mar';
+			}
+
+			return view('order_cancellations.'.$create_file, [
 					'order_cancellation' => $order_cancellation,
 					'consultation' => $order_cancellation->order->consultation,
 					'patient' => $order_cancellation->order->consultation->encounter->patient,
 					'tab' => 'order',			
 					'consultOption' => 'consultation',			
+					'is_drug'=>$is_drug,
 					]);
 	}
 
@@ -66,7 +74,11 @@ class OrderCancellationController extends Controller
 
 					Session::flash('message', 'Record successfully created.');
 					//return redirect('/orders/'.$order_cancellation->order->consultation_id);
-					return redirect('/orders');
+					if (!empty($request->is_drug)) {
+						return redirect('/medication_record/mar');
+					} else {
+						return redirect('/orders');
+					}
 			} else {
 					return redirect('/order_cancellations/create/'.$request->order_id)
 							->withErrors($valid)
