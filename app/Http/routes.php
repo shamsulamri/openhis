@@ -47,6 +47,17 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+
+
+		Route::resource('consultation_annotations', 'ConsultationAnnotationController');
+		Route::get('/consultation_annotations/id/{id}', 'ConsultationAnnotationController@searchById');
+		Route::post('/consultation_annotation/search', 'ConsultationAnnotationController@search');
+		Route::get('/consultation_annotation/search', 'ConsultationAnnotationController@search');
+		Route::get('/consultation_annotations/delete/{id}', 'ConsultationAnnotationController@delete');
+		Route::get('/consultation_annotations/get/{consulation_id}/{annotation_image}', 'ConsultationAnnotationController@getAnnotation');
+		
+
+
 		Route::resource('medication_records', 'MedicationRecordController');
 		Route::get('/medication_records/id/{id}', 'MedicationRecordController@searchById');
 		Route::post('/medication_record/search', 'MedicationRecordController@search');
@@ -793,6 +804,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/patient_list/search', 'PatientListController@search');
 				Route::get('/patient_lists/delete/{id}', 'PatientListController@delete');
 
+				Route::get('/consultation/get', 'ConsultationController@getConsultation');
+				Route::get('/consultation/set', 'ConsultationController@setConsultation');
 				Route::get('/consultations/close', 'ConsultationController@close');
 				Route::get('/consultations/progress/{consultation_id}', 'ConsultationController@progress');
 				Route::resource('consultations', 'ConsultationController');
@@ -801,12 +814,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/consultation/search', 'ConsultationController@search');
 				Route::get('/consultations/delete/{id}', 'ConsultationController@delete');
 
+				Route::get('/consultation_diagnoses/encounter', 'ConsultationDiagnosisController@getDiagnoses');
 				Route::resource('consultation_diagnoses', 'ConsultationDiagnosisController');
 				Route::get('/consultation_diagnoses/id/{id}', 'ConsultationDiagnosisController@searchById');
 				Route::post('/consultation_diagnosis/search', 'ConsultationDiagnosisController@search');
 				Route::get('/consultation_diagnosis/search', 'ConsultationDiagnosisController@search');
 				Route::get('/consultation_diagnoses/delete/{id}', 'ConsultationDiagnosisController@delete');
 
+				Route::get('/consultation_procedures/encounter', 'ConsultationProcedureController@getProcedures');
 				Route::resource('consultation_procedures', 'ConsultationProcedureController');
 				Route::get('/consultation_procedures/id/{id}', 'ConsultationProcedureController@searchById');
 				Route::post('/consultation_procedure/search', 'ConsultationProcedureController@search');

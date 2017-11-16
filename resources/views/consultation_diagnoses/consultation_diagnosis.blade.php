@@ -31,3 +31,4 @@
         </div>
     </div>
             {{ Form::hidden('consultation_id', $consultation->consultation_id, ['class'=>'form-control','placeholder'=>'',]) }}
+

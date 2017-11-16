@@ -65,7 +65,41 @@ class ConsultationProcedureController extends Controller
 					]);
 	}
 
-	public function store(Request $request) 
+	public function store(Request $request)
+	{
+			if ($request->ajax()) {
+
+				$procedure = new ConsultationProcedure();
+				$procedure->consultation_id = $request->id;
+				$procedure->procedure_description = $request->procedure_description;
+				$procedure->procedure_is_principal = $this->hasPrincipal();
+				$procedure->save();
+
+				return $this->generateHTML();
+
+			}
+	}
+
+	private function hasPrincipal()
+	{
+				$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+
+				$principal = DB::table('consultation_procedures as a')
+					->select('id', 'a.created_at', 'procedure_description','procedure_is_principal')
+					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
+					->where('encounter_id','=',$consultation->encounter_id)
+					->where('procedure_is_principal','=',1)
+					->count();
+
+				if ($principal) {
+						return 0;
+				} else {
+						return 1;
+				}
+
+	}	
+
+	public function store_backup(Request $request) 
 	{
 			$consultation_procedure = new ConsultationProcedure();
 			$valid = $consultation_procedure->validate($request->all(), $request->_method);
@@ -188,5 +222,61 @@ class ConsultationProcedureController extends Controller
 			return view('consultation_procedures.index', [
 					'consultation_procedures'=>$consultation_procedures
 			]);
+	}
+
+	public function getProcedures(Request $request)
+	{
+			if ($request->ajax()) {
+					return $this->generateHTML();
+			}
+
+	}
+
+	private function generateHTML()
+	{
+				$consultation = Consultation::find(Session::get('consultation_id'));
+	
+				$procedures = DB::table('consultation_procedures as a')
+					->select('id', 'a.created_at', 'procedure_description','procedure_is_principal')
+					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
+					->where('encounter_id','=',$consultation->encounter_id)
+					->orderBy('procedure_is_principal', 'desc')
+					->orderBy('a.created_at', 'desc')
+					->paginate($this->paginateValue);
+
+				$html='<table class="table table-hover">';
+				$principal='';
+
+				foreach($procedures as $procedure) {
+
+						if ($procedure->procedure_is_principal==1) {
+								$principal = "
+										<div class='label label-primary' title='Princiapl Procedure'>
+										1°	
+										</div>
+								";
+						} else {
+								$principal = "
+										<div class='label label-default' title='Secondary Procedure'>
+										2°	
+										</div>
+								";
+						}
+
+						$html = $html."
+							<tr>
+									<td width='5%'>".$principal."</td>
+									<td>".$procedure->procedure_description."</td>
+									<td class='col-xs-3'>
+									</td>
+									<td align='right'>
+										<a class='btn btn-danger btn-xs' href='/consultation_procedures/delete/". $procedure->id."'>Delete</a>
+									</td>
+							</tr>
+						";
+				}
+				$html = $html."</table>";
+				return $html;
+
 	}
 }

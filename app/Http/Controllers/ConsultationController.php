@@ -229,6 +229,7 @@ class ConsultationController extends Controller
 	public function edit($id) 
 	{
 			$consultation = Consultation::findOrFail($id);
+			//return $consultation->annotation;
 			Session::set('consultation_id', $consultation->consultation_id);
 			Session::set('encounter_id', $consultation->encounter->encounter_id);
 
@@ -249,6 +250,16 @@ class ConsultationController extends Controller
 
 	public function update(Request $request, $id) 
 	{
+			if ($request->ajax()) {
+					$consultation = Consultation::find($request->id);
+					$consultation->consultation_notes = $request->consultation_note;
+					$consultation->save();
+					return "Ok";
+			}
+	}
+
+	public function update_backup(Request $request, $id) 
+	{
 			$consultation = Consultation::findOrFail($id);
 			$consultation->fill($request->input());
 
@@ -257,9 +268,9 @@ class ConsultationController extends Controller
 
 			if ($valid->passes()) {
 					$consultation->save();
-					//Session::flash('message', 'Record successfully updated.');
-					//return redirect('/consultations/'.$id.'/edit');
-					return redirect('/consultation_diagnoses');
+					Session::flash('message', 'Record successfully updated.');
+					return redirect('/consultations/'.$id.'/edit');
+					//return redirect('/consultation_diagnoses');
 			} else {
 					return view('consultations.edit', [
 							'consultation'=>$consultation,
@@ -353,5 +364,23 @@ class ConsultationController extends Controller
 					'admission'=>$consultation->encounter->admission,
 					'drugs'=>$drugs,
 					]);
+	}
+
+	public function getConsultation(Request $request)
+	{
+			Log::info($request->note);
+			if ($request->ajax()) {
+						Log::info("qqqqq");
+						return "Ajax get";
+			}
+	}
+
+	public function setConsultation(Request $request)
+	{
+			if ($request->ajax()) {
+					$consultation = Consultation::find($request->id);
+					$consultation->consultation_notes = $request->note;
+					$consultation->save();
+			}
 	}
 }

@@ -87,6 +87,11 @@ class Consultation extends Model
 			return $this->hasOne('App\MedicalCertificate', 'consultation_id');
 	}
 	
+	public function annotation()
+	{
+			return $this->hasOne('App\ConsultationAnnotation', 'consultation_id');
+	}
+
 	public static function boot()
 	{
 			parent::boot();
