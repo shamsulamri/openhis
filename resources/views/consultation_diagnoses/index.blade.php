@@ -7,6 +7,7 @@
 <a href='/consultation_diagnoses/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
+<?php $hasPrincipal=False; ?>
 @if ($consultation_diagnoses->total()>0)
 <table class="table table-hover">
  <thead>
@@ -18,7 +19,6 @@
 	</tr>
   </thead>
 	<tbody>
-<?php $hasPrincipal=False; ?>
 @foreach ($consultation_diagnoses as $consultation_diagnosis)
 	<tr>
 			<td width='5%'>
