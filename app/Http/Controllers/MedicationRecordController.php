@@ -191,7 +191,7 @@ class MedicationRecordController extends Controller
 			$los = DojoUtility::diffInDays($start_date);
 
 			if ($los>5) {
-				$start_date = DojoUtility::addDays(DojoUtility::dateReadFormat($start_date), $los-4);
+				$start_date = DojoUtility::addDays(DojoUtility::dateReadFormat($start_date), $los-2);
 			}
 
 			return view('medication_records.mar', [
