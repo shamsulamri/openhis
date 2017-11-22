@@ -88,6 +88,24 @@ class ConsultationDiagnosisController extends Controller
 
 				return $this->generateHTML();
 
+			} else {
+				$consultation_diagnosis = new ConsultationDiagnosis();
+				$valid = $consultation_diagnosis->validate($request->all(), $request->_method);
+
+				if ($valid->passes()) {
+						$consultation_diagnosis = new ConsultationDiagnosis($request->all());
+						$consultation_diagnosis->id = $request->id;
+						if ($consultation_diagnosis->diagnosis_is_principal) {
+								$this->changeAllDiagnosisToSecondary();
+						}
+						$consultation_diagnosis->save();
+						Session::flash('message', 'Record successfully created.');
+						return redirect('/consultation_diagnoses');
+				} else {
+						return redirect('/consultation_diagnoses/create')
+						->withErrors($valid)
+						->withInput();
+				}
 			}
 	}
 

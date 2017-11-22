@@ -4,25 +4,122 @@
 <style>
 iframe { border: 1px #e5e5e5 solid; }
 canvas {border:1px solid #e5e5e5}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+	}
+
+.dropdown-submenu>a:after {
+		display: block;
+		content: " ";
+		float: right;
+		width: 0;
+		height: 0;
+		border-color: transparent;
+		border-style: solid;
+		border-width: 5px 0 5px 5px;
+		border-left-color: #ccc;
+		margin-top: 5px;
+		margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+    border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
 </style>
 @include('consultations.panel')
+<h1>Clinical Notes</h1>
+<br>
 <!--
-<h2>Clinical Notes</h2>
 {{ Form::model($consultation, ['tabindex'=>1,'id'=>'my_form','route'=>['consultations.update',$consultation->consultation_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 @include('consultations.consultation')
 {{ Form::close() }}
 -->
 
-<h2>Consultation Note</h2>
+<div class="form-inline">
+	<div class="form-group">
+		<button class='btn btn-success' onclick="loadAnnotation('hopi.png')">Present Illness</button>
+	</div>
+	<div class="form-group">
+		<button class='btn btn-success' onclick="loadAnnotation('examination.png')">Physical Examination</button>
+	</div>
+	<button class='btn btn-danger pull-right' onclick="clearAnnotation()">Clear</button>
+</div>
+<br>
+<div class="form-inline">
+		<div class="form-group">
+				<button class='btn btn-warning' onclick="lastAnnotation()"><span class='glyphicon glyphicon-pencil'></span></button>
+		</div>
+		@if ($consultation->encounter->patient->gender_code=='P')
+				@include('consultations.female_images')
+		@else
+				@include('consultations.male_images')
+		@endif
+</div>
+<br>
 <canvas tabindex=0 id="myCanvas" width="100%" height="500"></canvas>
-<button class='btn btn-default' onclick="loadImage('eyes')">Eyes</button>
-<button class='btn btn-default' onclick="loadImage('open_mouth_down')">Open Mouth</button>
+{{ Form::hidden('selected_image',null,['id'=>'selected_image']) }}
+{{ Form::hidden('last_image',null,['id'=>'last_image']) }}
 
+<!--
+<div class="tabs-container">
+		<ul class="nav nav-tabs">
+				<li class="active">
+					<a data-toggle="tab" href="#tab-1">Annotation
+					</a>
+				</li>
+				<li>
+					<a data-toggle="tab" href="#tab-2">Inpatient
+					</a>
+				</li>
+		</ul>
+		<div class="tab-content">
+			<div id="tab-1" class="tab-pane active">
+				<div class="panel-body">
+xxx
+				</div>
+			</div>
+			<div id="tab-2" class="tab-pane">
+				<div class="panel-body">
+qqq
+				</div>
+			</div>
+		</div>
+</div>
+-->
+<!--
 <h2>Diagnoses</h2>
-{{ Form::text('diagnosis_clinical', null, ['tabindex'=>2,'id'=>'diagnosis_clinical','class'=>'form-control','placeholder'=>'','rows'=>'3']) }}
+{{ Form::text('diagnosis_clinical', null, ['tabindex'=>2,'id'=>'diagnosis_clinical','class'=>'form-control','placeholder'=>'Enter clinical diagnosis','rows'=>'3']) }}
 <br>
 <div id='diagnosisHTML'>
 </div>
+-->
 
 <!--
 <h2>Procedures</h2>
@@ -204,10 +301,12 @@ canvas {border:1px solid #e5e5e5}
 		}
 
 		function savenote() {
+				console.log("Save!!!!!!!!");
 				var dataUrl = encodeURIComponent(canvas.toDataURL());
 				dataString = "annotation_dataurl="+dataUrl;
 				dataString = dataString + "&consultation_id={{ $consultation->consultation_id }}";
 				dataString = dataString + "&annotation_image=99";
+				dataString = dataString + "&annotation_image="+document.getElementById('selected_image').value;
 
 				$.ajax({
 						type: "POST",
@@ -241,6 +340,7 @@ canvas {border:1px solid #e5e5e5}
 					context.moveTo(lastPos.x, lastPos.y);
 					context.lineTo(mousePos.x, mousePos.y);
 					context.strokeStyle = '#0000FF';
+					context.lineWidth=1;
 					context.stroke();
 					lastPos = mousePos;
 			}
@@ -301,8 +401,9 @@ canvas {border:1px solid #e5e5e5}
 				imageObj.src = dataURL;
 		}
 			  
+		/**
 		var request = new XMLHttpRequest();
-		request.open('GET', '/consultation_annotations/get/{{ $consultation->consultation_id }}/99', true);
+		request.open('GET', '/consultation_annotations/get/{{ $consultation->consultation_id }}/hopi.png', true);
 		request.onreadystatechange = function() {
 				if(request.readyState == 4) {
 						if(request.status == 200) {
@@ -312,7 +413,35 @@ canvas {border:1px solid #e5e5e5}
 		};
 
 		request.send(null);
-		//loadImage('/clinical_images/eyes.png');
+		**/
+
+		function loadAnnotation(filename) {
+				//var e = document.getElementById('images');
+				//filename = e.options[e.selectedIndex].value;
+				//if (filename == document.getElementById('selected_image').value) return;
+				
+				loadImage(filename);
+				drawing = false;
+				context.clearRect(0,0, canvas.width, canvas.height);
+				context.beginPath();
+
+				document.getElementById('selected_image').value = filename;
+
+				if (filename != 'hopi.png') {
+						document.getElementById('last_image').value = filename;
+				}
+
+				var request = new XMLHttpRequest();
+				request.open('GET', '/consultation_annotations/get/{{ $consultation->consultation_id }}/'+filename, true);
+				request.onreadystatechange = function() {
+						if(request.readyState == 4) {
+								if(request.status == 200) {
+										loadCanvas(request.responseText);
+								}
+						}
+				};
+				request.send(null);
+		}
 
 		function loadImage(filename) {
 				drawing = false;
@@ -322,9 +451,31 @@ canvas {border:1px solid #e5e5e5}
 						context.drawImage(this, -100, 0, imageObj.width*2, imageObj.height*2);
 				};
 
-				imageObj.src = "/clinical_images/"+filename+".png";
+				imageObj.src = "/clinical_images/"+filename;
 				context.beginPath();
+				//document.getElementById('selected_image').value = filename;
 		}
+
+		function clearAnnotation() {
+				filename = document.getElementById('selected_image').value;
+				loadImage(filename);
+				savenote();
+		}
+
+		function lastAnnotation() {
+				filename = document.getElementById('last_image').value;
+				loadAnnotation(filename)
+		}
+		/**
+		$('#images').on('click', function(){
+				if (this.selectedIndex==-1) {
+						imageSelected();
+				} else {
+						imageSelected();
+				}
+		});
+		**/
+		loadAnnotation('hopi.png');
 
 </script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
