@@ -72,9 +72,19 @@ class Consultation extends Model
 			return $this->hasMany('App\ConsultationDiagnosis', 'consultation_id');
 	}
 
+	public function annotations()
+	{
+			return $this->hasMany('App\ConsultationAnnotation', 'consultation_id');
+	}
+
 	public function procedures()
 	{
 			return $this->hasMany('App\ConsultationProcedure', 'consultation_id');
+	}
+
+	public function forms()
+	{
+			return $this->hasMany('App\FormValue', 'consultation_id');
 	}
 
 	public function queue()

@@ -41,8 +41,8 @@
 				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 						<li><a href="javascript:loadAnnotation('r_ear.png')">Right Ear</a></li>
 						<li><a href="javascript:loadAnnotation('l_ear.png')">Left Ear</a></li>
-						<li><a href="javascript:loadAnnotation('r_tympanic_fembrane.png')">Right Tympanic Membrane</a></li>
-						<li><a href="javascript:loadAnnotation('l_tympanic_fembrane.png')">Left Tympanic Membrane</a></li>
+						<li><a href="javascript:loadAnnotation('r_tympanic_membrane.png')">Right Tympanic Membrane</a></li>
+						<li><a href="javascript:loadAnnotation('l_tympanic_membrane.png')">Left Tympanic Membrane</a></li>
 				</ul>
 		</div>
 	</div>

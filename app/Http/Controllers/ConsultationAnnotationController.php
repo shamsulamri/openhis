@@ -43,12 +43,10 @@ class ConsultationAnnotationController extends Controller
 	public function store(Request $request) 
 	{
 			if ($request->ajax()) {
-					Log::info("X");
 					$annotation = ConsultationAnnotation::where('consultation_id','=', $request->consultation_id)
 									->where('annotation_image', '=', $request->annotation_image)
 									->first();
 
-					Log::info($annotation);
 					if (empty($annotation)) {
 						$annotation = new ConsultationAnnotation();
 					}
@@ -82,13 +80,14 @@ class ConsultationAnnotationController extends Controller
 							->where('annotation_image', '=', $annotation_image)
 							->first();
 
-			return $annotation->annotation_dataurl;
+			if ($annotation) {
+					return $annotation->annotation_dataurl;
+			}
 
 	}
 
 	public function show(Request $request, $annotation_image) 
 	{
-			Log::info($annotation_image);
 			if ($request->ajax()) {
 					//$consulation_id = Session::get('consultation_id');
 					$consultation_id = 99;
@@ -147,6 +146,15 @@ class ConsultationAnnotationController extends Controller
 			ConsultationAnnotation::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/consultation_annotations');
+	}
+
+	public function clear($consultation_id, $annotation_image)
+	{	
+			Log::info("Image clear.....");
+			$annotation = ConsultationAnnotation::where('consultation_id','=', $consultation_id)
+							->where('annotation_image', '=', $annotation_image)
+							->first()
+							->delete();
 	}
 	
 	public function search(Request $request)

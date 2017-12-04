@@ -54,6 +54,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/consultation_annotation/search', 'ConsultationAnnotationController@search');
 		Route::get('/consultation_annotation/search', 'ConsultationAnnotationController@search');
 		Route::get('/consultation_annotations/delete/{id}', 'ConsultationAnnotationController@delete');
+		Route::get('/consultation_annotations/clear/{consultation_id}/{annotation_image}', 'ConsultationAnnotationController@clear');
 		Route::get('/consultation_annotations/get/{consulation_id}/{annotation_image}', 'ConsultationAnnotationController@getAnnotation');
 		
 

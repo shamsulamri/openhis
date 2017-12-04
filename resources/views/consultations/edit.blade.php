@@ -55,13 +55,11 @@ canvas {border:1px solid #e5e5e5}
 </style>
 @include('consultations.panel')
 <h1>Clinical Notes</h1>
-<br>
-<!--
 {{ Form::model($consultation, ['tabindex'=>1,'id'=>'my_form','route'=>['consultations.update',$consultation->consultation_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 @include('consultations.consultation')
 {{ Form::close() }}
--->
 
+<!--
 <div class="form-inline">
 	<div class="form-group">
 		<button class='btn btn-success' onclick="loadAnnotation('hopi.png')">Present Illness</button>
@@ -69,12 +67,12 @@ canvas {border:1px solid #e5e5e5}
 	<div class="form-group">
 		<button class='btn btn-success' onclick="loadAnnotation('examination.png')">Physical Examination</button>
 	</div>
-	<button class='btn btn-danger pull-right' onclick="clearAnnotation()">Clear</button>
 </div>
 <br>
+-->
 <div class="form-inline">
 		<div class="form-group">
-				<button class='btn btn-warning' onclick="lastAnnotation()"><span class='glyphicon glyphicon-pencil'></span></button>
+				<button class='btn btn-warning' onclick="loadAnnotation('hopi.png')"><span class='glyphicon glyphicon-pencil'></span></button>
 		</div>
 		@if ($consultation->encounter->patient->gender_code=='P')
 				@include('consultations.female_images')
@@ -87,6 +85,9 @@ canvas {border:1px solid #e5e5e5}
 {{ Form::hidden('selected_image',null,['id'=>'selected_image']) }}
 {{ Form::hidden('last_image',null,['id'=>'last_image']) }}
 
+<div>
+	<button class='btn btn-danger pull-right' onclick="clearAnnotation()">Clear</button>
+</div>
 <!--
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
@@ -113,13 +114,12 @@ qqq
 		</div>
 </div>
 -->
-<!--
+<br>
 <h2>Diagnoses</h2>
 {{ Form::text('diagnosis_clinical', null, ['tabindex'=>2,'id'=>'diagnosis_clinical','class'=>'form-control','placeholder'=>'Enter clinical diagnosis','rows'=>'3']) }}
 <br>
 <div id='diagnosisHTML'>
 </div>
--->
 
 <!--
 <h2>Procedures</h2>
@@ -395,10 +395,14 @@ qqq
 		function loadCanvas(dataURL) {
 				var imageObj = new Image();
 				imageObj.onload = function() {
-						context.drawImage(this, 0, 0);
+						context.drawImage(
+								this, 
+								canvas.width/2-this.width/2,
+							 	canvas.height/2-this.height/2);
 				};
 
 				imageObj.src = dataURL;
+
 		}
 			  
 		/**
@@ -448,7 +452,10 @@ qqq
 				context.clearRect(0,0, canvas.width, canvas.height);
 				var imageObj = new Image();
 				imageObj.onload = function() {
-						context.drawImage(this, -100, 0, imageObj.width*2, imageObj.height*2);
+						context.drawImage(this, 
+								canvas.width/2-this.width*2/2,
+							 	canvas.height/2-this.height*2/2,
+								imageObj.width*2, imageObj.height*2);
 				};
 
 				imageObj.src = "/clinical_images/"+filename;
@@ -456,10 +463,19 @@ qqq
 				//document.getElementById('selected_image').value = filename;
 		}
 
-		function clearAnnotation() {
+		function clearAnnotation(annotationId) {
 				filename = document.getElementById('selected_image').value;
 				loadImage(filename);
 				savenote();
+
+				var request = new XMLHttpRequest();
+				request.open('GET', '/consultation_annotations/clear/{{ $consultation->consultation_id }}/'+filename, true);
+				request.onreadystatechange = function() {
+						if(request.readyState == 4) {
+										console.log("Image cleared.");
+						}
+				};
+				request.send(null);
 		}
 
 		function lastAnnotation() {
