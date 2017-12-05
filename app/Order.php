@@ -30,7 +30,8 @@ class Order extends Model
 				'order_discount',
 				'order_unit_price',
 				'order_total',
-				'order_discharge',
+				'order_is_discharge',
+				'order_include_stat',
 				'updated_by',
 				'completed_at',
 		];

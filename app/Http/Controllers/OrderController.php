@@ -518,7 +518,7 @@ class OrderController extends Controller
 			}
 
 			if (!empty($request->user_id)) {
-					$orders = $orders->where('user_id','=',$request->user_id);
+					$orders = $orders->where('orders.user_id','=',$request->user_id);
 			}
 
 			if (!empty($request->age)) {

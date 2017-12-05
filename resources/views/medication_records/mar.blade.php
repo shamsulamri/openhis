@@ -10,13 +10,13 @@
 <h1>
 Medication Administration Record
 </h1>
+<br>
 <table class='table table-condensed'>
 	<tbody>
 @foreach ($drugs as $drug)
 <?php
 $frequency_count = count(explode(';',$drug->frequency_mar));
 ?>
-<br>
 	<tr>
 		<td width='30%'>
 			@if ($drug->cancel_id) <strike> @endif
@@ -35,11 +35,6 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 			@if ($drug->cancel_id) </strike> @endif
 			@if (!$drug->cancel_id)
 			<a class='btn btn-danger btn-xs' href='{{ URL::to('/order_cancellations/create/'. $drug->order_id.'?drug=true') }}'>Stop</a>
-			@endif
-			@if ($drug->cancel_id)
-				<span class='label label-warning'>
-				Cancel
-				</span>
 			@endif
 		</td>
 		<td>
@@ -75,11 +70,13 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 				?>
 				<td width='10' align='center'>
 			@if ($mars->contains('medication_slot',$date_slot)) 
+				<a href='/medication_record/datetime/{{ $mars[$date_slot]->medication_id }}'>
 				{{ DojoUtility::timeReadFormat($mars[$date_slot]->medication_datetime) }}
 				<br>by 
-				{{ $mars[$date_slot]->username }}
+				{{ $mars[$date_slot]->name }}
+				</a>
 			@else
-					@if ($date_value>=$entry_start & $date_value<=$entry_end)
+					@if ($date_value==$entry_start)
 						@if (!$drug->cancel_id)
 							<a href='/medication_record/record/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
 								&nbsp;?&nbsp;

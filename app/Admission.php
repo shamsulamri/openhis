@@ -95,6 +95,11 @@ class Admission extends Model
 			return $this->hasOne('App\Bed', 'bed_code', 'bed_code');
 	}
 
+	public function arrival()
+	{
+			return $this->hasOne('App\WardArrival', 'encounter_id', 'encounter_id');
+	}
+
 	public function period()
 	{
 			return $this->belongsTo('App\Period', 'period_code', 'period_code');

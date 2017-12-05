@@ -20,10 +20,11 @@ use App\DiagnosticOrder;
 use App\AMQPHelper as Amqp;
 use App\StockHelper;
 use App\OrderHelper;
+use App\OrderDrug;
 
 class ConsultationController extends Controller
 {
-	public $paginateValue=10;
+	public $paginateValue=3;
 
 	public function __construct()
 	{
@@ -148,6 +149,9 @@ class ConsultationController extends Controller
 	{
 			$id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail($id);
+
+			$this->orderStat($id);
+
 			if ($consultation->encounter->encounter_code=='outpatient' or $consultation->encounter->encounter_code=='emergency') {
 					if (Auth::user()->consultant) {
 						$consultation->consultation_status = 1;
@@ -175,6 +179,35 @@ class ConsultationController extends Controller
 					return redirect('/');
 			} else {
 					return redirect('/order_queues');
+			}
+	}
+
+	public function orderStat($consultation_id) 
+	{
+			$order_helper = new OrderHelper();
+			$stats = Order::where('order_include_stat',1)
+						->where('consultation_id',	$consultation_id)
+						->get();
+
+			foreach ($stats as $stat) {
+
+				$stat_id = $order_helper->orderItem($stat->product, $stat->admission->bed->ward->ward_code);
+
+				$primary_order = OrderDrug::where('order_id', $stat->order_id)->first();
+
+				$stat_order = OrderDrug::where('order_id', $stat_id)->first();
+				$stat_order->frequency_code = 'STAT';
+				$stat_order->drug_strength = $primary_order->drug_strength;
+				$stat_order->unit_code = $primary_order->unit_code;
+				$stat_order->drug_dosage = $primary_order->drug_dosage;
+				$stat_order->dosage_code = $primary_order->dosage_code;
+				$stat_order->route_code = $primary_order->route_code;
+				$stat_order->save();
+
+
+				$order = Order::find($stat_id);
+				$order->order_quantity_request = $primary_order->drug_dosage;
+				$order->save();
 			}
 	}
 

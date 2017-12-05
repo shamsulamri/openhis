@@ -101,6 +101,7 @@ class DojoUtility
 		public static function dateTimeWriteFormat($value)
 		{
 				if (!empty($value)) { 
+					$value = str_replace("-","/", $value);
 					return Carbon::createFromFormat('d/m/Y H:i', $value);
 				} else {
 					return null;

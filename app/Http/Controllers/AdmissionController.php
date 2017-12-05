@@ -182,6 +182,17 @@ class AdmissionController extends Controller
 			}
 	}
 
+	public function show($id) 
+	{
+			$admission = Admission::findOrFail($id);
+			$wardHelper = new WardHelper();
+
+			return view('admissions.show', [
+					'admission'=>$admission,
+					'patient'=>$admission->encounter->patient,
+					'wardHelper'=>$wardHelper,
+			]);
+	}
 	/**
 	public function show($id)
 	{

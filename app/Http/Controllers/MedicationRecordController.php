@@ -68,11 +68,30 @@ class MedicationRecordController extends Controller
 			$medication_record = MedicationRecord::findOrFail($id);
 			return view('medication_records.edit', [
 					'medication_record'=>$medication_record,
-				
-					]);
+			]);
+	}
+
+	public function datetime($id) 
+	{
+			$medication_record = MedicationRecord::findOrFail($id);
+			return view('medication_records.datetime', [
+					'medication_record'=>$medication_record,
+					'patient'=>$medication_record->order->consultation->encounter->patient,
+			]);
 	}
 
 	public function update(Request $request, $id) 
+	{
+			$medication_record = MedicationRecord::findOrFail($id);
+			$datetime = $request->medication_date.' '.$request->medication_time;
+			$datetime = DojoUtility::datetimeWriteFormat($datetime);
+			$medication_record->medication_datetime = $datetime;
+			$medication_record->save();
+
+			return redirect('/medication_record/mar/'.$medication_record->order->encounter_id);
+	}
+
+	public function update2(Request $request, $id) 
 	{
 			$medication_record = MedicationRecord::findOrFail($id);
 			$medication_record->fill($request->input());
@@ -174,7 +193,7 @@ class MedicationRecordController extends Controller
 					->orderBy('a.created_at', 'desc')
 					->get();
 
-			$mars = MedicationRecord::select('encounter_id', 'medication_slot', 'medication_datetime', 'username')
+			$mars = MedicationRecord::select('medication_id','encounter_id', 'medication_slot', 'medication_datetime', 'username', 'name')
 					->leftJoin('orders as b', 'b.order_id', '=', 'medication_records.order_id')
 					->leftjoin('users as c', 'c.id', '=', 'medication_records.user_id')
 					->where('b.encounter_id', '=', $encounter_id)

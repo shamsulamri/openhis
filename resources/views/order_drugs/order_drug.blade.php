@@ -2,7 +2,7 @@
 	<h3>{{ $product->product_name }}</h3>
 	<h5>{{ $product->product_code }}</h5>
 	<div class="alert @if ($available==0) alert-danger @else alert-success @endif">
-			Available: {{ $available }} ({{ $order_drug->order->store->store_name }})
+			Available: {{ $available }} @if ($order_drug->order->store) {{ '('.$order_drug->order->store->store_name.')' }} @endif
 	</div>
 	<!--
 	@if ($errors)
@@ -117,6 +117,20 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('order_include_stat')) has-error @endif'>
+						{{ Form::label('order_include_stat', 'Include STAT',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('order_include_stat', '1', $order->order_include_stat) }}
+							@if ($errors->has('order_include_stat')) <p class="help-block">{{ $errors->first('order_include_stat') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('order_is_discharge')) has-error @endif'>
 						{{ Form::label('order_is_discharge', 'Discharge Order',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
@@ -126,7 +140,6 @@
 					</div>
 			</div>
 	</div>
-
 @if ($product->drug)
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
@@ -200,7 +213,7 @@
 					</div>
         </div>
     </div>
-	@endif
+@endif
 
     {{ Form::hidden('consultation_id', $consultation->consultation_id, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
     {{ Form::hidden('product_code', $product->product_code, ['class'=>'form-control input-sm','placeholder'=>'',]) }}

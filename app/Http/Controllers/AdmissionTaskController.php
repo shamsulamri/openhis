@@ -72,6 +72,7 @@ class AdmissionTaskController extends Controller
 					->where('a.product_code','<>','consultation_fee')
 					->where('d.product_drop_charge','=',0)
 					->where('a.ward_code','=', $ward_code)
+					->where('d.category_code','<>','drugs')
 					->whereNull('cancel_id')
 					->whereNull('o.discharge_id')
 					->whereNotNull('n.post_id')

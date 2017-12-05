@@ -13,9 +13,10 @@ canvas {border:1px solid #e5e5e5}
 <h1>
 Progress Notes
 </h1>
+{{ $notes->render() }}
 @if (count($notes)>0)
 <br>
-<table class="table table-hover">
+<table class="table">
 	<tbody>
 	@foreach ($notes as $note)
 	<tr>
@@ -27,13 +28,13 @@ Progress Notes
 					<br>
 					@if ($note->consultation_notes)
 					{!! str_replace(chr(13), "<br>", $note->consultation_notes) !!}
+					<br>
 					@else
 						@if (count($note->annotations)==0)
 							-
 						@endif
 					@endif
-					@if ($note->annotations)
-					<br>
+					@if (count($note->annotations)>0)
 					<br>
 							@foreach ($note->annotations as $annotation)
 								<canvas tabindex=0 id="canvas_{{ $annotation->annotation_id }}" width="800" height="400"></canvas>
@@ -41,10 +42,14 @@ Progress Notes
 					@endif
 
 					@if ($note->forms)
+							<br>
+							<br>
+							<strong>Form</strong>
 							@foreach ($note->forms as $form)
 								<br>
-								<strong>{{ $form->form->form_name }} :</strong>
-								{{ $form->form_value }}
+								<a href='/form/{{ $form->form_code }}/{{ $note->encounter_id }}'>
+								<strong>{{ $form->form->form_name }}</strong>
+								</a>
 							@endforeach
 					@endif
 
@@ -71,6 +76,10 @@ Progress Notes
 							@foreach ($note->orders as $order)
 								@if ($order->orderCancel) <strike> @endif
 								{{ $order->product->product_name }}
+								@if (!empty($order->orderDrug->frequency))
+										, {{ $order->orderDrug->frequency->frequency_name }}
+								@endif
+								<br>
 								@if ($order->orderCancel) </strike> @endif
 							@endforeach
 					@else
@@ -108,8 +117,10 @@ Progress Notes
 </tbody>
 </table>
 @endif
+<!--
 <br>
 {{ $notes->render() }}
+-->
 
 <script>
 		function loadCanvas(id, dataURL) {

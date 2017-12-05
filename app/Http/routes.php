@@ -66,6 +66,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/medication_records/delete/{id}', 'MedicationRecordController@delete');
 		Route::get('/medication_record/mar/{encounter_id?}', 'MedicationRecordController@medicationAdministrationRecord');
 		Route::get('/medication_record/record/{order_id}/{index}/{slot}', 'MedicationRecordController@marRecord');
+		Route::get('/medication_record/datetime/{id}', 'MedicationRecordController@datetime');
 		
 
 		Route::resource('bed_charges', 'BedChargeController');
