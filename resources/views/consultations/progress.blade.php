@@ -37,7 +37,7 @@ Progress Notes
 					@if (count($note->annotations)>0)
 					<br>
 							@foreach ($note->annotations as $annotation)
-								<canvas tabindex=0 id="canvas_{{ $annotation->annotation_id }}" width="800" height="400"></canvas>
+								<canvas tabindex=0 id="canvas_{{ $annotation->annotation_id }}" width="800" height="350"></canvas>
 							@endforeach
 					@endif
 
