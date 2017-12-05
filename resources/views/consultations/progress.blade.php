@@ -41,13 +41,13 @@ Progress Notes
 							@endforeach
 					@endif
 
-					@if ($note->forms)
+					@if (count($note->forms)>0)
 							<br>
 							<br>
 							<strong>Form</strong>
 							@foreach ($note->forms as $form)
 								<br>
-								<a href='/form/{{ $form->form_code }}/{{ $note->encounter_id }}'>
+								<a href='/graph/{{ $form->form_code }}/{{ $note->encounter_id }}'>
 								<strong>{{ $form->form->form_name }}</strong>
 								</a>
 							@endforeach

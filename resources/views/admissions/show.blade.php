@@ -3,7 +3,6 @@
 @section('content')
 @include('patients.id_only')
 
-<br>
 <h1>Options</h1>
 <br>
 <h4>
@@ -34,19 +33,19 @@
 				</a>
 
 				<br><br>
-				<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+				<span class='fa fa-print' aria-hidden='true'></span>
 				<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $admission->patient_id }}">
 						General Label
 				</a>
 
 				<br><br>
-				<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+				<span class='fa fa-print' aria-hidden='true'></span>
 				<a target="_blank" href="{{ Config::get('host.report_server')  }}/ReportServlet?report=wrist_label&id={{ $admission->patient_id }}">
 						Wrist Label
 				</a>
 
 				<?php
-				$consultation = $wardHelper->hasOpenConsultation($admission->patient_id, $admission->encounter_id, Auth::user()->id);
+				$consultation = $wardHelper->hasOpenConsultation($admission->encounter->patient_id, $admission->encounter_id, Auth::user()->id);
 				?>
 
 				@endif
