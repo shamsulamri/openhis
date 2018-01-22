@@ -208,6 +208,7 @@ class ProductController extends Controller
 			$product->product_unit_charge = $request->product_unit_charge ?: 0;
 			$product->product_local_store = $request->product_local_store ?: 0;
 			$product->product_non_claimable = $request->product_non_claimable ?: 0;
+			$product->product_duration_use = $request->product_duration_use ?: 0;
 
 			$valid = $product->validate($request->all(), $request->_method);	
 

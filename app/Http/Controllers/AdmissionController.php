@@ -191,6 +191,7 @@ class AdmissionController extends Controller
 					'admission'=>$admission,
 					'patient'=>$admission->encounter->patient,
 					'wardHelper'=>$wardHelper,
+					'encounter'=>$admission->encounter,
 			]);
 	}
 	/**

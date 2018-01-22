@@ -355,6 +355,7 @@ class OrderHelper
 	{
 		$orders = Order::where('consultation_id',$consultation_id)
 					->leftJoin('products as c', 'c.product_code', '=', 'orders.product_code')
+					->where('product_duration_use', '=',0)
 					->get();
 
 		$stock_helper = new StockHelper();

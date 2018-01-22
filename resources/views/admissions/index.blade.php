@@ -99,7 +99,6 @@
 					</small>	
 			</td>
 			<td>
-				
 					<a href='admissions/{{ $admission->admission_id }}'>{{ strtoupper($admission->patient_name) }}</a>
 					<br>
 					<small>{{$admission->patient_mrn}}

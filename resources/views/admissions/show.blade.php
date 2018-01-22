@@ -10,23 +10,24 @@
 			<span class='fa fa-sign-in' aria-hidden='true'></span>
 			<a href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}'>Log Arrival</a>
 		@endif
-		@if (!empty($admission->discharge_id))
+		@if (!empty($admission->encounter->discharge))
 			<span class='fa fa-sign-out' aria-hidden='true'></span>
 			<a href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}'>Ward Discharge</a>
 		@else
 				@if (!is_null($admission->arrival)) 
-				<span class='fa fa-table' aria-hidden='true'></span>
-				<a href='{{ URL::to('medication_record/mar/'. $admission->encounter_id) }}'>
-					Medication Administration Record
-				</a>
+					@if ($admission->bed->ward->ward_code != 'mortuary')
+						<span class='fa fa-table' aria-hidden='true'></span>
+						<a href='{{ URL::to('medication_record/mar/'. $admission->encounter_id) }}'>
+							Medication Administration Record
+						</a>
+						<br><br>
 				
-				<br><br>
-				<span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
-				<a href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'>
-					Bed Movement
-				</a>
-
-				<br><br>
+						<span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
+						<a href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'>
+							Bed Movement
+						</a>
+						<br><br>
+					@endif
 				<span class='fa fa-wpforms' aria-hidden='true'></span>
 				<a href='{{ URL::to('form/results/'. $admission->encounter_id) }}'>
 					Forms

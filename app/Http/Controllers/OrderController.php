@@ -117,7 +117,7 @@ class OrderController extends Controller
 					'product_edit_price',
 					];
 
-			$sql_raw= "sum(order_quantity_request) as quantity_total, product_name, a.product_code, cancel_id, a.order_id, a.user_id, post_id, d.created_at,order_is_discharge,order_completed,order_report,category_name,product_edit_price";
+			$sql_raw= "sum(order_quantity_request) as quantity_total, product_name, a.product_code, cancel_id, a.order_id, a.user_id, post_id, d.created_at,order_is_discharge,order_completed,order_report,category_name,product_edit_price, product_duration_use";
 
 
 					//->selectRaw($sql_raw)

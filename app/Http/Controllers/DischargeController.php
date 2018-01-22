@@ -98,6 +98,13 @@ class DischargeController extends Controller
 			if ($discharge->encounter->encounter_code=='mortuary') {
 				$discharge_type = Type::where('is_mortuary',1)->orderBy('type_name')->lists('type_name', 'type_code')->prepend('','');
 			}
+			if ($discharge->encounter->encounter_code=='inpatient') {
+					$discharge_type = Type::where('is_mortuary',0)
+							->where('type_code','<>','admit')
+							->orderBy('type_name')
+							->lists('type_name', 'type_code')
+							->prepend('','');
+			}
 
 			$fees = Order::where('category_code','consultation')
 					->leftJoin('products as b', 'b.product_code', '=','orders.product_code')

@@ -113,7 +113,7 @@ class Encounter extends Model
 					if (!$encounter->patient->patient_mrn) {
 							$patient = $encounter->patient;
 							$prefix = config('host.mrn_prefix') . date('Ymd', strtotime(Carbon::now()));
-							$mrn = $prefix.str_pad(Patient::where('created_at','>=', Carbon::today())->count(), 4, '0', STR_PAD_LEFT);
+							$mrn = $prefix.str_pad(Encounter::where('created_at','>=', Carbon::today())->count(), 4, '0', STR_PAD_LEFT);
 							$patient->patient_mrn = $mrn;
 							$patient->save();
 					}

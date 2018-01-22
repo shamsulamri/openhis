@@ -50,6 +50,7 @@ class Product extends Model
 				'product_drop_charge',
 				'product_local_store',
 				'product_non_claimable',
+				'product_duration_use',
 				'tax_code'];
 	
     	protected $guarded = ['product_code'];

@@ -47,7 +47,16 @@
 						@foreach ($order_products as $order_product)
 							<tr>
 									<td width='10'>
+								<?php
+									$button_status="btn-primary";
+									if ($order_product->product_stocked==1) {
+											if ($order_product->product_on_hand>0) {
+								?>			
 										{{ Form::checkbox($order_product->product_code, 1, null) }}
+								<?php
+											}
+									}
+								?>
 									</td>
 									<td>
 										{{ ucfirst(strtoupper($order_product->product_name)) }}

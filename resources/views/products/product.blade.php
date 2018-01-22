@@ -342,6 +342,12 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('product_duration_use')) has-error @endif'>
+						<div class='col-sm-offset-4 col-sm-8'>
+							{{ Form::checkbox('product_duration_use', '1') }} <label>Duration Use</label><br>Hourly charged
+							@if ($errors->has('product_duration_use')) <p class="help-block">{{ $errors->first('product_duration_use') }}</p> @endif
+						</div>
+					</div>
 			</div>
 	</div>
 	@endcan
