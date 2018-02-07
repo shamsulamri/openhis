@@ -75,11 +75,26 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 				<br>by 
 				{{ $mars[$date_slot]->name }}
 				</a>
+
+				<!-- Verification -->
+				@if (!$verifications->contains('medication_slot',$date_slot)) 
+						@if ($mars[$date_slot]->username != Auth::user()->username)
+						<br>
+						<br>
+						<a href='/medication_record/verify/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
+							&nbsp;Verify&nbsp;
+						</a>
+						@endif
+				@endif
+				@if ($verifications->contains('medication_slot',$date_slot)) 
+					<br><br>
+					Verified by {{ $verifications[$date_slot]->name }}
+				@endif
 			@else
 					@if ($date_value==$entry_start)
 						@if (!$drug->cancel_id)
 							<a href='/medication_record/record/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
-								&nbsp;?&nbsp;
+								&nbsp;Record&nbsp;
 							</a>
 						@else
 							-

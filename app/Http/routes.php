@@ -48,7 +48,21 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		/** Rest API **/
+		Route::get('/api/patient/{mrn}', 'APIController@patient');
+		Route::get('/api/dependant/{mrn}', 'APIController@dependant');
+		Route::get('/api/allergy/{mrn}', 'APIController@allergy');
+		Route::get('/api/appointment/{mrn}', 'APIController@appointment');
+		Route::get('/api/discharge/{mrn}', 'APIController@discharge');
+		Route::get('/api/medication/{mrn}', 'APIController@medication');
 
+		Route::resource('order_stops', 'OrderStopController',['except'=>['create']]);
+		Route::get('/order_stop/create/{id}', 'OrderStopController@create');
+		Route::get('/order_stops/id/{id}', 'OrderStopController@searchById');
+		Route::post('/order_stop/search', 'OrderStopController@search');
+		Route::get('/order_stop/search', 'OrderStopController@search');
+		Route::get('/order_stops/delete/{id}', 'OrderStopController@delete');
+		
 		Route::resource('consultation_annotations', 'ConsultationAnnotationController');
 		Route::get('/consultation_annotations/id/{id}', 'ConsultationAnnotationController@searchById');
 		Route::post('/consultation_annotation/search', 'ConsultationAnnotationController@search');
@@ -56,8 +70,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/consultation_annotations/delete/{id}', 'ConsultationAnnotationController@delete');
 		Route::get('/consultation_annotations/clear/{consultation_id}/{annotation_image}', 'ConsultationAnnotationController@clear');
 		Route::get('/consultation_annotations/get/{consulation_id}/{annotation_image}', 'ConsultationAnnotationController@getAnnotation');
-		
-
 
 		Route::resource('medication_records', 'MedicationRecordController');
 		Route::get('/medication_records/id/{id}', 'MedicationRecordController@searchById');
@@ -66,8 +78,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/medication_records/delete/{id}', 'MedicationRecordController@delete');
 		Route::get('/medication_record/mar/{encounter_id?}', 'MedicationRecordController@medicationAdministrationRecord');
 		Route::get('/medication_record/record/{order_id}/{index}/{slot}', 'MedicationRecordController@marRecord');
+		Route::get('/medication_record/verify/{order_id}/{index}/{slot}', 'MedicationRecordController@marVerify');
 		Route::get('/medication_record/datetime/{id}', 'MedicationRecordController@datetime');
-		
 
 		Route::resource('bed_charges', 'BedChargeController');
 		Route::get('/bed_charges/id/{id}', 'BedChargeController@searchById');
@@ -604,7 +616,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 				Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
 				Route::get('/payments/{id?}', 'PaymentController@index');
-				Route::get('/payments/create/{patient_id?}/{encounter_id?}', 'PaymentController@create');
+				Route::get('/payments/create/{patient_id?}/{encounter_id?}/{non_claimable?}', 'PaymentController@create');
 				Route::get('/payments/id/{id}', 'PaymentController@searchById');
 				Route::post('/payment/search', 'PaymentController@search');
 				Route::get('/payment/search', 'PaymentController@search');
@@ -612,13 +624,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/payment/enquiry', 'PaymentController@enquiry');
 				Route::get('/payment/enquiry', 'PaymentController@enquiry');
 
+				Route::get('/bill_items/reload/{id}', 'BillItemController@reload');
+				Route::get('/bill_items/generate/{id}', 'BillItemController@generate');
 				Route::resource('bill_items', 'BillItemController',['except'=>['index','show']]);
-				Route::get('/bill_items/{id}', 'BillItemController@index');
+				Route::get('/bill_items/{id}/{non_claimable?}', 'BillItemController@index');
 				Route::get('/bill_items/id/{id}', 'BillItemController@searchById');
 				Route::get('/bill_items/{id}/json', 'BillItemController@json');
 				Route::get('/bill_items/delete/{id}', 'BillItemController@delete');
-				Route::get('/bill_items/generate/{id}', 'BillItemController@generate');
-				Route::get('/bill_items/reload/{id}', 'BillItemController@reload');
 				Route::get('/bill_items/close/{id}', 'BillItemController@close');
 				Route::post('/bill_item/enquiry', 'BillItemController@enquiry');
 				Route::get('/bill_item/enquiry', 'BillItemController@enquiry');
@@ -643,7 +655,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				
 				Route::resource('patients', 'PatientController');
 				Route::get('/patients/id/{id}', 'PatientController@searchById');
-				Route::get('/patients/{id}/json', 'PatientController@json');
+				//Route::get('/patients/{id}/json', 'PatientController@json');
 				Route::get('/patients/dependants/{id}', 'PatientController@dependants');
 				Route::get('/patients/dependant_list/{id}', 'PatientController@dependantList');
 				Route::get('/patient/dependants', 'PatientController@find');

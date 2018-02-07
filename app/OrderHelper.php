@@ -35,10 +35,11 @@ class OrderHelper
 			$drug = OrderDrug::where('order_id', $order_id)->first();
 
 			$value = "";
-			if ($drug->dosage) $value = $drug->drug_dosage." ".$drug->dosage->dosage_name;
-			if ($drug->route_code) $value = $value.", ".$drug->route_code.", ".$drug->frequency_code;
-			if ($drug->drug_duration) $value = $value.", ".$drug->drug_duration;
-			if ($drug->period_code) $value = $value." ".$drug->period_code;
+			if (!empty($drug->drug_dosage)) $value = $drug->drug_dosage." ".$drug->dosage->dosage_name;
+			if (!empty($drug->route_code)) $value = $value.", ".$drug->route_code.", ".$drug->frequency_code;
+			if (!empty($drug->drug_duration)) $value = $value.", ".$drug->drug_duration;
+			if (!empty($drug->period_code)) $value = $value." ".$drug->period_code;
+
 			return $value;
 	}
 

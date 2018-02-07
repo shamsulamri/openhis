@@ -22,6 +22,7 @@ class BillItem extends Model
 				'bill_unit_multiplier',
 				'bill_amount',
 				'bill_amount_pregst',
+				'bill_non_claimable',
 				'bill_exempted'];
 	
     protected $guarded = ['bill_id'];

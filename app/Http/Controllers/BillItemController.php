@@ -159,12 +159,12 @@ class BillItemController extends Controller
 
 	}
 
-	public function compileBill($encounter_id) 
+	public function compileBill($encounter_id, $non_claimable=null) 
 	{
 			$encounter = Encounter::find($encounter_id);
 			$patient_id = $encounter->patient_id;
 
-			$sql = sprintf("
+			$base_sql = "
 				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, order_discount, profit_multiplier, a.order_id, sum(order_total) as order_total
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
@@ -174,21 +174,30 @@ class BillItemController extends Controller
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				where order_completed = 1 
+				%s
 				and b.category_code<>'consultation'
 				and h.patient_id = %d
 				and bill_id is null 
 				and order_multiple=0
 				group by product_code
-			", $patient_id);
+			";
+
+			$sql = sprintf($base_sql, "", $patient_id);
+
+			if (!empty($encounter->sponsor_code)) {
+					if ($non_claimable==True) {
+						$sql = sprintf($base_sql, "and product_non_claimable = 1", $patient_id);
+					}
+
+					if ($non_claimable==False) {
+						$sql = sprintf($base_sql, "and product_non_claimable<>1", $patient_id);
+					}
+			}
 
 			$orders = DB::select($sql);
 			Log::info($sql);
 
 			foreach ($orders as $order) {
-					if ($order->product_code == '13000001') {
-							Log::info($order->product_code);
-							Log::info($order->order_total);
-					}
 					$item = new BillItem();
 					$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
@@ -198,6 +207,11 @@ class BillItemController extends Controller
 					$item->bill_quantity = $order->order_quantity_supply;
 					$item->bill_discount = $order->order_discount;
 					$item->bill_unit_multiplier = $order->profit_multiplier;
+					if (!empty($non_claimable)) {
+						if($non_claimable) {
+							$item->bill_non_claimable = 1;
+						}
+					}
 
 					$product = Product::find($item->product_code);
 					if (!empty($product->charge_code)) {
@@ -250,7 +264,6 @@ class BillItemController extends Controller
 			", $patient_id);
 
 			$orders = DB::select($sql);
-			Log::info($sql);
 
 			foreach ($orders as $order) {
 					$item = new BillItem();
@@ -339,7 +352,6 @@ class BillItemController extends Controller
 			
 			$orders = DB::select($sql);
 
-			Log::info($sql);
 			foreach ($orders as $order) {
 				$item = new BillItem();
 				$item->encounter_id = $encounter_id;
@@ -382,8 +394,9 @@ class BillItemController extends Controller
 			}
 	}
 
-	public function index($id)
+	public function index($id, $non_claimable=null)
 	{
+			$bill_label = "";
 			$encounter = Encounter::find($id);
 
 			$raw = "
@@ -400,12 +413,26 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 					->orderBy('category_name')
 					->orderBy('product_name');
 
+			if (!empty($non_claimable)) {
+				if ($non_claimable=='true') {
+						$bills = $bills->where('bill_non_claimable','=', 1);
+				}
+				if ($non_claimable=='false') {
+						$bills = $bills->whereNull('bill_non_claimable');
+				}
+			}
+
 			$bills = $bills->paginate($this->paginateValue);
 
 
-			if ($bills->total()==0) {
-				$bills=$this->compileBill($id);
-			$bills = DB::table('bill_items as a')
+			if ($bills->count()==0) {
+				if (!empty($encounter->sponsor_code)) {
+					$bills=$this->compileBill($id, True);
+					$bills=$this->compileBill($id, False);
+				} else {
+					$bills=$this->compileBill($id);
+				}
+				$bills = DB::table('bill_items as a')
 					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed', 'product_non_claimable','category_name','b.category_code','name')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
@@ -414,8 +441,10 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 					->leftjoin('users as f', 'f.id', '=', 'd.user_id')
 					->where('a.encounter_id','=', $id)
 					->orderBy('category_name')
-					->orderBy('product_name')
-					->paginate($this->paginateValue);
+					->orderBy('product_name');
+					$bills = $bills->whereNull('bill_non_claimable');
+					$bills = $bills->paginate($this->paginateValue);
+				$bill_label = "(Claimable)";
 			}
 
 			$pending = DB::table('bill_items as a')
@@ -425,9 +454,13 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 					->where('a.encounter_id','=', $id)
 					->count('bill_id');
 
+			/**
 			$bill_grand_total = DB::table('bill_items')
 					->where('encounter_id','=', $id)
 					->sum('bill_amount');
+			**/
+
+			$bill_grand_total = $bills->sum('bill_amount');
 
 			if (empty($bill_grand_total)) {
 					$bill_grand_total=0;
@@ -440,8 +473,17 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 					->selectRaw('sum(bill_amount_pregst) as gst_amount, format(sum(bill_amount_pregst*(tax_rate/100)),2) as gst_sum, tax_code')
 					->where('encounter_id','=', $id)
 					->whereNotNull('tax_code')
-					->groupBy('tax_code')
-					->get();
+					->groupBy('tax_code');
+					
+			if (!empty($non_claimable)) {
+				if ($non_claimable == 'true') {	
+						$gst_total = $gst_total->where('bill_non_claimable','=', 1);
+				} else {
+						$gst_total = $gst_total->whereNull('bill_non_claimable');
+				}
+			}
+
+			$gst_total = $gst_total->get();
 
 			$payments = DB::table('payments as a')
 					->leftJoin('payment_methods as b', 'b.payment_code','=','a.payment_code')
@@ -500,6 +542,15 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 
 			$bill_discount=BillDiscount::where('encounter_id', $id)->first();
 
+
+			if (!empty($non_claimable)) {
+				if ($non_claimable == 'true') {	
+						$bill_label = "(Non Claimable)";
+				} else {
+						$bill_label = "(Claimable)";
+				}
+			}
+
 			return view('bill_items.index', [
 					'bills'=>$bills,
 					'billPosted'=>$billPosted,
@@ -517,6 +568,8 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 					'pending' => $pending,
 					'incomplete_orders'=>$incomplete_orders,
 					'bill_discount'=>$bill_discount,
+					'bill_label'=>$bill_label,
+					'non_claimable'=>$non_claimable,
 			]);
 	}
 
@@ -631,11 +684,11 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 	
 	public function reload($id)
 	{
-		$bill = BillItem::where('encounter_id','=',$id)->first();
+		//$bill = BillItem::where('encounter_id','=',$id)->first();
+		$encounter = Encounter::find($id);
 		return view('bill_items.reload', [
-			'bill'=>$bill,
-			'patient'=>$bill->encounter->patient,
-			'encounter'=>$bill->encounter,
+			'patient'=>$encounter->patient,
+			'encounter'=>$encounter,
 			]);
 
 	}

@@ -9,11 +9,20 @@ use Log;
 class BillHelper 
 {
 
-	public function paymentOutstanding($patient_id, $encounter_id) 
+	public function paymentOutstanding($patient_id, $encounter_id, $non_claimable) 
 	{
 			$bill_grand_total = DB::table('bill_items')
-					->where('encounter_id','=', $encounter_id)
-					->sum('bill_amount');
+					->where('encounter_id','=', $encounter_id);
+
+			if (!empty($non_claimable)) {
+				if ($non_claimable == 'true') {	
+						$bill_grand_total = $bill_grand_total->where('bill_non_claimable','=', 1);
+				} else {
+						$bill_grand_total = $bill_grand_total->whereNull('bill_non_claimable');
+				}
+			}
+
+			$bill_grand_total = $bill_grand_total->sum('bill_amount');
 
 			$payment_total = DB::table('payments as a')
 					->where('patient_id','=', $patient_id)

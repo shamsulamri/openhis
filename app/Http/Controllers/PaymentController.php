@@ -78,7 +78,7 @@ class PaymentController extends Controller
 			]);
 	}
 
-	public function create($patient_id=null, $encounter_id=0 )
+	public function create($patient_id=null, $encounter_id=0, $non_claimable=null )
 	{
 			$payment = new Payment();
 			$payment->encounter_id = $encounter_id;
@@ -114,6 +114,7 @@ class PaymentController extends Controller
 					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					'discharges' => $discharges,
 					'credit' => new PaymentCredit(),
+					'non_claimable' => $non_claimable,
 					]);
 	}
 

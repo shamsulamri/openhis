@@ -8,6 +8,7 @@ Final Bill
 @else
 Interim Bill
 @endif
+{{ $bill_label }}
 </h1>
 @if ($encounter->discharge)
 	@if (!$encounter->bill)
@@ -23,6 +24,10 @@ Interim Bill
 @if ($bills->total()>0)
 
 <a class="btn btn-default" href="/discharges" role="button">Cancel</a>
+@if (!empty($encounter->sponsor_code))
+<a class="btn btn-default" href="/bill_items/{{ $encounter->encounter_id }}/false" role="button">Claimable</a>
+<a class="btn btn-default" href="/bill_items/{{ $encounter->encounter_id }}/true" role="button">Non Claimable</a>
+@endif
 @if (!$billPosted)
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
 <p class='pull-right'>&nbsp;</p>
@@ -84,7 +89,7 @@ Interim Bill
 			<tr>
 					<td>
 							@if ($bill->product_non_claimable)
-								<span class='label label-danger'>
+								<span class='label label-warning'>
 							@endif
 						{{ $bill->product_code }}
 							@if ($bill->product_non_claimable)
@@ -235,7 +240,12 @@ Interim Bill
 
 <h4>Payments
 @if (!$billPosted)
-<a href='/payments/create/{{ $patient->patient_id }}/{{ $encounter_id }}' class='btn btn-primary btn-sm pull-right'>New Payment</a>
+	@if (empty($encounter->sponsor_code))
+		<a href='/payments/create/{{ $patient->patient_id }}/{{ $encounter_id }}' class='btn btn-primary btn-sm pull-right'>New Payment</a>
+	@endif
+	@if (!empty($encounter->sponsor_code))
+		<a href='/payments/create/{{ $patient->patient_id }}/{{ $encounter_id }}/{{ $non_claimable }}' class='btn btn-primary btn-sm pull-right'>New Payment</a>
+	@endif
 @endif
 </h4>
 @if ($payments->total()>0)

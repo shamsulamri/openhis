@@ -2,7 +2,7 @@
     <div class='form-group  @if ($errors->has('payment_outstanding')) has-error @endif'>
         <label class='col-sm-2 control-label'>Balance</label>
         <div class='col-sm-10'>
-	<?php $balance = $billHelper->paymentOutstanding($patient->patient_id, $encounter_id); ?>
+	<?php $balance = $billHelper->paymentOutstanding($patient->patient_id, $encounter_id, $non_claimable); ?>
 	@if ($balance>0)
 			{{ Form::label('pay', number_format($balance,2), ['class'=>'form-control']) }}
 	@else

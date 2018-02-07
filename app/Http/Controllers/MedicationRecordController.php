@@ -201,6 +201,16 @@ class MedicationRecordController extends Controller
 
 			$mars =  $mars->keyBy('medication_slot');
 
+
+			$verifications = MedicationRecord::select('medication_id','encounter_id', 'medication_slot', 'medication_datetime', 'username', 'name')
+					->leftJoin('orders as b', 'b.order_id', '=', 'medication_records.order_id')
+					->leftjoin('users as c', 'c.id', '=', 'medication_records.verify_id')
+					->where('b.encounter_id', '=', $encounter_id)
+					->whereNotNull('verify_id')
+					->get();
+
+			$verifications =  $verifications->keyBy('medication_slot');
+
 			$mar_values = MedicationRecord::select('medication_datetime', 'medication_slot')
 					->leftJoin('orders as b', 'b.order_id', '=', 'medication_records.order_id')
 					->where('b.encounter_id', '=', $encounter_id);
@@ -221,6 +231,7 @@ class MedicationRecordController extends Controller
 					'encounter'=>$encounter,
 					'drugs'=>$drugs,
 					'mars'=>$mars,
+					'verifications'=>$verifications,
 					'mar_values'=>$mar_values,
 					'start_date'=>$start_date,
 					'entry_start'=>Carbon::now(),
@@ -238,6 +249,20 @@ class MedicationRecordController extends Controller
 			$mar->user_id = Auth::user()->id;
 			$now = DojoUtility::now();
 			$mar->medication_datetime = DojoUtility::dateTimeWriteFormat($now);
+			$mar->save();
+			
+			return redirect('/medication_record/mar/'.$mar->order->encounter_id);
+	}
+
+	public function marVerify($order_id, $index, $slot)
+	{
+			$medication_slot = $order_id.'-'.$index.'-'.$slot;
+			$mar = MedicationRecord::where('order_id','=',$order_id)
+						->where('medication_index', '=', $index)
+						->where('medication_slot', '=', $medication_slot)
+						->first();
+
+			$mar->verify_id = Auth::user()->id;
 			$mar->save();
 			
 			return redirect('/medication_record/mar/'.$mar->order->encounter_id);
