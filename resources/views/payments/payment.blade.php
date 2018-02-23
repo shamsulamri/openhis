@@ -223,6 +223,7 @@
 		{{ Form::hidden('encounter_id', null) }}
 	@endif
     {{ Form::hidden('patient_id', null) }}
+    {{ Form::hidden('payment_non_claimable', $non_claimable) }}
 
 
 <script>

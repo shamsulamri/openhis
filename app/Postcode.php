@@ -35,5 +35,14 @@ class Postcode extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+
+	public function state()
+	{
+			return $this->belongsTo('App\State', 'state_code');
+	}
 	
+	public function city()
+	{
+			return $this->belongsTo('App\City', 'city_code');
+	}
 }

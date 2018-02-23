@@ -37,7 +37,6 @@ class QueueController extends Controller
 					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
-					->where('b.encounter_code', $location->encounter_code)
 					->whereNull('discharge_id')
 					->whereNull('a.deleted_at')
 					->orderBy('a.created_at')

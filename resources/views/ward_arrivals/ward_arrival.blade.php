@@ -2,7 +2,7 @@
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         {{ Form::label('Bed', 'Bed',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::select('bed_code', $beds, $encounter->bed_code, ['id'=>'bed_code','onchange'=>'','class'=>'form-control']) }}
+            {{ Form::select('bed_code', $beds, $encounter->admission->bed_code, ['id'=>'bed_code','onchange'=>'','class'=>'form-control']) }}
         </div>
     </div>
 

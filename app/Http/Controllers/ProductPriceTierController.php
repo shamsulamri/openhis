@@ -25,6 +25,7 @@ class ProductPriceTierController extends Controller
 	public function index()
 	{
 			$product_price_tiers = ProductPriceTier::orderBy('charge_code')
+					->orderBy('tier_min')
 					->paginate($this->paginateValue);
 			return view('product_price_tiers.index', [
 					'product_price_tiers'=>$product_price_tiers

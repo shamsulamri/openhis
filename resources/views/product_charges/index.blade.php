@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Product Charge Index
+<h1>Tier List
 <a href='/product_charges/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/product_charge/search' method='post'>

@@ -23,24 +23,26 @@ Interim Bill
 @endif
 @if ($bills->total()>0)
 
-<a class="btn btn-default" href="/discharges" role="button">Cancel</a>
 @if (!empty($encounter->sponsor_code))
-<a class="btn btn-default" href="/bill_items/{{ $encounter->encounter_id }}/false" role="button">Claimable</a>
-<a class="btn btn-default" href="/bill_items/{{ $encounter->encounter_id }}/true" role="button">Non Claimable</a>
+<a class="btn btn-primary" href="/bill_items/{{ $encounter->encounter_id }}/false" role="button">Claimable</a>
+<a class="btn btn-primary" href="/bill_items/{{ $encounter->encounter_id }}/true" role="button">Non Claimable</a>
 @endif
 @if (!$billPosted)
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Interim Bill</a> 
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Simple Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Interim Bill</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Simple Invoice</a> 
 @else
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_invoice&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Tax Invoice</a> 
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple_invoice&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Simple Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_invoice&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Tax Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple_invoice&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Simple Invoice</a> 
 @endif
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Medical Certificate</a>
 <br>
 <!-- Bill Method -->
+@if (!$encounter->sponsor)
+	<br>
+@endif
 <div class="widget style1 gray-bg">
 <h4>Billing Method</h4>
 @if ($encounter->sponsor)
@@ -386,6 +388,7 @@ Interim Bill
             {{ Form::hidden('bill_deposit_total', $deposit_total) }}
             {{ Form::hidden('bill_outstanding', DojoUtility::roundUp($bill_outstanding)) }}
             {{ Form::hidden('bill_change', $bill_change) }}
+            {{ Form::hidden('bill_non_claimable', $non_claimable) }}
             {{ Form::hidden('bill_total', $bill_total) }}
 			@if ($bill_discount)
             {{ Form::hidden('bill_discount', $bill_discount->discount_amount) }}

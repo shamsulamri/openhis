@@ -82,14 +82,13 @@
 				<a href="{{ url('/loans') }}">Loans</a><br>
 				<a href="{{ url('/product_authorizations') }}">Product Authorizations</a><br>
 				<a href="{{ url('/store_authorizations') }}">Store Authorizations</a><br>
+				<a href="{{ url('/product_price_tiers') }}">Price Tiers</a><br>
 			</div>
 			<div class="col-xs-3">
 			<small>
 				<a href="{{ url('/product_categories') }}">Product Categories</a><br>
 				<a href="{{ url('/product_groups') }}">Product Groups</a><br>
 				<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
-				<a href="{{ url('/product_charges') }}">Product Charges</a><br>
-				<a href="{{ url('/product_price_tiers') }}">Product Price Tiers</a><br>
 				<a href="{{ url('/stock_movements') }}">Stock Movements</a><br>
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>
 				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
@@ -99,11 +98,12 @@
 				<a href="{{ url('/form_systems') }}">Form systems</a><br>
 				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
 				<a href="{{ url('/tax_types') }}">Tax Types</a><br>
-				<a href="{{ url('/general_ledgers') }}">General Ledger Codes</a><br>
 			</small>
 			</div>
 			<div class="col-xs-3">
 			<small>
+				<a href="{{ url('/general_ledgers') }}">General Ledger Codes</a><br>
+				<a href="{{ url('/product_charges') }}">Tiers</a><br>
 				<a href="{{ url('/drug_categories') }}">Drug Categories</a><br>
 				<a href="{{ url('/drug_systems') }}">Drug Systems</a><br>
 				<a href="{{ url('/drug_dosages') }}">Drug Dosages</a><br>

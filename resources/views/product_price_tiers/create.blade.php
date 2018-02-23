@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-New Product Price Tier
+New Price Tier
 </h1>
 @include('common.errors')
 <br>

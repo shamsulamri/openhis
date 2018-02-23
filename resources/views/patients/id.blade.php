@@ -70,15 +70,10 @@
 		<br>
 		Preadmission 
 </a>
-<a class='btn btn-default'  target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}">
-<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
-<br>
-&nbsp;&nbsp;Label&nbsp;&nbsp;
-</a>
-<a class='btn btn-default'  target="_blank" href="{{ Config::get('host.report_server')  }}/ReportServlet?report=wrist_label&id={{ $patient->patient_id }}">
-<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
-<br>
-&nbsp;&nbsp;Wrist&nbsp;&nbsp;
+<a class='btn btn-default' href='{{ URL::to('patient/prints/'. $patient->patient_id) }}'>
+	<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
+	<br>
+	&nbsp;&nbsp;Prints&nbsp;&nbsp;
 </a>
 @endif
 

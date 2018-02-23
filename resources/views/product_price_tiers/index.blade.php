@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Product Price Tier Index
+<h1>Price Tier Index
 <a href='/product_price_tiers/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/product_price_tier/search' method='post'>
@@ -22,8 +22,12 @@
     <th>Tier</th>
     <th>Min</th> 
 	<th>Max</th>
+    <th>Public</th> 
+	<th>Sponsor</th>
+	<!--
     <th>Outpatient</th> 
 	<th>Inpatient</th>
+	-->
 	<th></th>
 	</tr>
   </thead>

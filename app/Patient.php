@@ -86,6 +86,22 @@ class Patient extends Model
 				    parent::__construct($attributes);
 	}
 
+	public function getCurrentAddress() 
+	{
+		$value = "";
+		if (!empty($this->patient_cur_street_1)) $value = $value.$this->patient_cur_street_1;
+		if (!empty($this->patient_cur_street_2)) $value = $value.$this->patient_cur_street_2;
+		if (!empty($this->patient_cur_street_3)) $value = $value.$this->patient_cur_street_3;
+		if (!empty($this->patient_cur_postcode)) {
+			$postcode = Postcode::find($this->patient_cur_postcode);
+			$value = $value.', '.$this->patient_cur_postcode;
+			$value = $value.' '.$postcode->city->city_name;
+			$value = $value.', '.$postcode->state->state_name;
+		}
+
+		return $value;
+	}
+
 	public function validate($input, $method) {
 			$rules = [];
 			
@@ -379,6 +395,12 @@ class Patient extends Model
 			if ($value != '-') {
 				$value = $value.', '.$this->gender->gender_name;
 			}
+			return $value;
+	}
+
+	public function patientAgeNumber()
+	{
+			$value = DojoUtility::getAge($this->patient_birthdate);
 			return $value;
 	}
 

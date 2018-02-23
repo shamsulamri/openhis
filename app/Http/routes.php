@@ -48,6 +48,9 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		/** pdftk **/
+		Route::get('/pdf/{patient_id}/{form_name}', 'PDFController@encounter');
+
 		/** Rest API **/
 		Route::get('/api/patient/{mrn}', 'APIController@patient');
 		Route::get('/api/dependant/{mrn}', 'APIController@dependant');
@@ -667,6 +670,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/patient/enquiry', 'PatientController@enquiry');
 				Route::get('/patient/merge/{id}', 'PatientController@merge');
 				Route::post('/patient/merge/{id}', 'PatientController@merge');
+				Route::get('/patient/prints/{id}', 'PatientController@prints');
 
 				Route::resource('dependants', 'DependantController', ['except'=>['create','show']]);
 				Route::get('/dependants/create/{id}', 'DependantController@create');

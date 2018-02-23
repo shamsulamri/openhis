@@ -10,8 +10,9 @@
         "laravelcollective/html": "5.*",
         "webpatser/laravel-uuid": "2.*",
         "php-amqplib/php-amqplib": "2.6.*",
-	"bschmitt/laravel-amqp": "1.*",
-        "maatwebsite/excel": "~2.1.0"
+		"bschmitt/laravel-amqp": "1.*",
+        "maatwebsite/excel": "~2.1.0",
+        "mikehaertl/php-pdftk": "0.4.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

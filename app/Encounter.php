@@ -28,6 +28,7 @@ class Encounter extends Model
 				'encounter_description',
 				'book_id',
 				'appointment_id',
+				'bill_status',
 		];
 	
     protected $guarded = ['encounter_id'];

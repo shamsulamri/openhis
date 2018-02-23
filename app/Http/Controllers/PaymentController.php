@@ -141,6 +141,12 @@ class PaymentController extends Controller
 			if ($valid->passes()) {
 					$payment = new Payment($request->all());
 					$payment->user_id = Auth::user()->id;
+
+					$encounter = Encounter::find($payment->encounter_id);
+					if (!empty($encounter->sponsor_code)) {
+							$payment->payment_non_claimable = (int)$request->payment_non_claimable;
+					}
+
 					$payment->save();
 					if ($payment->payment_code=='credit_card') {
 							$payment_credit->payment_id = $payment->payment_id;

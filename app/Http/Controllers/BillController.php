@@ -17,6 +17,7 @@ use App\User;
 use App\PatientType;
 use App\Sponsor;
 use App\BillAging;
+use App\BillHelper;
 
 class BillController extends Controller
 {
@@ -54,12 +55,22 @@ class BillController extends Controller
 					$bill = new Bill($request->all());
 					$bill->user_id = Auth::user()->id;
 					$bill->id = $request->id;
+
+
+					$encounter = Encounter::find($bill->encounter_id);
+					if (!empty($encounter->sponsor_code)) {
+							$bill->bill_non_claimable = (int)$request->bill_non_claimable;
+					}
+
 					try {
 							$bill->save();
 					} catch (\Exception $e) {
 							\Log::info($e->getMessage());
 					} finally {
 							$encounter = Encounter::find($bill->encounter_id);
+							$bill_helper = new BillHelper();
+							$encounter->bill_status = $bill_helper->billStatus($encounter->encounter_id);
+							$encounter->save();
 							return view('bills.post', [
 									'patient'=>$encounter->patient,
 									'encounter'=>$encounter,

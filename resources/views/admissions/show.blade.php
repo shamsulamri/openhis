@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id_only')
 
-<h1>Options</h1>
+<h1>Admission Options</h1>
 <br>
 <h4>
 		@if (is_null($admission->arrival) && empty($admission->discharge_id))
@@ -36,7 +36,7 @@
 				<br><br>
 				<span class='fa fa-print' aria-hidden='true'></span>
 				<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $admission->patient_id }}">
-						General Label
+						Patient Label
 				</a>
 
 				<br><br>

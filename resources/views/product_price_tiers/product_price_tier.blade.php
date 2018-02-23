@@ -1,6 +1,6 @@
 
     <div class='form-group  @if ($errors->has('charge_code')) has-error @endif'>
-        <label for='charge_code' class='col-sm-2 control-label'>Code<span style='color:red;'> *</span></label>
+        <label for='charge_code' class='col-sm-2 control-label'>Tier<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::select('charge_code', $charge,null, ['class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('charge_code')) <p class="help-block">{{ $errors->first('charge_code') }}</p> @endif

@@ -4,6 +4,7 @@ namespace App;
 use Carbon\Carbon;
 use DB;
 use App\Encounter;
+use App\BillItem;
 use Log;
 
 class BillHelper 
@@ -126,5 +127,68 @@ class BillHelper
 			}
 
 	
+	}
+
+	public function billStatus($encounter_id)
+	{
+			$encounter = Encounter::find($encounter_id);
+
+			$status = 0;
+
+			if (!empty($encounter->sponsor_code)) {
+
+					$bill_claimable = False;
+					$bill_non_claimable = False;
+
+					$claimables = BillItem::where('encounter_id', '=', $encounter_id)
+									->where('bill_non_claimable', '=', 0)
+									->get();
+
+					if ($claimables->count()>0) {
+							$bill = Bill::where('encounter_id', '=', $encounter_id)
+										->where('bill_non_claimable', '=', 0)
+										->get(); 	
+							if ($bill->count()>0) {
+									$bill_claimable = True;
+							}
+					}
+					
+					$non_claimables = BillItem::where('encounter_id', '=', $encounter_id)
+									->where('bill_non_claimable', '=', 1)
+									->get();
+
+					if ($non_claimables->count()>0) {
+							$bill = Bill::where('encounter_id', '=', $encounter_id)
+										->where('bill_non_claimable', '=', 1)
+										->get(); 	
+							if ($bill->count()>0) {
+									$bill_non_claimable = True;
+							}
+					}
+
+					if ($bill_claimable && $bill_non_claimable) {
+							$status = 1;
+					} else {
+							if (!$bill_claimable && !$bill_non_claimable) {
+									$status = 4;
+							}
+							if ($bill_claimable && !$bill_non_claimable) {
+									$status = 3;
+							}
+							if (!$bill_claimable && $bill_non_claimable) {
+									$status = 2;
+							}
+					}
+
+			} else {
+					$bill = Bill::where('encounter_id', '=', $encounter_id)->get(); 	
+
+					if ($bill->count()>0) {
+							$status = 1;
+					}
+			}
+
+			return $status;
+			
 	}
 }

@@ -42,6 +42,7 @@
     <th>Name</th> 
     <th>Discharge</th> 
     <th>Physician</th> 
+    <th>Financial Status</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -76,16 +77,28 @@
 					<br>
 					<small>{{$discharge->ward_name}}</small>
 			</td>
+			<td>
+			<?php
+				$bill_status = $bill_helper->billStatus($discharge->encounter_id);
+			?>
+			@if ($bill_status==1)
+				<span class='label label-default'>Paid</span>
+			@else 
+				<span class='label label-warning'>Open</span>
+			@endif
+			</td>
 			<td align='right'>
 			<?php
 			$bill_label="Interim Bill";
 			$button_type="primary";
 			if ($discharge->discharge_id>0) {
 				$bill_label = "Final Bill";
+				/**
 				if ($discharge->id>0) {
 						$bill_label="&nbsp;&nbsp; Posted &nbsp;&nbsp;";
 						$button_type="default";
 				}
+				**/
 			}
 			?>
 			@cannot('system-administrator')

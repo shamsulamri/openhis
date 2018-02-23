@@ -26,6 +26,7 @@ use App\PatientFlag;
 use App\OrderHelper;
 use App\BedCharge;
 use App\PatientType;
+use App\BillHelper;
 
 class DischargeController extends Controller
 {
@@ -38,6 +39,7 @@ class DischargeController extends Controller
 
 	public function index()
 	{
+			/**
 			$discharges = DB::table('discharges as a')
 					->select('patient_mrn', 'b.encounter_code','patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'e.id','name','ward_name')
 					->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
@@ -50,6 +52,18 @@ class DischargeController extends Controller
 					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
 					->orderBy('e.id')
 					->orderBy('discharge_id','desc');
+			**/
+
+			$discharges = DB::table('discharges as a')
+					->select('patient_mrn', 'b.encounter_code','patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'name','ward_name')
+					->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
+					->leftJoin('ref_discharge_types as d', 'd.type_code','=','a.type_code')
+					->leftJoin('admissions as i', 'i.encounter_id', '=', 'b.encounter_id')
+					->leftJoin('users as f', 'f.id', '=', 'a.user_id')
+					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
+					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
+					->orderBy('discharge_id','desc');
 
 			$discharges = $discharges->paginate($this->paginateValue);
 
@@ -61,6 +75,7 @@ class DischargeController extends Controller
 					'dischargeHelper' => new DischargeHelper(),
 					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'encounter_code'=>null,
+					'bill_helper'=>new BillHelper(),
 			]);
 	}
 

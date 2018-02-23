@@ -42,12 +42,12 @@ class WardArrivalController extends Controller
 			$ward_arrival->encounter_id = $encounter_id;
 			$ward_code = $request->cookie('ward');
 
-			$bed = Bed::find($encounter->admission->bed_code);
+			//$bed = Bed::find($encounter->admission->bed_code);
+			$bed = $encounter->admission->bed;
 			$bed_name = $bed->bed_name;
-			if (isset($bed->room->room_name)) {
-					$bed_name += ' ('.$bed->room->room_name.')';
+			if ($bed->room) {
+					$bed_name = $bed_name.' ('.$bed->room->room_name.')';
 			}
-
 
 			$beds = Bed::select(DB::raw("concat(bed_name, ' (', room_name, ')') as bed_name, bed_code"))
 						->leftJoin('ward_rooms as b', 'b.room_code', '=', 'beds.room_code')
@@ -63,6 +63,7 @@ class WardArrivalController extends Controller
 					'patient' => $encounter->patient,	
 					'encounter' => $encounter,
 					'beds' => $beds,
+					'bed'=>$bed,
 					]);
 	}
 

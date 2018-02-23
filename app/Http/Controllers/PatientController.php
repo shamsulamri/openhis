@@ -322,4 +322,15 @@ class PatientController extends Controller
 
 		$this->destroy($duplicate_id);
 	}
+
+	public function prints($id)
+	{
+
+			$patient = Patient::find($id);
+
+			return view('patients.prints', [
+					'patient'=>$patient,
+			]);
+	}
+
 }
