@@ -60,9 +60,6 @@ class QueueController extends Controller
 			$locations = $locations->orderBy('location_name')
 							->lists('location_name', 'location_code')->prepend('','');
 			
-			$encounters = EncounterType::where('encounter_code','<>','inpatient')
-							->where('encounter_code', '<>', 'daycare');
-
 			$encounters = EncounterType::where('encounter_code', '<>', 'inpatient')
 					->where('encounter_code', '<>', 'daycare')
 					->where('encounter_code', '<>', 'mortuary')
@@ -207,6 +204,12 @@ class QueueController extends Controller
 							->orderBy('location_name')
 							->lists('location_name', 'location_code')->prepend('','');
 			
+			$encounters = EncounterType::where('encounter_code', '<>', 'inpatient')
+					->where('encounter_code', '<>', 'daycare')
+					->where('encounter_code', '<>', 'mortuary')
+					->lists('encounter_name', 'encounter_code')
+					->prepend('','');
+
 			return view('queues.index', [
 					'queues'=>$queues,
 					'locations' => $locations,
@@ -214,7 +217,7 @@ class QueueController extends Controller
 					'search' => $request->search,
 					'selectedLocation' => $selectedLocation,
 					'dojo'=>new DojoUtility(),
-					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'encounters' => $encounters,
 					'encounter_code'=>$request->encounter_code,
 				]);
 	}

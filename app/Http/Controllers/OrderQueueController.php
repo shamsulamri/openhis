@@ -66,6 +66,7 @@ class OrderQueueController extends Controller
 					'ward_name',
 					];
 
+			/**
 			$order_queues = DB::table('orders as a')
 					->select($fields)
 					->join('consultations as b', 'b.consultation_id', '=', 'a.consultation_id')
@@ -88,6 +89,7 @@ class OrderQueueController extends Controller
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id')
 					->groupBy('a.encounter_id');
+			**/
 
 			$order_queues = Order::groupBy('orders.encounter_id')
 					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
@@ -101,8 +103,8 @@ class OrderQueueController extends Controller
 					->whereNotNull('n.post_id');
 
 			if ($request->discharge) {
-					$order_queues = $order_queues->leftjoin('discharges as q', 'q.encounter_id', '=', 'orders.encounter_id')
-									->whereNotNull('discharge_id')
+					$order_queues = $order_queues->leftjoin('bills as q', 'q.encounter_id', '=', 'orders.encounter_id')
+									->whereNotNull('q.id')
 									->where('investigation_date','>=', Carbon::today());
 			} else {
 					$order_queues = $order_queues->where('investigation_date','<=', Carbon::today());

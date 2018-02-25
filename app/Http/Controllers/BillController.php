@@ -307,6 +307,10 @@ class BillController extends Controller
 						->where('encounter_id','=',$encounter->encounter_id)
 						->delete();
 
+					DB::table('payments')
+						->where('encounter_id','=',$encounter->encounter_id)
+						->delete();
+
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/bill_items/'.$encounter->encounter_id);
 			} else {

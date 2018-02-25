@@ -19,7 +19,7 @@ audio {
 @if ($is_discharge)
 <h1>Future Orders</h1>
 @else
-<h1>Order Queues</h1>
+<h1>Current Orders</h1>
 @endif
 <h3>{{ $location->location_name }}</h3>
 <br>
@@ -94,6 +94,7 @@ audio {
 			@endif
 			</td>
 			<td>
+					{{ $order->discharge_id }}
 					{{ $order->consultation->encounter->patient->patient_name }}
 					<br>
 					<small>{{ $order->consultation->encounter->patient->patient_mrn }}</small>
@@ -136,15 +137,17 @@ audio {
 	No record found.
 @endif
 
-@if (empty($encounter_code))
-<script>
-setTimeout(
-		function() 
-		{
-				window.location.href = "/order_queues?count={{ $order_queues->count() }}";
-		}
-,30000);
-</script>
+@if (!$is_discharge)
+		@if (empty($encounter_code))
+		<script>
+		setTimeout(
+				function() 
+				{
+						window.location.href = "/order_queues?count={{ $order_queues->count() }}";
+				}
+		,30000);
+		</script>
+		@endif
 @endif
 	
 @endsection

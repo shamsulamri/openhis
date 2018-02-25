@@ -31,9 +31,12 @@ Interim Bill
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Interim Bill</a> 
+<p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Simple Invoice</a> 
 @else
+<p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_invoice&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Tax Invoice</a> 
+<p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple_invoice&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Simple Invoice</a> 
 @endif
 <p class='pull-right'>&nbsp;</p>
@@ -43,21 +46,25 @@ Interim Bill
 @if (!$encounter->sponsor)
 	<br>
 @endif
-<div class="widget style1 gray-bg">
-<h4>Billing Method</h4>
-@if ($encounter->sponsor)
-	<h4>
-	<strong>
-	<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>
-	{{ $encounter->sponsor->sponsor_name }}
-	</a>
-	</strong>
-	</h4>
-	Membership Number: {{ $encounter->sponsor_id}}
-	@else
-	<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>Public</a>
+
+@if (!$billPosted)
+		<div class="widget style1 gray-bg">
+		<h4>Billing Method</h4>
+		@if ($encounter->sponsor)
+			<h4>
+			<strong>
+			<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>
+			{{ $encounter->sponsor->sponsor_name }}
+			</a>
+			</strong>
+			</h4>
+			Membership Number: {{ $encounter->sponsor_id}}
+			@else
+			<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>Public</a>
+		@endif
+		</div>
 @endif
-</div>
+
 <div class="widget style1 gray-bg">
 <table class="table table-condensed">
  <thead>
@@ -242,12 +249,7 @@ Interim Bill
 
 <h4>Payments
 @if (!$billPosted)
-	@if (empty($encounter->sponsor_code))
-		<a href='/payments/create/{{ $patient->patient_id }}/{{ $encounter_id }}' class='btn btn-primary btn-sm pull-right'>New Payment</a>
-	@endif
-	@if (!empty($encounter->sponsor_code))
 		<a href='/payments/create/{{ $patient->patient_id }}/{{ $encounter_id }}/{{ $non_claimable }}' class='btn btn-primary btn-sm pull-right'>New Payment</a>
-	@endif
 @endif
 </h4>
 @if ($payments->total()>0)
