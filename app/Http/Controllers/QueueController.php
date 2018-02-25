@@ -28,8 +28,12 @@ class QueueController extends Controller
 
 	public function index(Request $request)
 	{
-			$selectedLocation = $request->cookie('queue_location');
-			$location = Location::find($selectedLocation);
+			/**
+			if (empty($request->cookie('queue_location')) & empty(Auth::user()->location_code)) {
+					Session::flash('message', 'Location not set. Please select your location or room.');
+					return redirect('/queue_locations');
+			}
+			**/
 
 			$queues = DB::table('queues as a')
 					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.location_code', 'a.created_at', 'a.encounter_id')
@@ -42,19 +46,37 @@ class QueueController extends Controller
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 
-			$locations = Location::whereNotNull('encounter_code')
-							->where('encounter_code', $location->encounter_code)
-							->orderBy('location_name')
+			$location = null;
+			$encounter_code = null;
+			$locations = Location::whereNotNull('encounter_code');
+
+			if (!empty($request->cookie('queue_location'))) {
+					$selectedLocation = $request->cookie('queue_location');
+					$location = Location::find($selectedLocation);
+					$locations = $locations->where('encounter_code', $location->encounter_code);
+					$encounter_code = $location->encounter_code;
+			}
+
+			$locations = $locations->orderBy('location_name')
 							->lists('location_name', 'location_code')->prepend('','');
 			
+			$encounters = EncounterType::where('encounter_code','<>','inpatient')
+							->where('encounter_code', '<>', 'daycare');
+
+			$encounters = EncounterType::where('encounter_code', '<>', 'inpatient')
+					->where('encounter_code', '<>', 'daycare')
+					->where('encounter_code', '<>', 'mortuary')
+					->lists('encounter_name', 'encounter_code')
+					->prepend('','');
+
 			return view('queues.index', [
 					'queues'=>$queues,
 					'locations' => $locations,
-					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'encounters' => $encounters,
 					'location' => $location,
 					'selectedLocation' => null,
 					'dojo'=>new DojoUtility(),
-					'encounter_code'=>$location->encounter_code,
+					'encounter_code'=>$encounter_code,
 			]);
 	}
 
