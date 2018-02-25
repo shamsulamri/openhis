@@ -7,6 +7,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
+        <label for='ward_name' class='col-sm-3 control-label'>Encounter<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+            {{ Form::select('encounter_code', $encounter_type,null, ['class'=>'form-control','maxlength'=>'1']) }}
+            @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('department_code')) has-error @endif'>
         <label for='ward_name' class='col-sm-3 control-label'>Department<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -15,13 +23,6 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
-        {{ Form::label('encounter_code', 'Encounter',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::select('encounter_code', $encounter_type,null, ['class'=>'form-control','maxlength'=>'1']) }}
-            @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
-        </div>
-    </div>
     <div class='form-group  @if ($errors->has('gender_code')) has-error @endif'>
         {{ Form::label('gender_code', 'Gender',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

@@ -38,7 +38,7 @@
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
 				<h5><strong>Bed Occupancy Rate</strong></h5>	
-				<h4><strong>{{ number_format($bedHelper->bedOccupancyRate($ward->department->department_code, DojoUtility::thisYear(), DojoUtility::thisMonth()),2) }}%</strong></h4>	
+				<h4><strong>{{ $bedHelper->bedOccupancyRate($ward->department->department_code, DojoUtility::thisYear(), DojoUtility::thisMonth()) }}%</strong></h4>	
 			</div>
 		</div>
 	</div>
@@ -99,9 +99,15 @@
 					</small>	
 			</td>
 			<td>
-					<a href='admissions/{{ $admission->admission_id }}'>{{ strtoupper($admission->patient_name) }}</a>
+					@can('module-ward')
+					<a href='admissions/{{ $admission->admission_id }}'>
+					@endcan
+					{{ strtoupper($admission->patient_name) }}
+					@can('module-ward')
+					</a>
+					@endcan
 					<br>
-					<small>{{$admission->patient_mrn}}
+					<small>{{ DojoUtility::formatMRN($admission->patient_mrn) }}
 					<br>
 					</small>
 			</td>

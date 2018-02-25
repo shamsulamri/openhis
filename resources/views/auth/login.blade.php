@@ -1,8 +1,10 @@
 @extends('layouts.app3')
 
 @section('content')
+	<br>
+	<br>
 	<div align='center'>
-		<h1 class="logo-name">HMS</h1>
+		<img src='logo_400.png'>
 	</div>
 
     <div class="middle-box text-center loginscreen animated fadeInDown">

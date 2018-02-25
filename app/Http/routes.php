@@ -664,7 +664,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/patient/dependants', 'PatientController@find');
 				Route::post('/patient/search', 'PatientController@search');
 				Route::get('/patient/search', 'PatientController@search');
-				Route::get('/patients/delete/{id}', 'PatientController@delerte');
+				Route::get('/patients/delete/{id}', 'PatientController@delete');
 				Route::get('/patients/encounter/{id}', 'PatientController@hasActiveEncounter');
 				Route::post('/patient/enquiry', 'PatientController@enquiry');
 				Route::get('/patient/enquiry', 'PatientController@enquiry');

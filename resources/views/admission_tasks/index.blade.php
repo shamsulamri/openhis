@@ -112,11 +112,13 @@ $header_count=0;
 	@endif
 			<tr>
 			<td width='10'>
+				@if ($admission_task->category_code != 'drugs')
 						@if ($admission_task->order_multiple==0)
 								@if (!$admission_task->updated_by && empty($admission_task->cancel_id))
 								{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed) }}
 								@endif
 						@endif
+				@endif
 			</td>
 			@if ($group_by=='order')
 			<td width='150'>
@@ -175,17 +177,23 @@ $header_count=0;
 					</a>
 				@else
 					@if ($admission_task->order_completed==0)
-						@if (empty($admission_task->cancel_id))
-							@if ($admission_task->product_duration_use)
-							<a href="{{ URL::to('order_stop/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-danger btn-xs'>
-							Stop
-							</a>
-							@endif
-							<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
-							Cancel
-							</a>
-							<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=order_label&id={{ $admission_task->order_id }}'>
-								Print Label
+						@if ($admission_task->category_code != 'drugs')
+								@if (empty($admission_task->cancel_id))
+									@if ($admission_task->product_duration_use)
+									<a href="{{ URL::to('order_stop/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-danger btn-xs'>
+									Stop
+									</a>
+									@endif
+									<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
+									Cancel
+									</a>
+									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=order_label&id={{ $admission_task->order_id }}'>
+										Print Label
+									</a>
+								@endif
+						@else
+							<a href='{{ URL::to('medication_record/mar/'. $admission_task->encounter_id) }}' class='btn btn-primary btn-xs'>
+							&nbsp;&nbsp;&nbsp;&nbsp; MAR &nbsp;&nbsp;&nbsp;&nbsp;
 							</a>
 						@endif
 					@endif

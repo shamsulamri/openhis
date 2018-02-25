@@ -101,7 +101,10 @@ audio {
 			<td>
 					{{ $order->consultation->user->name }}<br>
 					@if ($order->admission) 
-					{{ $order->admission->bed->bed_name }}, {{ $order->admission->bed->room->room_name }}, 
+					{{ $order->admission->bed->bed_name }}
+						@if ($order->admission->bed->room)
+								, {{ $order->admission->bed->room->room_name }}, 
+						@endif
 					{{ $order->admission->bed->ward->ward_name }}
 					@else
 					{{ $order->consultation->encounter->queue->location->location_name }}

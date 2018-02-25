@@ -250,10 +250,12 @@ class DojoUtility
 
 		public static function formatMRN($mrn) 
 		{
+			$prefix = config('host.mrn_prefix');
+			$prefix_length = strlen($prefix);
 			if (is_null($mrn)) {
 					return "-";
 			} else {
-					return substr($mrn,0,2).'-'.substr($mrn,2,8).'-'.substr($mrn,10,4);
+					return substr($mrn,0,$prefix_length).'-'.substr($mrn,$prefix_length,8).'-'.substr($mrn,$prefix_length+8,4);
 			}
 		}
 
@@ -305,5 +307,6 @@ class DojoUtility
 		public static function round_five($num) {
 				    return round($num*2,-1)/2;
 		}
+
 }
 

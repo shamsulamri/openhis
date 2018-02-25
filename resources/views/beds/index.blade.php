@@ -1,8 +1,46 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Bed List</h1>
-<br>
+<h1>Bed List
+<a href='/beds/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+</h1>
+<form action='/bed/search' method='post' class='form-horizontal'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Find</div></label>
+						<div class='col-sm-9'>
+	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Ward</label>
+						<div class='col-sm-9'>
+						{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-3">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Class</label>
+						<div class='col-sm-9'>
+							{{ Form::select('class_code', $class, $class_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-1">
+					<div class='form-group'>
+						<div class='col-sm-12'>
+	<button class="btn btn-primary pull-right" type="submit" value="Submit"><span class='glyphicon glyphicon-search'></span></button>
+						</div>
+					</div>
+			</div>
+	</div>
+	<input type='hidden' name="_token" value="{{ csrf_token() }}">
+</form>
+
 <div class="row">
 	<div class="col-md-4">
 		<div class='panel panel-default'>
@@ -29,38 +67,6 @@
 		</div>
 	</div>
 </div>
-<form action='/bed/search' method='post' class='form-horizontal'>
-	<div class="row">
-			<div class="col-xs-4">
-					<div class='form-group'>
-						<label class='col-sm-3 control-label'><div align='left'>Find</div></label>
-						<div class='col-sm-9'>
-	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-4">
-					<div class='form-group'>
-						<label class='col-sm-3 control-label'>Ward</label>
-						<div class='col-sm-9'>
-						{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-4">
-					<div class='form-group'>
-						<label class='col-sm-3 control-label'>Class</label>
-						<div class='col-sm-9'>
-							{{ Form::select('class_code', $class, $class_code, ['class'=>'form-control','maxlength'=>'10']) }}
-						</div>
-					</div>
-			</div>
-	</div>
-<a href='/beds/create' class='btn btn-primary'>Create</a>
-	<button class="btn btn-primary pull-right" type="submit" value="Submit"><span class='glyphicon glyphicon-search'></span></button>
-	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-</form>
-<br>
 
 @can('system-administrator')
 <br>
@@ -69,9 +75,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Room</th>
-    <th>Bed</th>
     <th>Code</th>
+    <th>Bed</th>
+    <th>Room</th>
     <th>Class</th> 
     <th>Ward</th> 
     <th>Level</th> 
@@ -85,11 +91,7 @@
 @foreach ($beds as $bed)
 	<tr>
 			<td>
-					@if ($bed->room)
-					{{$bed->room->room_name}}
-					@else
-					-
-					@endif
+					{{$bed->bed_code}}
 			</td>
 			<td>
 					<a href='{{ URL::to('beds/'. $bed->bed_code . '/edit') }}'>
@@ -97,7 +99,11 @@
 					</a>
 			</td>
 			<td>
-					{{$bed->bed_code}}
+					@if ($bed->room)
+					{{$bed->room->room_name}}
+					@else
+					-
+					@endif
 			</td>
 			<td>
 					{{$bed->class_name}}

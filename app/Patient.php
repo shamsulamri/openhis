@@ -197,8 +197,9 @@ class Patient extends Model
 			if (!$this->attributes['patient_mrn']) {
 					return "-";
 			} else {
-					$mrn = $this->attributes['patient_mrn'];
-					return substr($mrn,0,2).'-'.substr($mrn,2,8).'-'.substr($mrn,10,4);
+					return DojoUtility::formatMRN($this->attributes['patient_mrn']);
+					//$mrn = $this->attributes['patient_mrn'];
+					//return substr($mrn,0,2).'-'.substr($mrn,2,8).'-'.substr($mrn,10,4);
 			}
 	}
 

@@ -56,6 +56,7 @@ class BillItemController extends Controller
 			";
 
 			$sql = sprintf($sql, $encounter_id);
+			Log::info($sql);
 			$beds = DB::select($sql);
 
 			foreach ($beds as $bed) {
@@ -71,7 +72,6 @@ class BillItemController extends Controller
 					$item->bill_amount_pregst = $item->bill_unit_price*$item->bill_quantity;
 					$item->bill_amount = $item->bill_unit_price*$item->bill_quantity;
 
-
 					if ($bed->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($bed->tax_rate/100)+1);
 					}
@@ -84,6 +84,10 @@ class BillItemController extends Controller
 					$merge_item->tax_code = $item->tax_code;
 					$merge_item->tax_rate = $item->tax_rate;
 					$merge_item->bill_unit_price = $item->bill_unit_price;
+					$merge_item->bill_non_claimable = 2;
+					if (!empty($encounter->sponsor_code)) {
+						$item->bill_non_claimable = 0;
+					}
 
 					$bill_items = BillItem::where('product_code',$item->product_code)
 							->where('encounter_id', '=', $encounter_id)
@@ -138,26 +142,30 @@ class BillItemController extends Controller
 			if ($encounter->type_code=='sponsored') {
 					if (!empty($tier->tier_inpatient_multiplier)) {
 							$value = $tier->tier_inpatient_multiplier*$cost;
-					} else {
+							if (!empty($tier->tier_inpatient_limit)) {
+								if ($value>$tier->tier_inpatient_limit) $value = $tier->tier_inpatient_limit;
+							}
+					} elseif (!empty($tier->tier_inpatient)) {
 							$value = $tier->tier_inpatient;
+					} else {
+							$value = $cost;
 					}
 
-					if (!empty($tier->tier_inpatient_limit)) {
-						if ($value>$tier->tier_inpatient_limit) $value = $tier->tier_inpatient_limit;
-					}
 			}
 
 			//if ($encounter->encounter_code=='outpatient' or $encounter->encounter_code=='emergency') {
 			if ($encounter->type_code=='public') {
 					if (!empty($tier->tier_outpatient_multiplier)) {
 							$value = $tier->tier_outpatient_multiplier*$cost;
+							if (!empty($tier->tier_outpatient_limit)) {
+								if ($value>$tier->tier_outpatient_limit) $value = $tier->tier_outpatient_limit;
+							}
+					} elseif (!empty($tier->tier_outpatient)) {
+							$value = $tier->tier_outpatient;
 					} else {
 							$value = $cost;
 					}
 
-					if (!empty($tier->tier_outpatient_limit)) {
-						if ($value>$tier->tier_outpatient_limit) $value = $tier->tier_outpatient_limit;
-					}
 			}
 
 			return $value;
@@ -243,6 +251,7 @@ class BillItemController extends Controller
 					}
 			}
 
+			Log::info("Bed bill calculation.....");
 			$this->bedBills($encounter_id);
 			$this->multipleOrders($encounter_id);
 			$this->forms($encounter_id);

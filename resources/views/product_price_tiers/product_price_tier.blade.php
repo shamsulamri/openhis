@@ -24,7 +24,7 @@
     </div>
 
 	<hr>
-	<h3>Outpatient</h3>
+	<h3>Public</h3>
     <div class='form-group  @if ($errors->has('tier_outpatient')) has-error @endif'>
         {{ Form::label('tier_outpatient', 'Price',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
@@ -32,6 +32,8 @@
             @if ($errors->has('tier_outpatient')) <p class="help-block">{{ $errors->first('tier_outpatient') }}</p> @endif
         </div>
     </div>
+
+	<br><br>
 
     <div class='form-group  @if ($errors->has('tier_outpatient_multiplier')) has-error @endif'>
         {{ Form::label('tier_outpatient_multiplier', 'Multiplier',['class'=>'col-sm-2 control-label']) }}
@@ -42,7 +44,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('tier_outpatient_limit')) has-error @endif'>
-        {{ Form::label('tier_outpatient_limit', 'Min Limit',['class'=>'col-sm-2 control-label']) }}
+        {{ Form::label('tier_outpatient_limit', 'Cap',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::text('tier_outpatient_limit', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('tier_outpatient_limit')) <p class="help-block">{{ $errors->first('tier_outpatient_limit') }}</p> @endif
@@ -50,7 +52,7 @@
     </div>
 
 	<hr>
-	<h3>Inpatient</h3>
+	<h3>Sponsor</h3>
 
     <div class='form-group  @if ($errors->has('tier_inpatient')) has-error @endif'>
         {{ Form::label('tier_inpatient', 'Price',['class'=>'col-sm-2 control-label']) }}
@@ -60,6 +62,7 @@
         </div>
     </div>
 
+	<br><br>
 
     <div class='form-group  @if ($errors->has('tier_inpatient_multiplier')) has-error @endif'>
         {{ Form::label('tier_inpatient_multiplier', 'Multiplier',['class'=>'col-sm-2 control-label']) }}
@@ -70,7 +73,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('tier_inpatient_limit')) has-error @endif'>
-        {{ Form::label('tier_inpatient_limit', 'Min Limit',['class'=>'col-sm-2 control-label']) }}
+        {{ Form::label('tier_inpatient_limit', 'Cap',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::text('tier_inpatient_limit', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('tier_inpatient_limit')) <p class="help-block">{{ $errors->first('tier_inpatient_limit') }}</p> @endif

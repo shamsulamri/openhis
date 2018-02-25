@@ -112,7 +112,7 @@ class EncounterController extends Controller
 										->where('ward_code', $preadmission->ward_code)
 										->where('class_Code', $preadmission->class_code)
 										->limit($preadmission->preadmissions-$preadmission_beds)
-										->orderBy('bed_code')
+										->orderBy('bed_name')
 										->get();
 
 						foreach($beds as $bed) {
@@ -125,7 +125,7 @@ class EncounterController extends Controller
 			$beds =  Bed::leftJoin('ward_rooms as b', 'b.room_code', '=', 'beds.room_code')
 							->where('status_code','=','01')
 							->orWhere('status_code','04')
-							->orderBy('room_name')
+							->orderBy('bed_name')
 							->get();
 
 			$wards = Ward::select(DB::raw("ward_name, ward_code"))

@@ -74,7 +74,7 @@ class BedHelper
 
 			Log::info($sql);
 			if (!empty($results)) {
-				return $results[0]->bor;
+				return number_format($results[0]->bor,2);
 			} else {
 				return 0;
 			}

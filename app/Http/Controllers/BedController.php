@@ -41,10 +41,13 @@ class BedController extends Controller
 					->leftjoin('wards as b', 'b.ward_code','=', 'beds.ward_code')
 					->leftjoin('ward_classes as c', 'beds.class_code','=', 'c.class_code')
 					->leftjoin('bed_statuses as d', 'd.status_code','=', 'beds.status_code')
+					->orderBy('bed_name');
+			/*
 					->orderBy('ward_name')
 					->orderBy('ward_level')
 					->orderBy('beds.class_code')
 					->orderBy('bed_code');
+			 */
 
 			if (Auth::user()->cannot('system-administrator')) {
 					if (Auth::user()->can('module-ward')) {
@@ -208,10 +211,15 @@ class BedController extends Controller
 								  ->orWhere('bed_code', 'like','%'.$request->search.'%');
 					});
 
+			$beds = $beds->orderBy('bed_name')
+						 ->paginate($this->paginateValue);
+
+			/*
 			$beds = $beds->orderBy('ward_name')
 						 ->orderBy('beds.room_code')
 						 ->orderBy('bed_code')
 						 ->paginate($this->paginateValue);
+			 */
 
 			return view('beds.index', [
 					'beds'=>$beds,
@@ -331,7 +339,7 @@ class BedController extends Controller
 			foreach($beds as $bed) {
 					$product = new Product();
 					$product->product_code = $bed->bed_code;
-					$product->product_name = $bed->bed_name.", ".$bed->room['room_name'].", ". $bed->wardClass->class_name .", ". $bed->ward->ward_name;
+					$product->product_name = $bed->bed_name." (". $bed->wardClass->class_name .") ";
 					$product->category_code = "srv";
 					$product->product_sold = 1;
 					$product->product_sale_price = $bed->wardClass->class_price;

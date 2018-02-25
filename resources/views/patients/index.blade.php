@@ -14,10 +14,6 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
-@if (Session::has('message'))
-		<div class="alert alert-info">{{ Session::get('message') }}</div>
-@else
-@endif
 @if ($patients->total()>0)
 <table class="table table-hover">
  <thead>
@@ -25,7 +21,7 @@
     <th>MRN</th> 
     <th>Name</th>
     <th>Identification</th>
-    <th>Encounter</th>
+    <th>Status</th>
     <th></th>
     <th></th>
 	@can('system-administrator')	
@@ -37,7 +33,7 @@
 @foreach ($patients as $patient)
 <?php $current_encounter = $patient->getCurrentEncounter(); ?>
 	<tr>
-			<td width='10%'>
+			<td width='150'>
 					{{ $patient->getMRN() }}
 			</td>
 			<td>
