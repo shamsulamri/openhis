@@ -48,15 +48,20 @@
 							<tr>
 									<td width='10'>
 								<?php
+									$show_checkbox = False;
 									$button_status="btn-primary";
 									if ($order_product->product_stocked==1) {
 											if ($order_product->product_on_hand>0) {
-								?>			
-										{{ Form::checkbox($order_product->product_code, 1, null) }}
-								<?php
+													$show_checkbox = True;
 											}
 									}
+									if ($order_product->product_stocked==0) {
+										$show_checkbox = True;
+									}
 								?>
+									@if ($show_checkbox)
+										{{ Form::checkbox($order_product->product_code, 1, null) }}
+									@endif
 									</td>
 									<td>
 										{{ ucfirst(strtoupper($order_product->product_name)) }}

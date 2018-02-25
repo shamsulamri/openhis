@@ -38,13 +38,18 @@ class PDFController extends Controller
 			$patient = $encounter->patient;
 
 			$pdf = new Pdf('forms/'.$form_name.'.pdf');
+			$consultant = "";
+			if ($admission) {
+				$consultant = $admission->consultant->name;
+			}
+
 			$pdf->fillForm([
 					        'name'=>$patient->patient_name,
 					        'identification'=>$patient->patient_new_ic,
 							'today'=>DojoUtility::today(),
 							'age'=>strtoupper($patient->patientAgeNumber()),
 							'gender'=>strtoupper($patient->gender->gender_name),
-							'consultant'=>strtoupper($admission->consultant->name),
+							'consultant'=>strtoupper($consultant),
 							'address'=>strtoupper($patient->getCurrentAddress()),
 						])
 						->needAppearances();
