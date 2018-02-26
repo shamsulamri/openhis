@@ -78,6 +78,7 @@
 @endif
 
 @can('module-discharge')
+		<br>
 		<a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
 								<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography
 		</a>
