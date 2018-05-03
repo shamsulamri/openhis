@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.id')
+@include('patients.id_only')
 <h1>Log Ward Arrival</h1>
 <br>
 

@@ -79,12 +79,24 @@
 
 
     <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
-        {{ Form::label('Description', 'Description',['class'=>'col-sm-3 control-label']) }}
+        {{ Form::label('Description', 'Description / Instruction',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::textarea('order_description', $order->order_description, ['class'=>'form-control input-sm','placeholder'=>'','rows'=>'3']) }}
             @if ($errors->has('order_description')) <p class="help-block">{{ $errors->first('order_description') }}</p> @endif
         </div>
     </div>
+
+	<hr>
+
+	@if (Auth::user()->consultant)
+    <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
+        {{ Form::label('Report', 'Report',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::textarea('order_report', $order->order_report, ['class'=>'form-control input-sm','placeholder'=>'','rows'=>'3']) }}
+            @if ($errors->has('order_report')) <p class="help-block">{{ $errors->first('order_report') }}</p> @endif
+        </div>
+    </div>
+	@endif
 
 	<div class="row">
 			<div class="col-xs-6">
@@ -93,6 +105,15 @@
 						<div class='col-sm-8'>
 							{{ Form::checkbox('order_is_discharge', '1', $order->order_is_discharge) }}
 							@if ($errors->has('order_is_discharge')) <p class="help-block">{{ $errors->first('order_is_discharge') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('order_completed')) has-error @endif'>
+						{{ Form::label('Order Completed', 'Order Completed',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('order_completed', '1', $order->order_completed) }}
+							@if ($errors->has('order_completed')) <p class="help-block">{{ $errors->first('order_completed') }}</p> @endif
 						</div>
 					</div>
 			</div>

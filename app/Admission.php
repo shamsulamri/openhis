@@ -34,6 +34,7 @@ class Admission extends Model
 				'nbm_datetime',
 				'period_code',
 				'diet_textures',
+				'block_room',
 				'nbm_status'];
 	
     protected $guarded = ['admission_id'];

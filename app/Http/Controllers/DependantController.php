@@ -150,8 +150,12 @@ class DependantController extends Controller
 	
 	public function search(Request $request)
 	{
+			$dependants = PatientDependant::where('patient_id', '=', $request->patient_id)
+							->pluck('dependant_id');
+
 			$patients = DB::table('patients')
 					->where('patient_id','<>',$request->patient_id)
+					->whereNotIn('patient_id', $dependants)
 					->where(function ($query) use ($request) {
 							$query->where('patient_name','like','%'.$request->search.'%')
 								  ->orWhere('patient_id', 'like','%'.$request->search.'%');
@@ -179,6 +183,15 @@ class DependantController extends Controller
 
 	public function add($dependant_id, $patient_id)
 	{
+
+			$count = PatientDependant::where('dependant_id', '=', $dependant_id)
+							->where('patient_id', '=', $patient_id)
+							->count();
+
+			if ($count>0) {
+					Session::flash('message', 'Record already exist.');
+					return redirect('/dependant/search?patient_id='.$patient_id);
+			}
 
 			$patientDependant = new PatientDependant();
 			$patientDependant->patient_id = $patient_id;

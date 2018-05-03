@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Future Order List
+<h1>Future Orders
 </h1>
 <form action='/future/search' method='post'>
 	<div class='input-group'>
@@ -42,7 +42,7 @@
 					<small>{{$future->product->category->category_name}}<small>
 			</td>
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_investigations/'. $future->orderInvestigation->id.'/edit_date') }}'>Edit</a>
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('order_investigations/'. $future->orderInvestigation->id.'/edit_date') }}'>Edit</a>
 			</td>
 	</tr>
 @endforeach

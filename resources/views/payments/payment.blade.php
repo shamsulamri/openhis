@@ -1,16 +1,4 @@
 	<br>
-    <div class='form-group  @if ($errors->has('payment_outstanding')) has-error @endif'>
-        <label class='col-sm-2 control-label'>Balance</label>
-        <div class='col-sm-10'>
-	<?php $balance = $billHelper->paymentOutstanding($patient->patient_id, $encounter_id, $non_claimable); ?>
-	@if ($balance>0)
-			{{ Form::label('pay', number_format($balance,2), ['class'=>'form-control']) }}
-	@else
-			{{ Form::label('pay', '-', ['class'=>'form-control']) }}
-	@endif
-        </div>
-    </div>
-
 	@if ($encounter_id>0)
     <div class='form-group  @if ($errors->has('encounter_id')) has-error @endif'>
         <label class='col-sm-2 control-label'>Encounter ID</label>
@@ -26,6 +14,19 @@
         </div>
     </div>
 	@endif
+
+    <div class='form-group  @if ($errors->has('payment_outstanding')) has-error @endif'>
+        <label class='col-sm-2 control-label'>Balance</label>
+        <div class='col-sm-10'>
+	<?php $balance = $billHelper->paymentOutstanding($patient->patient_id, $encounter_id, $non_claimable); ?>
+	@if ($balance>0)
+			{{ Form::label('pay', number_format($balance,2), ['class'=>'form-control']) }}
+	@else
+			{{ Form::label('pay', '-', ['class'=>'form-control']) }}
+	@endif
+        </div>
+    </div>
+
 
     <div class='form-group  @if ($errors->has('payment_amount')) has-error @endif'>
         <label for='payment_amount' class='col-sm-2 control-label'>Amount<span style='color:red;'> *</span></label>

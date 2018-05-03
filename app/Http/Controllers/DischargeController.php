@@ -27,6 +27,7 @@ use App\OrderHelper;
 use App\BedCharge;
 use App\PatientType;
 use App\BillHelper;
+use App\Room;
 
 class DischargeController extends Controller
 {
@@ -169,6 +170,7 @@ class DischargeController extends Controller
 									->whereNull('bed_stop')
 									->first();
 							$bed_charge->bed_stop = date('d/m/Y');
+							$bed_charge->block_room = $encounter->admission->block_room;
 							$bed_charge->save();
 					}
 

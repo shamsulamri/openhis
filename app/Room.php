@@ -37,5 +37,9 @@ class Room extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function beds() {
+			return $this->hasMany('App\Bed', 'room_code');
+	}
+
 	
 }

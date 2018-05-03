@@ -208,6 +208,7 @@ Interim Bill
 </tbody>
 </table>
 </div>
+@endif
 <!-- GST Summary -->
 <div class="widget style1 gray-bg">
 		<div class='row'>
@@ -238,7 +239,6 @@ Interim Bill
 		</table>
 			</div>
 		</div>
-@endif
 @if (count($gst_total)==0)
 	<h4>No GST detail</h4>
 	<br>

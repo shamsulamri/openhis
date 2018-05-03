@@ -13,6 +13,7 @@ use Session;
 use Gate;
 use App\DojoUtility;
 use Carbon\Carbon;
+use App\OrderInvestigation;
 
 class FutureController extends Controller
 {
@@ -27,9 +28,8 @@ class FutureController extends Controller
 	{
 			$futures = Order::orderBy('orders.order_id')
 					->leftjoin('order_investigations as a', 'orders.order_id','=','a.order_id')
-					->where('investigation_date', '>=', Carbon::today())
 					->where('order_completed', '=', 0)
-					->where('order_is_discharge','=',1)
+					->where('order_is_future','=',1)
 					->orderBy('investigation_date');
 
 			$futures = $futures->paginate($this->paginateValue);
@@ -44,9 +44,8 @@ class FutureController extends Controller
 					->leftjoin('order_investigations as a', 'orders.order_id','=','a.order_id')
 					->leftjoin('encounters as b', 'orders.encounter_id','=','b.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id','=','b.patient_id')
-					->where('investigation_date', '>=', Carbon::today())
 					->where('order_completed', '=', 0)
-					->where('order_is_discharge','=',1)
+					->where('order_is_future','=',1)
 					->where(function ($query) use ($request) {
 							$query->where('patient_name','like','%'.$request->search.'%')
 									->orWhere('patient_mrn', 'like','%'.$request->search.'%')

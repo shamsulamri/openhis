@@ -45,7 +45,6 @@
 			<span class="glyphicon glyphicon-menu-hamburger"></span>
 		  </button>
 		  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-			<li><a href="{{ URL::to('medication_record/mar') }}">Medication Administration Record</a></li>
 			@if ($consultation->encounter->encounter_code=='inpatient')
 			<li><a href="{{ URL::to('diet') }}">Diet</a></li>
 			@endif
@@ -59,6 +58,8 @@
 			@if ($consultation->encounter->encounter_code=='inpatient')
 			<li><a href="{{ URL::to('admission/classification') }}">Patient Classification</a></li>
 			@endif
+			<li role="separator" class="divider"></li>
+			<li><a href="{{ URL::to('medication_record/mar') }}">Medication Administration Record</a></li>
 		  </ul>
 		</div>
 </div>

@@ -115,7 +115,7 @@ class OrderTaskController extends Controller
 					->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->join('patients as d', 'd.patient_id','=', 'c.patient_id')
 					->join('products as e','e.product_code','=','a.product_code')
-					->join('order_investigations as l','l.order_id','=','a.order_id')
+					->leftjoin('order_investigations as l','l.order_id','=','a.order_id')
 					->leftjoin('order_cancellations as f', 'f.order_id', '=', 'a.order_id')
 					->leftjoin('product_categories as g', 'g.category_code', '=', 'e.category_code')
 					->leftjoin('queues as h', 'h.encounter_id', '=', 'c.encounter_id')
@@ -133,8 +133,15 @@ class OrderTaskController extends Controller
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
 					->orderBy('order_is_discharge','desc')
-					->orderBy('a.created_at', 'desc')
-					->paginate($this->paginateValue);
+					->orderBy('a.created_at', 'desc');
+
+			if ($request->future) {
+				$order_tasks = $order_tasks->where('order_is_future','=', 1);
+			} else {
+				$order_tasks = $order_tasks->where('order_is_future','=', 0);
+			}
+
+			$order_tasks = $order_tasks->paginate($this->paginateValue);
 			
 			//->where('investigation_date','<', Carbon::now())
 			

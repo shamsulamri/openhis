@@ -54,7 +54,8 @@ class PatientController extends Controller
 
 			//Amqp::pushMessage('lab','This is a new message');
 
-			$patients = Patient::orderBy('patient_id','desc')
+			$patients = Patient::whereNotNull('patient_mrn')
+					->orderBy('patient_id','desc')
 					->paginate($this->paginateValue);
 			/**
 					->whereNotNull('patient_mrn')
@@ -62,6 +63,7 @@ class PatientController extends Controller
 			**/
 			return view('patients.index', [
 					'patients'=>$patients,
+					'all_records'=>null,
 			]);
 	}
 
@@ -194,20 +196,43 @@ class PatientController extends Controller
 	{
 			$search = $request->search;
 			$search = str_replace('-','',$search);
-			$patients = Patient::where('patient_name','like','%'.$search.'%')
+			$search = trim($search);
+
+			/*
+			$patients = Patient::whereNotNull('patient_mrn')
+					->orWhere('patient_name','like','%'.$search.'%')
 					->orWhere('patient_mrn', 'like','%'.$search.'%')
 					->orWhere('patient_new_ic', 'like','%'.$search.'%')
 					->orWhere('patient_old_ic', 'like','%'.$search.'%')
 					->orWhere('patient_birth_certificate', 'like','%'.$search.'%')
 					->orWhere('patient_passport', 'like','%'.$search.'%')
 					->orWhere('patient_police_id', 'like','%'.$search.'%')
-					->orWhere('patient_military_id', 'like','%'.$search.'%')
-					->orderBy('patient_name')
+					->orWhere('patient_military_id', 'like','%'.$search.'%');
+			 */
+
+			if ($request->all_records == 1) {
+				$patients = Patient::orderBy('patient_name');
+			} else {
+				$patients = Patient::whereNotNull('patient_mrn');
+			}
+
+			$patients = $patients->where(function ($query) use ($request,$search) {
+							$query->orWhere('patient_name','like','%'.$search.'%')
+									->orWhere('patient_mrn', 'like','%'.$search.'%')
+									->orWhere('patient_new_ic', 'like','%'.$search.'%')
+									->orWhere('patient_old_ic', 'like','%'.$search.'%')
+									->orWhere('patient_birth_certificate', 'like','%'.$search.'%')
+									->orWhere('patient_passport', 'like','%'.$search.'%')
+									->orWhere('patient_police_id', 'like','%'.$search.'%')
+									->orWhere('patient_military_id', 'like','%'.$search.'%');
+					});
+			$patients = $patients->orderBy('patient_name')
 					->paginate($this->paginateValue);
 
 			return view('patients.index', [
 					'patients'=>$patients,
 					'search'=>$search,
+					'all_records'=>$request->all_records,
 					]);
 	}
 

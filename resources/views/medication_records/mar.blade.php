@@ -8,7 +8,7 @@
 @include('patients.id_only')
 @endif
 <h1>
-Medication Administration Record
+Medication Administration Records
 </h1>
 <br>
 <table class='table table-condensed'>
@@ -34,7 +34,7 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 			</h4>
 			@if ($drug->cancel_id) </strike> @endif
 			@if (!$drug->cancel_id)
-			<a class='btn btn-danger btn-xs' href='{{ URL::to('/order_cancellations/create/'. $drug->order_id.'?drug=true') }}'>Stop</a>
+			<a class='btn btn-danger btn-xs' href='{{ URL::to('/order_cancellations/create/'. $drug->order_id.'?drug=1') }}'>Stop</a>
 			@endif
 		</td>
 		<td>
@@ -70,14 +70,18 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 				?>
 				<td width='10' align='center'>
 			@if ($mars->contains('medication_slot',$date_slot)) 
+				@if (empty($drug->cancel_id))
 				<a href='/medication_record/datetime/{{ $mars[$date_slot]->medication_id }}'>
-				{{ DojoUtility::timeReadFormat($mars[$date_slot]->medication_datetime) }}
-				<br>by 
-				{{ $mars[$date_slot]->name }}
+				@endif
+						{{ DojoUtility::timeReadFormat($mars[$date_slot]->medication_datetime) }}
+						<br>by 
+						{{ $mars[$date_slot]->name }}
+				@if (empty($drug->cancel_id))
 				</a>
+				@endif
 
 				<!-- Verification -->
-				@if (!$verifications->contains('medication_slot',$date_slot)) 
+				@if (!$verifications->contains('medication_slot',$date_slot) && empty($drug->cancel_id)) 
 						@if ($mars[$date_slot]->username != Auth::user()->username)
 						<br>
 						<br>
@@ -115,4 +119,7 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 @endforeach
 </tbody>
 </table>
+<!--
+							<a href='/medication_record/record/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
+-->
 @endsection

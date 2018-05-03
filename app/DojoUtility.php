@@ -250,6 +250,8 @@ class DojoUtility
 
 		public static function formatMRN($mrn) 
 		{
+			return $mrn;
+			/**
 			$prefix = config('host.mrn_prefix');
 			$prefix_length = strlen($prefix);
 			if (is_null($mrn)) {
@@ -257,6 +259,7 @@ class DojoUtility
 			} else {
 					return substr($mrn,0,$prefix_length).'-'.substr($mrn,$prefix_length,8).'-'.substr($mrn,$prefix_length+8,4);
 			}
+			**/
 		}
 
 		public static function dateDiff($date_1 , $date_2 , $differenceFormat = '%a' )

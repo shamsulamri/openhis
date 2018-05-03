@@ -93,10 +93,16 @@ class AdmissionTaskController extends Controller
 			
 			//return $admission_tasks->toSql();
 			$admission_tasks = $admission_tasks->paginate($this->paginateValue);
+				
+			$categories = ProductCategory::select('category_name', 'category_code')
+							->whereIn('category_code',$admission_tasks->pluck('category_code'))
+							->lists('category_name', 'category_code')
+							->sortBy('category_name')
+							->prepend('','');
 
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,
-					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'categories' => $categories, //ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
@@ -228,6 +234,12 @@ class AdmissionTaskController extends Controller
 					->where('a.ward_code','=', $ward_code)
 					->whereNull('cancel_id');
 
+			$categories = ProductCategory::select('category_name', 'category_code')
+							->whereIn('category_code',$admission_tasks->pluck('category_code'))
+							->lists('category_name', 'category_code')
+							->sortBy('category_name')
+							->prepend('','');
+
 			if ($request->categories) {
 				$admission_tasks = $admission_tasks->where('d.category_code','like', '%'.$request->categories.'%');
 			}
@@ -264,11 +276,12 @@ class AdmissionTaskController extends Controller
 					break;
 			}
 
+
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'categories' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'categories' => $categories,
 					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'category' => $request->categories,
 					'group_by' => $request->group_by,

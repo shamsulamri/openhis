@@ -97,6 +97,13 @@
         </div>
     </div>
 
+    <div class='form-group'>
+        {{ Form::label('Block', 'Block Room',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+			{{ Form::checkbox('block_room', '1', null, ['id'=>'block_room','onclick'=>'setBlockRoom()']) }}
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('bed_code')) has-error @endif'>
         <label for='bed_code' class='col-sm-3 control-label'>Bed<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
@@ -172,6 +179,10 @@
 		encounterChanged(encounter);
 	}
 
+	function setBlockRoom() {
+			classChanged();
+	}
+
 	function checkPatientType() {
 		type = document.getElementById('type_code').value;
 		if (type == 'public') {
@@ -198,6 +209,7 @@
 			document.getElementById('ward_code').disabled = value;
 			document.getElementById('bed_code').disabled = value;
 			document.getElementById('class_code').disabled = value;
+			document.getElementById('block_room').disabled = value;
 	}
 
 	checkPatientType();
@@ -215,6 +227,7 @@
 			document.getElementById('admission_code').value = '';
 			document.getElementById('referral_code').value = '';
 			document.getElementById('user_id').value = '';
+			document.getElementById('block_room').checked = false;
 
 			disableInputs(true);
 			triage = document.getElementById('triage');
@@ -269,6 +282,7 @@
 					document.getElementById('ward_code').disabled = false;
 					document.getElementById('bed_code').disabled = false;
 					document.getElementById('class_code').disabled = false;
+					document.getElementById('block_room').disabled = false;
 					wardChanged()
 					removeItemList(document.getElementById('ward_code'),'daycare');
 					removeItemList(document.getElementById('ward_code'),'mortuary');
@@ -339,16 +353,32 @@
 			classCode = document.getElementById('class_code').value;
 			beds = [
 				@foreach($beds as $bed)
-					'{{ $bed->bed_code }}:{{ $bed->class_code }}:{{ $bed->ward_code }}:{{ $bed->getBedNameStatus() }}',
+					'{{ $bed->bed_code }}:{{ $bed->class_code }}:{{ $bed->ward_code }}:{{ $bed->bed_name }}:{{ $bed->room_code }}',
 				@endforeach
 			]
 
+			empty_rooms = [
+			@foreach ($empty_rooms as $room)
+				'{{ $room->room_code }}',
+			@endforeach
+			]
 			var bedSelect = document.getElementById('bed_code');
+
+			var isBlock = document.getElementById('block_room').checked;
+			if (isBlock) {
+
+			}
 			clearList(bedSelect);
 			for (var i=0;i<beds.length;i++) {
 					values = beds[i].split(":")
 					if (wardCode==values[2] && classCode==values[1]) {
-							addList(bedSelect,values[0], values[3]);
+							if (!isBlock) {
+									addList(bedSelect,values[0], values[3]);
+							} else {
+									if (empty_rooms.indexOf(values[4])>0) {
+										addList(bedSelect,values[0], values[3]);
+									}
+							}
 					}
 			}
 	}
@@ -423,4 +453,5 @@
 	@if (!empty($appointment))
 			document.getElementById('location_code').value = '{{ $encounter->location_code }}';
 	@endif
+
 </script>

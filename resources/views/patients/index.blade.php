@@ -11,6 +11,10 @@
 			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
 		</span>
 	</div>
+	<br>
+	<div class='input-group'>
+			{{ Form::checkbox('all_records', '1', $all_records,['class'=>'i-checks'])  }} Include dependants
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <br>
@@ -45,7 +49,15 @@
 					{{ $patient->patient_new_ic }}
 			</td>
 			<td>
+					@if (count($patient->getDischargeOrders())>0)
+						<span class='label label-warning'>
+							Discharge Orders
+						</span>
+					@endif
 					@if (!empty($current_encounter))
+						@if (count($patient->getDischargeOrders())>0)
+							&nbsp;
+						@endif
 						<span class='label label-primary'>
 							{{ $current_encounter }}
 						</span>

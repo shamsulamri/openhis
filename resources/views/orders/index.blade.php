@@ -67,7 +67,11 @@ $category='';
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>
 			@else
+					@if (Auth::user()->consultant)
+						<a href='{{ URL::to('orders/'. $order->order_id . '/edit') }}'>
+					@else
 						<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>
+					@endif
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>
 			@endif
@@ -82,6 +86,11 @@ $category='';
 				</div>
 			</td>
 			<td align='right'>
+				@if (Auth::user()->consultant && $order->post_id==0 && $order->order_completed==1)
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>
+							<span class='glyphicon glyphicon-minus'></span>
+					</a>
+				@endif
 				@if ($order->order_completed==0) 
 					@if ($order->post_id>0 && $order->order_is_discharge==0)
 						@if (!isset($order->cancel_id))

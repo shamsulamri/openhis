@@ -198,8 +198,6 @@ class Patient extends Model
 					return "-";
 			} else {
 					return DojoUtility::formatMRN($this->attributes['patient_mrn']);
-					//$mrn = $this->attributes['patient_mrn'];
-					//return substr($mrn,0,2).'-'.substr($mrn,2,8).'-'.substr($mrn,10,4);
 			}
 	}
 
@@ -259,7 +257,9 @@ class Patient extends Model
 
 	public function alert()
 	{
-			return $this->hasMany('App\MedicalAlert', 'patient_id', 'patient_id');
+			$alerts =  $this->hasMany('App\MedicalAlert', 'patient_id', 'patient_id');
+			$alerts = $alerts->where('alert_public','=',1);
+			return $alerts;
 	}
 
 	public function outstandingBill()
@@ -337,10 +337,10 @@ class Patient extends Model
 							$encounter_active=False;
 					}
 					if ($encounter->discharge) {
-							if ($encounter->bill) {
+							//if ($encounter->bill) {
 									Log::info($encounter->bill);
 									$encounter_active=False;
-							}
+							//}
 					}
 			} else {
 				$encounter_active=False;
@@ -374,6 +374,24 @@ class Patient extends Model
 			} else {
 				return null;
 			}
+	}
+
+	public function getDischargeOrders()
+   	{
+			$discharge_orders = Order::select('orders.order_id')
+									->leftjoin('order_cancellations as b','orders.order_id','=', 'b.order_id')
+									->leftjoin('encounters as c','c.encounter_id','=', 'orders.encounter_id')
+									->leftjoin('patients as d','d.patient_id','=', 'c.patient_id')
+									->leftjoin('order_investigations as e', 'orders.order_id','=','e.order_id')
+									->where('investigation_date', '>=', Carbon::today())
+									->where('order_completed','=',0)
+									->where('order_is_discharge','=',1)
+									->where('c.patient_id','=', $this->patient_id)
+									->whereNull('cancel_id')
+									->get();
+
+			return $discharge_orders;
+
 	}
 
 

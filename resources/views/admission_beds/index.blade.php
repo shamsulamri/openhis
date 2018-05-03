@@ -2,7 +2,7 @@
 
 @section('content')
 @if ($admission != NULL)
-	@include('patients.id')
+	@include('patients.id_only')
 @endif 	
 
 @if ($flag==1)
@@ -85,9 +85,9 @@
 					<td align='right'>
 							@if (empty($admission_bed->patient_name))
 									@if (!empty($book_id))
-										<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/move/'.$admission->admission_id.'/'. $admission_bed->bed_code.'?book_id='.$book_id) }}'>
+										<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/confirm/'.$admission->admission_id.'/'. $admission_bed->bed_code.'?book_id='.$book_id) }}'>
 									@else
-										<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/move/'.$admission->admission_id.'/'. $admission_bed->bed_code) }}'>
+										<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/confirm/'.$admission->admission_id.'/'. $admission_bed->bed_code) }}'>
 									@endif
 									@if (empty($admission->bed->bed_code))
 											Admit

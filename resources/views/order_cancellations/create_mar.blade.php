@@ -2,13 +2,7 @@
 
 @section('content')
 
-@if ($is_drug)
-		@if ($consultation)
-		@include('consultations.panel')
-		@else
-		@include('patients.id_only')
-		@endif
-@endif
+@include('patients.id_only')
 <h1>Order Cancellation</h1>
 <br>
 

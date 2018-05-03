@@ -172,7 +172,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<!--
 						<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Inpatient Tasks<span></a></li>
 						-->
-						<li><a href="{{ url('/order_queues?discharge=true') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Future Orders<span></a></li>
+						<li><a href="{{ url('/order_queues?future=true') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Future Orders<span></a></li>
 
 						<!-- Patient Module -->
 						@endcan
@@ -183,7 +183,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Patient List' href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
 						<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 						<li><a title='Future Orders' href="{{ url('/futures') }}"><i class="fa fa-question-circle"></i><span class='nav-label'>Future Orders</span></a></li>
-						<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-user-md"></i><span class='nav-label'>Queues</span></a></li>
+						<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-users"></i><span class='nav-label'>Queues</span></a></li>
 						<li><a title='Admissions' href="{{ url('/admissions') }}"><i class="fa fa-bed"></i><span class='nav-label'>Admissions</span></a></li>
 						<li><a title='Preadmissions' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="glyphicon glyphicon-time"></i><span class='nav-label'>Preadmissions</span></a></li>
 						<li><a title='Discharges' href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
@@ -195,7 +195,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<!-- Consultation Module -->
 						@can('module-consultation')
 								@if (!Auth::user()->consultant)
-								<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-user-md"></i><span class='nav-label'>Queues</span></a></li>
+								<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-users"></i><span class='nav-label'>Queues</span></a></li>
 								@endif
 								@cannot('module-ward')
 						<div class="dropdown profile-element"> 

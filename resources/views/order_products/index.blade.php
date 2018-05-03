@@ -121,7 +121,7 @@
 		</form>
 		@if ($order_products->total()>10)
 		<br>
-		{{ $order_products->appends(['search'=>$search, 'set_code'=>$set_value])->render() }}
+		{{ $order_products->appends(['search'=>$search, 'set_code'=>$set_value, 'categories'=>$category_code])->render() }}
 		@endif
 		<br>
 		@if ($order_products->total()>0)

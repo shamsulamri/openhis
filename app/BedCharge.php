@@ -14,6 +14,7 @@ class BedCharge extends Model
 				'encounter_id',
 				'bed_code',
 				'bed_start',
+				'block_room',
 				'bed_stop'];
 	
     protected $guarded = ['charge_id'];
@@ -49,6 +50,10 @@ class BedCharge extends Model
 		if (DojoUtility::validateDate($value)==true) {
 			$this->attributes['bed_stop'] = DojoUtility::dateWriteFormat($value);
 		}
+	}
+
+	public function bed() {
+			return $this->belongsTo('App\Bed', 'bed_code');
 	}
 
 }

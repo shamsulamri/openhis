@@ -7,7 +7,7 @@ audio {
 	display:none;
 }
 </style>
-@if (!empty($count)) 
+@if (!$count>0) 
 		@if ($order_queues->count()>$count)
 				<audio controls autoplay>
 						<source src="Positive.ogg" type="audio/mpeg">
@@ -15,11 +15,10 @@ audio {
 				</audio> 
 		@endif
 @endif
-
-@if ($is_discharge)
+@if ($is_future)
 <h1>Future Orders</h1>
 @else
-<h1>Current Orders</h1>
+<h1>Order Queues</h1>
 @endif
 <h3>{{ $location->location_name }}</h3>
 <br>
@@ -49,7 +48,7 @@ audio {
 	{{ Form::select('locations', $locations, $location, ['class'=>'form-control','maxlength'=>'10']) }}
 	-->
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-	<input type='hidden' name="discharge" value="{{ $is_discharge }}">
+	<input type='hidden' name="future" value="{{ $is_future }}">
 </form>
 
 <br>
@@ -87,7 +86,7 @@ audio {
 				<span>
 			</td>
 			<td>
-			@if ($is_discharge)
+			@if ($is_future)
 					{{ (DojoUtility::dateLongFormat($order->investigation_date)) }}
 			@else
 					{{ date('d F, H:i', strtotime($order->created_at)) }}
@@ -113,14 +112,13 @@ audio {
 
 			</td>
 			<td align='right'>
+			@if ($is_future)
+					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code .'?future=true' }}' class='btn btn-primary btn-xs'>
+					@else
 					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}' class='btn btn-primary btn-xs'>
+			@endif
 						Open	
-					</a>
-					@can('system-administrator')
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a>
-					@endcan
-			</td>
-	</tr>
+					</a> @can('system-administrator') <a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a> @endcan </td> </tr>
 @endforeach
 @endif
 </tbody>
@@ -137,7 +135,7 @@ audio {
 	No record found.
 @endif
 
-@if (!$is_discharge)
+@if (!$is_future)
 		@if (empty($encounter_code))
 		<script>
 		setTimeout(

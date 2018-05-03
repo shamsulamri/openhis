@@ -24,6 +24,7 @@ use App\ProductPriceTier;
 use App\ProductCategory;
 use App\BillDiscount;
 use App\BedMovement;
+use App\Bed;
 
 class BillItemController extends Controller
 {
@@ -47,7 +48,7 @@ class BillItemController extends Controller
 	public function bedBills($encounter_id) {
 			$encounter = Encounter::find($encounter_id);
 			$sql = "
-				select bed_code, datediff(bed_start, bed_stop) as los, product_code, c.tax_code, tax_rate, product_sale_price
+				select bed_code, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, product_code, c.tax_code, tax_rate, product_sale_price, block_room
 				from bed_charges as a
 				left join products as b on (a.bed_code = product_code)
 				left join tax_codes as c on (c.tax_code = b.tax_code)
@@ -56,21 +57,43 @@ class BillItemController extends Controller
 			";
 
 			$sql = sprintf($sql, $encounter_id);
-			Log::info($sql);
 			$beds = DB::select($sql);
 
 			foreach ($beds as $bed) {
+
 					$bed_los = $bed->los;
+					$bed_unit = 1;
+					if (empty($bed_los)) {
+							$bed_los = $bed->los2;
+					}
 					if ($bed_los<=0) $bed_los=1;
+
+					$block_room = 0;
+					if (empty($bed->block_room)) {
+							$block_room = $encounter->admission->block_room;
+					} else {
+							$block_room = $bed->block_room;
+					}
+
+					if ($block_room == 1) {
+							$bed_charge = Bed::find($bed->bed_code);
+							$bed_unit = $bed_charge->room->beds->count();
+							if ($bed_unit == 0) $bed_unit = 1;
+					}
+
 					$item = new BillItem();
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $bed->product_code;
 					$item->tax_code = $bed->tax_code;
 					$item->tax_rate = $bed->tax_rate;
-					$item->bill_quantity = $bed_los;
+					$item->bill_quantity = $bed_los*$bed_unit;
 					$item->bill_unit_price = $bed->product_sale_price;
 					$item->bill_amount_pregst = $item->bill_unit_price*$item->bill_quantity;
 					$item->bill_amount = $item->bill_unit_price*$item->bill_quantity;
+					$item->bill_non_claimable = 2;
+					if (!empty($encounter->sponsor_code)) {
+						$item->bill_non_claimable = 0;
+					}
 
 					if ($bed->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($bed->tax_rate/100)+1);
@@ -78,6 +101,7 @@ class BillItemController extends Controller
 
 					$item->save();
 
+					/*** Merge ***/
 					$merge_item = new BillItem();
 					$merge_item->encounter_id = $item->encounter_id;
 					$merge_item->product_code = $item->product_code;
@@ -208,7 +232,6 @@ class BillItemController extends Controller
 			}
 
 			$orders = DB::select($sql);
-			Log::info($sql);
 
 			foreach ($orders as $order) {
 					$item = new BillItem();
@@ -252,7 +275,7 @@ class BillItemController extends Controller
 			}
 
 			Log::info("Bed bill calculation.....");
-			$this->bedBills($encounter_id);
+			//$this->bedBills($encounter_id);
 			$this->multipleOrders($encounter_id);
 			$this->forms($encounter_id);
 			$this->compileConsultation($encounter_id);
@@ -452,11 +475,14 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 
 			if ($bills->count()==0) {
 				if (!empty($encounter->sponsor_code)) {
-					$bills=$this->compileBill($id, True);
-					$bills=$this->compileBill($id, False);
+					$this->compileBill($id, True);
+					$this->compileBill($id, False);
 				} else {
-					$bills=$this->compileBill($id);
+					$this->compileBill($id);
 				}
+
+				/** Compile bed bills **/
+				$this->bedBills($id);
 
 				$bills = DB::table('bill_items as a')
 					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed', 'product_non_claimable','category_name','b.category_code','name')
@@ -551,6 +577,7 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 
 			$incomplete_orders = Order::where('encounter_id','=',$id)
 									->where('order_completed','=',0)
+									->where('order_is_discharge','=',0)
 									->leftjoin('order_cancellations as b','orders.order_id','=', 'b.order_id')
 									->whereNull('cancel_id')
 									->count();

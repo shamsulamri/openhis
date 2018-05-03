@@ -465,7 +465,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/admission_bed/search', 'AdmissionBedController@search');
 		Route::get('/admission_bed/search', 'AdmissionBedController@search');
 		Route::get('/admission_beds/delete/{id}', 'AdmissionBedController@delete');
-		Route::get('/admission_beds/move/{admission_id}/{bed_code}', 'AdmissionBedController@move');
+		Route::post('/admission_beds/move/{admission_id}/{bed_code}', 'AdmissionBedController@move');
+		Route::get('/admission_beds/confirm/{admission_id}/{bed_code}', 'AdmissionBedController@confirm');
 
 		Route::resource('bed_bookings', 'BedBookingController',['except'=>['create']]);
 		Route::get('/bed_bookings/create/{patient_id}/{admission_id?}', 'BedBookingController@create');
@@ -518,6 +519,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/admission/progress/{patient_id}', 'AdmissionController@progress');
 		Route::post('/admission/diet_enquiry', 'AdmissionController@diet_enquiry');
 		Route::get('/admission/diet_enquiry', 'AdmissionController@diet_enquiry');
+		Route::get('/admission/consultation/{encounter_id}', 'AdmissionController@consultation');
 
 		Route::group(['middleware' => 'diet_middleware'], function () {
 

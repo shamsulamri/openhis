@@ -38,6 +38,33 @@ class BedHelper
 	
 	}
 	
+	public function getEmptyRooms() {
+			$sql = "
+				select count(*) as allocations, a.room_code, occupants
+				from beds as a
+				left join (
+				select count(*) as occupants, room_code
+				from admissions as a
+				left join encounters as b on (a.encounter_id = b.encounter_id)
+				left join discharges as c on (c.encounter_id = b.encounter_id)
+				left join ward_discharges as d on (d.discharge_id = c.discharge_id)
+				left join beds as e on (e.bed_code = a.bed_code)
+				where d.discharge_id is null
+				group by room_code
+				) as b on (b.room_code = a.room_code) 
+				where encounter_code = 'inpatient'
+				and occupants is null
+				group by a.room_code, occupants";
+			
+			$results = DB::select($sql);
+
+			if (!empty($results)) {
+				return $results;
+			} else {
+				return null;
+			}
+	}
+
 	public function bedOccupancyRate($department=null, $year=null, $month=null)
 	{
 

@@ -305,6 +305,25 @@ class AdmissionBedController extends Controller
 					]);
 	}
 
+	public function confirm(Request $request,$admission_id, $bed_code)
+	{
+			$book_id = NULL;
+			$admission = Admission::find($admission_id);
+			$bed = Bed::find($bed_code);
+
+			if (!empty($request->book_id)) {
+				$book_id = $request->book_id;
+			}
+			return view('admission_beds.confirm', [
+					'admission' => $admission, 
+					'bed_code' => $bed_code,
+					'current_bed'=>$this->getCurrentBed($admission->encounter_id),
+					'patient'=>$admission->encounter->patient,
+					'bed'=>$bed,
+					'book_id' => $book_id,
+			]);
+	}
+
 	public function move(Request $request,$admission_id, $bed_code)
 	{
 			$admission = Admission::find($admission_id);
@@ -383,6 +402,7 @@ class AdmissionBedController extends Controller
 						$new_bed_charge->encounter_id = $admission->encounter_id;
 						$new_bed_charge->bed_code = $new_bed->bed_code;
 						$new_bed_charge->bed_start = date('d/m/Y');
+						$new_bed_charge->block_room = $admission->block_room;
 						$new_bed_charge->save();
 			}
 

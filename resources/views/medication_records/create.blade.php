@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+@include('patients.id_only')
 <h1>
-New Medication Record
+Medication Administration Record
 </h1>
 @include('common.errors')
 <br>

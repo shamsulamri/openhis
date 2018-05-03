@@ -154,7 +154,7 @@ class PatientListController extends Controller
 	
 					})
 					->leftJoin('ref_genders as k', 'k.gender_code', '=', 'c.gender_code')
-					->where('a.location_code',$request->cookie('queue_location'))
+					->where('a.location_code',$location->location_code)
 					->whereNull('discharge_id')
 					->whereNull('a.deleted_at')
 					->orWhere('a.location_code','pool')

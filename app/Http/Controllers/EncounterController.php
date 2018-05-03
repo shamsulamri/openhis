@@ -32,6 +32,7 @@ use App\BedBooking;
 use App\WardClass;
 use App\Appointment;
 use App\BedCharge;
+use App\BedHelper;
 		
 class EncounterController extends Controller
 {
@@ -151,6 +152,8 @@ class EncounterController extends Controller
 				$encounter->location_code = $user->location_code;
 			}
 
+			$bed_helper = new BedHelper();
+			$empty_rooms = $bed_helper->getEmptyRooms();
 			return view('encounters.create', [
 					'encounter' => $encounter,
 					'patient' => $patient,
@@ -172,6 +175,7 @@ class EncounterController extends Controller
 					'ward_classes'=>$ward_classes,
 					'bed_booking'=>$bed_booking,
 					'appointment'=>$appointment,
+					'empty_rooms'=>$empty_rooms,
 				]);
 	}
 
@@ -211,8 +215,8 @@ class EncounterController extends Controller
 
 					if (!empty($valid)) {
 							return redirect('/encounters/create?patient_id='.$request->patient_id)
-									->withErrors($valid)
-									->withInput();
+								->withErrors($valid)
+								->withInput();
 					} 
 			}
 
@@ -259,6 +263,7 @@ class EncounterController extends Controller
 							$admission->diet_code='normal';
 							$admission->class_code='class_normal';
 							$admission->encounter_id = $encounter->encounter_id;
+							$admission->block_room = $request->block_room;
 							//$admission->team_code = $request->team_code;
 							$admission->save();
 							Log::info($admission);

@@ -32,11 +32,19 @@
 			</div>
 			&nbsp;
 </div>
-@if (count($patient->alert)>0)
+@if (count($patient->getDischargeOrders()) > 0) 
+	<div class='alert alert-warning' role='alert'>
+		<strong>Warning !</strong> Incomplete discharge orders
+	</div>
+@endif
+<?php
+	$alerts = $patient->alert;
+?>
+@if (count($alerts)>0)
 	<br>
 	<div class='alert alert-danger' role='alert'>
 	<p>
-	@foreach ($patient->alert as $alert)
+	@foreach ($alerts as $alert)
 		@if ($alert->alert_public==1) 
 		- {{ $alert->alert_description }}
 		@if ($alert != end($patient->alert))
@@ -47,13 +55,10 @@
 	</p>
 	</div>
 @else
-	<!--
 	<br>
-	-->
 @endif
 @endif
 @if (Gate::check('module-patient'))
-<br>
 <a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
 						<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography
 </a>

@@ -2,11 +2,10 @@
 
 @section('content')
 @if ($consultation)
-@include('consultations.panel')
+	@include('consultations.panel')
 @else
-@include('patients.id')
+	@include('patients.id')
 @endif
-
 <div class="row">
   <div class="col-md-6">
 		<h1>Form List</h1>

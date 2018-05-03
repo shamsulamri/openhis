@@ -164,6 +164,12 @@ class OrderInvestigationController extends Controller
 			$order->fill($request->input());
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
 			$order->order_completed = $request->order_completed ?: 0;
+			if ($order_investigation->investigation_date>date('Y/m/d')) {
+					$order->order_is_future = 1;
+			} else {
+					$order->order_is_future = 0;
+			}
+
 			$order->save();
 			
 			$valid = $order_investigation->validate($request->all(), $request->_method);	

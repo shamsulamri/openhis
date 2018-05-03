@@ -447,11 +447,23 @@ class AdmissionController extends Controller
 	public function destroy($id)
 	{	
 			$admission = Admission::find($id);
+			$bed = Bed::find($admission->bed_code);
+			$bed->status_code = '01';
+			$bed->save();
 			BedMovement::where('admission_id', $admission->admission_id)->delete();
 			Admission::find($id)->delete();
 			Encounter::find($admission->encounter_id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/admissions');
+	}
+	
+	public function consultation($id) 
+	{
+			$admission = Admission::find($id);
+			return view('admissions.consultation', [
+					'admission'=>$admission,
+					'patient'=>$admission->encounter->patient,
+			]);
 	}
 	
 	public function search(Request $request)

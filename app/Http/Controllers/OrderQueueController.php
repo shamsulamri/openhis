@@ -102,12 +102,19 @@ class OrderQueueController extends Controller
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id');
 
-			if ($request->discharge) {
+			if ($request->future) {
+					/**
 					$order_queues = $order_queues->leftjoin('bills as q', 'q.encounter_id', '=', 'orders.encounter_id')
 									->whereNotNull('q.id')
 									->where('investigation_date','>=', Carbon::today());
+					**/
+					$order_queues = $order_queues->where('order_is_future','=', 1);
 			} else {
-					$order_queues = $order_queues->where('investigation_date','<=', Carbon::today());
+					/*
+					$order_queues = $order_queues->where('investigation_date','<=', Carbon::today())
+							->orWhereNull('investigation_date');
+					 */
+					$order_queues = $order_queues->where('order_is_future','=', 0);
 			}
 
 			/*
@@ -123,8 +130,6 @@ class OrderQueueController extends Controller
 					->groupBy('orders.encounter_id');
 			 */
 					
-
-
 			$order_queues = $order_queues->paginate($this->paginateValue);
 
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
@@ -132,8 +137,11 @@ class OrderQueueController extends Controller
 			
 			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed', 'unreported'=>'Unreported');
 
-			$is_discharge = null;
-			if (!empty($request->discharge)) $is_discharge=true;
+			$is_future = null;
+			if (!empty($request->future)) $is_future=true;
+
+			$count = $request->count ?: 0;
+
 
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
@@ -142,8 +150,8 @@ class OrderQueueController extends Controller
 					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'location'=>$location,
 					'encounter_code'=>null,
-					'is_discharge'=>$is_discharge,
-					'count'=>$request->count,
+					'is_future'=>$is_future,
+					'count'=>$count,
 					'status'=>$status,
 					'status_code'=>null,
 					]);
@@ -339,7 +347,6 @@ class OrderQueueController extends Controller
 					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
 					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
-					->where('investigation_date','<=', Carbon::today())
 					->where('orders.location_code','=',$location_code)
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id');
@@ -364,7 +371,7 @@ class OrderQueueController extends Controller
 									->whereNotNull('discharge_id')
 									->where('investigation_date','>=', Carbon::today());
 			} else {
-					$order_queues = $order_queues->where('investigation_date','<=', Carbon::today());
+					//$order_queues = $order_queues->where('investigation_date','<=', Carbon::today());
 			}
 
 			$order_queues = $order_queues->paginate($this->paginateValue);
@@ -373,6 +380,9 @@ class OrderQueueController extends Controller
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
 			//return $locations;
 			
+			$is_future = null;
+			if (!empty($request->future)) $is_future=true;
+
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,
@@ -385,6 +395,7 @@ class OrderQueueController extends Controller
 					'encounter_code'=>$request->encounter_code,
 					'status'=>$status,
 					'status_code'=>$request->status_code,
+					'is_future'=>$is_future,
 					]);
 	}
 }

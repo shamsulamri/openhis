@@ -24,7 +24,7 @@
 								</a>
 								<br><br>
 						
-								<span class='glyphicon glyphicon-resize-horizontal' aria-hidden='true'></span>
+								<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
 								<a href='{{ URL::to('admission_beds?flag=1&admission_id='. $admission->admission_id) }}' title='Bed movement'>
 									Bed Movement
 								</a>
@@ -54,12 +54,11 @@
 						@endif
 				@endif
 
+				<br><br>
 				@if (empty($consultation))
-				<br><br>
 				<span class='fa fa-stethoscope' aria-hidden='true'></span>
-				<a href='{{ URL::to('consultations/create?encounter_id='. $admission->encounter_id) }}'>Start Consultation</a>
+				<a href='{{ URL::to('admission/consultation/'. $admission->admission_id) }}'>Start Consultation</a>
 				@else
-				<br><br>
 				<span class='fa fa-stethoscope' aria-hidden='true'></span>
 				<a href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'>Resume Consultation</a>
 				@endif

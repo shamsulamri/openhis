@@ -16,6 +16,7 @@ use App\DojoUtility;
 use Auth;
 use App\OrderHelper;
 use App\Encounter;
+use App\Order;
 
 class MedicationRecordController extends Controller
 {
@@ -45,7 +46,7 @@ class MedicationRecordController extends Controller
 					]);
 	}
 
-	public function store(Request $request) 
+	public function store2(Request $request) 
 	{
 			$medication_record = new MedicationRecord();
 			$valid = $medication_record->validate($request->all(), $request->_method);
@@ -63,6 +64,26 @@ class MedicationRecordController extends Controller
 			}
 	}
 
+	public function store(Request $request) 
+	{
+			$index = 0;
+			if (!empty($request->index)) $index = $request->index;
+
+			$mar = new MedicationRecord();
+			$mar->order_id = $request->order_id;
+			$mar->medication_index = $index;
+			$mar->medication_slot = $request->order_id.'-'.$index.'-'.$request->slot;
+			$mar->user_id = Auth::user()->id;
+
+			$datetime = $request->medication_date.' '.$request->medication_time;
+			$datetime = DojoUtility::datetimeWriteFormat($datetime);
+			$mar->medication_datetime = $datetime;
+			$mar->save();
+
+			return redirect('/medication_record/mar/'.$mar->order->encounter_id);
+	}
+
+
 	public function edit($id) 
 	{
 			$medication_record = MedicationRecord::findOrFail($id);
@@ -77,6 +98,7 @@ class MedicationRecordController extends Controller
 			return view('medication_records.datetime', [
 					'medication_record'=>$medication_record,
 					'patient'=>$medication_record->order->consultation->encounter->patient,
+					'order'=>$medication_record->order,
 			]);
 	}
 
@@ -241,6 +263,26 @@ class MedicationRecordController extends Controller
 	}
 
 	public function marRecord($order_id, $index, $slot)
+	{
+			$order = Order::find($order_id);
+			$mar = new MedicationRecord();
+			$mar->order_id = $order_id;
+			$mar->medication_index = $index;
+			$mar->medication_slot = $order_id.'-'.$index.'-'.$slot;
+			$mar->user_id = Auth::user()->id;
+			$now = DojoUtility::now();
+			$mar->medication_datetime = DojoUtility::dateTimeWriteFormat($now);
+
+			return view('medication_records.create', [
+					'medication_record'=>$mar,
+					'patient'=>$order->consultation->encounter->patient,
+					'order'=>$order,
+					'index'=>$index,
+					'slot'=>$slot,
+			]);
+	}
+
+	public function marRecord2($order_id, $index, $slot)
 	{
 			$mar = new MedicationRecord();
 			$mar->order_id = $order_id;

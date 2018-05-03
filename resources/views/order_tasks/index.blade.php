@@ -20,7 +20,7 @@
 			</div>
 			<div align="right" class="col-xs-6">
 					<a class="btn btn-primary pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
- Drug Label</a>
+ Label</a>
 			</div>
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">

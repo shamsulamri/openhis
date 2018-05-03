@@ -231,7 +231,7 @@ class OrderHelper
 					$order->save();
 			}
 
-			if ($product->order_form=3) {
+			if ($product->order_form==3) {
 					$order_investigation = new OrderInvestigation();
 					$order_investigation->order_id = $order->order_id;
 					$order_investigation->investigation_date = date('d/m/Y');

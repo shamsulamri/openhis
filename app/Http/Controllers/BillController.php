@@ -55,6 +55,9 @@ class BillController extends Controller
 					$bill = new Bill($request->all());
 					$bill->user_id = Auth::user()->id;
 					$bill->id = $request->id;
+					if (empty($bill->bill_total)) {
+							$bill->bill_total = 0;
+					}
 
 
 					$encounter = Encounter::find($bill->encounter_id);

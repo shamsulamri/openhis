@@ -41,9 +41,9 @@
 </tbody>
 </table>
 @if (isset($search)) 
-	{{ $patients->appends(['search'=>$search])->render() }}
+	{{ $patients->appends(['search'=>$search,'patient_id'=>$patient_id])->render() }}
 	@else
-	{{ $patients->render() }}
+	{{ $patients->appends(['patient_id'=>$patient_id])->render() }}
 @endif
 <br>
 @if ($patients->total()>0)

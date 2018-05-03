@@ -52,6 +52,7 @@ class OrderCancellationController extends Controller
 					'tab' => 'order',			
 					'consultOption' => 'consultation',			
 					'is_drug'=>$is_drug,
+					'encounter' => $order_cancellation->order->consultation->encounter,
 					]);
 	}
 
@@ -75,12 +76,13 @@ class OrderCancellationController extends Controller
 					Session::flash('message', 'Record successfully created.');
 					//return redirect('/orders/'.$order_cancellation->order->consultation_id);
 					if (!empty($request->is_drug)) {
-						return redirect('/medication_record/mar');
+						$order = Order::find($request->order_id);
+						return redirect('/medication_record/mar/'.$order->encounter_id);
 					} else {
 						return redirect('/orders');
 					}
 			} else {
-					return redirect('/order_cancellations/create/'.$request->order_id)
+					return redirect('/order_cancellations/create/'.$request->order_id.'?drug='.$request->is_drug)
 							->withErrors($valid)
 							->withInput();
 			}
