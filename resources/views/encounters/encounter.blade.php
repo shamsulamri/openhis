@@ -132,7 +132,7 @@
         <div class='col-sm-9'>
             {{ Form::select('user_id', $consultants,null, ['id'=>'user_id','class'=>'form-control']) }}
             @if ($errors->has('user_id')) <p class="help-block">{{ $errors->first('user_id') }}</p> @endif
-			<small>Not required for death cases</small>
+			<small>Not required for observation and mortality cases</small>
         </div>
     </div>
 
@@ -286,6 +286,7 @@
 					wardChanged()
 					removeItemList(document.getElementById('ward_code'),'daycare');
 					removeItemList(document.getElementById('ward_code'),'mortuary');
+					removeItemList(document.getElementById('ward_code'),'observation');
 			}
 
 			if (encounterCode=='emergency') {
@@ -296,11 +297,13 @@
 						document.getElementById('location_code').disabled = false;
 					} else {
 						if (document.getElementById('triage').value == 'yellow') {
+									var wardSelect = document.getElementById('ward_code');
+									addList(wardSelect,'observation', 'Observation');
 									show(document.querySelectorAll('.target'));
 									if (document.getElementById('triage').value != '') {
 										document.getElementById('ward_code').value = 'observation';
 										document.getElementById('bed_code').disabled = false;
-										document.getElementById('ward_code').disabled = false;
+										document.getElementById('ward_code').disabled = true;
 										wardChanged();
 									}
 								checkPatientType();
@@ -329,7 +332,7 @@
 
 			classes = [
 				@foreach($ward_classes as $class)
-					'{{ $class->ward_code }}:{{ $class->class_code }}: {{ $class->wardClass->class_name }}',
+					'{{ $class->ward_code }}:{{ $class->class_code }}:{{ $class->wardClass->class_name }}',
 				@endforeach
 			]
 

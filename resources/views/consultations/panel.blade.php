@@ -81,13 +81,13 @@
     <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-	<li><a href="/consultations/close">End Consultation</a></li>
+	<li><a href="/consultations/close">Suspend</a></li>
 	@if (empty($consultation->encounter->discharge->discharge_id))
-			@if (Auth::user()->consultant)
+			@can('discharge_patient')
 			<li role="separator" class="divider"></li>
 			<li><a href="/medical_certificates/create">Medical Certificate</a></li>
-			<li><a href="/discharges/create" role="button">Clinical Discharge</a></li>
-			@endif
+			<li><a href="/discharges/create" role="button">Discharge</a></li>
+			@endcan
 	@endif
   </ul>
 </div>

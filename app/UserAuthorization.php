@@ -26,6 +26,7 @@ class UserAuthorization extends Model
 				'product_information_edit',
 				'product_purchase_edit',
 				'product_sale_edit',
+				'discharge_patient',
 				'loan_function',
 				'store_code',
 				'location_code',

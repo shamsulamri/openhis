@@ -97,6 +97,10 @@ class AuthServiceProvider extends ServiceProvider
 				return $user->authorization->product_sale_edit;
 		});
 
+		$gate->define('discharge_patient', function ($user) {
+				return $user->authorization->discharge_patient;
+		});
+
 		$gate->define('appointment_function', function ($user) {
 				return $user->authorization->appointment_function;
 		});

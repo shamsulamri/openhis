@@ -16,6 +16,7 @@ use Auth;
 use App\DojoUtility;
 use App\User;
 use App\EncounterType;
+use App\QueueLocation;
 
 class QueueController extends Controller
 {
@@ -28,6 +29,19 @@ class QueueController extends Controller
 
 	public function index(Request $request)
 	{
+			if (empty($request->cookie('queue_location'))) {
+					//return "Location not set";
+					return redirect('queue_locations');
+			}
+
+			if (!empty(Auth::user()->authorization->location_code)) {
+				$location_code = Auth::user()->authorization->location_code;
+			} else {
+				$location_code = $request->cookie('queue_location');
+			}
+
+			$location = QueueLocation::find($location_code);
+
 			/**
 			if (empty($request->cookie('queue_location')) & empty(Auth::user()->location_code)) {
 					Session::flash('message', 'Location not set. Please select your location or room.');
@@ -41,18 +55,16 @@ class QueueController extends Controller
 					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->where('a.location_code','like','%'.$location->location_code.'%')
 					->whereNull('discharge_id')
 					->whereNull('a.deleted_at')
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 
-			$location = null;
 			$encounter_code = null;
 			$locations = Location::whereNotNull('encounter_code');
 
 			if (!empty($request->cookie('queue_location'))) {
-					$selectedLocation = $request->cookie('queue_location');
-					$location = Location::find($selectedLocation);
 					$locations = $locations->where('encounter_code', $location->encounter_code);
 					$encounter_code = $location->encounter_code;
 			}
@@ -69,7 +81,7 @@ class QueueController extends Controller
 					'locations' => $locations,
 					'encounters' => $encounters,
 					'location' => $location,
-					'selectedLocation' => null,
+					'selectedLocation' => $location->location_code,
 					'dojo'=>new DojoUtility(),
 					'encounter_code'=>$encounter_code,
 			]);

@@ -88,7 +88,6 @@
 
 	<hr>
 
-	@if (Auth::user()->consultant)
     <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
         {{ Form::label('Report', 'Report',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -96,7 +95,6 @@
             @if ($errors->has('order_report')) <p class="help-block">{{ $errors->first('order_report') }}</p> @endif
         </div>
     </div>
-	@endif
 
 	<div class="row">
 			<div class="col-xs-6">

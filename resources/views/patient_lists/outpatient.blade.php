@@ -48,14 +48,14 @@
 							@if (empty($list->discharge_id))
 								@if ($list->consultation_status==1)
 									@if ($user_id == $list->user_id)
-											<a class='btn btn-warning btn-xs' href='{{ URL::to('consultations/'.$list->consultation_id.'/edit') }}'>Resume</a>
+											<a class='btn btn-warning' href='{{ URL::to('consultations/'.$list->consultation_id.'/edit') }}'>Resume</a>
 									@endif
 								@else
-									<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $list->encounter_id) }}'>&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;</a>
+									<a class='btn btn-default' href='{{ URL::to('consultations/create?encounter_id='. $list->encounter_id) }}'>&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;</a>
 								@endif
 							@else
 								@if ($user_id == $list->user_id)
-										<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'.$list->consultation_id.'/edit') }}'>&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;</a>
+										<a class='btn btn-default' href='{{ URL::to('consultations/'.$list->consultation_id.'/edit') }}'>&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;</a>
 								@endif
 							@endif
 					</td>

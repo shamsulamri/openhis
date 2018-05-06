@@ -35,6 +35,13 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('discharge_patient')) has-error @endif'>
+        <div class='col-sm-offset-5'>
+            {{ Form::checkbox('discharge_patient', '1') }} <label>Discharge</label>
+            @if ($errors->has('discharge_patient')) <p class="help-block">{{ $errors->first('discharge_patient') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('module_order')) has-error @endif'>
         <label for='module_order' class='col-sm-4 control-label'>Order Module</label>
         <div class='col-sm-8'>

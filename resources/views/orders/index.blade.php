@@ -67,7 +67,7 @@ $category='';
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>
 			@else
-					@if (Auth::user()->consultant)
+					@if ($order->order_completed==1 && $order->post_id==0)
 						<a href='{{ URL::to('orders/'. $order->order_id . '/edit') }}'>
 					@else
 						<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>

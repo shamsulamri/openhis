@@ -70,6 +70,26 @@
     </div>
 	-->
 
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('order_is_discharge')) has-error @endif'>
+						{{ Form::label('Discharge Order', 'Discharge Order',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('order_is_discharge', '1', $order->order_is_discharge) }}
+							@if ($errors->has('order_is_discharge')) <p class="help-block">{{ $errors->first('order_is_discharge') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('order_completed')) has-error @endif'>
+						{{ Form::label('Order Completed', 'Order Completed',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('order_completed', '1', $order->order_completed) }}
+							@if ($errors->has('order_completed')) <p class="help-block">{{ $errors->first('order_completed') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
             {{ Form::hidden('consultation_id', null) }}
             {{ Form::hidden('product_code', null) }}
             {{ Form::hidden('order_single', $order_single) }}

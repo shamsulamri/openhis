@@ -92,6 +92,8 @@ class AppointmentController extends Controller
 					$appointment->appointment_datetime = $appointment_datetime;
 					$appointment->save();
 					Session::flash('message', 'Record successfully created.');
+
+					return redirect('/appointments');
 					if (Auth::user()->can('module-ward')) {
 						return redirect('/ward_discharges/create/'.$appointment->admission_id);
 					} else {

@@ -13,8 +13,11 @@
 
 		@if ($admission->arrival) 
 				@if (!empty($admission->encounter->discharge))
-					<span class='fa fa-sign-out' aria-hidden='true'></span>
-					<a href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}'>Ward Discharge</a>
+						<span class='fa fa-sign-out' aria-hidden='true'></span>
+						<a href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}'>Ward Discharge</a>
+						<br><br>
+						<span class='fa fa-calendar' aria-hidden='true'></span>
+						<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>Appointment</a>
 				@else
 						@if (!is_null($admission->arrival)) 
 							@if ($admission->bed->ward->ward_code != 'mortuary')

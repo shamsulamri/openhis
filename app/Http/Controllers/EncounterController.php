@@ -133,7 +133,7 @@ class EncounterController extends Controller
 							->orderBy('ward_name')
 							->lists('ward_name', 'ward_code');
 
-			$ward_classes = Bed::select(DB::raw('beds.ward_code, class_name, beds.class_code, count(*)'))
+			$ward_classes = Bed::select(DB::raw('beds.ward_code, class_name, beds.class_code,beds.encounter_code,  count(*)'))
 					->leftJoin('ward_classes as b', 'b.class_code', '=', 'beds.class_code')
 					->groupBy(['ward_code','b.class_code'])
 					->get();
