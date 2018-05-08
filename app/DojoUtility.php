@@ -304,7 +304,7 @@ class DojoUtility
 						$newvalue = ($newFloat+0.1);
 				}
 				 
-				return $newvalue;
+				return number_format($newvalue,2);
 		}
 
 		public static function round_five($num) {

@@ -83,7 +83,6 @@
 @endif
 
 @can('module-discharge')
-		<br>
 		<a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
 								<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography
 		</a>
@@ -127,10 +126,8 @@
 </a>
 @endcan
 
-@If (!$patient->hasActiveEncounter())
-<a class='btn btn-primary pull-right' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
+<a class='btn btn-primary pull-right @If ($patient->hasActiveEncounter()) disabled @endif' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
 <span class='fa fa-stethoscope' aria-hidden='true'></span>
 <br>
 Encounter
 </a>
-@endif

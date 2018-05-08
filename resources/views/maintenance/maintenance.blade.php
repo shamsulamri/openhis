@@ -79,6 +79,7 @@
 				<a href="{{ url('/drugs') }}">Drugs</a><br>
 				<a href="{{ url('/drug_prescriptions') }}">Drug Prescriptions</a><br>
 				<a href="{{ url('/sets') }}">Order Sets</a><br>
+				<a href="{{ url('/order_routes') }}">Order Routes</a><br>
 				<a href="{{ url('/loans') }}">Loans</a><br>
 				<a href="{{ url('/product_authorizations') }}">Product Authorizations</a><br>
 				<a href="{{ url('/store_authorizations') }}">Store Authorizations</a><br>

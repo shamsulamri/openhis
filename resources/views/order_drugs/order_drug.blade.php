@@ -122,20 +122,32 @@
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('order_include_stat')) has-error @endif'>
-						{{ Form::label('order_include_stat', 'Include STAT',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-							{{ Form::checkbox('order_include_stat', '1', $order->order_include_stat) }}
-							@if ($errors->has('order_include_stat')) <p class="help-block">{{ $errors->first('order_include_stat') }}</p> @endif
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('order_is_discharge')) has-error @endif'>
 						{{ Form::label('order_is_discharge', 'Discharge Order',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
 							{{ Form::checkbox('order_is_discharge', '1', $order->order_is_discharge) }}
 							@if ($errors->has('order_is_discharge')) <p class="help-block">{{ $errors->first('order_is_discharge') }}</p> @endif
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('order_completed')) has-error @endif'>
+						{{ Form::label('Order Completed', 'Order Completed',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('order_completed', '1', $order->order_completed) }}
+							@if ($errors->has('order_completed')) <p class="help-block">{{ $errors->first('order_completed') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('order_include_stat')) has-error @endif'>
+						{{ Form::label('order_include_stat', 'Include STAT',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('order_include_stat', '1', $order->order_include_stat) }}
+							@if ($errors->has('order_include_stat')) <p class="help-block">{{ $errors->first('order_include_stat') }}</p> @endif
 						</div>
 					</div>
 			</div>

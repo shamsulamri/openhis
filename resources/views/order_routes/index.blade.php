@@ -19,8 +19,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>encounter_code</th>
-    <th>route_id</th> 
+    <th>Redirect</th>
+    <th>From</th> 
+    <th>To</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -29,11 +30,14 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('order_routes/'. $order_route->route_id . '/edit') }}'>
-						{{$order_route->encounter_code}}
+						{{ $order_route->category->category_name }}
 					</a>
 			</td>
 			<td>
-					{{$order_route->route_id}}
+						{{$order_route->encounter->encounter_name}}
+			</td>
+			<td>
+						{{ $order_route->location->location_name }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_routes/delete/'. $order_route->route_id) }}'>Delete</a>

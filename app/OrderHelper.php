@@ -188,10 +188,8 @@ class OrderHelper
 				$order->order_sale_price = $product->product_sale_price;
 			}	
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
-			//$order->location_code = $product->location_code;
 			$location_code = (new self)->getTargetLocation($product);
 			$order->location_code = $location_code;
-			//$order->store_code = (new self)->getStoreAffected($product);
 			$order->store_code = (new self)->getTargetStore($product);
 
 			if ($admission) {

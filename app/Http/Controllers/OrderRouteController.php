@@ -10,9 +10,9 @@ use App\OrderRoute;
 use Log;
 use DB;
 use Session;
-use App\Encounter;
-use App\Category;
-use App\Store;
+use App\EncounterType;
+use App\ProductCategory;
+use App\QueueLocation;
 
 
 class OrderRouteController extends Controller
@@ -26,8 +26,7 @@ class OrderRouteController extends Controller
 
 	public function index()
 	{
-			$order_routes = DB::table('order_routes')
-					->orderBy('encounter_code')
+			$order_routes = OrderRoute::orderBy('encounter_code')
 					->paginate($this->paginateValue);
 			return view('order_routes.index', [
 					'order_routes'=>$order_routes
@@ -39,9 +38,9 @@ class OrderRouteController extends Controller
 			$order_route = new OrderRoute();
 			return view('order_routes.create', [
 					'order_route' => $order_route,
-					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
-					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'encounter' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'category' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					]);
 	}
 
@@ -68,9 +67,9 @@ class OrderRouteController extends Controller
 			$order_route = OrderRoute::findOrFail($id);
 			return view('order_routes.edit', [
 					'order_route'=>$order_route,
-					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
-					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'encounter' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'category' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					]);
 	}
 
@@ -89,9 +88,9 @@ class OrderRouteController extends Controller
 			} else {
 					return view('order_routes.edit', [
 							'order_route'=>$order_route,
-					'encounter' => Encounter::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
-					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'encounter' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'category' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

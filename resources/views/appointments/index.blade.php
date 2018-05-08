@@ -2,9 +2,18 @@
 
 @section('content')
 <h1>Appointment List</h1>
+@if (Auth::user()->service_id)
+<br>
+<h3>{{ Auth::user()->appointment->service_name }}</h3>
+@endif
 <form action='/appointment/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+
+	@if (!Auth::user()->service_id)
 	{{ Form::select('services', $services, $service, ['class'=>'form-control']) }}
+	@else
+	{{ Form::hidden('services', Auth::user()->service_id) }}
+	@endif
 	<div class="input-group date">
 		<input data-mask="99/99/9999" name="date_start" id="date_start" type="text" class="form-control" value="{{ $date_start }}">
 		<span class="input-group-addon"><i class="fa fa-calendar"></i></span>

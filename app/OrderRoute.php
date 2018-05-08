@@ -37,5 +37,18 @@ class OrderRoute extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function category()
+	{
+			return $this->belongsTo('App\ProductCategory','category_code');
+	}
 	
+	public function encounter()
+	{
+			return $this->belongsTo('App\EncounterType','encounter_code');
+	}
+
+	public function location()
+	{
+			return $this->belongsTo('App\QueueLocation','location_code');
+	}
 }

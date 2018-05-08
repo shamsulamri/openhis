@@ -337,10 +337,9 @@ class Patient extends Model
 							$encounter_active=False;
 					}
 					if ($encounter->discharge) {
-							//if ($encounter->bill) {
-									Log::info($encounter->bill);
+							if ($encounter->bill) {
 									$encounter_active=False;
-							//}
+							}
 					}
 			} else {
 				$encounter_active=False;
