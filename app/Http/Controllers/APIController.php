@@ -75,8 +75,9 @@ class APIController extends Controller
 	public function appointment($mrn) 
 	{
 			$result = DB::table('appointments as a')
-						->select('appointment_datetime as datetime')
+						->select('appointment_datetime as datetime', 'service_name as service')
 						->leftJoin('patients as b', 'a.patient_id', '=', 'b.patient_id')
+						->leftJoin('appointment_services as c', 'c.service_id', '=', 'a.service_id')
 						->where('patient_mrn', '=', $mrn)
 						->where('appointment_datetime', '>=', Carbon::today())
 						->get();
@@ -88,7 +89,7 @@ class APIController extends Controller
 	public function discharge($mrn) 
 	{
 			$result = DB::table('discharges as a')
-						->select('discharge_date as date', 'encounter_name as encounter', 'discharge_diagnosis as diagnosis')
+						->select('discharge_date as date', 'encounter_name as encounter')
 						->leftJoin('encounters as b', 'b.encounter_id', '=', 'a.encounter_id')
 						->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 						->leftJoin('ref_encounter_types as d', 'd.encounter_code', '=', 'b.encounter_code')

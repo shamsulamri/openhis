@@ -598,11 +598,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 		});
 
+				Route::get('/order_queues/setup', 'OrderQueueController@setting');
+				Route::post('/order_queues/setup', 'OrderQueueController@setup');
 				Route::resource('order_queues', 'OrderQueueController');
 				Route::get('/order_queues/id/{id}', 'OrderQueueController@searchById');
 				Route::post('/order_queue/search', 'OrderQueueController@search');
 				Route::get('/order_queue/search', 'OrderQueueController@search');
 				Route::get('/order_queues/delete/{id}', 'OrderQueueController@delete');
+
 		Route::group(['middleware' => 'support'], function () {
 
 		});

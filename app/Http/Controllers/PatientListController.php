@@ -159,11 +159,8 @@ class PatientListController extends Controller
 					->whereNull('a.deleted_at')
 					->orWhere('a.location_code','pool')
 					->orderBy('discharge_id')
-					->orderBy('a.created_at');
-
-			//dd($outpatients->toSql());
-			
-			$outpatients = $outpatients->paginate($this->paginateValue);
+					->orderBy('a.created_at')
+					->paginate($this->paginateValue);
 
 			return view('patient_lists.index', [
 					'outpatient_lists'=>$outpatients,

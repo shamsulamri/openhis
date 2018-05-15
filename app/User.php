@@ -90,6 +90,24 @@ class User extends Authenticatable
 			return $stores->pluck('store_code');
 	}
 
+	public function storeCodeInString() 
+	{
+
+			$auth_stores = StoreAuthorization::where('author_id', $this->author_id)->get();
+
+			if (count($auth_stores)==0) {
+				$auth_stores = Store::all();
+			}
+
+			$stores = "";
+			foreach ($auth_stores->pluck('store_code') as $code) {
+				$stores = $stores . "'" . $code . "', ";
+			}
+
+			$stores = substr($stores, 0, strlen($stores)-2);
+			return $stores;
+	}
+
 	public function categoryList()
 	{
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', $this->author_id);

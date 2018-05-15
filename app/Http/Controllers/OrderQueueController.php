@@ -15,6 +15,7 @@ use App\EncounterType;
 use Carbon\Carbon;
 use Auth;
 use App\Order;
+use App\ProductCategory;
 use Gate;
 
 class OrderQueueController extends Controller
@@ -50,6 +51,9 @@ class OrderQueueController extends Controller
 			}
 
 			$location = QueueLocation::find($location_code);
+
+			$queue_encounters = $request->cookie('queue_encounters');
+			$queue_categories = $request->cookie('queue_categories');
 
 			$fields = ['a.order_id',
 					'patient_name', 
@@ -97,11 +101,14 @@ class OrderQueueController extends Controller
 					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
 					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
-					->where('orders.location_code','=',$location_code)
+					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->whereIn('o.category_code', $queue_categories)
+					->whereIn('c.encounter_code', $queue_encounters)
 					->where('order_completed','=',0)
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id');
 
+					//->where('orders.location_code','=',$location_code)
 			if ($request->future) {
 					/**
 					$order_queues = $order_queues->leftjoin('bills as q', 'q.encounter_id', '=', 'orders.encounter_id')
@@ -154,6 +161,8 @@ class OrderQueueController extends Controller
 					'count'=>$count,
 					'status'=>$status,
 					'status_code'=>null,
+					'queue_encounters'=>$queue_encounters,
+					'queue_categories'=>$queue_categories,
 					]);
 	}
 
@@ -300,6 +309,8 @@ class OrderQueueController extends Controller
 			}
 			$location = QueueLocation::find($location_code);
 
+			$queue_encounters = $request->cookie('queue_encounters');
+			$queue_categories = $request->cookie('queue_categories');
 			/*
 			$fields = ['a.order_id',
 					'patient_name', 
@@ -347,7 +358,9 @@ class OrderQueueController extends Controller
 					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
 					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
-					->where('orders.location_code','=',$location_code)
+					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->whereIn('o.category_code', $queue_categories)
+					->whereIn('c.encounter_code', $queue_encounters)
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id');
 
@@ -397,5 +410,39 @@ class OrderQueueController extends Controller
 					'status_code'=>$request->status_code,
 					'is_future'=>$is_future,
 					]);
+	}
+
+	public function setting(Request $request) {
+			$queue_encounters = $request->cookie('queue_encounters');
+			$queue_categories = $request->cookie('queue_categories');
+			return view('order_queues.setup', [
+					'encounters' => EncounterType::all()->sortBy('encounter_name'),
+					'categories' => ProductCategory::all()->sortBy('category_name'),
+					'queue_encounters' => $queue_encounters,
+					'queue_categories' => $queue_categories,
+			]);
+	}
+
+	public function setup(Request $request) {
+			$encounters = EncounterType::all();
+			$categories = ProductCategory::all();
+
+			$queue_encounters = [];
+			foreach ($encounters as $encounter) {
+					if ($request[$encounter->encounter_code]) {
+						array_push($queue_encounters, $encounter->encounter_code);
+					}
+			}
+
+			$queue_categories = [];
+			foreach ($categories as $category) {
+					if ($request[$category->category_code]) {
+						array_push($queue_categories, $category->category_code);
+					}
+			}
+
+			return redirect('/order_queues')
+				->withCookie(cookie('queue_encounters',$queue_encounters, 2628000))
+				->withCookie(cookie('queue_categories',$queue_categories, 2628000));
 	}
 }

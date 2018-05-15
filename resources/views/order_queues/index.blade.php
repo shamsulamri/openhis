@@ -15,26 +15,21 @@ audio {
 				</audio> 
 		@endif
 @endif
+<h1>
 @if ($is_future)
-<h1>Future Orders</h1>
+Future Orders
 @else
-<h1>Order Queues</h1>
+Order Queues
 @endif
+<a class='pull-right' href='{{ URL::to('order_queues/setup') }}'><i class="fa fa-cog"></i></a>
+</h1>
 <h3>{{ $location->location_name }}</h3>
 <br>
 <form action='/order_queue/search' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'><div align='left'>Encounter</div></label>
-						<div class='col-sm-9'>
-								{{ Form::select('encounter_code', $encounters, $encounter_code, ['class'=>'form-control','maxlength'=>'10']) }}
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-4">
-					<div class='form-group'>
-						<label class='col-sm-3 control-label'>Status</label>
+						<label class='col-sm-3 control-label'><div align='left'>Status</div></label>
 						<div class='col-sm-9'>
 								{{ Form::select('status_code', $status,$status_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>

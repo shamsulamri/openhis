@@ -14,6 +14,7 @@ use Auth;
 use Log;
 use App\Ward;
 use App\QueueLocation;
+use App\Http\Controllers\ProductController;
 use Config;
 
 class OrderHelper 
@@ -170,7 +171,7 @@ class OrderHelper
 	}
 	**/
 
-	public static function orderItem($product, $ward_code) 
+	public static function orderItem($product, $ward_code)
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 
@@ -188,14 +189,15 @@ class OrderHelper
 				$order->order_sale_price = $product->product_sale_price;
 			}	
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
-			$location_code = (new self)->getTargetLocation($product);
-			$order->location_code = $location_code;
-			$order->store_code = (new self)->getTargetStore($product);
 
 			if ($admission) {
 					$order->admission_id = $admission->admission_id;
 					$order->ward_code = $admission->bed->ward_code;
+					$location_code = (new self)->getTargetLocation($product);
+					$order->location_code = $location_code;
+					$order->store_code = (new self)->getTargetStore($product);
 			}
+
 			$order->save();
 
 			if ($product->order_form==2) {
@@ -349,6 +351,23 @@ class OrderHelper
 					return $prefix.$description;
 			}
 		}
+
+	public static function insertStock($order) 
+	{
+		if ($order->product->product_stocked==1) {
+				$stock = new Stock();
+				$stock->order_id = $order->order_id;
+				$stock->product_code = $order->product_code;
+				$stock->stock_quantity = -($order->order_quantity_supply);
+				$stock->store_code = $order->store_code;
+				$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
+				$stock->move_code = 'sale';
+				$stock->save();
+
+				$productController = new ProductController();
+				$productController->updateTotalOnHand($order->product_code);
+		}
+	}
 
 	public static function dropCharge($consultation_id) 
 	{

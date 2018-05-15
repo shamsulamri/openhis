@@ -184,11 +184,11 @@ $header_count=0;
 									Stop
 									</a>
 									@endif
-									<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
-									Cancel
-									</a>
 									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=order_label&id={{ $admission_task->order_id }}'>
 										Print Label
+									</a>
+									<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
+									&nbsp;&nbsp;&nbsp;Cancel&nbsp;&nbsp;&nbsp;
 									</a>
 								@endif
 						@else

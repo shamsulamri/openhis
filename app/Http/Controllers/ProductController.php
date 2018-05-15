@@ -550,6 +550,9 @@ class ProductController extends Controller
 
 			if (!empty($request->store)) {
 				$sql = $sql." and a.store_code = '".$request->store."'";
+			} else {
+				$stores = Auth::user()->storeCodeInString();
+				$sql = $sql." and a.store_code in (". $stores .") ";
 			}
 
 			if (!empty($request->category_code)) {
@@ -574,7 +577,6 @@ class ProductController extends Controller
 					['path' => $request->url(), 
 					'query' => $request->query()]
 			);
-
 
 			return view('products.on_hand', [
 					'products'=>$data,

@@ -85,6 +85,7 @@ class OrderTaskController extends Controller
 				$location_code = $request->cookie('queue_location');
 			}
 			$location = Location::find($location_code);
+			$queue_categories = $request->cookie('queue_categories');
 
 			$consultation = Consultation::where('patient_id','=',$encounter->patient_id)
 					->orderBy('created_at','desc')
@@ -109,6 +110,7 @@ class OrderTaskController extends Controller
 					'product_stocked',
 					'e.category_code',
 					];
+
 			$order_tasks = DB::table('orders as a')
 					->select($fields)
 					->join('consultations as b', 'b.consultation_id', '=', 'a.consultation_id')
@@ -124,7 +126,7 @@ class OrderTaskController extends Controller
 					->leftjoin('users as k','k.id','=', 'a.user_id')
 					->leftjoin('wards as m','m.ward_code','=', 'a.ward_code')
 					->where('c.encounter_id','=', $encounter_id)
-					->where('a.location_code','=',$location_code)
+					->whereIn('e.category_code', $queue_categories)
 					->where('e.product_local_store','=',0)
 					->where('a.post_id','>',0)
 					->whereNull('cancel_id')
@@ -263,12 +265,14 @@ class OrderTaskController extends Controller
 					if ($orderId>0) {
 							OrderTask::where('order_id', $orderId)->update(['order_completed'=>$value]);				
 							if ($value=='1') {
-								OrderTask::where('order_id', $orderId)->update(['store_code'=>$store_code]);				
+								//OrderTask::where('order_id', $orderId)->update(['store_code'=>$store_code]);				
 
 								$order = Order::find($orderId);
 								$order->order_quantity_supply = $request['quantity_'.$order->order_id];
 								$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
 								$order->updated_by = Auth::user()->id;
+								$order->location_code = $location_code;
+								$order->store_code = $store_code;
 								$order->save();
 
 								if ($order->product->product_stocked==1) {

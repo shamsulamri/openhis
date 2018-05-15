@@ -13,7 +13,7 @@ use Session;
 use App\EncounterType;
 use App\ProductCategory;
 use App\QueueLocation;
-
+use App\Ward;
 
 class OrderRouteController extends Controller
 {
@@ -41,6 +41,7 @@ class OrderRouteController extends Controller
 					'encounter' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'category' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
 					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					]);
 	}
 
@@ -70,6 +71,7 @@ class OrderRouteController extends Controller
 					'encounter' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'category' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
 					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'ward' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					]);
 	}
 
@@ -88,9 +90,9 @@ class OrderRouteController extends Controller
 			} else {
 					return view('order_routes.edit', [
 							'order_route'=>$order_route,
-					'encounter' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
-					'category' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+							'encounter' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+							'category' => ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+							'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}

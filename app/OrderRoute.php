@@ -25,7 +25,6 @@ class OrderRoute extends Model
 			$rules = [
 				'encounter_code'=>'required',
 				'category_code'=>'required',
-				'store_code'=>'required',
 			];
 
 			

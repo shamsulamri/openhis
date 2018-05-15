@@ -34,7 +34,7 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 			</h4>
 			@if ($drug->cancel_id) </strike> @endif
 			@if (!$drug->cancel_id)
-			<a class='btn btn-danger btn-xs' href='{{ URL::to('/order_cancellations/create/'. $drug->order_id.'?drug=1') }}'>Stop</a>
+			<a class='btn btn-warning btn-xs' href='{{ URL::to('/order_cancellations/create/'. $drug->order_id.'?drug=1') }}'>Cancel</a>
 			@endif
 		</td>
 		<td>

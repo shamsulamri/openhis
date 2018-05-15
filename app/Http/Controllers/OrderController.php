@@ -300,6 +300,17 @@ class OrderController extends Controller
 
 			if ($valid->passes()) {
 					$order->order_quantity_supply = $order->order_quantity_request;
+					if ($request->order_completed == 1) {
+						$location_code = $request->cookie('queue_location');
+						$admission = EncounterHelper::getCurrentAdmission($order->encounter_id);
+						$order->location_code = $location_code;
+
+						if ($order->product->product_stocked==1) {
+								$store_code = OrderHelper::getLocalStore($order->consultation->encounter, $admission);
+								$order->store_code = $store_code;
+								OrderHelper::insertStock($order);
+						}
+					}
 					$order->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/orders/');
@@ -415,12 +426,12 @@ class OrderController extends Controller
 						->get();
 
 			$encounter = Encounter::find($encounter_id);
-			//if (!$encounter->admission) {
+			if (!$encounter->admission) {
 					if ($order->count()>0) {
 							Session::flash('message', 'Product already in the order list.');
 							return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
 					}
-			//}
+			}
 
 			$product = Product::find($product_code);
 			$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));

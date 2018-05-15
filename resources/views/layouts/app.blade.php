@@ -306,7 +306,7 @@ if ($_COOKIE['his-navbar']==1) {
             <ul class="nav navbar-top-links navbar-right">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                Options <i class="fa fa-cog"></i>
+                                Options <i class="fa fa-angle-down"></i>
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/logout') }}">Logout</a></li>

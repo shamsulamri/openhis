@@ -25,6 +25,9 @@ use App\OrderMultiple;
 use App\OrderHelper;
 use App\StockHelper;
 use App\OrderRoute;
+use App\QueueLocation;
+use App\EncounterHelper;
+use App\Store;
 
 class OrderDrugController extends Controller
 {
@@ -169,6 +172,7 @@ class OrderDrugController extends Controller
 
 	public function update(Request $request, $id) 
 	{
+			$stock_helper = new StockHelper();
 			$order_drug = OrderDrug::findOrFail($id);
 			$order_drug->fill($request->input());
 			$order_drug->drug_prn = $request->drug_prn ?: 0;
@@ -182,6 +186,24 @@ class OrderDrugController extends Controller
 			$order->order_quantity_supply = $request->order_quantity_request;
 			$order->order_total = $product->product_sale_price*$order->order_quantity_request;
 
+			if ($request->order_completed == 1) {
+				// Set store to local when order completed
+				$admission = EncounterHelper::getCurrentAdmission($order->encounter_id);
+
+				if (!$admission) {
+						$location_code = $request->cookie('queue_location');
+						$order->location_code = $location_code;
+				}
+
+				if ($order->product->product_stocked==1) {
+						$store_code = OrderHelper::getLocalStore($order->consultation->encounter, $admission);
+						$order->store_code = $store_code;
+						//OrderHelper::insertStock($order);
+				}
+				$available = $stock_helper->getStockAvailable($order->product_code, $store_code);
+				$local_store = Store::find($store_code);
+			}
+
 			if ($request->order_is_discharge==1) {
 					$route = OrderRoute::where('encounter_code', $order->consultation->encounter->encounter_code)
 							->where('category_code', $product->category_code)
@@ -190,21 +212,21 @@ class OrderDrugController extends Controller
 							$order->store_code = $route->store_code;
 					}
 			}
-			$stock_helper = new StockHelper();
+
 			$allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $order->store_code, $order_drug->order->encounter_id);
 			$on_hand = $stock_helper->getStockCountByStore($product->product_code, $order->store_code);
 
 
 			$valid=null;
-
-			
 			$valid = $order_drug->validate($request->all(), $request->_method);	
+
 			if ($order->order_quantity_request>$on_hand-$allocated) {
 					//$valid['order_quantity_request']='Insufficient quantity.'; 
 					$valid->getMessageBag()->add('order_quantity_request', 'Insufficient quantity.');
 					return redirect('/order_drugs/'.$id.'/edit')
 							->withErrors($valid)
-							->withInput();
+							->withInput()
+							->with(['stock_count'=>$available, 'local_store'=>$local_store]);
 			}
 
 			//$order->save();

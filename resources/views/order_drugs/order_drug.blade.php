@@ -1,9 +1,27 @@
 
 	<h3>{{ $product->product_name }}</h3>
 	<h5>{{ $product->product_code }}</h5>
-	<div class="alert @if ($available==0) alert-danger @else alert-success @endif">
-			Available: {{ $available }} @if ($order_drug->order->store) {{ '('.$order_drug->order->store->store_name.')' }} @endif
+
+<?php 
+	$stock_count = 0;
+	$store = null;
+?>
+@if (!empty(Session::get('local_store')))
+		<?php
+			$stock_count = Session::get('stock_count');
+			$store = Session::get('local_store');
+		?>
+@else
+		<?php
+			$stock_count = $available;
+			$store = $order_drug->order->store;
+		?>
+@endif
+@if (!empty($store))
+	<div class="alert @if ($stock_count==0) alert-danger @else alert-success @endif">
+			Available: {{ $stock_count }} {{ '('.$store->store_name.')' }} 
 	</div>
+@endif
 	<!--
 	@if ($errors)
 		@foreach($errors->all() as $message)
@@ -131,6 +149,19 @@
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('order_include_stat')) has-error @endif'>
+						{{ Form::label('order_include_stat', 'Include STAT',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::checkbox('order_include_stat', '1', $order->order_include_stat,['onchange'=>'countTotalUnit()']) }}
+							@if ($errors->has('order_include_stat')) <p class="help-block">{{ $errors->first('order_include_stat') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
+
+	<!--
+	<div class="row">
+			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('order_completed')) has-error @endif'>
 						{{ Form::label('Order Completed', 'Order Completed',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
@@ -140,18 +171,7 @@
 					</div>
 			</div>
 	</div>
-
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('order_include_stat')) has-error @endif'>
-						{{ Form::label('order_include_stat', 'Include STAT',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-							{{ Form::checkbox('order_include_stat', '1', $order->order_include_stat) }}
-							@if ($errors->has('order_include_stat')) <p class="help-block">{{ $errors->first('order_include_stat') }}</p> @endif
-						</div>
-					</div>
-			</div>
-	</div>
+	-->
 @if ($product->drug)
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
@@ -243,6 +263,13 @@
 	}
 
 	function countTotalUnit() {
+			if (document.getElementById('frequency').value == 'STAT') {
+				document.getElementById('order_include_stat').checked = false;
+				document.getElementById('order_include_stat').disabled = true;
+			} else {
+				document.getElementById('order_include_stat').disabled = false;
+			}
+
 			@if ($product->product_unit_charge)
 			dosage = document.getElementById('dosage').value;
 			frequency = getFrequencyValue(document.getElementById('frequency').value) 
@@ -276,4 +303,5 @@
 		route.value = values[3];
 	}
 
+	countTotalUnit();
 </script>

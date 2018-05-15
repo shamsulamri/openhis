@@ -18,6 +18,7 @@ use App\Order;
 use App\OrderMultiple;
 use App\OrderHelper;
 use App\Product;
+use App\EncounterHelper;
 use Auth;
 
 class OrderInvestigationController extends Controller
@@ -168,6 +169,18 @@ class OrderInvestigationController extends Controller
 					$order->order_is_future = 1;
 			} else {
 					$order->order_is_future = 0;
+			}
+
+			if ($request->order_completed == 1) {
+				$location_code = $request->cookie('queue_location');
+				$admission = EncounterHelper::getCurrentAdmission($order->encounter_id);
+				$order->location_code = $location_code;
+
+				if ($order->product->product_stocked==1) {
+						$store_code = OrderHelper::getLocalStore($order->consultation->encounter, $admission);
+						$order->store_code = $store_code;
+						OrderHelper::insertStock($order);
+				}
 			}
 
 			$order->save();
