@@ -247,8 +247,10 @@
 					<div class='form-group  @if ($errors->has('charge_code')) has-error @endif'>
 						{{ Form::label('charge_code', 'Price Tier',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::select('charge_code', $charges ,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
+							{{ Form::select('charge_code', $charges ,null, ['id'=>'charge_code', 'class'=>'form-control','maxlength'=>'20', ]) }}
 							@if ($errors->has('charge_code')) <p class="help-block">{{ $errors->first('charge_code') }}</p> @endif
+							<br>
+							<a href='javascript:showTier()'>Show price tiers</a>
 						</div>
 					</div>
 			</div>
@@ -300,7 +302,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_local_store')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_local_store', '1') }} <label>Local Store</label><br>Stock deduct from local store when consumed. Recommended to be drop charged.
+							{{ Form::checkbox('product_local_store', '1') }} <label>Local Store</label><br>Stock taken from local store when consumed.
 							@if ($errors->has('product_local_store')) <p class="help-block">{{ $errors->first('product_local_store') }}</p> @endif
 						</div>
 					</div>
@@ -308,7 +310,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_edit_price')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_edit_price', '1') }} <label>Allow price edit</label><br>Allow the user to edit the sale price during ordering
+							{{ Form::checkbox('product_edit_price', '1') }} <label>Allow price edit</label><br>Allow orderer to edit the sale price during ordering
 							@if ($errors->has('product_edit_price')) <p class="help-block">{{ $errors->first('product_edit_price') }}</p> @endif
 						</div>
 					</div>
@@ -409,6 +411,10 @@
              });
         });
 
+		function showTier() {
+				var tier = document.getElementById('charge_code');
+				window.location.href = "/product_price_tiers/"+tier.value;
+		}
     </script>
 
 

@@ -25,7 +25,6 @@
 				<a href="{{ url('/patient_types') }}">Patient Types</a><br>
 				<a href="{{ url('/encounter_types') }}">Encounter Types</a><br>
 				<a href="{{ url('/patient_flags') }}">Patient Flags</a><br>
-				<a href="{{ url('/patient_classifications') }}">Patient Classifications</a><br>
 				<!--
 				<a href="{{ url('/ward_discharges') }}">Ward Discharges</a><br>
 				<a href="{{ url('/ward_arrivals') }}">Ward Arrivals</a><br>
@@ -64,6 +63,7 @@
 				<a href="{{ url('/birth_complications') }}">Birth Complications</a><br>
 				<a href="{{ url('/delivery_modes') }}">Delivery Modes</a><br>
 				<a href="{{ url('/triages') }}">Triages</a><br>
+				<a href="{{ url('/patient_classifications') }}">Patient Classifications</a><br>
 			</small>
 			</div>
 	</div>

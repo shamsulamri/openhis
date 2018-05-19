@@ -288,6 +288,7 @@ class DojoUtility
 		}
 
 		public static function roundUp($value) {
+				$value = str_replace(",", "", $value);
 				$valueInString = strval(round($value,2));
 				if (strpos($valueInString, ".") == 0) $valueInString = $valueInString.".00";
 				$valueArray = explode(".", $valueInString);

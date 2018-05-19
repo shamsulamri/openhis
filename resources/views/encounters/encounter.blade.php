@@ -318,11 +318,13 @@
 			var locationSelect = document.getElementById('location_code');
 			clearList(locationSelect);
 
+			if (document.getElementById('location_code').disabled == false) {
 			for (var i=0;i<locations.length;i++) {
 					values = locations[i].split(":")
 					if (encounter==values[0]) {
 							addList(locationSelect,values[1], values[2]);
 					}
+			}
 			}
 
 	}

@@ -10,6 +10,20 @@ Interim Bill
 @endif
 {{ $bill_label }}
 </h1>
+@if (!$encounter->discharge && !$encounter->bill)
+	<div class='alert alert-warning'>
+	Click Reload button to compile latest bill items.
+	</div>
+@endif
+
+@if (!empty($encounter->sponsor_code))
+	@if ($non_claimable_amount>0 && $claimable_amount>0 && count($encounter->bill)==1)
+			<div class='alert alert-danger'>
+			You have unposted bill.
+			</div>
+	@endif
+@endif
+
 @if ($encounter->discharge)
 	@if (!$encounter->bill)
 		@if ($incomplete_orders>0 && $encounter->discharge->discharge_id)
@@ -21,11 +35,14 @@ Interim Bill
 		@endif
 	@endif
 @endif
-@if ($bills->total()>0)
 
 @if (!empty($encounter->sponsor_code))
-<a class="btn btn-primary" href="/bill_items/{{ $encounter->encounter_id }}/false" role="button">Claimable</a>
-<a class="btn btn-primary" href="/bill_items/{{ $encounter->encounter_id }}/true" role="button">Non Claimable</a>
+		@if ($claimable_amount>0)
+			<a class="btn btn-primary" href="/bill_items/{{ $encounter->encounter_id }}/false" role="button">Claimable ({{ $claimable_amount }})</a>
+		@endif
+		@if ($non_claimable_amount>0)
+			<a class="btn btn-primary" href="/bill_items/{{ $encounter->encounter_id }}/true" role="button">Non Claimable ({{ $non_claimable_amount }})</a>
+		@endif
 @endif
 @if (!$billPosted)
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
@@ -47,7 +64,21 @@ Interim Bill
 	<br>
 @endif
 
-@if (!$billPosted)
+<?php
+	$show_billing_method = false;
+
+	if (!empty($encounter->sponsor_code)) {
+		if ($non_claimable_amount>0 && $claimable_amount>0 && count($encounter->bill)==1) {
+			$show_billing_method = true;
+		}
+	} else {
+		if (!$encounter->bill) $show_billing_method = true;
+	}
+
+
+?>
+
+@if ($show_billing_method) 
 		<div class="widget style1 gray-bg">
 		<h4>Billing Method</h4>
 		@if ($encounter->sponsor)
@@ -65,6 +96,7 @@ Interim Bill
 		</div>
 @endif
 
+@if ($bills->total()>0)
 <div class="widget style1 gray-bg">
 <table class="table table-condensed">
  <thead>
@@ -198,7 +230,7 @@ Interim Bill
 				$bill_grand_total = $bill_grand_total*(1-($bill_discount->discount_amount/100));
 			}
 			?>
-					<strong>{{ number_format(DojoUtility::roundUp($bill_grand_total),2) }}<strong>
+					<strong>{{ DojoUtility::roundUp($bill_grand_total) }}<strong>
 			</td>
 			@can('system-administrator')
 			<td align='right'>
@@ -208,6 +240,10 @@ Interim Bill
 </tbody>
 </table>
 </div>
+@else
+		<div class="widget style1 gray-bg">
+		<h4>No items.</h4>
+		</div>
 @endif
 <!-- GST Summary -->
 <div class="widget style1 gray-bg">
@@ -372,7 +408,17 @@ Interim Bill
 -->
 @if (!$billPosted)
 <div class="widget style1 gray-bg">
-<h4>Post Bill</h4>
+<?php
+$claim_label = "";
+if (!empty($encounter->sponsor_code)) {
+	if ($non_claimable == 0) {
+			$claim_label = "Claimable";
+	} else {
+			$claim_label = "Non-claimable";
+	}
+}
+?>
+<h4>Post {{ $claim_label }} Bill</h4>
 {{ Form::open(['id'=>'post_form','url'=>'bills', 'class'=>'form-horizontal']) }} 
 	<table>
 		<tr>

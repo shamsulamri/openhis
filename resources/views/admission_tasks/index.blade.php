@@ -177,8 +177,7 @@ $header_count=0;
 					</a>
 				@else
 					@if ($admission_task->order_completed==0)
-						@if ($admission_task->category_code != 'drugs')
-								@if (empty($admission_task->cancel_id))
+						@if (empty($admission_task->cancel_id))
 									@if ($admission_task->product_duration_use)
 									<a href="{{ URL::to('order_stop/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-danger btn-xs'>
 									Stop
@@ -190,14 +189,14 @@ $header_count=0;
 									<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
 									&nbsp;&nbsp;&nbsp;Cancel&nbsp;&nbsp;&nbsp;
 									</a>
-								@endif
-						@else
-							<a href='{{ URL::to('medication_record/mar/'. $admission_task->encounter_id) }}' class='btn btn-primary btn-xs'>
-							&nbsp;&nbsp;&nbsp;&nbsp; MAR &nbsp;&nbsp;&nbsp;&nbsp;
-							</a>
 						@endif
 					@endif
 				@endif
+					@if ($admission_task->category_code == 'drugs')
+						<a href='{{ URL::to('medication_record/mar/'. $admission_task->encounter_id) }}' class='btn btn-primary btn-xs'>
+						&nbsp;&nbsp;&nbsp;&nbsp; MAR &nbsp;&nbsp;&nbsp;&nbsp;
+						</a>
+					@endif
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('admission_tasks/delete/'. $admission_task->order_id) }}'>Delete</a>
 					@endcan

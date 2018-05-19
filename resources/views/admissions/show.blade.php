@@ -58,6 +58,7 @@
 				@endif
 
 				<br><br>
+			@if (!$admission->encounter->discharge)
 				@if (empty($consultation))
 				<span class='fa fa-stethoscope' aria-hidden='true'></span>
 				<a href='{{ URL::to('admission/consultation/'. $admission->admission_id) }}'>Start Consultation</a>
@@ -65,6 +66,7 @@
 				<span class='fa fa-stethoscope' aria-hidden='true'></span>
 				<a href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'>Resume Consultation</a>
 				@endif
+			@endif
 		@endif
 </h4>
 @endsection

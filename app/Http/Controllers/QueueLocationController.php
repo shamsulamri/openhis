@@ -161,6 +161,12 @@ class QueueLocationController extends Controller
 				//->withCookie(\Cookie::forget('ward'));
 	}
 
+	public function forgetCookie() {
+			Session::flash('message', 'Location forgotten.');
+			return redirect('/queue_locations')
+				->withCookie(\Cookie::forget('queue_location'));
+	}
+
 	public function getLocation(Request $request)
 	{
 			return $request->cookie('queue_location');

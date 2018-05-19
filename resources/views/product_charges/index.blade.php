@@ -19,8 +19,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>charge_name</th>
-    <th>charge_code</th> 
+    <th>Name</th>
+    <th>Code</th> 
 	<th></th>
 	</tr>
   </thead>

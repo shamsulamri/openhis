@@ -13,6 +13,9 @@ Medication Administration Records
 <br>
 <table class='table table-condensed'>
 	<tbody>
+@if (empty($drugs)) 
+	<h3>No Record</h3>
+@endif
 @foreach ($drugs as $drug)
 <?php
 $frequency_count = count(explode(';',$drug->frequency_mar));
@@ -119,7 +122,4 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 @endforeach
 </tbody>
 </table>
-<!--
-							<a href='/medication_record/record/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
--->
 @endsection

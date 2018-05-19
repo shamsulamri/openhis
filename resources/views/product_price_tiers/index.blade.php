@@ -20,10 +20,9 @@
  <thead>
 	<tr> 
     <th>Tier</th>
-    <th>Min</th> 
-	<th>Max</th>
-    <th>Public</th> 
-	<th>Sponsor</th>
+    <th><div align='center'>Cost Range</div></th> 
+    <th><div align='center'>Public</div></th> 
+    <th><div align='center'>Sponsor</div></th> 
 	<!--
     <th>Outpatient</th> 
 	<th>Inpatient</th>
@@ -39,29 +38,32 @@
 						{{$tier->charge->charge_name}}
 					</a>
 			</td>
-			<td>
-					{{$tier->tier_min}}
+			<td align='center'>
+				@if (!empty($tier->tier_min) || !empty($tier->tier_max))
+					@if (!$tier->tier_min) < @endif
+					@if (!$tier->tier_max) > @endif
+					@if ($tier->tier_min>0) {{ number_format($tier->tier_min,2) }} @endif
+					@if ($tier->tier_min && $tier->tier_max) - @endif
+					@if ($tier->tier_max>0) {{ number_format($tier->tier_max,2) }} @endif
+				@endif
 			</td>
-			<td>
-					{{$tier->tier_max}}
-			</td>
-			<td>
+			<td align='center'>
 					@if ($tier->tier_outpatient_multiplier)
 					x {{$tier->tier_outpatient_multiplier}} 
 							@if ($tier->tier_outpatient_limit)
 							(Min {{$tier->tier_outpatient_limit}})
 							@endif
 					@endif
-					{{ $tier->tier_outpatient }}
+					@if ($tier->tier_outpatient>0) {{ number_format($tier->tier_outpatient,2) }} @endif
 			</td>
-			<td>
+			<td align='center'>
 					@if ($tier->tier_inpatient_multiplier)
 					x {{$tier->tier_inpatient_multiplier}}
 							@if ($tier->tier_inpatient_limit)
 							(Min {{$tier->tier_inpatient_limit}})
 							@endif
 					@endif
-					{{ $tier->tier_inpatient }}
+					@if ($tier->tier_inpatient>0) {{ number_format($tier->tier_inpatient,2) }} @endif
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('product_price_tiers/delete/'. $tier->tier_id) }}'>Delete</a>

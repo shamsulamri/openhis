@@ -4,7 +4,6 @@
 
 <h1>Queue List</h1>
 <form action='/queue/search' method='post' name='myform' class='form-horizontal'>
-	@cannot('module-consultation')
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
@@ -30,7 +29,6 @@
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<br>
 	-->
-	@endcannot
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 @if ($queues->total()>0)
@@ -71,8 +69,8 @@
 					-->
 
 					@can('module-consultation')
-					<a class='btn btn-default' title='Consultation' href='{{ URL::to('consultations/create?encounter_id='. $queue->encounter_id) }}'>
-							Consultation
+					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $queue->encounter_id) }}'>
+						<i class="fa fa-stethoscope"></i>
 					</a>
 					@endcan
 					@can('system-administrator')

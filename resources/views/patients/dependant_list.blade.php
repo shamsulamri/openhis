@@ -36,7 +36,7 @@ Manage
 		</td>
 		<td>
 			@can('module-patient')
-			<a class='btn btn-default btn-xs pull-right' href='/patients/{{ $p->patient_id }}/edit'>Swap</a>
+			<a class='btn btn-default btn-xs pull-right' href='/patients/{{ $p->patient_id }}/edit'>Select</a>
 			@endcan
 		</td>
 	</tr>

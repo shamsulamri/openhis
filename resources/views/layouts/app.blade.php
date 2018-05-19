@@ -168,11 +168,11 @@ if ($_COOKIE['his-navbar']==1) {
 						<div class="dropdown profile-element"> 
 								<h4>&nbsp;Support</h4>
 						</div>
-						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-question-circle-o'></i><span class='nav-label'>Outpatient Tasks</span></a></li>
+						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-question-circle-o'></i><span class='nav-label'>Order Queues</span></a></li>
 						<!--
 						<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Inpatient Tasks<span></a></li>
 						-->
-						<li><a href="{{ url('/order_queues?future=true') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Future Orders<span></a></li>
+						<li><a href="{{ url('/order_queues?future=true') }}"><i class='fa fa-exclamation-circle'></i><span class='nav-label'>Future Orders<span></a></li>
 
 						<!-- Patient Module -->
 						@endcan
@@ -245,9 +245,7 @@ if ($_COOKIE['his-navbar']==1) {
 								<h4>&nbsp;Ward</h4>
 						</div>
 						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-bed'></i><span class='nav-label'>Admissions</a></li>
-						<!--
-						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-question-circle-o'></i><span class='nav-label'>Outpatient Tasks</span></a></li>
-						-->
+						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-question-circle-o'></i><span class='nav-label'>Order Queues</span></a></li>
 						<li><a title="Admission Tasks" href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Admission Tasks</a></li>
 						@if (!empty($ward->ward_code))
 								@if ($ward->ward_code != 'mortuary')

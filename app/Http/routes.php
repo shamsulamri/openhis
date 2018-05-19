@@ -453,6 +453,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/documents/file/{id}', 'DocumentController@file');
 
 		Route::get('/queue_locations/set/{id}', 'QueueLocationController@setLocation');
+		Route::get('/queue_locations/forget', 'QueueLocationController@forgetCookie');
 		Route::get('/queue_locations/get', 'QueueLocationController@getLocation');
 		Route::resource('queue_locations', 'QueueLocationController');
 		Route::get('/queue_locations/id/{id}', 'QueueLocationController@searchById');

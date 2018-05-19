@@ -212,6 +212,7 @@ class MedicationRecordController extends Controller
 					->where('a.encounter_id','=',$encounter_id)
 					->where('b.category_code','=','drugs')
 					->orderBy('b.category_code')
+					->orderBy('cancel_id', 'asc')
 					->orderBy('a.created_at', 'desc')
 					->get();
 

@@ -37,7 +37,6 @@ class BillItemController extends Controller
 
 	public function generate($id) 
 	{
-
 			$bill_existing = DB::table('bill_items')
 								->where('encounter_id','=',$id);
 								
@@ -77,7 +76,9 @@ class BillItemController extends Controller
 
 					if ($block_room == 1) {
 							$bed_charge = Bed::find($bed->bed_code);
-							$bed_unit = $bed_charge->room->beds->count();
+							if ($bed_charge->room) {
+									$bed_unit = $bed_charge->room->beds->count();
+							}
 							if ($bed_unit == 0) $bed_unit = 1;
 					}
 
@@ -274,7 +275,6 @@ class BillItemController extends Controller
 					}
 			}
 
-			Log::info("Bed bill calculation.....");
 			//$this->bedBills($encounter_id);
 			$this->multipleOrders($encounter_id);
 			$this->forms($encounter_id);
@@ -442,16 +442,16 @@ class BillItemController extends Controller
 			if (!empty($encounter->sponsor_code)) {
 				if (!empty($non_claimable)) {
 						if ($non_claimable=='true') {
-								$non_claimable = 1;
+								$non_claimable = 1; // Claimable
 						}
 						if ($non_claimable=='false') {
-								$non_claimable = 0;
+								$non_claimable = 0; // Non-claim
 						}
 				} else {
 						$non_claimable = 0;
 				}
 			} else {
-				$non_claimable = 2;
+				$non_claimable = 2; // Cash
 			}
 
 
@@ -604,6 +604,14 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 				}
 			}
 
+			$claimable_amount = BillItem::where('encounter_id', '=', $id)
+									->where('bill_non_claimable', '=', 0)
+									->sum('bill_amount');
+
+			$non_claimable_amount = BillItem::where('encounter_id', '=', $id)
+									->where('bill_non_claimable', '=', 1)
+									->sum('bill_amount');
+
 			return view('bill_items.index', [
 					'bills'=>$bills,
 					'billPosted'=>$billPosted,
@@ -623,6 +631,8 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 					'bill_discount'=>$bill_discount,
 					'bill_label'=>$bill_label,
 					'non_claimable'=>$non_claimable,
+					'non_claimable_amount'=>$non_claimable_amount,
+					'claimable_amount'=>$claimable_amount,
 			]);
 	}
 

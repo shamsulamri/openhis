@@ -1,11 +1,13 @@
 	<br>
 	@if ($encounter_id>0)
+	<!--
     <div class='form-group  @if ($errors->has('encounter_id')) has-error @endif'>
         <label class='col-sm-2 control-label'>Encounter ID</label>
         <div class='col-sm-10'>
             {{ Form::label('encounter', $encounter_id, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
+	-->
 	@else
     <div class='form-group  @if ($errors->has('encounter_id')) has-error @endif'>
         <label class='col-sm-2 control-label'>Encounter ID</label>

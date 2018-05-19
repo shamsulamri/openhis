@@ -69,12 +69,15 @@ class AdmissionTaskController extends Controller
 					->leftjoin('ward_discharges as o', 'o.encounter_id', '=', 'b.encounter_id')
 					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
 					->where('b.encounter_code','<>', 'outpatient')
-					->where('order_completed','=',0)
 					->where('a.product_code','<>','consultation_fee')
 					->where('d.product_drop_charge','=',0)
 					->where('a.ward_code','=', $ward_code)
 					->whereNull('cancel_id')
 					->whereNull('o.discharge_id')
+					->where(function ($query) use ($request) {
+						$query->where('order_completed','=',0)
+							->orWhere('category_code','=', 'drugs');
+					})
 					->whereNotNull('n.post_id')
 					->orderBy('product_name')
 					->orderBy('bed_name');

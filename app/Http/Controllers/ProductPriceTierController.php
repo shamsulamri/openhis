@@ -22,6 +22,16 @@ class ProductPriceTierController extends Controller
 			$this->middleware('auth');
 	}
 
+	public function show($id)
+	{
+			$tiers = ProductPriceTier::where('charge_code', '=', $id)->get();
+			$tier = ProductCharge::where('charge_code', '=', $id)->first();
+			return view('product_price_tiers.show', [
+					'tier'=>$tier,
+					'tiers'=>$tiers,
+			]);
+	}
+
 	public function index()
 	{
 			$product_price_tiers = ProductPriceTier::orderBy('charge_code')

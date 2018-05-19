@@ -2,7 +2,10 @@
 
 @section('content')
 <h1>Queue Location List
-<a href='/queue_locations/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+<div class='pull-right'>
+<a href='/queue_locations/forget' class='btn btn-primary'><span class='glyphicon glyphicon-trash'></span></a>
+<a href='/queue_locations/create' class='btn btn-primary'><span class='glyphicon glyphicon-plus'></span></a>
+</div>
 </h1>
 <form action='/queue_location/search' method='post'>
 	<div class='input-group'>

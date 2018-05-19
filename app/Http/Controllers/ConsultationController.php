@@ -167,13 +167,13 @@ class ConsultationController extends Controller
 			$post->consultation_id = $id;
 			$post->save();
 
-			$this->postDiagnosticOrder($consultation);
 			OrderHelper::dropCharge($id);
 
 			Order::where('consultation_id','=',$id)
 					->where('post_id','=',0)
 					->update(['post_id'=>$post->post_id]);
 
+			$this->postDiagnosticOrder($consultation);
 
 			if (Auth::user()->authorization->module_consultation==1) {
 					return redirect('/');

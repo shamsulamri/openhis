@@ -337,7 +337,7 @@ class DischargeController extends Controller
 				where b.encounter_code = 'outpatient'
 			";
 			$discharges = Discharge::orderBy('discharge_id','desc')
-					->select(DB::raw('b.created_at as encounter_date, discharges.created_at as discharge_date, patient_name, patient_mrn, encounter_name, ward_name,location_name, datediff(discharges.created_at, b.created_at) as LOS, timediff(outpatients.created_at, b.created_at) as waiting_time, type_name, name'))
+					->select(DB::raw('b.created_at as encounter_date, concat(discharges.discharge_date," ", discharges.discharge_time) as discharge_date, patient_name, patient_mrn, encounter_name, ward_name,location_name, datediff(discharges.created_at, b.created_at) as LOS, timediff(outpatients.created_at, b.created_at) as waiting_time, type_name, name'))
 					->leftJoin('encounters as b', 'b.encounter_id','=','discharges.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('admissions as d', 'd.encounter_id', '=', 'b.encounter_id')

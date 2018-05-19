@@ -128,6 +128,12 @@
 					{{$order->product_name}}
 					<br>
 					<small>{{$order->product_code}}</small>
+					@if ($order->cancel_id) 
+							<br>
+							<strong>
+							<small>Reason: {{$order->cancel_reason}}</small>
+							</strong>
+					@endif
 			</td>
 			<td>
 					{{ $order->name }}
@@ -141,8 +147,6 @@
 			<td>
 					@if ($order->cancel_id) 
 							<span class="label label-warning">Cancel</span>
-							<br>
-							<small>{{$order->cancel_reason}}</small>
 					@else
 							@if ($order->order_completed==0) 
 								@if ($order->post_id==0) 

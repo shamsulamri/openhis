@@ -114,11 +114,7 @@
 					{{ DojoUtility::dateTimeReadFormat($discharge->encounter_date) }}
 			</td>
 			<td>
-					@if ($discharge->LOS>0)
-					{{ (DojoUtility::dateReadFormat($discharge->discharge_date)) }}
-					@else
-					-
-					@endif
+					{{ (DojoUtility::dateTimeReadFormat($discharge->discharge_date)) }}
 			</td>
 			<td>
 					@if ($discharge->LOS>0)

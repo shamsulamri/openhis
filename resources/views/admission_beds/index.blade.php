@@ -23,7 +23,7 @@
 	</div>
 	<div class='col-md-8'>
 		<h3>
-		Currently at {{ $current_bed->bed->room->room_name }}, {{ $current_bed->bed->bed_name }} ({{$current_bed->bed->wardClass->class_name }})
+		Currently at @if ($current_bed->bed->room) {{ $current_bed->bed->room->room_name }}, @endif {{ $current_bed->bed->bed_name }} ({{$current_bed->bed->wardClass->class_name }})
 		</h3>
 		<br>
 <form action='/admission_bed/search' method='post'>

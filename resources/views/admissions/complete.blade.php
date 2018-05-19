@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.id')
+@include('patients.id_only')
 <style>
 table, th, td {
    	border: none;

@@ -382,7 +382,7 @@ class OrderHelper
 
 			$drop_now = false;
 
-			if ($order->product->location_code=='none' or $order->product->location == null) $drop_now = true;
+			//if ($order->product->location_code=='none' or $order->product->location == null) $drop_now = true;
 			if ($order->product_drop_charge==1) $drop_now = true;
 
 				/**
