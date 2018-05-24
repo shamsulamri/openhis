@@ -73,7 +73,7 @@ class OrderTaskController extends Controller
 			]);
 	}
 
-	public function task(Request $request, $encounter_id, $location_code)
+	public function task(Request $request, $encounter_id, $location_code = null)
 	{
 			Session::set('encounter_id', $encounter_id);
 			$encounter = Encounter::find($encounter_id);

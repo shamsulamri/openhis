@@ -69,7 +69,9 @@
 	@cannot('module-ward')
     <th>Ward</th>
 	@endcannot
+	<!--
     <th>Room</th>
+	-->
     <th>Bed</th>
 	@can('module-ward')
 	@if ($ward->ward_code != 'mortuary')
@@ -101,11 +103,11 @@
 			<td>
 					@can('module-ward')
 					<a href='admissions/{{ $admission->admission_id }}'>
+					@else
+					<a href='admissions/{{ $admission->admission_id }}/edit'>
 					@endcan
 					{{ strtoupper($admission->patient_name) }}
-					@can('module-ward')
 					</a>
-					@endcan
 					<br>
 					<small>{{ DojoUtility::formatMRN($admission->patient_mrn) }}
 					<br>
@@ -119,13 +121,26 @@
 					{{$admission->ward_name}}
 			</td>
 			@endcannot
+			<!--
 			<td>
 					@if ($admission->room_name) 
 						{{$admission->room_name}} 
 					@endif
 			</td>
+			-->
 			<td>
-					{{$admission->bed_name}} 
+				@can('module-ward')
+					@if ($ward->ward_code != $admission->ward_code) 
+						{{$admission->anchor_bed}} 
+						<br>
+						Currently in {{ $admission->ward_name }}
+					@else
+							
+						{{$admission->bed_name}} 
+					@endif
+				@else
+						{{$admission->bed_name}} 
+				@endcan
 			</td>
 			@can('module-ward')
 			@if ($ward->ward_code != 'mortuary')

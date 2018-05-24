@@ -1,6 +1,6 @@
 
     <div class='form-group  @if ($errors->has('author_id')) has-error @endif'>
-        <label for='author_id' class='col-sm-3 control-label'>Authorization<span style='color:red;'> *</span></label>
+        <label for='author_id' class='col-sm-3 control-label'>Authorization Group<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::select('author_id', $authorizations,null, ['class'=>'form-control','maxlength'=>'10']) }}
             @if ($errors->has('author_id')) <p class="help-block">{{ $errors->first('author_id') }}</p> @endif

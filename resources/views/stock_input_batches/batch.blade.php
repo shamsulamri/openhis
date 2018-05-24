@@ -1,7 +1,7 @@
 @extends('layouts.app2')
 
 @section('content')
-		<a class="btn btn-default" href="/stock_inputs/input/{{ $input_id }}" role="button">Back</a>
+		<a class="btn btn-default" href="/stock_inputs/input/{{ $input_id }}" role="button">Return</a>
 		<a href='#' onclick='submitForm()' class='btn btn-primary'>Update</a>
 <br>
 <br>

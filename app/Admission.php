@@ -35,6 +35,7 @@ class Admission extends Model
 				'period_code',
 				'diet_textures',
 				'block_room',
+				'anchor_bed',
 				'nbm_status'];
 	
     protected $guarded = ['admission_id'];
@@ -94,6 +95,11 @@ class Admission extends Model
 	public function bed()
 	{
 			return $this->hasOne('App\Bed', 'bed_code', 'bed_code');
+	}
+
+	public function anchorBed()
+	{
+			return $this->hasOne('App\Bed', 'bed_code', 'anchor_bed');
 	}
 
 	public function arrival()

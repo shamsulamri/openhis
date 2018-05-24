@@ -12,6 +12,7 @@ class Set extends Model
 	protected $table = 'ref_sets';
 	protected $fillable = [
 				'set_code',
+				'user_id',
 				'set_name'];
 	
     protected $guarded = ['set_code'];
@@ -37,5 +38,9 @@ class Set extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function owner()
+	{
+			return $this->belongsTo('App\User', 'user_id','id');
+	}
 	
 }

@@ -27,14 +27,19 @@
 		</h3>
 		<br>
 <form action='/admission_bed/search' method='post'>
+@if ($current_bed->bed->bed_transit == 1 && $admission->anchorBed->ward_code != $current_ward)
+	<a class='btn btn-primary' href='{{ URL::to('admission_beds/confirm/'.$admission->admission_id.'/'. $admission->anchor_bed) }}'>
+	Return to ward
+	</a>
+@endif
 	@can('module-patient')
-    <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
+    <a class="btn btn-default pull-right" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
 	@endcan
 	@can('module-ward')
 	@if (!empty($book_id))
-    <a class="btn btn-default" href="/bed_bookings" role="button">Cancel</a>
+    <a class="btn btn-default pull-right" href="/bed_bookings" role="button">Cancel</a>
 	@else
-    <a class="btn btn-default" href="/admissions" role="button">Cancel</a>
+    <a class="btn btn-default pull-right" href="/admissions" role="button">Cancel</a>
 	@endif
 	@endcan
 	{{ Form::hidden('admission_id', $admission->admission_id) }}
@@ -83,6 +88,18 @@
 							{{ strtoupper($admission_bed->patient_name) }}
 					</td>
 					<td align='right'>
+					@if ($admission_bed->status_code == '03')
+								@if (!empty($encounter->admission->bed))
+										@if ($admission->encounter->patient_id<>$admission_bed->patient_id)
+											@if (empty($move))
+										<a class='btn btn-default btn-xs' href='{{ URL::to('bed_bookings/create/'.$admission->encounter->patient_id.'/'.$admission->admission_id.'?class_code='.$admission_bed->class_code.'&ward_code='.$admission_bed->ward_code.'&bed_code='.$admission_bed->bed_code) }}'>
+											&nbsp;&nbsp;Reserve&nbsp;&nbsp;
+										</a>
+											@endif
+										@endif
+								@endif
+					@endif
+					@if ($admission_bed->status_code == '01' && $admission_bed->bed_code != $admission->anchor_bed) 
 							@if (empty($admission_bed->patient_name))
 									@if (!empty($book_id))
 										<a class='btn btn-primary btn-xs' href='{{ URL::to('admission_beds/confirm/'.$admission->admission_id.'/'. $admission_bed->bed_code.'?book_id='.$book_id) }}'>
@@ -105,17 +122,24 @@
 									</a>
 							@else
 								
-								@if (!empty($encounter->admission->bed))
-										@if ($admission->encounter->patient_id<>$admission_bed->patient_id)
-											@if (empty($move))
-										<a class='btn btn-default btn-xs' href='{{ URL::to('bed_bookings/create/'.$admission->encounter->patient_id.'/'.$admission->admission_id.'?class_code='.$admission_bed->class_code.'&ward_code='.$admission_bed->ward_code.'&bed_code='.$admission_bed->bed_code) }}'>
-											&nbsp;&nbsp;Reserve&nbsp;&nbsp;
-										</a>
-											@endif
-										@endif
-								@endif
-
 							@endif
+							@if ($admission_bed->block_room == 1)
+								<span class="label label-warning">
+										&nbsp;&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;
+								</span>
+							@endif
+					@else
+						@if ($admission_bed->status_code == '05')
+								<span class="label label-warning">
+										&nbsp;&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;
+								</span>
+						@endif
+						@if ($admission_bed->status_code == '02')
+								<span class="label label-danger">
+										Housekeeping
+								</span>
+						@endif
+					@endif
 					</td>
 			</tr>
 		@endforeach

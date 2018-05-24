@@ -48,13 +48,20 @@ class OrderProductController extends Controller
 		 	$order_products = NULL; 	
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 
+			$sets = Set::orderBy('set_name')
+						->whereNull('user_id')
+						->orWhere('user_id', '=', Auth::user()->id)
+						->lists('set_name', 'set_code')
+						->prepend('Drug History','drug_history')
+						->prepend('','');
+
 			return view('order_products.index', [
 					'order_products'=>$order_products,
 					'consultation'=>$consultation,
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
-					'sets' => Set::all()->sortBy('set_name')->lists('set_name', 'set_code')->prepend('Drug History','drug_history')->prepend('',''),
+					'sets' => $sets,
 					'set_value' => '',
 					'search' => '',
 					'categories' => $this->getCategories(),

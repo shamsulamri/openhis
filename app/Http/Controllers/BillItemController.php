@@ -47,7 +47,7 @@ class BillItemController extends Controller
 	public function bedBills($encounter_id) {
 			$encounter = Encounter::find($encounter_id);
 			$sql = "
-				select bed_code, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, product_code, c.tax_code, tax_rate, product_sale_price, block_room
+				select bed_code, bed_stop, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, product_code, c.tax_code, tax_rate, product_sale_price, block_room
 				from bed_charges as a
 				left join products as b on (a.bed_code = product_code)
 				left join tax_codes as c on (c.tax_code = b.tax_code)
@@ -62,17 +62,14 @@ class BillItemController extends Controller
 
 					$bed_los = $bed->los;
 					$bed_unit = 1;
-					if (empty($bed_los)) {
+
+					if (empty($bed->bed_stop)) {
 							$bed_los = $bed->los2;
 					}
+
 					if ($bed_los<=0) $bed_los=1;
 
-					$block_room = 0;
-					if (empty($bed->block_room)) {
-							$block_room = $encounter->admission->block_room;
-					} else {
-							$block_room = $bed->block_room;
-					}
+					$block_room = $bed->block_room;
 
 					if ($block_room == 1) {
 							$bed_charge = Bed::find($bed->bed_code);

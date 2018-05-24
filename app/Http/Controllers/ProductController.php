@@ -318,9 +318,10 @@ class ProductController extends Controller
 			/*** Seach Param ***/
 			if (!empty($request->search)) {
 					$products = $products->where(function ($query) use ($request) {
-								$query->where('product_name','like','%'.$request->search.'%')
-								->orWhere('product_name_other','like','%'.$request->search.'%')
-								->orWhere('products.product_code','like','%'.$request->search.'%');
+							$search_param = trim($request->search, " ");
+								$query->where('product_name','like','%'.$search_param.'%')
+								->orWhere('product_name_other','like','%'.$search_param.'%')
+								->orWhere('products.product_code','like','%'.$search_param.'%');
 					});
 			}
 

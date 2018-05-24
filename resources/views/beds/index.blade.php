@@ -119,6 +119,7 @@
 	$label = 'default';
 	if ($bed->status_code=='02') $label = 'danger';
 	if ($bed->status_code=='03') $label = 'primary';
+	if ($bed->status_code=='05') $label = 'warning';
 ?>
 					<span class="label label-{{ $label }}">
 					@if ($bed->status_code == '03')

@@ -1,7 +1,6 @@
 
 	<h3>{{ $product->product_name }}</h3>
 	<h5>{{ $product->product_code }}</h5>
-
 <?php 
 	$stock_count = 0;
 	$store = null;
@@ -17,6 +16,7 @@
 			$store = $order_drug->order->store;
 		?>
 @endif
+
 @if (!empty($store))
 	<div class="alert @if ($stock_count==0) alert-danger @else alert-success @endif">
 			Available: {{ $stock_count }} {{ '('.$store->store_name.')' }} 

@@ -193,10 +193,11 @@ class OrderHelper
 			if ($admission) {
 					$order->admission_id = $admission->admission_id;
 					$order->ward_code = $admission->bed->ward_code;
-					$location_code = (new self)->getTargetLocation($product);
-					$order->location_code = $location_code;
-					$order->store_code = (new self)->getTargetStore($product);
 			}
+
+			$location_code = (new self)->getTargetLocation($product);
+			$order->location_code = $location_code;
+			$order->store_code = (new self)->getTargetStore($product);
 
 			$order->save();
 

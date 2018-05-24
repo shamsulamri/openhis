@@ -10,6 +10,10 @@ Interim Bill
 @endif
 {{ $bill_label }}
 </h1>
+<h3>
+Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
+</h3>
+<br>
 @if (!$encounter->discharge && !$encounter->bill)
 	<div class='alert alert-warning'>
 	Click Reload button to compile latest bill items.

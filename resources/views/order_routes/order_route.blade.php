@@ -15,6 +15,15 @@
         </div>
     </div>
 
+	<!--
+    <div class='form-group  @if ($errors->has('ward_code')) has-error @endif'>
+        <label for='ward_code' class='col-sm-2 control-label'>To<span style='color:red;'> *</span></label>
+        <div class='col-sm-10'>
+            {{ Form::select('ward_code', $ward,null, ['class'=>'form-control','maxlength'=>'20']) }}
+            @if ($errors->has('ward_code')) <p class="help-block">{{ $errors->first('ward_code') }}</p> @endif
+        </div>
+    </div>
+	-->
 
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
         <label for='location_code' class='col-sm-2 control-label'>To<span style='color:red;'> *</span></label>
@@ -24,13 +33,6 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('ward_code')) has-error @endif'>
-        <label for='ward_code' class='col-sm-2 control-label'>To<span style='color:red;'> *</span></label>
-        <div class='col-sm-10'>
-            {{ Form::select('ward_code', $ward,null, ['class'=>'form-control','maxlength'=>'20']) }}
-            @if ($errors->has('ward_code')) <p class="help-block">{{ $errors->first('ward_code') }}</p> @endif
-        </div>
-    </div>
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">

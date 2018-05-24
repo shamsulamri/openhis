@@ -28,7 +28,7 @@ Patient has been successfully admitted to the following location:
 	</tr>
 	@if ($admission->bed->wardClass)
 	<tr>
-		<td width='100' height='30'>Room</td>
+		<td width='100' height='30'>Class</td>
 		<td><strong>{{ $admission->bed->wardClass->class_name }}</strong></td>
 	</tr>
 	@endif

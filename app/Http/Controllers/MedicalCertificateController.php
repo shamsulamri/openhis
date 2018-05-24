@@ -68,7 +68,8 @@ class MedicalCertificateController extends Controller
 					$medical_certificate->mc_id = $request->mc_id;
 					$medical_certificate->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/medical_certificates/'.$medical_certificate->mc_id.'/edit');
+					return redirect('/discharges/create');
+					//return redirect('/medical_certificates/'.$medical_certificate->mc_id.'/edit');
 			} else {
 					return redirect('/medical_certificates/create?consultation_id='.$consultation->consultation_id)
 							->withErrors($valid)
@@ -100,7 +101,8 @@ class MedicalCertificateController extends Controller
 			if ($valid->passes()) {
 					$medical_certificate->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/medical_certificates/'.$id.'/edit');
+					//return redirect('/medical_certificates/'.$id.'/edit');
+					return redirect('/discharges/create');
 			} else {
 					$consultation = $medical_certificate->consultation;
 					return view('medical_certificates.edit', [

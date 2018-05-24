@@ -267,7 +267,7 @@ class ProductSearchController extends Controller
 	{
 			$reason=$request->reason;
 			$product_searches=null;
-			$search = $request->search;
+			$search = trim($request->search, " ");
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 			switch ($reason) {
 					case "bom":

@@ -54,6 +54,7 @@
 				<a href="{{ url('/consultations') }}">Consultation</a><br>
 				<a href="{{ url('/patient_lists') }}">Patient Lists</a><br>
 				<a href="{{ url('/discharges') }}">Discharges</a><br>
+				<a href="{{ url('/sets') }}">Order Sets</a><br>
 			</div>
 			<div class="col-xs-6">
 			<small>
@@ -78,7 +79,6 @@
 				<a href="{{ url('/stores') }}">Stores</a><br>
 				<a href="{{ url('/drugs') }}">Drugs</a><br>
 				<a href="{{ url('/drug_prescriptions') }}">Drug Prescriptions</a><br>
-				<a href="{{ url('/sets') }}">Order Sets</a><br>
 				<a href="{{ url('/order_routes') }}">Order Routes</a><br>
 				<a href="{{ url('/loans') }}">Loans</a><br>
 				<a href="{{ url('/product_authorizations') }}">Product Authorizations</a><br>

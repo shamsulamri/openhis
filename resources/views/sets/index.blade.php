@@ -18,6 +18,7 @@
 	<tr> 
     <th>Name</th>
     <th>Code</th> 
+    <th>Owner</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -31,6 +32,9 @@
 			</td>
 			<td>
 					{{$set->set_code}}
+			</td>
+			<td>
+					{{ $set->owner['name'] }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-default btn-xs' href='{{ URL::to('sets/'. $set->set_code) }}'>Assets</a>

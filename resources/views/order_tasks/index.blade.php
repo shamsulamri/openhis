@@ -46,7 +46,7 @@
 	<?php 
 	$status='';
 	$allocated =  $stock_helper->getStockAllocatedByStore($order->product_code, $order->store_code, $encounter_id); //-$order->order_quantity_request;
-	$on_hand = $stock_helper->getStockCountByStore($order->product_code, $order->store_code);
+	$on_hand = $stock_helper->getStockCountByStore($order->product_code, $location->store_code);
 	$available = $on_hand-$allocated;
 	?>
 	@if ($order->order_completed==1) 
@@ -139,7 +139,7 @@
 	</tr>
 	@if ($order->product_track_batch && $order->order_completed==0)
 <?php
-	$batches = $stock_helper->getBatches($order->product_code, $order->store_code);
+	$batches = $stock_helper->getBatches($order->product_code, $location->store_code);
 	$order_request = $order->order_quantity_request;
 	$total_quantity = 0;
 ?>

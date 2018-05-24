@@ -1,6 +1,6 @@
 
 <div class='page-header'>
-<h3>Admission</h3>
+<h1>Admission</h1>
 </div>
     <div class='form-group  @if ($errors->has('admission_code')) has-error @endif'>
         {{ Form::label('admission_code', 'Admission Type',['class'=>'col-sm-3 control-label']) }}

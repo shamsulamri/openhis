@@ -231,6 +231,9 @@ class StockInputController extends Controller
 				if (empty($request['value_'.$line->line_id])) {
 						$valid['value_'.$line->line_id]='This field is required.';
 				}
+				if (empty($request['quantity_'.$line->line_id])) {
+						$valid['quantity_'.$line->line_id]='This field is required.';
+				}
 				if ($input->move_code=='transfer') {
 						if ($request['quantity_'.$line->line_id]>$request['on_hand_value_'.$line->line_id]) {
 								$valid['quantity_'.$line->line_id]='This field is required.';

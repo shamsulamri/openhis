@@ -115,8 +115,7 @@ class OrderRouteController extends Controller
 	
 	public function search(Request $request)
 	{
-			$order_routes = DB::table('order_routes')
-					->where('encounter_code','like','%'.$request->search.'%')
+			$order_routes = OrderRoute::where('encounter_code','like','%'.$request->search.'%')
 					->orWhere('route_id', 'like','%'.$request->search.'%')
 					->orderBy('encounter_code')
 					->paginate($this->paginateValue);
@@ -129,12 +128,11 @@ class OrderRouteController extends Controller
 
 	public function searchById($id)
 	{
-			$order_routes = DB::table('order_routes')
-					->where('route_id','=',$id)
+			$order_routes = OrderRoute::where('route_id','=',$id)
 					->paginate($this->paginateValue);
 
 			return view('order_routes.index', [
-					'order_routes'=>$order_routes
+					'order_routes'=>$order_routes,
 			]);
 	}
 }

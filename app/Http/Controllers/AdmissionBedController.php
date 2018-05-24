@@ -34,7 +34,8 @@ class AdmissionBedController extends Controller
 
 	public function index(Request $request)
 	{
-			$ward_code = $request->cookie('ward');
+			$setWard = $request->cookie('ward');
+			$current_ward = $request->cookie('ward');
 			$admission = NULL;
 			$patient = NULL;
 			$flag=$request->flag;
@@ -66,7 +67,7 @@ class AdmissionBedController extends Controller
 
 
 			$admission_beds = DB::table('beds as a')
-					->select(['b.admission_id','a.bed_code','room_name', 'bed_name','patient_name','a.ward_code', 'ward_name', 'a.class_code', 'class_name','c.patient_id'])
+					->select(['block_room', 'a.status_code', 'b.admission_id','a.bed_code','room_name', 'bed_name','patient_name','a.ward_code', 'ward_name', 'a.class_code', 'class_name','c.patient_id'])
 					->leftJoin('admissions as b', 'b.bed_code', '=', 'a.bed_code')
 					->leftJoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftJoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
@@ -83,7 +84,6 @@ class AdmissionBedController extends Controller
 					->orderBy('ward_name')
 					->paginate($this->paginateValue);
 
-
 			return view('admission_beds.index', [
 					'admission_beds'=>$admission_beds,
 					'wards' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
@@ -91,6 +91,7 @@ class AdmissionBedController extends Controller
 								->orWhere('encounter_code','=','daycare')
 								->orderBy('ward_name')->get(),
 					'ward_code'=>$ward_code,
+					'current_ward'=>$current_ward,
 					'ward_class' => $ward_class,
 					'admission' => $admission,
 					'patient' => $patient,
@@ -265,7 +266,7 @@ class AdmissionBedController extends Controller
 			$encounter= Encounter::find($admission->encounter_id);
 
 			$admission_beds = DB::table('beds as a')
-					->select(['b.admission_id','a.bed_code','bed_name','room_name','patient_name','a.ward_code', 'ward_name','class_name', 'a.class_code','c.patient_id'])
+					->select(['block_room', 'status_code', 'b.admission_id','a.bed_code','bed_name','room_name','patient_name','a.ward_code', 'ward_name','class_name', 'a.class_code','c.patient_id'])
 					->leftJoin('admissions as b', 'b.bed_code', '=', 'a.bed_code')
 					->leftJoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftJoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
@@ -334,6 +335,20 @@ class AdmissionBedController extends Controller
 			$current_bed->status_code = "02";
 			$current_bed->save();
 
+			/** Release beds if room blocked **/
+			if ($admission->block_room==1) {
+				$block_beds = Bed::where('room_code',$current_bed->room_code)
+								->where('bed_code', '<>', $current_bed->bed_code)
+								->get();
+
+				foreach ($block_beds as $blocked_bed) {
+						DB::table('beds')
+								->where('bed_code', $blocked_bed->bed_code)
+								->update(['status_code'=>'02']);
+				}
+
+			}	
+
 			if ($current_bed->bed_transit==1) {
 				$current_bed_charge = BedCharge::where('encounter_id',$admission->encounter_id)
 						->where('bed_code', $current_bed->bed_code)
@@ -368,6 +383,9 @@ class AdmissionBedController extends Controller
 			$bed_movement->save();
 			
 			/** Update admission table **/
+			if ($new_bed->bed_transit == 0) {
+					$admission->anchor_bed = $bed_code;
+			}
 			$admission->bed_code = $bed_code;
 			$admission->save();
 
@@ -383,6 +401,7 @@ class AdmissionBedController extends Controller
 						$open_bed->bed_stop = date('d/m/Y');
 						$open_bed->save();
 				}
+
 			}
 
 			/** Is returning bed ? **/
@@ -404,6 +423,19 @@ class AdmissionBedController extends Controller
 						$new_bed_charge->bed_start = date('d/m/Y');
 						$new_bed_charge->block_room = $admission->block_room;
 						$new_bed_charge->save();
+
+						if ($admission->block_room==1) {
+								$other_beds = Bed::where('room_code',$new_bed->room_code)
+												->where('bed_code', '<>', $new_bed->bed_code)
+												->get();
+
+								foreach ($other_beds as $other_bed) {
+										DB::table('beds')
+												->where('bed_code', $other_bed->bed_code)
+												->update(['status_code'=>'05']);
+								}
+
+						}	
 			}
 
 			if (!empty($request->book_id)) {

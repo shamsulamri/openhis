@@ -208,7 +208,7 @@ class EncounterController extends Controller
 	public function store(Request $request)
 	{
 			$valid=null;
-
+			
 			if ($request->encounter_code == 'inpatient') {
 					if (empty($request->user_id)) $valid['user_id']='This field is required.';
 					if (empty($request->bed_code)) $valid['bed_code']='This field is required.';
@@ -267,6 +267,7 @@ class EncounterController extends Controller
 
 							$admission = new Admission();
 							$admission->bed_code = $request->bed_code;
+							$admission->anchor_bed = $request->bed_code;
 							$admission->admission_code = $request->admission_code;
 							$admission->referral_code = $request->referral_code;
 							$admission->user_id = $request->user_id;
@@ -277,7 +278,20 @@ class EncounterController extends Controller
 							$admission->block_room = $request->block_room;
 							//$admission->team_code = $request->team_code;
 							$admission->save();
-							Log::info($admission);
+
+							//Block other beds in room if room is blocked
+							if ($admission->block_room==1) {
+								$other_beds = Bed::where('room_code',$bed->room_code)
+												->where('bed_code', '<>', $bed->bed_code)
+												->get();
+
+								foreach ($other_beds as $other_bed) {
+										DB::table('beds')
+												->where('bed_code', $other_bed->bed_code)
+												->update(['status_code'=>'05']);
+								}
+
+							}	
 
 							$bed_movement = new BedMovement();
 							$bed_movement->admission_id = $admission->admission_id;
@@ -292,6 +306,7 @@ class EncounterController extends Controller
 							$bed_charge->encounter_id = $encounter->encounter_id;
 							$bed_charge->bed_code = $admission->bed_code;
 							$bed_charge->bed_start = date('d/m/Y');
+							$bed_charge->block_room = $request->block_room;
 							$bed_charge->save();
 
 							Session::flash('message', 'Record successfully created.');

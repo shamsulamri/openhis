@@ -10,22 +10,28 @@ use App\Set;
 use Log;
 use DB;
 use Session;
-
+use App\User;
 
 class SetController extends Controller
 {
 	public $paginateValue=10;
+	public $consultants = null;
 
 	public function __construct()
 	{
 			$this->middleware('auth');
+			$this->consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('module_consultation',1)
+							->orderBy('name')
+							->lists('name','id')
+							->prepend('','');
 	}
 
 	public function index()
 	{
-			$sets = DB::table('ref_sets')
-					->orderBy('set_name')
+			$sets = Set::orderBy('set_name')
 					->paginate($this->paginateValue);
+
 			return view('sets.index', [
 					'sets'=>$sets
 			]);
@@ -36,6 +42,7 @@ class SetController extends Controller
 			$set = new Set();
 			return view('sets.create', [
 					'set' => $set,
+					'consultants' => $this->consultants,
 				
 					]);
 	}
@@ -72,7 +79,7 @@ class SetController extends Controller
 			$set = Set::findOrFail($id);
 			return view('sets.edit', [
 					'set'=>$set,
-				
+					'consultants' => $this->consultants,
 					]);
 	}
 
@@ -114,8 +121,7 @@ class SetController extends Controller
 	
 	public function search(Request $request)
 	{
-			$sets = DB::table('ref_sets')
-					->where('set_name','like','%'.$request->search.'%')
+			$sets = Set::where('set_name','like','%'.$request->search.'%')
 					->orWhere('set_code', 'like','%'.$request->search.'%')
 					->orderBy('set_name')
 					->paginate($this->paginateValue);
@@ -128,8 +134,7 @@ class SetController extends Controller
 
 	public function searchById($id)
 	{
-			$sets = DB::table('ref_sets')
-					->where('set_code','=',$id)
+			$sets = Set::where('set_code','=',$id)
 					->paginate($this->paginateValue);
 
 			return view('sets.index', [

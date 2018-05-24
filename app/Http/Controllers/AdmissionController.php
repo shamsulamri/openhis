@@ -42,12 +42,13 @@ class AdmissionController extends Controller
 {
 	public $paginateValue=10;
 
-	public $selectFields = ['bed_name', 'a.admission_id','c.patient_id','patient_name','a.encounter_id','a.user_id','e.discharge_id', 
+	public $selectFields = ['h.bed_name', 'a.admission_id','c.patient_id','patient_name','a.encounter_id','a.user_id','e.discharge_id', 
 					'f.discharge_id as ward_discharge',
 					'a.created_at',
 					'arrival_id',	
 					'patient_mrn',
-					'ward_name',
+					'i.ward_name',
+					'i.ward_code',
 					'room_name',
 					'a.user_id',
 					'k.name',
@@ -57,6 +58,8 @@ class AdmissionController extends Controller
 					'n.team_name',
 					'nbm_status',
 					'c.gender_code',
+					'o.bed_name as anchor_bed',
+					'p.ward_code as anchor_ward',
 			];
 
 
@@ -101,8 +104,17 @@ class AdmissionController extends Controller
 					->leftJoin('diets as l', 'l.diet_code', '=', 'a.diet_code')
 					->leftJoin('diet_classes as m', 'm.class_code', '=', 'a.class_code')
 					->leftJoin('teams as n', 'n.team_code', '=', 'a.team_code')
-					->where('h.ward_code','like', '%'.$ward_code.'%')
-					->whereNull('f.encounter_id')
+					->leftJoin('beds as o', 'o.bed_code', '=', 'a.anchor_bed')
+					->leftJoin('wards as p', 'p.ward_code', '=', 'o.ward_code');
+
+			if (!empty($ward_code)) {
+					$admissions = $admissions->where(function ($query) use ($request, $ward_code) {
+						$query->where('h.ward_code', '=', $ward_code)
+							->orwhere('p.ward_code', '=', $ward_code);
+					});
+			}
+
+			$admissions = $admissions->whereNull('f.encounter_id')
 					->orderBy('admission_id', 'desc');
 					
 			if (Auth::user()->can('module-patient')) {
@@ -508,7 +520,9 @@ class AdmissionController extends Controller
 					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
 					->leftJoin('diets as l', 'l.diet_code', '=', 'a.diet_code')
 					->leftJoin('diet_classes as m', 'm.class_code', '=', 'a.class_code')
-					->leftJoin('teams as n', 'n.team_code', '=', 'a.team_code');
+					->leftJoin('teams as n', 'n.team_code', '=', 'a.team_code')
+					->leftJoin('beds as o', 'o.bed_code', '=', 'a.anchor_bed')
+					->leftJoin('wards as p', 'p.ward_code', '=', 'o.ward_code');
 
 			if (!empty($request->search)) {
 					$admissions = $admissions->where(function ($query) use ($request) {

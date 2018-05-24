@@ -190,6 +190,8 @@ class PaymentController extends Controller
 					'expiry_months'=>$this->months,
 					'expiry_years'=>$this->years,
 					'credit'=> $credit,
+					'non_claimable' => $payment->payment_non_claimable,
+					'edit' => true,
 					]);
 	}
 
