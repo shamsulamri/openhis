@@ -21,7 +21,7 @@
 				@else
 						@if (!is_null($admission->arrival)) 
 							@if ($admission->bed->ward->ward_code != 'mortuary')
-								<span class='fa fa-table' aria-hidden='true'></span>
+								<span class='fa fa-medkit' aria-hidden='true'></span>
 								<a href='{{ URL::to('medication_record/mar/'. $admission->encounter_id) }}'>
 									Medication Administration Record
 								</a>
@@ -33,21 +33,27 @@
 								</a>
 								<br><br>
 							@endif
-						<span class='fa fa-wpforms' aria-hidden='true'></span>
+						<span class='fa fa-edit' aria-hidden='true'></span>
 						<a href='{{ URL::to('form/results/'. $admission->encounter_id) }}'>
 							Forms
 						</a>
 
-						<br><br>
-						<span class='fa fa-print' aria-hidden='true'></span>
+						<hr>
+						<span class='fa fa-file-o' aria-hidden='true'></span>
 						<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $admission->patient_id }}">
 								Patient Label
 						</a>
 
 						<br><br>
-						<span class='fa fa-print' aria-hidden='true'></span>
+						<span class='fa fa-file-o' aria-hidden='true'></span>
 						<a target="_blank" href="{{ Config::get('host.report_server')  }}/ReportServlet?report=wrist_label&id={{ $admission->patient_id }}">
 								Wrist Label
+						</a>
+
+						<br><br>
+						<span class='fa fa-file-o' aria-hidden='true'></span>
+						<a target="_blank" href="/pdf/{{ $patient->patient_id }}/darah">
+						Borang Persetujuan Pemindahan Darah Atau Komponen Darah
 						</a>
 
 						<?php
@@ -59,6 +65,7 @@
 
 				<br><br>
 			@if (!$admission->encounter->discharge)
+				<hr>
 				@if (empty($consultation))
 				<span class='fa fa-stethoscope' aria-hidden='true'></span>
 				<a href='{{ URL::to('admission/consultation/'. $admission->admission_id) }}'>Start Consultation</a>

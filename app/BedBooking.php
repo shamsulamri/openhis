@@ -61,4 +61,9 @@ class BedBooking extends Model
 	{
 			return $this->belongsTo('App\Patient', 'patient_id');
 	}
+
+	public function ward()
+	{
+			return $this->belongsTo('App\Ward', 'ward_code');
+	}
 }

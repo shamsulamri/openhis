@@ -16,7 +16,7 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'>Ward</label>
+						<label class='col-sm-3 control-label'><div align='left'>Ward</div></label>
 						<div class='col-sm-9'>
 						{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
@@ -46,7 +46,7 @@
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
 				<h5><strong>Total Bed</strong></h5>	
-				<h4><strong>{{ $bedHelper->totalBed() }}</strong></h4>	
+				<h4><strong>{{ $bedHelper->totalBed($ward_code, $class_code) }}</strong></h4>	
 			</div>
 		</div>
 	</div>
@@ -54,7 +54,7 @@
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
 				<h5><strong>Available</strong></h5>	
-				<h4><strong>{{ $bedHelper->bedAvailable() }}</strong></h4>	
+				<h4><strong>{{ $bedHelper->bedAvailable($ward_code, $class_code) }}</strong></h4>	
 			</div>
 		</div>
 	</div>
@@ -62,7 +62,7 @@
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
 				<h5><strong>Clinical Discharge</strong></h5>	
-				<h4><strong>{{ $bedHelper->dischargeClinical() }}</strong></h4>	
+				<h4><strong>{{ $bedHelper->dischargeClinical($ward_code, $class_code) }}</strong></h4>	
 			</div>
 		</div>
 	</div>

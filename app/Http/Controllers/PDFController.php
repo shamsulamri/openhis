@@ -37,7 +37,7 @@ class PDFController extends Controller
 			$admission = $encounter_helper->getCurrentAdmission($encounter->encounter_id);
 			$patient = $encounter->patient;
 
-			$pdf = new Pdf('forms/'.$form_name.'.pdf');
+			$pdf = new Pdf('medical_forms/'.$form_name.'.pdf');
 			$consultant = "";
 			if ($admission) {
 				$consultant = $admission->consultant->name;
@@ -54,12 +54,12 @@ class PDFController extends Controller
 						])
 						->needAppearances();
 
-			if (!$pdf->saveAs('forms/'.$patient->patient_id.'.pdf')) {
+			if (!$pdf->saveAs('medical_forms/'.$patient->patient_id.'.pdf')) {
 				$error = $pdf->getError();
 				return $error;
 			}
 
-			return redirect('forms/'.$patient->patient_id.'.pdf');
+			return redirect('medical_forms/'.$patient->patient_id.'.pdf');
 	}
 
 }

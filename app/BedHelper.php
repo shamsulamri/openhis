@@ -107,30 +107,43 @@ class BedHelper
 			}
 	}
 
-	public function totalBed() 
+	public function totalBed($ward_code=null, $class_code=null) 
 	{
-			$beds = Bed::count();
-			return $beds;
+			$beds = Bed::all();
+
+			if ($ward_code) {
+				$beds = $beds->where('ward_code', $ward_code);
+			}
+
+			if ($class_code) {
+				$beds = $beds->where('class_code', $class_code);
+			}
+
+			return $beds->count();
 	}
 
-	public function bedAvailable() {
+	public function bedAvailable($ward_code=null, $class_code=null) {
 
-			$sql = "select count(*) as bed_available from admissions as a
-					left join ward_discharges b on (a.encounter_id = b.encounter_id)
-					where discharge_id is null";
+			$beds = Admission::leftJoin('ward_discharges as b', 'admissions.encounter_id', '=', 'b.encounter_id')
+						->leftJoin('beds as c', 'c.bed_code', '=', 'admissions.bed_code');
 
-			$results = DB::select($sql);
-
-			if (!empty($results)) {
-				return Bed::count()-$results[0]->bed_available;
-			} else {
-				return 0;
+			if ($ward_code) {
+				$beds = $beds->where('ward_code', $ward_code);
 			}
+
+			if ($class_code) {
+				$beds = $beds->where('c.class_code', $class_code);
+			}
+
+			$beds = $beds->whereNull('discharge_id');
+
+			return $this->totalBed($ward_code, $class_code)-$beds->count();
+
 
 	
 	}
 
-	public function dischargeClinical() {
+	public function dischargeClinical($ward_code=null, $class_code=null) {
 
 			$sql = "select count(*) as total from admissions as a
 					left join ward_discharges b on (a.encounter_id = b.encounter_id)
@@ -139,14 +152,22 @@ class BedHelper
 					and b.discharge_id is null
 					";
 
-			$results = DB::select($sql);
+			$beds = Admission::leftJoin('ward_discharges as b', 'admissions.encounter_id', '=', 'b.encounter_id')
+						->leftJoin('discharges as c', 'c.encounter_id','=', 'admissions.encounter_id')
+						->leftJoin('beds as d', 'd.bed_code', '=', 'admissions.bed_code')
+						->whereNotNull('c.discharge_id')
+						->whereNull('b.discharge_id');
 
-			if (!empty($results)) {
-				return $results[0]->total;
-			} else {
-				return 0;
+			if ($ward_code) {
+				$beds = $beds->where('ward_code', $ward_code);
 			}
 
+			if ($class_code) {
+				$beds = $beds->where('d.class_code', $class_code);
+			}
+
+			return $beds->count();
+	
 	
 	}
 }

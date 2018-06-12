@@ -201,6 +201,7 @@ class OrderDrugController extends Controller
 				if ($order->product->product_stocked==1) {
 						$store_code = OrderHelper::getLocalStore($order->consultation->encounter, $admission);
 						$order->store_code = $store_code;
+						Log::info($store_code);
 						//OrderHelper::insertStock($order);
 				}
 				$available = $stock_helper->getStockAvailable($order->product_code, $store_code);

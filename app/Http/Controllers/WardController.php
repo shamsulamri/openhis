@@ -82,6 +82,7 @@ class WardController extends Controller
 			$ward = Ward::findOrFail($id);
 			$ward->fill($request->input());
 
+			$ward->ward_omission = $request->ward_omission ?: 0;
 
 			$valid = $ward->validate($request->all(), $request->_method);	
 

@@ -63,6 +63,7 @@ class WardClassController extends Controller
 	public function edit($id) 
 	{
 			$ward_class = WardClass::findOrFail($id);
+
 			return view('ward_classes.edit', [
 					'ward_class'=>$ward_class,
 					'diet_classes' => DietClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),

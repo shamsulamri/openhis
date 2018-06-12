@@ -41,7 +41,7 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 				<a href='/appointment_services/{{ $patient->patient_id }}/12{{ $service_path }}?admission_id={{ $admission_id }}' class='btn btn-default btn-xs'>3/12</a>
 			</td>
 			<td width='70' align='right'>
-			@if ($selected_week-1>=0)
+			@if ($start_week>$today)
 				<a href='/appointment_services/{{ $patient->patient_id }}/{{ $selected_week-1 }}{{ $service_path }}?admission_id={{ $admission_id }}' class='btn btn-warning btn-xs'><span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span></a>
 			@else
 				<a href='#' class='btn btn-warning btn-xs disabled'><span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span></a>

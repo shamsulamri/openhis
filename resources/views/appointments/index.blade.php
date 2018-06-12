@@ -2,15 +2,14 @@
 
 @section('content')
 <h1>Appointment List</h1>
-@if (Auth::user()->service_id)
-<br>
-<h3>{{ Auth::user()->appointment->service_name }}</h3>
+@if (!empty($service))
+<h3>{{ $service->service_name }}</h3>
 @endif
 <form action='/appointment/search' method='post' class='form-inline'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 
-	@if (!Auth::user()->service_id)
-	{{ Form::select('services', $services, $service, ['class'=>'form-control']) }}
+	@if (!$service)
+	{{ Form::select('services', $services, $service_id, ['class'=>'form-control']) }}
 	@else
 	{{ Form::hidden('services', Auth::user()->service_id) }}
 	@endif
@@ -29,8 +28,8 @@
 	<tr> 
     <th width='10'></th>
     <th>Slot</th>
-    <th>Service</th>
     <th>Patient</th>
+    <th>Service</th>
     <th>Home Phone</th> 
     <th>Mobile Phone</th> 
 	<th></th>
@@ -48,22 +47,22 @@
 				@endif
 			</td>
 			<td>
-					<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/0/'.$appointment->service_id. '/'.$appointment->appointment_id) }}'>
+					<?php
+						$week = DojoUtility::weekOfMonth($appointment->appointment_datetime)-1;
+					?>
+					<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/'.$week.'/'.$appointment->service_id. '/'.$appointment->appointment_id) }}?edit=true'>
 					{{ DojoUtility::dateLongFormat($appointment->appointment_datetime) }}
 					</a>
 			</td>
 			<td>
-					{{$appointment->service->service_name}}
-			</td>
-			<td>
-					<!--
 					<a href='{{ URL::to('patients/'. $appointment->patient_id.'/edit') }}'>
-						{{$appointment->patient_name}}
-					</a>
-					-->
 						{{$appointment->patient->patient_name}}
+					</a>
 					<br>
 					<small>{{$appointment->patient->patient_mrn}}</small>
+			</td>
+			<td>
+					{{$appointment->service->service_name}}
 			</td>
 			<td>
 				{{ $appointment->patient->patient_phone_home }}

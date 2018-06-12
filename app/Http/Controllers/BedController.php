@@ -49,6 +49,8 @@ class BedController extends Controller
 					->orderBy('bed_code');
 			 */
 
+			$ward_code = null;
+
 			if (Auth::user()->cannot('system-administrator')) {
 					if (Auth::user()->can('module-ward')) {
 							$ward_code = $request->cookie('ward');
@@ -64,7 +66,7 @@ class BedController extends Controller
 					'beds'=>$beds,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
-					'ward_code' => null,
+					'ward_code' => $ward_code,
 					'class_code' => null,
 					'search'=> null,
 					'bedHelper' => new BedHelper(),

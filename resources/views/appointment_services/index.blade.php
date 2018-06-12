@@ -2,7 +2,10 @@
 
 @section('content')
 <h1>Appointment Service List
-<a href='/appointment_services/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+<div class='pull-right'>
+<a href='/appointment_services/forget' class='btn btn-primary'><span class='fa fa-stop-circle'></span></a>
+<a href='/appointment_services/create' class='btn btn-primary'><span class='glyphicon glyphicon-plus'></span></a>
+</div>
 </h1>
 <form action='/appointment_service/search' method='post'>
 	<div class='input-group'>
@@ -35,6 +38,7 @@
 					{{$appointment_service->department_name}}
 			</td>
 			<td align='right'>
+					<a class='btn btn-warning btn-xs' href='{{ URL::to('appointment_services/set/'. $appointment_service->service_id) }}'>Set Book</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('appointment_services/delete/'. $appointment_service->service_id) }}'>Delete</a>
 			</td>
 	</tr>

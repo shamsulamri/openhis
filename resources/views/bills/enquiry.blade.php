@@ -103,6 +103,13 @@
 			</td>
 			<td>
 					{{ $bill->sponsor_name?:"-" }}
+					@if ($bill->bill_non_claimable == 0)
+						(Claimable)
+					@endif
+					@if ($bill->bill_non_claimable == 1)
+						(Non-Claimable)
+					@endif
+
 			</td>
 			<td>
 					{{ $bill->name }}

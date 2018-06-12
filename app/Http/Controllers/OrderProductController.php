@@ -226,13 +226,11 @@ class OrderProductController extends Controller
 							->pluck('product_code');
 
 				if (!empty($request->categories)) {
-						$order_products = DB::table('products')
-							->where('category_code',$request->categories)
+						$order_products = Product::where('category_code',$request->categories)
 							->orderBy('product_name')
 							->paginate($this->paginateValue);
 				} else {
-						$order_products = DB::table('products')
-							->whereIn('product_code', $orderSets)
+						$order_products = Product::whereIn('product_code', $orderSets)
 							->orderBy('product_name')
 							->paginate($this->paginateValue);
 				}

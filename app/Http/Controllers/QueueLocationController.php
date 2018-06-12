@@ -162,7 +162,7 @@ class QueueLocationController extends Controller
 	}
 
 	public function forgetCookie() {
-			Session::flash('message', 'Location forgotten.');
+			Session::flash('message', 'Location detached.');
 			return redirect('/queue_locations')
 				->withCookie(\Cookie::forget('queue_location'));
 	}

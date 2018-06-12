@@ -262,6 +262,7 @@ class ConsultationController extends Controller
 	public function edit($id) 
 	{
 			$consultation = Consultation::findOrFail($id);
+
 			//return $consultation->annotation;
 			Session::set('consultation_id', $consultation->consultation_id);
 			Session::set('encounter_id', $consultation->encounter->encounter_id);

@@ -47,6 +47,12 @@
 		</div>
     </div>
 
+    <div class='form-group  @if ($errors->has('ward_omission')) has-error @endif'>
+        {{ Form::label('ward_omission', 'Omission',['class'=>'col-sm-3 control-label']) }}
+		<div class='col-sm-9'>
+            {{ Form::checkbox('ward_omission', '1') }} Hide this ward from admission list
+		</div>
+    </div>
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/wards" role="button">Cancel</a>

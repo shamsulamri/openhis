@@ -60,14 +60,14 @@
 									}
 								?>
 									@if ($show_checkbox)
-										{{ Form::checkbox($order_product->product_code, 1, null) }}
+										{{ Form::checkbox($order_product->product_code, 1, null,['class'=>'i-checks']) }}
 									@endif
 									</td>
 									<td>
 										{{ ucfirst(strtoupper($order_product->product_name)) }}
 										<br>
 										<small>
-										{{ $order_product->product_code }} 
+										{{ $order_product->product_code }}
 										@if (!empty($order_product->category))
 										({{ $order_product->category->category_name }})
 										@endif

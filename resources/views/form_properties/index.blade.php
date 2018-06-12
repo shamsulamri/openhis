@@ -41,7 +41,7 @@
 					{{$form_property->system_code}}
 			</td>
 			<td align='right'>
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('form_property/add/'.$form_code.'/'.$form_property->property_code) }}'><span class='glyphicon glyphicon-chevron-right'></span></a>
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('form_property/add/'.$form_code.'/'.$form_property->property_code) }}'><span class='glyphicon glyphicon-plus'></span></a>
 					@can('system-administrator')
 					<!--
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('form_properties/delete/'. $form_property->property_code) }}'>-</a>

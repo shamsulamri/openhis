@@ -3,7 +3,7 @@
 @section('content')
 <h1>Queue Location List
 <div class='pull-right'>
-<a href='/queue_locations/forget' class='btn btn-primary'><span class='glyphicon glyphicon-trash'></span></a>
+<a href='/queue_locations/forget' class='btn btn-primary'><span class='fa fa-stop-circle'></span></a>
 <a href='/queue_locations/create' class='btn btn-primary'><span class='glyphicon glyphicon-plus'></span></a>
 </div>
 </h1>

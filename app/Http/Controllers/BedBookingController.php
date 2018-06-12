@@ -94,9 +94,22 @@ class BedBookingController extends Controller
 					$admission = Admission::find($admission_id);
 			}
 
+			$wards = Ward::select(DB::raw("ward_name, ward_code"))
+							->where('ward_omission', '=', '0')	
+							->where('ward_code', '<>', 'mortuary')	
+							->where('ward_code', '<>', 'observation')	
+							->orderBy('ward_name')
+							->lists('ward_name', 'ward_code')
+							->prepend('','');
+
+			$ward_classes = Bed::select(DB::raw('beds.ward_code, class_name, beds.class_code,beds.encounter_code,  count(*)'))
+					->leftJoin('ward_classes as b', 'b.class_code', '=', 'beds.class_code')
+					->groupBy(['ward_code','b.class_code'])
+					->get();
+
 			return view('bed_bookings.create', [
 					'bed_booking' => $bed_booking,
-					'ward' => Ward::where('ward_code','<>','mortuary')->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'ward' => $wards,
 					'class' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'patient' => Patient::find($bed_booking->patient_id),
 					'title' => $title,
@@ -104,6 +117,7 @@ class BedBookingController extends Controller
 					'consultants' => $this->getConsultants(),
 					'priority' => Priority::all()->sortBy('priority_name')->lists('priority_name', 'priority_code')->prepend('',''),
 					'book' => $request->book,
+					'ward_classes' => $ward_classes,
 					]);
 	}
 
@@ -153,6 +167,11 @@ class BedBookingController extends Controller
 	{
 			$bed_booking = BedBooking::findOrFail($id);
 
+			$ward_classes = Bed::select(DB::raw('beds.ward_code, class_name, beds.class_code,beds.encounter_code,  count(*)'))
+					->leftJoin('ward_classes as b', 'b.class_code', '=', 'beds.class_code')
+					->groupBy(['ward_code','b.class_code'])
+					->get();
+
 			return view('bed_bookings.edit', [
 					'bed_booking'=>$bed_booking,
 					'patient' => Patient::find($bed_booking->patient_id),
@@ -162,6 +181,7 @@ class BedBookingController extends Controller
 					'consultants' => $this->getConsultants(),
 					'priority' => Priority::all()->sortBy('priority_name')->lists('priority_name', 'priority_code')->prepend('',''),
 					'book' => null,
+					'ward_classes' => $ward_classes,
 					]);
 	}
 

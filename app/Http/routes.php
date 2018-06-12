@@ -707,6 +707,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/appointment/enquiry', 'AppointmentController@enquiry');
 				Route::post('/appointment/enquiry', 'AppointmentController@enquiry');
 
+				Route::get('/appointment_services/forget', 'AppointmentServiceController@forgetCookie');
+				Route::get('/appointment_services/set/{id}', 'AppointmentServiceController@setAppointmentBook');
 				Route::resource('appointment_services', 'AppointmentServiceController', ['except'=>['show']]);
 				Route::get('/appointment_services/id/{id}', 'AppointmentServiceController@searchById');
 				Route::get('/appointment_services/{id}/{selected_week}/{service_id?}/{appointment_id?}', 'AppointmentServiceController@show');

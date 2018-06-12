@@ -163,8 +163,7 @@ class AppointmentServiceController extends Controller
 			$service_path = "";
 
 			if (empty($request->services)) {
-					$services = AppointmentService::all();
-					$services = null;
+					//$services = AppointmentService::all();
 			} else {
 					$services = AppointmentService::where('service_id', $request->services)->get();
 					$service_id = $request->services;		
@@ -173,6 +172,9 @@ class AppointmentServiceController extends Controller
 			if ($service_id != null) { 
 					$service_path="/".$service_id;
 					$services = AppointmentService::where('service_id', $service_id)->get();
+					if ($appointment_id) {
+							$service_path = "/".$service_id.'/'.$appointment_id;
+					}
 			}
 			//$d = strtotime('today');
 			//$start_week = strtotime('last monday midnight', $d);
@@ -184,8 +186,20 @@ class AppointmentServiceController extends Controller
 			$start_week = new Carbon('monday this week');
 			$start_week = $start_week->addWeeks($selected_week);
 			$end_week = new Carbon('next sunday'); 
-
 			$week=array(Carbon::create($start_week->year, $start_week->month, $start_week->day));
+
+			$appointment=null;
+
+			if ($appointment_id && !empty($request->edit)) {
+					$appointment = Appointment::find($appointment_id);
+					$start_week = new Carbon($appointment->appointment_datetime);
+					$start_week = $start_week->startOfWeek();
+					$end_week = new $start_week;
+					$end_week->addDays(6);
+					$week=array(Carbon::create($start_week->year, $start_week->month, $start_week->day));
+					$selected_week = $start_week->diffInWeeks(new Carbon('monday this week'));
+			}
+
 
 			for ($i=0;$i<6;$i++) {
 					$start_week = $start_week->addDays(1);
@@ -196,19 +210,18 @@ class AppointmentServiceController extends Controller
 			//$services = AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('','');
 			//return $services;
 
-			$appointment=null;
 
 			$admission_id = 0;
 			if (isset($request->admission_id)) {
 				$admission_id = $request->admission_id;
 			}
 
-			if ($appointment_id != null) {
-					$appointment = Appointment::find($appointment_id);
-					$service_path = $service_path.'/'.$appointment_id;
-			}
 			
 			$block_dates = BlockDate::orderBy('block_date')->get();
+
+			if ($appointment_id) {
+					$appointment = Appointment::find($appointment_id);
+			}
 
 			return view('appointment_services.render', [
 					'services'=>$services,
@@ -226,8 +239,25 @@ class AppointmentServiceController extends Controller
 					'appointment'=>$appointment, 
 					'admission_id'=>$admission_id, 
 					'block_dates'=> $block_dates,
+					'today'=>new Carbon('monday this week'),
+					'start_week'=>$start_week,
 					]);
 
 	}
 
+	public function setAppointmentBook(Request $request, $id) 
+	{
+			$service = AppointmentService::find($id);
+
+			Session::flash('message', 'Appointment book set to '.$service->service_name);
+			return redirect('/appointment_services')
+				->withCookie(cookie('appointment_service',$id, 2628000));
+				//->withCookie(\Cookie::forget('ward'));
+	}
+
+	public function forgetCookie() {
+			Session::flash('message', 'Appointment book detached.');
+			return redirect('/appointment_services')
+				->withCookie(\Cookie::forget('appointment_service'));
+	}
 }

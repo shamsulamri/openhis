@@ -42,7 +42,7 @@
 			</td>
 
 			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('form_positions/delete/'. $form_position->id) }}'><span class='glyphicon glyphicon-trash'></span></a>
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('form_positions/delete/'. $form_position->id) }}'><span class='glyphicon glyphicon-minus'></span></a>
 			</td>
 	</tr>
 @endforeach

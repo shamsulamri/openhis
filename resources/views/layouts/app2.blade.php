@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>{{ env('APPLICATON_NAME') }}</title>
+<title>{{ env('APPLICATION_NAME') }}</title>
 <link href="/assets/inspinia/css/bootstrap.min.css" rel="stylesheet">
 <link href="/assets/inspinia/font-awesome/css/font-awesome.css" rel="stylesheet">
 <link href="/assets/inspinia/css/animate.css" rel="stylesheet">
@@ -16,7 +16,8 @@
 <link href="/assets/inspinia/css/style.css" rel="stylesheet">
 <link href="/assets/inspinia/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 <link href="/assets/inspinia/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
-
+<link href="/assets/inspinia/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="/assets/inspinia/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
 
 <!-- Mainly scripts -->
 <script src="/assets/inspinia/js/jquery-2.1.1.js"></script>
@@ -67,6 +68,12 @@
 <!-- Toastr -->
 <link href="/assets/inspinia/css/plugins/toastr/toastr.min.css" rel="stylesheet">
 <script src="/assets/inspinia/js/plugins/toastr/toastr.min.js"></script>
+
+<!-- Jquery Validate -->
+<script src="/assets/inspinia/js/plugins/validate/jquery.validate.min.js"></script>
+
+<!-- iCheck -->
+<script src="/assets/inspinia/js/plugins/iCheck/icheck.min.js"></script>
 
 		<script src="/assets/js/moment.min.2.5.0.js"></script>
 		<script src="/assets/js/combodate.js"></script>
@@ -127,6 +134,11 @@
 		@if (count($errors) > 0)
 				toastr.error(toastr.options,'Please correct the errors highlighted below.')
 		@endif
+
+		$('.i-checks').iCheck({
+			checkboxClass: 'icheckbox_square-green',
+			radioClass: 'iradio_square-green'
+		});
 
 		$(document).ready(function() {
 				$("input:text").focus(function() { $(this).select(); } );

@@ -68,37 +68,21 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 	<br>
 @endif
 
-<?php
-	$show_billing_method = false;
-
-	if (!empty($encounter->sponsor_code)) {
-		if ($non_claimable_amount>0 && $claimable_amount>0 && count($encounter->bill)==1) {
-			$show_billing_method = true;
-		}
-	} else {
-		if (!$encounter->bill) $show_billing_method = true;
-	}
-
-
-?>
-
-@if ($show_billing_method) 
-		<div class="widget style1 gray-bg">
-		<h4>Billing Method</h4>
-		@if ($encounter->sponsor)
-			<h4>
-			<strong>
-			<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>
-			{{ $encounter->sponsor->sponsor_name }}
-			</a>
-			</strong>
-			</h4>
-			Membership Number: {{ $encounter->sponsor_id}}
-			@else
-			<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>Public</a>
-		@endif
-		</div>
+<div class="widget style1 gray-bg">
+<h4>Billing Method</h4>
+@if ($encounter->sponsor)
+	<h4>
+	<strong>
+	<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>
+	{{ $encounter->sponsor->sponsor_name }}
+	</a>
+	</strong>
+	</h4>
+	Membership Number: {{ $encounter->sponsor_id}}
+	@else
+	<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>Public</a>
 @endif
+</div>
 
 @if ($bills->total()>0)
 <div class="widget style1 gray-bg">

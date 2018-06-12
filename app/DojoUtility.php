@@ -312,5 +312,9 @@ class DojoUtility
 				    return round($num*2,-1)/2;
 		}
 
+		public static function weekOfMonth($date) {
+				$dt = Carbon::parse($date);
+				return $dt->weekOfMonth;
+		}
 }
 

@@ -21,10 +21,10 @@ iframe { border: 1px #e5e5e5 solid; }
 @endcannot
 <div class="row">
 	<div class="col-xs-6">
-		<iframe name='frameIndex' id='frameIndex' width='100%' height='750px' src='/order_products'></iframe>
+		<iframe name='frameIndex' id='frameIndex' width='100%' height='850px' src='/order_products'></iframe>
 	</div>
 	<div class="col-xs-6">
-		<iframe name='frameDetail' id='frameDetail' width='100%' height='750px' src='/orders'><iframe>
+		<iframe name='frameDetail' id='frameDetail' width='100%' height='850px' src='/orders'><iframe>
 	</div>
 </div>
 

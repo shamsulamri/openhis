@@ -19,8 +19,6 @@
 <link href="/assets/inspinia/css/plugins/iCheck/custom.css" rel="stylesheet">
 <link href="/assets/inspinia/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
 
-
-
 <!-- Mainly scripts -->
 <script src="/assets/inspinia/js/jquery-2.1.1.js"></script>
 <script src="/assets/inspinia/js/bootstrap.min.js"></script>
@@ -75,7 +73,6 @@
 <script src="/assets/inspinia/js/plugins/validate/jquery.validate.min.js"></script>
 
 <!-- iCheck -->
-
 <script src="/assets/inspinia/js/plugins/iCheck/icheck.min.js"></script>
 
 		<script src="/assets/js/moment.min.2.5.0.js"></script>
@@ -185,7 +182,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Future Orders' href="{{ url('/futures') }}"><i class="fa fa-question-circle"></i><span class='nav-label'>Future Orders</span></a></li>
 						<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-users"></i><span class='nav-label'>Queues</span></a></li>
 						<li><a title='Admissions' href="{{ url('/admissions') }}"><i class="fa fa-bed"></i><span class='nav-label'>Admissions</span></a></li>
-						<li><a title='Preadmissions' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="glyphicon glyphicon-time"></i><span class='nav-label'>Preadmissions</span></a></li>
+						<li><a title='Preadmissions' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="fa fa-building"></i><span class='nav-label'>Preadmissions</span></a></li>
 						<li><a title='Discharges' href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
 						<!--
 						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
@@ -230,13 +227,13 @@ if ($_COOKIE['his-navbar']==1) {
 								<h4>&nbsp;Inventory</h4>
 						</div>
 						<li><a title='Products' href="{{ url('/products') }}"><i class='fa fa-glass'></i><span class='nav-label'>Products</span></a></li>
-						<li><a title='Suppliers' href="{{ url('/suppliers') }}"><i class='fa fa-truck' aria-hidden='true'></i><span class='nav-label'>Suppliers</span></a></li>
-						<li><a title='Stores' href="{{ url('/stores') }}"><i class='fa fa-th-large'></i><span class='nav-label'>Stores</span></a></li>
+						<li><a title='Suppliers' href="{{ url('/suppliers') }}"><i class='fa fa-industry' aria-hidden='true'></i><span class='nav-label'>Suppliers</span></a></li>
+						<li><a title='Stores' href="{{ url('/stores') }}"><i class='fa fa-archive'></i><span class='nav-label'>Stores</span></a></li>
 						<li><a title='Purchase Orders' href="{{ url('/purchase_orders') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchase Orders</span></a></li>
-						<li><a title='Stock Movement' href="{{ url('/stock_inputs') }}"><i class='fa fa-ship'></i><span class='nav-label'>Bulk Movement</span></a></li>
+						<li><a title='Stock Movement' href="{{ url('/stock_inputs') }}"><i class='fa fa-truck'></i><span class='nav-label'>Bulk Movement</span></a></li>
 						<li><a title='Order Sets' href="{{ url('/sets') }}"><i class='fa fa-medkit'></i><span class='nav-label'>Order Sets</span></a></li>
-						<li><a title='Product Authorizations' href="{{ url('/product_authorizations') }}"><i class='fa fa-barcode'></i><span class='nav-label'>Product Authorizations</span></a></li>
-						<li><a title='Loans' href="{{ url('/loans') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'><span class='nav-label'>Loans</span></a></li>
+						<li><a title='Product Authorizations' href="{{ url('/product_authorizations') }}"><i class='fa fa-crosshairs'></i><span class='nav-label'>Product Authorizations</span></a></li>
+						<li><a title='Loans' href="{{ url('/loans') }}"><i class='fa fa-share-square'></i><span class='nav-label'><span class='nav-label'>Loans</span></a></li>
 						@endcan
 
 						<!-- Ward Module -->
@@ -258,7 +255,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
 						<li><a title="Bed Reservations" href="{{ url('/bed_bookings') }}"><i class='glyphicon glyphicon-bookmark'></i><span class='nav-label'>Bed Reservations</a></li>
 						<li><a title="Appointments" href="{{ url('/appointments') }}"><i class='fa fa-calendar'></i><span class='nav-label'>Appointments</a></li>
-						<li><a title="Loans" href="{{ url('/loans/ward') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'>Loans</a></li>
+						<li><a title="Loans" href="{{ url('/loans/ward') }}"><i class='fa fa-share-square'></i><span class='nav-label'>Loans</a></li>
 						@endcan
 
 						<!-- Medical Record -->
@@ -267,7 +264,7 @@ if ($_COOKIE['his-navbar']==1) {
 								<h4>&nbsp;Medical Record</h4>
 						</div>
 						<li><a title="Patient List" href="{{ url('/patients') }}"><i class='fa fa-user'></i><span class='nav-label'>Patient List</a></li>
-						<li><a title="Loans" href="{{ url('/loans?type=folder') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'>Loans</a></li>
+						<li><a title="Loans" href="{{ url('/loans?type=folder') }}"><i class='fa fa-share-square'></i><span class='nav-label'>Loans</a></li>
 						@endcan
 
 						<!-- Financial Module -->
@@ -311,8 +308,10 @@ if ($_COOKIE['his-navbar']==1) {
 								<li role='separator' class='divider'></li>
                                 <li><a href="{{ url('/user_profile') }}">User Profile</a></li>
                                 <li><a href="{{ url('/change_password') }}">Change Password</a></li>
+								<li role='separator' class='divider'></li>
                                 <li><a href="{{ url('/queue_locations') }}">Set Location</a></li>
                                 <li><a href="{{ url('/wards') }}">Set Ward</a></li>
+                                <li><a href="{{ url('/appointment_services') }}">Set Appointment Book</a></li>
 								<li role='separator' class='divider'></li>
                                 <li><a href="{{ url('/manual.pdf') }}">Manual</a></li>
                             </ul>

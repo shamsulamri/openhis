@@ -130,8 +130,10 @@ class EncounterController extends Controller
 							->get();
 
 			$wards = Ward::select(DB::raw("ward_name, ward_code"))
+							->where('ward_omission', '=', '0')	
 							->orderBy('ward_name')
-							->lists('ward_name', 'ward_code');
+							->lists('ward_name', 'ward_code')
+							->prepend('','');
 
 			$ward_classes = Bed::select(DB::raw('beds.ward_code, class_name, beds.class_code,beds.encounter_code,  count(*)'))
 					->leftJoin('ward_classes as b', 'b.class_code', '=', 'beds.class_code')
@@ -141,7 +143,7 @@ class EncounterController extends Controller
 			$ward_code = null;
 			if (!empty($request->book_id)) {
 				$bed_booking = BedBooking::find($request->book_id);
-				$encounter->encounter_code = 'inpatient';
+				$encounter->encounter_code = $bed_booking->ward->encounter_code;
 			}
 
 			$appointment = null;
@@ -166,7 +168,7 @@ class EncounterController extends Controller
 					'locations' => $locations,
 					'consultants' => $consultants,
 					'teams' => Team::all()->sortBy('team_name')->lists('team_name', 'team_code')->prepend('',''),
-					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+					'wards' => $wards,
 					'classes' => WardClass::all()->sortBy('class_name')->lists('class_name', 'class_code')->prepend('',''),
 					'beds' => $beds,
 					'referral' => Referral::all()->sortBy('referral_name')->lists('referral_name', 'referral_code')->prepend('',''),

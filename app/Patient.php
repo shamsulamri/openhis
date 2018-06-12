@@ -360,8 +360,53 @@ class Patient extends Model
 			
 			if ($encounter) {
 					if ($encounter->discharge) { 
-							if (!$encounter->bill) { 
-									return "Billing process...";
+							if ($encounter->sponsor_code) {
+									$claimable_amount = BillItem::where('encounter_id', '=', $encounter->encounter_id)
+															->where('bill_non_claimable', '=', 0)
+															->sum('bill_amount');
+
+									$non_claimable_amount = BillItem::where('encounter_id', '=', $encounter->encounter_id)
+															->where('bill_non_claimable', '=', 1)
+															->sum('bill_amount');
+
+									$bill_complete = false;
+									if ($claimable_amount>0) {
+											$claimable_bill = Bill::where('encounter_id', '=', $encounter->encounter_id)
+														->where('bill_non_claimable', '=', 0)
+														->first();
+									}
+
+									if ($non_claimable_amount>0) {
+											$non_claimable_bill = Bill::where('encounter_id', '=', $encounter->encounter_id)
+														->where('bill_non_claimable', '=', 1)
+														->first();
+									}
+
+									if ($claimable_amount>0 && $non_claimable_amount>0) {
+											Log::info("-----");
+											if ($claimable_bill && $non_claimable_bill) {
+												$bill_complete = true;
+											}
+									} else {
+											if ($claimable_amount>0 || $non_claimable_amount>0) {
+													if (!empty($claimable_bill) || !empty($non_claimable_bill)) {
+														$bill_complete = true;
+													}
+											}
+									}
+
+
+									Log::info("X: ".$claimable_amount);
+									Log::info("X: ".$non_claimable_amount);
+
+									if (!$bill_complete) {
+											return "Billing process...";
+									}
+
+							} else {
+									if ($encounter->bill->count()==0) {
+											return "Billing process...";
+									}
 							}
 					} else {
 							if ($encounter->admission) {
