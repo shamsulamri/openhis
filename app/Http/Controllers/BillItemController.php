@@ -25,6 +25,7 @@ use App\ProductCategory;
 use App\BillDiscount;
 use App\BedMovement;
 use App\Bed;
+use App\MedicalCertificate;
 
 class BillItemController extends Controller
 {
@@ -572,6 +573,10 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 			$billPosted=False;
 			if (count($billPost)>0) $billPosted=True;
 
+			$hasMc = False;
+			$mc = MedicalCertificate::where('encounter_id', '=', $id)->get();
+			if (count($mc)>0) $hasMc = True;
+
 			$incomplete_orders = Order::where('encounter_id','=',$id)
 									->where('order_completed','=',0)
 									->where('order_is_discharge','=',0)
@@ -630,6 +635,7 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 					'non_claimable'=>$non_claimable,
 					'non_claimable_amount'=>$non_claimable_amount,
 					'claimable_amount'=>$claimable_amount,
+					'hasMc'=>$hasMc,
 			]);
 	}
 

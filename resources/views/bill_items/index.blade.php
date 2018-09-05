@@ -60,8 +60,10 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple_invoice&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Simple Invoice</a> 
 @endif
+@if ($hasMc) 
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Medical Certificate</a>
+@endif
 <br>
 <!-- Bill Method -->
 @if (!$encounter->sponsor)
