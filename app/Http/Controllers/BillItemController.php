@@ -210,6 +210,7 @@ class BillItemController extends Controller
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				where order_completed = 1 
+				and b.deleted_at is null
 				%s
 				and b.category_code<>'consultation'
 				and h.patient_id = %d
@@ -242,14 +243,7 @@ class BillItemController extends Controller
 					$item->bill_quantity = $order->order_quantity_supply;
 					$item->bill_discount = $order->order_discount;
 					$item->bill_unit_multiplier = $order->profit_multiplier;
-					$item->bill_non_claimable = 2;
-					if (!empty($encounter->sponsor_code)) {
-						if($non_claimable) {
-							$item->bill_non_claimable = 1;
-						} else {
-							$item->bill_non_claimable = 0;
-						}
-					}
+					$item->bill_non_claimable = $this->getBillNonClaimableValue($non_claimable);
 
 					$product = Product::find($item->product_code);
 					if (!empty($product->charge_code)) {
@@ -273,19 +267,16 @@ class BillItemController extends Controller
 					}
 			}
 
-			//$this->bedBills($encounter_id);
 			$this->multipleOrders($encounter_id);
-			$this->forms($encounter_id);
-			$this->compileConsultation($encounter_id);
 			//$this->outstandingCharges($encounter_id);
 	}
 
-	public function compileConsultation($encounter_id) 
+	public function compileConsultation($encounter_id, $non_claimable = null) 
 	{
 			$encounter = Encounter::find($encounter_id);
 			$patient_id = $encounter->patient_id;
 
-			$sql = sprintf("
+			$base_sql = "
 				select a.product_code, order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, profit_multiplier, a.order_id, order_total, order_discount
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
@@ -295,11 +286,27 @@ class BillItemController extends Controller
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				where order_completed = 1 
+				and b.deleted_at is null
 				and b.category_code='consultation'
 				and h.patient_id = %d
-				and bill_id is null 
 				and order_multiple=0
-			", $patient_id);
+				and bill_id is null
+				%s
+			";
+
+			$sql = sprintf($base_sql, $patient_id, "");
+
+			if (!empty($encounter->sponsor_code)) {
+					if ($non_claimable==True) {
+						$sql = sprintf($base_sql, $patient_id, "and product_non_claimable = 1");
+					}
+
+					if ($non_claimable==False) {
+						$sql = sprintf($base_sql, $patient_id, "and product_non_claimable<>1");
+					}
+			}
+
+			Log::info($sql);
 
 			$orders = DB::select($sql);
 
@@ -328,6 +335,7 @@ class BillItemController extends Controller
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
+					$item->bill_non_claimable = $this->getBillNonClaimableValue($non_claimable);
 					$item->save();
 			}
 	}
@@ -344,6 +352,7 @@ class BillItemController extends Controller
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				where b.encounter_id=%d
+				and c.deleted_at is null
 				and a.order_completed=1
 				group by a.order_id
 			", $id);
@@ -373,10 +382,10 @@ class BillItemController extends Controller
 			}
 	}
 
-	public function forms($encounter_id)
+	public function forms($encounter_id, $non_claimable = null)
 	{
-			$sql = sprintf("
-				select count(*) as order_quantity_supply, c.product_code, d.tax_code, tax_rate, c.product_sale_price, d.tax_code, d.tax_rate, profit_multiplier
+			$base_sql = "
+				select count(*) as order_quantity_supply, c.product_code, d.tax_code, tax_rate, c.product_sale_price, d.tax_code, d.tax_rate, profit_multiplier, product_non_claimable
 				from form_values a
 				left join forms b on (b.form_code = a.form_code)
 				left join products c on (c.form_code = b.form_code)
@@ -385,9 +394,24 @@ class BillItemController extends Controller
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				where a.encounter_id=%d
-				group by a.form_code, c.product_code, profit_multiplier
-			", $encounter_id);
-			
+				and c.deleted_at is null
+				%s
+				group by a.form_code, c.product_code, profit_multiplier";
+
+			$sql = sprintf($base_sql, $encounter_id, "");
+
+			$encounter = Encounter::find($encounter_id);
+			if (!empty($encounter->sponsor_code)) {
+					if ($non_claimable==True) {
+						$sql = sprintf($base_sql, $encounter_id, "and product_non_claimable = 1");
+					}
+
+					if ($non_claimable==False) {
+						$sql = sprintf($base_sql, $encounter_id, "and product_non_claimable<>1");
+					}
+			}
+
+			Log::info($sql);
 			$orders = DB::select($sql);
 
 			foreach ($orders as $order) {
@@ -401,6 +425,8 @@ class BillItemController extends Controller
 				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
 				$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
 				$item->bill_amount_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_non_claimable = $this->getBillNonClaimableValue($non_claimable);
+
 				if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 				}
@@ -410,6 +436,16 @@ class BillItemController extends Controller
 				} catch (\Exception $e) {
 					\Log::info($e->getMessage());
 				}
+			}
+	}
+
+	function getBillNonClaimableValue($non_claimable = null) {
+			if ($non_claimable == True) {
+					return 1; // Non-claimable
+			} else if ($non_claimable == False) {
+					return 0; // Claimable
+			} else {
+					return 2; // Cash
 			}
 	}
 
@@ -467,6 +503,7 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 					->orderBy('category_name')
 					->orderBy('product_name');
 
+
 			$bills = $bills->where('bill_non_claimable','=', $non_claimable);
 			$bills = $bills->paginate($this->paginateValue);
 
@@ -475,8 +512,14 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 				if (!empty($encounter->sponsor_code)) {
 					$this->compileBill($id, True);
 					$this->compileBill($id, False);
+					$this->forms($id, True);
+					$this->forms($id, False);
+					$this->compileConsultation($id, True);
+					$this->compileConsultation($id, False);
 				} else {
 					$this->compileBill($id);
+					$this->forms($id);
+					$this->compileConsultation($id);
 				}
 
 				/** Compile bed bills **/
