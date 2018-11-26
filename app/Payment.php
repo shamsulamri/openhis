@@ -12,6 +12,7 @@ class Payment extends Model
 	protected $table = 'payments';
 	protected $fillable = [
 				'encounter_id',
+				'bill_id',
 				'payment_amount',
 				'payment_non_claimable',
 				'payment_code',
@@ -27,7 +28,7 @@ class Payment extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'encounter_id'=>'required',
+				'bill_id'=>'required',
 				'payment_amount'=>'required|numeric',
 				'payment_code'=>'required',
 			];

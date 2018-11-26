@@ -217,6 +217,7 @@
 				<a href="{{ url('/urgencies') }}">Urgencies</a><br>
 				<a href="{{ url('/relationships') }}">Relationships</a><br>
 				<a href="{{ url('/priorities') }}">Priorities</a><br>
+				<a href="{{ url('/entitlements') }}">Entitlements</a><br>
 			</div>
 	</div>
 	</h4>

@@ -67,4 +67,9 @@ class Discharge extends Model
 	{
 			return $this->belongsTo('App\Encounter', 'encounter_id');
 	}
+
+
+	public function getTableColumns() {
+			return "X";
+	}
 }

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Reports</h1>
+<h1>Queries & Reports</h1>
 <br>
 
 <h3>Clinical Order</h3>
@@ -24,6 +24,9 @@
 		<a href="{{ url('/bed/enquiry') }}">Bed Enquiry</a><br>
 		<a href="{{ url('/bed_movement/enquiry') }}">Bed Movement History</a><br>
 		<a href="{{ url('/preadmission/enquiry') }}">Preadmission Enquiry</a><br>
+	</div>
+	<div class="col-xs-6">
+		<a href="{{ url('/discharge/discharge_count') }}">Discharge Count Report</a><br>
 	</div>
 </div>
 <br>
@@ -48,6 +51,9 @@
 		<a href="{{ url('/deposit/enquiry') }}">Deposit Enquiry</a><br>
 		<a href="{{ url('/refund/enquiry') }}">Refund Enquiry</a><br>
 		<a href="{{ url('/bill_aging/enquiry') }}">Aging Report</a><br>
+	</div>
+	<div class="col-xs-6">
+		<a href="{{ url('/bill/sponsor_outstanding') }}">Sponsor Outstanding Bill Report</a><br>
 	</div>
 </div>
 <br>

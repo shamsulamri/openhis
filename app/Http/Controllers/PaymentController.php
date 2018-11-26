@@ -22,6 +22,7 @@ use App\Sponsor;
 use App\DojoUtility;
 use App\User;
 use App\Discharge;
+use App\Bill;
 
 class PaymentController extends Controller
 {
@@ -58,7 +59,7 @@ class PaymentController extends Controller
 	public function index($id)
 	{
 			$payments = DB::table('payments as a')
-					->select('payment_id', 'a.encounter_id', 'a.created_at', 'payment_amount','payment_name', 'payment_description')
+					->select('payment_id','bill_id', 'a.encounter_id', 'a.created_at', 'payment_amount','payment_name', 'payment_description')
 					->leftJoin('patients as b', 'b.patient_id', '=',  'a.patient_id')
 					->leftJoin('encounters as c', 'c.encounter_id','=', 'a.encounter_id')
 					->leftJoin('payment_methods as d', 'd.payment_code', '=', 'a.payment_code')
@@ -84,12 +85,19 @@ class PaymentController extends Controller
 			$payment->encounter_id = $encounter_id;
 
 			$encounter = Encounter::find($encounter_id);
+
 			$patient = null;
 			if ($patient_id) {
 					$patient = Patient::find($patient_id);
 			} else {
 					$patient = $payment->encounter->patient;
 			}
+
+			$bills = Bill::where('patient_id', $patient_id)
+						->select('id as bill_id')
+						->leftJoin('encounters as b', 'b.encounter_id', '=', 'bills.encounter_id')
+						->lists('bill_id','bill_id');
+				
 
 			$payment->patient_id = $patient->patient_id;
 
@@ -115,6 +123,7 @@ class PaymentController extends Controller
 					'discharges' => $discharges,
 					'credit' => new PaymentCredit(),
 					'non_claimable' => $non_claimable,
+					'bills' => $bills,
 					]);
 	}
 

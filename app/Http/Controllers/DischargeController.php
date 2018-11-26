@@ -325,6 +325,48 @@ class DischargeController extends Controller
 			return "ward";
 	}
 
+	public function dischargeCount(Request $request) {
+ 
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			$rows = Discharge::groupBy('b.sponsor_code')
+					->leftJoin('encounters as b', 'b.encounter_id', '=', 'discharges.encounter_id')
+					->leftJoin('sponsors as c', 'c.sponsor_code', '=', 'b.sponsor_code')
+					->select(DB::raw('count(*) as visits, sponsor_name'));
+
+			if (!empty($date_start) && empty($request->date_end)) {
+				$rows = $rows->where('discharges.created_at', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($date_start) && !empty($request->date_end)) {
+				$rows = $rows->where('discharges.created_at', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($date_start) && !empty($date_end)) {
+				$rows = $rows->whereBetween('discharges.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
+
+			$rows = $rows->orderBy('visits');
+
+			if ($request->export_report) {
+				DojoUtility::export_report($rows->get());
+			}
+
+			$rows = $rows->get();
+			$columns = ['sponsor_name'=>'Sponsor', 'visits'=>'Count'];
+
+			$keys = array_keys($columns);
+
+			return view('discharges.discharge_count', [
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
+					'columns'=>$columns,
+					'rows'=>$rows,
+					'keys'=>$keys
+			]);
+	}
+
 	public function enquiry(Request $request)
 	{
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
@@ -387,7 +429,9 @@ class DischargeController extends Controller
 			if (!empty($date_start) && !empty($date_end)) {
 				$discharges = $discharges->whereBetween('discharges.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
 			} 
+
 			if ($request->export_report) {
+				return gettype($discharges->get());
 				DojoUtility::export_report($discharges->get());
 			}
 

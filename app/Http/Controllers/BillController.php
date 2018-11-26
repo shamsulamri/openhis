@@ -327,4 +327,66 @@ class BillController extends Controller
 							->withInput();
 			}
 	}
+
+	public function sponsorOutstanding(Request $request) {
+ 
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			$subquery = "
+				select format(sum(payment_amount),2) as total_payment, c.sponsor_code from payments as a
+				left join bills as b on (a.bill_id = b.id)
+				left join encounters as c on (c.encounter_id = b.encounter_id)
+				where c.sponsor_code is not null
+				group by c.sponsor_code
+			";
+
+			$rows = Bill::groupBy('b.sponsor_code')
+					->select(DB::raw('format(sum(bill_grand_total),2) as bill_grand_total, sponsor_name, total_payment, format((total_payment-sum(bill_grand_total)),2) as outstanding'))
+					->leftJoin('encounters as b', 'b.encounter_id', '=', 'bills.encounter_id')
+					->leftJoin('sponsors as c', 'c.sponsor_code', '=', 'b.sponsor_code')
+					->leftJoin('discharges', 'discharges.encounter_id', '=', 'b.encounter_id')
+					->leftJoin(DB::raw('('.$subquery.') payments'), function($join) {
+							$join->on('b.sponsor_code','=', 'payments.sponsor_code');
+					})
+					->where('bill_non_claimable', '=', 0)
+					->orderBy('outstanding')
+					->having('outstanding','<',0);
+
+
+			if (!empty($date_start) && empty($request->date_end)) {
+				$rows = $rows->where('discharges.created_at', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($date_start) && !empty($request->date_end)) {
+				$rows = $rows->where('discharges.created_at', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($date_start) && !empty($date_end)) {
+				$rows = $rows->whereBetween('discharges.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
+
+			//$rows = $rows->orderBy('visits');
+
+			if ($request->export_report) {
+				DojoUtility::export_report($rows->get());
+			}
+
+			$rows = $rows->get();
+			$columns = ['sponsor_name'=>'Sponsor', 
+					'bill_grand_total'=>'Grand Total',
+					'total_payment'=>'Total Payment',
+					'outstanding'=>'Outstanding'
+			];
+
+			$keys = array_keys($columns);
+
+			return view('bills.sponsor_outstanding', [
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
+					'columns'=>$columns,
+					'rows'=>$rows,
+					'keys'=>$keys
+			]);
+	}
 }

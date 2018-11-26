@@ -14,12 +14,17 @@ class ReportController extends Controller
 {
 		public function index()
 		{
+			return view('reports.index');
+		}
+
+		public function aggregate()
+		{
 			$users = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
 					->orderBy('name')
 					->lists('name','username')
 					->prepend('','');
 
-				return view('reports.index',[
+				return view('reports.index2',[
 						'reports'=>[
 								'discharge'=>'Discharge', 
 								'bill_list'=>'Bills', 

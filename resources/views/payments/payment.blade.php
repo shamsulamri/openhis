@@ -9,10 +9,18 @@
     </div>
 	-->
 	@else
+	<!--
     <div class='form-group  @if ($errors->has('encounter_id')) has-error @endif'>
         <label class='col-sm-2 control-label'>Encounter ID</label>
         <div class='col-sm-10'>
             {{ Form::select('encounter_id', $discharges, null, ['class'=>'form-control']) }}
+        </div>
+    </div>
+	-->
+    <div class='form-group  @if ($errors->has('bill_id')) has-error @endif'>
+        <label class='col-sm-2 control-label'>Bill ID</label>
+        <div class='col-sm-10'>
+            {{ Form::select('bill_id', $bills, null, ['class'=>'form-control']) }}
         </div>
     </div>
 	@endif

@@ -57,6 +57,7 @@
             {{ Form::select('type_code', $patient_type, null, ['id'=>'type_code','onchange'=>'checkPatientType()','class'=>'form-control','maxlength'=>'20']) }}
         </div>
     </div>
+
     <div class='form-group  @if ($errors->has('sponsor_code')) has-error @endif'>
         {{ Form::label('sponsor_code', 'Sponsor',['class'=>'col-sm-4 control-label']) }}
         <div class='col-sm-8'>
@@ -71,6 +72,14 @@
             {{ Form::text('sponsor_id', null, ['id'=>'sponsor_id','class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('sponsor_id')) <p class="help-block">{{ $errors->first('sponsor_id') }}</p> @endif
 			<small>Employee, insurance or third party payor identification stated above</small>
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('entitlement_code')) has-error @endif'>
+        {{ Form::label('entitlement_code', 'Entitlement',['class'=>'col-sm-4 control-label']) }}
+        <div class='col-sm-8'>
+            {{ Form::select('entitlement_code', $entitlement, null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('entitlement_code')) <p class="help-block">{{ $errors->first('entitlement_code') }}</p> @endif
         </div>
     </div>
 
@@ -161,6 +170,7 @@
 	document.getElementById('user_id').disabled = true;
 	document.getElementById('triage').disabled = true;
 	document.getElementById('sponsor_code').disabled = true;
+	document.getElementById('entitlement_code').disabled = true;
 	document.getElementById('sponsor_id').disabled = true;
 	document.getElementById('location_code').disabled = true;
 	document.getElementById('ward_code').disabled = true;
@@ -187,11 +197,14 @@
 		type = document.getElementById('type_code').value;
 		if (type == 'public') {
 			document.getElementById('sponsor_code').value = '';
+			document.getElementById('entitlement_code').value = '';
 			document.getElementById('sponsor_id').value = '';
 			document.getElementById('sponsor_code').disabled = true;
+			document.getElementById('entitlement_code').disabled = true;
 			document.getElementById('sponsor_id').disabled = true;
 		} else {
 			document.getElementById('sponsor_code').disabled = false;
+			document.getElementById('entitlement_code').disabled = false;
 			document.getElementById('sponsor_id').disabled = false;
 		}
 	}

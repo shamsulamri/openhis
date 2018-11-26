@@ -47,6 +47,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('entitlements', 'EntitlementController');
+		Route::get('/entitlements/id/{id}', 'EntitlementController@searchById');
+		Route::post('/entitlement/search', 'EntitlementController@search');
+		Route::get('/entitlement/search', 'EntitlementController@search');
+		Route::get('/entitlements/delete/{id}', 'EntitlementController@delete');
+		
+		Route::get('/reports/aggregate', 'ReportController@aggregate');
 
 		/** pdftk **/
 		Route::get('/pdf/{patient_id}/{form_name}', 'PDFController@encounter');
@@ -429,6 +436,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/class_methods/{class_name}', 'SpyController@getMethods');
 		Route::get('/integration', 'IntegrationController@test');
 		Route::get('/reports', 'ReportController@index');
+		Route::get('/report_aggregate', 'ReportController@aggregate');
 		Route::post('/reports', 'ReportController@generate');
 		
 		Route::get('/obstetric', 'ObstetricController@history');
@@ -655,9 +663,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/bill/aging', 'BillController@aging');
 				Route::get('/bill/bill_edit/{id}', 'BillController@billEdit');
 				Route::post('/bill/bill_update/{id}', 'BillController@billUpdate');
+				Route::post('/bill/sponsor_outstanding', 'BillController@sponsorOutstanding');
+				Route::get('/bill/sponsor_outstanding', 'BillController@sponsorOutstanding');
 		});
 
 		Route::group(['middleware' => 'patient_list_middleware'], function () {
+				Route::post('/discharge/discharge_count', 'DischargeController@dischargeCount');
+				Route::get('/discharge/discharge_count', 'DischargeController@dischargeCount');
+
 				Route::post('/discharge/enquiry', 'DischargeController@enquiry');
 				Route::get('/discharge/enquiry', 'DischargeController@enquiry');
 				Route::get('/discharges', 'DischargeController@index');

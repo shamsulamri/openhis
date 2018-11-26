@@ -9,6 +9,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Bill ID</th> 
     <th>Method</th> 
     <th>Description</th> 
     <th>Date</th>
@@ -19,6 +20,9 @@
 	<tbody>
 @foreach ($payments as $payment)
 	<tr>
+			<td>
+					{{$payment->bill_id}}
+			</td>
 			<td>
 					<a href='{{ URL::to('payments/'. $payment->payment_id . '/edit') }}'>
 					{{$payment->payment_name}}
