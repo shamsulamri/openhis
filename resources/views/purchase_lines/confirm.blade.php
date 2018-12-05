@@ -2,7 +2,7 @@
 
 @section('content')
 <h2>
-Post Document
+Post Transaction
 </h2>
 @include('common.errors')
 <br>
