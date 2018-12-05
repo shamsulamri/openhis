@@ -21,6 +21,8 @@
 	<tr> 
     <th>Name</th>
     <th>Code</th> 
+    <th>Rate</th> 
+    <th>Default</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -34,6 +36,18 @@
 			</td>
 			<td>
 					{{$tax_code->tax_code}}
+			</td>
+			<td>
+				@if ($tax_code->tax_rate != null)
+					{{ number_format($tax_code->tax_rate) }}%
+				@else
+					-
+				@endif
+			</td>
+			<td>
+				@if ($tax_code->tax_default)
+					x
+				@endif
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('tax_codes/delete/'. $tax_code->tax_code) }}'>Delete</a>

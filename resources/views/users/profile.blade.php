@@ -25,11 +25,11 @@ User Profile
         </div>
     </div>
 	<hr>
-    <div class='form-group  @if ($errors->has('gst_number')) has-error @endif'>
-        <label for='gst_number' class='col-sm-3 control-label'>GST Number</label>
+    <div class='form-group  @if ($errors->has('tax_number')) has-error @endif'>
+        <label for='tax_number' class='col-sm-3 control-label'>GST Number</label>
         <div class='col-sm-9'>
-            {{ Form::text('gst_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'255']) }}
-            @if ($errors->has('gst_number')) <p class="help-block">{{ $errors->first('gst_number') }}</p> @endif
+            {{ Form::text('tax_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'255']) }}
+            @if ($errors->has('tax_number')) <p class="help-block">{{ $errors->first('tax_number') }}</p> @endif
         </div>
     </div>
 

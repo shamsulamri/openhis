@@ -35,7 +35,7 @@ class Product extends Model
 				'product_bom',
 				'product_reorder',
 				'product_purchase_price',
-				'purchase_tax_code',
+				'product_input_tax',
 				'location_code',
 				'form_code',
 				'charge_code',
@@ -51,7 +51,7 @@ class Product extends Model
 				'product_local_store',
 				'product_non_claimable',
 				'product_duration_use',
-				'tax_code'];
+				'product_output_tax'];
 	
     	protected $guarded = ['product_code'];
     	protected $primaryKey = 'product_code';
@@ -116,6 +116,11 @@ class Product extends Model
 			return $this->belongsTo('App\UnitMeasure', 'product_purchase_unit');
 	}
 
+	public function productUnitMeasures()
+	{
+			return $this->hasMany('App\ProductUom', 'product_code')->get();
+	}
+
 	public function orderForm()
 	{
 			return $this->belongsTo('App\OrderForm', 'order_form');
@@ -126,14 +131,14 @@ class Product extends Model
 			return $this->belongsTo('App\Form', 'form_code');
 	}
 
-	public function tax()
+	public function outputTax()
 	{
-			return $this->belongsTo('App\TaxCode', 'tax_code');
+			return $this->belongsTo('App\TaxCode', 'product_output_tax');
 	}
 
-	public function purchase_tax()
+	public function inputTax()
 	{
-			return $this->belongsTo('App\TaxCode', 'purchase_tax_code');
+			return $this->belongsTo('App\TaxCode', 'product_input_tax');
 	}
 
 	public function location()

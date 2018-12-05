@@ -28,7 +28,6 @@ class ProductSearch extends Model
 				'product_average_cost',
 				'product_conversion_unit',
 				'product_sale_margin',
-				'product_gst',
 				'status_code'];
 	
     protected $guarded = ['product_code'];

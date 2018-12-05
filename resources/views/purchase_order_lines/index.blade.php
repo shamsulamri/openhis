@@ -2,9 +2,9 @@
 
 @section('content')
 <?php 
-$total_after_gst=0.0; 
-$total_gst=0.0;
-$total_before_gst=0.0;
+$total_include_tax=0.0; 
+$total_tax=0.0;
+$total_exclude_tax=0.0;
 $count=0;
 ?>
 @if ($purchase_order->purchase_posted==1)
@@ -35,13 +35,13 @@ $count=0;
 @foreach ($purchase_order_lines as $purchase_order_line)
 	<?php 
 		if (empty($purchase_order_line->deleted_at)) {
-			$total_after_gst += $purchase_order_line->line_total_gst;
-			$total_before_gst += $purchase_order_line->line_total;
-			$total_gst += $purchase_order_line->line_total_gst-$purchase_order_line->line_total;
+			$total_include_tax += $purchase_order_line->line_subtotal_tax;
+			$total_exclude_tax += $purchase_order_line->line_subtotal;
+			$total_tax += $purchase_order_line->line_subtotal_tax-$purchase_order_line->line_subtotal;
 		}
 	?>
 @endforeach
-@if ($total_after_gst>0 && $purchase_order->purchase_posted==0)
+@if ($total_include_tax>0 && $purchase_order->purchase_posted==0)
 		<a href='/purchase_order/post?purchase_id={{ $purchase_id }}' class='btn btn-primary'>Post Purchase Order</a>
 @endif
 		<a class="btn btn-warning pull-right" target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=purchase_order&id={{ $purchase_id }}" role="button">Print</a> 
@@ -92,10 +92,12 @@ $count=0;
     <th>#</th>
 	-->
     <th>Product</th>
-    <th><div align='right'>Tax</div></th> 
     <th><div align='right'>Qty</div></th> 
+    <th><div align='right'>UOM</div></th> 
     <th><div align='right'>Unit Price</div></th> 
-    <th><div align='right'>Amount</div></th> 
+    <th><div align='right'>Sub Total</div></th> 
+    <th><div align='right'>Tax</div></th> 
+    <th><div align='right'>Subtotal Include Tax</div></th> 
 	<!--
     <th><div align='right'>Total GST</div></th> 
 	-->
@@ -135,29 +137,31 @@ $count=0;
 					</s>
 			@endif
 			</td>
-			<td width='100' align='right'>
+			<td width='50' align='right'>
+					{{ number_format($purchase_order_line->line_quantity) }} 
+			</td>
+			<td width='10' align='right'>
+				@if ($purchase_order_line->unit_code != null)
+					{{ $purchase_order_line->uom->unit_name }}
+				@endif
+			</td>
+			<td width='50' align='right'>
+					{{ number_format($purchase_order_line->line_unit_price,2) }}
+			</td>
+			<td width='10' align='right'>
+					{{ number_format($purchase_order_line->line_subtotal,2) }}
+			</td>
+			<td width='10' align='right'>
 					@if (!empty($purchase_order_line->tax_code))
-							{{ $purchase_order_line->product->purchase_tax->tax_name }}
-							@if ($purchase_order_line->product->purchase_tax->tax_rate>0) 
-								<br>({{ number_format($purchase_order_line->product->purchase_tax->tax_rate) }}%)
+							{{ $purchase_order_line->tax_code }}
+							@if ($purchase_order_line->tax_rate>0) 
+								<br>({{ number_format($purchase_order_line->tax_rate) }}%)
 							@endif
 					@endif
 			</td>
 			<td width='50' align='right'>
-					{{ number_format($purchase_order_line->line_quantity_ordered) }} 
-					{{ $purchase_order_line->product->getPurchaseUnitShortname() }}
+					{{ number_format($purchase_order_line->line_subtotal_tax,2) }}
 			</td>
-			<td width='50' align='right'>
-					{{ number_format($purchase_order_line->line_price,2) }}
-			</td>
-			<td width='10' align='right'>
-					{{ number_format($purchase_order_line->line_total,2) }}
-			</td>
-			<!--
-			<td width='50' align='right'>
-					{{ number_format($purchase_order_line->line_total_gst,2) }}
-			</td>
-			-->
 			<td align='right' width='20'>
 					@if ($purchase_order->purchase_received==0)
 					@if (empty($purchase_order_line->deleted_at))
@@ -168,20 +172,23 @@ $count=0;
 	</tr>
 @endforeach
 @endif
-@if ($total_after_gst>0)
+
+@if ($total_include_tax>0)
+	<!--
 	<tr>
-		<td colspan='4' align='right'><strong>Total Before GST</strong></td>
-		<td width='20' align='right'>{{ number_format($total_before_gst,2) }}</td>
+		<td colspan='6' align='right'><strong>Total Before Tax</strong></td>
+		<td width='20' align='right'>{{ number_format($total_exclude_tax,2) }}</td>
 		<td></td>
 	</tr>
 	<tr>
-		<td colspan='4' align='right'><strong>Total GST</strong></td>
-		<td width='20' align='right'>{{ number_format($total_gst,2) }}</td>
+		<td colspan='6' align='right'><strong>Total Tax</strong></td>
+		<td width='20' align='right'>{{ number_format($total_tax,2) }}</td>
 		<td></td>
 	</tr>
+	-->
 	<tr>
-		<td colspan='4' align='right'><strong>Total After GST</strong></td>
-		<td width='20' align='right'>{{ number_format($total_after_gst,2) }}</td>
+		<td colspan='6' align='right'><strong>Total</strong></td>
+		<td width='20' align='right'>{{ number_format($total_include_tax,2) }}</td>
 		<td></td>
 	</tr>
 @endif

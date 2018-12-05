@@ -26,6 +26,8 @@ use Auth;
 use App\StockInputLine;
 use App\StockInput;
 use App\StockStore;
+use App\TaxCode;
+use App\Purchase;
 
 class ProductSearchController extends Controller
 {
@@ -82,7 +84,11 @@ class ProductSearchController extends Controller
 			}
 
 			$product_searches = $product_searches->paginate($this->paginateValue);
-
+			
+			$purchase = null;
+			if ($request->purchase_id) {
+					$purchase = Purchase::find($request->purchase_id);
+			}
 			return view('product_searches.index', [
 					'product_searches'=>$product_searches,
 					'purchase_id'=>$request->purchase_id,
@@ -98,6 +104,8 @@ class ProductSearchController extends Controller
 					'day'=>$request->day,
 					'diet_code'=>$request->diet_code,
 					'input_id'=>$request->input_id,
+					'purchase'=>$purchase,
+					'move_id'=>$request->move_id,
 			]);
 	}
 
@@ -134,17 +142,28 @@ class ProductSearchController extends Controller
 
 	public function add($purchase_id, $product_code)
 	{
+			$default_tax = TaxCode::where('tax_default',1)->first();
 			$product = Product::find($product_code);
 			$purchase_order_line = new PurchaseOrderLine();
 			$purchase_order_line->purchase_id = $purchase_id;
 			$purchase_order_line->product_code = $product_code;
-			$purchase_order_line->line_price = $product->product_purchase_price;
-			$purchase_order_line->tax_code = $product->purchase_tax_code;
-			$purchase_order_line->tax_rate = isset($product->purchase_tax_rate) ? $product->purhcase_tax->tax_rate : 0;
+			$purchase_order_line->line_unit_price = $product->product_purchase_price;
+			$purchase_order_line->line_quantity = 1;
+			$purchase_order_line->unit_code = 'unit';
+			if ($product->product_input_tax) {
+				$purchase_order_line->tax_code = $product->product_input_tax;
+				$purchase_order_line->tax_rate = isset($product->product_input_tax) ? $product->inputTax->tax_rate : 0;
+			} else {
+				$purchase_order_line->tax_code = $default_tax->tax_code;
+				$purchase_order_line->tax_rate = isset($default_tax->tax_rate) ? $default_tax->tax_rate : 0;
+			}
+			if ($default_tax->tax_rate>0) {
+				$purchase_order_line->line_subtotal_tax = $product->product_purchase_price*(1+$default_tax->tax_rate/100);
+			}
 			$purchase_order_line->save();
 
 			$this->gline_id = $purchase_order_line->line_id;
-			Session::flash('message', 'Enter order quantity.');
+			Session::flash('message', 'Record added successfully.');
 			return redirect('/product_searches?reason=purchase_order&purchase_id='.$purchase_id.'&line_id='.$purchase_order_line->line_id);
 	}
 

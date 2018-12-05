@@ -17,6 +17,9 @@
 		<a class='btn btn-default' href='{{ URL::to('products/'. $product->product_code.'/edit') }}'>
 			<span class='fa fa-glass' aria-hidden='true'></span><br>Edit<br>Product
 		</a>
+		<a class='btn btn-default' href='{{ URL::to('product/uom/'. $product->product_code) }}'>
+			<span class='fa fa-balance-scale' aria-hidden='true'></span><br>Unit of<br>Measure
+		</a>
 	@endcan
 @if ($product->product_stocked==1)
 		<a class='btn btn-default' href='{{ URL::to('stock_limit/'. $product->product_code) }}'>
@@ -52,3 +55,4 @@
 			<span class='glyphicon glyphicon-transfer' aria-hidden='true'></span><br>Product<br>Request
 		</a>
 @endcan
+

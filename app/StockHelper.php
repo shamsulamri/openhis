@@ -62,7 +62,7 @@ class StockHelper
 						->leftjoin('stock_inputs as c', 'c.input_id', '=', 'b.input_id')
 						->where('input_close','=', 0);
 
-			return $quantity->sum('line_quantity_ordered');
+			return $quantity->sum('line_quantity');
 	}
 
 	public function onTransfer($product_code, $store_code)

@@ -15,6 +15,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('tax_default')) has-error @endif'>
+        <label for='tax_default' class='col-sm-3 control-label'>Default</label>
+        <div class='col-sm-9'>
+			{{ Form::checkbox('tax_default', '1') }} 
+        </div>
+    </div>
+
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/tax_codes" role="button">Cancel</a>

@@ -6,6 +6,12 @@
     font-size: 80%;
 }
 </style>
+@if (!empty($purchase))
+<a class='btn btn-default' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}'>Items</a>
+<a class='btn btn-default' href='/purchases/master_document/{{ $purchase->purchase_id }}'>Documents</a>
+<a class='btn btn-default' href='/product_searches?reason={{ $purchase->purchase_document }}&purchase_id={{ $purchase->purchase_id }}'>Products</a>
+<br><br>
+@endif
 <form action='/product_search/search' method='post'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
@@ -35,23 +41,20 @@
 					{{ $product_search->product_code }}
 			</td>
 			<td align='right'>
-				@if ($reason=='purchase_order')
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/add/'. $purchase_id . '/' . $product_search->product_code) }}'>
-				@endif
 				@if ($reason=='bom')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/bom/'. $product_code . '/' . $product_search->product_code) }}'>
-				@endif
-				@if ($reason=='asset')
+				@elseif ($reason=='asset')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/asset/'. $set_code . '/' . $product_search->product_code) }}'>
-				@endif
-				@if ($reason=='menu')
+				@elseif ($reason=='menu')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/menu/'. $class_code . '/' . $period_code . '/' . $week . '/'. $day . '/'. $product_search->product_code) .'/'. $diet_code }}'>
-				@endif
-				@if ($reason=='bulk')
+				@elseif ($reason=='bulk')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/bulk/'. $input_id . '/' . $product_search->product_code) }}'>
+				@elseif ($reason=='adjust' or $reason=='receive')
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('inventory_movements/add/'. $move_id . '/' . $product_search->product_code) }}'>
+				@else
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('purchase_lines/add/'. $purchase_id . '/' . $product_search->product_code) }}'>
 				@endif
-								<span class='glyphicon glyphicon-plus'></span>
-							</a>
+					<span class='glyphicon glyphicon-plus'></span></a>
 			</td>
 	</tr>
 @endforeach
@@ -73,25 +76,19 @@
 @if (Session::has('message'))
 <script>
 	var frameLine = parent.document.getElementById('frameLine');
-	@if ($reason=='purchase_order')
-	frameLine.src='/purchase_order_lines/{{ $line_id }}/edit';
-	@endif
 
 	@if ($reason=='bom')
-	frameLine.src='/bill_materials/index/{{ $product_code }}';
-	@endif
-			
-	@if ($reason=='asset')
-	frameLine.src='/order_sets/index/{{ $set_code }}';
-	@endif
-
-	@if ($reason=='menu')
-	frameLine.src='/diet_menus/menu/{{ $class_code }}/{{ $period_code }}/{{ $week }}/{{ $day }}/{{ $diet_code }}';
-	@endif
-
-	@if ($reason=='bulk')
-	//frameLine.src='/stock_input_lines/{{ $line_id }}/edit';
-	frameLine.src='/stock_inputs/input/{{ $input_id }}';
+			frameLine.src='/bill_materials/index/{{ $product_code }}';
+	@elseif ($reason=='asset')
+			frameLine.src='/order_sets/index/{{ $set_code }}';
+	@elseif ($reason=='menu')
+			frameLine.src='/diet_menus/menu/{{ $class_code }}/{{ $period_code }}/{{ $week }}/{{ $day }}/{{ $diet_code }}';
+	@elseif($reason=='bulk')
+			frameLine.src='/stock_inputs/input/{{ $input_id }}';
+	@elseif($reason=='adjust' or $reason=='receive')
+			frameLine.src='/inventories/line/{{ $move_id }}';
+	@else
+			frameLine.src='/purchase_lines/detail/{{ $purchase_id }}';
 	@endif
 </script>
 @endif

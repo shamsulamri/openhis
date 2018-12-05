@@ -1,5 +1,5 @@
-    <div class='form-group'>
-        <div class=" col-sm-12">
+<div class='form-group'>		
+		<div class=" col-sm-12">
             	{{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
 <input type="button" id="getInfo" value="Read MyKad" class='btn btn-primary'/>
         </div>

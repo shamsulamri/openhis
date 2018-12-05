@@ -17,12 +17,14 @@ class PurchaseOrderLine extends Model
 	protected $fillable = [
 				'purchase_id',
 				'product_code',
-				'line_quantity_ordered',
-				'line_price',
+				'unit_code',
+				'uom_rate',
+				'line_quantity',
+				'line_unit_price',
 				'tax_code',
 				'tax_rate',
-				'line_total',
-				'line_total_gst',
+				'line_subtotal',
+				'line_subtotal_tax',
 		];
 	
     protected $guarded = ['line_id'];
@@ -99,5 +101,15 @@ class PurchaseOrderLine extends Model
 	public function product()
 	{
 		return $this->belongsTo('App\Product','product_code');
+	}
+
+	public function tax()
+	{
+		return $this->belongsTo('App\TaxCode','tax_code');
+	}
+
+	public function uom()
+	{
+		return $this->belongsTo('App\UnitMeasure','unit_code');
 	}
 }

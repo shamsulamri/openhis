@@ -66,7 +66,7 @@
 <?php
 	$total_receive = $stock_helper->stockReceiveSum($receive->line_id);
 	$total_receive = $total_receive/$receive->product->product_conversion_unit;
-	$balance = $receive->line_quantity_ordered-$total_receive;
+	$balance = $receive->line_quantity-$total_receive;
 	if ($balance==0) $count++;
 ?>
 	<tr>
@@ -89,12 +89,12 @@
 			</td>
 			<td>
 				<h4>
-				{{ $total_receive }} of {{ number_format($receive->line_quantity_ordered) }}
+				{{ $total_receive }} of {{ number_format($receive->line_quantity) }}
 				</h4>
 			</td>
 			<td>
     			<div class='@if ($errors->has('line_'.$receive->line_id)) has-error @endif'>
-				{{ Form::text('receive_quantity_'.$receive->line_id, number_format($receive->line_quantity_ordered)-$total_receive, ['class'=>'form-control']) }}
+				{{ Form::text('receive_quantity_'.$receive->line_id, number_format($receive->line_quantity)-$total_receive, ['class'=>'form-control']) }}
 				</div>
 			</td>
 			<td>
@@ -125,7 +125,7 @@
 				</div>
 			</td>
 			<td>
-            	{{ Form::label('supplier_name', number_format($receive->line_quantity_ordered), ['class'=>'form-control']) }}
+            	{{ Form::label('supplier_name', number_format($receive->line_quantity), ['class'=>'form-control']) }}
 			</td>
 			<td>
 				{{ Form::label('total_receive_'.$receive->line_id, $total_receive, ['class'=>'form-control']) }}

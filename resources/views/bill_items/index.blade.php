@@ -157,7 +157,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 							{{ number_format($bill->bill_unit_price,2) }}
 					</td>
 					<td align='right' width='80'>
-							{{ number_format($bill->bill_amount_pregst,2) }}
+							{{ number_format($bill->bill_amount_exclude_tax,2) }}
 					</td>
 					<td align='right' width='80'>
 							{{ number_format($bill->bill_amount,2) }}
@@ -235,41 +235,6 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 		<h4>No items.</h4>
 		</div>
 @endif
-<!-- GST Summary -->
-<div class="widget style1 gray-bg">
-		<div class='row'>
-			<div class='col-md-5'>
-		<table class='table table-condensed'>
-		 <thead>
-			<tr> 
-			<th>GST</th> 
-			<th><div align='right'>Amount (RM)</div></th> 
-			<th><div align='right'>GST (RM)</div></th> 
-			</tr>
-		</thead>
-		@foreach ($gst_total as $gst)
-			<tr>
-					<td>{{ $gst->tax_code}}</td>
-					<td>
-						<div class='pull-right'>
-						{{ $gst->gst_amount }}
-						</div>
-					</td>
-					<td>
-						<div class='pull-right'>
-						{{ $gst->gst_sum }}
-						</div>
-					</td>
-			</tr>
-		@endforeach
-		</table>
-			</div>
-		</div>
-@if (count($gst_total)==0)
-	<h4>No GST detail</h4>
-	<br>
-@endif
-</div>
 <!-- Payments -->
 <div class="widget style1 gray-bg">
 

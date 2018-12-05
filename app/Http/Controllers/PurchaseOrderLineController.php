@@ -20,6 +20,8 @@ use App\DojoUtility;
 use App\StockInput;
 use App\StockInputLine;
 use App\PurchaseOrderHelper;
+use App\ProductUom;
+use App\TaxCode;
 
 class PurchaseOrderLineController extends Controller
 {
@@ -53,7 +55,6 @@ class PurchaseOrderLineController extends Controller
 					->where('purchase_id','=',$purchase_id)
 					->paginate($this->paginateValue);
 			}
-
 
 			return view('purchase_order_lines.index', [
 					'purchase_order_lines'=>$purchase_order_lines,
@@ -111,9 +112,22 @@ class PurchaseOrderLineController extends Controller
 	public function edit($id) 
 	{
 			$purchase_order_line = PurchaseOrderLine::findOrFail($id);
+			$product_uoms =  $purchase_order_line->product->productUnitMeasures();
+
+			$uom_list = [];
+			$uom_list['unit'] = 'Unit';
+			foreach ($product_uoms as $uom) {
+					if ($uom->unit_code != 'unit') {
+						$uom_list[$uom->unit_code] = $uom->unitMeasure->unit_name;
+					}
+			}
+
 			return view('purchase_order_lines.edit', [
 					'purchase_order_line'=>$purchase_order_line,
 					'product' => Product::find($purchase_order_line->product_code),
+					'uom_list' => $uom_list,
+					'product_uoms' => $product_uoms,
+					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					]);
 	}
 
@@ -125,17 +139,19 @@ class PurchaseOrderLineController extends Controller
 
 			$valid = $purchase_order_line->validate($request->all(), $request->_method);	
 
+			$tax = TaxCode::find($request->tax_code);
+
 			if ($valid->passes()) {
-					$purchase_order_line->line_total=$purchase_order_line->line_quantity_ordered*$purchase_order_line->line_price;
-					$purchase_order_line->line_total_gst= $purchase_order_line->line_total;
-					if (!empty($product->purchase_tax_code)) {
-							$purchase_order_line->line_total_gst=$purchase_order_line->line_total_gst*(1+($product->purchase_tax->tax_rate/100));
-							$purchase_order_line->tax_rate = $product->purchase_tax->tax_rate;
+					$purchase_order_line->line_subtotal=$purchase_order_line->line_quantity*$purchase_order_line->line_unit_price;
+					$purchase_order_line->line_subtotal_tax= $purchase_order_line->line_subtotal;
+					if (!empty($request->tax_code)) {
+							$purchase_order_line->line_subtotal_tax=$purchase_order_line->line_subtotal_tax*(1+($tax->tax_rate/100));
+							$purchase_order_line->tax_rate = $tax->tax_rate;
 					}
 
 					$purchase_order_line->save();
 
-					$product->product_purchase_price = $purchase_order_line->line_price;
+					$product->product_purchase_price = $purchase_order_line->line_unit_price;
 					$product->save();
 
 					Session::flash('message', 'Record successfully updated.');
@@ -228,9 +244,9 @@ class PurchaseOrderLineController extends Controller
 				$input_line->input_id = $stock_input->input_id;
 				$input_line->po_line_id = $line->line_id;
 				$input_line->product_code = $line->product_code;
-				//$input_line->line_value = $line->line_total;
-				$input_line->line_quantity = $line->line_quantity_ordered-$total_receive;
-				$input_line->line_value = $poline->line_price*$input_line->line_quantity;
+				//$input_line->line_value = $line->line_subtotal;
+				$input_line->line_quantity = $line->line_quantity-$total_receive;
+				$input_line->line_value = $poline->line_unit_price*$input_line->line_quantity;
 				$input_line->save();
 			}
 
@@ -260,7 +276,7 @@ class PurchaseOrderLineController extends Controller
 			$valid = array();
 			$stock_helper = new StockHelper();
 			$purchase_order_lines = PurchaseOrderLine::where('purchase_id',$id)
-										->select('line_id','product_code','line_total')
+										->select('line_id','product_code','line_subtotal')
 										->get();
 
 			//if ($request->count_completed==0) {
@@ -323,7 +339,7 @@ class PurchaseOrderLineController extends Controller
 						$stock->store_code = $request->store_code;
 						$stock->product_code = $line->product_code;
 						$stock->stock_quantity = $stock_quantity;
-						$stock->stock_value = $line->line_total;
+						$stock->stock_value = $line->line_subtotal;
 						$stock->batch_number = $request[$batch_name];
 						$stock->stock_datetime = DojoUtility::now();
 						$stock->stock_description = "Purchase id: ".$line->purchase_id;
@@ -359,7 +375,7 @@ class PurchaseOrderLineController extends Controller
 
 			foreach($purchase_order_lines as $line) {
 
-					$quantity_order = $line->line_quantity_ordered;
+					$quantity_order = $line->line_quantity;
 					$total_receive = $stock_helper->stockReceiveSum($line->line_id);
 					$total_receive = $total_receive/$line->product->product_conversion_unit;
 					$receive_name = "receive_quantity_".$line->line_id;

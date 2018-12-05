@@ -25,7 +25,6 @@ class Patient extends Model
 				'nation_code',
 				'race_code',
 				'occupation_code',
-				'registration_code',
 				'flag_code',
 				'patient_name',
 				'patient_birthdate',

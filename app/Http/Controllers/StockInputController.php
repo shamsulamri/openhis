@@ -222,7 +222,6 @@ class StockInputController extends Controller
 
 	public function save(Request $request, $id)
 	{
-
 		$input = StockInput::find($id);
 		$lines = StockInputLine::where('input_id', $id)->get();
 
@@ -359,7 +358,8 @@ class StockInputController extends Controller
 				$stock->move_code = $stock_input->move_code;
 				$stock->store_code = $stock_input->store_code;
 				$stock->product_code = $product->product_code;
-				$stock->stock_quantity = $line->line_quantity*$conversion;
+				//$stock->stock_quantity = $line->line_quantity*$conversion;
+				$stock->stock_quantity = $line->line_quantity*$line->poline->uom_rate;
 				$stock->stock_conversion_unit = $line->product->product_conversion_unit;
 				$stock->stock_value = $line->line_value;
 				//$stock->batch_number = $line->batch_number;

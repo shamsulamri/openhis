@@ -74,6 +74,7 @@
 	<div class="row">
 			<div class="col-xs-6">
 				<a href="{{ url('/products') }}">Products</a><br>
+				<a href="{{ url('/purchases') }}">Purchases</a><br>
 				<a href="{{ url('/purchase_orders') }}">Purchase Orders</a><br>
 				<a href="{{ url('/suppliers') }}">Suppliers</a><br>
 				<a href="{{ url('/stores') }}">Stores</a><br>
@@ -87,6 +88,7 @@
 			</div>
 			<div class="col-xs-3">
 			<small>
+				<a href="{{ url('/purchase_documents') }}">Purchase Documents</a><br>
 				<a href="{{ url('/product_categories') }}">Product Categories</a><br>
 				<a href="{{ url('/product_groups') }}">Product Groups</a><br>
 				<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
@@ -98,11 +100,11 @@
 				<a href="{{ url('/forms') }}">Forms</a><br>
 				<a href="{{ url('/form_systems') }}">Form systems</a><br>
 				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
-				<a href="{{ url('/tax_types') }}">Tax Types</a><br>
 			</small>
 			</div>
 			<div class="col-xs-3">
 			<small>
+				<a href="{{ url('/tax_types') }}">Tax Types</a><br>
 				<a href="{{ url('/general_ledgers') }}">General Ledger Codes</a><br>
 				<a href="{{ url('/product_charges') }}">Tiers</a><br>
 				<a href="{{ url('/drug_categories') }}">Drug Categories</a><br>

@@ -135,14 +135,6 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('product_gst')) has-error @endif'>
-        {{ Form::label('product_gst', 'product_gst',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('product_gst', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('product_gst')) <p class="help-block">{{ $errors->first('product_gst') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group  @if ($errors->has('status_code')) has-error @endif'>
         {{ Form::label('status_code', 'status_code',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

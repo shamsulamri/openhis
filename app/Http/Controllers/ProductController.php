@@ -32,9 +32,11 @@ use App\Ward;
 use App\StoreAuthorization;
 use App\ProductCategory;
 use App\GeneralLedger;
-use App\StockHelper;
+use App\InventoryHelper;
 use App\DojoUtility;
 use App\ProductCharge;
+use App\ProductUom;
+use App\StockHelper;
 
 class ProductController extends Controller
 {
@@ -47,8 +49,6 @@ class ProductController extends Controller
 
 	public function index(Request $request)
 	{
-			$stock_helper = new StockHelper();
-
 			$loan=False;
 			if (Auth::user()->authorization->author_id==7) {
 					$loan=True;
@@ -72,7 +72,7 @@ class ProductController extends Controller
 					'loan'=>$loan,
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>null,
-					'stockHelper'=>new StockHelper(),
+					'helper'=>new InventoryHelper(),
 					'store_code'=>$store_code,
 			]);
 	}
@@ -158,6 +158,13 @@ class ProductController extends Controller
 					$product = new Product($request->all());
 					$product->product_code = $request->product_code;
 					$product->save();
+
+					$product_uom = new ProductUom();
+					$product_uom->product_code = $product->product_code;
+					$product_uom->unit_code = 'unit';
+					$product_uom->uom_rate = 1;
+					$product_uom->save();
+
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/products/id/'.$product->product_code);
 			} else {
@@ -235,7 +242,7 @@ class ProductController extends Controller
 	
 	public function delete($id)
 	{
-		$product = Product::findOrFail($id);
+		$product = Product::find($id);
 		return view('products.destroy', [
 			'product'=>$product
 			]);
@@ -314,6 +321,7 @@ class ProductController extends Controller
 			}
 
 			$products = $products->leftjoin('ref_unit_measures as e', 'e.unit_code', '=', 'products.unit_code');
+			$products = $products->withTrashed();
 
 			/*** Seach Param ***/
 			if (!empty($request->search)) {
@@ -359,80 +367,6 @@ class ProductController extends Controller
 		$stock_helper = new StockHelper();
 		$stock_helper->updateAllStockOnHand($product_code);
 	}
-	/**
-	public function updateTotalOnHand($product_code)
-	{
-			StockStore::where('product_code','=', $product_code)->delete();
-			$stores = Store::all();
-			$total=0;
-			foreach ($stores as $store) {
-					$total += $this->storeOnHand($product_code, $store->store_code);
-			}
-					
-			$product = Product::find($product_code);
-			$product->product_on_hand = $total;
-			$product->save();		
-
-			return $total;
-	}
-
-	public function storeOnHand($product_code, $store_code) 
-	{
-
-			$stock_take = Stock::select('stock_datetime', 'stock_quantity')
-							->where('move_code','=','take')
-							->where('product_code','=',$product_code)
-							->where('store_code','=',$store_code)
-							->orderBy('stock_datetime', 'desc')
-							->orderBy('stock_id', 'desc')
-							->first();
-
-			$stock_on_hand=0;
-
-			if (!empty($stock_take)) {
-					$stock_value = $stock_take->stock_quantity; 
-
-					$take_date = $stock_take->stock_datetime; 
-
-					$stocks = Stock::where('stock_datetime','>=',$take_date)
-									->where('product_code','=',$product_code)
-									->where('store_code','=',$store_code)
-									->where('move_code','<>', 'take')
-									->sum('stock_quantity');
-
-					$used = Order::where('product_code','=', $product_code)
-								->where('created_at','>', $take_date)
-								->where('order_completed','=',1)
-								->sum('order_quantity_supply');
-
-					$stock_on_hand = $stock_value + $stocks - $used;
-			} else {
-					$stocks = Stock::where('product_code','=',$product_code)
-									->where('store_code','=',$store_code)
-									->sum('stock_quantity');
-
-					$used = Order::where('product_code','=', $product_code)
-								->where('order_completed','=',1)
-								->where('store_code', '=', $store_code)
-								->sum('order_quantity_supply');
-
-					$stock_on_hand=$stocks - $used;
-			}
-
-			if ($stock_on_hand>0) {
-					$stock_store = new StockStore();
-					$stock_store->product_code = $product_code;
-					$stock_store->store_code = $store_code;
-					$stock_store->stock_quantity = $stock_on_hand;
-					$stock_store->save();
-			}
-
-
-			Log::info($store_code.':'.$stock_on_hand);
-			return $stock_on_hand;
-	}
-
-	**/
 
 	public function enquiry(Request $request)
 	{
@@ -464,7 +398,7 @@ class ProductController extends Controller
 				left join stores as c on (c.store_code = a.store_code) 
 				left join stock_limits as d on (d.product_code = b.product_code and d.store_code = a.store_code)
 				left join (
-						select sum(line_quantity_ordered) as on_purchase, product_code
+						select sum(line_quantity) as on_purchase, product_code
 						from purchase_order_lines as a
 						left join purchase_orders as b on (a.purchase_id = b.purchase_id)
 						where purchase_posted=1 

@@ -206,11 +206,11 @@
 	</div>
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('purchase_tax_code')) has-error @endif'>
-						{{ Form::label('purchase_tax_code', 'Input Tax Code',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('product_input_tax')) has-error @endif'>
+						{{ Form::label('product_input_tax', 'Input Tax Code',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::select('purchase_tax_code', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
-							@if ($errors->has('purchase_tax_code')) <p class="help-block">{{ $errors->first('purchase_tax_code') }}</p> @endif
+							{{ Form::select('product_input_tax', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
+							@if ($errors->has('product_input_tax')) <p class="help-block">{{ $errors->first('product_input_tax') }}</p> @endif
 						</div>
 					</div>
 			</div>
@@ -266,11 +266,11 @@
 	</div>
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('tax_code')) has-error @endif'>
-						{{ Form::label('tax_code', 'Output Tax Code',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('product_output_tax')) has-error @endif'>
+						{{ Form::label('product_output_tax', 'Output Tax Code',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::select('tax_code', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
-							@if ($errors->has('tax_code')) <p class="help-block">{{ $errors->first('tax_code') }}</p> @endif
+							{{ Form::select('product_output_tax', $tax_code,null, ['class'=>'form-control','maxlength'=>'20', ]) }}
+							@if ($errors->has('product_output_tax')) <p class="help-block">{{ $errors->first('product_output_tax') }}</p> @endif
 						</div>
 					</div>
 			</div>

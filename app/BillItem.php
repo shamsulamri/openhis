@@ -21,7 +21,7 @@ class BillItem extends Model
 				'bill_unit_price',
 				'bill_unit_multiplier',
 				'bill_amount',
-				'bill_amount_pregst',
+				'bill_amount_exclude_tax',
 				'bill_non_claimable',
 				'bill_exempted'];
 	

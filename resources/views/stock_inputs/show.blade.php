@@ -8,7 +8,7 @@ iframe { border: 1px #e5e5e5 solid; }
 @if ($stock_input->move_code != 'receive')
 <h1>Stock Movement</h1>
 @else
-<h1>Stock Receive</h1>
+<h1>Goods Receive</h1>
 @endif
 
 <!--

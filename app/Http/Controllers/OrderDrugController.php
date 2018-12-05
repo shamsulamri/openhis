@@ -143,8 +143,6 @@ class OrderDrugController extends Controller
 					$frequencies = Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('','');
 			}
 
-
-				//	'frequency' => Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('',''),
 			$indications = DrugDisease::where('drug_code','=', $product_code)->distinct()->get();
 			$stock_helper = new StockHelper();
 			$available = $stock_helper->getStockAvailable($product_code, $order_drug->order->store_code);
@@ -224,6 +222,7 @@ class OrderDrugController extends Controller
 			$valid=null;
 			$valid = $order_drug->validate($request->all(), $request->_method);	
 
+			/*
 			if ($order->order_quantity_request>$on_hand-$allocated) {
 					//$valid['order_quantity_request']='Insufficient quantity.'; 
 					$valid->getMessageBag()->add('order_quantity_request', 'Insufficient quantity.');
@@ -232,15 +231,7 @@ class OrderDrugController extends Controller
 							->withInput()
 							->with(['stock_count'=>$available, 'local_store'=>$local_store]);
 			}
-
-			//$order->save();
-			/**
-			if (!empty($valid)) {
-					return redirect('/order_drugs/'.$id.'/edit')
-							->withErrors($valid)
-							->withInput();
-			} 
-			**/
+			 */
 
 			if ($valid->passes()) {
 					$order->save();

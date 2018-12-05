@@ -47,6 +47,68 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('inventory_movements', 'InventoryMovementController');
+		Route::get('/inventory_movements/id/{id}', 'InventoryMovementController@searchById');
+		Route::get('/inventory_movements/show/{id}', 'InventoryMovementController@show');
+		Route::post('/inventory_movement/search', 'InventoryMovementController@search');
+		Route::get('/inventory_movement/search', 'InventoryMovementController@search');
+		Route::get('/inventory_movements/delete/{id}', 'InventoryMovementController@delete');
+		Route::get('/inventory_movements/add/{move_id}/{product_code}', 'InventoryMovementController@add');
+		
+		Route::post('/schema/destroy', 'SchemaController@destroy');
+		Route::get('/schema/index/{table}', 'SchemaController@index');
+		Route::get('/schema/form/{table}/{id?}', 'SchemaController@form');
+		Route::get('/schema/delete/{table}/{id?}', 'SchemaController@delete');
+		Route::get('/schema/{table}', 'SchemaController@schema');
+		Route::post('/schema/post', 'SchemaController@post');
+
+		Route::resource('inventories', 'InventoryController');
+		Route::get('/inventories/id/{id}', 'InventoryController@searchById');
+		Route::post('/inventory/search', 'InventoryController@search');
+		Route::get('/inventory/search', 'InventoryController@search');
+		Route::get('/inventories/delete/{id}', 'InventoryController@delete');
+		Route::get('/inventories/onhand/{product_code}', 'InventoryController@getOnHand');
+		Route::get('/inventories/line/{id}', 'InventoryController@line');
+		Route::post('/inventories/save/{move_id}', 'InventoryController@save');
+		Route::get('/inventories/confirm/{move_id}', 'InventoryController@confirm');
+		Route::post('/inventories/post/{move_id}', 'InventoryController@post');
+		
+		Route::resource('purchase_documents', 'PurchaseDocumentController');
+		Route::get('/purchase_documents/id/{id}', 'PurchaseDocumentController@searchById');
+		Route::post('/purchase_document/search', 'PurchaseDocumentController@search');
+		Route::get('/purchase_document/search', 'PurchaseDocumentController@search');
+		Route::get('/purchase_documents/delete/{id}', 'PurchaseDocumentController@delete');
+		
+		Route::resource('purchase_lines', 'PurchaseLineController');
+		Route::get('/purchase_lines/add/{purchase_id}/{product_code}', 'PurchaseLineController@add');
+		Route::get('/purchase_lines/show/{id}', 'PurchaseLineController@show');
+		Route::get('/purchase_lines/detail/{id}', 'PurchaseLineController@detail');
+		Route::get('/purchase_lines/id/{id}', 'PurchaseLineController@searchById');
+		Route::post('/purchase_line/search', 'PurchaseLineController@search');
+		Route::get('/purchase_line/search', 'PurchaseLineController@search');
+		Route::get('/purchase_lines/delete/{id}', 'PurchaseLineController@delete');
+		Route::get('/purchase_lines/convert/{from}/{to}', 'PurchaseLineController@convert');
+		Route::post('/purchase_lines/multiple', 'PurchaseLineController@multiple');
+		Route::post('/purchase_lines/delete_selection/{id}', 'PurchaseLineController@deleteSelection');
+		Route::get('/purchase_lines/master_item/{id}/{document_id?}', 'PurchaseLineController@masterItem');
+		Route::post('/purchase_lines/post/{id}', 'PurchaseLineController@post');
+		Route::get('/purchase_lines/post_confirmation/{id}', 'PurchaseLineController@post_confirmation');
+		
+		Route::resource('purchases', 'PurchaseController');
+		Route::get('/purchases/id/{id}', 'PurchaseController@searchById');
+		Route::post('/purchase/search', 'PurchaseController@search');
+		Route::get('/purchase/search', 'PurchaseController@search');
+		Route::get('/purchases/delete/{id}', 'PurchaseController@delete');
+		Route::get('/purchases/master_document/{supplier_code}', 'PurchaseController@masterDocument');
+		
+
+		Route::resource('product_uoms', 'ProductUomController');
+		Route::get('/product_uoms/id/{id}', 'ProductUomController@searchById');
+		Route::post('/product_uom/search', 'ProductUomController@search');
+		Route::get('/product_uom/search', 'ProductUomController@search');
+		Route::get('/product_uoms/delete/{id}', 'ProductUomController@delete');
+		Route::get('/product/uom/{id}', 'ProductUomController@uom');
+
 		Route::resource('entitlements', 'EntitlementController');
 		Route::get('/entitlements/id/{id}', 'EntitlementController@searchById');
 		Route::post('/entitlement/search', 'EntitlementController@search');

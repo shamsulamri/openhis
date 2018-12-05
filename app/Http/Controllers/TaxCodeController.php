@@ -68,9 +68,15 @@ class TaxCodeController extends Controller
 
 	public function update(Request $request, $id) 
 	{
+
+			if ($request->tax_default == 1) {
+				DB::table('tax_codes')->update(['tax_default'=>null]);
+			}
+
 			$tax_code = TaxCode::findOrFail($id);
 			$tax_code->fill($request->input());
 
+			$tax_code->tax_default = $request->tax_default ?: 0;
 
 			$valid = $tax_code->validate($request->all(), $request->_method);	
 

@@ -175,14 +175,6 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('product_gst')) has-error @endif'>
-        {{ Form::label('product_gst', 'product_gst',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::checkbox('product_gst', '1') }}
-            @if ($errors->has('product_gst')) <p class="help-block">{{ $errors->first('product_gst') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/order_products" role="button">Cancel</a>

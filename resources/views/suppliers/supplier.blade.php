@@ -15,11 +15,11 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('supplier_gst_number')) has-error @endif'>
-        <label for='supplier_gst_number' class='col-sm-3 control-label'>GST Number</label>
+    <div class='form-group  @if ($errors->has('supplier_tax_number')) has-error @endif'>
+        <label for='supplier_tax_number' class='col-sm-3 control-label'>GST Number</label>
         <div class='col-sm-9'>
-            {{ Form::text('supplier_gst_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
-            @if ($errors->has('supplier_gst_number')) <p class="help-block">{{ $errors->first('supplier_gst_number') }}</p> @endif
+            {{ Form::text('supplier_tax_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+            @if ($errors->has('supplier_tax_number')) <p class="help-block">{{ $errors->first('supplier_tax_number') }}</p> @endif
         </div>
     </div>
 

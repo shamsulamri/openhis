@@ -366,11 +366,11 @@ class PurchaseOrderController extends Controller
 					if ($product->product_purchased==1) {
 							$purchase_order_line = new PurchaseOrderLine();
 							$purchase_order_line->purchase_id = $id;
-							$purchase_order_line->line_quantity_ordered = $value;
+							$purchase_order_line->line_quantity = $value;
 							$purchase_order_line->line_quantity_received = $value;
-							$purchase_order_line->line_total = $value*$product->product_purchase_price;
+							$purchase_order_line->line_subtotal = $value*$product->product_purchase_price;
 							$purchase_order_line->product_code = $key;
-							$purchase_order_line->line_price = $product->product_purchase_price;
+							$purchase_order_line->line_unit_price = $product->product_purchase_price;
 							$purchase_order_line->save();
 					}
 			}

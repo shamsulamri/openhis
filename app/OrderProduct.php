@@ -32,8 +32,7 @@ class OrderProduct extends Model
 				'form_code',
 				'product_average_cost',
 				'product_units',
-				'product_sale_margin',
-				'product_gst'];
+				'product_sale_margin'];
 	
     protected $guarded = ['product_code'];
     protected $primaryKey = 'product_code';

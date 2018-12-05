@@ -78,7 +78,7 @@ class StockInputLine extends Model
 
 	public function poline()
 	{
-		return $this->belongsTo('App\PurchaseOrderLine', 'line_id', 'po_line_id');
+		return $this->belongsTo('App\PurchaseOrderLine', 'po_line_id', 'line_id');
 	}
 
 	public function product()

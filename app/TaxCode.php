@@ -14,6 +14,7 @@ class TaxCode extends Model
 				'tax_code',
 				'tax_name',
 				'tax_shortname',
+				'tax_default',
 				'tax_rate'];
 	
     protected $guarded = ['tax_code'];
@@ -24,7 +25,6 @@ class TaxCode extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'tax_name'=>'required',
-				'tax_rate'=>'required',
 			];
 
 			

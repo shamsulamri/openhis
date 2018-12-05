@@ -87,7 +87,7 @@ class BillItemController extends Controller
 					$item->tax_rate = $bed->tax_rate;
 					$item->bill_quantity = $bed_los*$bed_unit;
 					$item->bill_unit_price = $bed->product_sale_price;
-					$item->bill_amount_pregst = $item->bill_unit_price*$item->bill_quantity;
+					$item->bill_amount_exclude_tax = $item->bill_unit_price*$item->bill_quantity;
 					$item->bill_amount = $item->bill_unit_price*$item->bill_quantity;
 					$item->bill_non_claimable = 2;
 					if (!empty($encounter->sponsor_code)) {
@@ -119,7 +119,7 @@ class BillItemController extends Controller
 					/*** Sum-up selected fields ***/
 					foreach($bill_items as $bill_item) {
 						$merge_item->bill_quantity += $bill_item->bill_quantity;
-						$merge_item->bill_amount_pregst += $item->bill_amount_pregst;
+						$merge_item->bill_amount_exclude_tax += $item->bill_amount_exclude_tax;
 						$merge_item->bill_amount += $item->bill_amount;
 					}
 
@@ -256,7 +256,7 @@ class BillItemController extends Controller
 
 					$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
-					$item->bill_amount_pregst = $item->bill_amount;
+					$item->bill_amount_exclude_tax = $item->bill_amount;
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
@@ -331,7 +331,7 @@ class BillItemController extends Controller
 
 					$item->bill_amount = $order->order_total;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
-					$item->bill_amount_pregst = $item->bill_amount;
+					$item->bill_amount_exclude_tax = $item->bill_amount;
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
@@ -369,7 +369,7 @@ class BillItemController extends Controller
 				$item->bill_unit_multiplier = $order->profit_multiplier;
 				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
 				$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
-				$item->bill_amount_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_amount_exclude_tax = $order->order_quantity_supply*$item->bill_unit_price;
 				if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 				}
@@ -424,7 +424,7 @@ class BillItemController extends Controller
 				$item->bill_unit_multiplier = $order->profit_multiplier;
 				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
 				$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
-				$item->bill_amount_pregst = $order->order_quantity_supply*$item->bill_unit_price;
+				$item->bill_amount_exclude_tax = $order->order_quantity_supply*$item->bill_unit_price;
 				$item->bill_non_claimable = $this->getBillNonClaimableValue($non_claimable);
 
 				if ($order->tax_rate) {
@@ -462,7 +462,7 @@ class BillItemController extends Controller
 				$item->bill_quantity = 1;
 				$item->bill_unit_price = $outstanding; 
 				$item->bill_amount = $outstanding;
-				$item->bill_amount_pregst = $outstanding;
+				$item->bill_amount_exclude_tax = $outstanding;
 				$item->save();
 				Log::info($item);
 			}
@@ -490,10 +490,10 @@ class BillItemController extends Controller
 
 
 			$raw = "
-sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_amount_pregst) as bill_amount_pregst, bill_id,a.encounter_id,a.product_code,product_name,a.tax_code,a.tax_rate,bill_discount,bill_unit_price,bill_exempted, order_completed, product_non_claimable, b.category_code
+sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_amount_exclude_tax) as bill_amount_exclude_tax, bill_id,a.encounter_id,a.product_code,product_name,a.tax_code,a.tax_rate,bill_discount,bill_unit_price,bill_exempted, order_completed, product_non_claimable, b.category_code
 				";
 			$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed', 'product_non_claimable','category_name','b.category_code','name')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'order_completed', 'product_non_claimable','category_name','b.category_code','name')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
@@ -526,7 +526,7 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 				$this->bedBills($id);
 
 				$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_pregst','bill_exempted', 'order_completed', 'product_non_claimable','category_name','b.category_code','name')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'order_completed', 'product_non_claimable','category_name','b.category_code','name')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.tax_code')
 					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
@@ -559,19 +559,7 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 
 			if (empty($bill_grand_total)) {
 					$bill_grand_total=0;
-			} else {
-					//$bill_grand_total = DojoUtility::roundUp($bill_grand_total);
-			}
-
-
-			$gst_total = DB::table('bill_items as a')
-					->selectRaw('sum(bill_amount_pregst) as gst_amount, format(sum(bill_amount_pregst*(tax_rate/100)),2) as gst_sum, tax_code')
-					->where('encounter_id','=', $id)
-					->where('bill_non_claimable','=', $non_claimable)
-					->whereNotNull('tax_code')
-					->groupBy('tax_code');
-					
-			$gst_total = $gst_total->get();
+			} 
 
 			$payments = DB::table('payments as a')
 					->leftJoin('payment_methods as b', 'b.payment_code','=','a.payment_code')
@@ -626,16 +614,6 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 									->leftjoin('order_cancellations as b','orders.order_id','=', 'b.order_id')
 									->whereNull('cancel_id')
 									->count();
-									//->where('order_multiple','=',0)
-
-			/**
-			$incomplete_orders = $incomplete_orders + OrderMultiple::where('encounter_id','=',$id)
-									->leftJoin('orders as b', 'b.order_id', '=', 'order_multiples.order_id')
-									->leftjoin('order_cancellations as c','c.order_id','=', 'b.order_id')
-									->where('order_multiples.order_completed','=',0)
-									->whereNull('cancel_id')
-									->count();
-			**/
 
 			$bill_discount=BillDiscount::where('encounter_id', $id)->first();
 
@@ -665,7 +643,6 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 					'patient' => $encounter->patient,
 					'payments' => $payments,
 					'payment_total' => $payment_total,
-					'gst_total' => $gst_total,
 					'encounter' => $encounter,
 					'encounter_id' => $id,
 					'deposit_total' => $deposit_total,
@@ -741,10 +718,10 @@ sum(bill_quantity) as bill_quantity, sum(bill_amount) as bill_amount, sum(bill_a
 						$bill->bill_amount = $bill->bill_quantity*$bill->bill_unit_price;
 			}
 
-			$bill->bill_amount_pregst = $bill->bill_amount;
+			$bill->bill_amount_exclude_tax = $bill->bill_amount;
 			if ($bill->bill_discount>0) {
 					$bill->bill_amount = $bill->bill_amount * (1-($bill->bill_discount/100));
-					$bill->bill_amount_pregst = $bill->bill_amount;
+					$bill->bill_amount_exclude_tax = $bill->bill_amount;
 			}
 
 			if ($bill->product->tax_code) {

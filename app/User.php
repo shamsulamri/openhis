@@ -17,7 +17,7 @@ class User extends Authenticatable
 				'consultant',
 				'department_code',
 				'tax_code',
-				'gst_number',
+				'tax_number',
 				'employee_id',
 				'author_id',
 				'service_id',

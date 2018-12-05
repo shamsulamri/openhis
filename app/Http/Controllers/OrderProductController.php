@@ -123,7 +123,6 @@ class OrderProductController extends Controller
 			$order_product->product_sold = $request->product_sold ?: 0;
 			$order_product->product_discontinued = $request->product_discontinued ?: 0;
 			$order_product->product_bom = $request->product_bom ?: 0;
-			$order_product->product_gst = $request->product_gst ?: 0;
 
 			$valid = $order_product->validate($request->all(), $request->_method);	
 
