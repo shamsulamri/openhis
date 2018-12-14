@@ -31,7 +31,7 @@ class InventoryMovement extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'move_code'=>'required',
-				'store_code'=>'required',
+				'store_code'=>'required_if:move_code,==,transfer',
 				'store_code_transfer'=>'required_if:move_code,==,transfer',
 			];
 

@@ -8,6 +8,7 @@ use Log;
 use Auth;
 use App\ProductUom;
 use App\UnitMeasure;
+use App\InventoryBatch;
 
 class InventoryHelper 
 {
@@ -83,7 +84,38 @@ class InventoryHelper
 						->orderBy('unit_name')
 						->lists('unit_name', 'unit_code');
 
-			return $uoms;
+
+			$product = Product::find($product_code);
+			$product_uoms =  $product->productUnitMeasures();
+
+			$uom_list = [];
+			$uom_list['unit'] = 'Unit';
+			foreach ($product_uoms as $uom) {
+					if ($uom->unit_code != 'unit') {
+						$uom_list[$uom->unit_code] = $uom->unitMeasure->unit_name;
+					}
+			}
+
+			return $uom_list;
 	}
+
+	public function getBatches($product_code)
+	{
+			//$batches = InventoryBatch::where('product_code', $product_code)->get();
+
+			$batches = Inventory::where('inventories.product_code', $product_code)
+							->selectRaw('sum(inv_quantity) as sum_quantity, inv_batch_number, inventories.product_code, unit_code')
+							->leftjoin('inventory_batches as b', 'batch_number', '=', 'inv_batch_number')
+							->groupBy('inv_batch_number')
+							->groupBy('unit_code')
+							->orderBy('batch_expiry_date')
+							->where('inventories.unit_code', 'unit')
+							->get();
+
+			Log::info($batches);
+			return $batches;
+	}
+
 }
+
 

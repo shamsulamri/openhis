@@ -19,9 +19,10 @@ class Purchase extends Model
 				'document_code',
 				'author_id',
 				'supplier_code',
-				'purchase_date',
 				'purchase_description',
 				'purchase_reference',
+				'store_code',
+				'purchase_posted',
 				'deleted_at'];
 	
     protected $guarded = ['purchase_id'];
@@ -43,20 +44,6 @@ class Purchase extends Model
 			];
 			
 			return validator::make($input, $rules ,$messages);
-	}
-
-	
-	public function setPurchaseDateAttribute($value)
-	{
-		if (DojoUtility::validateDate($value)==true) {
-			$this->attributes['purchase_date'] = DojoUtility::dateWriteFormat($value);
-		}
-	}
-
-
-	public function getPurchaseDateAttribute($value)
-	{
-		return DojoUtility::dateReadFormat($value);
 	}
 
 	public function supplier()

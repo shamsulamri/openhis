@@ -65,8 +65,9 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Medical Certificate</a>
 @endif
 <br>
+<br>
 <!-- Bill Method -->
-@if (!$encounter->sponsor)
+@if (!empty($encounter->sponsor))
 	<br>
 @endif
 
@@ -93,12 +94,12 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 	<tr> 
     <th>Code</th> 
     <th>Item</th> 
-    <th><div align='right'>Tax</div></th> 
     <th><div align='right'>Discount</div></th> 
-    <th><div align='right'>Qty</div></th> 
+    <th><div align='right'>Quantity</div></th> 
     <th><div align='right'>Unit Price</div></th> 
-    <th><div align='right'>Total</div></th> 
-    <th><div align='right'>Total GST</div></th> 
+    <th><div align='right'>Subtotal</div></th> 
+    <th><div align='right'>Tax</div></th> 
+    <th><div align='right'>Subtotal Include Tax</div></th> 
 	@can('system-administrator')	
 	<th></th>
 	@endcan
@@ -118,7 +119,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 <?php $category = $bill->category_name; ?>
 @endif
 			<tr>
-					<td>
+					<td width='100'>
 							@if ($bill->product_non_claimable)
 								<span class='label label-warning'>
 							@endif
@@ -140,9 +141,6 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 							@endif
 					</td>
 					<td align='right' width='50'>
-							{{ $bill->tax_code }}
-					</td>
-					<td align='right' width='50'>
 						<?php if ($bill->bill_discount>0) { ?>
 							{{ floatval($bill->bill_discount) }} %
 						<?php } ?>
@@ -150,14 +148,17 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 								Exempted
 							<?php } ?>
 					</td>
-					<td align='right' width='50'>
-							{{$bill->bill_quantity}}
+					<td align='right' width='100'>
+							{{$bill->bill_quantity}} {{$bill->unit_name}}
 					</td>
 					<td align='right' width='100'>
 							{{ number_format($bill->bill_unit_price,2) }}
 					</td>
 					<td align='right' width='80'>
 							{{ number_format($bill->bill_amount_exclude_tax,2) }}
+					</td>
+					<td align='right' width='50'>
+							{{ $bill->tax_code }}
 					</td>
 					<td align='right' width='80'>
 							{{ number_format($bill->bill_amount,2) }}

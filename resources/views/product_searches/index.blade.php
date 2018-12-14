@@ -6,14 +6,24 @@
     font-size: 80%;
 }
 </style>
-@if (!empty($purchase))
-<a class='btn btn-default' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}'>Items</a>
-<a class='btn btn-default' href='/purchases/master_document/{{ $purchase->purchase_id }}'>Documents</a>
-<a class='btn btn-default' href='/product_searches?reason={{ $purchase->purchase_document }}&purchase_id={{ $purchase->purchase_id }}'>Products</a>
-<br><br>
+@if (!empty($purchase)) 
+<a class='btn btn-default' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}?reason=purchase'>Items</a>
+<a class='btn btn-default' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>
+<a class='btn btn-default' href='/product_searches?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Products</a>
+@else
+<a class='btn btn-default' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
+<a class='btn btn-default' href='/purchases/master_document?reason=stock&move_id={{ $move_id }}'>Documents</a>
+<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
 @endif
+<br><br>
+
 <form action='/product_search/search' method='post'>
+	<div class='input-group'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+		<span class='input-group-btn'>
+			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
+		</span>
+	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<input type='hidden' name="purchase_id" value="{{ $purchase_id }}">
 	<input type='hidden' name="reason" value="{{ $reason }}">
@@ -26,6 +36,7 @@
 	<input type='hidden' name="return_id" value="{{ $return_id }}">
 	<input type='hidden' name="line_id" value="{{ $line_id }}">
 	<input type='hidden' name="input_id" value="{{ $input_id }}">
+	<input type='hidden' name="move_id" value="{{ $move_id }}">
 </form>
 <br>
 @if ($product_searches->total()>0)
@@ -49,7 +60,7 @@
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/menu/'. $class_code . '/' . $period_code . '/' . $week . '/'. $day . '/'. $product_search->product_code) .'/'. $diet_code }}'>
 				@elseif ($reason=='bulk')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('product_searches/bulk/'. $input_id . '/' . $product_search->product_code) }}'>
-				@elseif ($reason=='adjust' or $reason=='receive')
+				@elseif ($reason=='stock')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('inventory_movements/add/'. $move_id . '/' . $product_search->product_code) }}'>
 				@else
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('purchase_lines/add/'. $purchase_id . '/' . $product_search->product_code) }}'>
@@ -62,9 +73,9 @@
 </table>
 @endif
 @if (isset($search)) 
-	{{ $product_searches->appends(['input_id'=>$input_id, 'diet_code'=>$diet_code,'class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'search'=>$search,'reason'=>$reason,  'purchase_id'=>$purchase_id])->render() }}
+	{{ $product_searches->appends(['input_id'=>$input_id, 'diet_code'=>$diet_code,'class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'search'=>$search,'reason'=>$reason,  'purchase_id'=>$purchase_id, 'move_id'=>$move_id])->render() }}
 	@else
-	{{ $product_searches->appends(['input_id'=>$input_id, 'diet_code'=>$diet_code,'class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'reason'=>$reason, 'purchase_id'=>$purchase_id])->render() }}
+	{{ $product_searches->appends(['input_id'=>$input_id, 'diet_code'=>$diet_code,'class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'reason'=>$reason, 'purchase_id'=>$purchase_id, 'move_id'=>$move_id])->render() }}
 @endif
 <br>
 @if ($product_searches->total()>0)
@@ -85,8 +96,8 @@
 			frameLine.src='/diet_menus/menu/{{ $class_code }}/{{ $period_code }}/{{ $week }}/{{ $day }}/{{ $diet_code }}';
 	@elseif($reason=='bulk')
 			frameLine.src='/stock_inputs/input/{{ $input_id }}';
-	@elseif($reason=='adjust' or $reason=='receive')
-			frameLine.src='/inventories/line/{{ $move_id }}';
+	@elseif($reason=='stock')
+			frameLine.src='/inventories/detail/{{ $move_id }}';
 	@else
 			frameLine.src='/purchase_lines/detail/{{ $purchase_id }}';
 	@endif

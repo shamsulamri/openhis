@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use App\InventoryBatch;
 
 class Inventory extends Model
 {
@@ -74,5 +75,18 @@ class Inventory extends Model
 	{
 		return $this->belongsTo('App\Product', 'product_code');
 	}
+
+	public function unit()
+	{
+		return $this->belongsTo('App\UnitMeasure', 'unit_code');
+	}
 	
+	public function batch()
+	{
+			$batch = InventoryBatch::where('product_code', $this->product_code)
+						->where('batch_number', '=', $this->inv_batch_number)
+						->first();
+
+			return $batch;
+	}
 }

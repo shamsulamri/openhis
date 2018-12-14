@@ -18,6 +18,7 @@ class BillItem extends Model
 				'tax_rate',
 				'bill_discount',
 				'bill_quantity',
+				'bill_unit_code',
 				'bill_unit_price',
 				'bill_unit_multiplier',
 				'bill_amount',

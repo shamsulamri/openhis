@@ -16,6 +16,7 @@ use App\Product;
 use App\ProductUom;
 use App\InventoryHelper;
 use App\InventoryMovement;
+use App\InventoryBatch;
 use Schema;
 
 class InventoryController extends Controller
@@ -37,16 +38,18 @@ class InventoryController extends Controller
 			]);
 	}
 
-	public function line($id)
+	public function detail($id)
 	{
+			$movement =InventoryMovement::find($id);
 			$inventories = Inventory::orderBy('move_code')
 					->where('move_id', $id)
 					->paginate($this->paginateValue);
 
-			return view('inventories.line', [
+			return view('inventories.detail', [
 					'inventories'=>$inventories,
 					'helper'=>new InventoryHelper(),
 					'move_id'=>$id,
+					'movement'=>$movement,
 			]);
 	}
 
@@ -121,9 +124,10 @@ class InventoryController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$inventory = Inventory::find($id);
 			Inventory::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
-			return redirect('/inventories');
+			return redirect('/inventories/line/'.$inventory->move_id);
 	}
 	
 	public function search(Request $request)
@@ -161,7 +165,31 @@ class InventoryController extends Controller
 			return $helper->getStockOnHand($product_code).'-'.$allocated.'-'.$completed;
 	}
 	
-	public function save(Request $request, $move_id)
+	public function deleteForm(Request $request, $move_id) 
+	{
+		$lines = Inventory::where('move_id', $move_id)->get();
+
+		foreach ($lines as $line) {
+				if ($request['chk_'.$line->inv_id] == '1') {
+					Inventory::find($line->inv_id)->delete();
+				}
+		}
+	}
+
+	public function submit(Request $request, $move_id)
+	{
+		if ($request->button == 'Save') {
+			Session::flash('message', 'Record Saved.');
+			$this->saveForm($request, $move_id);
+		} else {
+			$this->deleteForm($request, $move_id);
+			Session::flash('message', 'Record Deleted.');
+		}
+
+		return redirect('/inventories/detail/'.$move_id);
+	}
+
+	public function saveForm(Request $request, $move_id)
 	{
 		$movement = InventoryMovement::find($move_id);
 		$lines = Inventory::where('move_id', $move_id)->get();
@@ -170,25 +198,59 @@ class InventoryController extends Controller
 			$inventory = Inventory::find($line->inv_id);
 			$inventory->unit_code = $request['unit_'.$line->inv_id]?:'unit';
 			$inventory->uom_rate = 1;
-			$inventory->inv_book_quantity = $request['book_'.$line->inv_id];
+			//$inventory->inv_book_quantity = $request['book_'.$line->inv_id];
 			$inventory->inv_physical_quantity = $request['physical_'.$line->inv_id];
 			$inventory->inv_quantity = $inventory->uom_rate*$inventory->inv_physical_quantity;
 			$inventory->inv_batch_number = $request['batch_'.$line->inv_id];
 
+			if (!empty($request['batch_'.$line->inv_id])) {
+					$batch = InventoryBatch::where('batch_number', '=', $line->inv_batch_number)
+								->where('product_code', $line->product_code)
+								->first();
+
+					if (empty($batch)) {
+							$batch = new InventoryBatch();
+							$batch->batch_number = $inventory->inv_batch_number;
+							$batch->batch_expiry_date = $request['inv_expiry_date_'.$inventory->inv_id];
+							$batch->product_code = $inventory->product_code;
+							$batch->save();
+							Log::info('----save----');
+					} else {
+							$batch->batch_expiry_date = $request['inv_expiry_date_'.$inventory->inv_id]?:NULL;
+							$batch->save();
+							//$batch->update(['batch_expiry_date'=>NULL]);
+							Log::info($batch);
+							Log::info('----update----');
+					}
+			}
+
 			$product_uom = ProductUom::where('product_code','=',  $inventory->product_code)
 								->where('unit_code', '=', $inventory->unit_code)
 								->first();
+
+			if (empty($product_uom)) {
+					$product_uom = new ProductUom();
+					$product_uom->uom_rate = 1;
+					$product_uom->uom_cost = 0;
+			}
+
 			$subtotal = 0;
 
 			if ($product_uom) {
 				$inventory->uom_rate = $product_uom->uom_rate;
-				if ($movement->move_code == 'receive') {
+				if ($movement->move_code == 'adjust') {
+						if ($inventory->inv_book_quantity>0) {
+								$inventory->inv_quantity = ($inventory->inv_physical_quantity*$inventory->uom_rate)-$inventory->inv_book_quantity;
+						} else {
+								$inventory->inv_quantity = $inventory->inv_physical_quantity*$inventory->uom_rate;
+						}
+				} elseif ($movement->move_code == 'receive') {
 						$inventory->inv_quantity = $inventory->inv_physical_quantity*$inventory->uom_rate;
 				} else {
-						$inventory->inv_quantity = ($inventory->inv_physical_quantity-$inventory->inv_book_quantity)*$inventory->uom_rate;
+						$inventory->inv_quantity = -($inventory->inv_physical_quantity*$inventory->uom_rate);
 				}
 				$inventory->inv_unit_cost = $product_uom->uom_cost;
-				$inventory->inv_subtotal = $inventory->inv_quantity*$product_uom->uom_cost;
+				$inventory->inv_subtotal = $inventory->inv_physical_quantity*$product_uom->uom_cost;
 			}
 
 
@@ -197,8 +259,6 @@ class InventoryController extends Controller
 			$inventory->save();
 		}
 
-		Session::flash('message', 'Record Saved.');
-		return redirect('/inventories/line/'.$move_id);
 	}
 
 	public function confirm($move_id)
@@ -223,6 +283,7 @@ class InventoryController extends Controller
 			$movement->save();
 
 			Session::flash('message', 'Transaction posted.');
-			return redirect('/inventories/line/'.$move_id);
+			return redirect('/inventory_movements');
 	}
+
 }

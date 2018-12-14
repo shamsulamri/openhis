@@ -91,24 +91,15 @@
 					</div>
 			</div>
 	</div>
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
-						{{ Form::label('store_code', 'Store',['class'=>'col-sm-3 control-label']) }}
-						<div class='col-sm-9'>
-							{{ Form::select('store_code', $store, $purchase_line->store_code, ['id'=>'store_code']) }}
-							@if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
-						</div>
-					</div>
-			</div>
-	</div>
 	@endif
 	<br>
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-default" href="/purchase_lines/detail/{{ $purchase_line->purchase_id }}" role="button">Cancel</a>
+            <a class="btn btn-default" href="/purchase_lines/detail/{{ $purchase_line->purchase_id }}" role="button">Back</a>
+			@if ($purchase_line->line_posted == 0)
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+			@endif
         </div>
     </div>
 

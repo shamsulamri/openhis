@@ -16,6 +16,8 @@ use App\DojoUtility;
 use Carbon\Carbon;
 use App\PurchaseLine;
 use App\PurchaseDocument;
+use App\Store;
+use App\InventoryMovement;
 
 class PurchaseController extends Controller
 {
@@ -28,26 +30,77 @@ class PurchaseController extends Controller
 
 	public function index()
 	{
-			$purchases = Purchase::orderBy('purchase_id', 'desc')
+			$purchases = Purchase::orderBy('purchase_posted')
+					->orderBy('purchase_id', 'asc')
 					->paginate($this->paginateValue);
 			return view('purchases.index', [
 					'purchases'=>$purchases
 			]);
 	}
 
-	public function masterDocument($id)
+	public function masterDocument(Request $request, $id = null)
 	{
-			$purchase = Purchase::find($id);
+			$purchase = null;
+			$movement = null;
+			$reason = $request->reason?:null;
 
 			$purchases = Purchase::orderBy('purchase_id', 'desc')
-					->where('supplier_code', '=', $purchase->supplier_code)
 					->where('purchase_id', '<>', $id)
-					->paginate($this->paginateValue);
+					->where('purchase_posted', 1);
+
+			if ($reason == 'purchase') {
+					$purchase = Purchase::find($request->purchase_id);
+					$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
+					$id = $request->purchase_id;
+			}
+
+			$purchases = $purchases->paginate($this->paginateValue);
+
+			if ($reason == 'stock') {
+				$movement = InventoryMovement::find($request->move_id);		
+				$id = $request->move_id;
+			}
 
 			return view('purchases.master_document', [
 					'purchases'=>$purchases,
 					'purchase'=>$purchase,
-					'purchase_id'=>$id,
+					'id'=>$id,
+					'movement'=>$movement,
+					'reason'=>$reason,
+			]);
+	}
+
+	public function masterSearch(Request $request) 
+	{
+			$id = null;
+			$purchase = null;
+			$movement = null;
+			$reason = $request->reason?:null;
+
+			$purchases = Purchase::orderBy('purchase_id', 'desc')
+					->where('purchase_number', 'like','%'.$request->search.'%')
+					->where('purchase_posted', 1);
+
+			if ($reason == 'purchase') {
+					$purchase = Purchase::find($request->purchase_id);
+					$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
+					$id = $request->purchase_id;
+			}
+
+			$purchases = $purchases->paginate($this->paginateValue);
+
+			if ($reason == 'stock') {
+				$movement = InventoryMovement::find($request->move_id);		
+				$id = $request->move_id;
+			}
+
+			return view('purchases.master_document', [
+					'purchases'=>$purchases,
+					'purchase'=>$purchase,
+					'id'=>$request->id,
+					'movement'=>$movement,
+					'reason'=>$reason,
+					'search'=>$request->search,
 			]);
 	}
 
@@ -60,6 +113,7 @@ class PurchaseController extends Controller
 					'purchase' => $purchase,
 					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
 					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
+					'store' => Store::where('store_receiving','=',1)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 
@@ -98,6 +152,7 @@ class PurchaseController extends Controller
 					'purchase'=>$purchase,
 					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
 					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
+					'store' => Store::where('store_receiving','=',1)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 

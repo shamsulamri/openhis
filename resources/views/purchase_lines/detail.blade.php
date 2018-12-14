@@ -15,12 +15,6 @@ $count=($page-1)*10;
 		}
 	?>
 @endforeach
-<a class="btn btn-default" target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=purchase&id={{ $purchase_id }}" role="button">Print</a> 
-@if ($purchase->document_code == 'goods_receive')
-<a class="btn btn-primary pull-right" href="/purchase_lines/post_confirmation/{{ $purchase_id }}" role="button">Post</a> 
-@endif
-	<br>
-	<br>
 	<div class="row">
 			<div class="col-xs-6">
 				<address>
@@ -59,9 +53,11 @@ $count=($page-1)*10;
     <th>#</th>
 	-->
 	<th>
+		@if ($purchase->purchase_posted==0)
 			<a class="btn btn-default btn-xs" href="javascript:toggleCheck()" role="button">
 				<i class="fa fa-check"></i>
 			</a>
+		@endif
 	</th>
     <th></th>
     <th>Item</th>
@@ -79,7 +75,11 @@ $count=($page-1)*10;
 	?>
 	<tr>
 			<td width='1'>
-					{{ Form::checkbox($purchase_line->line_id, 1, null,['id'=> $purchase_line->line_id, 'class'=>'i-checks']) }}
+				@if ($purchase_line->line_posted == 0)
+						@if ($purchase->purchase_posted==0)
+							{{ Form::checkbox($purchase_line->line_id, 1, null,['id'=> $purchase_line->line_id, 'class'=>'i-checks']) }}
+						@endif
+				@endif
 			</td>
 			<td width='1'>
 					{{ $count }}
@@ -91,9 +91,13 @@ $count=($page-1)*10;
 						{{$purchase_line->product->product_name}}
 						</strong>
 					@else
-					<a href='{{ URL::to('purchase_lines/'. $purchase_line->line_id . '/edit') }}'>
-						{{$purchase_line->product->product_name}}
-					</a>
+							@if ($purchase->purchase_posted==0)
+							<a href='{{ URL::to('purchase_lines/'. $purchase_line->line_id . '/edit') }}'>
+								{{$purchase_line->product->product_name}}
+							</a>
+							@else
+								{{$purchase_line->product->product_name}}
+							@endif
 					@endif
 					<br>
 					{{$purchase_line->product_code}}
@@ -103,22 +107,22 @@ $count=($page-1)*10;
 					</s>
 			@endif
 			</td>
-			<td width='80' align='right'>
+			<td @if ($purchase->purchase_posted==0) width='80' @endif align='right'>
 					{{ number_format($purchase_line->line_quantity) }} 
 				@if ($purchase_line->unit_code != null)
 					{{ $purchase_line->uom->unit_name }}
 				@endif
 			</td>
-			<td width='50' align='right'>
+			<td @if ($purchase->purchase_posted==0) width='50' @endif align='right'>
 					{{ number_format($purchase_line->line_unit_price,2) }}
 			</td>
-			<td width='10' align='right'>
+			<td @if ($purchase->purchase_posted==0) width='10' @endif align='right'>
 					{{ number_format($purchase_line->line_subtotal,2) }}
 			</td>
-			<td width='10' align='right'>
+			<td @if ($purchase->purchase_posted==0) width='10' @endif align='right'>
 					{{ $purchase_line->tax_code }}
 			</td>
-			<td width='50' align='right'>
+			<td @if ($purchase->purchase_posted==0) width='50' @else width='100' @endif align='right'>
 					{{ number_format($purchase_line->line_subtotal_tax,2) }}
 			</td>
 			<!--
@@ -143,7 +147,7 @@ $count=($page-1)*10;
 </tbody>
 </table>
 <input type='hidden' name="_token" value="{{ csrf_token() }}">
-@if (count($purchase_lines)>0)
+@if (count($purchase_lines)>0 && $purchase->purchase_posted ==0)
 		{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 @endif
 {{ Form::close() }}

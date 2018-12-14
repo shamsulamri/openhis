@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Purchase Index
+<h1>Purchases
 <a href='/purchases/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/purchase/search' method='post'>
@@ -19,17 +19,21 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Date</th> 
     <th>Document Number</th>
     <th>Type</th> 
     <th>Supplier</th> 
     <th>Description</th> 
-    <th>Reference</th> 
+    <th>Status</th> 
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($purchases as $purchase)
 	<tr>
+			<td width='10%'>
+					{{ DojoUtility::dateReadFormat($purchase->created_at) }}
+			</td>
 			<td>
 					<a href='{{ URL::to('purchases/'. $purchase->purchase_id.'/edit') }}'>
 						{{$purchase->purchase_number}}
@@ -45,7 +49,9 @@
 					{{$purchase->purchase_description }}
 			</td>
 			<td>
-					{{$purchase->purchase_reference }}
+					@if ($purchase->purchase_posted)
+						Close
+					@endif
 			</td>
 			<td align='right'>
 					<a class='btn btn-default btn-xs' href='{{ URL::to('purchase_lines/show/'. $purchase->purchase_id) }}'>Line Item</a>

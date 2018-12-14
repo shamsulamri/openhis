@@ -48,6 +48,8 @@
 	$allocated =  $stock_helper->getStockAllocatedByStore($order->product_code, $order->store_code, $encounter_id); //-$order->order_quantity_request;
 	$on_hand = $stock_helper->getStockCountByStore($order->product_code, $location->store_code);
 	$available = $on_hand-$allocated;
+	$batches = $helper->getBatches($order->product_code)?:null;
+	$quantity_request = $order->order_quantity_request;
 	?>
 	@if ($order->order_completed==1) 
 			<?php $status='success' ?>
@@ -59,11 +61,9 @@
 	@endif
 	<tr class='{{ $status }}'>
 			<td width='10'>
-				@if ($status != 'danger')
 					@if (!isset($order->cancel_id) && $order->order_completed==0)
 					{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
 					@endif
-				@endif
 			</td>
 			<td>
 					@if (!isset($order->cancel_id))
@@ -113,12 +113,16 @@
 						@if ($order->order_completed==0) 
 							{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
 						@else
-							{{ $order->order_quantity_supply }}
+							{{ $order->order_quantity_request }}
 							{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_request) }}
 						@endif
 					@else
-					{{ $order->order_quantity_supply }} 
-					{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_supply) }}
+						@if (!$batches)
+							{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
+						@else
+							{{ $order->order_quantity_request }} 
+							{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_request) }}
+						@endif
 					@endif
 			</td>
 			<td>
@@ -137,72 +141,47 @@
 					@endif
 			</td>
 	</tr>
-	@if ($order->product_track_batch && $order->order_completed==0)
-<?php
-	$batches = $stock_helper->getBatches($order->product_code, $location->store_code);
-	$order_request = $order->order_quantity_request;
-	$total_quantity = 0;
-?>
-			@if (count($batches)>0) 
+		<table>
+		@foreach ($batches as $batch)
+			<?php
+			$supply = 0;
+			if ($batch->sum_quantity<$quantity_request) {
+				$supply = $batch->sum_quantity;
+				$quantity_request -= $batch->sum_quantity;
+			}
+
+			if ($batch->sum_quantity>$quantity_request) {
+				$quantity_request = $batch->sum_quantity-$quantity_request;
+				$supply = $quantity_request;
+			}
+			?>
 			<tr>
-				<td colspan=1>		
+				<td>
+					{{ $batch->inv_batch_number }}
 				</td>
-				<td colspan=2>
-						<table class='table'>
-							<thead>
-							<tr>
-								<th>Batch Number</th>
-								<th>Expiry Date<div></th>
-								<th width='20%'>On-Hand</th>
-								<th width='20%'>Quantity<div></th>
-							</tr>
-							</thead>
-					@foreach ($batches as $batch)	
-						<?php
-						$allocated = 0;
-						if ($order_request>$batch->batch_quantity) {
-							$allocated = $batch->batch_quantity;
-						} else {
-							$allocated = $order_request-$total_quantity;
-						}
-						if ($allocated+$total_quantity>$order_request) $allocated = $order_request-$total_quantity;
-						$total_quantity += $allocated;
-						?>
-							<tr>
-								<td>
-										{{ Form::label('stock_quantity', $batch->batch_number, ['class'=>'form-control']) }}
-								</td>
-								<td>
-										{{ Form::label('stock_quantity', $batch->expiry_date, ['class'=>'form-control']) }}
-								</td>
-								<td>
-										{{ Form::label('batch_quantity', $batch->batch_quantity, ['class'=>'form-control']) }}
-								</td>
-								<td>
-										{{ Form::text($batch->product_code.'_'.$batch->batch_number, $allocated, ['class'=>'form-control']) }}
-								</td>
-							</tr>
-					@endforeach
-						@if ($total_quantity<$order->order_quantity_request)
-						<tr>
-							<td colspan=4>
-								<div class='alert alert-danger'>
-									<strong>Warning !</strong> Insufficient supply ({{ $order_request-$total_quantity }})
-								</div>
-							</td>
-						</tr>
-						@endif
-						</table>
+				<td>
+					{{ $batch->batch()->batch_expiry_date }}
 				</td>
-				<td colspan=6></td>
+				<!--
+				<td>
+					{{ Form::select('batch_unit_'.$batch->batch()->batch_id, $helper->getUOM($batch->product_code),null, ['id'=>'gender_code','class'=>'form-control']) }}
+				</td>
+				-->
+				<td>
+            		{{ Form::text('batch_'.$batch->product_code.'_'.$batch->batch()->batch_id, $supply?:0, ['class'=>'form-control']) }}
+				</td>
+				<td>
+					{{ $batch->sum_quantity }} {{ $batch->unit->unit_name }}
+				</td>
 			</tr>
-			@endif
-	@endif
+		@endforeach
+		</table>
 @endforeach
 @endif
 </tbody>
 </table>
 	{{ Form::hidden('ids', $ids) }}
+	{{ Form::hidden('encounter_id', $encounter_id) }}
 </form>
 @if (isset($search)) 
 	{{ $order_tasks->appends(['search'=>$search])->render() }}

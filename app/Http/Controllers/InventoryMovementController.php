@@ -14,6 +14,7 @@ use App\StockMovement as Move;
 use App\Store;
 use Auth;
 use App\Inventory;
+use App\InventoryHelper;
 
 class InventoryMovementController extends Controller
 {
@@ -26,7 +27,8 @@ class InventoryMovementController extends Controller
 
 	public function index()
 	{
-			$inventory_movements = InventoryMovement::orderBy('move_code')
+			$inventory_movements = InventoryMovement::orderBy('move_posted')
+					->orderBy('move_id')
 					->paginate($this->paginateValue);
 
 			return view('inventory_movements.index', [
@@ -34,12 +36,13 @@ class InventoryMovementController extends Controller
 			]);
 	}
 
-	public function show($id)
+	public function show(Request $request, $id)
 	{
 			$movement = InventoryMovement::find($id);
 					
 			return view('inventory_movements.show', [
 					'movement'=>$movement,
+					'reason'=>$request->reason,
 			]);
 	}
 
@@ -49,7 +52,7 @@ class InventoryMovementController extends Controller
 
 			return view('inventory_movements.create', [
 					'inventory_movement' => $inventory_movement,
-					'move' => Move::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
+					'move' => array('adjust'=>'Stock Adjustment', 'receive'=>'Stock Receive', 'issue'=>'Stock Issue'),
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'store_transfer' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
@@ -66,7 +69,7 @@ class InventoryMovementController extends Controller
 					$inventory_movement->save();
 
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/inventory_movements/id/'.$inventory_movement->move_id);
+					return redirect('/inventory_movements/show/'.$inventory_movement->move_id);
 			} else {
 					return redirect('/inventory_movements/create')
 							->withErrors($valid)
@@ -153,17 +156,19 @@ class InventoryMovementController extends Controller
 	{
 			$movement = InventoryMovement::find($move_id);
 
+			$helper = new InventoryHelper();
+
 			$inventory = new Inventory();
 			$inventory->move_id = $movement->move_id;
 			$inventory->move_code = $movement->move_code;
 			$inventory->store_code = $movement->store_code;
 			$inventory->product_code = $product_code;
-			$inventory->inv_quantity = 0;
+			$inventory->inv_book_quantity = $helper->getStockOnHand($product_code);
 			$inventory->inv_subtotal = 0;
 			$inventory->save();
 
 			Session::flash('message', 'Record added successfully.');
-			return redirect('/product_searches?reason='.$movement->move_code.'&move_id='.$move_id);
+			return redirect('/product_searches?reason=stock&move_id='.$move_id);
 	}
 
 }

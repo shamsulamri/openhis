@@ -1,9 +1,15 @@
 @extends('layouts.app2')
 
 @section('content')
-<a class='btn btn-default' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}'>Items</a>
-<a class='btn btn-default' href='/purchases/master_document/{{ $purchase->purchase_id }}'>Documents</a>
-<a class='btn btn-default' href='/product_searches?reason={{ $purchase->purchase_document }}&purchase_id={{ $purchase->purchase_id }}'>Products</a>
+@if ($reason == 'purchase')
+<a class='btn btn-default' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}?reason=purchase'>Items</a>
+<a class='btn btn-default' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>
+<a class='btn btn-default' href='/product_searches?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Products</a>
+@else
+<a class='btn btn-default' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
+<a class='btn btn-default' href='/purchases/master_document?reason=stock&move_id={{ $movement->move_id }}'>Documents</a>
+<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+@endif
 <br>
 <br>
 <form action='/purchase_line/search' method='post'>
@@ -14,6 +20,9 @@
 		</span>
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
+			{{ Form::hidden('id', $id) }}
+			{{ Form::hidden('document_id', $document_id) }}
+			{{ Form::hidden('reason', $reason) }}
 </form>
 <br>
 
@@ -29,15 +38,27 @@
 	</th>
     <th>Item</th> 
     <th>Document</th> 
-	<th><div align='right'>Balance</div></th>
-	<th>Subtotal</th>
+	<th><div align='right'>
+					@if ($reason == 'purchase')
+						Balance
+					@else
+						Quantity
+					@endif
+	</div></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($purchase_lines as $purchase_line)
+<?php
+	$show_checkbox = true;
+	$balance_quantity = $purchase_line->balanceQuantity();
+	if ($balance_quantity==0 and $reason=='purchase') { $show_checkbox = false; }
+?>
 	<tr>
 			<td width='10'>
+				@if ($show_checkbox)
 					{{ Form::checkbox($purchase_line->line_id, 1, null,['id'=>$purchase_line->line_id,'class'=>'i-checks']) }}
+				@endif
 			</td>
 			<td>
 						{{$purchase_line->product->product_name}}
@@ -48,13 +69,14 @@
 					{{ $purchase_line->purchase->purchase_number }}
 			</td>
 			<td width='80' align='right'>
-					{{ number_format($purchase_line->balanceQuantity()) }} 
+					@if ($reason == 'purchase')
+					{{ number_format($balance_quantity) }} 
+					@else
+					{{ number_format($purchase_line->line_quantity) }} 
+					@endif
 						@if ($purchase_line->unit_code != null)
 							{{ $purchase_line->uom->unit_name }}
 						@endif
-			</td>
-			<td width='10' align='right'>
-					{{ number_format($purchase_line->line_subtotal_tax,2) }} 
 			</td>
 	</tr>
 @endforeach
@@ -62,13 +84,15 @@
 </table>
 			{{ Form::submit('Add', ['class'=>'btn btn-primary']) }}
 			<input type='hidden' name="_token" value="{{ csrf_token() }}">
-			{{ Form::hidden('purchase_id', $purchase->purchase_id) }}
+			{{ Form::hidden('id', $id) }}
+			{{ Form::hidden('document_id', $document_id) }}
+			{{ Form::hidden('reason', $reason) }}
 </form>
 @endif
 @if (isset($search)) 
-	{{ $purchase_lines->appends(['search'=>$search])->render() }}
+	{{ $purchase_lines->appends(['search'=>$search, 'id'=>$id, 'document_id'=>$document_id, 'reason'=>$reason])->render() }}
 	@else
-	{{ $purchase_lines->render() }}
+	{{ $purchase_lines->appends(['id'=>$id, 'document_id'=>$document_id, 'reason'=>$reason])->render() }}
 @endif
 <br>
 @if ($purchase_lines->total()>0)
@@ -78,7 +102,12 @@
 @endif
 <script>
 	var frameLine = parent.document.getElementById('frameLine');
-	frameLine.src='/purchase_lines/detail/{{ $purchase->purchase_id }}';
+
+	@if($reason=='stock')
+			frameLine.src='/inventories/detail/{{ $movement->move_id }}';
+	@else
+			frameLine.src='/purchase_lines/detail/{{ $purchase->purchase_id }}';
+	@endif
 
 	function toggleCheck(flag) {
 		//$('input').iCheck('check');

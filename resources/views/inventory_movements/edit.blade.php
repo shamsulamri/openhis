@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-Edit Inventory Movement
+Edit Stock Movement
 </h1>
 @include('common.errors')
 <br>

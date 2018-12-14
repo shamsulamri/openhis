@@ -28,6 +28,7 @@ use App\StockInput;
 use App\StockStore;
 use App\TaxCode;
 use App\Purchase;
+use App\InventoryMovement;
 
 class ProductSearchController extends Controller
 {
@@ -89,13 +90,19 @@ class ProductSearchController extends Controller
 			if ($request->purchase_id) {
 					$purchase = Purchase::find($request->purchase_id);
 			}
+
+			$movement = null;
+			if ($request->move_id) {
+					$movement = InventoryMovement::find($request->move_id);
+			}
+
 			return view('product_searches.index', [
 					'product_searches'=>$product_searches,
 					'purchase_id'=>$request->purchase_id,
 					'line_id'=>$request->line_id,
 					'product_code'=>$request->product_code,
 					'set_code'=>$request->set_code,
-					'reason'=>$request->reason,
+					'reason'=>$reason,
 					'purchase_order'=>$purchase_order,
 					'return_id'=>$return_id,
 					'class_code'=>$request->class_code,
@@ -106,6 +113,7 @@ class ProductSearchController extends Controller
 					'input_id'=>$request->input_id,
 					'purchase'=>$purchase,
 					'move_id'=>$request->move_id,
+					'movement'=>$movement,
 			]);
 	}
 
@@ -339,9 +347,12 @@ class ProductSearchController extends Controller
 									$this->bulk($request->input_id, $product_searches[0]->product_code);
 									return redirect('/product_searches?reason=bulk&input_id='.$request->input_id);
 									break;
-							case "purchase_order";
+							case "purchase";
 									$this->add($request->purchase_id, $product_searches[0]->product_code);
 									return redirect('/product_searches?reason=purchase_order&purchase_id='.$request->purchase_id.'&line_id='.$this->gline_id);
+									break;
+							case "stock";
+									return redirect('/inventory_movements/add/'.$request->move_id.'/'.$product_searches[0]->product_code);
 									break;
 							case "bom";
 									$this->bom($request->product_code, $product_searches[0]->product_code);
@@ -353,6 +364,10 @@ class ProductSearchController extends Controller
 									break;
 					}
 			} else {
+					$movement = null;
+					if ($request->move_id) {
+							$movement = InventoryMovement::find($request->move_id);
+					}
 					return view('product_searches.index', [
 							'product_searches'=>$product_searches,
 							'search'=>$request->search,
@@ -369,6 +384,8 @@ class ProductSearchController extends Controller
 							'diet_code'=>$request->diet_code,
 							'line_id'=>$request->line_id,
 							'input_id'=>$request->input_id,
+							'move_id'=>$request->move_id,
+							'movement'=>$movement,
 					]);
 			}
 	}

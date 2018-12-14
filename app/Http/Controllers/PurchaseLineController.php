@@ -16,7 +16,9 @@ use App\TaxCode;
 use App\Purchase;
 use App\Store;
 use App\Inventory;
+use App\InventoryMovement;
 use Auth;
+use App\InventoryHelper;
 
 class PurchaseLineController extends Controller
 {
@@ -55,25 +57,31 @@ class PurchaseLineController extends Controller
 			]);
 	}
 
-	public function convert($from, $to) 
+	public function convert(Request $request, $from, $to) 
 	{
+			$reason = $request->reason;
 			$items = PurchaseLine::where('purchase_id', '=', $from)->get();
 
 			foreach ($items as $item) {
-				$this->convertItem($to, $item->line_id);
+				$this->convertItem($request->reason, $to, $item->line_id);
 			}
 
-			return redirect('/purchases/master_document/'.$to);
+			if ($reason == 'purchase') {
+					return redirect('/purchases/master_document?reason=purchase&purchase_id='.$to);
+			} else {
+					return redirect('/purchases/master_document?reason=stock&move_id='.$to);
+			}
 	}
 
-	public function convertItem($purchase_id, $line_id)
+	public function convertItem($reason, $to, $line_id)
 	{
 			$item = PurchaseLine::find($line_id);
 
 			if ($item) {
+				if ($reason == 'purchase') {
 					if ($item->balanceQuantity()) {
 							$purchase_line = new PurchaseLine();
-							$purchase_line->purchase_id = $purchase_id;
+							$purchase_line->purchase_id = $to;
 							$purchase_line->product_code = $item->product_code;
 							$purchase_line->line_unit_price = $item->line_unit_price;
 							$purchase_line->line_quantity = $item->balanceQuantity();
@@ -86,29 +94,66 @@ class PurchaseLineController extends Controller
 							$purchase_line->reference_id = $item->line_id;
 							$purchase_line->save();
 					}
+				} else {
+							$movement = InventoryMovement::find($to);
+
+							$helper = new InventoryHelper();
+
+							$inventory = new Inventory();
+							$inventory->move_id = $to;
+							$inventory->move_code = $movement->move_code;
+							$inventory->store_code = $movement->store_code;
+							$inventory->product_code = $item->product_code;
+							$inventory->inv_book_quantity = $helper->getStockOnHand($item->product_code);
+							$inventory->inv_subtotal = $item->line_subtotal;
+							$inventory->inv_physical_quantity = $item->line_quantity;
+							$inventory->unit_code = $item->unit_code;
+							$inventory->uom_rate = $item->uom_rate;
+							$inventory->inv_quantity = $item->line_quantity*$item->uom_rate;
+							$inventory->save();
+				}
 			}
 	}
 
-	public function masterItem($id, $document_id = null)
+	public function masterItem(Request $request, $id, $document_id = null)
 	{
-			$purchase_lines = PurchaseLine::orderBy('purchase_id')
-					->where('purchase_id', '<>', $id);
+			$reason = $request->reason?:null;
+			$purchase = null;
+			$movement = null;
+
+			$purchase_lines = PurchaseLine::orderBy('purchase_lines.purchase_id')
+					->leftjoin('purchases as b', 'b.purchase_id', '=', 'purchase_lines.purchase_id')
+					->where('purchase_posted',1);
+
+			if ($reason=='purchase') {
+					$purchase = Purchase::find($id);
+					$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code)
+													->where('b.purchase_id', '<>', $id);
+			}
 
 			if ($document_id) {
-				$purchase_lines = $purchase_lines->where('purchase_id', '=', $document_id);
+				$purchase_lines = $purchase_lines->where('purchase_lines.purchase_id', '=', $document_id);
 			}
 
 			$purchase_lines = $purchase_lines->paginate($this->paginateValue);
 
+			if ($reason=='stock') {
+					$movement = InventoryMovement::find($id);
+			}
+
 			return view('purchase_lines.master_item', [
-					'purchase_id' => $id,
+					'id' => $id,
 					'purchase_lines'=>$purchase_lines,
-					'purchase'=> Purchase::find($id),
+					'purchase'=> $purchase,
+					'movement'=> $movement,
+					'reason'=>$reason,
+					'document_id'=>$document_id,
 			]);
 	}
 
 	public function multiple(Request $request)
 	{
+			$reason = $request->reason;
 			foreach ($request->all() as $id=>$value) {
 					switch ($id) {
 							case '_token':
@@ -116,11 +161,11 @@ class PurchaseLineController extends Controller
 							case 'current_id':
 									break;
 							default:
-									$this->convertItem($request->purchase_id, $id);
+									$this->convertItem($reason, $request->id, $id);
 					}
 			}
 
-			return redirect('/purchase_lines/master_item/'.$request->purchase_id);
+			return redirect('/purchase_lines/master_item/'.$request->id.'/'.$request->document_id.'?reason='.$reason);
 	}
 
 	public function show($id)
@@ -259,7 +304,6 @@ class PurchaseLineController extends Controller
 							case 'current_id':
 									break;
 							default:
-									$purchase_line = PurchaseLine::find($id);
 									PurchaseLine::find($id)->delete();
 					}
 			}
@@ -277,16 +321,46 @@ class PurchaseLineController extends Controller
 	
 	public function search(Request $request)
 	{
-			$purchase_lines = DB::table('purchase_lines')
-					->where('product_code','like','%'.$request->search.'%')
-					->orWhere('line_id', 'like','%'.$request->search.'%')
-					->orderBy('product_code')
-					->paginate($this->paginateValue);
+			$reason = $request->reason?:null;
+			$purchase = null;
+			$movement = null;
+			$purchase_lines = PurchaseLine::orderBy('purchase_lines.purchase_id')
+					->leftjoin('purchases as b', 'b.purchase_id', '=', 'purchase_lines.purchase_id')
+					->leftjoin('products as c', 'c.product_code', '=', 'purchase_lines.product_code')
+					->leftjoin('ref_unit_measures as d', 'd.unit_code', '=', 'purchase_lines.unit_code');
 
-			return view('purchase_lines.index', [
+			$purchase_lines = $purchase_lines->where(function ($query) use ($request) {
+					$query->where('purchase_lines.product_code','like','%'.$request->search.'%')
+					->orWhere('purchase_number', 'like','%'.$request->search.'%')
+					->orWhere('product_name', 'like','%'.$request->search.'%');
+			});
+
+			$purchase_lines = $purchase_lines->where('purchase_posted',1);
+
+			if ($reason=='purchase') {
+					$purchase = Purchase::find($request->id);
+					$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code)
+													->where('b.purchase_id', '<>', $request->id);
+			}
+
+			if (!empty($request->document_id)) {
+				$purchase_lines = $purchase_lines->where('purchase_lines.purchase_id', '=', $request->document_id);
+			}
+
+			$purchase_lines = $purchase_lines->paginate($this->paginateValue);
+
+			if ($reason=='stock') {
+					$movement = InventoryMovement::find($request->id);
+			}
+
+			return view('purchase_lines.master_item', [
+					'id' => $request->id,
 					'purchase_lines'=>$purchase_lines,
-					'search'=>$request->search
-					]);
+					'purchase'=> $purchase,
+					'movement'=> $movement,
+					'reason'=>$request->reason,
+					'document_id'=>$request->document_id,
+			]);
 	}
 
 	public function searchById($id)
@@ -329,19 +403,22 @@ class PurchaseLineController extends Controller
 			$purchase_line->save();
 
 			Session::flash('message', 'Record added successfully.');
-			return redirect('/product_searches?reason='.$purchase->purchase_document.'&purchase_id='.$purchase_id.'&line_id='.$purchase->line_id);
+			return redirect('/product_searches?reason=purchase&purchase_id='.$purchase_id.'&line_id='.$purchase->line_id);
 	}
 
 	public function post($id) 
 	{
+
+		$purchase = Purchase::find($id);
 		$purchase_lines = PurchaseLine::where('purchase_id', $id)
+							->where('line_posted',0)
 							->get();
 
 		foreach ($purchase_lines as $line) {
 			$inventory = new Inventory();
 			$inventory->line_id = $line->line_id;
 			$inventory->move_code = 'goods_receive';
-			$inventory->store_code = $line->store_code;
+			$inventory->store_code = $purchase->store_code;
 			$inventory->product_code = $line->product_code;
 			$inventory->unit_code = $line->unit_code;
 			$inventory->uom_rate = $line->uom_rate;
@@ -353,8 +430,10 @@ class PurchaseLineController extends Controller
 			$inventory->inv_expiry_date = $line->expiry_date;
 			$inventory->inv_posted = 1;
 			$inventory->username = Auth::user()->id;
-			Log::info($line->uom_rate);
 			$inventory->save();
+
+			$line->line_posted = 1;
+			$line->save();
 		}
 
 		Session::flash('message', 'Document posted.');
@@ -368,5 +447,18 @@ class PurchaseLineController extends Controller
 			'id'=>$id
 		]);
 
+	}
+
+	public function close($id)
+	{
+		$purchase = Purchase::find($id);
+		$purchase->purchase_posted = 1;
+		$purchase->save();
+
+		if ($purchase->document_code == 'goods_receive' or $purchase->document_code =='purchase_invoice') {
+				$this->post($id);
+		}
+
+		return redirect('/purchases');
 	}
 }

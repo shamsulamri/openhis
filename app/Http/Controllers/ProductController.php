@@ -273,7 +273,7 @@ class ProductController extends Controller
 					'store'=>Auth::user()->storeList()->prepend('All Store','all')->prepend('',''),
 					'categories'=>Auth::user()->categoryList(),
 					'store_code'=>$store_code,
-					'stockHelper'=> new StockHelper(),
+					'helper'=>new InventoryHelper(),
 					'category_code'=>$request->category_code,
 					]);
 	}

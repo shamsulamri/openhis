@@ -25,6 +25,9 @@ use App\StockBatch;
 use App\OrderDrug;
 use App\OrderHelper;
 use App\DojoUtility;
+use App\InventoryHelper;
+use App\Inventory;
+use App\ProductUom;
 
 class OrderTaskController extends Controller
 {
@@ -70,6 +73,7 @@ class OrderTaskController extends Controller
 
 			return view('order_tasks.index', [
 					'order_tasks'=>$order_tasks,
+					'encounter_id'=>$encounter_id,
 			]);
 	}
 
@@ -172,6 +176,7 @@ class OrderTaskController extends Controller
 					'order_helper'=> new OrderHelper(),
 					'store'=>$store,
 					'consultation_id'=>$consultation->consultation_id,
+					'helper'=>new InventoryHelper(),
 			]);
 	}
 	public function edit($id) 
@@ -248,6 +253,77 @@ class OrderTaskController extends Controller
 	}
 
 	public function status(Request $request)
+	{
+			if (!empty(Auth::user()->authorization->location_code)) {
+				$location_code = Auth::user()->authorization->location_code;
+			} else {
+				$location_code = $request->cookie('queue_location');
+			}
+			$location = Location::find($location_code);
+			$store_code = $location->store_code;
+
+			$helper = new InventoryHelper();
+			$orders = Order::where('encounter_id', $request->encounter_id)
+							->where('order_completed', 0)
+							->get();
+
+			foreach($orders as $order) {
+					$checked = $request[$order->order_id] ?:0;
+					if ($checked == 1) {
+
+						$total_supply = 0;
+						$batches = $helper->getBatches($order->product_code)?:null;
+						if ($batches) {
+								foreach($batches as $batch) {
+										$unit_supply = $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
+										if ($unit_supply>0) {
+												$total_supply = $total_supply + $unit_supply;
+
+												$inventory = new Inventory();
+												$inventory->order_id = $order->order_id;
+												$inventory->store_code = $store_code;
+												$inventory->product_code = $order->product_code;
+												$inventory->unit_code = $batch->unit_code;
+
+												$uom = ProductUom::where('product_code', $order->product_code)
+															->where('unit_code', $inventory->unit_code)
+															->first();
+
+												$inventory->uom_rate =  $uom->uom_rate;
+												$inventory->inv_unit_cost =  $uom->uom_cost;
+												$inventory->inv_quantity = $unit_supply*$uom->uom_rate;
+												$inventory->inv_physical_quantity = $unit_supply;
+												$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
+												$inventory->move_code = 'sale';
+												$inventory->inv_batch_number = $batch->inv_batch_number;
+												$inventory->inv_posted = 1;
+												$inventory->inv_quantity = -($inventory->inv_quantity);
+												$inventory->save();
+										}
+								}
+						} else {
+							$total_supply += $request["quantity_".$order->order_id];
+						}
+
+						/** Completed order **/
+						$order = Order::find($order->order_id);
+						$order->order_quantity_supply = $total_supply;
+						$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
+						$order->updated_by = Auth::user()->id;
+						$order->location_code = $location_code;
+						$order->store_code = $store_code;
+						$order->order_completed = 1;
+						$order->save();
+
+
+					}
+			}
+
+			Session::flash('message', 'Record successfully updated.');
+			return redirect('order_queues');
+	}
+
+	public function status2(Request $request)
 	{
 			if (!empty(Auth::user()->authorization->location_code)) {
 				$location_code = Auth::user()->authorization->location_code;

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Inventory Movement Index
+<h1>Stock Movements
 <a href='/inventory_movements/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/inventory_movement/search' method='post'>
@@ -19,25 +19,39 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>move_code</th>
-    <th>move_id</th> 
+    <th>Date</th> 
+    <th>Movement</th>
+    <th>Store</th> 
+    <th>Description</th> 
+    <th>Status</th> 
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($inventory_movements as $inventory_movement)
 	<tr>
-			<td>
+			<td width='10%'>
+					{{ DojoUtility::dateReadFormat($inventory_movement->created_at) }}
+			</td>
+			<td width='20%'>
 					<a href='{{ URL::to('inventory_movements/'. $inventory_movement->move_id . '/edit') }}'>
-						{{$inventory_movement->move_code}}
+						{{$inventory_movement->movement->move_name}}
 					</a>
 			</td>
+			<td width='20%'>
+					{{$inventory_movement->store? $inventory_movement->store->store_name: '-'}}
+			</td>
 			<td>
-					{{$inventory_movement->move_id}}
+					{{$inventory_movement->move_description }}
+			</td>
+			<td width='10'>
+					{{ $inventory_movement->move_posted?'Close':'' }}
 			</td>
 			<td align='right'>
-					<a class='btn btn-default btn-xs' href='{{ URL::to('inventory_movements/show/'.$inventory_movement->move_id) }}'>Line</a>
+					<a class='btn btn-default btn-xs' href='{{ URL::to('inventory_movements/show/'.$inventory_movement->move_id.'?reason=stock') }}'>Line</a>
+					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('inventory_movements/delete/'. $inventory_movement->move_id) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

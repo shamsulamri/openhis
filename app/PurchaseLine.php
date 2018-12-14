@@ -27,7 +27,6 @@ class PurchaseLine extends Model
 				'line_subtotal_tax',
 				'line_subtotal',
 				'batch_number',
-				'store_code',
 				'expiry_date',
 				'reference_id',
 				'deleted_at'];
