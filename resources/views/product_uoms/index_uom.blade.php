@@ -35,7 +35,11 @@
 					{{$product_uom->uom_price}}
 			</td>
 			<td align='right'>
+				@can('system-administrator')
+					@if ($product_uom->unit_code != 'unit')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('product_uoms/delete/'. $product_uom->id) }}'>Delete</a>
+					@endif
+				@endcan
 			</td>
 	</tr>
 @endforeach

@@ -18,6 +18,7 @@ use App\PurchaseLine;
 use App\PurchaseDocument;
 use App\Store;
 use App\InventoryMovement;
+use App\RnPurchaseRequest;
 
 class PurchaseController extends Controller
 {
@@ -67,6 +68,7 @@ class PurchaseController extends Controller
 					'id'=>$id,
 					'movement'=>$movement,
 					'reason'=>$reason,
+					'reload'=>$request->reload,
 			]);
 	}
 
@@ -136,14 +138,30 @@ class PurchaseController extends Controller
 			}
 	}
 
-	public function updatePurchaseNumber($id) {
-			$purchase = Purchase::findOrFail($id);
-			$prefix = Auth::user()->authorization->identification_prefix."-";
-			$prefix = "";
+	public function updatePurchaseNumber($purchase_id) {
+
+
+			$purchase = Purchase::findOrFail($purchase_id);
+			$prefix = $purchase->document->document_prefix;
+
+			$table = 'rn_'.$purchase->document_code;
+
+			DB::insert('insert into '.$table.' (purchase_id) values (?)',
+					[$purchase_id]);
+
+			$results = DB::select('select * from '.$table.' where purchase_id='.$purchase_id);
+			$id = $results[0]->id;
+
 			$number = str_pad($id, 8, '0', STR_PAD_LEFT);
-			$purchase->purchase_number = $prefix.$purchase->document->document_prefix . '-'.$number;
+
+			$purchase->purchase_number = $prefix. '-'.$number;
 			$purchase->save();
+
+			$affected = DB::update('update '.$table.' set document_number= ? where id=?', [$purchase->purchase_number, $id]);
+			Log::info($affected);
+
 	}
+
 
 	public function edit($id) 
 	{

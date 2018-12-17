@@ -173,7 +173,6 @@ class DietMenuController extends Controller
 							->where('b.diet_code','=', $diet_code)
 							->where('week_index','=', $weekOfMonth)
 							->where('day_index','=', $dayOfWeek)
-							->where('product_bom', '=', 1)
 							->groupBy('a.product_code')
 							->orderBy('period_position')
 							->orderBy('product_name')

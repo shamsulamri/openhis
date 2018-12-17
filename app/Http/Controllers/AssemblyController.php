@@ -177,7 +177,6 @@ class AssemblyController extends Controller
 			$quantity = $request->quantity;
 			$bom_products = BillMaterial::where('bill_materials.product_code',$id)
 					->leftjoin('products as b','b.product_code', '=', 'bill_materials.bom_product_code')
-					->where('product_dismantle_material','=',1)
 					->get();
 			$product = Product::find($id);
 

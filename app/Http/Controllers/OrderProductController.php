@@ -119,10 +119,7 @@ class OrderProductController extends Controller
 			$order_product->product_active = $request->product_active ?: 0;
 			$order_product->product_drop_shipment = $request->product_drop_shipment ?: 0;
 			$order_product->product_stocked = $request->product_stocked ?: 0;
-			$order_product->product_purchased = $request->product_purchased ?: 0;
-			$order_product->product_sold = $request->product_sold ?: 0;
 			$order_product->product_discontinued = $request->product_discontinued ?: 0;
-			$order_product->product_bom = $request->product_bom ?: 0;
 
 			$valid = $order_product->validate($request->all(), $request->_method);	
 
@@ -169,7 +166,7 @@ class OrderProductController extends Controller
 			if (!empty($request->search)) {
 				$product = Product::find($request->search);
 				if ($product) {
-						if ($product->product_sold==1 && $product->product_drop_charge == 1) {
+						if ($product->product_drop_charge == 1) {
 
 							$response=0;
 							if ($product->product_stocked==1) {
@@ -193,14 +190,7 @@ class OrderProductController extends Controller
 						}
 				}
 
-				/*
 				$order_products = Product::orderBy('product_name')
-					->where('product_name','like','%'.$request->search.'%')
-					->where('product_sold','1');
-				 */
-
-				$order_products = Product::orderBy('product_name')
-					->where('product_sold','1')
 					->where(function ($query) use ($request) {
 						$query->where('product_name','like','%'.$request->search.'%')
 							->orWhere('product_name_other','like','%'.$request->search.'%')

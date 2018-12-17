@@ -14,6 +14,13 @@
             @if ($errors->has('document_prefix')) <p class="help-block">{{ $errors->first('document_prefix') }}</p> @endif
         </div>
     </div>
+    <div class='form-group  @if ($errors->has('document_description')) has-error @endif'>
+        {{ Form::label('document_description', 'Description',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::textarea('document_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+            @if ($errors->has('document_description')) <p class="help-block">{{ $errors->first('arrival_description') }}</p> @endif
+        </div>
+    </div>
 
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">

@@ -105,7 +105,6 @@ class BedController extends Controller
 					$product->product_code = $bed->bed_code;
 					$product->product_name = $bed->bed_name;
 					$product->category_code = "srv";
-					$product->product_sold = 1;
 					$product->product_sale_price = $class->class_price;
 					$product->order_form="1";
 					$product->save();
@@ -343,7 +342,6 @@ class BedController extends Controller
 					$product->product_code = $bed->bed_code;
 					$product->product_name = $bed->bed_name." (". $bed->wardClass->class_name .") ";
 					$product->category_code = "srv";
-					$product->product_sold = 1;
 					$product->product_sale_price = $bed->wardClass->class_price;
 					$product->order_form="1";
 					$product->save();

@@ -53,6 +53,7 @@
 	$show_checkbox = true;
 	$balance_quantity = $purchase_line->balanceQuantity();
 	if ($balance_quantity==0 and $reason=='purchase') { $show_checkbox = false; }
+	$show_checkbox = true;
 ?>
 	<tr>
 			<td width='10'>
@@ -103,10 +104,12 @@
 <script>
 	var frameLine = parent.document.getElementById('frameLine');
 
-	@if($reason=='stock')
-			frameLine.src='/inventories/detail/{{ $movement->move_id }}';
-	@else
-			frameLine.src='/purchase_lines/detail/{{ $purchase->purchase_id }}';
+	@if($reload=='true')
+			@if($reason=='stock')
+					frameLine.src='/inventories/detail/{{ $movement->move_id }}';
+			@else
+					frameLine.src='/purchase_lines/detail/{{ $purchase->purchase_id }}';
+			@endif		
 	@endif
 
 	function toggleCheck(flag) {

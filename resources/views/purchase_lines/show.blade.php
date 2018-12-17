@@ -7,7 +7,7 @@ iframe { border: 1px #e5e5e5 solid; }
 <h1>{{ $purchase->document->document_name }}</h1>
 
 <a class="btn btn-default" href="/purchases" role="button">Back</a>
-<a class="btn btn-default" href="#" role="button">Print</a>
+<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=purchase&id={{ $purchase->purchase_id }}" role="button" target="_blank">Print</a> 
 @if ($purchase->purchase_posted == 0)
 {{ Form::open(['url'=>'purchase_lines/close/'.$purchase_id, 'class'=>'pull-right']) }}
 	{{ method_field('POST') }}

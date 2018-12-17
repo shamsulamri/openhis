@@ -21,7 +21,6 @@ use App\OrderForm;
 use App\ProductStatus;
 use App\Store;
 use App\Stock;
-use App\StockStore;
 use Carbon\Carbon;
 use App\TaxCode;
 use Gate;
@@ -32,7 +31,6 @@ use App\Ward;
 use App\StoreAuthorization;
 use App\ProductCategory;
 use App\GeneralLedger;
-use App\InventoryHelper;
 use App\DojoUtility;
 use App\ProductCharge;
 use App\ProductUom;
@@ -72,7 +70,7 @@ class ProductController extends Controller
 					'loan'=>$loan,
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>null,
-					'helper'=>new InventoryHelper(),
+					'helper'=>new StockHelper(),
 					'store_code'=>$store_code,
 			]);
 	}
@@ -83,8 +81,8 @@ class ProductController extends Controller
 			$product->order_form=1;
 			$product->status_code='active';
 			$product->form_code='generic';
-			$product->location_code = 'none';
 			$product->tax_code= 'ES';
+			$product->unit_code= 'unit';
 
 			$categories = Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');
 
@@ -98,13 +96,12 @@ class ProductController extends Controller
 			return view('products.create', [
 					'product' => $product,
 					'category' => $categories,
-					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
 					'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
 					'charges' => ProductCharge::all()->sortBy('charge_name')->lists('charge_name', 'charge_code')->prepend('',''),
+					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
 					]);
 	}
 
@@ -128,8 +125,6 @@ class ProductController extends Controller
 			return view($viewpage, [
 						'product' => $product,
 						'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-						'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-						'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 						'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 						'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 						'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
@@ -187,8 +182,6 @@ class ProductController extends Controller
 			return view('products.edit', [
 					'product'=>$product,
 					'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
 					'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
@@ -196,6 +189,7 @@ class ProductController extends Controller
 					'store_code'=>$store_code,
 					'categories'=>Auth::user()->categoryList(),
 					'charges' => ProductCharge::all()->sortBy('charge_name')->lists('charge_name', 'charge_code')->prepend('',''),
+					'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
 					]);
 	}
 
@@ -204,13 +198,8 @@ class ProductController extends Controller
 			$product = Product::findOrFail($id);
 			$product->fill($request->input());
 
-			$product->product_purchased = $request->product_purchased ?: 0;
-			$product->product_sold = $request->product_sold ?: 0;
-			$product->product_bom = $request->product_bom ?: 0;
 			$product->product_stocked = $request->product_stocked ?: 0;
-			$product->product_dismantle_material = $request->product_dismantle_material ?: 0;
 			$product->product_edit_price = $request->product_edit_price ?: 0;
-			$product->product_track_batch = $request->product_track_batch ?: 0;
 			$product->product_drop_charge = $request->product_drop_charge ?: 0;
 			$product->product_unit_charge = $request->product_unit_charge ?: 0;
 			$product->product_local_store = $request->product_local_store ?: 0;
@@ -225,18 +214,9 @@ class ProductController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/products/'.$id.'/edit');
 			} else {
-					return view('products.edit', [
-							'product'=>$product,
-							'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-							'unit' => Unit::all()->sortBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-							'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
-							'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
-							'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
-							'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
-							'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
-							'charges' => ProductCharge::all()->sortBy('charge_name')->lists('charge_name', 'charge_code')->prepend('',''),
-							])
-							->withErrors($valid);			
+					return redirect('/products/'.$id.'/edit')
+							->withErrors($valid)
+							->withInput();
 			}
 	}
 	
@@ -273,7 +253,7 @@ class ProductController extends Controller
 					'store'=>Auth::user()->storeList()->prepend('All Store','all')->prepend('',''),
 					'categories'=>Auth::user()->categoryList(),
 					'store_code'=>$store_code,
-					'helper'=>new InventoryHelper(),
+					'helper'=>new StockHelper(),
 					'category_code'=>$request->category_code,
 					]);
 	}
@@ -283,25 +263,6 @@ class ProductController extends Controller
 			/*** Base ***/
 			$products = Product::orderBy('product_name')
 					->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code');
-
-			/*** Not product list ***/
-			if (!$is_product_list) {
-					if (empty($request->store)) {
-							$products = StockStore::leftjoin('products', 'products.product_code', '=', 'stock_stores.product_code')
-									->whereIn('stock_stores.store_code', Auth::user()->storeCodes());
-					} else {
-							$products = StockStore::leftjoin('products', 'products.product_code', '=', 'stock_stores.product_code')
-									->where('stock_stores.store_code',$request->store);
-					}
-
-					$products = $products->leftJoin('stock_limits as d', function($query) use ($request) {
-							$query->on('d.product_code','=', 'products.product_code')
-								->on('d.store_code','=', 'stock_stores.store_code');	
-					});
-
-					$products = $products->select('product_name', 'stock_stores.product_code', 'stock_stores.store_code', 'product_on_hand', 'product_stocked', 'limit_max', 'limit_min', 'product_average_cost');
-			}
-
 
 			/*** Reorder ***/
 			if ($is_reorder) {
@@ -320,7 +281,6 @@ class ProductController extends Controller
 					}
 			}
 
-			$products = $products->leftjoin('ref_unit_measures as e', 'e.unit_code', '=', 'products.unit_code');
 			$products = $products->withTrashed();
 
 			/*** Seach Param ***/
@@ -358,6 +318,7 @@ class ProductController extends Controller
 					'default_store'=>Auth::user()->defaultStore($request),
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>$request->category_code,
+					'helper'=>new StockHelper(),
 			]);
 	}
 

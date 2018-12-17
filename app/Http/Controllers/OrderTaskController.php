@@ -25,7 +25,7 @@ use App\StockBatch;
 use App\OrderDrug;
 use App\OrderHelper;
 use App\DojoUtility;
-use App\InventoryHelper;
+use App\StockHelper;
 use App\Inventory;
 use App\ProductUom;
 
@@ -100,7 +100,6 @@ class OrderTaskController extends Controller
 					'i.location_name',	
 					'a.store_code',
 					'product_stocked',
-					'product_track_batch',
 					'cancel_id',
 					'ward_name',
 					'order_quantity_request',
@@ -110,7 +109,6 @@ class OrderTaskController extends Controller
 					'order_completed',
 					'name',
 					'investigation_date',
-					'product_track_batch',
 					'product_stocked',
 					'e.category_code',
 					];
@@ -176,7 +174,7 @@ class OrderTaskController extends Controller
 					'order_helper'=> new OrderHelper(),
 					'store'=>$store,
 					'consultation_id'=>$consultation->consultation_id,
-					'helper'=>new InventoryHelper(),
+					'helper'=>new StockHelper(),
 			]);
 	}
 	public function edit($id) 
@@ -262,7 +260,7 @@ class OrderTaskController extends Controller
 			$location = Location::find($location_code);
 			$store_code = $location->store_code;
 
-			$helper = new InventoryHelper();
+			$helper = new StockHelper();
 			$orders = Order::where('encounter_id', $request->encounter_id)
 							->where('order_completed', 0)
 							->get();
@@ -322,69 +320,6 @@ class OrderTaskController extends Controller
 			Session::flash('message', 'Record successfully updated.');
 			return redirect('order_queues');
 	}
-
-	public function status2(Request $request)
-	{
-			if (!empty(Auth::user()->authorization->location_code)) {
-				$location_code = Auth::user()->authorization->location_code;
-			} else {
-				$location_code = $request->cookie('queue_location');
-			}
-			$location = Location::find($location_code);
-
-			$store_code = $location->store_code;
-
-			$values = explode(',',$request->ids);
-
-			foreach ($values as $orderId) {
-					$value = $request->$orderId ?: 0;
-					if ($orderId>0) {
-							OrderTask::where('order_id', $orderId)->update(['order_completed'=>$value]);				
-							if ($value=='1') {
-								//OrderTask::where('order_id', $orderId)->update(['store_code'=>$store_code]);				
-
-								$order = Order::find($orderId);
-								$order->order_quantity_supply = $request['quantity_'.$order->order_id];
-								$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
-								$order->updated_by = Auth::user()->id;
-								$order->location_code = $location_code;
-								$order->store_code = $store_code;
-								$order->save();
-
-								if ($order->product->product_stocked==1) {
-										$stock = new Stock();
-										$stock->order_id = $orderId;
-										$stock->product_code = $order->product_code;
-										$stock->stock_quantity = -($order->order_quantity_supply);
-										$stock->store_code = $store_code;
-										$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
-										$stock->move_code = 'sale';
-										$stock->save();
-
-										if ($stock->product->product_track_batch==1) {
-											$total_quantity = $this->statusBatch($request, $stock);
-											$stock->stock_quantity = -$total_quantity;
-											$stock->stock_value = $order->product->product_average_cost*$total_quantity;
-											$stock->save();
-
-											$order->order_quantity_supply = $total_quantity;
-											$order->save();
-										} 							
-								}
-							} else {
-								OrderTask::where('order_id', $orderId)->update(['store_code'=>null]);				
-							}
-							$order = OrderTask::find($orderId);
-							$productController = new ProductController();
-							$productController->updateTotalOnHand($order->product_code);
-					}
-			}
-			$order_task = OrderTask::find($values[0]);
-			Session::flash('message', 'Record successfully updated.');
-			return redirect('order_queues');
-			//return redirect('/order_tasks/task/'.$order_task->consultation->consultation_id.'/'.$order_task->product->category->location_code);
-	}
-
 
 	public function statusBatch(Request $request, $stock) 
 	{

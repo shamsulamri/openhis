@@ -63,11 +63,15 @@
 					{{ $inventory->inv_batch_number }}
 				@endif
 			</td>
-			<td>
-					<div class="input-group date">
+			<td align='center'>
+				<div class="input-group date">
+				@if ($movement->move_posted==0) 
 						<input data-mask="99/99/9999" name="inv_expiry_date_{{ $inventory->inv_id }}" id="inv_expiry_date_{{ $inventory->inv_id }}" type="text" class="form-control" value='{{ $inventory->batch()?$inventory->batch()->batch_expiry_date:'' }}'>
 						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-					</div>
+				@else
+					{{ $inventory->batch()?$inventory->batch()->batch_expiry_date:'' }}
+				@endif
+				</div>
 			</td>
 			<!--
 			<td align='right'>

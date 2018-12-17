@@ -15,17 +15,14 @@ use App\ProductStatus as Status;
 use App\UnitMeasure as Unit;
 use App\QueueLocation as Location;
 use App\Form;
-use App\PurchaseOrderLine;
 use App\Product;
 use App\BillMaterial;
 use App\OrderSet;
-use App\PurchaseOrder;
 use App\DietMenu;
 use App\ProductAuthorization;
 use Auth;
 use App\StockInputLine;
 use App\StockInput;
-use App\StockStore;
 use App\TaxCode;
 use App\Purchase;
 use App\InventoryMovement;
@@ -56,7 +53,6 @@ class ProductSearchController extends Controller
 					$product_searches = $product_searches->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 			}
 
-			$purchase_order = PurchaseOrder::find($request->purchase_id);
 
 			$reason = $request->reason;
 			$return_id = 0;
@@ -69,8 +65,6 @@ class ProductSearchController extends Controller
 
 			switch ($reason) {
 					case "purchase_order":
-							$product_searches = $product_searches->where('product_purchased','=',1);
-							//dd($product_searches->toSql());
 							$return_id = $request->purchase_id;
 							break;
 					case "bom":
@@ -103,7 +97,6 @@ class ProductSearchController extends Controller
 					'product_code'=>$request->product_code,
 					'set_code'=>$request->set_code,
 					'reason'=>$reason,
-					'purchase_order'=>$purchase_order,
 					'return_id'=>$return_id,
 					'class_code'=>$request->class_code,
 					'period_code'=>$request->period_code,
@@ -187,26 +180,6 @@ class ProductSearchController extends Controller
 			
 	}
 
-	public function bulk($input_id, $product_code) 
-	{
-		$stock_input = StockInput::find($input_id);
-		$stock_store = StockStore::where('store_code',$stock_input->store_code)
-					->where('product_code', $product_code)
-					->first();
-
-		$product = Product::find($product_code);
-		$line = new StockInputLine();
-		$line->input_id = $input_id;
-		$line->product_code = $product_code;
-		if ($stock_store) {
-				$line->line_snapshot_quantity = $stock_store->stock_quantity;
-		}
-
-		$line->save();
-		Session::flash('message', 'Record successfully created.');
-		return redirect('/product_searches?reason=bulk&input_id='.$input_id.'&line_id='.$line->line_id);
-	}
-
 	public function asset($set_code, $product_code)
 	{
 			$order_set = new OrderSet();
@@ -252,9 +225,6 @@ class ProductSearchController extends Controller
 			$product_search->fill($request->input());
 
 			$product_search->product_unit_charge = $request->product_unit_charge ?: 0;
-			$product_search->product_purchased = $request->product_purchased ?: 0;
-			$product_search->product_sold = $request->product_sold ?: 0;
-			$product_search->product_bom = $request->product_bom ?: 0;
 
 			$valid = $product_search->validate($request->all(), $request->_method);	
 
@@ -300,7 +270,6 @@ class ProductSearchController extends Controller
 					case "bom":
 							$product_searches = Product::orderBy('product_name')
 									->where('product_code','!=', $request->product_code)
-									->where('product_bom','!=',1)
 									->where(function ($query) use($search) {
 											$query->where('product_name','like','%'.$search.'%')
 												  ->orWhere('product_code', 'like','%'.$search.'%')
@@ -332,14 +301,8 @@ class ProductSearchController extends Controller
 									->orderBy('product_name');
 							}
 
-							if ($reason=='purchase_order') {
-								$product_searches = $product_searches->where('product_purchased','=',1);
-							}
-
 							$product_searches = $product_searches->paginate($this->paginateValue);
 			}
-
-			$purchase_order = PurchaseOrder::find($request->purchase_id);
 
 			if ($product_searches->count()==1) {
 					switch ($reason) {
@@ -375,7 +338,6 @@ class ProductSearchController extends Controller
 							'reason'=>$request->reason,
 							'product_code'=>$request->product_code,
 							'set_code'=>$request->set_code,
-							'purchase_order'=>$purchase_order,
 							'return_id'=>$request->return_id,
 							'class_code'=>$request->class_code,
 							'period_code'=>$request->period_code,

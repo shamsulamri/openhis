@@ -22,30 +22,18 @@ Stock
 <br>
 <br>
 <span class='glyphicon glyphicon-th-large' aria-hidden='true'></span>
-@if ($product->product_bom==1)
 <a href='{{ URL::to('bill_materials/'. $product->product_code) }}'>Bill of Materials</a>
-@else
-Bill of Materials
-@endif
 
 
 <br>
 <br>
 <span class='glyphicon glyphicon-cog' aria-hidden='true'></span>
-@if ($product->product_bom==1)
 <a href='{{ URL::to('build_assembly/'. $product->product_code) }}'>Build Assembly</a>
-@else
-Build Assembly
-@endif
 
 <br>
 <br>
 <span class='glyphicon glyphicon-fire' aria-hidden='true'></span>
-@if ($product->product_bom==1)
 <a href='{{ URL::to('explode_assembly/'. $product->product_code) }}'>Explode Assembly</a>
-@else
-Explode Assembly
-@endif
 
 <br>
 <br>

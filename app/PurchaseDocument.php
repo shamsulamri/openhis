@@ -17,6 +17,7 @@ class PurchaseDocument extends Model
 	protected $fillable = [
 				'document_code',
 				'document_prefix',
+				'document_description',
 				'document_name'];
 	
     protected $guarded = ['document_code'];

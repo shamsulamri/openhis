@@ -14,7 +14,7 @@ use App\StockMovement as Move;
 use App\Store;
 use Auth;
 use App\Inventory;
-use App\InventoryHelper;
+use App\StockHelper;
 
 class InventoryMovementController extends Controller
 {
@@ -156,7 +156,7 @@ class InventoryMovementController extends Controller
 	{
 			$movement = InventoryMovement::find($move_id);
 
-			$helper = new InventoryHelper();
+			$helper = new StockHelper();
 
 			$inventory = new Inventory();
 			$inventory->move_id = $movement->move_id;

@@ -25,26 +25,17 @@
 		<a class='btn btn-default' href='{{ URL::to('stock_limit/'. $product->product_code) }}'>
 			<span class='fa fa-cart-plus' aria-hidden='true'></span><br>Stock<br>Limits
 		</a>
-		<a class='btn btn-default' href='{{ URL::to('stocks/'. $product->product_code) }}'>
-			<span class='glyphicon glyphicon-road' aria-hidden='true'></span><br>Stock<br>Movements
-		</a>
 @endif
 @can('module-inventory')
-		@if ($product->product_bom==1)
-				<a class='btn btn-default' href='{{ URL::to('bill_materials/'. $product->product_code) }}'>
-					<span class='fa fa-cubes' aria-hidden='true'></span><br>Bill of<br> Materials
-				</a>
-		@endif
-		@if ($product->product_bom==1)
-				<a class='btn btn-default' href='{{ URL::to('build_assembly/'. $product->product_code) }}'>
-					<span class='glyphicon glyphicon-cog' aria-hidden='true'></span><br>Build<br>Assembly
-				</a>
-		@endif
-		@if ($product->product_bom==1)
-				<a class='btn btn-default' href='{{ URL::to('explode_assembly/'. $product->product_code) }}'>
-					<span class='glyphicon glyphicon-fire' aria-hidden='true'></span><br>Explode<br>Assembly
-				</a>
-		@endif
+		<a class='btn btn-default' href='{{ URL::to('bill_materials/'. $product->product_code) }}'>
+			<span class='fa fa-cubes' aria-hidden='true'></span><br>Bill of<br> Materials
+		</a>
+		<a class='btn btn-default' href='{{ URL::to('build_assembly/'. $product->product_code) }}'>
+			<span class='glyphicon glyphicon-cog' aria-hidden='true'></span><br>Build<br>Assembly
+		</a>
+		<a class='btn btn-default' href='{{ URL::to('explode_assembly/'. $product->product_code) }}'>
+			<span class='glyphicon glyphicon-fire' aria-hidden='true'></span><br>Explode<br>Assembly
+		</a>
 		<a class='btn btn-default' href='{{ URL::to('product_maintenances/'. $product->product_code) }}'>
 			<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span><br>Product<br>Maintenance
 		</a>

@@ -166,46 +166,6 @@ $allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $st
 						</div>
 					</div>
 			</div>
-			<div class="col-xs-6">
-					<div class='form-group'>
-						<div class='col-sm-offset-4 col-sm-8'>
-							@if ($product->product_track_batch)
-								<span class="fa fa-check-square-o" aria-hidden="true"></span>
-							@else
-								<span class="fa fa-square-o" aria-hidden="true"></span>
-							@endif
-							<label>Batch Tracked</label><br>Batch number required during stock movement.
-						</div>
-					</div>
-			</div>
-	</div>
-
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group'>
-						<div class='col-sm-offset-4 col-sm-8'>
-							@if ($product->product_bom)
-								<span class="fa fa-check-square-o" aria-hidden="true"></span>
-							@else
-								<span class="fa fa-square-o" aria-hidden="true"></span>
-							@endif
-							<label>Bill of Materials</label><br>
-							This product contains parts to make end product.
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group'>
-						<div class='col-sm-offset-4 col-sm-8'>
-							@if ($product->product_dismantle_material)
-								<span class="fa fa-check-square-o" aria-hidden="true"></span>
-							@else
-								<span class="fa fa-square-o" aria-hidden="true"></span>
-							@endif
-							<label>Assembly Part</label><br>Dismantled components return to stock when explode.
-						</div>
-					</div>
-			</div>
 	</div>
 </div>
 

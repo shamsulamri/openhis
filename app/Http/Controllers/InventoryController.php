@@ -14,7 +14,7 @@ use App\StockMovement as Move;
 use App\Store;
 use App\Product;
 use App\ProductUom;
-use App\InventoryHelper;
+use App\StockHelper;
 use App\InventoryMovement;
 use App\InventoryBatch;
 use Schema;
@@ -47,7 +47,7 @@ class InventoryController extends Controller
 
 			return view('inventories.detail', [
 					'inventories'=>$inventories,
-					'helper'=>new InventoryHelper(),
+					'helper'=>new StockHelper(),
 					'move_id'=>$id,
 					'movement'=>$movement,
 			]);
@@ -157,7 +157,7 @@ class InventoryController extends Controller
 
 	public function getOnHand($product_code) 
 	{
-			$helper = new InventoryHelper();
+			$helper = new StockHelper();
 			$on_hand = $helper->getStockOnHand($product_code);
 			$allocated = $helper->getStockAllocated($product_code);
 			$completed = $helper->getStockCompleted($product_code);

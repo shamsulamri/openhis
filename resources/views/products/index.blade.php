@@ -44,9 +44,6 @@ $allocated=0;
 					<a href='{{ URL::to('products/'. $product->product_code.'?detail=true') }}'>
 					@endcan
 						{{ $product->product_name }} 
-						@if ($product->product_bom==1)
-							*
-						@endif
 					</a>
 			</td>
 			<td>

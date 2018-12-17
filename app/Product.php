@@ -20,37 +20,22 @@ class Product extends Model
 				'product_name',
 				'product_name_other',
 				'category_code',
-				'unit_code',
 				'order_form',
-				'product_upc',
-				'product_sku',
 				'product_unit_charge',
-				'product_purchased',
-				'product_purchase_unit',
 				'product_stocked',
-				'product_sold',
 				'product_drop_charge',
-				'product_dismantle_material',
-				'product_sale_price',
-				'product_bom',
 				'product_reorder',
-				'product_purchase_price',
-				'product_input_tax',
-				'location_code',
 				'form_code',
+				'unit_code',
 				'charge_code',
-				'product_track_batch',
 				'status_code',
 				'product_average_cost',
-				'product_cost',
-				'product_conversion_unit',
-				'product_conversion_code',
-				'product_sale_margin',
 				'product_on_hand',
 				'product_drop_charge',
 				'product_local_store',
 				'product_non_claimable',
 				'product_duration_use',
+				'product_input_tax',
 				'product_output_tax'];
 	
     	protected $guarded = ['product_code'];
@@ -63,7 +48,6 @@ class Product extends Model
 				'product_name'=>'required',
 				'category_code'=>'required',
 				'order_form'=>'required',
-				'product_sale_price'=>'required_if:product_sold,==,"1"'
 			];
 
 			
@@ -79,14 +63,7 @@ class Product extends Model
 
         	if ($method=='PUT') {
 				$product = Product::find($this->attributes['product_code']);
-        	   	$rules['product_purchase_price'] = 'greater_than_or_equal:'.$this->attributes['product_purchase_price'].','.$product->product_purchase_price;
-				$messages['greater_than_or_equal']="Purchase prices cannot be lower than last recorded price.";
         	}
-
-
-
-			Log::info($rules);
-			Log::info($messages);
 			
 			return validator::make($input, $rules ,$messages);
 	}
@@ -104,16 +81,6 @@ class Product extends Model
 	public function category()
 	{
 			return $this->belongsTo('App\ProductCategory','category_code');
-	}
-
-	public function unitMeasure()
-	{
-			return $this->belongsTo('App\UnitMeasure', 'unit_code');
-	}
-
-	public function purchaseUnitMeasure()
-	{
-			return $this->belongsTo('App\UnitMeasure', 'product_purchase_unit');
 	}
 
 	public function productUnitMeasures()
@@ -139,11 +106,6 @@ class Product extends Model
 	public function inputTax()
 	{
 			return $this->belongsTo('App\TaxCode', 'product_input_tax');
-	}
-
-	public function location()
-	{
-			return $this->belongsTo('App\QueueLocation', 'location_code');
 	}
 
 	public function status()
@@ -175,44 +137,8 @@ class Product extends Model
 			}
 	}
 
-	public function getLocationName()
-	{
-			if ($this->attributes['location_code']) {
-				return QueueLocation::find($this->attributes['location_code'])->location_name;
-			} else {
-				return "-";
-			}
-	}
-
 	public function getProductOnHandAttribute($value) 
 	{
 			return floatval($value);
-	}
-
-	public function getProductSku() 
-	{
-			if ($this->attributes['product_sku']) {
-					return $this->attributes['product_sku'];
-			} else {
-					return "";
-			}
-	}
-
-	public function getUnitShortname()
-	{
-			if ($this->unitMeasure) {
-					return $this->unitMeasure->unit_shortname;
-			} else {
-					return "U";
-			}
-	}
-
-	public function getPurchaseUnitShortname()
-	{
-			if ($this->purchaseUnitMeasure) {
-					return $this->purchaseUnitMeasure->unit_shortname;
-			} else {
-					return "U";
-			}
 	}
 }

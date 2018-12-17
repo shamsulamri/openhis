@@ -82,7 +82,7 @@
 						{{ $order_helper->getPrescription($order->order_id) }}
 					@endif
 
-					@if ($status=='danger' & $order->product_track_batch==0)
+					@if ($status=='danger')
 						<br>
 						<span class='label label-danger'>Insufficient supply.</span>
 					@endif
@@ -109,7 +109,7 @@
 			@endif
 			</td>
 			<td width='100'>
-					@if ($order->product_track_batch==0 && $order->product_stocked==1)
+					@if ($order->product_stocked==1)
 						@if ($order->order_completed==0) 
 							{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
 						@else

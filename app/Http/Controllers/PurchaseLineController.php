@@ -18,7 +18,7 @@ use App\Store;
 use App\Inventory;
 use App\InventoryMovement;
 use Auth;
-use App\InventoryHelper;
+use App\StockHelper;
 
 class PurchaseLineController extends Controller
 {
@@ -54,6 +54,7 @@ class PurchaseLineController extends Controller
 					'purchase_id'=>$id,
 					'purchase'=>Purchase::find($id),
 					'page'=>$request->page,
+					'reload'=>$request->reload,
 			]);
 	}
 
@@ -67,9 +68,9 @@ class PurchaseLineController extends Controller
 			}
 
 			if ($reason == 'purchase') {
-					return redirect('/purchases/master_document?reason=purchase&purchase_id='.$to);
+					return redirect('/purchases/master_document?reason=purchase&reload=true&purchase_id='.$to);
 			} else {
-					return redirect('/purchases/master_document?reason=stock&move_id='.$to);
+					return redirect('/purchases/master_document?reason=stock&reload=true&move_id='.$to);
 			}
 	}
 
@@ -79,7 +80,7 @@ class PurchaseLineController extends Controller
 
 			if ($item) {
 				if ($reason == 'purchase') {
-					if ($item->balanceQuantity()) {
+					//if ($item->balanceQuantity()) {
 							$purchase_line = new PurchaseLine();
 							$purchase_line->purchase_id = $to;
 							$purchase_line->product_code = $item->product_code;
@@ -93,11 +94,11 @@ class PurchaseLineController extends Controller
 							$purchase_line->line_subtotal_tax = $item->line_subtotal_tax;
 							$purchase_line->reference_id = $item->line_id;
 							$purchase_line->save();
-					}
+					//}
 				} else {
 							$movement = InventoryMovement::find($to);
 
-							$helper = new InventoryHelper();
+							$helper = new StockHelper();
 
 							$inventory = new Inventory();
 							$inventory->move_id = $to;
@@ -121,7 +122,7 @@ class PurchaseLineController extends Controller
 			$purchase = null;
 			$movement = null;
 
-			$purchase_lines = PurchaseLine::orderBy('purchase_lines.purchase_id')
+			$purchase_lines = PurchaseLine::orderBy('purchase_lines.purchase_id', 'desc')
 					->leftjoin('purchases as b', 'b.purchase_id', '=', 'purchase_lines.purchase_id')
 					->where('purchase_posted',1);
 
@@ -148,6 +149,7 @@ class PurchaseLineController extends Controller
 					'movement'=> $movement,
 					'reason'=>$reason,
 					'document_id'=>$document_id,
+					'reload'=>$request->reload,
 			]);
 	}
 
@@ -165,15 +167,13 @@ class PurchaseLineController extends Controller
 					}
 			}
 
-			return redirect('/purchase_lines/master_item/'.$request->id.'/'.$request->document_id.'?reason='.$reason);
+			return redirect('/purchase_lines/master_item/'.$request->id.'/'.$request->document_id.'?reason='.$reason.'&reload=true');
 	}
 
 	public function show($id)
 	{
 			$purchase_line = PurchaseLine::where('purchase_id', '=', $id);
 			$purchase = Purchase::find($id);
-
-			$reasons = array('PQ'=>'purchase_request', 'PO'=>'purchase_order', 'GR'=>'goods_receive');
 
 			return view('purchase_lines.show', [
 					'purchase_id' => $id,
@@ -255,7 +255,7 @@ class PurchaseLineController extends Controller
 					$purchase_line->save();
 
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/purchase_lines/detail/'.$request->purchase_id);
+					return redirect('/purchase_lines/detail/'.$request->purchase_id.'?reload=true');
 			} else {
 					return view('purchase_lines.edit', [
 							'purchase_line'=>$purchase_line,
@@ -308,7 +308,7 @@ class PurchaseLineController extends Controller
 					}
 			}
 
-			return redirect('/purchase_lines/detail/'.$purchase_id);
+			return redirect('/purchase_lines/detail/'.$purchase_id.'?reload=true');
 	}
 
 	public function destroy($id)
@@ -360,6 +360,7 @@ class PurchaseLineController extends Controller
 					'movement'=> $movement,
 					'reason'=>$request->reason,
 					'document_id'=>$request->document_id,
+					'reload'=>null,
 			]);
 	}
 

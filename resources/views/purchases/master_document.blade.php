@@ -8,8 +8,7 @@
 @else
 <a class='btn btn-default' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
 <a class='btn btn-default' href='/purchases/master_document?reason=stock&move_id={{ $movement->move_id }}'>Documents</a>
-<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
-@endif
+<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a> @endif
 <br><br>
 <form action='/purchase/master_search' method='post'>
 	<div class='input-group'>
@@ -72,10 +71,12 @@
 <script>
 	var frameLine = parent.document.getElementById('frameLine');
 
-	@if($reason=='stock')
-			frameLine.src='/inventories/detail/{{ $movement->move_id }}';
-	@else
-			frameLine.src='/purchase_lines/detail/{{ $purchase->purchase_id }}';
+	@if($reload=='true')
+			@if($reason=='stock')
+					frameLine.src='/inventories/detail/{{ $movement->move_id }}';
+			@else
+					frameLine.src='/purchase_lines/detail/{{ $purchase->purchase_id }}';
+			@endif
 	@endif
 </script>
 @endsection

@@ -32,15 +32,6 @@
 						</div>
 					</div>
 			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_upc')) has-error @endif'>
-						{{ Form::label('product_upc', 'UPC',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-							{{ Form::label('', $product->product_upc, ['class'=>'form-control']) }}
-							@if ($errors->has('product_upc')) <p class="help-block">{{ $errors->first('product_upc') }}</p> @endif
-						</div>
-					</div>
-			</div>
 	</div>
 
 	<div class="row">
@@ -98,21 +89,11 @@
 						</div>
 					</div>
 			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_sku')) has-error @endif'>
-						{{ Form::label('product_sku', 'SKU',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-							{{ Form::label('', $product->getProductSku(), ['class'=>'form-control','placeholder'=>'Store Keeping Unit','maxlength'=>'100']) }}
-							@if ($errors->has('product_sku')) <p class="help-block">{{ $errors->first('product_sku') }}</p> @endif
-						</div>
-					</div>
-
-			</div>
 	</div>
 
 	<div class="row">
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_dismantle_material')) has-error @endif'>
+					<div class='form-group  @if ($errors->has('product_stocked')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
 							@if ($product->product_stocked)
 								<span class="fa fa-check-square-o" aria-hidden="true"></span>
@@ -124,66 +105,11 @@
 						</div>
 					</div>
 			</div>
-			<div class="col-xs-6">
-					<div class='form-group'>
-						<div class='col-sm-offset-4 col-sm-8'>
-							@if ($product->product_track_batch)
-								<span class="fa fa-check-square-o" aria-hidden="true"></span>
-							@else
-								<span class="fa fa-square-o" aria-hidden="true"></span>
-							@endif
-							<label>Batch Tracked</label><br>Batch number required during stock movement.
-						</div>
-					</div>
-			</div>
-	</div>
-
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_bom')) has-error @endif'>
-						<div class='col-sm-offset-4 col-sm-8'>
-							@if ($product->product_bom)
-								<span class="fa fa-check-square-o" aria-hidden="true"></span>
-							@else
-								<span class="fa fa-square-o" aria-hidden="true"></span>
-							@endif
-							<label>Bill of Materials</label><br>
-							This product contains parts to make end product.
-							@if ($errors->has('product_bom')) <p class="help-block">{{ $errors->first('product_bom') }}</p> @endif
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_bom')) has-error @endif'>
-						<div class='col-sm-offset-4 col-sm-8'>
-							@if ($product->product_dismantle_material)
-								<span class="fa fa-check-square-o" aria-hidden="true"></span>
-							@else
-								<span class="fa fa-square-o" aria-hidden="true"></span>
-							@endif
-							<label>Assembly Part</label><br>Dismantled components return to stock when explode.
-							@if ($errors->has('product_dismantle_material')) <p class="help-block">{{ $errors->first('product_dismantle_material') }}</p> @endif
-						</div>
-					</div>
-			</div>
 	</div>
 
 	<!-- Purchase -->
 	@can('product_purchase_edit')
 	<hr>
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_purchased')) has-error @endif'>
-						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_purchased', '1') }} <label>Purchase Product</label><br>This product require to be purchased.
-							@if ($errors->has('product_purchased')) <p class="help-block">{{ $errors->first('product_purchased') }}</p> @endif
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-			</div>
-	</div>
-
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_purchase_price')) has-error @endif'>
@@ -230,19 +156,6 @@
 	@can('product_sale_edit')
 	<!-- Sale -->
 	<hr>
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('product_sold')) has-error @endif'>
-						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_sold', '1') }} <label>Sale Product</label><br>This product can be ordered for patients.
-							@if ($errors->has('product_sold')) <p class="help-block">{{ $errors->first('product_sold') }}</p> @endif
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-			</div>
-	</div>
-
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_sale_price')) has-error @endif'>

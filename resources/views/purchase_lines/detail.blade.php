@@ -61,7 +61,7 @@ $count=($page-1)*10;
 	</th>
     <th></th>
     <th>Item</th>
-    <th><div align='right'>UOM</div></th> 
+    <th><div align='right'>Quantity</div></th> 
     <th><div align='right'>Unit Price</div></th> 
     <th><div align='right'>Sub Total</div></th> 
     <th><div align='right'>Tax</div></th> 
@@ -108,10 +108,18 @@ $count=($page-1)*10;
 			@endif
 			</td>
 			<td @if ($purchase->purchase_posted==0) width='80' @endif align='right'>
-					{{ number_format($purchase_line->line_quantity) }} 
-				@if ($purchase_line->unit_code != null)
-					{{ $purchase_line->uom->unit_name }}
+				@if ($purchase_line->line_quantity == 0) 
+				<div class='has-error'>
+        			<label class='control-label'>
 				@endif
+						{{ number_format($purchase_line->line_quantity) }} 
+						@if ($purchase_line->unit_code != null)
+							{{ $purchase_line->uom->unit_name }}
+						@endif
+				@if ($purchase_line->line_quantity == 0) 
+					</label>
+				@endif
+				</div>
 			</td>
 			<td @if ($purchase->purchase_posted==0) width='50' @endif align='right'>
 					{{ number_format($purchase_line->line_unit_price,2) }}
@@ -172,5 +180,11 @@ $count=($page-1)*10;
 			$('#{{ $purchase_line->line_id }}').prop('checked', !checked).iCheck('update');
 		@endforeach
 	}
+
+	@if ($reload == 'true')
+			var frameProduct = parent.document.getElementById('frameProduct');
+			frameProduct.contentWindow.location.reload();
+	@endif
+
 </script>
 @endsection

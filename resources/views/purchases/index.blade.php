@@ -19,8 +19,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Date</th> 
     <th>Document Number</th>
+    <th>Date</th> 
     <th>Type</th> 
     <th>Supplier</th> 
     <th>Description</th> 
@@ -31,13 +31,13 @@
 	<tbody>
 @foreach ($purchases as $purchase)
 	<tr>
-			<td width='10%'>
-					{{ DojoUtility::dateReadFormat($purchase->created_at) }}
-			</td>
 			<td>
 					<a href='{{ URL::to('purchases/'. $purchase->purchase_id.'/edit') }}'>
 						{{$purchase->purchase_number}}
 					</a>
+			</td>
+			<td width='10%'>
+					{{ DojoUtility::dateReadFormat($purchase->created_at) }}
 			</td>
 			<td>
 					{{$purchase->document->document_name }}
@@ -55,7 +55,9 @@
 			</td>
 			<td align='right'>
 					<a class='btn btn-default btn-xs' href='{{ URL::to('purchase_lines/show/'. $purchase->purchase_id) }}'>Line Item</a>
+			@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('purchases/delete/'. $purchase->purchase_id) }}'>Delete</a>
+			@endcan
 			</td>
 	</tr>
 @endforeach

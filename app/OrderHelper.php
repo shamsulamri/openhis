@@ -412,37 +412,6 @@ class OrderHelper
 
 				if ($order->product->product_stocked==1) {
 						$stock_helper->updateStockBatch($order);
-						/*
-						$stock = new Stock();
-						$stock->order_id = $order->order_id;
-						$stock->product_code = $order->product_code;
-						$stock->stock_quantity = -($order->order_quantity_supply);
-						$stock->store_code = $order->store_code;
-						$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
-						$stock->move_code = 'sale';
-						$stock->save();
-
-						$stock_helper->updateAllStockOnHand($order->product_code);
-
-						if ($stock->product->product_track_batch==1) {
-
-								$batch = $stock_helper->getFirstBatch($stock->product_code, $stock->store_code);
-
-								if ($batch) {
-										$stock_batch = new StockBatch();
-										$stock_batch->stock_id = $stock->stock_id;
-										$stock_batch->store_code = $stock->store_code;
-										$stock_batch->product_code = $stock->product_code;
-										$stock_batch->batch_number = $batch->batch_number;
-										$stock_batch->expiry_date = $batch->expiry_date;
-										$stock_batch->batch_quantity = $stock->stock_quantity;
-										$stock_batch->save();
-								}
-
-
-						} 							
-						*/
-
 				}
 			}
 		}
