@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\PurchaseLine;
+use App\DojoUtility;
 use Log;
 use DB;
 use Session;
@@ -19,10 +20,14 @@ use App\Inventory;
 use App\InventoryMovement;
 use Auth;
 use App\StockHelper;
+use App\ProductUom;
+use App\Supplier;
+use App\PurchaseRequestStatus;
 
 class PurchaseLineController extends Controller
 {
 	public $paginateValue=20;
+	public $order_status = array(''=>'','open'=>'Open','close'=>'Close');
 
 	public function __construct()
 	{
@@ -31,7 +36,7 @@ class PurchaseLineController extends Controller
 
 	public function index()
 	{
-			$purchase_lines = PurchaseLine::orderBy('product_code')
+			$purchase_lines = PurchaseLine::orderBy('line_id')
 					->paginate($this->paginateValue);
 
 			return view('purchase_lines.index', [
@@ -93,6 +98,7 @@ class PurchaseLineController extends Controller
 							$purchase_line->tax_rate = $item->tax_rate;
 							$purchase_line->line_subtotal_tax = $item->line_subtotal_tax;
 							$purchase_line->reference_id = $item->line_id;
+							$purchase_line->line_posted = $item->line_posted;
 							$purchase_line->save();
 					//}
 				} else {
@@ -128,8 +134,8 @@ class PurchaseLineController extends Controller
 
 			if ($reason=='purchase') {
 					$purchase = Purchase::find($id);
-					$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code)
-													->where('b.purchase_id', '<>', $id);
+					$purchase_lines = $purchase_lines->where('b.purchase_id', '<>', $id);
+					$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code);
 			}
 
 			if ($document_id) {
@@ -179,6 +185,8 @@ class PurchaseLineController extends Controller
 					'purchase_id' => $id,
 					'purchase_line' => $purchase_line,
 					'purchase'=>$purchase,
+					'author_id'=>Auth::user()->author_id,
+					'purchase_request_status' => PurchaseRequestStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 			]);
 	}
 
@@ -339,8 +347,8 @@ class PurchaseLineController extends Controller
 
 			if ($reason=='purchase') {
 					$purchase = Purchase::find($request->id);
-					$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code)
-													->where('b.purchase_id', '<>', $request->id);
+					$purchase_lines = $purchase_lines->where('b.purchase_id', '<>', $request->id);
+					$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code);
 			}
 
 			if (!empty($request->document_id)) {
@@ -361,6 +369,7 @@ class PurchaseLineController extends Controller
 					'reason'=>$request->reason,
 					'document_id'=>$request->document_id,
 					'reload'=>null,
+					'search'=>$request->search,
 			]);
 	}
 
@@ -380,12 +389,18 @@ class PurchaseLineController extends Controller
 			$purchase = Purchase::find($purchase_id);
 
 			$product = Product::find($product_code);
+			$unit_cost = 0;
+			if ($product->uom->count()>0) {
+					$unit_cost =$product->uom->where('unit_code','unit')->first()->uom_cost;
+			}
+
 			$default_tax = TaxCode::where('tax_default',1)->first();
 			$purchase_line = new PurchaseLine();
 			$purchase_line->purchase_id = $purchase_id;
 			$purchase_line->product_code = $product_code;
-			$purchase_line->line_unit_price = $product->product_purchase_price;
+			$purchase_line->line_unit_price = $unit_cost;
 			$purchase_line->line_quantity = 1;
+			$purchase_line->uom_rate = 1;
 			$purchase_line->line_subtotal = $purchase_line->line_quantity*$purchase_line->line_unit_price;
 			$purchase_line->unit_code = 'unit';
 			if ($product->product_input_tax) {
@@ -397,7 +412,7 @@ class PurchaseLineController extends Controller
 			}
 
 			if ($purchase_line->tax_rate>0) {
-				$purchase_line->line_subtotal_tax = $product->product_purchase_price*(1+$default_tax->tax_rate/100);
+				$purchase_line->line_subtotal_tax = $purchase_line->line_unit_price*(1+$default_tax->tax_rate/100);
 			} else {
 				$purchase_line->line_subtotal_tax = $purchase_line->line_subtotal;
 			}
@@ -407,9 +422,8 @@ class PurchaseLineController extends Controller
 			return redirect('/product_searches?reason=purchase&purchase_id='.$purchase_id.'&line_id='.$purchase->line_id);
 	}
 
-	public function post($id) 
+	public function updateStock($id) 
 	{
-
 		$purchase = Purchase::find($id);
 		$purchase_lines = PurchaseLine::where('purchase_id', $id)
 							->where('line_posted',0)
@@ -435,10 +449,29 @@ class PurchaseLineController extends Controller
 
 			$line->line_posted = 1;
 			$line->save();
+
+			$this->updateCost($line);
 		}
 
 		Session::flash('message', 'Document posted.');
 		return redirect('/purchase_lines/detail/'.$id);
+	}
+
+	public function updateCost($purchase_line)
+	{
+			$uom = $purchase_line->product->uom->where('unit_code','unit')->first();
+			Log::info('-->'.$uom);
+			if (!empty($uom)) {
+					$uom->uom_cost = $purchase_line->line_unit_price;
+					$uom->save();
+			} else {
+					$uom = new ProductUom();
+					$uom->product_code = $purchase_line->product_code;
+					$uom->unit_code = 'unit';
+					$uom->uom_cost = $purchase_line->line_unit_price;
+					$uom->uom_rate = 1;
+					$uom->save();
+			}
 	}
 
 
@@ -450,16 +483,97 @@ class PurchaseLineController extends Controller
 
 	}
 
-	public function close($id)
+	public function close(Request $request, $id)
+	{
+		$purchase = Purchase::find($id);
+		$purchase->status_code = $request->status_code;
+		$purchase->save();
+
+		return redirect('/purchase/search?document_code=purchase_request');
+	}
+
+	public function post($id)
 	{
 		$purchase = Purchase::find($id);
 		$purchase->purchase_posted = 1;
 		$purchase->save();
 
-		if ($purchase->document_code == 'goods_receive' or $purchase->document_code =='purchase_invoice') {
-				$this->post($id);
+		$purchase_lines = PurchaseLine::where('purchase_id', $id)
+							->where('line_posted',0)
+							->get();
+
+		foreach ($purchase_lines as $line) {
+			$this->updateCost($line);
+		}
+
+		if ($purchase->document_code == 'goods_receive') {
+				//or $purchase->document_code =='purchase_invoice'
+				$this->updateStock($id);
 		}
 
 		return redirect('/purchases');
+	}
+
+	public function enquiry(Request $request)
+	{
+			$purchase_lines = PurchaseLine::leftJoin('purchases as b', 'b.purchase_id', '=', 'purchase_lines.purchase_id')
+								->leftJoin('products as c', 'c.product_code', '=', 'purchase_lines.product_code')
+								->leftJoin('suppliers as d', 'd.supplier_code', '=', 'b.supplier_code');
+
+			if (!empty($request->document_number)) {
+				$purchase_lines = $purchase_lines->where('purchase_number','like', '%'.$request->document_number.'%');
+			}
+
+			if (!empty($request->product_name)) {
+				$purchase_lines = $purchase_lines->where('product_name','like', '%'.$request->product_name.'%');
+			}
+
+			if (!empty($request->supplier_code)) {
+				$purchase_lines = $purchase_lines->where('b.supplier_code','=', $request->supplier_code);
+			}
+
+			/*** Status ***/
+			if (!empty($request->status_code)) {
+				switch($request->status_code) {
+						case "close":
+								$purchase_lines = $purchase_lines->where('purchase_posted','=', 1 );
+								break;
+						case "open":
+								$purchase_lines = $purchase_lines->where('purchase_posted','=', 0 );
+								break;
+				} 
+			}
+
+			/*** Date Range ****/
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			if (!empty($request->date_start) && empty($request->date_end)) {
+				$purchase_lines = $purchase_lines->where('b.created_at', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($request->date_start) && !empty($request->date_end)) {
+				$purchase_lines = $purchase_lines->where('b.created_at', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($request->date_start) && !empty($request->date_end)) {
+				$purchase_lines = $purchase_lines->whereBetween('b.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
+
+			$purchase_lines = $purchase_lines->paginate($this->paginateValue);
+
+			return view('purchase_lines.enquiry', [
+				'purchase_lines'=>$purchase_lines,
+				'store'=>Auth::user()->storeList()->prepend('',''),
+				'store_code'=>$request->store_code,
+				'product_name'=>$request->product_name,
+				'date_start'=> $date_start,
+				'date_end'=> $date_end,
+				'document_number'=>$request->document_number,
+				'order_status'=> $this->order_status,
+				'status_code'=>$request->status_code,
+				'supplier_code'=>$request->supplier_code,
+				'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
+			]);
 	}
 }

@@ -37,8 +37,8 @@ class UserAuthorizationController extends Controller
 			$user_authorization = new UserAuthorization();
 			return view('user_authorizations.create', [
 					'user_authorization' => $user_authorization,
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 
@@ -64,8 +64,8 @@ class UserAuthorizationController extends Controller
 			$user_authorization = UserAuthorization::findOrFail($id);
 			return view('user_authorizations.edit', [
 					'user_authorization'=>$user_authorization,
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					]);
 	}
 
@@ -90,6 +90,7 @@ class UserAuthorizationController extends Controller
 			$user_authorization->discharge_patient = $request->discharge_patient ?: 0;
 			$user_authorization->product_purchase_edit = $request->product_purchase_edit ?: 0;
 			$user_authorization->product_sale_edit = $request->product_sale_edit ?: 0;
+			$user_authorization->purchase_request = $request->purchase_request ?: 0;
 			$user_authorization->appointment_function = $request->appointment_function ?: 0;
 			$user_authorization->view_progress_note = $request->view_progress_note ?: 0;
 

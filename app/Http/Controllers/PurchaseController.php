@@ -19,6 +19,7 @@ use App\PurchaseDocument;
 use App\Store;
 use App\InventoryMovement;
 use App\RnPurchaseRequest;
+use App\PurchaseHelper;
 
 class PurchaseController extends Controller
 {
@@ -29,13 +30,21 @@ class PurchaseController extends Controller
 			$this->middleware('auth');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 			$purchases = Purchase::orderBy('purchase_posted')
-					->orderBy('purchase_id', 'asc')
-					->paginate($this->paginateValue);
+					->where('author_id', '=', Auth::user()->author_id)
+					->orderBy('purchase_id', 'desc');
+
+
+			$purchases = $purchases->paginate($this->paginateValue);
+
 			return view('purchases.index', [
-					'purchases'=>$purchases
+					'purchases'=>$purchases,
+					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
+					'document_code' => null,
+					'author_id'=>Auth::user()->author_id,
+					'purchase_helper' => new PurchaseHelper(),
 			]);
 	}
 
@@ -47,7 +56,15 @@ class PurchaseController extends Controller
 
 			$purchases = Purchase::orderBy('purchase_id', 'desc')
 					->where('purchase_id', '<>', $id)
-					->where('purchase_posted', 1);
+					->where('purchase_posted','=', 1);
+
+			$purchases = $purchases
+					->where(function ($query) use ($request) {
+							$query->whereNull('status_code')
+									->orWhere('status_code','!=', 'declined');
+					});
+
+			//return $purchases->get();
 
 			if ($reason == 'purchase') {
 					$purchase = Purchase::find($request->purchase_id);
@@ -80,8 +97,15 @@ class PurchaseController extends Controller
 			$reason = $request->reason?:null;
 
 			$purchases = Purchase::orderBy('purchase_id', 'desc')
-					->where('purchase_number', 'like','%'.$request->search.'%')
-					->where('purchase_posted', 1);
+					->where('purchase_id', '<>', $id)
+					->where('purchase_posted','=', 1);
+
+			$purchases = $purchases
+					->where(function ($query) use ($request) {
+							$query->whereNull('status_code')
+									->orWhere('status_code','!=', 'declined');
+					});
+
 
 			if ($reason == 'purchase') {
 					$purchase = Purchase::find($request->purchase_id);
@@ -103,19 +127,22 @@ class PurchaseController extends Controller
 					'movement'=>$movement,
 					'reason'=>$reason,
 					'search'=>$request->search,
+					'reload'=>null,
 			]);
 	}
 
-	public function create()
+	public function create(Request $request)
 	{
 			$purchase = new Purchase();
 			$purchase->purchase_date = DojoUtility::today();
+			//$purchase->store_code = Auth::user()->defaultStore($request);
 
 			return view('purchases.create', [
 					'purchase' => $purchase,
 					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
 					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
-					'store' => Store::where('store_receiving','=',1)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'store_code' => Auth::user()->defaultStore($request),
 					]);
 	}
 
@@ -127,6 +154,7 @@ class PurchaseController extends Controller
 			if ($valid->passes()) {
 					$purchase = new Purchase($request->all());
 					$purchase->author_id = Auth::user()->author_id;
+					$purchase->username = Auth::user()->username;
 					$purchase->save();
 					$this->updatePurchaseNumber($purchase->purchase_id);
 					Session::flash('message', 'Record successfully created.');
@@ -163,14 +191,15 @@ class PurchaseController extends Controller
 	}
 
 
-	public function edit($id) 
+	public function edit(Request $request, $id) 
 	{
 			$purchase = Purchase::findOrFail($id);
 			return view('purchases.edit', [
 					'purchase'=>$purchase,
 					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
 					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
-					'store' => Store::where('store_receiving','=',1)->orderBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'store_code' => Auth::user()->defaultStore($request),
 					]);
 	}
 
@@ -187,10 +216,7 @@ class PurchaseController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/purchases/id/'.$id);
 			} else {
-					return view('purchases.edit', [
-							'purchase'=>$purchase,
-					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
-							])
+					return redirect('/purchases/'.$id.'/edit')
 							->withErrors($valid)
 							->withInput();
 			}
@@ -206,6 +232,7 @@ class PurchaseController extends Controller
 	}
 	public function destroy($id)
 	{	
+			PurchaseLine::where('purchase_id', $id)->delete();
 			Purchase::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/purchases');
@@ -213,25 +240,64 @@ class PurchaseController extends Controller
 	
 	public function search(Request $request)
 	{
-			$purchases = DB::table('purchases')
-					->where('purchase_number','like','%'.$request->search.'%')
-					->orWhere('purchase_id', 'like','%'.$request->search.'%')
-					->orderBy('purchase_number')
-					->paginate($this->paginateValue);
+			$purchases = Purchase::orderBy('purchase_posted');
+
+			if (!empty($request->status_code)) {
+					if ($request->status_code == 'open') {
+							$purchases = Purchase::where('purchase_posted', 0)
+									->where('author_id', '=', Auth::user()->author_id);
+					}
+					if ($request->status_code == 'purchase_request') {
+							$purchases = Purchase::whereNull('status_code')
+											->where('purchase_posted', 1)
+											->where('document_code', '=', 'purchase_request');
+					}
+			} else {
+					if (!empty($request->document_code)) {
+							$purchases = $purchases->where('document_code', '=', $request->document_code);
+					}
+
+					if ($request->document_code != 'purchase_request') {
+							$purchases = $purchases->where('author_id', '=', Auth::user()->author_id);
+					}
+
+					if ($request->document_code == 'purchase_request' && Auth::user()->authorization->purchase_request == 0) {
+							$purchases = $purchases->where('author_id', '=', Auth::user()->author_id);
+					}
+			}
+
+			if (!empty($request->search)) {
+					$purchases = $purchases->where('purchase_number','like','%'.$request->search.'%');
+			}
+
+			$purchases = $purchases->paginate($this->paginateValue);
 
 			return view('purchases.index', [
 					'purchases'=>$purchases,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'document_code'=>$request->document_code,
+					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
+					'purchase_helper' => new PurchaseHelper(),
+					'author_id'=>Auth::user()->author_id,
 					]);
 	}
 
 	public function searchById($id)
 	{
 			$purchases = Purchase::find($id)
-					->paginate($this->paginateValue);
+					->orderBy('purchase_posted')
+					->where('author_id', '=', Auth::user()->author_id)
+					->orderBy('purchase_id', 'asc');
+
+
+			$purchases = $purchases->paginate($this->paginateValue);
 
 			return view('purchases.index', [
-					'purchases'=>$purchases
+					'purchases'=>$purchases,
+					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
+					'document_code' => null,
+					'author_id'=>Auth::user()->author_id,
+					'purchase_helper' => new PurchaseHelper(),
 			]);
 	}
 

@@ -104,5 +104,9 @@ class AuthServiceProvider extends ServiceProvider
 		$gate->define('appointment_function', function ($user) {
 				return $user->authorization->appointment_function;
 		});
+
+		$gate->define('purchase_request', function ($user) {
+				return $user->authorization->purchase_request;
+		});
     }
 }

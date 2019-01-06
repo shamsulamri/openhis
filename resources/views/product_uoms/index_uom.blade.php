@@ -29,10 +29,10 @@
 					{{$product_uom->uom_rate}}
 			</td>
 			<td>
-					{{$product_uom->uom_cost}}
+					{{number_format($product_uom->uom_cost,2)}}
 			</td>
 			<td>
-					{{$product_uom->uom_price}}
+					{{number_format($product_uom->uom_price,2)}}
 			</td>
 			<td align='right'>
 				@can('system-administrator')

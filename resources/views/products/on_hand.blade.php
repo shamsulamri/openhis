@@ -14,17 +14,17 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'>Category</label>
+						<label class='col-sm-3 control-label'>Store</label>
 						<div class='col-sm-9'>
-							{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'>Store</label>
+						<label class='col-sm-3 control-label'><div align='left'>Batch</div></label>
 						<div class='col-sm-9'>
-							{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+							<input type='text' class='form-control' name='batch_number' value='{{ isset($batch_number) ? $batch_number : '' }}' autocomplete='off' autofocus>
 						</div>
 					</div>
 			</div>
@@ -67,22 +67,22 @@ $allocated=0;
 					{{$product->product_code}}
 			</td>
 			<td>
-				{{ $product->store_name }}
+				{{ $product->store->store_name }}
 			</td>
 			<td align='right'>
-				{{ floatval($product->stock_quantity) }}
+				{{ $stock_helper->getStockOnHand($product->product_code, $product->store_code) }}
 			</td>
 			<td align='right'>
-				{{ floatval($product->allocated) }}
+				{{ $stock_helper->getStockAllocated($product->product_code, $product->store_code) }}
 			</td>
 			<td align='right'>
-				{{ floatval($product->available) }}
+				{{ $stock_helper->getStockAvailable($product->product_code, $product->store_code) }}
 			</td>
 			<td align='right'>
-					{{$product->product_average_cost}}
+				{{ $stock_helper->getStockAverageCost($product->product_code, $product->store_code) }}
 			</td>
 			<td align='right'>
-					{{ number_format($product->total_cost,2) }}
+				{{ $stock_helper->getStockTotalCost($product->product_code, $product->store_code) }}
 			</td>
 	</tr>
 @endforeach

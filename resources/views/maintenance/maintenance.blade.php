@@ -90,21 +90,23 @@
 			<div class="col-xs-3">
 			<small>
 				<a href="{{ url('/purchase_documents') }}">Purchase Documents</a><br>
+				<a href="{{ url('/purchase_request_statuses') }}">Purchase Request Statuses</a><br>
 				<a href="{{ url('/product_categories') }}">Product Categories</a><br>
 				<a href="{{ url('/product_groups') }}">Product Groups</a><br>
 				<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
 				<a href="{{ url('/stock_movements') }}">Stock Movements</a><br>
+				<a href="{{ url('/stock_tags') }}">Stock Tags</a><br>
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>
 				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
 				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
 				<a href="{{ url('/loan_types') }}">Loan Types</a><br>
 				<a href="{{ url('/forms') }}">Forms</a><br>
 				<a href="{{ url('/form_systems') }}">Form systems</a><br>
-				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
 			</small>
 			</div>
 			<div class="col-xs-3">
 			<small>
+				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
 				<a href="{{ url('/tax_types') }}">Tax Types</a><br>
 				<a href="{{ url('/general_ledgers') }}">General Ledger Codes</a><br>
 				<a href="{{ url('/product_charges') }}">Tiers</a><br>

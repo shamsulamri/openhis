@@ -14,7 +14,7 @@
 @else
 	@if (!empty($movement))
 		<a class='btn btn-default' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
-		<a class='btn btn-default' href='/purchases/master_document?reason=stock&move_id={{ $move_id }}'>Documents</a>
+		<a class='btn btn-default' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
 		<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
 		<br><br>
 	@endif

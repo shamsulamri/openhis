@@ -20,7 +20,7 @@ use App\Form;
 use App\OrderForm;
 use App\ProductStatus;
 use App\Store;
-use App\Stock;
+use App\Inventory;
 use Carbon\Carbon;
 use App\TaxCode;
 use Gate;
@@ -63,7 +63,7 @@ class ProductController extends Controller
 			$products = $products->orderBy('products.created_at','desc')
 							->paginate($this->paginateValue);
 
-			$store_code = Auth::user()->defaultStore($request);
+			$store = Store::find(Auth::user()->defaultStore($request))?:null;
 
 			return view('products.index', [
 					'products'=>$products,
@@ -71,7 +71,7 @@ class ProductController extends Controller
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>null,
 					'helper'=>new StockHelper(),
-					'store_code'=>$store_code,
+					'store'=>$store,
 			]);
 	}
 
@@ -244,7 +244,7 @@ class ProductController extends Controller
 
 			$products = $this->search_query($request, TRUE);
 
-			$store_code = Auth::user()->defaultStore($request);
+			$store = Store::find(Auth::user()->defaultStore($request));
 
 			return view('products.index', [
 					'products'=>$products,
@@ -252,7 +252,7 @@ class ProductController extends Controller
 					'loan'=>$loan,
 					'store'=>Auth::user()->storeList()->prepend('All Store','all')->prepend('',''),
 					'categories'=>Auth::user()->categoryList(),
-					'store_code'=>$store_code,
+					'store'=>$store,
 					'helper'=>new StockHelper(),
 					'category_code'=>$request->category_code,
 					]);
@@ -309,13 +309,11 @@ class ProductController extends Controller
 					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 			}
 
-			$store_code = Auth::user()->defaultStore($request);
+			$store = Store::find(Auth::user()->defaultStore($request));
+
 			return view('products.index', [
 					'products'=>$products,
-					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
-					'store_code'=>$store_code,
-					'stockHelper'=>new StockHelper(),
-					'default_store'=>Auth::user()->defaultStore($request),
+					'store'=>$store,
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>$request->category_code,
 					'helper'=>new StockHelper(),
@@ -424,6 +422,50 @@ class ProductController extends Controller
 	}
 
 	public function onHandEnquiry(Request $request)
+	{
+			/*** Base ***/
+			//$products = Product::orderBy('product_name')
+			//		->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code');
+
+			$products = Inventory::orderBy('product_name')
+							->leftJoin('products as b', 'b.product_code', '=', 'inventories.product_code')
+							->groupBy('store_code', 'b.product_code');
+
+			/*** Seach Param ***/
+			if (!empty($request->search)) {
+					$products = $products->where(function ($query) use ($request) {
+							$search_param = trim($request->search, " ");
+								$query->where('product_name','like','%'.$search_param.'%')
+								->orWhere('product_name_other','like','%'.$search_param.'%')
+								->orWhere('b.product_code','like','%'.$search_param.'%');
+					});
+			}
+
+			/*** Category ***/
+			if (!empty($request->category_code)) {
+					$products = $products->where('category_code', $request->category_code);
+			}
+
+			/*** Batch Number ***/
+			if (!empty($request->batch_number)) {
+					$products = $products->where('inv_batch_number', $request->batch_number);
+			}
+
+			$products = $products->paginate($this->paginateValue);
+
+			return view('products.on_hand', [
+					'products'=>$products,
+					'search'=>$request->search,
+					'store'=>Auth::user()->storeList()->prepend('',''),
+					'categories'=>Auth::user()->categoryList(),
+					'store_code'=>$request->store,
+					'stock_helper'=> new StockHelper(),
+					'category_code'=>$request->category_code,
+					'batch_number'=>$request->batch_number,
+					]);
+
+	}
+	public function onHandEnquiry2(Request $request)
 	{
 			$sql = "
 				select 	product_name, a.product_code, store_name, a.stock_quantity, allocated, (a.stock_quantity-allocated) as available, 

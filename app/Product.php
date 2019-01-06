@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\DojoUtility;
 use Log;
 use App\GeneralLedger;
+use App\ProductUom;
 
 class Product extends Model
 {
@@ -118,6 +119,11 @@ class Product extends Model
 			return $this->hasOne('App\Drug', 'drug_code', 'product_code');
 	}
 
+	public function uom()
+	{
+			return $this->hasMany('App\ProductUom', 'product_code');
+	}
+
 	public function getOrderFormName()
 	{
 			if ($this->attributes['order_form']) {
@@ -140,5 +146,25 @@ class Product extends Model
 	public function getProductOnHandAttribute($value) 
 	{
 			return floatval($value);
+	}
+
+	public function unit() 
+	{
+			//return $this->uom()->where('unit_code', 'unit')->first();
+			return $this->belongsTo('App\UnitMeasure', 'unit_code');
+	}
+
+	public function unitCost()
+	{
+			$uom = ProductUom::where('product_code', '=', $this->atrributes['product_code'])
+					->where('unit_code', '=', 'unit')
+					->first();
+
+			$cost = 0;
+			if (!empty($uom)) {
+					$cost = $uom->uom_cost;
+			}
+
+			return $cost;
 	}
 }

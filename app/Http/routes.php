@@ -47,6 +47,19 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('purchase_request_statuses', 'PurchaseRequestStatusController');
+		Route::get('/purchase_request_statuses/id/{id}', 'PurchaseRequestStatusController@searchById');
+		Route::post('/purchase_request_status/search', 'PurchaseRequestStatusController@search');
+		Route::get('/purchase_request_status/search', 'PurchaseRequestStatusController@search');
+		Route::get('/purchase_request_statuses/delete/{id}', 'PurchaseRequestStatusController@delete');
+		
+		
+		Route::resource('stock_tags', 'StockTagController');
+		Route::get('/stock_tags/id/{id}', 'StockTagController@searchById');
+		Route::post('/stock_tag/search', 'StockTagController@search');
+		Route::get('/stock_tag/search', 'StockTagController@search');
+		Route::get('/stock_tags/delete/{id}', 'StockTagController@delete');
+		
 		Route::resource('inventory_batches', 'InventoryBatchController');
 		Route::get('/inventory_batches/id/{id}', 'InventoryBatchController@searchById');
 		Route::post('/inventory_batch/search', 'InventoryBatchController@search');
@@ -57,9 +70,15 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/inventory_movements/id/{id}', 'InventoryMovementController@searchById');
 		Route::get('/inventory_movements/show/{id}', 'InventoryMovementController@show');
 		Route::post('/inventory_movement/search', 'InventoryMovementController@search');
+		Route::post('/inventory_movement/search_document', 'InventoryMovementController@searchDocument');
+		Route::post('/inventory_movement/post_item', 'InventoryMovementController@postItem');
 		Route::get('/inventory_movement/search', 'InventoryMovementController@search');
+		Route::post('/inventory_movement/search_item', 'InventoryMovementController@searchItem');
 		Route::get('/inventory_movements/delete/{id}', 'InventoryMovementController@delete');
 		Route::get('/inventory_movements/add/{move_id}/{product_code}', 'InventoryMovementController@add');
+		Route::get('/inventory_movements/master_document/{id}', 'InventoryMovementController@masterDocument');
+		Route::get('/inventory_movements/master_item/{id}/{document_id?}', 'InventoryMovementController@masterItem');
+		Route::get('/inventory_movement/convert/{from}/{to}', 'InventoryMovementController@convert');
 		
 		Route::post('/schema/destroy', 'SchemaController@destroy');
 		Route::get('/schema/index/{table}', 'SchemaController@index');
@@ -78,6 +97,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/inventories/submit/{move_id}', 'InventoryController@submit');
 		Route::get('/inventories/confirm/{move_id}', 'InventoryController@confirm');
 		Route::post('/inventories/post/{move_id}', 'InventoryController@post');
+		Route::get('/inventory/enquiry', 'InventoryController@enquiry');
+		Route::post('/inventory/enquiry', 'InventoryController@enquiry');
 		
 		Route::resource('purchase_documents', 'PurchaseDocumentController');
 		Route::get('/purchase_documents/id/{id}', 'PurchaseDocumentController@searchById');
@@ -86,6 +107,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/purchase_documents/delete/{id}', 'PurchaseDocumentController@delete');
 		
 		Route::resource('purchase_lines', 'PurchaseLineController');
+		Route::get('/purchase_line/enquiry', 'PurchaseLineController@enquiry');
+		Route::post('/purchase_line/enquiry', 'PurchaseLineController@enquiry');
 		Route::get('/purchase_lines/add/{purchase_id}/{product_code}', 'PurchaseLineController@add');
 		Route::get('/purchase_lines/show/{id}', 'PurchaseLineController@show');
 		Route::get('/purchase_lines/detail/{id}', 'PurchaseLineController@detail');
@@ -303,20 +326,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/stock_input_batch/search', 'StockInputBatchController@search');
 		Route::get('/stock_input_batches/delete/{id}', 'StockInputBatchController@delete');
 		Route::get('/stock_input_batches/batch/{line_id}', 'StockInputBatchController@batch');
-		
 
-		Route::resource('stock_batches', 'StockBatchController');
-		Route::get('/stock_batches/id/{id}', 'StockBatchController@searchById');
-		Route::post('/stock_batch/search', 'StockBatchController@search');
-		Route::get('/stock_batch/search', 'StockBatchController@search');
-		Route::get('/stock_batches/delete/{id}', 'StockBatchController@delete');
-		
 		Route::resource('drug_diseases', 'DrugDiseaseController');
 		Route::get('/drug_diseases/id/{id}', 'DrugDiseaseController@searchById');
 		Route::post('/drug_disease/search', 'DrugDiseaseController@search');
 		Route::get('/drug_disease/search', 'DrugDiseaseController@search');
 		Route::get('/drug_diseases/delete/{id}', 'DrugDiseaseController@delete');
-		
 		
 		Route::resource('drug_prescriptions', 'DrugPrescriptionController');
 		Route::get('/drug_prescriptions/id/{id}', 'DrugPrescriptionController@searchById');
@@ -577,6 +592,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/ward/search', 'WardController@search');
 		Route::get('/ward/search', 'WardController@search');
 		Route::get('/wards/delete/{id}', 'WardController@delete');
+
+		Route::get('/stores/set/{id}', 'StoreController@setStore');
+		Route::resource('stores', 'StoreController');
+		Route::get('/stores/id/{id}', 'StoreController@searchById');
+		Route::post('/store/search', 'StoreController@search');
+		Route::get('/store/search', 'StoreController@search');
+		Route::get('/stores/delete/{id}', 'StoreController@delete');
+		Route::get('/store/generate', 'StoreController@generate');
 
 		Route::get('/loans/request/{id}', 'LoanController@request');
 		Route::get('/loans/request/{id}/edit', 'LoanController@requestEdit');
@@ -977,23 +1000,23 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/product/search', 'ProductController@search');
 				Route::get('/product/search', 'ProductController@search');
 				Route::get('/products/delete/{id}', 'ProductController@delete');
-
-				Route::post('/stocks/enquiry', 'StockController@enquiry');
-				Route::get('/stocks/enquiry', 'StockController@enquiry');
-				Route::get('/stocks/total/{product_code}', 'StockController@updateTotalOnHand');
-				Route::get('/stocks/delete/{id}', 'StockController@delete');
-				Route::resource('stocks', 'StockController', ['except'=>['create', 'show']]);
-				Route::get('/stocks/{product_code}/{store_code?}', 'StockController@show');
-				//Route::get('/stocks/onhand/{product_code}/{store_code}', 'StockController@onHand');
-				Route::get('/stocks/create/{product_code}/{store_code}', 'StockController@create');
-				Route::get('/stocks/id/{id}', 'StockController@searchById');
-				Route::post('/stock/search', 'StockController@search');
-				Route::get('/stock/search', 'StockController@search');
-				Route::get('/stock/reset', 'StockController@reset');
 				
 		});
 
 		Route::group(['middleware' => 'inventory'], function () {
+				Route::post('/products/reorder', 'ProductController@reorder');
+				Route::get('/products/reorder', 'ProductController@reorder');
+				Route::post('/products/on_hand', 'ProductController@onHandEnquiry');
+				Route::get('/products/on_hand', 'ProductController@onHandEnquiry');
+				Route::post('/products/enquiry', 'ProductController@enquiry');
+				Route::get('/products/enquiry', 'ProductController@enquiry');
+				Route::get('/products/{id}/option', 'ProductController@option');
+				Route::get('/products/{id}/json', 'ProductController@json');
+				Route::resource('products', 'ProductController');
+				Route::get('/products/id/{id}', 'ProductController@searchById');
+				Route::post('/product/search', 'ProductController@search');
+				Route::get('/product/search', 'ProductController@search');
+				Route::get('/products/delete/{id}', 'ProductController@delete');
 
 				Route::resource('product_maintenances', 'ProductMaintenanceController');
 				Route::get('/product_maintenances/id/{id}', 'ProductMaintenanceController@searchById');
@@ -1011,7 +1034,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				
 				Route::resource('stock_movements', 'StockMovementController');
 				Route::get('/stock_movements/id/{id}', 'StockMovementController@searchById');
-				Route::post('/stock_movement/search', 'StockMovementController@search');
+				Route::post('/stock_movements/search', 'StockMovementController@search');
 				Route::get('/stock_movement/search', 'StockMovementController@search');
 				Route::get('/stock_movements/delete/{id}', 'StockMovementController@delete');
 
@@ -1020,19 +1043,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/build_assembly/{id}', 'AssemblyController@build');
 				Route::get('/explode_assembly/{id}', 'AssemblyController@explode');
 				Route::post('/explode_assembly/{id}', 'AssemblyController@destroy');
-				
-				Route::post('/purchase_order_lines/enquiry', 'PurchaseOrderLineController@enquiry');
-				Route::get('/purchase_order_lines/enquiry', 'PurchaseOrderLineController@enquiry');
-				Route::get('/purchase_order_lines/{id}/json', 'PurchaseOrderLineController@json');
-				Route::resource('purchase_order_lines', 'PurchaseOrderLineController', ['except'=>['index','create']]);
-				Route::get('/purchase_order_lines/index/{purchase_id}', 'PurchaseOrderLineController@index');
-				Route::get('/purchase_order_lines/create/{purchase_id}', 'PurchaseOrderLineController@create');
-				Route::get('/purchase_order_lines/id/{id}', 'PurchaseOrderLineController@searchById');
-				Route::post('/purchase_order_line/search', 'PurchaseOrderLineController@search');
-				Route::get('/purchase_order_line/search', 'PurchaseOrderLineController@search');
-				Route::get('/purchase_order_lines/delete/{id}', 'PurchaseOrderLineController@delete');
-				Route::get('/purchase_order_line/receive/{id}', 'PurchaseOrderLineController@stockReceiveLine');
-				Route::post('/purchase_order_line/receive_post/{id}', 'PurchaseOrderLineController@stockReceivePost');
 				
 				Route::resource('urgencies', 'UrgencyController');
 				Route::get('/urgencies/id/{id}', 'UrgencyController@searchById');
@@ -1045,13 +1055,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/supplier/search', 'SupplierController@search');
 				Route::get('/supplier/search', 'SupplierController@search');
 				Route::get('/suppliers/delete/{id}', 'SupplierController@delete');
-
-				Route::resource('stores', 'StoreController');
-				Route::get('/stores/id/{id}', 'StoreController@searchById');
-				Route::post('/store/search', 'StoreController@search');
-				Route::get('/store/search', 'StoreController@search');
-				Route::get('/stores/delete/{id}', 'StoreController@delete');
-				Route::get('/store/generate', 'StoreController@generate');
 
 				Route::get('/purchase_orders/{id}/json', 'PurchaseOrderController@json');
 				Route::resource('purchase_orders', 'PurchaseOrderController');

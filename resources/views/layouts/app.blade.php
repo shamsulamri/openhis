@@ -230,7 +230,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Suppliers' href="{{ url('/suppliers') }}"><i class='fa fa-industry' aria-hidden='true'></i><span class='nav-label'>Suppliers</span></a></li>
 						<li><a title='Stores' href="{{ url('/stores') }}"><i class='fa fa-archive'></i><span class='nav-label'>Stores</span></a></li>
 						<li><a title='Purchases' href="{{ url('/purchases') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchases</span></a></li>
-						<li><a title='Stock Movement' href="{{ url('/inventory_movements') }}"><i class='fa fa-truck'></i><span class='nav-label'>Bulk Movement</span></a></li>
+						<li><a title='Stock Movements' href="{{ url('/inventory_movements') }}"><i class='fa fa-truck'></i><span class='nav-label'>Stock Movements</span></a></li>
 						<li><a title='Order Sets' href="{{ url('/sets') }}"><i class='fa fa-medkit'></i><span class='nav-label'>Order Sets</span></a></li>
 						<li><a title='Product Authorizations' href="{{ url('/product_authorizations') }}"><i class='fa fa-crosshairs'></i><span class='nav-label'>Product Authorizations</span></a></li>
 						<li><a title='Loans' href="{{ url('/loans') }}"><i class='fa fa-share-square'></i><span class='nav-label'><span class='nav-label'>Loans</span></a></li>
@@ -281,6 +281,8 @@ if ($_COOKIE['his-navbar']==1) {
 						@can('product_list')
 								@cannot('module-inventory')
 								<li><a title="Products" href="{{ url('/products') }}"><i class='glyphicon glyphicon-glass'></i><span class='nav-label'>Products</a></li>
+								<li><a title='Purchases' href="{{ url('/purchases') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchases</span></a></li>
+								<li><a title='Stock Movement' href="{{ url('/inventory_movements') }}"><i class='fa fa-truck'></i><span class='nav-label'>Stock Movements</span></a></li>
 								@endcannot
 						@endcan
 
@@ -311,6 +313,7 @@ if ($_COOKIE['his-navbar']==1) {
 								<li role='separator' class='divider'></li>
                                 <li><a href="{{ url('/queue_locations') }}">Set Location</a></li>
                                 <li><a href="{{ url('/wards') }}">Set Ward</a></li>
+                                <li><a href="{{ url('/stores') }}">Set Store</a></li>
                                 <li><a href="{{ url('/appointment_services') }}">Set Appointment Book</a></li>
 								<li role='separator' class='divider'></li>
                                 <li><a href="{{ url('/manual.pdf') }}">Manual</a></li>

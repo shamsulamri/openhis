@@ -2,6 +2,10 @@
 
 @section('content')
 <h1>Product List<a href='/products/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></a></h1>
+@if ($store)
+<h3>{{ $store->store_name }}</h3>
+@endif
+<br>
 <form action='/product/search' method='post' class='form-inline'>
 	<label>Product</label>
 	<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -64,7 +68,7 @@ $allocated=0;
 						@endif
 			</td>
 			<td align='right'>
-					{{ $helper->getStockOnHand($product->product_code, $store_code) }}
+					{{ $helper->getStockOnHand($product->product_code, $store?$store->store_code:null) }}
 			</td>
 			@can('system-administrator')
 			<td align='right'>

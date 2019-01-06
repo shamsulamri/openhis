@@ -33,6 +33,7 @@
 					{{$store->store_code}}
 			</td>
 			<td align='right'>
+					<a class='btn btn-warning btn-xs' href='{{ URL::to('stores/set/'. $store->store_code) }}'>Set Store</a>
 			@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('stores/delete/'. $store->store_code) }}'>Delete</a>
 			@endcan

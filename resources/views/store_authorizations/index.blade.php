@@ -30,7 +30,9 @@
 					</a>
 			</td>
 			<td>
+					@if ($store_authorization->store)
 					{{$store_authorization->store->store_name}}
+					@endif
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('store_authorizations/delete/'. $store_authorization->id) }}'>Delete</a>

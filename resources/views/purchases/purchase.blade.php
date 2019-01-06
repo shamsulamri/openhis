@@ -16,7 +16,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
-        <label for='store_code' class='col-sm-2 control-label'>Store<span style='color:red;'> *</span></label>
+        <label for='store_code' class='col-sm-2 control-label'>Store</label>
         <div class='col-sm-10'>
             {{ Form::select('store_code', $store,null, ['id'=>'store_code','class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
@@ -62,14 +62,21 @@
 				switch (document_code) {
 						case 'goods_receive':
 								store.disabled = false;
+								store.value = '{{ $store_code }}';
 								break;
 						case 'purchase_invoice':
 								store.disabled = false;
+								store.value = '{{ $store_code }}';
+								break;
+						case 'purchase_request':
+								store.disabled = false;
+								store.value = '{{ $store_code }}';
 								break;
 						default:
 							store.disabled = true;
 				}
 		}
+
 		document.getElementById('store_code').disabled = true;
 		documentChanged();
 	</script>

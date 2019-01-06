@@ -17,6 +17,7 @@ $count=($page-1)*10;
 @endforeach
 	<div class="row">
 			<div class="col-xs-6">
+				@if ($purchase->supplier)
 				<address>
 				<strong>{{ $purchase->supplier->supplier_name }}</strong><br>
 				{{ $purchase->supplier->supplier_street_1 }}
@@ -31,11 +32,12 @@ $count=($page-1)*10;
 				{{ $purchase->supplier->state->state_name }}
 				@endif
 				</address>
+				@endif
 			</div>
 			<div class="col-xs-6">
 				<div class='text-right'>
-				<strong>Id:</strong> {{ $purchase->purchase_number }}<br>
-				<strong>Date:</strong> {{ date('d/m/Y', strtotime(str_replace('/','-',$purchase->purchase_date))) }}
+				<strong>Document Id:</strong> {{ $purchase->purchase_number }}<br>
+				<strong>Date:</strong> {{ date('d/m/Y', strtotime(str_replace('/','-',$purchase->created_at))) }}
 				</div>
 			</div>
 	</div>
@@ -108,18 +110,10 @@ $count=($page-1)*10;
 			@endif
 			</td>
 			<td @if ($purchase->purchase_posted==0) width='80' @endif align='right'>
-				@if ($purchase_line->line_quantity == 0) 
-				<div class='has-error'>
-        			<label class='control-label'>
-				@endif
 						{{ number_format($purchase_line->line_quantity) }} 
 						@if ($purchase_line->unit_code != null)
-							{{ $purchase_line->uom->unit_name }}
+							{{ $purchase_line->uom->unit_shortname }}
 						@endif
-				@if ($purchase_line->line_quantity == 0) 
-					</label>
-				@endif
-				</div>
 			</td>
 			<td @if ($purchase->purchase_posted==0) width='50' @endif align='right'>
 					{{ number_format($purchase_line->line_unit_price,2) }}
@@ -131,7 +125,15 @@ $count=($page-1)*10;
 					{{ $purchase_line->tax_code }}
 			</td>
 			<td @if ($purchase->purchase_posted==0) width='50' @else width='100' @endif align='right'>
+				@if ($purchase_line->line_subtotal_tax == 0) 
+				<div class='has-error'>
+        			<label class='control-label'>
+				@endif
 					{{ number_format($purchase_line->line_subtotal_tax,2) }}
+				@if ($purchase_line->line_quantity == 0) 
+					</label>
+				</div>
+				@endif
 			</td>
 			<!--
 			<td align='right' width='20'>

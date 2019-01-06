@@ -19,8 +19,10 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Document Number</th> 
     <th>Date</th> 
     <th>Movement</th>
+    <th>Tag</th>
     <th>Store</th> 
     <th>Description</th> 
     <th>Status</th> 
@@ -30,6 +32,9 @@
 	<tbody>
 @foreach ($inventory_movements as $inventory_movement)
 	<tr>
+			<td>
+					{{ $inventory_movement->move_number }}
+			</td>
 			<td width='10%'>
 					{{ DojoUtility::dateReadFormat($inventory_movement->created_at) }}
 			</td>
@@ -37,6 +42,9 @@
 					<a href='{{ URL::to('inventory_movements/'. $inventory_movement->move_id . '/edit') }}'>
 						{{$inventory_movement->movement->move_name}}
 					</a>
+			</td>
+			<td>
+				{{ $inventory_movement->tag? $inventory_movement->tag->tag_name: '-' }}
 			</td>
 			<td width='20%'>
 					{{$inventory_movement->store? $inventory_movement->store->store_name: '-'}}
@@ -49,9 +57,7 @@
 			</td>
 			<td align='right'>
 					<a class='btn btn-default btn-xs' href='{{ URL::to('inventory_movements/show/'.$inventory_movement->move_id.'?reason=stock') }}'>Line</a>
-					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('inventory_movements/delete/'. $inventory_movement->move_id) }}'>Delete</a>
-					@endcan
 			</td>
 	</tr>
 @endforeach

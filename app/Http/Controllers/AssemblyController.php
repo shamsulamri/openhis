@@ -19,6 +19,7 @@ use App\Loan;
 use Auth;
 use App\StockHelper;
 use App\StoreAuthorization;
+use App\Inventory;
 
 class AssemblyController extends Controller
 {
@@ -59,6 +60,114 @@ class AssemblyController extends Controller
 	}
 
 	public function build(Request $request, $id)
+	{
+			$bom = BillMaterial::where('product_code',$id)->pluck('bom_product_code');
+			/*
+			$boms = Product::whereIn('products.product_code', $bom)
+							->leftjoin('bill_materials', 'bom_product_code','=','products.product_code')
+							->get();
+			 */
+
+			$boms = BillMaterial::where('product_code', '=', $id)->get();
+
+			$flag=True;
+			$quantity = $request->quantity;
+			$product_controller = new ProductController();
+			$max = $request->max;
+			$msg="";
+
+			$helper = new StockHelper();
+
+			foreach($boms as $bom) {
+					
+					$on_hand = $helper->getStockOnHand($bom->bom_product_code, $request->store_code);
+
+					//if ($bom->product->product_on_hand<$bom->bom_quantity*$quantity) $flag=False;
+					if ($on_hand<$bom->bom_quantity*$quantity) $flag=False;
+			}
+
+			if (empty($request->store_code)) {
+					$flag=False;
+					$msg = "Store not selected"; 
+			}
+			if ($quantity<0) {
+					$flag=False;
+					$msg = "Build count error"; 
+			}
+
+			if ($quantity>$max) {
+					$flag=False;
+					$msg = "Build cannot be greater than ".$max;
+			}
+
+			if ($flag) {
+
+				$product = Product::find($id);
+
+				$inventory = new Inventory();
+				$inventory->move_code = 'adjustment';
+				$inventory->move_description = 'build';
+				$inventory->store_code = $request->store_code;
+				$inventory->product_code = $product->product_code;
+				$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
+				$inventory->inv_physical_quantity = $quantity;
+				$inventory->unit_code = $product->unit_code;
+				$inventory->uom_rate = $product->unit()->uom_rate;
+				$inventory->inv_unit_cost = $product->unit()->uom_cost;
+				$inventory->inv_posted = 1;
+				$inventory->inv_quantity = $quantity;
+				$inventory->inv_subtotal = $inventory->inv_unit_cost*$inventory->inv_quantity;
+				$inventory->save();
+
+				foreach($boms as $bom) {
+						$product = Product::find($bom->bom_product_code);
+						$inventory = new Inventory();
+						$inventory->move_code = 'adjustment';
+						$inventory->move_description = 'build';
+						$inventory->store_code = $request->store_code;
+						$inventory->product_code = $product->product_code;
+						$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
+						$inventory->inv_physical_quantity = $quantity*$bom->bom_quantity;
+						$inventory->unit_code = $product->unit_code;
+						$inventory->uom_rate = $product->unit()->uom_rate;
+						$inventory->inv_unit_cost = $product->unit()->uom_cost;
+						$inventory->inv_posted = 1;
+						$inventory->inv_quantity = -$inventory->inv_physical_quantity;
+						$inventory->inv_subtotal = $inventory->inv_unit_cost*$inventory->inv_quantity;
+						$inventory->save();
+
+				}
+
+				Session::flash('message', 'Product built.');
+				return redirect('/build_assembly/'.$id);
+			} else {
+					if (empty($request->store_code)) {
+						Session::flash('message', 'Store not defined.');
+					} else {
+						Session::flash('message', 'Not enough item to build');
+					}
+					Session::flash('message', $msg);
+					$product = Product::findOrFail($id);
+
+					$stores = StoreAuthorization::where('author_id', Auth::user()->author_id)
+							->select('store_name', 'store_authorizations.store_code')
+							->leftjoin('stores as b', 'b.store_code','=', 'store_authorizations.store_code')
+							->orderBy('store_name')
+							->lists('store_name', 'store_code');
+
+					return view('assemblies.index', [
+							'product'=>$product,
+							'boms'=>$boms,
+							'quantity'=>$request->quantity,
+							'store' => $stores,
+							'store_code'=>$request->store_code,
+							'stock_helper'=>new StockHelper(),
+					]);
+			}
+				
+	}
+
+	public function build2(Request $request, $id)
 	{
 			$bom = BillMaterial::where('product_code',$id)->pluck('bom_product_code');
 			/*
@@ -162,11 +271,12 @@ class AssemblyController extends Controller
 	public function explode(Request $request, $id)
 	{
 			$product = Product::find($id);
+			$store = Store::find(Auth::user()->defaultStore($request));
 
 			return view('assemblies.explode', [
 					'product'=>$product,
-					'store'=>Auth::user()->storeList()->prepend('',''),
-					'store_code'=>Auth::user()->defaultStore($request),
+					'stores'=>Auth::user()->storeList()->prepend('',''),
+					'store'=>$store,
 					'stock_helper'=>new StockHelper(),
 			]);
 	}
@@ -180,51 +290,47 @@ class AssemblyController extends Controller
 					->get();
 			$product = Product::find($id);
 
-			$stock_helper = new StockHelper();
-			$on_hand = $stock_helper->getStockCountByStore($product->product_code, $request->store_code);
+			$helper = new StockHelper();
+			$on_hand = $helper->getStockOnHand($product->product_code, $request->store_code);
 			if ($quantity>$on_hand) {
 					Session::flash('message', 'Quantity more than on hand.');
 					return redirect('/explode_assembly/'.$id)
 							->withInput();
 			}
 
-
-			$stock = new Stock();
-			$stock->move_code='explode';
-			$stock->store_code = $request->store_code;
-			$stock->product_code = $id;
-			$stock->stock_quantity = -1*$quantity;
-			$stock->stock_datetime = DojoUtility::now(); 
-			$stock->stock_description = "Explode Assembly: ".$quantity;
-
-			$product = Product::find($id);
-			$stock->stock_value = $product->product_average_cost*$stock->stock_quantity;
-
-			$stock->save();
-			$stock_id = $stock->stock_id;
+				$inventory = new Inventory();
+				$inventory->move_code = 'adjustment';
+				$inventory->move_description = 'explode';
+				$inventory->store_code = $request->store_code;
+				$inventory->product_code = $product->product_code;
+				$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
+				$inventory->inv_physical_quantity = $quantity;
+				$inventory->unit_code = $product->unit_code;
+				$inventory->uom_rate = $product->unit()->uom_rate;
+				$inventory->inv_unit_cost = $product->unit()->uom_cost;
+				$inventory->inv_posted = 1;
+				$inventory->inv_quantity = -$quantity;
+				$inventory->inv_subtotal = $inventory->inv_unit_cost*$inventory->inv_quantity;
+				$inventory->save();
 
 			foreach ($bom_products as $bom_product) {
-
-						$stock = new Stock();
-						$stock->move_code='adjust';
-						$stock->store_code = $request->store_code;
-						$stock->product_code = $bom_product->bom_product_code;
-						$stock->stock_quantity = $quantity*$bom_product->bom_quantity;
-						$stock->stock_datetime = DojoUtility::now(); 
-						$stock->stock_description = "Explode Assembly: ".$id;
-						$stock->username = Auth::user()->username;
-						$stock->stock_tag = $stock_id;
-
 						$product = Product::find($bom_product->bom_product_code);
-						$stock->stock_value = $product->product_average_cost*$stock->stock_quantity;
-						
-						$stock->save();
-
-						$product_controller->updateTotalOnHand($stock->product_code);
+						$inventory = new Inventory();
+						$inventory->move_code = 'adjustment';
+						$inventory->move_description = 'explode';
+						$inventory->store_code = $request->store_code;
+						$inventory->product_code = $product->product_code;
+						$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
+						$inventory->inv_physical_quantity = $bom_product->bom_quantity;
+						$inventory->unit_code = $product->unit_code;
+						$inventory->uom_rate = $product->unit()->uom_rate;
+						$inventory->inv_unit_cost = $product->unit()->uom_cost;
+						$inventory->inv_posted = 1;
+						$inventory->inv_quantity = $inventory->inv_physical_quantity;
+						$inventory->inv_subtotal = $inventory->inv_unit_cost*$inventory->inv_quantity;
+						$inventory->save();
 			}
 
-
-				$product_controller->updateTotalOnHand($id);
 			Session::flash('message', 'Product exploded.');
 			return redirect('/explode_assembly/'.$id);
 	}

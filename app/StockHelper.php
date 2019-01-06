@@ -17,6 +17,7 @@ class StockHelper
 			$value = Inventory::where('product_code',$product_code)
 						->where('inv_posted', 1);
 
+
 			if (!empty($store_code)) {
 					$value = $value->where('store_code', $store_code);
 			}
@@ -25,13 +26,59 @@ class StockHelper
 					$value = $value->where('inv_batch_number', $batch_number);
 			}
 
+			Log::info($product_code);
+			Log::info($store_code);
 			$value = $value->sum('inv_quantity');
 			
 			if (empty($value)) $value =0;
 
-			Log::info($value);
-
 			return floatval($value);
+	}
+
+	public function getStockOnPurchase($product_code, $store_code = null, $batch_number = null)
+	{
+			return 99;
+	}
+
+	public function getStockOnIssue($product_code, $store_code = null, $batch_number = null)
+	{
+			return 99;
+	}
+
+	public function getStockAverageCost($product_code, $store_code = null, $batch_number = null)
+	{
+			$value = Inventory::where('product_code',$product_code)
+						->where('inv_posted', 1);
+
+			if (!empty($store_code)) {
+					$value = $value->where('store_code', $store_code);
+			}
+
+			if (!empty($batch_number)) {
+					$value = $value->where('inv_batch_number', $batch_number);
+			}
+
+			$value = $value->sum('inv_subtotal')/$value->sum('inv_quantity')?:0;
+			$value = number_format($value,2);
+			return $value;
+	}
+
+	public function getStockTotalCost($product_code, $store_code = null, $batch_number = null)
+	{
+			$value = Inventory::where('product_code',$product_code)
+						->where('inv_posted', 1);
+
+			if (!empty($store_code)) {
+					$value = $value->where('store_code', $store_code);
+			}
+
+			if (!empty($batch_number)) {
+					$value = $value->where('inv_batch_number', $batch_number);
+			}
+
+			$value = $value->sum('inv_subtotal')?:0;
+			$value = number_format($value,2);
+			return $value;
 	}
 
 	public function getStockAllocated($product_code, $store_code=null,$encounter_id=null) 
@@ -74,6 +121,14 @@ class StockHelper
 
 			return floatval($allocated);
 
+	}
+
+	public function getStockAvailable($product_code, $store_code=null)
+	{
+			$on_hand = $this->getStockOnHand($product_code, $store_code);
+			$allocated = $this->getStockAllocated($product_code, $store_code);
+
+			return $on_hand - $allocated;
 	}
 
 	public function getUOM($product_code)

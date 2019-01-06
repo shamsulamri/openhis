@@ -7,7 +7,7 @@
 <a class='btn btn-default' href='/product_searches?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Products</a>
 @else
 <a class='btn btn-default' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
-<a class='btn btn-default' href='/purchases/master_document?reason=stock&move_id={{ $movement->move_id }}'>Documents</a>
+<a class='btn btn-default' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
 <a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
 @endif
 <br>
@@ -67,11 +67,15 @@
 					{{$purchase_line->product_code}}
 			</td>
 			<td width='10'>
-					{{ $purchase_line->purchase->purchase_number }}
+					{{ $purchase_line->purchase_number }}
 			</td>
 			<td width='80' align='right'>
 					@if ($reason == 'purchase')
-					{{ number_format($balance_quantity) }} 
+						@if ($purchase_line->purchase->document_code == 'purchase_request')
+							{{ number_format($purchase_line->line_quantity) }} 
+						@else
+							{{ number_format($purchase_line->line_quantity) }} 
+						@endif
 					@else
 					{{ number_format($purchase_line->line_quantity) }} 
 					@endif

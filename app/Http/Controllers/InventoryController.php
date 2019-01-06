@@ -18,6 +18,7 @@ use App\StockHelper;
 use App\InventoryMovement;
 use App\InventoryBatch;
 use Schema;
+use Auth;
 
 class InventoryController extends Controller
 {
@@ -38,7 +39,7 @@ class InventoryController extends Controller
 			]);
 	}
 
-	public function detail($id)
+	public function detail(Request $request, $id)
 	{
 			$movement =InventoryMovement::find($id);
 			$inventories = Inventory::orderBy('move_code')
@@ -50,6 +51,7 @@ class InventoryController extends Controller
 					'helper'=>new StockHelper(),
 					'move_id'=>$id,
 					'movement'=>$movement,
+					'submit'=>$request->submit,
 			]);
 	}
 
@@ -186,7 +188,7 @@ class InventoryController extends Controller
 			Session::flash('message', 'Record Deleted.');
 		}
 
-		return redirect('/inventories/detail/'.$move_id);
+		return redirect('/inventories/detail/'.$move_id.'?submit='.$request->button);
 	}
 
 	public function saveForm(Request $request, $move_id)
@@ -284,6 +286,38 @@ class InventoryController extends Controller
 
 			Session::flash('message', 'Transaction posted.');
 			return redirect('/inventory_movements');
+	}
+
+	public function enquiry(Request $request)
+	{
+			$inventories = Inventory::orderBy('inv_id', 'desc')
+							->leftJoin('products as b', 'b.product_code', '=', 'inventories.product_code')
+							->where('inv_posted', 1);
+
+			/*** Store ***/
+			if (!empty($request->store_code)) {
+					$inventories = $inventories->where('store_code', $request->store_code);
+			}
+
+			/*** Seach Param ***/
+			if (!empty($request->search)) {
+					$inventories = $inventories->where(function ($query) use ($request) {
+							$search_param = trim($request->search, " ");
+								$query->where('product_name','like','%'.$search_param.'%')
+								->orWhere('product_name_other','like','%'.$search_param.'%')
+								->orWhere('b.product_code','like','%'.$search_param.'%');
+					});
+			}
+
+
+			$inventories = $inventories->paginate($this->paginateValue);
+
+			return view('inventories.enquiry', [
+				'inventories'=>$inventories,
+				'store'=>Auth::user()->storeList()->prepend('',''),
+				'store_code'=>$request->store_code,
+				'search'=>$request->search,
+			]);
 	}
 
 }

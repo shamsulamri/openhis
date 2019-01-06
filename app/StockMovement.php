@@ -13,6 +13,7 @@ class StockMovement extends Model
 	protected $fillable = [
 				'move_code',
 				'move_name',
+				'move_prefix',
 				'gl_code',
 		];
 	
@@ -24,6 +25,7 @@ class StockMovement extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'move_name'=>'required',
+				'move_prefix'=>'required',
 			];
 
 			

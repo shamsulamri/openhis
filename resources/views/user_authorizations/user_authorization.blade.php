@@ -85,6 +85,13 @@
             @if ($errors->has('product_sale_edit')) <p class="help-block">{{ $errors->first('product_sale_edit') }}</p> @endif
         </div>
     </div>
+
+    <div class='form-group  @if ($errors->has('purchase_request')) has-error @endif'>
+        <div class='col-sm-offset-5'>
+            {{ Form::checkbox('purchase_request', '1') }} <label>Manage Purchase Request</label>
+            @if ($errors->has('purchase_request')) <p class="help-block">{{ $errors->first('purchase_request') }}</p> @endif
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('module_ward')) has-error @endif'>
         <label for='module_ward' class='col-sm-4 control-label'>Ward Module</label>
         <div class='col-sm-8'>
@@ -171,19 +178,11 @@
 			@if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
 		</div>
     </div>
-
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
         {{ Form::label('location_code', 'Location',['class'=>'col-sm-4 control-label']) }}
 		<div class='col-sm-8'>
 			{{ Form::select('location_code', $location, null, ['class'=>'form-control','maxlength'=>'10']) }}
 			@if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif
-		</div>
-    </div>
-    <div class='form-group  @if ($errors->has('identification_prefix')) has-error @endif'>
-        {{ Form::label('identification_prefix', 'Identification Prefix',['class'=>'col-sm-4 control-label']) }}
-		<div class='col-sm-8'>
-            {{ Form::text('identification_prefix', null, ['class'=>'form-control','placeholder'=>'Purchase order number prefix','maxlength'=>'20']) }}
-			@if ($errors->has('identification_prefix')) <p class="help-block">{{ $errors->first('identification_prefix') }}</p> @endif
 		</div>
     </div>
 	<br>

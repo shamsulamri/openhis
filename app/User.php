@@ -131,17 +131,18 @@ class User extends Authenticatable
 	public function defaultStore($request) 
 	{
 			$default_store=null;
+			$store = null;
 			if ($this->authorization->store_code) {
 				$default_store = $this->authorization->store_code;
+			} else {
+					if ($this->authorization->module_inventory==1) {
+							$ward_code = $request->cookie('ward');
+							$ward = Ward::find($ward_code);
+							if ($ward) {
+								$default_store = $ward->store_code;
+							} 
+					} 		
 			}
-
-			if ($this->authorization->module_inventory==0) {
-					$ward_code = $request->cookie('ward');
-					$ward = Ward::find($ward_code);
-					if ($ward) {
-						$default_store = $ward->store_code;
-					} 
-			} 		
 
 			return $default_store;
 	}

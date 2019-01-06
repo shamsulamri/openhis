@@ -145,4 +145,14 @@ class StoreController extends Controller
 			}
 			return "Ok";
 	}
+
+	public function setStore($id) 
+	{
+			$store = Store::find($id);
+			Session::flash('message', 'The store has been set to '.$store->store_name);
+
+			return redirect('/stores')
+					->withCookie(cookie('store',$id, 2628000));
+					//->withCookie(\Cookie::forget('queue_location'));
+	}
 }

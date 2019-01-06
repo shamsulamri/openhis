@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+//use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
@@ -11,8 +11,8 @@ use DB;
 
 class PurchaseLine extends Model
 {
-	use SoftDeletes;
-	protected $dates = ['deleted_at'];
+	//use SoftDeletes;
+	//protected $dates = ['deleted_at'];
 
 	protected $table = 'purchase_lines';
 	protected $fillable = [

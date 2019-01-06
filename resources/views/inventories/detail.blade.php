@@ -13,17 +13,17 @@
 	</th>
 @endif
     <th>Product</th>
-    <th><div align='center'>Book Quantity</div></th> 
-    <th><div align='center'>Physical Quantity</div></th> 
-    <th><div align='center'>UOM</div></th> 
-    <th><div align='center'>Batch Number</div></th> 
-    <th><div align='center'>Expiry Date</div></th> 
+    <th><div align='right'>Book Quantity</div></th> 
+    <th><div align='right'>Physical Quantity</div></th> 
+    <th><div align='right'>Unit of Measure</div></th> 
+    <th><div align='right'>Batch Number</div></th> 
+    <th><div align='right'>Expiry Date</div></th> 
 	</tr>
   </thead>
 	<tbody>
-<form method='POST' action='/inventories/submit/{{ $move_id }}' class='form-horizontal'>
+<form id='myform' method='POST' action='/inventories/submit/{{ $move_id }}' class='form-horizontal'>
 @if ($movement->move_posted == 0)
-		{{ Form::submit('Save', ['name'=>'button', 'class'=>'btn btn-primary']) }}
+	{{ Form::submit('Save', ['onkeypress'=>'submitForm()', 'name'=>'button', 'class'=>'btn btn-primary']) }}
 <br>
 <br>
 @endif
@@ -39,26 +39,28 @@
 					<br>
 					{{ $inventory->product_code }}
 			</td>
-			<td width='15%' align='center'>
+			<td width='13%' align='center' >
 				@if ($movement->move_posted==0) {{ Form::label('book_'.$inventory->inv_id, $inventory->inv_book_quantity ?:'-', ['class'=>'form-control']) }} @else {{ $inventory->inv_book_quantity }} @endif
 			</td>
-			<td width='15%' align='center'>
+			<td width='13%' align='center'>
 				@if ($movement->move_posted==0) 
-            		{{ Form::text('physical_'.$inventory->inv_id, $inventory->inv_physical_quantity ?:0, ['class'=>'form-control']) }}
+					<div class='@if ($inventory->inv_physical_quantity>$inventory->inv_book_quantity && $inventory->inv_book_quantity>0) has-error @endif'>
+            		{{ Form::text('physical_'.$inventory->inv_id, $inventory->inv_physical_quantity ?:0, ['onchange'=>'quantityChanged()','class'=>'form-control']) }}
+					</div>
 				@else
 					{{ $inventory->inv_physical_quantity }}
 				@endif
 			</td>
-			<td width='15%' align='center'>
+			<td width='13%' align='center'>
 				@if ($movement->move_posted==0) 
-					{{ Form::select('unit_'.$inventory->inv_id, $helper->getUOM($inventory->product_code),$inventory->unit_code, ['id'=>'gender_code','class'=>'form-control','maxlength'=>'1']) }}
+					{{ Form::select('unit_'.$inventory->inv_id, $helper->getUOM($inventory->product_code),$inventory->unit_code, ['onchange'=>'quantityChanged()','id'=>'gender_code','class'=>'form-control','maxlength'=>'1']) }}
 				@else
 					{{ $inventory->unit->unit_name }}
 				@endif
 			</td>
-			<td align='center'>
+			<td width='15%' align='center'>
 				@if ($movement->move_posted==0) 
-            		{{ Form::text('batch_'.$inventory->inv_id, $inventory->inv_batch_number, ['class'=>'form-control']) }}
+            		{{ Form::text('batch_'.$inventory->inv_id, $inventory->inv_batch_number, ['onchange'=>'quantityChanged()','class'=>'form-control']) }}
 				@else
 					{{ $inventory->inv_batch_number }}
 				@endif
@@ -66,7 +68,7 @@
 			<td align='center'>
 				<div class="input-group date">
 				@if ($movement->move_posted==0) 
-						<input data-mask="99/99/9999" name="inv_expiry_date_{{ $inventory->inv_id }}" id="inv_expiry_date_{{ $inventory->inv_id }}" type="text" class="form-control" value='{{ $inventory->batch()?$inventory->batch()->batch_expiry_date:'' }}'>
+						<input data-mask="99/99/9999" name="inv_expiry_date_{{ $inventory->inv_id }}" id="inv_expiry_date_{{ $inventory->inv_id }}" type="text" class="form-control" value='{{ $inventory->batch()?$inventory->batch()->batch_expiry_date:'' }}' onchange="quantityChanged()">
 						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 				@else
 					{{ $inventory->batch()?$inventory->batch()->batch_expiry_date:'' }}
@@ -103,6 +105,10 @@
 	{{ $inventories->total() }} records found.
 @else
 	No record found.
+	<script>
+			parent.resetPost();
+			parent.disableCheck(true);
+	</script>
 @endif
 <script>
 	function toggleCheck() {
@@ -137,5 +143,20 @@
 				autoclose: true
 		});
 	@endforeach
+
+	function submitForm() {
+			parent.disableCheck(false);
+			//document.getElementById('myform').submit();
+	}
+
+	function quantityChanged() {
+			parent.resetPost();
+			parent.disableCheck(true);
+	}
+
+
+	@if ($submit=='Save')
+		submitForm();
+	@endif
 </script>
 @endsection

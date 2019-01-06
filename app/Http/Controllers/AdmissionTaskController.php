@@ -340,11 +340,6 @@ class AdmissionTaskController extends Controller
 									$order->store_code = $store_code;
 									$order->location_code = null;
 									$order->save();
-
-									if ($order->product->product_stocked==1) {
-											$stock_helper = new StockHelper();
-											$stock_helper->updateStockBatch($order);
-									}
 							} 
 					}
 					/*

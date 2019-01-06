@@ -1,7 +1,7 @@
 @if ($product)
 <?php 
-$on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_code);
-$allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $store_code); 
+$on_hand = $stock_helper->getStockOnHand($product->product_code, $store_code);
+$allocated = $stock_helper->getStockAllocated($product->product_code, $store_code); 
 ?>
 <div class='form-horizontal'>
 	<!-- Information -->
@@ -37,9 +37,9 @@ $allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $st
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group'>
-						{{ Form::label('form_code', 'Conversion Unit',['class'=>'col-sm-4 control-label']) }}
+						{{ Form::label('unit_code', 'Unit',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('form_code', $product->product_conversion_unit?:'-', ['class'=>'form-control']) }}
+            				{{ Form::label('unit_code', $product->unit->unit_name?:'-', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -49,25 +49,17 @@ $allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $st
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group'>
-						<label for='category_code' class='col-sm-4 control-label'>Purchase Unit</label>
+						<label for='average_cost' class='col-sm-4 control-label'>Average Cost</label>
 						<div class='col-sm-8'>
-							@if ($product->purchaseUnitMeasure)
-            				{{ Form::label('category_code', $product->purchaseUnitMeasure->unit_name?:"Unit", ['class'=>'form-control']) }}
-							@else
-            				{{ Form::label('form_code', "-", ['class'=>'form-control']) }}
-							@endif
+            				{{ Form::label('average_cost', $product->product_average_cost, ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group'>
-						{{ Form::label('form_code', 'Sale Unit',['class'=>'col-sm-4 control-label']) }}
+						{{ Form::label('form_code', 'Total Cost',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							@if ($product->unitMeasure)
-            				{{ Form::label('form_code', $product->unitMeasure->unit_name?:"Unit", ['class'=>'form-control']) }}
-							@else
-            				{{ Form::label('form_code', "-", ['class'=>'form-control']) }}
-							@endif
+            				{{ Form::label('form_code', number_format($on_hand*$product->product_average_cost,2), ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -83,28 +75,9 @@ $allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $st
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group'>
-						<label for='average_cost' class='col-sm-4 control-label'>Average Cost</label>
-						<div class='col-sm-8'>
-            				{{ Form::label('average_cost', $product->product_average_cost, ['class'=>'form-control']) }}
-						</div>
-					</div>
-			</div>
-	</div>
-
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group'>
 						{{ Form::label('unit_code', 'Allocated',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
             				{{ Form::label('', $allocated?:' 0 ', ['class'=>'form-control']) }}
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group'>
-						{{ Form::label('form_code', 'Total Cost',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-            				{{ Form::label('form_code', number_format($on_hand*$product->product_average_cost,2), ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -128,7 +101,7 @@ $allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $st
 					<div class='form-group  '>
 						{{ Form::label('status_code', 'On Purchase',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('status_code', floatval($stock_helper->onPurchase($product->product_code))?:' 0 ', ['class'=>'form-control']) }}
+            				{{ Form::label('status_code', floatval($stock_helper->getStockOnPurchase($product->product_code))?:' 0 ', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -136,7 +109,7 @@ $allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $st
 					<div class='form-group'>
 						{{ Form::label('form_code', 'On Transfer',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('status_code', floatval($stock_helper->onTransfer($product->product_code, $store_code))?:' 0 ', ['class'=>'form-control']) }}
+            				{{ Form::label('status_code', floatval($stock_helper->getStockOnIssue($product->product_code, $store_code))?:' 0 ', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -146,7 +119,7 @@ $allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $st
 					<div class='form-group  '>
 						{{ Form::label('status_code', 'In Assembly',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('status_code', floatval($stock_helper->onPurchase($product->product_code))?:' 0 ', ['class'=>'form-control']) }}
+            				{{ Form::label('status_code', floatval($stock_helper->getStockOnPurchase($product->product_code))?:' 0 ', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>

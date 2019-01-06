@@ -8,12 +8,21 @@
     </div>
 
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
-        <label for='store_code' class='col-sm-2 control-label'>Store</label>
+        <label for='store_code' class='col-sm-2 control-label'>Store<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::select('store_code', $store,null, ['class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
         </div>
     </div>
+
+    <div class='form-group  @if ($errors->has('tag_code')) has-error @endif'>
+        <label for='tag_code' class='col-sm-2 control-label'>Tag</label>
+        <div class='col-sm-10'>
+            {{ Form::select('tag_code', $tag,null, ['class'=>'form-control','maxlength'=>'20']) }}
+            @if ($errors->has('tag_code')) <p class="help-block">{{ $errors->first('tag_code') }}</p> @endif
+        </div>
+    </div>
+
 
     <div class='form-group  @if ($errors->has('move_description')) has-error @endif'>
         {{ Form::label('move_description', 'Description',['class'=>'col-sm-2 control-label']) }}

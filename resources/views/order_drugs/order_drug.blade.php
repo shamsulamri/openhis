@@ -18,7 +18,7 @@
 @endif
 
 @if (!empty($store))
-	<div class="alert @if ($stock_count==0) alert-danger @else alert-success @endif">
+	<div class="alert @if ($stock_count<=0) alert-danger @else alert-success @endif">
 			Available: {{ $stock_count }} {{ '('.$store->store_name.')' }} 
 	</div>
 @endif

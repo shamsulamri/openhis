@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+//use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
@@ -11,13 +11,16 @@ use App\InventoryBatch;
 
 class Inventory extends Model
 {
-	use SoftDeletes;
-	protected $dates = ['deleted_at'];
+	//use SoftDeletes;
+	//protected $dates = ['deleted_at'];
 
 	protected $table = 'inventories';
 	protected $fillable = [
 				'line_id',
 				'order_id',
+				'move_id',
+				'move_reference',
+				'move_description',
 				'move_code',
 				'store_code',
 				'product_code',
@@ -45,11 +48,15 @@ class Inventory extends Model
 				'product_code'=>'required',
 				'inv_quantity'=>'required',
 				'inv_subtotal'=>'required',
+				'inv_physical_quantity'=>'less_than_or_equal:inv_book_quantity',
+				//'store_code'=>'required_if:document_code,==,goods_receive|required_if:document_code,==,purchase_invoice',
 			];
 
+
         	if ($method=='') {
+				$rules['inv_physical_quantity'] = 'less_than_or_equal:inv_book_quantity';
         	    $rules['move_code'] = 'required';
-			}
+			} 
 			
 			
 			$messages = [
@@ -69,6 +76,16 @@ class Inventory extends Model
 	public function getInvExpiryDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
+	}
+
+	public function movement()
+	{
+		return $this->belongsTo('App\StockMovement', 'move_code');
+	}
+
+	public function store()
+	{
+		return $this->belongsTo('App\Store', 'store_code');
 	}
 
 	public function product()

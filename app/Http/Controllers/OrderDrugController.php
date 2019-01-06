@@ -215,8 +215,8 @@ class OrderDrugController extends Controller
 					}
 			}
 
-			$allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $order->store_code, $order_drug->order->encounter_id);
-			$on_hand = $stock_helper->getStockCountByStore($product->product_code, $order->store_code);
+			$allocated = $stock_helper->getStockAllocated($product->product_code, $order->store_code);
+			$on_hand = $stock_helper->getStockOnHand($product->product_code, $order->store_code);
 
 
 			$valid=null;
@@ -236,7 +236,7 @@ class OrderDrugController extends Controller
 			if ($valid->passes()) {
 					$order->save();
 					$order_drug->save();
-					OrderHelper::createDrugServings($order_drug);
+					//OrderHelper::createDrugServings($order_drug);
 
 					$order = Order::find($order_drug->order_id);
 					$order->post_id=0;

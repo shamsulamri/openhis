@@ -18,9 +18,11 @@ class InventoryMovement extends Model
 				'purchase_id',
 				'user_id',
 				'move_code',
+				'tag_code',
 				'store_code',
 				'store_code_transfer',
 				'move_description',
+				'move_number',
 				'move_posted'];
 	
     protected $guarded = ['move_id'];
@@ -31,11 +33,12 @@ class InventoryMovement extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'move_code'=>'required',
-				'store_code'=>'required_if:move_code,==,transfer',
+				'store_code'=>'required',
 				'store_code_transfer'=>'required_if:move_code,==,transfer',
 			];
 
 			
+			//'store_code'=>'required_if:move_code,==,transfer',
 			
 			$messages = [
 				'required' => 'This field is required'
@@ -54,14 +57,20 @@ class InventoryMovement extends Model
 	{
 		return $this->belongsTo('App\Store', 'store_code_transfer', 'store_code');
 	}
+
 	public function movement()
 	{
 		return $this->belongsTo('App\StockMovement', 'move_code');
 	}
-	
-	public function purchase()
+
+	public function document()
 	{
-		return $this->belongsTo('App\PurchaseOrder', 'purchase_id');
+		return $this->belongsTo('App\PurchaseDocument', 'document_code','move_code');
+	}
+
+	public function tag()
+	{
+		return $this->belongsTo('App\StockTag', 'tag_code');
 	}
 
 	public function user()
