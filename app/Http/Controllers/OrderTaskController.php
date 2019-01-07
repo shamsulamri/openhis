@@ -25,7 +25,6 @@ use App\StockBatch;
 use App\OrderDrug;
 use App\OrderHelper;
 use App\DojoUtility;
-use App\StockHelper;
 use App\Inventory;
 use App\ProductUom;
 
@@ -174,7 +173,6 @@ class OrderTaskController extends Controller
 					'order_helper'=> new OrderHelper(),
 					'store'=>$store,
 					'consultation_id'=>$consultation->consultation_id,
-					'helper'=>new StockHelper(),
 			]);
 	}
 	public function edit($id) 
@@ -271,7 +269,7 @@ class OrderTaskController extends Controller
 
 						$total_supply = 0;
 						$batches = $helper->getBatches($order->product_code)?:null;
-						if ($batches) {
+						if ($batches->count()>0) {
 								foreach($batches as $batch) {
 										$unit_supply = $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
 										if ($unit_supply>0) {
@@ -289,18 +287,35 @@ class OrderTaskController extends Controller
 
 												$inventory->uom_rate =  $uom->uom_rate;
 												$inventory->inv_unit_cost =  $uom->uom_cost;
-												$inventory->inv_quantity = $unit_supply*$uom->uom_rate;
+												$inventory->inv_quantity = -($unit_supply*$uom->uom_rate);
 												$inventory->inv_physical_quantity = $unit_supply;
 												$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
 												$inventory->move_code = 'sale';
 												$inventory->inv_batch_number = $batch->inv_batch_number;
 												$inventory->inv_posted = 1;
-												$inventory->inv_quantity = -($inventory->inv_quantity);
 												$inventory->save();
 										}
 								}
 						} else {
 							$total_supply += $request["quantity_".$order->order_id];
+							$inventory = new Inventory();
+							$inventory->order_id = $order->order_id;
+							$inventory->store_code = $store_code;
+							$inventory->product_code = $order->product_code;
+							$inventory->unit_code = $order->product->unit_code;
+
+							$uom = ProductUom::where('product_code', $order->product_code)
+									->where('unit_code', $inventory->unit_code)
+									->first();
+
+							$inventory->uom_rate =  $uom->uom_rate;
+							$inventory->inv_unit_cost =  $uom->uom_cost;
+							$inventory->inv_quantity = -($total_supply*$uom->uom_rate);
+							$inventory->inv_physical_quantity = $total_supply;
+							$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
+							$inventory->move_code = 'sale';
+							$inventory->inv_posted = 1;
+							$inventory->save();
 						}
 
 						/** Completed order **/

@@ -91,7 +91,7 @@ class StockHelper
 					->whereNull('cancel_id');
 
 			if (!empty($encounter_id)) {
-					$allocated = $allocated->where('encounter_id','<>', $encounter_id);
+					$allocated = $allocated->where('orders.encounter_id','<>', $encounter_id);
 			}
 
 			if (!empty($store_code)) {
@@ -165,6 +165,7 @@ class StockHelper
 							->groupBy('unit_code')
 							->orderBy('batch_expiry_date')
 							->where('inventories.unit_code', 'unit')
+							->whereNotNull('inv_batch_number')
 							->get();
 
 			Log::info($batches);

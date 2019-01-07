@@ -49,11 +49,12 @@ class BillItemController extends Controller
 	public function bedBills($encounter_id) {
 			$encounter = Encounter::find($encounter_id);
 			$sql = "
-				select bed_code, bed_stop, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, product_code, c.tax_code, tax_rate, product_sale_price, block_room
+				select bed_code, bed_stop, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, b.product_code, c.tax_code, tax_rate, uom_price as product_sale_price, block_room
 				from bed_charges as a
 				left join products as b on (a.bed_code = product_code)
 				left join tax_codes as c on (c.tax_code = b.product_output_tax)
 				left join discharges as d on (d.encounter_id = a.encounter_id)
+				left join product_uoms as g on (g.product_code = b.product_code and g.unit_code = b.unit_code)
 				where a.encounter_id=%d
 			";
 
@@ -222,14 +223,13 @@ class BillItemController extends Controller
 			$base_sql = "
 			select a.product_code, sum(inv_physical_quantity) as total_quantity, d.tax_code, d.tax_rate, inv_subtotal as subtotal, a.order_id, order_discount, uom_price, a.unit_code
 					from inventories a
-					left join orders b on (a.order_id = a.order_id)
+					left join orders b on (b.order_id = a.order_id)
 					left join products c on (c.product_code = b.product_code)
 					left join tax_codes d on (d.tax_code = c.product_output_tax)
 					left join encounters e on (e.encounter_id = b.encounter_id)
 					left join bill_items as f on (f.encounter_id = b.encounter_id and f.product_code = b.product_code)
 					left join product_uoms as g on (g.product_code = c.product_code and g.unit_code = a.unit_code)
 					where order_completed = 1
-					and order_completed = 1
 					and bill_id is null
 					%s
 					and e.patient_id = %d
@@ -247,7 +247,6 @@ class BillItemController extends Controller
 						$sql = sprintf($base_sql, "and product_non_claimable<>1", $patient_id);
 					}
 			}
-			Log::info($sql);
 			
 			$orders = DB::select($sql);
 			
@@ -362,7 +361,7 @@ class BillItemController extends Controller
 	public function multipleOrders($id) 
 	{
 			$sql = sprintf("
-				select count(a.order_id) as order_quantity_supply, b.product_code, d.tax_code, tax_rate, c.product_sale_price, d.tax_code, d.tax_rate, profit_multiplier
+				select count(a.order_id) as order_quantity_supply, b.product_code, d.tax_code, tax_rate, uom_price as product_sale_price, d.tax_code, d.tax_rate, profit_multiplier
 				from order_multiples a
 				left join orders b on (b.order_id = a.order_id)
 				left join products c on (c.product_code = b.product_code)
@@ -370,12 +369,13 @@ class BillItemController extends Controller
 				left join encounters as g on (g.encounter_id=b.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				left join product_uoms as j on (j.product_code = b.product_code and j.unit_code = 'unit')
 				where b.encounter_id=%d
 				and c.deleted_at is null
 				and a.order_completed=1
-				group by a.order_id
+				group by a.order_id, uom_price
 			", $id);
-			
+
 			$orders = DB::select($sql);
 
 			foreach ($orders as $order) {
@@ -404,7 +404,7 @@ class BillItemController extends Controller
 	public function forms($encounter_id, $non_claimable = 2)
 	{
 			$base_sql = "
-				select count(*) as order_quantity_supply, c.product_code, d.tax_code, tax_rate, c.product_sale_price, d.tax_code, d.tax_rate, profit_multiplier, product_non_claimable
+				select count(*) as order_quantity_supply, c.product_code, d.tax_code, tax_rate, uom_price as product_sale_price, d.tax_code, d.tax_rate, profit_multiplier, product_non_claimable
 				from form_values a
 				left join forms b on (b.form_code = a.form_code)
 				left join products c on (c.form_code = b.form_code)
@@ -412,6 +412,7 @@ class BillItemController extends Controller
 				left join encounters as g on (g.encounter_id=a.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				left join product_uoms as j on (j.product_code = c.product_code and j.unit_code = 'unit')
 				where a.encounter_id=%d
 				and c.deleted_at is null
 				%s

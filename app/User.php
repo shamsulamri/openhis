@@ -128,13 +128,14 @@ class User extends Authenticatable
 			return $codes;
 	}
 
-	public function defaultStore($request) 
+	public function defaultStore($request = null)
 	{
 			$default_store=null;
 			$store = null;
 			if ($this->authorization->store_code) {
 				$default_store = $this->authorization->store_code;
 			} else {
+				if (empty($request)) {
 					if ($this->authorization->module_inventory==1) {
 							$ward_code = $request->cookie('ward');
 							$ward = Ward::find($ward_code);
@@ -142,6 +143,7 @@ class User extends Authenticatable
 								$default_store = $ward->store_code;
 							} 
 					} 		
+				}
 			}
 
 			return $default_store;
