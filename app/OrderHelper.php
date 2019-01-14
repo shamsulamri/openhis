@@ -179,15 +179,17 @@ class OrderHelper
 			$order->consultation_id = Session::get('consultation_id');
 			$order->encounter_id = Session::get('encounter_id');
 			$order->user_id = Auth::user()->id;
-
+			$order->unit_code = $product->uomDefaultPrice()?$product->uomDefaultPrice()->unit_code:'unit';
 			$order->product_code = $product->product_code;
 			$order->order_quantity_request = 1;
-			$order->order_unit_price = $product->product_sale_price; 
-			if ($product->tax) {
-				$order->order_sale_price = $product->product_sale_price * (1+($product->tax->tax_rate/100));
+			$order->order_unit_price = $product->uomDefaultPrice()?$product->uomDefaultPrice()->uom_price:0;
+			if ($product->outputTax) {
+				$price = (1+($product->outputTax->tax_rate/100))* $order->order_unit_price;
+				$order->order_sale_price = $price;
 			} else {
-				$order->order_sale_price = $product->product_sale_price;
+				$order->order_sale_price = $order->order_unit_price;
 			}	
+
 			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 
 			if ($admission) {
@@ -411,7 +413,7 @@ class OrderHelper
 				}
 
 				if ($order->product->product_stocked==1) {
-						$stock_helper->updateStockBatch($order);
+						//$stock_helper->updateStockBatch($order);
 				}
 			}
 		}

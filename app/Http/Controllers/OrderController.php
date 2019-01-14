@@ -264,8 +264,8 @@ class OrderController extends Controller
 			$product = Product::find($order->product_code);
 			$valid = null;
 			if ($product->product_stocked==1) {
-					$on_hand = $stock_helper->getStockCountByStore($order->product_code, $order->store_code);
-					$allocated = $stock_helper->getStockAllocatedByStore($order->product_code, $order->store_code, Session::get('encounter_id'));
+					$on_hand = $stock_helper->getStockOnHand($order->product_code, $order->store_code);
+					$allocated = $stock_helper->getStockAllocated($order->product_code, $order->store_code, Session::get('encounter_id'));
 
 					if ($order->order_quantity_request>$on_hand-$allocated) {
 							$valid = $order->validate($request->all(), $request->_method);	
@@ -284,17 +284,20 @@ class OrderController extends Controller
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
 
 			$product = Product::find($order->product_code);
-			if ($product->product_edit_price==1) {
-				$order->order_unit_price = $order->order_sale_price;
+			//if ($product->product_edit_price==1) {
+				//$order->order_unit_price = $order->order_sale_price;
 				$order->order_total = $order->order_sale_price*$order->order_quantity_request;
-			}
+			//}
 
+			/*
 			$valid = $this->validateOrder($request, $order);
+
 			if ($valid) {
 					return redirect('/orders/'.$order->order_id.'/edit')
 							->withErrors($valid)
 							->withInput();
 			}
+			 */
 
 			$valid = $order->validate($request->all(), $request->_method);	
 

@@ -154,17 +154,25 @@ class Product extends Model
 			return $this->belongsTo('App\UnitMeasure', 'unit_code');
 	}
 
-	public function unitCost()
+	public function uomDefaultCost()
 	{
-			$uom = ProductUom::where('product_code', '=', $this->atrributes['product_code'])
-					->where('unit_code', '=', 'unit')
+			$product_code = $this->attributes['product_code'];
+			$uom = ProductUom::where('product_code', '=', $product_code)
+					->where('uom_default_cost', '=', 1)
+					->select('unit_code', 'uom_cost')
 					->first();
 
-			$cost = 0;
-			if (!empty($uom)) {
-					$cost = $uom->uom_cost;
-			}
+			return $uom?:null;
+	}
 
-			return $cost;
+	public function uomDefaultPrice()
+	{
+			$product_code = $this->attributes['product_code'];
+			$uom = ProductUom::where('product_code', '=', $product_code)
+					->where('uom_default_price', '=', 1)
+					->select('unit_code', 'uom_price')
+					->first();
+
+			return $uom?:null;
 	}
 }

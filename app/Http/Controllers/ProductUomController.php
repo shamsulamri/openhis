@@ -49,6 +49,7 @@ class ProductUomController extends Controller
 	{
 			$product = Product::find($request->id);
 			$product_uom = new ProductUom();
+
 			return view('product_uoms.create', [
 					'product_uom' => $product_uom,
 					'product' => $product,
@@ -56,6 +57,13 @@ class ProductUomController extends Controller
 					]);
 	}
 
+	public function uncheckDefaultCost($product_code) {
+			ProductUom::where('product_code', $product_code)->update(['uom_default_cost'=>0]);
+	}
+
+	public function uncheckDefaultPrice($product_code) {
+			ProductUom::where('product_code', $product_code)->update(['uom_default_price'=>0]);
+	}
 	public function store(Request $request) 
 	{
 			$product_uom = new ProductUom();
@@ -64,6 +72,14 @@ class ProductUomController extends Controller
 			if ($valid->passes()) {
 					$product_uom = new ProductUom($request->all());
 					$product_uom->product_code = $request->product_code;
+					$product_uom->uom_default_cost = $request->uom_default_cost ?: 0;
+					if ($product_uom->uom_default_cost == 1) {
+						$this->uncheckDefaultCost($product_uom->product_code);
+					}
+					$product_uom->uom_default_price = $request->uom_default_price ?: 0;
+					if ($product_uom->uom_default_price == 1) {
+						$this->uncheckDefaultPrice($product_uom->product_code);
+					}
 					$product_uom->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/product/uom/'.$product_uom->product_code);
@@ -77,6 +93,7 @@ class ProductUomController extends Controller
 	public function edit($id) 
 	{
 			$product_uom = ProductUom::findOrFail($id);
+
 			return view('product_uoms.edit', [
 					'product_uom'=>$product_uom,
 					'product' => $product_uom->product,
@@ -89,6 +106,15 @@ class ProductUomController extends Controller
 			$product_uom = ProductUom::findOrFail($id);
 			$product_uom->fill($request->input());
 
+			$product_uom->uom_default_cost = $request->uom_default_cost ?: 0;
+			if ($product_uom->uom_default_cost == 1) {
+				$this->uncheckDefaultCost($product_uom->product_code);
+			}
+
+			$product_uom->uom_default_price = $request->uom_default_price ?: 0;
+			if ($product_uom->uom_default_price == 1) {
+				$this->uncheckDefaultPrice($product_uom->product_code);
+			}
 
 			$valid = $product_uom->validate($request->all(), $request->_method);	
 

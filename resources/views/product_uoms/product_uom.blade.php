@@ -23,6 +23,20 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('uom_default_cost')) has-error @endif'>
+        <label for='uom_default_cost' class='col-sm-2 control-label'>Default Cost</label>
+        <div class='col-sm-10'>
+			{{ Form::checkbox('uom_default_cost', '1') }} 
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('uom_default_price')) has-error @endif'>
+        <label for='uom_default_price' class='col-sm-2 control-label'>Default Price</label>
+        <div class='col-sm-10'>
+			{{ Form::checkbox('uom_default_price', '1') }} 
+        </div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-2 col-sm-10">
             <a class="btn btn-default" href="/product/uom/{{ $product->product_code }}" role="button">Cancel</a>

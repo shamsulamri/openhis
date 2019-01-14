@@ -182,7 +182,7 @@ class OrderDrugController extends Controller
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
 			$order->order_quantity_request = $request->order_quantity_request;
 			$order->order_quantity_supply = $request->order_quantity_request;
-			$order->order_total = $product->product_sale_price*$order->order_quantity_request;
+			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 
 			$local_store = $order->store;
 			$available = $stock_helper->getStockAvailable($order->product_code, $order->store_code);

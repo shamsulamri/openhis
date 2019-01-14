@@ -202,7 +202,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, sum(order_quantity_supply) as order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, order_discount, profit_multiplier, a.order_id, sum(order_total) as order_total
+				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_sale_price, order_discount, profit_multiplier
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -217,9 +217,10 @@ class BillItemController extends Controller
 				and h.patient_id = %d
 				and bill_id is null 
 				and order_multiple=0
-				group by product_code
+				group by product_code,a.unit_code, order_sale_price, order_discount, profit_multiplier
 			";
 
+			/*
 			$base_sql = "
 			select a.product_code, sum(inv_physical_quantity) as total_quantity, d.tax_code, d.tax_rate, inv_subtotal as subtotal, a.order_id, order_discount, uom_price, a.unit_code
 					from inventories a
@@ -235,8 +236,10 @@ class BillItemController extends Controller
 					and e.patient_id = %d
 					group by a.product_code, a.unit_code, d.tax_code, inv_subtotal, a.order_id, order_discount
 			";
+			*/
 
 			$sql = sprintf($base_sql, "", $patient_id);
+
 
 			if (!empty($encounter->sponsor_code)) {
 					if ($non_claimable==1) {
@@ -252,7 +255,7 @@ class BillItemController extends Controller
 			
 			foreach ($orders as $order) {
 					$item = new BillItem();
-					$item->order_id = $order->order_id;
+					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
 					$item->tax_code = $order->tax_code;
@@ -263,12 +266,9 @@ class BillItemController extends Controller
 					$item->bill_non_claimable = $non_claimable;
 
 					$product = Product::find($item->product_code);
-					$uom = ProductUom::where('product_code', $order->product_code)
-							->where('unit_code', $order->unit_code)
-							->first();
 
 					if (!empty($product->charge_code)) {
-							$sale_price = $this->getPriceTier($encounter_id, $product, $uom->uom_price);
+							$sale_price = $this->getPriceTier($encounter_id, $product, $product->uomDefaultPrice()->oum_price);
 							$item->bill_unit_price = $sale_price;
 					} else {
 							$item->bill_unit_price = $uom->uom_price;

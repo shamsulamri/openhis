@@ -110,14 +110,14 @@
 					@if ($dischargeHelper->drugCompleted($discharge->encounter_id))
 
 						
-							@can('module-discharge')
-							<a class='btn btn-{{ $button_type }} btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
-							@endcan
 					@else
 							<span class="label label-warning">
 							Preparing drug...
 							</span>
 					@endif
+					@can('module-discharge')
+					<a class='btn btn-{{ $button_type }} btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
+					@endcan
 			@endif
 			@endcannot
 			@can('system-administrator')

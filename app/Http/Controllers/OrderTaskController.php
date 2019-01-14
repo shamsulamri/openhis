@@ -129,9 +129,7 @@ class OrderTaskController extends Controller
 					->where('c.encounter_id','=', $encounter_id)
 					->whereIn('e.category_code', $queue_categories)
 					->where('e.product_local_store','=',0)
-					->where('a.post_id','>',0)
-					->whereNull('cancel_id')
-					->orderBy('order_completed')
+					->where('a.post_id','>',0) ->whereNull('cancel_id') ->orderBy('order_completed')
 					->orderBy('cancel_id')
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
@@ -264,6 +262,7 @@ class OrderTaskController extends Controller
 							->get();
 
 			foreach($orders as $order) {
+					$product = $order->product;
 					$checked = $request[$order->order_id] ?:0;
 					if ($checked == 1) {
 
@@ -319,6 +318,10 @@ class OrderTaskController extends Controller
 						}
 
 						/** Completed order **/
+						$uom = ProductUom::where('product_code', $order->product_code)
+									->where('unit_code', $inventory->unit_code)
+									->first();
+
 						$order = Order::find($order->order_id);
 						$order->order_quantity_supply = $total_supply;
 						$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());

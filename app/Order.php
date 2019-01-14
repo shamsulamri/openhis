@@ -24,6 +24,7 @@ class Order extends Model
 				'order_completed',
 				'order_completed_by',
 				'order_quantity_supply',
+				'unit_code',
 				'store_code',
 				'location_code',
 				'order_sale_price',

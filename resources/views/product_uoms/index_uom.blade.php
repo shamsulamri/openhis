@@ -14,6 +14,8 @@
     <th>Rate</th> 
     <th>Cost</th> 
     <th>Price</th>
+    <th>Default Cost</th> 
+    <th>Default Price</th>
 	<th></th>
 	</tr>
   </thead>
@@ -33,6 +35,12 @@
 			</td>
 			<td>
 					{{number_format($product_uom->uom_price,2)}}
+			</td>
+			<td>
+					{{$product_uom->uom_default_cost?'Default':''}}
+			</td>
+			<td>
+					{{$product_uom->uom_default_price?'Default':''}}
 			</td>
 			<td align='right'>
 				@can('system-administrator')
