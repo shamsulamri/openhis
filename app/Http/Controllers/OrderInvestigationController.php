@@ -79,7 +79,6 @@ class OrderInvestigationController extends Controller
 					$order->product_code = $request->product_code;
 					$order->order_is_discharge = $request->order_is_discharge;
 					$order->order_description = $request->order_description;
-					$order->order_sale_price = $product->product_sale_price;
 					$order->location_code = $product->location_code;
 					$order->save();
 					
@@ -179,7 +178,6 @@ class OrderInvestigationController extends Controller
 				if ($order->product->product_stocked==1) {
 						$store_code = OrderHelper::getLocalStore($order->consultation->encounter, $admission);
 						$order->store_code = $store_code;
-						OrderHelper::insertStock($order);
 				}
 			}
 

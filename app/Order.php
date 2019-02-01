@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use App\StockHelper;
 use Log;
-
 
 class Order extends Model
 {
@@ -17,6 +17,9 @@ class Order extends Model
 				'user_id',
 				'admission_id',
 				'product_code',
+				'ward_code',
+				'location_code',
+				'store_code',
 				'order_quantity_request',
 				'order_description',
 				'order_report',
@@ -25,16 +28,13 @@ class Order extends Model
 				'order_completed_by',
 				'order_quantity_supply',
 				'unit_code',
-				'store_code',
-				'location_code',
-				'order_sale_price',
-				'order_discount',
 				'order_unit_price',
-				'order_total',
+				'order_discount',
 				'order_is_discharge',
 				'order_include_stat',
 				'updated_by',
 				'completed_at',
+				'created_at',
 		];
 	
     protected $guarded = ['order_id'];
@@ -86,6 +86,10 @@ class Order extends Model
 			}
 	}
 	 */
+
+	public function orderDate() {
+			return $this->attributes['created_at'];
+	}
 
 	public function orderDrug() {
 			return $this->hasOne('App\OrderDrug','order_id');
@@ -141,6 +145,12 @@ class Order extends Model
 				$order->orderDrug()->delete();
 			});
 
+			static::created(function($order)
+			{
+
+			});
+
+
 	}
 
 	public function save(array $options = array())
@@ -153,6 +163,7 @@ class Order extends Model
 			{
 				//Log::info("Changed!!!!");
 			}	
+
 	}
 
 

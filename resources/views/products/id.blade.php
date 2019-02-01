@@ -22,6 +22,9 @@
 		</a>
 	@endcan
 @if ($product->product_stocked==1)
+		<a class='btn btn-default' href='{{ URL::to('inventory_batches/product/'. $product->product_code) }}'>
+			<span class='fa fa-tags' aria-hidden='true'></span><br>Stock<br>Batches
+		</a>
 		<a class='btn btn-default' href='{{ URL::to('stock_limit/'. $product->product_code) }}'>
 			<span class='fa fa-cart-plus' aria-hidden='true'></span><br>Stock<br>Limits
 		</a>

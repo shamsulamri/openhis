@@ -26,8 +26,6 @@ class StockHelper
 					$value = $value->where('inv_batch_number', $batch_number);
 			}
 
-			Log::info($product_code);
-			Log::info($store_code);
 			$value = $value->sum('inv_quantity');
 			
 			if (empty($value)) $value =0;
@@ -35,14 +33,109 @@ class StockHelper
 			return floatval($value);
 	}
 
-	public function getStockOnPurchase($product_code, $store_code = null, $batch_number = null)
+	public function getStockOnPurchase($product_code)
 	{
-			return 99;
+			$sql = "
+				select sum(line_quantity) as total_quantity
+				from purchase_lines as a
+				left join purchases as b on (b.purchase_id = a.purchase_id)
+				left join inventories as c on (c.line_id = a.line_id)
+				where document_code = 'purchase_order'
+				and purchase_posted = 1
+				and a.product_code = '".$product_code."'
+				and inv_id is null
+			";
+
+			$data = DB::select($sql);
+
+			return $data[0]->total_quantity;
 	}
 
-	public function getStockOnIssue($product_code, $store_code = null, $batch_number = null)
+	public function getStockTransferIn($product_code, $store_code = null, $batch_number = null)
 	{
-			return 99;
+			$sql = "
+				select a.product_code, sum(a.inv_physical_quantity) as total_quantity
+				from inventories as a
+				left join inventory_movements as b on (b.move_id = a.move_id)
+				where b.move_code = 'stock_issue'
+				and b.tag_code = 'transfer'
+				and move_posted = 1
+				and a.product_code = '".$product_code."'
+			";
+
+			if (!empty($store_code)) {
+					$sql = $sql . "
+						and target_store = '".$store_code."'
+					";
+			}
+
+			$sql = $sql."
+				group by a.product_code, target_store
+			";
+
+			$data = DB::select($sql);
+
+			if (sizeof($data)==0) {
+					return 0;
+			} else {
+					return $data[0]->total_quantity - $this->getTransferReceive($product_code, $store_code);
+			}
+	}
+
+	public function getStockTransferOut($product_code, $store_code = null, $batch_number = null)
+	{
+			$sql = "
+				select a.product_code, sum(a.inv_physical_quantity) as total_quantity
+				from inventories as a
+				left join inventory_movements as b on (b.move_id = a.move_id)
+				where b.move_code = 'stock_issue'
+				and b.tag_code = 'transfer'
+				and move_posted = 1
+				and a.product_code = '".$product_code."'
+			";
+
+			if (!empty($store_code)) {
+					$sql = $sql . "
+						and a.store_code = '".$store_code."'
+					";
+			}
+
+			$sql = $sql."
+				group by a.product_code, target_store
+			";
+
+			$data = DB::select($sql);
+
+			if (sizeof($data)==0) {
+					return 0;
+			} else {
+					return $data[0]->total_quantity - $this->getTransferReceive($product_code, $store_code);
+			}
+	}
+
+	public function getTransferReceive($product_code, $store_code = null, $batch_number = null)
+	{
+			$sql = "
+				select sum(inv_quantity) as total_quantity
+				from inventories as a
+				left join inventory_movements as b on (b.move_id = a.move_reference)
+				left join inventory_movements as c on (a.move_id = c.move_id)
+				where move_reference is not null
+				and b.move_code = 'stock_issue'
+				and c.move_code = 'stock_receive'
+				and b.target_store = c.store_code
+				and a.product_code = '".$product_code."'
+				group by a.product_code
+			";
+
+			$data = DB::select($sql);
+
+			if (sizeof($data)==0) {
+					return 0;
+			} else {
+					return $data[0]->total_quantity;
+
+			}
 	}
 
 	public function getStockAverageCost($product_code, $store_code = null, $batch_number = null)
@@ -58,9 +151,15 @@ class StockHelper
 					$value = $value->where('inv_batch_number', $batch_number);
 			}
 
-			$value = $value->sum('inv_subtotal')/$value->sum('inv_quantity')?:0;
-			$value = number_format($value,2);
-			return $value;
+			if (!empty($value)) {
+					if ($value->sum('inv_quantity')>0) {
+							$value = $value->sum('inv_subtotal')/$value->sum('inv_quantity');
+							$value = number_format($value,2);
+					}
+					return $value;
+			} else {
+					return 0;
+			}
 	}
 
 	public function getStockTotalCost($product_code, $store_code = null, $batch_number = null)
@@ -123,10 +222,10 @@ class StockHelper
 
 	}
 
-	public function getStockAvailable($product_code, $store_code=null)
+	public function getStockAvailable($product_code, $store_code=null, $batch_number = null)
 	{
-			$on_hand = $this->getStockOnHand($product_code, $store_code);
-			$allocated = $this->getStockAllocated($product_code, $store_code);
+			$on_hand = $this->getStockOnHand($product_code, $store_code, $batch_number);
+			$allocated = $this->getStockAllocated($product_code, $store_code, $batch_number);
 
 			return $on_hand - $allocated;
 	}
@@ -147,29 +246,75 @@ class StockHelper
 			$uom_list['unit'] = 'Unit';
 			foreach ($product_uoms as $uom) {
 					if ($uom->unit_code != 'unit') {
-						$uom_list[$uom->unit_code] = $uom->unitMeasure->unit_name;
+						$uom_list[$uom->unit_code] = $uom->unitMeasure->unit_name.' ('.$uom->uom_rate.')';
 					}
 			}
 
 			return $uom_list;
 	}
 
-	public function getBatches($product_code)
+	public function getBatches($product_code, $order_id=null, $store_code=null)
 	{
-			//$batches = InventoryBatch::where('product_code', $product_code)->get();
-
+			/*
 			$batches = Inventory::where('inventories.product_code', $product_code)
-							->selectRaw('sum(inv_quantity) as sum_quantity, inv_batch_number, inventories.product_code, unit_code')
+							->selectRaw('batch_id, inventories.product_code, batch_expiry_date, sum(inv_quantity) as sum_quantity, inv_batch_number')
 							->leftjoin('inventory_batches as b', 'batch_number', '=', 'inv_batch_number')
+							->leftjoin('ref_unit_measures as c', 'c.unit_code', '=', 'inventories.unit_code')
+							->groupBy('batch_id')
+							->groupBy('inventories.product_code')
 							->groupBy('inv_batch_number')
-							->groupBy('unit_code')
+							->groupBy('batch_expiry_date')
 							->orderBy('batch_expiry_date')
-							->where('inventories.unit_code', 'unit')
+							->havingRaw('sum_quantity>?',[0])
 							->whereNotNull('inv_batch_number')
 							->get();
+			 */
+			$batches = Inventory::where('inventories.product_code', $product_code)
+							->selectRaw('batch_id, inventories.product_code, batch_expiry_date, sum(inv_quantity) as sum_quantity, inv_batch_number')
+							->leftjoin('inventory_batches as b', 'batch_number', '=', 'inv_batch_number')
+							->leftjoin('ref_unit_measures as c', 'c.unit_code', '=', 'inventories.unit_code')
+							->groupBy('inventories.product_code')
+							->groupBy('inv_batch_number')
+							->groupBy('batch_expiry_date')
+							->orderBy('batch_expiry_date')
+							->orderBy('inv_batch_number', 'desc')
+							->havingRaw('sum_quantity>?',[0])
+							->where('inv_posted', 1);
 
-			Log::info($batches);
+			if (!empty($order_id)) {
+				$batches = Inventory::where('inventories.product_code', $product_code)
+							->selectRaw('batch_id, inventories.product_code, batch_expiry_date, sum(inv_quantity) as sum_quantity, inv_batch_number')
+							->leftjoin('inventory_batches as b', 'batch_number', '=', 'inv_batch_number')
+							->leftjoin('ref_unit_measures as c', 'c.unit_code', '=', 'inventories.unit_code')
+							->groupBy('batch_id')
+							->groupBy('inventories.product_code')
+							->groupBy('inv_batch_number')
+							->groupBy('batch_expiry_date')
+							->orderBy('batch_expiry_date')
+							->where('inventories.order_id', $order_id)
+							->where('inv_posted', 1)
+							->where('move_code', 'sale');
+			}
+
+			if ($store_code) {
+				$batches = $batches->where('store_code', $store_code);
+			}
+
+			$batches = $batches->get();
+
+			foreach ($batches as $batch) {
+				Log::info($batch->sum_quantity);
+			}
 			return $batches;
+	}
+
+	public function updateStockOnHand($product_code)
+	{
+			$product = Product::find($product_code);
+			if ($product->product_stocked == 1) {
+				$product->product_on_hand = $this->getStockOnHand($product_code); 
+				$product->save();
+			}
 	}
 
 }

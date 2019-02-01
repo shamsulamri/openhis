@@ -12,6 +12,7 @@
         <div class='col-sm-10'>
             {{ Form::select('supplier_code', $supplier,null, ['class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('supplier_code')) <p class="help-block">{{ $errors->first('supplier_code') }}</p> @endif
+			Not required for purchase request
         </div>
     </div>
 

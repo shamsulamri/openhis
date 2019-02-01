@@ -20,6 +20,7 @@ use Auth;
 use App\StockHelper;
 use App\StoreAuthorization;
 use App\Inventory;
+use App\ProductUom;
 
 class AssemblyController extends Controller
 {
@@ -97,7 +98,11 @@ class AssemblyController extends Controller
 
 			if ($quantity>$max) {
 					$flag=False;
-					$msg = "Build cannot be greater than ".$max;
+					if ($max>0) {
+						$msg = "Build cannot be greater than ".$max;
+					} else {
+						$msg = "Build not possible.";
+					}
 			}
 
 			if ($flag) {
@@ -105,35 +110,54 @@ class AssemblyController extends Controller
 				$product = Product::find($id);
 
 				$inventory = new Inventory();
-				$inventory->move_code = 'adjustment';
+				$inventory->move_code = 'stock_adjust';
 				$inventory->move_description = 'build';
 				$inventory->store_code = $request->store_code;
 				$inventory->product_code = $product->product_code;
 				$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
 				$inventory->inv_physical_quantity = $quantity;
 				$inventory->unit_code = $product->unit_code;
+
+				$uom = ProductUom::where('product_code', $inventory->product_code)
+						->where('unit_code', $inventory->unit_code)
+						->first();
+
+				$inventory->uom_rate =  $uom->uom_rate;
+				$inventory->inv_unit_cost =  $uom->uom_cost;
+				$inventory->inv_quantity = $quantity*$uom->uom_rate;
+				$inventory->inv_physical_quantity = $quantity;
+				$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
+				$inventory->inv_posted = 1;
+
+				/*
 				$inventory->uom_rate = $product->unit()->uom_rate;
 				$inventory->inv_unit_cost = $product->unit()->uom_cost;
 				$inventory->inv_posted = 1;
 				$inventory->inv_quantity = $quantity;
 				$inventory->inv_subtotal = $inventory->inv_unit_cost*$inventory->inv_quantity;
+				 */
 				$inventory->save();
 
 				foreach($boms as $bom) {
 						$product = Product::find($bom->bom_product_code);
 						$inventory = new Inventory();
-						$inventory->move_code = 'adjustment';
+						$inventory->move_code = 'stock_adjust';
 						$inventory->move_description = 'build';
 						$inventory->store_code = $request->store_code;
 						$inventory->product_code = $product->product_code;
 						$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
 						$inventory->inv_physical_quantity = $quantity*$bom->bom_quantity;
 						$inventory->unit_code = $product->unit_code;
-						$inventory->uom_rate = $product->unit()->uom_rate;
-						$inventory->inv_unit_cost = $product->unit()->uom_cost;
+
+						$uom = ProductUom::where('product_code', $inventory->product_code)
+								->where('unit_code', $inventory->unit_code)
+								->first();
+
+						$inventory->uom_rate = $uom->uom_rate;
+						$inventory->inv_unit_cost = $uom->uom_cost;
 						$inventory->inv_posted = 1;
 						$inventory->inv_quantity = -$inventory->inv_physical_quantity;
-						$inventory->inv_subtotal = $inventory->inv_unit_cost*$inventory->inv_quantity;
+						$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_quantity;
 						$inventory->save();
 
 				}
@@ -159,7 +183,7 @@ class AssemblyController extends Controller
 							'product'=>$product,
 							'boms'=>$boms,
 							'quantity'=>$request->quantity,
-							'store' => $stores,
+							'store'=>Auth::user()->storeList()->prepend('',''),
 							'store_code'=>$request->store_code,
 							'stock_helper'=>new StockHelper(),
 					]);
@@ -219,7 +243,7 @@ class AssemblyController extends Controller
 
 				foreach($boms as $bom) {
 						$stock = new Stock();
-						$stock->move_code='adjust';
+						$stock->move_code='stock_adjust';
 						$stock->store_code = $request->store_code;
 						$stock->product_code = $bom->bom_product_code;
 						$stock->stock_quantity = -1*$quantity*$bom->bom_quantity;
@@ -299,35 +323,46 @@ class AssemblyController extends Controller
 			}
 
 				$inventory = new Inventory();
-				$inventory->move_code = 'adjustment';
+				$inventory->move_code = 'stock_adjust';
 				$inventory->move_description = 'explode';
 				$inventory->store_code = $request->store_code;
 				$inventory->product_code = $product->product_code;
 				$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
 				$inventory->inv_physical_quantity = $quantity;
 				$inventory->unit_code = $product->unit_code;
-				$inventory->uom_rate = $product->unit()->uom_rate;
-				$inventory->inv_unit_cost = $product->unit()->uom_cost;
+
+				$uom = ProductUom::where('product_code', $inventory->product_code)
+						->where('unit_code', $inventory->unit_code)
+						->first();
+
+				$inventory->uom_rate =  $uom->uom_rate;
+				$inventory->inv_unit_cost =  $uom->uom_cost;
+				$inventory->inv_quantity = -($quantity*$uom->uom_rate);
+				$inventory->inv_subtotal = $uom->uom_cost*$inventory->inv_quantity;
 				$inventory->inv_posted = 1;
-				$inventory->inv_quantity = -$quantity;
-				$inventory->inv_subtotal = $inventory->inv_unit_cost*$inventory->inv_quantity;
 				$inventory->save();
 
 			foreach ($bom_products as $bom_product) {
 						$product = Product::find($bom_product->bom_product_code);
 						$inventory = new Inventory();
-						$inventory->move_code = 'adjustment';
+						$inventory->move_code = 'stock_adjust';
 						$inventory->move_description = 'explode';
 						$inventory->store_code = $request->store_code;
 						$inventory->product_code = $product->product_code;
 						$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
 						$inventory->inv_physical_quantity = $bom_product->bom_quantity;
 						$inventory->unit_code = $product->unit_code;
-						$inventory->uom_rate = $product->unit()->uom_rate;
-						$inventory->inv_unit_cost = $product->unit()->uom_cost;
+
+						$uom = ProductUom::where('product_code', $inventory->product_code)
+								->where('unit_code', $inventory->unit_code)
+								->first();
+
+						$inventory->uom_rate =  $uom->uom_rate;
+						$inventory->inv_unit_cost =  $uom->uom_cost;
+						$inventory->inv_quantity = $inventory->inv_physical_quantity*$uom->uom_rate;
+						$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
 						$inventory->inv_posted = 1;
-						$inventory->inv_quantity = $inventory->inv_physical_quantity;
-						$inventory->inv_subtotal = $inventory->inv_unit_cost*$inventory->inv_quantity;
+
 						$inventory->save();
 			}
 

@@ -2,13 +2,19 @@
 
 @section('content')
 @if (!empty($purchase)) 
-<a class='btn btn-default' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}?reason=purchase'>Items</a>
-<a class='btn btn-default' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>
-<a class='btn btn-default' href='/product_searches?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Products</a>
+	@if ($purchase->document_code == 'goods_receive')
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>
+	@else
+		<a class='btn btn-default btn-sm' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}?reason=purchase'>Items</a>
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>
+		<a class='btn btn-default btn-sm' href='/product_searches?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Products</a>
+		<a class='btn btn-default btn-sm' href='/product_searches?reason=purchase&type=reorder&purchase_id={{ $purchase->purchase_id }}'>Reorder</a>
+	@endif
 @else
 <a class='btn btn-default' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
 <a class='btn btn-default' href='/purchases/master_document?reason=stock&move_id={{ $movement->move_id }}'>Documents</a>
-<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a> @endif
+<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a> 
+@endif
 <br><br>
 <form action='/purchase/master_search' method='post'>
 	<div class='input-group'>

@@ -63,7 +63,7 @@ class ProductController extends Controller
 			$products = $products->orderBy('products.created_at','desc')
 							->paginate($this->paginateValue);
 
-			$store = Store::find(Auth::user()->defaultStore($request))?:null;
+			$store = Store::find(Auth::user()->defaultStore($request));
 
 			return view('products.index', [
 					'products'=>$products,
@@ -113,31 +113,6 @@ class ProductController extends Controller
 			]);	
 	}
 
-	public function show(Request $request, $id)
-	{
-			$return_id = $request->id;
-			$product = Product::find($id); 
-			$viewpage ="products.show";
-			if ($request->detail) {
-				$viewpage ="products.show_detail";
-			}
-
-			return view($viewpage, [
-						'product' => $product,
-						'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
-						'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
-						'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
-						'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
-						'status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
-						'return_id' => $return_id,
-						'reason' => $request->reason,
-						'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
-						'stock_helper'=>new StockHelper(),
-						'store'=>Auth::user()->storeList()->prepend('',''),
-						'store_code'=>null,
-				]);	
-	}
-
 	public function json($id)
 	{
 		$product = Product::find($id);
@@ -172,6 +147,9 @@ class ProductController extends Controller
 	public function edit($id) 
 	{
 			$product = Product::findOrFail($id);
+
+			$helper = new StockHelper();
+			$helper->updateStockOnHand($id);
 
 			$store_code = 'main';
 			if (Auth::user()->authorization->store_code) {
@@ -327,6 +305,31 @@ class ProductController extends Controller
 		$stock_helper->updateAllStockOnHand($product_code);
 	}
 
+	public function show(Request $request, $id)
+	{
+			$return_id = $request->id;
+			$product = Product::find($id); 
+			$viewpage ="products.show";
+			if ($request->detail) {
+				$viewpage ="products.show_detail";
+			}
+
+			return view($viewpage, [
+						'product' => $product,
+						'category' => Category::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
+						'form' => Form::all()->sortBy('form_name')->lists('form_name', 'form_code')->prepend('',''),
+						'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
+						'order_form' => OrderForm::all()->sortBy('form_name')->lists('form_name', 'form_code'),
+						'status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
+						'return_id' => $return_id,
+						'reason' => $request->reason,
+						'product_status' => ProductStatus::all()->sortBy('status_name')->lists('status_name', 'status_code'),
+						'stock_helper'=>new StockHelper(),
+						'store'=>Auth::user()->storeList()->prepend('',''),
+						'store_code'=>Auth::user()->defaultStore($request),
+				]);	
+	}
+
 	public function enquiry(Request $request)
 	{
 		$stock_helper = new StockHelper();
@@ -334,10 +337,17 @@ class ProductController extends Controller
 		$store_code = null;
 
 		if (!empty($request->search)) {
-			$product = Product::find($request->search);
+			$product = Product::where('product_code', $request->search);
+			$product = $product->whereIn('category_code', Auth::user()->categoryCodes());
+			$product = $product->first();
 		}
 
-		if (!empty($request->store_code)) $store_code = $request->store_code;
+		if (!empty($request->store_code)) {
+				$store_code = $request->store_code;
+		} else {
+				$store_code = Auth::user()->defaultStore($request);
+		}
+
 
 		return view('products.enquiry', [
 				'product'=>$product,
@@ -351,38 +361,25 @@ class ProductController extends Controller
 	public function reorder(Request $request)
 	{
 			$sql = "
-				select product_name, a.product_code, store_name, a.stock_quantity, limit_min, limit_max, on_purchase, on_transfer, in_transfer, unit_shortname
-				from stock_stores as a 
-				left join products as b on (a.product_code = b.product_code) 
-				left join stores as c on (c.store_code = a.store_code) 
-				left join stock_limits as d on (d.product_code = b.product_code and d.store_code = a.store_code)
+				select product_name, a.product_code, a.store_code, store_name, sum(inv_quantity) as stock_quantity, limit_min, limit_max, unit_name, unit_shortname, on_purchase
+				from inventories as a
+				left join stock_limits as b on (a.product_code = b.product_code and b.store_code = a.store_code)
+				left join products as c on (c.product_code = a.product_code)
+				left join stores as d on (d.store_code = a.store_code)
+				left join ref_unit_measures as e on (e.unit_code = a.unit_code)
 				left join (
-						select sum(line_quantity) as on_purchase, product_code
-						from purchase_order_lines as a
-						left join purchase_orders as b on (a.purchase_id = b.purchase_id)
-						where purchase_posted=1 
-						and purchase_received=0
-						group by product_code
-				) as e on (e.product_code = a.product_code)
-				left join (
-						select sum(line_quantity) as on_transfer, product_code, store_code
-						from stock_input_lines as a
-						left join stock_inputs as b on (a.input_id = b.input_id)
-						where move_code = 'transfer'
-						and input_close = 0
-						group by store_code, product_code
-				) as f on (f.product_code = a.product_code and f.store_code = a.store_code)
-				left join (
-						select sum(line_quantity) as in_transfer, product_code, store_code_transfer
-						from stock_input_lines as a
-						left join stock_inputs as b on (a.input_id = b.input_id)
-						where move_code = 'transfer'
-						and input_close = 0
-						group by store_code_transfer, product_code
-				) as g on (g.product_code = a.product_code and g.store_code_transfer = a.store_code)
-				left join ref_unit_measures as h on (h.unit_code = b.unit_code)
-				where stock_quantity<limit_min
-			";
+						select a.product_code, sum(line_quantity) as on_purchase
+						from purchase_lines as a
+						left join purchases as b on (b.purchase_id = a.purchase_id)
+						left join inventories as c on (c.line_id = a.line_id)
+						where document_code = 'purchase_order'
+						and purchase_posted = 1
+						and inv_id is null
+						group by a.product_code
+				) as f on (f.product_code = a.product_code)
+				group by a.product_code, a.store_code, limit_min, limit_max, unit_name, unit_shortname
+				having stock_quantity<limit_min
+				";
 
 			if (!empty($request->store)) {
 				$sql = $sql." and a.store_code = '".$request->store."'";
@@ -421,15 +418,14 @@ class ProductController extends Controller
 			]);
 	}
 
-	public function onHandEnquiry(Request $request)
+	public function onHandEnquiry2(Request $request)
 	{
 			/*** Base ***/
-			//$products = Product::orderBy('product_name')
-			//		->leftjoin('product_categories as c', 'c.category_code','=', 'products.category_code');
 
 			$products = Inventory::orderBy('product_name')
 							->leftJoin('products as b', 'b.product_code', '=', 'inventories.product_code')
-							->groupBy('store_code', 'b.product_code');
+							->groupBy('b.product_code')
+							->groupBy('store_code');
 
 			/*** Seach Param ***/
 			if (!empty($request->search)) {
@@ -441,9 +437,9 @@ class ProductController extends Controller
 					});
 			}
 
-			/*** Category ***/
-			if (!empty($request->category_code)) {
-					$products = $products->where('category_code', $request->category_code);
+			/*** Store ***/
+			if (!empty($request->store_code)) {
+					$products = $products->where('store_code', $request->store_code);
 			}
 
 			/*** Batch Number ***/
@@ -451,7 +447,18 @@ class ProductController extends Controller
 					$products = $products->where('inv_batch_number', $request->batch_number);
 			}
 
+			if ($request->export_report) {
+				$products = $products->select('product_name','b.product_code');
+				$products = $products->get()->toArray();
+				//$data = collect($products)->map(function($x){ return (array) $x; })->toArray(); 
+				DojoUtility::export_report($products);
+			}
+
 			$products = $products->paginate($this->paginateValue);
+
+			if (empty($request->search)) {
+				//$product = null;
+			}
 
 			return view('products.on_hand', [
 					'products'=>$products,
@@ -460,17 +467,18 @@ class ProductController extends Controller
 					'categories'=>Auth::user()->categoryList(),
 					'store_code'=>$request->store,
 					'stock_helper'=> new StockHelper(),
-					'category_code'=>$request->category_code,
+					'store_code'=>$request->store_code,
 					'batch_number'=>$request->batch_number,
 					]);
 
 	}
-	public function onHandEnquiry2(Request $request)
+
+	public function onHandEnquiry(Request $request)
 	{
 			$sql = "
-				select 	product_name, a.product_code, store_name, a.stock_quantity, allocated, (a.stock_quantity-allocated) as available, 
-						b.product_average_cost, (b.product_average_cost*a.stock_quantity) as total_cost, unit_shortname, c.store_code
-				from stock_stores as a
+				select a.product_code, product_name, store_name, sum(inv_quantity) as on_hand, sum(inv_subtotal) as total_cost,
+					 sum(inv_subtotal)/sum(inv_quantity) as average_cost, IFNULL(allocated, 0) as allocated ,sum(inv_quantity)-IFNULL(allocated,0) as available, unit_shortname, inv_batch_number
+				from inventories a
 				left join products as b on (a.product_code = b.product_code)
 				left join stores as c on (c.store_code = a.store_code)
 				left join (
@@ -482,12 +490,13 @@ class ProductController extends Controller
 						group by store_code, product_code
 				) as d on (d.store_code = a.store_code and d.product_code = a.product_code)
 				left join ref_unit_measures as e on (e.unit_code = b.unit_code)
+				where inv_posted = 1
 			";
 
-			$sql = $sql."where (product_name like '%".$request->search."%' or a.product_code like '%".$request->search."%')";
+			$sql = $sql."and (product_name like '%".$request->search."%' or a.product_code like '%".$request->search."%')";
 
-			if (!empty($request->store)) {
-				$sql = $sql." and a.store_code = '".$request->store."'";
+			if (!empty($request->store_code)) {
+				$sql = $sql." and a.store_code = '".$request->store_code."'";
 			} else {
 				$stores = Auth::user()->storeCodeInString();
 				$sql = $sql." and a.store_code in (". $stores .") ";
@@ -496,6 +505,12 @@ class ProductController extends Controller
 			if (!empty($request->category_code)) {
 				$sql = $sql." and b.category_code = '".$request->category_code."'";
 			}
+
+			if (!empty($request->batch_number)) {
+				$sql = $sql." and inv_batch_number = '".$request->batch_number."'";
+			}
+
+			$sql = $sql." group by a.store_code, product_code, inv_batch_number";
 
 			$data = DB::select($sql);
 
@@ -521,9 +536,10 @@ class ProductController extends Controller
 					'search'=>$request->search,
 					'store'=>Auth::user()->storeList()->prepend('',''),
 					'categories'=>Auth::user()->categoryList(),
-					'store_code'=>$request->store,
+					'store_code'=>$request->store_code,
 					'stock_helper'=> new StockHelper(),
 					'category_code'=>$request->category_code,
+					'batch_number'=>$request->batch_number,
 					]);
 	}
 

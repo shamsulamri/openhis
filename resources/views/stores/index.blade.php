@@ -1,7 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Store List<a href='/stores/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></a></h1>
+<h1>Store List
+<div class='pull-right'>
+<a href='/stores/forget' class='btn btn-primary'><span class='fa fa-stop-circle'></span></a>
+<a href='/stores/create' class='btn btn-primary'><span class='glyphicon glyphicon-plus'></a>
+</div>
+</h1>
 <form action='/store/search' method='post'>
 	<div class='input-group'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>

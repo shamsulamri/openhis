@@ -21,13 +21,11 @@
  <thead>
 	<tr> 
     <th>Name</th> 
-    <th width='100'><div align='right'>Store</div></th> 
+    <th><div align='right'>Store</div></th> 
     <th width='100'><div align='right'>On Hand</div></th> 
     <th width='50'><div align='right'>Min</div></th> 
     <th width='50'><div align='right'>Max</div></th> 
     <th width='100'><div align='right'>On Purchase</div></th> 
-    <th width='100'><div align='right'>On Transfer</div></th> 
-    <th width='100'><div align='right'>In Transfer</div></th> 
 	</tr>
   </thead>
 	<tbody>
@@ -60,16 +58,10 @@ if ($store_code == '') $store_code = null;
 				{{ $product->limit_min }}
 			</td>
 			<td align='right'>
-				{{ $product->limit_max }}
+				{{ $product->limit_max?:'-' }}
 			</td>
 			<td align='right'>
-				{{ floatval($product->on_purchase) }}
-			</td>
-			<td align='right'>
-				{{ floatval($product->on_transfer) }}
-			</td>
-			<td align='right'>
-				{{ floatval($product->in_transfer) }}
+				{{ $product->on_purchase?:'-' }}
 			</td>
 	</tr>
 @endforeach

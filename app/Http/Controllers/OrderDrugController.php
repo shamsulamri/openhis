@@ -104,7 +104,6 @@ class OrderDrugController extends Controller
 					$order->order_is_discharge = $request->order_is_discharge;
 					$order->order_quantity_request = $request->order_quantity_request;
 					$order->order_description = $request->order_description;
-					$order->order_sale_price = $product->product_sale_price;
 					$order->location_code = $product->location_code;
 					$order->save();
 
@@ -182,7 +181,6 @@ class OrderDrugController extends Controller
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
 			$order->order_quantity_request = $request->order_quantity_request;
 			$order->order_quantity_supply = $request->order_quantity_request;
-			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 
 			$local_store = $order->store;
 			$available = $stock_helper->getStockAvailable($order->product_code, $order->store_code);
@@ -199,8 +197,6 @@ class OrderDrugController extends Controller
 				if ($order->product->product_stocked==1) {
 						$store_code = OrderHelper::getLocalStore($order->consultation->encounter, $admission);
 						$order->store_code = $store_code;
-						Log::info($store_code);
-						//OrderHelper::insertStock($order);
 				}
 				$available = $stock_helper->getStockAvailable($order->product_code, $store_code);
 				$local_store = Store::find($store_code);
@@ -236,7 +232,7 @@ class OrderDrugController extends Controller
 			if ($valid->passes()) {
 					$order->save();
 					$order_drug->save();
-					//OrderHelper::createDrugServings($order_drug);
+					OrderHelper::createDrugServings($order_drug);
 
 					$order = Order::find($order_drug->order_id);
 					$order->post_id=0;

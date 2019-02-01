@@ -20,7 +20,6 @@ class OrderTask extends Model
 				'order_completed',
 				'order_quantity_supply',
 				'location_code',
-				'order_sale_price',
 				'order_discount',
 				'order_is_discharge',
 				'order_report',

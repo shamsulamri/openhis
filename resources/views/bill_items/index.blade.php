@@ -14,7 +14,7 @@ Interim Bill
 Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 </h3>
 <br>
-@if (!$encounter->discharge && !$encounter->bill)
+@if (!$encounter->discharge && !$billPosted)
 	<div class='alert alert-warning'>
 	Click Reload button to compile latest bill items.
 	</div>
@@ -29,7 +29,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 @endif
 
 @if ($encounter->discharge)
-	@if (!$encounter->bill)
+	@if (!$billPosted)
 		@if ($incomplete_orders>0 && $encounter->discharge->discharge_id)
 		<div class='alert alert-danger' role='alert'>Patient has {{ $incomplete_orders }} incomplete order(s)
 <a href='/order/enquiry?encounter_id={{ $encounter->encounter_id }}&status_code=incomplete' class='pull-right'>Show incomplete orders</a>
@@ -71,21 +71,23 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 	<br>
 @endif
 
-<div class="widget style1 gray-bg">
-<h4>Billing Method</h4>
-@if ($encounter->sponsor)
-	<h4>
-	<strong>
-	<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>
-	{{ $encounter->sponsor->sponsor_name }}
-	</a>
-	</strong>
-	</h4>
-	Membership Number: {{ $encounter->sponsor_id}}
-	@else
-	<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>Public</a>
+@if (!$billPosted)
+		<div class="widget style1 gray-bg">
+		<h4>Billing Method</h4>
+		@if ($encounter->sponsor)
+			<h4>
+			<strong>
+			<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>
+			{{ $encounter->sponsor->sponsor_name }}
+			</a>
+			</strong>
+			</h4>
+			Membership Number: {{ $encounter->sponsor_id}}
+			@else
+			<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>Public</a>
+		@endif
+		</div>
 @endif
-</div>
 
 @if ($bills->total()>0)
 <div class="widget style1 gray-bg">
@@ -133,9 +135,6 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 							<a href='{{ URL::to('bill_items/'. $bill->bill_id . '/edit') }}'>
 							@endif
 							{{ strtoupper($bill->product_name) }}
-							@if ($bill->category_code=='consultation')
-								({{ strtoupper($bill->name) }})
-							@endif
 							@if (!$billPosted)
 							</a>
 							@endif
@@ -149,7 +148,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 							<?php } ?>
 					</td>
 					<td align='right' width='100'>
-							{{$bill->bill_quantity}} {{$bill->unit_name}}
+							{{$bill->bill_quantity}} {{$bill->unit_name?:"Unit"}}
 					</td>
 					<td align='right' width='100'>
 							{{ number_format($bill->bill_unit_price,2) }}

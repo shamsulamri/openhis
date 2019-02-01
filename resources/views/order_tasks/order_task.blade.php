@@ -42,14 +42,6 @@
     </div>
 	@endif
 	<!--
-    <div class='form-group  @if ($errors->has('order_sale_price')) has-error @endif'>
-        {{ Form::label('order_sale_price', 'Sale Price',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('order_sale_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('order_sale_price')) <p class="help-block">{{ $errors->first('order_sale_price') }}</p> @endif
-        </div>
-    </div>
-
     <div class='form-group  @if ($errors->has('order_discount')) has-error @endif'>
         {{ Form::label('order_discount', 'Discount',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

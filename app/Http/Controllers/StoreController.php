@@ -155,4 +155,10 @@ class StoreController extends Controller
 					->withCookie(cookie('store',$id, 2628000));
 					//->withCookie(\Cookie::forget('queue_location'));
 	}
+
+	public function forgetCookie() {
+			Session::flash('message', 'Store detached.');
+			return redirect('/stores')
+				->withCookie(\Cookie::forget('store'));
+	}
 }

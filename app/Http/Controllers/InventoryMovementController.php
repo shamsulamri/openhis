@@ -64,7 +64,6 @@ class InventoryMovementController extends Controller
 	{
 			$store_code =  Auth::user()->defaultStore($request);
 			$inventories = Inventory::where('move_posted', 1)
-							->where('inventories.store_code', $store_code)
 							->leftJoin('inventory_movements as b', 'b.move_id', '=', 'inventories.move_id');
 							
 
@@ -155,7 +154,7 @@ class InventoryMovementController extends Controller
 					$inventory->inv_book_quantity = $helper->getStockOnHand($item->product_code, $movement->store_code);
 					Log::info($movement->store_code);
 					$inventory->inv_posted = 0;
-					if ($movement->move_code == 'receive') {
+					if ($movement->move_code == 'stock_receive') {
 							$inventory->inv_quantity = abs($inventory->inv_quantity);
 					}
 					$inventory->save();
@@ -178,12 +177,17 @@ class InventoryMovementController extends Controller
 			$inventory_movement = new InventoryMovement();
 			$inventory_movement->store_code =  Auth::user()->defaultStore($request);
 
+			$tags = StockTag::select(DB::raw("tag_name, tag_code, move_code"))->get();
+
 			return view('inventory_movements.create', [
 					'inventory_movement' => $inventory_movement,
-					'move' => StockMovement::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
+					'move' => StockMovement::where('move_code', '<>', 'sale')
+								->where('move_code', '<>', 'goods_receive')
+								->orderBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
 					'store'=>Auth::user()->storeList()->prepend('',''),
-					'store_transfer' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'target_stores' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'tag' => StockTag::all()->sortBy('tag_name')->lists('tag_name', 'tag_code')->prepend('',''),
+					'tags' => $tags,
 					]);
 	}
 
@@ -213,7 +217,7 @@ class InventoryMovementController extends Controller
 			$movement = InventoryMovement::findOrFail($move_id);
 			$prefix = $movement->movement->move_prefix;
 
-			$table = 'rn_stock_'.$movement->move_code;
+			$table = 'rn_'.$movement->move_code;
 
 			DB::insert('insert into '.$table.' (move_id) values (?)',
 					[$move_id]);
@@ -236,7 +240,7 @@ class InventoryMovementController extends Controller
 			$inventory_movement = InventoryMovement::findOrFail($id);
 			return view('inventory_movements.edit', [
 					'inventory_movement'=>$inventory_movement,
-					'move' => array(''=>'','adjust'=>'Stock Adjustment', 'receive'=>'Stock Receive', 'issue'=>'Stock Issue'),
+					'move' => array(''=>'','stock_adjust'=>'Stock Adjustment', 'stock_receive'=>'Stock Receive', 'stock_issue'=>'Stock Issue'),
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'store_transfer' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'tag' => StockTag::all()->sortBy('tag_name')->lists('tag_name', 'tag_code')->prepend('',''),
@@ -292,9 +296,9 @@ class InventoryMovementController extends Controller
 
 	public function searchDocument(Request $request)
 	{
-			$documents = InventoryMovement::where('move_code','like','%'.$request->search.'%')
-					->orWhere('move_number', 'like','%'.$request->search.'%')
-					->orderBy('move_id')
+			$documents = InventoryMovement::where('move_posted',1)
+					->where('move_number', 'like','%'.$request->search.'%')
+					->orderBy('move_id', 'desc')
 					->paginate($this->paginateValue);
 
 			$movement = InventoryMovement::find($request->move_id);
@@ -332,6 +336,7 @@ class InventoryMovementController extends Controller
 			$inventory->store_code = $movement->store_code;
 			$inventory->product_code = $product_code;
 			$inventory->inv_book_quantity = $helper->getStockOnHand($product_code, $store_code);
+			$inventory->unit_code = 'unit';
 			$inventory->inv_subtotal = 0;
 			$inventory->save();
 

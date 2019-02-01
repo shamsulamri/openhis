@@ -10,7 +10,7 @@ use App\StockTag;
 use Log;
 use DB;
 use Session;
-
+use App\StockMovement;
 
 class StockTagController extends Controller
 {
@@ -36,7 +36,7 @@ class StockTagController extends Controller
 			$stock_tag = new StockTag();
 			return view('stock_tags.create', [
 					'stock_tag' => $stock_tag,
-				
+					'stock_movements' => StockMovement::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
 					]);
 	}
 
@@ -63,7 +63,7 @@ class StockTagController extends Controller
 			$stock_tag = StockTag::findOrFail($id);
 			return view('stock_tags.edit', [
 					'stock_tag'=>$stock_tag,
-				
+					'stock_movements' => StockMovement::all()->sortBy('move_name')->lists('move_name', 'move_code')->prepend('',''),
 					]);
 	}
 
@@ -71,7 +71,6 @@ class StockTagController extends Controller
 	{
 			$stock_tag = StockTag::findOrFail($id);
 			$stock_tag->fill($request->input());
-
 
 			$valid = $stock_tag->validate($request->all(), $request->_method);	
 
@@ -105,8 +104,7 @@ class StockTagController extends Controller
 	
 	public function search(Request $request)
 	{
-			$stock_tags = DB::table('stock_tags')
-					->where('tag_name','like','%'.$request->search.'%')
+			$stock_tags = StockTag::where('tag_name','like','%'.$request->search.'%')
 					->orWhere('tag_code', 'like','%'.$request->search.'%')
 					->orderBy('tag_name')
 					->paginate($this->paginateValue);

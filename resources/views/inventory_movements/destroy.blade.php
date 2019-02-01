@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-Delete Inventory Movement
+Delete Stock Movement
 </h1>
 @include('common.errors')
 <br>

@@ -91,21 +91,6 @@ class ConsultationController extends Controller
 					$consultation->consultation_status=1;
 					$consultation->save();
 
-					/**
-					$order = new Order();
-					$order->consultation_id = $consultation->consultation_id;
-					$order->encounter_id = $consultation->encounter_id;
-					$order->product_code = "consultation_fee";
-					$order->order_quantity_request=1;
-					$order->order_completed=1;
-					$order->order_total = Auth::user()->consultation_fee;
-					$order->order_unit_price = Auth::user()->consultation_fee;
-					$order->order_sale_price = Auth::user()->consultation_fee;
-					$order->user_id = Auth::user()->id;
-					$order->save();
-					Log::info($order);
-					**/
-
 					Session::set('consultation_id', $consultation->consultation_id);
 					Session::set('encounter_id', $encounter->encounter_id);
 					return view('consultations.edit', [

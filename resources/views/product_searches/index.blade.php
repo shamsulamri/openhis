@@ -7,15 +7,16 @@
 }
 </style>
 @if (!empty($purchase)) 
-<a class='btn btn-default' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}?reason=purchase'>Items</a>
-<a class='btn btn-default' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>
-<a class='btn btn-default' href='/product_searches?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Products</a>
+<a class='btn btn-default btn-sm' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}?reason=purchase'>Items</a>
+<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>
+<a class='btn btn-default btn-sm' href='/product_searches?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Products</a>
+<a class='btn btn-default btn-sm' href='/product_searches?reason=purchase&type=reorder&purchase_id={{ $purchase->purchase_id }}'>Reorder</a>
 <br><br>
 @else
 	@if (!empty($movement))
-		<a class='btn btn-default' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
-		<a class='btn btn-default' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
-		<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+		<a class='btn btn-default btn-sm' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
+		<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
+		<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
 		<br><br>
 	@endif
 @endif
@@ -40,6 +41,7 @@
 	<input type='hidden' name="line_id" value="{{ $line_id }}">
 	<input type='hidden' name="input_id" value="{{ $input_id }}">
 	<input type='hidden' name="move_id" value="{{ $move_id }}">
+	<input type='hidden' name="type" value="{{ $type }}">
 </form>
 <br>
 @if ($product_searches->total()>0)
@@ -50,6 +52,9 @@
 			<td>
 					<a href='{{ URL::to('products/'. $product_search->product_code.'?reason='.$reason.'&id='.$return_id) }}' target='frameLine'>
 						{{$product_search->product_name}}
+						@if (!empty($product_search->stock_quantity))
+							({{ $product_search->stock_quantity.'/'.$product_search->limit_min }})
+						@endif
 					</a>
 					<br>
 					{{ $product_search->product_code }}
@@ -74,6 +79,10 @@
 @endforeach
 </tbody>
 </table>
+		@if ($type=='reorder')
+		<a class='btn btn-default' href='/purchase_lines/add_reorder/{{ $purchase->purchase_id }}'>Add all reorder items</a>
+		<br>
+		@endif
 @endif
 @if (isset($search)) 
 	{{ $product_searches->appends(['input_id'=>$input_id, 'diet_code'=>$diet_code,'class_code'=>$class_code, 'period_code'=>$period_code, 'week'=>$week, 'day'=>$day, 'set_code'=>$set_code, 'product_code'=>$product_code, 'search'=>$search,'reason'=>$reason,  'purchase_id'=>$purchase_id, 'move_id'=>$move_id])->render() }}

@@ -51,7 +51,11 @@ iframe { border: 1px #e5e5e5 solid; }
 <div class="row">
 	@if ($purchase->purchase_posted == 0)
 	<div class="col-xs-5">
+		@if ($purchase->document_code == 'goods_receive')
+		<iframe name='frameProduct' id='frameProduct' width='100%' height='950px' src='/purchases/master_document?reason=purchase&purchase_id={{ $purchase_id }}' ></iframe>
+		@else
 		<iframe name='frameProduct' id='frameProduct' width='100%' height='950px' src='/purchase_lines/master_item/{{ $purchase_id }}?reason=purchase'></iframe>
+		@endif
 	</div>
 	@endif
 	@if ($purchase->purchase_posted == 0)

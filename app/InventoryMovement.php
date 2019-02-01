@@ -20,7 +20,7 @@ class InventoryMovement extends Model
 				'move_code',
 				'tag_code',
 				'store_code',
-				'store_code_transfer',
+				'target_store',
 				'move_description',
 				'move_number',
 				'move_posted'];
@@ -34,7 +34,7 @@ class InventoryMovement extends Model
 			$rules = [
 				'move_code'=>'required',
 				'store_code'=>'required',
-				'store_code_transfer'=>'required_if:move_code,==,transfer',
+				'target_store'=>'required_if:tag_code,==,transfer',
 			];
 
 			

@@ -32,17 +32,27 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Date</th> 
+    <th>Movement</th>
     <th>Code</th>
     <th>Product</th>
-    <th>Movement</th>
     <th>Store</th>
-    <th>Date</th> 
-    <th>Quantity</th> 
+    <th>Batch</th>
+    <th><div align='right'>Quantity</div></th> 
 	</tr>
   </thead>
 	<tbody>
 @foreach ($inventories as $inventory)
 	<tr>
+			<td>
+					{{ DojoUtility::dateReadFormat($inventory->inv_datetime) }}
+			</td>
+			<td>
+				{{ $inventory->move_name }}
+				@if (!empty($inventory->move_description))
+				 ({{ $inventory->move_description }})
+				@endif
+			</td>
 			<td>
 				{{ $inventory->product_code }}
 			</td>
@@ -50,17 +60,12 @@
 				{{ $inventory->product->product_name }}
 			</td>
 			<td>
-				@if ($inventory->movement)
-				{{ $inventory->movement->move_name }}
-				@endif
+				{{ $inventory->store_name }}
 			</td>
 			<td>
-				{{ $inventory->store->store_name }}
+					{{ $inventory->inv_batch_number?:'-' }}
 			</td>
-			<td>
-					{{ DojoUtility::dateReadFormat($inventory->inv_datetime) }}
-			</td>
-			<td>
+			<td align='right'>
 					{{ $inventory->inv_quantity }}
 			</td>
 	</tr>

@@ -84,7 +84,7 @@ Order Queues
 			@if ($is_future)
 					{{ (DojoUtility::dateLongFormat($order->investigation_date)) }}
 			@else
-					{{ date('d F, H:i', strtotime($order->created_at)) }}
+					{{ DojoUtility::dateLongFormat($order->consultation->encounter->created_at) }}
 			@endif
 			</td>
 			<td>
@@ -113,7 +113,9 @@ Order Queues
 					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}' class='btn btn-primary btn-xs'>
 			@endif
 						Open	
-					</a> @can('system-administrator') <a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a> @endcan </td> </tr>
+					</a> @can('system-administrator') <a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a> @endcan 
+			</td> 
+	</tr>
 @endforeach
 @endif
 </tbody>

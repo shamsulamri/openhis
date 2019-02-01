@@ -58,11 +58,17 @@ class ProductUomController extends Controller
 	}
 
 	public function uncheckDefaultCost($product_code) {
-			ProductUom::where('product_code', $product_code)->update(['uom_default_cost'=>0]);
+			Log::info("Cost...");
+			$uom = ProductUom::where('product_code', $product_code)
+					->where('uom_default_cost', '=', 1)
+					->update(['uom_default_cost'=>0]);
 	}
 
 	public function uncheckDefaultPrice($product_code) {
-			ProductUom::where('product_code', $product_code)->update(['uom_default_price'=>0]);
+			Log::info("Price...");
+			ProductUom::where('product_code', $product_code)
+					->where('uom_default_price', '=', 1)
+					->update(['uom_default_price'=>0]);
 	}
 	public function store(Request $request) 
 	{
@@ -104,17 +110,18 @@ class ProductUomController extends Controller
 	public function update(Request $request, $id) 
 	{
 			$product_uom = ProductUom::findOrFail($id);
-			$product_uom->fill($request->input());
-
-			$product_uom->uom_default_cost = $request->uom_default_cost ?: 0;
-			if ($product_uom->uom_default_cost == 1) {
+			if ($request->uom_default_cost == 1) {
 				$this->uncheckDefaultCost($product_uom->product_code);
 			}
 
-			$product_uom->uom_default_price = $request->uom_default_price ?: 0;
-			if ($product_uom->uom_default_price == 1) {
+			if ($request->uom_default_price == 1) {
 				$this->uncheckDefaultPrice($product_uom->product_code);
 			}
+
+			$product_uom = ProductUom::findOrFail($id);
+			$product_uom->fill($request->input());
+			$product_uom->uom_default_cost = $request->uom_default_cost ?: 0;
+			$product_uom->uom_default_price = $request->uom_default_price ?: 0;
 
 			$valid = $product_uom->validate($request->all(), $request->_method);	
 
@@ -162,8 +169,7 @@ class ProductUomController extends Controller
 
 	public function searchById($id)
 	{
-			$product_uoms = DB::table('product_uoms')
-					->where('id','=',$id)
+			$product_uoms = ProductUom::where('id','=',$id)
 					->paginate($this->paginateValue);
 
 			return view('product_uoms.index', [

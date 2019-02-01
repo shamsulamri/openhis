@@ -3,8 +3,8 @@
 @section('content')
 @if ($reason=='bulk')
 <a class="btn btn-default" href="{{ url('stock_inputs/input/'.$return_id) }}" role="button">Back</a>
-@elseif ($reason=='purchase_order')
-<a class="btn btn-default" href="{{ url('purchase_order_lines/index/'.$return_id) }}" role="button">Back</a>
+@elseif ($reason=='purchase')
+<a class="btn btn-default" href="{{ url('purchase_lines/detail/'.$return_id) }}" role="button">Back</a>
 @elseif ($reason=='bom')
 <a class="btn btn-default" href="{{ url('bill_materials/index/'.$return_id) }}" role="button">Back</a>
 @else

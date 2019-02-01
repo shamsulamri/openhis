@@ -171,8 +171,6 @@ class OrderController extends Controller
 			$order->consultation_id = $consultation_id;
 			$order->product_code = $product_code;
 			$order->order_quantity_request=1;
-			$order->order_total = $product->product_sale_price*$order->order_quantity_request;
-			$order->location_code = $product->location_code;
 
 			$consultation = Consultation::findOrFail($consultation_id);
 
@@ -203,7 +201,6 @@ class OrderController extends Controller
 					$order = new Order($request->all());
 					$order->encounter_id = Session::get('encounter_id');
 					$order->order_id = $request->order_id;
-					$order->order_sale_price = $product->product_sale_price;
 					$order->user_id = Auth::user()->id;
 					$order->save();
 					Session::flash('message', 'Record successfully created.');
@@ -239,21 +236,19 @@ class OrderController extends Controller
 			} elseif ($product->order_form == '3') {
 					return redirect('/order_investigations/'.$order->orderInvestigation->id.'/edit?order_single='.$request->order_single);
 			} else {
+					$stock_helper = new StockHelper();
+					$available = $stock_helper->getStockAvailable($order->product_code, $order->store_code);
 
-				$stock_helper = new StockHelper();
-				$available = $stock_helper->getStockAvailable($order->product_code, $order->store_code);
-
-
-				return view('orders.edit', [
-					'order'=>$order,
-					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
-					'consultation' => $consultation,
-					'patient'=>$consultation->encounter->patient,
-					'tab'=>'order',
-					'product'=>$product,
-					'current_id'=>$current_id,
-					'available'=>$available,
-					'order_single'=>$request->order_single,
+					return view('orders.edit', [
+							'order'=>$order,
+							'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+							'consultation' => $consultation,
+							'patient'=>$consultation->encounter->patient,
+							'tab'=>'order',
+							'product'=>$product,
+							'current_id'=>$current_id,
+							'available'=>$available,
+							'order_single'=>$request->order_single,
 					]);
 			}
 	}
@@ -284,10 +279,6 @@ class OrderController extends Controller
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
 
 			$product = Product::find($order->product_code);
-			//if ($product->product_edit_price==1) {
-				//$order->order_unit_price = $order->order_sale_price;
-				$order->order_total = $order->order_sale_price*$order->order_quantity_request;
-			//}
 
 			/*
 			$valid = $this->validateOrder($request, $order);
@@ -311,7 +302,6 @@ class OrderController extends Controller
 						if ($order->product->product_stocked==1) {
 								$store_code = OrderHelper::getLocalStore($order->consultation->encounter, $admission);
 								$order->store_code = $store_code;
-								OrderHelper::insertStock($order);
 						}
 					}
 					$order->save();
@@ -420,6 +410,10 @@ class OrderController extends Controller
 
 	public function single(Request $request, $product_code)
 	{
+			//$helper = new StockHelper();
+			//$batches = $helper->getBatches($product_code, null, 'consumable');
+			//return $batches;
+
 			$encounter_id = Session::get('encounter_id');
 			$order = Order::where('product_code','=', $product_code)
 						->leftJoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
@@ -485,7 +479,7 @@ class OrderController extends Controller
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
-			$orders = Order::select('b.encounter_id', 'e.product_code', 'product_name', 'orders.order_id', 'order_completed', 'patient_name', 'patient_mrn', 'orders.created_at as order_date', 'name', 'cancel_id', 'cancel_reason', 'post_id', 'order_report', DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),DB::raw('TIMEDIFF(orders.created_at,now()) as age'))
+			$orders = Order::select('b.encounter_id', 'e.product_code', 'product_name', 'orders.order_id', 'order_completed', 'patient_name', 'patient_mrn', 'orders.created_at as order_date', 'name', 'cancel_id', 'cancel_reason', 'post_id', 'order_report', DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),DB::raw('TIMEDIFF(IFNULL(completed_at, now()),orders.created_at) as age'))
 					->leftJoin('encounters as b', 'b.encounter_id', '=', 'orders.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftJoin('products as e', 'e.product_code', '=', 'orders.product_code')

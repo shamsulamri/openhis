@@ -57,7 +57,9 @@
 			</td>
 			<td align='right'>
 					<a class='btn btn-default btn-xs' href='{{ URL::to('inventory_movements/show/'.$inventory_movement->move_id.'?reason=stock') }}'>Line</a>
+			@if ($inventory_movement->move_posted==0)
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('inventory_movements/delete/'. $inventory_movement->move_id) }}'>Delete</a>
+			@endif
 			</td>
 	</tr>
 @endforeach

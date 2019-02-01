@@ -33,6 +33,8 @@ $on_hand = $stock_helper->getStockOnHand($bom->product->product_code, $store_cod
 if (empty($on_hand)) $can_build=False;
 if ($on_hand>0 && $on_hand>=$bom->bom_quantity) {
 	if ($on_hand/$bom->bom_quantity<$max) $max = $on_hand/$bom->bom_quantity;
+} else {
+		$max = 0;
 }	
 ?>
 <tr>
@@ -58,7 +60,7 @@ if ($on_hand>0 && $on_hand>=$bom->bom_quantity) {
 </tr>
 @endforeach
 </table>
-@if ($max!=99999 && $can_build)
+@if ($max>0 && $can_build)
 <h4>Product on hand: <strong>{{ $stock_helper->getStockOnHand($product->product_code, $store_code) }}</strong></h4>
 <h4>The maximum number of build: <strong>{{ floor($max) }}</strong></h4>
 <br>

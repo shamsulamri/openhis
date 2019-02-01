@@ -135,6 +135,7 @@ class User extends Authenticatable
 			if ($this->authorization->store_code) {
 				$default_store = $this->authorization->store_code;
 			} else {
+				/*
 				if (empty($request)) {
 					if ($this->authorization->module_inventory==1) {
 							$ward_code = $request->cookie('ward');
@@ -143,9 +144,18 @@ class User extends Authenticatable
 								$default_store = $ward->store_code;
 							} 
 					} 		
+				} 		
+				 */
+				if (!empty($request)) {
+					if (!empty($request->cookie('store'))) {
+							$default_store = $request->cookie('store');
+					}
+				}
+
+				if ($default_store == null) {
+						$default_store = $this->storeCodes()[0];
 				}
 			}
-
 			return $default_store;
 	}
 }

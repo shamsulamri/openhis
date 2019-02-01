@@ -27,14 +27,13 @@
     </div>
 
 	@if ($product->product_edit_price==1)
-   <div class='form-group  @if ($errors->has('order_sale_price')) has-error @endif'>
-        <label for='order_sale_price' class='col-sm-3 control-label'>Price<span style='color:red;'> *</span></label>
+   <div class='form-group  @if ($errors->has('order_unit_price')) has-error @endif'>
+        <label for='order_unit_price' class='col-sm-3 control-label'>Unit Price</label>
         <div class='col-sm-9'>
-            {{ Form::text('order_sale_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('order_sale_price')) <p class="help-block">{{ $errors->first('order_sale_price') }}</p> @endif
+            {{ Form::text('order_unit_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_unit_price')) <p class="help-block">{{ $errors->first('order_unit_price') }}</p> @endif
         </div>
     </div>
-
    <div class='form-group  @if ($errors->has('order_discount')) has-error @endif'>
         <label for='order_discount' class='col-sm-3 control-label'>Discount</label>
         <div class='col-sm-9'>

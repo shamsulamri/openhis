@@ -62,6 +62,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		
 		Route::resource('inventory_batches', 'InventoryBatchController');
 		Route::get('/inventory_batches/id/{id}', 'InventoryBatchController@searchById');
+		Route::get('/inventory_batches/product/{id}', 'InventoryBatchController@index_product');
+		Route::get('/inventory_batches/add/{id}', 'InventoryBatchController@add');
 		Route::post('/inventory_batch/search', 'InventoryBatchController@search');
 		Route::get('/inventory_batch/search', 'InventoryBatchController@search');
 		Route::get('/inventory_batches/delete/{id}', 'InventoryBatchController@delete');
@@ -92,7 +94,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/inventory/search', 'InventoryController@search');
 		Route::get('/inventory/search', 'InventoryController@search');
 		Route::get('/inventories/delete/{id}', 'InventoryController@delete');
-		Route::get('/inventories/onhand/{product_code}', 'InventoryController@getOnHand');
 		Route::get('/inventories/detail/{id}', 'InventoryController@detail');
 		Route::post('/inventories/submit/{move_id}', 'InventoryController@submit');
 		Route::get('/inventories/confirm/{move_id}', 'InventoryController@confirm');
@@ -110,6 +111,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/purchase_line/enquiry', 'PurchaseLineController@enquiry');
 		Route::post('/purchase_line/enquiry', 'PurchaseLineController@enquiry');
 		Route::get('/purchase_lines/add/{purchase_id}/{product_code}', 'PurchaseLineController@add');
+		Route::get('/purchase_lines/add_reorder/{purchase_id}', 'PurchaseLineController@addReorder');
 		Route::get('/purchase_lines/show/{id}', 'PurchaseLineController@show');
 		Route::get('/purchase_lines/detail/{id}', 'PurchaseLineController@detail');
 		Route::get('/purchase_lines/id/{id}', 'PurchaseLineController@searchById');
@@ -594,6 +596,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/wards/delete/{id}', 'WardController@delete');
 
 		Route::get('/stores/set/{id}', 'StoreController@setStore');
+		Route::get('/stores/forget', 'StoreController@forgetCookie');
 		Route::resource('stores', 'StoreController');
 		Route::get('/stores/id/{id}', 'StoreController@searchById');
 		Route::post('/store/search', 'StoreController@search');

@@ -43,7 +43,7 @@ class UnitMeasure extends Model
 	public function getUnitShortnameAttribute($value)
 	{
 			if (empty($value)) {
-					return "-";
+					return $this->attributes['unit_name'];
 			} else {
 					return $value;
 			}	

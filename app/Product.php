@@ -159,7 +159,7 @@ class Product extends Model
 			$product_code = $this->attributes['product_code'];
 			$uom = ProductUom::where('product_code', '=', $product_code)
 					->where('uom_default_cost', '=', 1)
-					->select('unit_code', 'uom_cost')
+					->select('unit_code', 'uom_cost', 'uom_rate')
 					->first();
 
 			return $uom?:null;
@@ -174,5 +174,14 @@ class Product extends Model
 					->first();
 
 			return $uom?:null;
+	}
+
+	public function getStockLimits($store_code)
+	{
+			$limits = StockLimit::where('product_code', $this->attributes['product_code'])
+						->where('store_code', $store_code)
+						->first();
+
+			return $limits;
 	}
 }

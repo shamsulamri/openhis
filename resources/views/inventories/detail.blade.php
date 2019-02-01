@@ -39,8 +39,9 @@
 					<br>
 					{{ $inventory->product_code }}
 			</td>
-			<td width='13%' align='center' >
-				@if ($movement->move_posted==0) {{ Form::label('book_'.$inventory->inv_id, $inventory->inv_book_quantity ?:'-', ['class'=>'form-control']) }} @else {{ $inventory->inv_book_quantity }} @endif
+			<td width='13%' align='right' >
+				{{ Form::hidden('book_'.$inventory->inv_id, $helper->getStockOnHand($inventory->product_code, $inventory->store_code, $inventory->inv_batch_number)) }}
+				@if ($movement->move_posted==0) {{ Form::label('book_'.$inventory->inv_id, $helper->getStockOnHand($inventory->product_code, $inventory->store_code, $inventory->inv_batch_number)?:'-', ['class'=>'form-control']) }} @else {{ $inventory->inv_book_quantity }} @endif
 			</td>
 			<td width='13%' align='center'>
 				@if ($movement->move_posted==0) 

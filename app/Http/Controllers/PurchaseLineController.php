@@ -23,6 +23,7 @@ use App\StockHelper;
 use App\ProductUom;
 use App\Supplier;
 use App\PurchaseRequestStatus;
+use App\InventoryBatch;
 
 class PurchaseLineController extends Controller
 {
@@ -246,6 +247,7 @@ class PurchaseLineController extends Controller
 	{
 			$purchase_line = PurchaseLine::findOrFail($id);
 			$purchase_line->fill($request->input());
+
 			$product = Product::find($purchase_line->product_code);
 
 			$valid = $purchase_line->validate($request->all(), $request->_method);	
@@ -386,23 +388,25 @@ class PurchaseLineController extends Controller
 
 	public function add($purchase_id, $product_code)
 	{
-			$purchase = Purchase::find($purchase_id);
+			$purchase_line = PurchaseLine::where('purchase_id', $purchase_id)
+							->where('product_code', $product_code)
+							->first();
 
-			$product = Product::find($product_code);
-			$unit_cost = 0;
-			if ($product->uom->count()>0) {
-					$unit_cost =$product->uom->where('unit_code','unit')->first()->uom_cost;
+			if (!$purchase_line) {
+					$purchase_line = new PurchaseLine();
 			}
 
+			$purchase = Purchase::find($purchase_id);
+			$product = Product::find($product_code);
 			$default_tax = TaxCode::where('tax_default',1)->first();
-			$purchase_line = new PurchaseLine();
+
 			$purchase_line->purchase_id = $purchase_id;
 			$purchase_line->product_code = $product_code;
-			$purchase_line->line_unit_price = $unit_cost;
-			$purchase_line->line_quantity = 1;
-			$purchase_line->uom_rate = 1;
+			$purchase_line->line_quantity += 1;
+			$purchase_line->uom_rate = $product->uomDefaultCost()->uom_rate;
+			$purchase_line->unit_code = $product->uomDefaultCost()->unit_code;
+			$purchase_line->line_unit_price = $product->uomDefaultCost()->uom_cost;
 			$purchase_line->line_subtotal = $purchase_line->line_quantity*$purchase_line->line_unit_price;
-			$purchase_line->unit_code = 'unit';
 			if ($product->product_input_tax) {
 				$purchase_line->tax_code = $product->product_input_tax;
 				$purchase_line->tax_rate = isset($product->product_input_tax) ? $product->inputTax->tax_rate : 0;
@@ -412,7 +416,7 @@ class PurchaseLineController extends Controller
 			}
 
 			if ($purchase_line->tax_rate>0) {
-				$purchase_line->line_subtotal_tax = $purchase_line->line_unit_price*(1+$default_tax->tax_rate/100);
+				$purchase_line->line_subtotal_tax = $purchase_line->line_subtotal*(1+$default_tax->tax_rate/100);
 			} else {
 				$purchase_line->line_subtotal_tax = $purchase_line->line_subtotal;
 			}
@@ -422,12 +426,50 @@ class PurchaseLineController extends Controller
 			return redirect('/product_searches?reason=purchase&purchase_id='.$purchase_id.'&line_id='.$purchase->line_id);
 	}
 
-	public function updateStock($id) 
+	public function addReorder($purchase_id)
+	{
+		$stores = Auth::user()->storeCodeInString();
+		$sql = "
+				select a.product_code, sum(inv_quantity) as stock_quantity
+				from inventories as a
+				left join stock_limits as b on (a.product_code = b.product_code and b.store_code = a.store_code)
+				left join products as c on (c.product_code = a.product_code)
+				left join stores as d on (d.store_code = a.store_code)
+				left join ref_unit_measures as e on (e.unit_code = a.unit_code)
+				left join (
+						select a.product_code, sum(line_quantity) as on_purchase
+						from purchase_lines as a
+						left join purchases as b on (b.purchase_id = a.purchase_id)
+						left join inventories as c on (c.line_id = a.line_id)
+						where document_code = 'purchase_order'
+						and purchase_posted = 1
+						and inv_id is null
+						group by a.product_code
+				) as f on (f.product_code = a.product_code)
+				where a.store_code in (". $stores .")
+				group by a.product_code, a.store_code, limit_min, limit_max, unit_name, unit_shortname
+				having stock_quantity<limit_min
+		";
+
+		$reorders = DB::select($sql);
+
+		foreach ($reorders as $reorder) {
+			$this->add($purchase_id, $reorder->product_code);
+			Log::info($reorder->product_code);
+		}
+
+		Session::flash('message', 'Record added successfully.');
+		return redirect('/product_searches?reason=purchase&type=reorder&purchase_id='.$purchase_id);
+	}
+
+	public function goodsReceive($id) 
 	{
 		$purchase = Purchase::find($id);
 		$purchase_lines = PurchaseLine::where('purchase_id', $id)
 							->where('line_posted',0)
 							->get();
+
+		$helper = new StockHelper();
 
 		foreach ($purchase_lines as $line) {
 			$inventory = new Inventory();
@@ -442,7 +484,6 @@ class PurchaseLineController extends Controller
 			$inventory->inv_unit_cost = $line->line_unit_price;
 			$inventory->inv_subtotal = $line->line_subtotal;
 			$inventory->inv_batch_number = $line->batch_number;
-			$inventory->inv_expiry_date = $line->expiry_date;
 			$inventory->inv_posted = 1;
 			$inventory->username = Auth::user()->id;
 			$inventory->save();
@@ -451,6 +492,8 @@ class PurchaseLineController extends Controller
 			$line->save();
 
 			$this->updateCost($line);
+
+			$helper->updateStockOnHand($inventory->product_code);
 		}
 
 		Session::flash('message', 'Document posted.');
@@ -459,8 +502,8 @@ class PurchaseLineController extends Controller
 
 	public function updateCost($purchase_line)
 	{
-			$uom = $purchase_line->product->uom->where('unit_code','unit')->first();
-			Log::info('-->'.$uom);
+			/** Save last cost price **/
+			$uom = $purchase_line->product->uom->where('unit_code',$purchase_line->unit_code)->first();
 			if (!empty($uom)) {
 					$uom->uom_cost = $purchase_line->line_unit_price;
 					$uom->save();
@@ -504,11 +547,20 @@ class PurchaseLineController extends Controller
 
 		foreach ($purchase_lines as $line) {
 			$this->updateCost($line);
+			if (!empty($line->batch_number)) {
+				$batches = InventoryBatch::where('batch_number', $line->batch_number)->get();
+				if ($batches->count()==0) {
+						$batch = new InventoryBatch();
+						$batch->batch_number = $line->batch_number;
+						$batch->product_code = $line->product_code;
+						$batch->batch_expiry_date = $line->expiry_date;
+						$batch->save();
+				}
+			}	
 		}
 
 		if ($purchase->document_code == 'goods_receive') {
-				//or $purchase->document_code =='purchase_invoice'
-				$this->updateStock($id);
+				$this->goodsReceive($id);
 		}
 
 		return redirect('/purchases');
@@ -516,9 +568,12 @@ class PurchaseLineController extends Controller
 
 	public function enquiry(Request $request)
 	{
-			$purchase_lines = PurchaseLine::leftJoin('purchases as b', 'b.purchase_id', '=', 'purchase_lines.purchase_id')
+			$purchase_lines = PurchaseLine::select('*', 'e.unit_name')
+								->leftJoin('purchases as b', 'b.purchase_id', '=', 'purchase_lines.purchase_id')
 								->leftJoin('products as c', 'c.product_code', '=', 'purchase_lines.product_code')
-								->leftJoin('suppliers as d', 'd.supplier_code', '=', 'b.supplier_code');
+								->leftJoin('suppliers as d', 'd.supplier_code', '=', 'b.supplier_code')
+								->leftJoin('ref_unit_measures as e', 'e.unit_code', '=', 'purchase_lines.unit_code')
+								->whereIn('category_code', Auth::user()->categoryCodes());
 
 			if (!empty($request->document_number)) {
 				$purchase_lines = $purchase_lines->where('purchase_number','like', '%'.$request->document_number.'%');
@@ -559,6 +614,12 @@ class PurchaseLineController extends Controller
 			if (!empty($request->date_start) && !empty($request->date_end)) {
 				$purchase_lines = $purchase_lines->whereBetween('b.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
 			} 
+
+			if ($request->export_report) {
+				$purchase_lines = $purchase_lines->select('purchase_number', 'b.created_at', 'supplier_name', 'product_name', 'c.product_code', 'line_quantity', 'unit_name', 'line_unit_price' );
+				$purchase_lines = $purchase_lines->get()->toArray();
+				DojoUtility::export_report($purchase_lines);
+			}
 
 			$purchase_lines = $purchase_lines->paginate($this->paginateValue);
 

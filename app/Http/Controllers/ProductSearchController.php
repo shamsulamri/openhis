@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -64,7 +66,7 @@ class ProductSearchController extends Controller
 									->prepend('','');
 
 			switch ($reason) {
-					case "purchase_order":
+					case "purchase":
 							$return_id = $request->purchase_id;
 							break;
 					case "bom":
@@ -80,6 +82,45 @@ class ProductSearchController extends Controller
 
 			$product_searches = $product_searches->paginate($this->paginateValue);
 			
+			if ($request->type == 'reorder') {
+				$stores = Auth::user()->storeCodeInString();
+				$sql = "
+						select product_name, a.product_code, a.store_code, store_name, sum(inv_quantity) as stock_quantity, limit_min, limit_max, unit_name, unit_shortname, on_purchase
+						from inventories as a
+						left join stock_limits as b on (a.product_code = b.product_code and b.store_code = a.store_code)
+						left join products as c on (c.product_code = a.product_code)
+						left join stores as d on (d.store_code = a.store_code)
+						left join ref_unit_measures as e on (e.unit_code = a.unit_code)
+						left join (
+								select a.product_code, sum(line_quantity) as on_purchase
+								from purchase_lines as a
+								left join purchases as b on (b.purchase_id = a.purchase_id)
+								left join inventories as c on (c.line_id = a.line_id)
+								where document_code = 'purchase_order'
+								and purchase_posted = 1
+								and inv_id is null
+								group by a.product_code
+						) as f on (f.product_code = a.product_code)
+						where a.store_code in (". $stores .")
+						group by a.product_code, a.store_code, limit_min, limit_max, unit_name, unit_shortname
+						having stock_quantity<limit_min
+				";
+
+					$data = DB::select($sql);
+
+					/** Pagination **/
+					$page = Input::get('page', 1); 
+					$offSet = ($page * $this->paginateValue) - $this->paginateValue;
+					$itemsForCurrentPage = array_slice($data, $offSet, $this->paginateValue, true);
+
+					$product_searches = new LengthAwarePaginator($itemsForCurrentPage, count($data), 
+							$this->paginateValue, 
+							$page, 
+							['path' => $request->url(), 
+							'query' => $request->query()]
+					);
+			}
+
 			$purchase = null;
 			if ($request->purchase_id) {
 					$purchase = Purchase::find($request->purchase_id);
@@ -107,6 +148,7 @@ class ProductSearchController extends Controller
 					'purchase'=>$purchase,
 					'move_id'=>$request->move_id,
 					'movement'=>$movement,
+					'type'=>$request->type,
 			]);
 	}
 
@@ -141,8 +183,11 @@ class ProductSearchController extends Controller
 			}
 	}
 
+	/**
 	public function add($purchase_id, $product_code)
 	{
+			return "X";
+
 			$default_tax = TaxCode::where('tax_default',1)->first();
 			$product = Product::find($product_code);
 			$purchase_order_line = new PurchaseOrderLine();
@@ -167,6 +212,7 @@ class ProductSearchController extends Controller
 			Session::flash('message', 'Record added successfully.');
 			return redirect('/product_searches?reason=purchase_order&purchase_id='.$purchase_id.'&line_id='.$purchase_order_line->line_id);
 	}
+	**/
 
 	public function bom($product_code, $bom_product_code) 
 	{
@@ -327,6 +373,12 @@ class ProductSearchController extends Controller
 									break;
 					}
 			} else {
+
+					$purchase = null;
+					if ($request->purchase_id) {
+							$purchase = Purchase::find($request->purchase_id);
+					}
+
 					$movement = null;
 					if ($request->move_id) {
 							$movement = InventoryMovement::find($request->move_id);
@@ -348,6 +400,7 @@ class ProductSearchController extends Controller
 							'input_id'=>$request->input_id,
 							'move_id'=>$request->move_id,
 							'movement'=>$movement,
+							'purchase'=>$purchase,
 					]);
 			}
 	}

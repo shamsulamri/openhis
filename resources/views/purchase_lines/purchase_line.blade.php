@@ -20,7 +20,7 @@
 					<div class='form-group  @if ($errors->has('line_quantity')) has-error @endif'>
 						{{ Form::label('line_quantity', 'Quantity',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
-							{{ Form::text('line_quantity', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							{{ Form::text('line_quantity', null, ['id'=>'line_quantity', 'class'=>'form-control','onchange'=>'uomChanged()']) }}
 							@if ($errors->has('line_quantity')) <p class="help-block">{{ $errors->first('line_quantity') }}</p> @endif
 						</div>
 					</div>
@@ -96,7 +96,7 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-default" href="/purchase_lines/detail/{{ $purchase_line->purchase_id }}" role="button">Back</a>
+            <a class="btn btn-default" href="/purchase_lines/detail/{{ $purchase_line->purchase_id }}" role="button">Cancel</a>
 			@if ($purchase_line->line_posted == 0)
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
 			@endif
@@ -122,11 +122,12 @@
 				var unit_code = document.getElementById('unit_code');
 				var uom_rate = document.getElementById('uom_rate');
 				var label_rate = document.getElementById('label_rate');
+				var line_quantity = document.getElementById('line_quantity');
 
 				@foreach ($product_uoms as $uom)
 
 				if (uom_list.value == '{{ $uom->unit_code }}') {
-						price.value = {{ $uom->uom_cost }};
+						price.value = {{ $uom->uom_cost?:0 }};
 						unit_code.value = '{{ $uom->unit_code }}';
 						uom_rate.value = '{{ $uom->uom_rate }}';
 						label_rate.innerHTML = '{{ $uom->uom_rate }}';

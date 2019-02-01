@@ -1,7 +1,8 @@
 @if ($product)
 <?php 
-$on_hand = $stock_helper->getStockOnHand($product->product_code, $store_code);
-$allocated = $stock_helper->getStockAllocated($product->product_code, $store_code); 
+$on_hand = $stock_helper->getStockOnHand($product->product_code, $store_code)?:0;
+$allocated = $stock_helper->getStockAllocated($product->product_code, $store_code)?:0;
+$stock_limit = $product->getStockLimits($store_code);
 ?>
 <div class='form-horizontal'>
 	<!-- Information -->
@@ -51,7 +52,7 @@ $allocated = $stock_helper->getStockAllocated($product->product_code, $store_cod
 					<div class='form-group'>
 						<label for='average_cost' class='col-sm-4 control-label'>Average Cost</label>
 						<div class='col-sm-8'>
-            				{{ Form::label('average_cost', $product->product_average_cost, ['class'=>'form-control']) }}
+            				{{ Form::label('average_cost', $stock_helper->getStockAverageCost($product->product_code, $store_code)?:'0 ' , ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -59,7 +60,7 @@ $allocated = $stock_helper->getStockAllocated($product->product_code, $store_cod
 					<div class='form-group'>
 						{{ Form::label('form_code', 'Total Cost',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('form_code', number_format($on_hand*$product->product_average_cost,2), ['class'=>'form-control']) }}
+            				{{ Form::label('form_code', $stock_helper->getStockTotalCost($product->product_code, $store_code), ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -93,23 +94,29 @@ $allocated = $stock_helper->getStockAllocated($product->product_code, $store_cod
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  '>
+						{{ Form::label('status_code', 'On Purchase',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+            				{{ Form::label('status_code', floatval($stock_helper->getStockOnPurchase($product->product_code, $store_code))?:' 0 ', ['class'=>'form-control']) }}
+						</div>
+					</div>
 			</div>
 	</div>
 
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  '>
-						{{ Form::label('status_code', 'On Purchase',['class'=>'col-sm-4 control-label']) }}
+						{{ Form::label('status_code', 'Transfer In',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('status_code', floatval($stock_helper->getStockOnPurchase($product->product_code))?:' 0 ', ['class'=>'form-control']) }}
+            				{{ Form::label('status_code', floatval($stock_helper->getStockTransferIn($product->product_code, $store_code))?:' 0 ', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-6">
-					<div class='form-group'>
-						{{ Form::label('form_code', 'On Transfer',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  '>
+						{{ Form::label('status_code', 'Transfer Out',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('status_code', floatval($stock_helper->getStockOnIssue($product->product_code, $store_code))?:' 0 ', ['class'=>'form-control']) }}
+            				{{ Form::label('status_code', floatval($stock_helper->getStockTransferOut($product->product_code, $store_code))?:' 0 ', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -117,13 +124,19 @@ $allocated = $stock_helper->getStockAllocated($product->product_code, $store_cod
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  '>
-						{{ Form::label('status_code', 'In Assembly',['class'=>'col-sm-4 control-label']) }}
+						{{ Form::label('status_code', 'Min Limit',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('status_code', floatval($stock_helper->getStockOnPurchase($product->product_code))?:' 0 ', ['class'=>'form-control']) }}
+            				{{ Form::label('status_code', $stock_limit->limit_min?:' 0 ', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<div class='form-group  '>
+						{{ Form::label('status_code', 'Max Limit',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+            				{{ Form::label('status_code', $stock_limit->limit_max?:' 0 ', ['class'=>'form-control']) }}
+						</div>
+					</div>
 			</div>
 	</div>
 	<div class="row">

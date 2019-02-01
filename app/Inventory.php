@@ -8,6 +8,8 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 use App\InventoryBatch;
+use App\StockHelper;
+use Log;
 
 class Inventory extends Model
 {
@@ -35,8 +37,7 @@ class Inventory extends Model
 				'inv_description',
 				'inv_batch_number',
 				'loan_id',
-				'username',
-				'deleted_at'];
+				'username'];
 	
     protected $guarded = ['inv_id'];
     protected $primaryKey = 'inv_id';
@@ -105,5 +106,18 @@ class Inventory extends Model
 						->first();
 
 			return $batch;
+	}
+
+	public static function boot()
+	{
+			parent::boot();
+
+			static::created(function($inventory)
+			{
+				$helper = new StockHelper();
+				$helper->updateStockOnHand($inventory->product_code);
+			});
+
+
 	}
 }

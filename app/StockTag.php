@@ -15,6 +15,7 @@ class StockTag extends Model
 
 	protected $table = 'stock_tags';
 	protected $fillable = [
+				'move_code',
 				'tag_name'];
 	
     protected $guarded = ['tag_code'];

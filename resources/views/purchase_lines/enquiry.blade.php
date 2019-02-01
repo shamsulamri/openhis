@@ -102,6 +102,7 @@
 			</td>
 			<td>
 					{{$purchase_line->line_quantity }}
+					{{ $purchase_line->unit_name }}
 			</td>
 			<td>
 					{{ number_format($purchase_line->line_unit_price,2) }}

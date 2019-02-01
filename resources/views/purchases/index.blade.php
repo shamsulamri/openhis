@@ -102,9 +102,10 @@
 			</td>
 			<td>
 			{{ $purchase->purchase_posted==1? 'Posted':'Open' }}
+			@if ($purchase->purchaseRequestStatus) <br> @endif
 			{{ $purchase->purchaseRequestStatus ? ' ('.$purchase->purchaseRequestStatus->status_name.')' : '' }}
 			</td>
-			<td align='right'>
+			<td align='right' width='140'>
 					<a class='btn btn-default btn-xs' href='{{ URL::to('purchase_lines/show/'. $purchase->purchase_id) }}'>Line Item</a>
 			@if ($author_id == $purchase->author_id)
 					@if ($purchase->purchase_posted == 0)

@@ -19,6 +19,7 @@ use App\InventoryMovement;
 use App\InventoryBatch;
 use Schema;
 use Auth;
+use App\DojoUtility;
 
 class InventoryController extends Controller
 {
@@ -156,16 +157,6 @@ class InventoryController extends Controller
 					'inventories'=>$inventories
 			]);
 	}
-
-	public function getOnHand($product_code) 
-	{
-			$helper = new StockHelper();
-			$on_hand = $helper->getStockOnHand($product_code);
-			$allocated = $helper->getStockAllocated($product_code);
-			$completed = $helper->getStockCompleted($product_code);
-
-			return $helper->getStockOnHand($product_code).'-'.$allocated.'-'.$completed;
-	}
 	
 	public function deleteForm(Request $request, $move_id) 
 	{
@@ -200,13 +191,13 @@ class InventoryController extends Controller
 			$inventory = Inventory::find($line->inv_id);
 			$inventory->unit_code = $request['unit_'.$line->inv_id]?:'unit';
 			$inventory->uom_rate = 1;
-			//$inventory->inv_book_quantity = $request['book_'.$line->inv_id];
+			$inventory->inv_book_quantity = $request['book_'.$line->inv_id];
+			$inventory->inv_batch_number = $request['batch_'.$line->inv_id];
 			$inventory->inv_physical_quantity = $request['physical_'.$line->inv_id];
 			$inventory->inv_quantity = $inventory->uom_rate*$inventory->inv_physical_quantity;
-			$inventory->inv_batch_number = $request['batch_'.$line->inv_id];
 
 			if (!empty($request['batch_'.$line->inv_id])) {
-					$batch = InventoryBatch::where('batch_number', '=', $line->inv_batch_number)
+					$batch = InventoryBatch::where('batch_number', '=', $request['batch_'.$line->inv_id])
 								->where('product_code', $line->product_code)
 								->first();
 
@@ -240,19 +231,19 @@ class InventoryController extends Controller
 
 			if ($product_uom) {
 				$inventory->uom_rate = $product_uom->uom_rate;
-				if ($movement->move_code == 'adjust') {
+				if ($movement->move_code == 'stock_adjust') {
 						if ($inventory->inv_book_quantity>0) {
 								$inventory->inv_quantity = ($inventory->inv_physical_quantity*$inventory->uom_rate)-$inventory->inv_book_quantity;
 						} else {
 								$inventory->inv_quantity = $inventory->inv_physical_quantity*$inventory->uom_rate;
 						}
-				} elseif ($movement->move_code == 'receive') {
+				} elseif ($movement->move_code == 'stock_receive') {
 						$inventory->inv_quantity = $inventory->inv_physical_quantity*$inventory->uom_rate;
 				} else {
 						$inventory->inv_quantity = -($inventory->inv_physical_quantity*$inventory->uom_rate);
 				}
-				$inventory->inv_unit_cost = $product_uom->uom_cost;
-				$inventory->inv_subtotal = $inventory->inv_physical_quantity*$product_uom->uom_cost;
+				$inventory->inv_unit_cost = $product_uom->uom_cost/$inventory->uom_rate;
+				$inventory->inv_subtotal = $inventory->inv_quantity*$inventory->inv_unit_cost;
 			}
 
 
@@ -291,14 +282,20 @@ class InventoryController extends Controller
 	public function enquiry(Request $request)
 	{
 			$inventories = Inventory::orderBy('inv_id', 'desc')
+							->select('inv_datetime', 'b.product_code', 'b.product_name', 'c.move_name', 'inventories.move_description', 'inv_batch_number', 'inv_quantity', 'store_name')
 							->leftJoin('products as b', 'b.product_code', '=', 'inventories.product_code')
+							->leftJoin('stock_movements as c', 'c.move_code', '=', 'inventories.move_code')
+							->leftJoin('stores as d', 'd.store_code', '=', 'inventories.store_code')
+							->leftJoin('inventory_movements as e', 'e.move_id', '=', 'inventories.move_id')
 							->where('inv_posted', 1);
 
 			/*** Store ***/
 			if (!empty($request->store_code)) {
-					$inventories = $inventories->where('store_code', $request->store_code);
+				$inventories = $inventories->where('inventories.store_code', $request->store_code);
+			} else {
+				$stores = Auth::user()->storeCodes();
+				$inventories = $inventories->whereIn('inventories.store_code', $stores);
 			}
-
 			/*** Seach Param ***/
 			if (!empty($request->search)) {
 					$inventories = $inventories->where(function ($query) use ($request) {
@@ -309,7 +306,13 @@ class InventoryController extends Controller
 					});
 			}
 
+			if ($request->export_report) {
+				$inventories = $inventories->select('inv_datetime','move_name', 'product_name','b.product_code', 'store_name', 'inv_batch_number','inv_quantity');
+				$inventories = $inventories->get()->toArray();
+				DojoUtility::export_report($inventories);
+			}
 
+			//return $inventories->get();
 			$inventories = $inventories->paginate($this->paginateValue);
 
 			return view('inventories.enquiry', [

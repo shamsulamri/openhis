@@ -14,6 +14,7 @@ use Auth;
 use Log;
 use App\Ward;
 use App\QueueLocation;
+use App\StockHelper;
 use App\Http\Controllers\ProductController;
 use Config;
 
@@ -91,10 +92,7 @@ class OrderHelper
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 			$encounter = Encounter::find(Session::get('encounter_id'));
 
-			/*** Default Route ***/
-			$target_location=$product->location_code;
-
-			/*** Overriding Route ***/
+			/*** Set Route ***/
 			$route = null;
 			if ($admission) {
 						$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
@@ -180,17 +178,9 @@ class OrderHelper
 			$order->encounter_id = Session::get('encounter_id');
 			$order->user_id = Auth::user()->id;
 			$order->unit_code = $product->uomDefaultPrice()?$product->uomDefaultPrice()->unit_code:'unit';
+			$order->order_unit_price = $product->uomDefaultPrice()?$product->uomDefaultPrice()->uom_price:'unit';
 			$order->product_code = $product->product_code;
 			$order->order_quantity_request = 1;
-			$order->order_unit_price = $product->uomDefaultPrice()?$product->uomDefaultPrice()->uom_price:0;
-			if ($product->outputTax) {
-				$price = (1+($product->outputTax->tax_rate/100))* $order->order_unit_price;
-				$order->order_sale_price = $price;
-			} else {
-				$order->order_sale_price = $order->order_unit_price;
-			}	
-
-			$order->order_total = $order->order_sale_price*$order->order_quantity_request;
 
 			if ($admission) {
 					$order->admission_id = $admission->admission_id;
@@ -229,9 +219,8 @@ class OrderHelper
 							$order->save();
 					}
 					$order_drug->save();
-					OrderHelper::createDrugServings($order_drug);
-					$order->order_total = $order->order_sale_price*$order->order_quantity_request;
-					$order->save();
+					//OrderHelper::createDrugServings($order_drug);
+					//$order->save();
 			}
 
 			if ($product->order_form==3) {
@@ -355,28 +344,12 @@ class OrderHelper
 			}
 		}
 
-	public static function insertStock($order) 
-	{
-		if ($order->product->product_stocked==1) {
-				$stock = new Stock();
-				$stock->order_id = $order->order_id;
-				$stock->product_code = $order->product_code;
-				$stock->stock_quantity = -($order->order_quantity_supply);
-				$stock->store_code = $order->store_code;
-				$stock->stock_value = -($order->product->product_average_cost*$order->order_quantity_supply);
-				$stock->move_code = 'sale';
-				$stock->save();
-
-				$productController = new ProductController();
-				$productController->updateTotalOnHand($order->product_code);
-		}
-	}
-
 	public static function dropCharge($consultation_id) 
 	{
 		$orders = Order::where('consultation_id',$consultation_id)
 					->leftJoin('products as c', 'c.product_code', '=', 'orders.product_code')
 					->where('product_duration_use', '=',0)
+					->where('post_id', 0)
 					->get();
 
 		$stock_helper = new StockHelper();
@@ -409,14 +382,60 @@ class OrderHelper
 			if ($drop_now) {
 				if (!$order->orderCancel) {
 						$order->order_completed=1;
+						$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
 						$order->save();
 				}
 
 				if ($order->product->product_stocked==1) {
-						//$stock_helper->updateStockBatch($order);
+
+						$batches = $stock_helper->getBatches($order->product_code, null, $order->store_code)?:null;
+
+						if ($batches->count()>0) {
+							$quantity_request = $order->order_quantity_request;
+							foreach ($batches as $batch) {
+									$supply = 0;
+									if ($batch->sum_quantity<$quantity_request) {
+										$supply = $batch->sum_quantity;
+										$quantity_request -= $batch->sum_quantity;
+									} else {
+										$supply = $quantity_request;
+										$quantity_request = $quantity_request-$supply;
+									}
+									$order->order_quantity_supply = $supply;
+									self::addToInventory($order, $batch->inv_batch_number);
+							}
+						} else {
+							self::addToInventory($order);
+						}
+
 				}
 			}
 		}
+	}
+
+	public static function addToInventory($order, $batch_number = null) 
+	{
+		$total_supply = $order->order_quantity_supply;
+		$inventory = new Inventory();
+		$inventory->order_id = $order->order_id;
+		$inventory->store_code = $order->store_code;
+		$inventory->product_code = $order->product_code;
+		$inventory->inv_batch_number = $batch_number;
+		$inventory->unit_code = $order->product->unit_code;
+
+		$uom = ProductUom::where('product_code', $order->product_code)
+				->where('unit_code', $inventory->unit_code)
+				->first();
+
+		$inventory->uom_rate =  $uom->uom_rate;
+		$inventory->inv_unit_cost =  $uom->uom_cost;
+		$inventory->inv_quantity = -($total_supply*$uom->uom_rate);
+		$inventory->inv_physical_quantity = $total_supply;
+		$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
+		$inventory->move_code = 'sale';
+		$inventory->inv_posted = 1;
+		$inventory->save();
+				
 	}
 }
 

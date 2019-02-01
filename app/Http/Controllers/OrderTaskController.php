@@ -95,7 +95,7 @@ class OrderTaskController extends Controller
 					->first();
 			Session::set('consultation_id', $consultation->consultation_id);
 
-			$fields = ['patient_name', 'product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'a.post_id', 'a.created_at','order_is_discharge',
+			$fields = ['patient_name', 'product_name', 'a.product_code', 'cancel_id', 'a.order_id', 'a.post_id', 'a.created_at as order_date','order_is_discharge',
 					'i.location_name',	
 					'a.store_code',
 					'product_stocked',
@@ -278,7 +278,7 @@ class OrderTaskController extends Controller
 												$inventory->order_id = $order->order_id;
 												$inventory->store_code = $store_code;
 												$inventory->product_code = $order->product_code;
-												$inventory->unit_code = $batch->unit_code;
+												$inventory->unit_code = $order->unit_code;
 
 												$uom = ProductUom::where('product_code', $order->product_code)
 															->where('unit_code', $inventory->unit_code)
@@ -288,7 +288,7 @@ class OrderTaskController extends Controller
 												$inventory->inv_unit_cost =  $uom->uom_cost;
 												$inventory->inv_quantity = -($unit_supply*$uom->uom_rate);
 												$inventory->inv_physical_quantity = $unit_supply;
-												$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
+												$inventory->inv_subtotal =  -($uom->uom_cost*$inventory->inv_physical_quantity);
 												$inventory->move_code = 'sale';
 												$inventory->inv_batch_number = $batch->inv_batch_number;
 												$inventory->inv_posted = 1;
@@ -296,25 +296,27 @@ class OrderTaskController extends Controller
 										}
 								}
 						} else {
-							$total_supply += $request["quantity_".$order->order_id];
-							$inventory = new Inventory();
-							$inventory->order_id = $order->order_id;
-							$inventory->store_code = $store_code;
-							$inventory->product_code = $order->product_code;
-							$inventory->unit_code = $order->product->unit_code;
+							if ($product->product_stocked==1) {
+									$total_supply += $request["quantity_".$order->order_id];
+									$inventory = new Inventory();
+									$inventory->order_id = $order->order_id;
+									$inventory->store_code = $store_code;
+									$inventory->product_code = $order->product_code;
+									$inventory->unit_code = $order->product->unit_code;
 
-							$uom = ProductUom::where('product_code', $order->product_code)
-									->where('unit_code', $inventory->unit_code)
-									->first();
+									$uom = ProductUom::where('product_code', $order->product_code)
+											->where('unit_code', $inventory->unit_code)
+											->first();
 
-							$inventory->uom_rate =  $uom->uom_rate;
-							$inventory->inv_unit_cost =  $uom->uom_cost;
-							$inventory->inv_quantity = -($total_supply*$uom->uom_rate);
-							$inventory->inv_physical_quantity = $total_supply;
-							$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
-							$inventory->move_code = 'sale';
-							$inventory->inv_posted = 1;
-							$inventory->save();
+									$inventory->uom_rate =  $uom->uom_rate;
+									$inventory->inv_unit_cost =  $uom->uom_cost;
+									$inventory->inv_quantity = -($total_supply*$uom->uom_rate);
+									$inventory->inv_physical_quantity = $total_supply;
+									$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
+									$inventory->move_code = 'sale';
+									$inventory->inv_posted = 1;
+									$inventory->save();
+							}
 						}
 
 						/** Completed order **/
@@ -332,6 +334,10 @@ class OrderTaskController extends Controller
 						$order->save();
 
 
+					}
+
+					if ($product->product_stocked == 1) {
+							$helper->updateStockOnHand($order->product_code);
 					}
 			}
 

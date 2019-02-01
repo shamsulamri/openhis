@@ -30,10 +30,12 @@ class InventoryBatch extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'batch_number'=>'required',
-				'product_code'=>'required',
 				'batch_expiry_date'=>'size:10|date_format:d/m/Y',
 			];
 
+        	if ($method=='') {
+        	    $rules['product_code'] = 'required';
+        	}
 			
 			
 			$messages = [
@@ -57,6 +59,11 @@ class InventoryBatch extends Model
 	public function getBatchExpiryDateAttribute($value)
 	{
 		return DojoUtility::dateReadFormat($value);
+	}
+
+	public function product()
+	{
+			return $this->belongsTo('App\Product', 'product_code');
 	}
 
 }

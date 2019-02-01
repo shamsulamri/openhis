@@ -1,9 +1,13 @@
 @extends('layouts.app2')
 
 @section('content')
-<a class='btn btn-default' href='/inventory_movements/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
-<a class='btn btn-default' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
-<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+@if ($movement->tag_code == 'transfer_in' && $movement->move_code == 'stock_receive')
+<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
+@else
+<a class='btn btn-default btn-sm' href='/inventory_movements/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
+<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
+<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+@endif
 <br>
 <br>
 <form action='/inventory_movement/search_item' method='post'>

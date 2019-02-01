@@ -22,6 +22,7 @@
     <th>Redirect</th>
     <th>From</th> 
     <th>To</th> 
+    <th>Store</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -38,6 +39,9 @@
 			</td>
 			<td>
 						{{ $order_route->location->location_name }}
+			</td>
+			<td>
+						{{ $order_route->location->store->store_name }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_routes/delete/'. $order_route->route_id) }}'>Delete</a>

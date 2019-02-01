@@ -16,7 +16,7 @@
 					<div class='form-group'>
 						<label class='col-sm-3 control-label'>Store</label>
 						<div class='col-sm-9'>
-							{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::select('store_code', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
@@ -36,11 +36,13 @@
 </form>
 <br>
 
+@if (!empty($products))
 @if ($products->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
     <th>Name</th> 
+    <th>Batch</th> 
     <th>Store</th> 
     <th width='100'><div align='right'>On Hand</div></th> 
     <th width='50'><div align='right'>Allocated</div></th> 
@@ -57,7 +59,7 @@ $allocated=0;
 ?>
 	<tr>
 			<td>
-					<a href='{{ URL::to('stocks/enquiry?search='. $product->product_code. '&store_code='.$product->store_code) }}'>
+					<a href='{{ URL::to('products/on_hand?search='. $product->product_code) }}'>
 						{{ $product->product_name }} 
 						@if ($product->unit_shortname) 
 						({{ $product->unit_shortname }}) 
@@ -67,34 +69,38 @@ $allocated=0;
 					{{$product->product_code}}
 			</td>
 			<td>
-				{{ $product->store->store_name }}
+				{{ $product->inv_batch_number?:'-' }}
+			</td>
+			<td>
+				{{ $product->store_name }}
 			</td>
 			<td align='right'>
-				{{ $stock_helper->getStockOnHand($product->product_code, $product->store_code) }}
+				{{ $product->on_hand }}
 			</td>
 			<td align='right'>
-				{{ $stock_helper->getStockAllocated($product->product_code, $product->store_code) }}
+				{{ $product->allocated }}
 			</td>
 			<td align='right'>
-				{{ $stock_helper->getStockAvailable($product->product_code, $product->store_code) }}
+				{{ $product->available }}
 			</td>
 			<td align='right'>
-				{{ $stock_helper->getStockAverageCost($product->product_code, $product->store_code) }}
+				{{ number_format($product->average_cost,2) }}
 			</td>
 			<td align='right'>
-				{{ $stock_helper->getStockTotalCost($product->product_code, $product->store_code) }}
+				{{ number_format($product->total_cost,2) }}
 			</td>
 	</tr>
 @endforeach
 @endif
 </tbody>
 </table>
-{{ $products->appends(['search'=>$search,'category_code'=>$category_code, 'store'=>$store_code])->render() }}
+{{ $products->appends(['search'=>$search,'batch_number'=>$batch_number, 'store'=>$store_code])->render() }}
 <br>
 @if ($products->total()>0)
 	{{ $products->total() }} records found.
 @else
 	No record found.
+@endif
 @endif
 <script>
 		function search_now(value) {

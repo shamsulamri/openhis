@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+@include('products.id')
 <h1>
-Delete Inventory Batch
+Delete Batch
 </h1>
 @include('common.errors')
 <br>

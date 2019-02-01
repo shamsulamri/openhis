@@ -145,6 +145,10 @@ class BillItemController extends Controller
 			$value=0;
 			$tiers = ProductPriceTier::where('charge_code','=', $product->charge_code)->get();
 
+			if (empty($tiers)) {
+					return $price;
+			}
+
 			if ($tiers->count()>0) {
 					foreach ($tiers as $tier) {
 						if ($price<=$tier->tier_max && empty($tier->tier_min)) {
@@ -202,7 +206,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_sale_price, order_discount, profit_multiplier
+				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -217,26 +221,8 @@ class BillItemController extends Controller
 				and h.patient_id = %d
 				and bill_id is null 
 				and order_multiple=0
-				group by product_code,a.unit_code, order_sale_price, order_discount, profit_multiplier
+				group by product_code,a.unit_code, order_discount
 			";
-
-			/*
-			$base_sql = "
-			select a.product_code, sum(inv_physical_quantity) as total_quantity, d.tax_code, d.tax_rate, inv_subtotal as subtotal, a.order_id, order_discount, uom_price, a.unit_code
-					from inventories a
-					left join orders b on (b.order_id = a.order_id)
-					left join products c on (c.product_code = b.product_code)
-					left join tax_codes d on (d.tax_code = c.product_output_tax)
-					left join encounters e on (e.encounter_id = b.encounter_id)
-					left join bill_items as f on (f.encounter_id = b.encounter_id and f.product_code = b.product_code)
-					left join product_uoms as g on (g.product_code = c.product_code and g.unit_code = a.unit_code)
-					where order_completed = 1
-					and bill_id is null
-					%s
-					and e.patient_id = %d
-					group by a.product_code, a.unit_code, d.tax_code, inv_subtotal, a.order_id, order_discount
-			";
-			*/
 
 			$sql = sprintf($base_sql, "", $patient_id);
 
@@ -254,6 +240,7 @@ class BillItemController extends Controller
 			$orders = DB::select($sql);
 			
 			foreach ($orders as $order) {
+					Log::info($order->product_code);
 					$item = new BillItem();
 					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
@@ -265,13 +252,14 @@ class BillItemController extends Controller
 					$item->bill_discount = $order->order_discount;
 					$item->bill_non_claimable = $non_claimable;
 
-					$product = Product::find($item->product_code);
+					$product = Product::find($order->product_code);
 
 					if (!empty($product->charge_code)) {
-							$sale_price = $this->getPriceTier($encounter_id, $product, $product->uomDefaultPrice()->oum_price);
+							Log::info($product->product_name.' = '. $product->uomDefaultPrice()->uom_price);
+							$sale_price = $this->getPriceTier($encounter_id, $product, $product->uomDefaultPrice()->uom_price);
 							$item->bill_unit_price = $sale_price;
 					} else {
-							$item->bill_unit_price = $uom->uom_price;
+							$item->bill_unit_price = $product->uomDefaultPrice()->uom_price;
 					}
 
 					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;
@@ -287,7 +275,7 @@ class BillItemController extends Controller
 					}
 			}
 
-			$this->multipleOrders($encounter_id);
+			//$this->multipleOrders($encounter_id);
 			//$this->outstandingCharges($encounter_id);
 	}
 
@@ -297,7 +285,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, order_quantity_supply, c.tax_rate, c.tax_code, order_sale_price, profit_multiplier, a.order_id, order_total, order_discount
+				select a.product_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -312,6 +300,7 @@ class BillItemController extends Controller
 				and order_multiple=0
 				and bill_id is null
 				%s
+				group by product_code,a.unit_code, order_discount
 			";
 
 			$sql = sprintf($base_sql, $patient_id, "");
@@ -330,24 +319,24 @@ class BillItemController extends Controller
 
 			foreach ($orders as $order) {
 					$item = new BillItem();
-					$item->order_id = $order->order_id;
+					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
-					$item->bill_quantity = $order->order_quantity_supply;
-					$item->bill_unit_multiplier = $order->profit_multiplier;
+					$item->bill_quantity = $order->total_quantity;
 					$item->bill_discount = $order->order_discount;
 
-					$product = Product::find($item->product_code);
+					$product = Product::find($order->product_code);
 					if (!empty($product->charge_code)) {
-							$sale_price = $this->getPriceTier($encounter_id, $product);
+							dd("Q");
+							$sale_price = $this->getPriceTier($encounter_id, $product, $order->order_unit_price);
 							$item->bill_unit_price = $sale_price;
 					} else {
-							$item->bill_unit_price = $order->order_sale_price;
+							$item->bill_unit_price = $product->uomDefaultPrice()->uom_price;
 					}
 
-					$item->bill_amount = $order->order_total;
+					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
 					if ($order->tax_rate) {
@@ -404,7 +393,7 @@ class BillItemController extends Controller
 	public function forms($encounter_id, $non_claimable = 2)
 	{
 			$base_sql = "
-				select count(*) as order_quantity_supply, c.product_code, d.tax_code, tax_rate, uom_price as product_sale_price, d.tax_code, d.tax_rate, profit_multiplier, product_non_claimable
+				select count(*) as order_quantity_supply, c.product_code, d.tax_code, tax_rate, uom_price as product_sale_price, d.tax_code, d.tax_rate, product_non_claimable
 				from form_values a
 				left join forms b on (b.form_code = a.form_code)
 				left join products c on (c.form_code = b.form_code)
@@ -416,7 +405,7 @@ class BillItemController extends Controller
 				where a.encounter_id=%d
 				and c.deleted_at is null
 				%s
-				group by a.form_code, c.product_code, profit_multiplier";
+				group by a.form_code, c.product_code";
 
 			$sql = sprintf($base_sql, $encounter_id, "");
 
@@ -440,8 +429,7 @@ class BillItemController extends Controller
 				$item->tax_code = $order->tax_code;
 				$item->tax_rate = $order->tax_rate;
 				$item->bill_quantity = $order->order_quantity_supply;
-				$item->bill_unit_multiplier = $order->profit_multiplier;
-				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
+				$item->bill_unit_price = $order->product_sale_price;
 				$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
 				$item->bill_amount_exclude_tax = $order->order_quantity_supply*$item->bill_unit_price;
 				$item->bill_non_claimable = $non_claimable;
@@ -498,12 +486,10 @@ class BillItemController extends Controller
 			}
 
 			$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'order_completed', 'product_non_claimable','category_name','b.category_code','name', 'unit_name')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'product_non_claimable','category_name','b.category_code', 'unit_name')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.product_output_tax')
-					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
-					->leftjoin('users as f', 'f.id', '=', 'd.user_id')
 					->leftjoin('ref_unit_measures as g', 'g.unit_code', '=', 'a.bill_unit_code')
 					->where('a.encounter_id','=', $id)
 					->orderBy('category_name')
@@ -531,12 +517,10 @@ class BillItemController extends Controller
 				$this->bedBills($id);
 
 				$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'order_completed', 'product_non_claimable','category_name','b.category_code','name', 'unit_name')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'product_non_claimable','category_name','b.category_code', 'unit_name')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.product_output_tax')
-					->leftjoin('orders as d', 'd.order_id', '=', 'a.order_id')
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
-					->leftjoin('users as f', 'f.id', '=', 'd.user_id')
 					->leftjoin('ref_unit_measures as g', 'g.unit_code', '=', 'a.bill_unit_code')
 					->where('a.encounter_id','=', $id)
 					->where('bill_non_claimable','=', $non_claimable)
@@ -615,7 +599,6 @@ class BillItemController extends Controller
 
 			$incomplete_orders = Order::where('encounter_id','=',$id)
 									->where('order_completed','=',0)
-									->where('order_is_discharge','=',0)
 									->leftjoin('order_cancellations as b','orders.order_id','=', 'b.order_id')
 									->whereNull('cancel_id')
 									->count();
