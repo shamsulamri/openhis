@@ -171,6 +171,11 @@ $header_count=0;
 				@endif
 			</td>
 			<td align='right'>
+					@if ($admission_task->category_code == 'drugs')
+						<a href='{{ URL::to('medication_record/mar/'. $admission_task->encounter_id) }}' class='btn btn-primary btn-xs'>
+						&nbsp;&nbsp;&nbsp;&nbsp; MAR &nbsp;&nbsp;&nbsp;&nbsp;
+						</a>
+					@endif
 				@if (Auth::user()->authorization->module_support==1)
 					<a href='{{ URL::to('order_tasks/task/'. $admission_task->encounter_id) .'/'. $location_code }}' class='btn btn-primary btn-xs'>
 						Open	
@@ -183,20 +188,17 @@ $header_count=0;
 									Stop
 									</a>
 									@endif
+									@if ($admission_task->category_code != 'drugs')
 									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=order_label&id={{ $admission_task->order_id }}'>
 										Print Label
 									</a>
+									@endif
 									<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
 									&nbsp;&nbsp;&nbsp;Cancel&nbsp;&nbsp;&nbsp;
 									</a>
 						@endif
 					@endif
 				@endif
-					@if ($admission_task->category_code == 'drugs')
-						<a href='{{ URL::to('medication_record/mar/'. $admission_task->encounter_id) }}' class='btn btn-primary btn-xs'>
-						&nbsp;&nbsp;&nbsp;&nbsp; MAR &nbsp;&nbsp;&nbsp;&nbsp;
-						</a>
-					@endif
 					@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('admission_tasks/delete/'. $admission_task->order_id) }}'>Delete</a>
 					@endcan

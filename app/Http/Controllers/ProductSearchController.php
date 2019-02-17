@@ -401,6 +401,7 @@ class ProductSearchController extends Controller
 							'move_id'=>$request->move_id,
 							'movement'=>$movement,
 							'purchase'=>$purchase,
+							'type'=>$request->type,
 					]);
 			}
 	}

@@ -10,6 +10,7 @@ use App\DojoUtility;
 use Log;
 use App\GeneralLedger;
 use App\ProductUom;
+use App\StockHelper;
 
 class Product extends Model
 {
@@ -148,6 +149,13 @@ class Product extends Model
 			return floatval($value);
 	}
 
+	public function getTotalOnHand()
+	{
+			$helper = new StockHelper();
+
+			return $helper->getStockOnHand($this->attributes['product_code']);
+			//return floatval($value);
+	}
 	public function unit() 
 	{
 			//return $this->uom()->where('unit_code', 'unit')->first();
@@ -184,4 +192,5 @@ class Product extends Model
 
 			return $limits;
 	}
+
 }

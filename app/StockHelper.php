@@ -151,7 +151,7 @@ class StockHelper
 					$value = $value->where('inv_batch_number', $batch_number);
 			}
 
-			if (!empty($value)) {
+			if ($value->count()>0) {
 					if ($value->sum('inv_quantity')>0) {
 							$value = $value->sum('inv_subtotal')/$value->sum('inv_quantity');
 							$value = number_format($value,2);
@@ -270,17 +270,19 @@ class StockHelper
 							->get();
 			 */
 			$batches = Inventory::where('inventories.product_code', $product_code)
-							->selectRaw('batch_id, inventories.product_code, batch_expiry_date, sum(inv_quantity) as sum_quantity, inv_batch_number')
+							->select('batch_id', 'inventories.product_code', 'batch_expiry_date','inv_batch_number', DB::raw('sum(inv_quantity) as sum_quantity'))
 							->leftjoin('inventory_batches as b', 'batch_number', '=', 'inv_batch_number')
 							->leftjoin('ref_unit_measures as c', 'c.unit_code', '=', 'inventories.unit_code')
 							->groupBy('inventories.product_code')
-							->groupBy('inv_batch_number')
 							->groupBy('batch_expiry_date')
+							->groupBy('inv_batch_number')
 							->orderBy('batch_expiry_date')
 							->orderBy('inv_batch_number', 'desc')
-							->havingRaw('sum_quantity>?',[0])
-							->where('inv_posted', 1);
+							->havingRaw('sum(inv_quantity)>?',[0])
+							->where('inv_posted', 1)
+							->whereNotNull('inv_batch_number');
 
+			/*
 			if (!empty($order_id)) {
 				$batches = Inventory::where('inventories.product_code', $product_code)
 							->selectRaw('batch_id, inventories.product_code, batch_expiry_date, sum(inv_quantity) as sum_quantity, inv_batch_number')
@@ -295,6 +297,7 @@ class StockHelper
 							->where('inv_posted', 1)
 							->where('move_code', 'sale');
 			}
+			 */
 
 			if ($store_code) {
 				$batches = $batches->where('store_code', $store_code);

@@ -348,7 +348,6 @@ class ProductController extends Controller
 				$store_code = Auth::user()->defaultStore($request);
 		}
 
-
 		return view('products.enquiry', [
 				'product'=>$product,
 				'stock_helper'=>$stock_helper,

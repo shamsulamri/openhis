@@ -200,6 +200,7 @@ class InventoryController extends Controller
 					$batch = InventoryBatch::where('batch_number', '=', $request['batch_'.$line->inv_id])
 								->where('product_code', $line->product_code)
 								->first();
+								//->where('batch_expiry_date', '=', DojoUtility::dateWriteFormat($request['inv_expiry_date_'.$line->inv_id]))
 
 					if (empty($batch)) {
 							$batch = new InventoryBatch();
@@ -293,7 +294,7 @@ class InventoryController extends Controller
 			if (!empty($request->store_code)) {
 				$inventories = $inventories->where('inventories.store_code', $request->store_code);
 			} else {
-				$stores = Auth::user()->storeCodes();
+				$stores = Auth::user()->authorizedStores();
 				$inventories = $inventories->whereIn('inventories.store_code', $stores);
 			}
 			/*** Seach Param ***/

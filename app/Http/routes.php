@@ -1046,6 +1046,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/build_assembly/{id}', 'AssemblyController@build');
 				Route::get('/explode_assembly/{id}', 'AssemblyController@explode');
 				Route::post('/explode_assembly/{id}', 'AssemblyController@destroy');
+				Route::post('/explode_assembly/refresh/{id}', 'AssemblyController@explode');
 				
 				Route::resource('urgencies', 'UrgencyController');
 				Route::get('/urgencies/id/{id}', 'UrgencyController@searchById');

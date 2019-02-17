@@ -65,7 +65,7 @@ if ($on_hand>0 && $on_hand>=$bom->bom_quantity) {
 <h4>The maximum number of build: <strong>{{ floor($max) }}</strong></h4>
 <br>
 <form class='form-inline' action='/build_assembly/{{ $bom->product_code }}' method='post'>
-	<label>Quanity to build</label>
+	<label>Quantity to build</label>
 	{{ Form::text('quantity', $quantity, ['class'=>'form-control','placeholder'=>'']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	{{ Form::submit('Build', ['class'=>'btn btn-default']) }}

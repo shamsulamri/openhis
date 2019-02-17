@@ -316,7 +316,10 @@ class PatientController extends Controller
 	public function merge(Request $request, $id)
 	{
 			$patient = Patient::find($id);
-			$duplicate_patient = Patient::where('patient_mrn',$request->duplicate_id)->first();
+			$duplicate_patient = null;
+			if (!empty($request->duplicate_id)) {
+				$duplicate_patient = Patient::where('patient_mrn',$request->duplicate_id)->first();
+			}
 
 			if ($request->target_id) {
 					$this->mergeRecord($patient->patient_id, $request->target_id);

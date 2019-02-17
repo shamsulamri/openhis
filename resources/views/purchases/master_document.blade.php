@@ -4,6 +4,7 @@
 @if (!empty($purchase)) 
 	@if ($purchase->document_code == 'goods_receive')
 		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>
+		<a class='btn btn-default btn-sm' href='/product_searches?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Products</a>
 	@else
 		<a class='btn btn-default btn-sm' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}?reason=purchase'>Items</a>
 		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>

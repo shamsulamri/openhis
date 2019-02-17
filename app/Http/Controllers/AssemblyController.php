@@ -295,13 +295,21 @@ class AssemblyController extends Controller
 	public function explode(Request $request, $id)
 	{
 			$product = Product::find($id);
-			$store = Store::find(Auth::user()->defaultStore($request));
+			if ($request->store_code) {
+					$store_code = $request->store_code;
+			} else {
+					$store_code = Auth::user()->defaultStore($request);
+			}
+
+			$helper = new StockHelper();
+			$on_hand = $helper->getStockOnHand($id, $store_code);
 
 			return view('assemblies.explode', [
 					'product'=>$product,
-					'stores'=>Auth::user()->storeList()->prepend('',''),
-					'store'=>$store,
+					'store'=>Auth::user()->storeList(),
 					'stock_helper'=>new StockHelper(),
+					'store_code'=>$request->store_code?:$store_code,
+					'on_hand'=>$on_hand,
 			]);
 	}
 
@@ -350,7 +358,7 @@ class AssemblyController extends Controller
 						$inventory->store_code = $request->store_code;
 						$inventory->product_code = $product->product_code;
 						$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
-						$inventory->inv_physical_quantity = $bom_product->bom_quantity;
+						$inventory->inv_physical_quantity = $bom_product->bom_quantity*$quantity;
 						$inventory->unit_code = $product->unit_code;
 
 						$uom = ProductUom::where('product_code', $inventory->product_code)

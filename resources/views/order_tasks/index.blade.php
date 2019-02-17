@@ -102,6 +102,7 @@
 			@endif
 			</td>
 			<td>
+					{{ $on_hand - $allocated }}
 			</td>
 			<td width='100'>
 			@if ($status=='danger')
@@ -181,9 +182,9 @@
 				@endif
 				<td>
 					@if ($order->order_completed == 0) 
-            		{{ Form::text('batch_'.$batch->product_code.'_'.$batch->batch()->batch_id, $supply?:0, ['class'=>'form-control']) }}
+            		{{ Form::text('batch_'.$batch->product_code.'_'.$batch->batch_id, $supply?:0, ['class'=>'form-control']) }}
 					@else
-            		{{ Form::label('batch_'.$batch->product_code.'_'.$batch->batch()->batch_id, abs($supply?:0), ['class'=>'form-control']) }}
+            		{{ Form::label('batch_'.$batch->product_code.'_'.$batch->batch_id, abs($supply?:0), ['class'=>'form-control']) }}
 					@endif
 				</td>
 			</tr>

@@ -126,7 +126,7 @@ $stock_limit = $product->getStockLimits($store_code);
 					<div class='form-group  '>
 						{{ Form::label('status_code', 'Min Limit',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('status_code', $stock_limit->limit_min?:' 0 ', ['class'=>'form-control']) }}
+            				{{ Form::label('status_code', $stock_limit?$stock_limit->limit_min:' 0 ', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -134,7 +134,7 @@ $stock_limit = $product->getStockLimits($store_code);
 					<div class='form-group  '>
 						{{ Form::label('status_code', 'Max Limit',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('status_code', $stock_limit->limit_max?:' 0 ', ['class'=>'form-control']) }}
+            				{{ Form::label('status_code', $stock_limit?$stock_limit->limit_max:' 0 ', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>

@@ -2,7 +2,6 @@
 
 @section('content')
 <h1>Stock Batch List
-<a href='/inventory_batches/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/inventory_batch/search' method='post'>
 	<div class='input-group'>

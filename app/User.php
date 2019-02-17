@@ -79,7 +79,7 @@ class User extends Authenticatable
 			return $stores;
 	}
 
-	public function storeCodes()
+	public function authorizedStores()
 	{
 			$stores = StoreAuthorization::where('author_id', $this->author_id)->get();
 
@@ -153,7 +153,7 @@ class User extends Authenticatable
 				}
 
 				if ($default_store == null) {
-						$default_store = $this->storeCodes()[0];
+						$default_store = $this->authorizedStores()[0];
 				}
 			}
 			return $default_store;

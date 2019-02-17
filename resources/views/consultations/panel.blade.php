@@ -81,7 +81,13 @@
     <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-	<li><a href="/consultations/close">Suspend</a></li>
+	<li><a href="/consultations/close">
+	@if ($consultation->encounter->encounter_code == 'outpatient')
+		Suspend	Consultation
+	@else
+		End Consultation
+	@endif
+	</a></li>
 	@if (empty($consultation->encounter->discharge->discharge_id))
 			@can('discharge_patient')
 			<li role="separator" class="divider"></li>

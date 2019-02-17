@@ -35,11 +35,9 @@ class ConsultationDiagnosisController extends Controller
 					->paginate($this->paginateValue);
 
 
-			/**
 			if ($consultation_diagnoses->count()==0) {
 					return $this->create();
 			} else {
-			**/
 					return view('consultation_diagnoses.index', [
 							'consultation_diagnoses'=>$consultation_diagnoses,
 							'consultation'=>$consultation,
@@ -47,9 +45,7 @@ class ConsultationDiagnosisController extends Controller
 							'tab'=>'diagnosis',
 							'consultOption' => 'consultation',
 					]);
-			/**
 			}
-			**/
 	}
 
 	public function create()

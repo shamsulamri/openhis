@@ -37,10 +37,13 @@ class OrderHelper
 			$drug = OrderDrug::where('order_id', $order_id)->first();
 
 			$value = "";
-			if (!empty($drug->drug_dosage)) $value = $drug->drug_dosage." ".$drug->dosage->dosage_name;
-			if (!empty($drug->route_code)) $value = $value.", ".$drug->route_code.", ".$drug->frequency_code;
-			if (!empty($drug->drug_duration)) $value = $value.", ".$drug->drug_duration;
-			if (!empty($drug->period_code)) $value = $value." ".$drug->period_code;
+			if ($drug) {
+					if (!empty($drug->dosage_code)) $value = $drug->drug_dosage." ".$drug->dosage->dosage_name;
+					if (!empty($drug->route_code)) $value = $value.", ".$drug->route->route_name.", ".$drug->frequency_code;
+					if (!empty($drug->drug_duration)) $value = $value.", ".$drug->drug_duration;
+					if (!empty($drug->period_code)) $value = $value." ".$drug->period_code;
+					$value = trim($value, ",");
+			}
 
 			return $value;
 	}
@@ -94,6 +97,7 @@ class OrderHelper
 
 			/*** Set Route ***/
 			$route = null;
+			$target_location = null;
 			if ($admission) {
 						$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
 								->where('category_code', $product->category_code)

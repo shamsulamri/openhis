@@ -7,16 +7,16 @@
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'><div align='left'>Encounter</div></label>
-						<div class='col-sm-9'>
+						<label class='col-sm-4 control-label'><div align='left'>Encounter&nbsp;</div></label>
+						<div class='col-sm-8'>
 								{{ Form::select('encounter_code', $encounters, $encounter_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'>Location</label>
-						<div class='col-sm-9'>
+						<label class='col-sm-4 control-label'>Location</label>
+						<div class='col-sm-8'>
 								{{ Form::select('locations', $locations, $selectedLocation, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>

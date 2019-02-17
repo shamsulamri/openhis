@@ -10,7 +10,7 @@ Merge Patient Record
 {{ Form::open(['url'=>'patient/merge/'.$patient->patient_id]) }}
 @if (!$duplicate_patient)
 		<h4>Enter the duplicate identification to merge</h4>
-		{{ Form::text('duplicate_id', $duplicate_id, ['class'=>'form-control','placeholder'=>'Patient ID','maxlength'=>'100']) }}
+		{{ Form::text('duplicate_id', $duplicate_id, ['class'=>'form-control','placeholder'=>'Patient MRN','maxlength'=>'100']) }}
 		<br>
 @endif
 @if ($duplicate_patient)
