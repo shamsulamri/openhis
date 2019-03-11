@@ -173,7 +173,7 @@ class OrderHelper
 	}
 	**/
 
-	public static function orderItem($product, $ward_code)
+	public static function orderItem($product, $ward_code, $renew_drug=null)
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 
@@ -200,18 +200,19 @@ class OrderHelper
 			if ($product->order_form==2) {
 					$order_drug = new OrderDrug();
 					$order_drug->order_id = $order->order_id;
-					$drug_prescription = DrugPrescription::where('drug_code','=',$product->product_code)->first();
-					if (!empty($drug_prescription)) {
-							$order_drug->drug_strength = $drug_prescription->drug_strength;
-							$order_drug->unit_code = $drug_prescription->unit_code;
+					if (empty($renew_drug)) {
+							$drug_prescription = DrugPrescription::where('drug_code', $product->product_code)->first();
+							$order_drug->drug_strength = $drug_prescription->drug->strength;
+							$uom = UnitMeasure::find($drug_prescription->drug->uom_strength);
+							if (!empty($uom)) {
+									$order_drug->unit_code = $drug_prescription->drug->uom_strength;
+							}
 							$order_drug->drug_dosage = $drug_prescription->drug_dosage;
 							$order_drug->dosage_code = $drug_prescription->dosage_code;
 							$order_drug->route_code = $drug_prescription->route_code;
-							//$order_drug->frequency_code = $drug_prescription->frequency_code;
+							$order_drug->frequency_code = $drug_prescription->frequency_code;
 							$order_drug->drug_duration = $drug_prescription->drug_duration;
 							$order_drug->period_code = $drug_prescription->period_code;
-							$order_drug->drug_prn = $drug_prescription->drug_prn;
-							$order_drug->drug_meal = $drug_prescription->drug_meal;
 							$order->order_quantity_request = $drug_prescription->drug_total_unit;
 							$order->order_quantity_supply = $drug_prescription->drug_total_unit;
 							$order->order_description = $drug_prescription->drug_description;
@@ -220,8 +221,21 @@ class OrderHelper
 									$order->order_quantity_request = 1;
 									$order->order_quantity_supply = 1;
 							}
-							$order->save();
+					} else {
+							if ($renew_drug->order->product->drug) {
+									$order_drug->drug_strength = $renew_drug->order->product->drug->strength;
+									$order_drug->unit_code = $renew_drug->order->product->drug->uom_strength;
+							}
+							$order_drug->drug_dosage = $renew_drug->drug_dosage;
+							$order_drug->dosage_code = $renew_drug->dosage_code;
+							$order_drug->route_code = $renew_drug->route_code;
+							$order_drug->frequency_code = $renew_drug->frequency_code;
+							$order_drug->drug_duration = $renew_drug->drug_duration;
+							$order_drug->period_code = $renew_drug->period_code;
+
+							$order->order_quantity_request = $renew_drug->order->order_quantity_request;
 					}
+					$order->save();
 					$order_drug->save();
 					//OrderHelper::createDrugServings($order_drug);
 					//$order->save();

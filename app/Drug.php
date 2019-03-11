@@ -65,4 +65,9 @@ class Drug extends Model
 	{
 			return $this->belongsTo('App\DrugCaution', 'caution_code');
 	}
+
+	public function category()
+	{
+			return $this->belongsTo('App\DrugCategory', 'category_code');
+	}
 }

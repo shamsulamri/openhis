@@ -20,9 +20,7 @@ class OrderDrug extends Model
 				'frequency_code',
 				'drug_duration',
 				'period_code',
-				'drug_total_unit',
-				'drug_prn',
-				'drug_meal'];
+				'drug_total_unit'];
 
 	public function validate($input, $method) {
 			$rules = [

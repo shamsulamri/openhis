@@ -8,14 +8,17 @@
 <br>
 <form action='/product/search' method='post' class='form-inline'>
 	<label>Product</label>
-	<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+	<div class="form-group">
+			<input type='text' class='form-control' placeholder="Name or code" id='search' name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+   </div>
 	<label>Category</label>
 	{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
+
+
 </form>
 <br>
-
 @if ($products->total()>0)
 <table class="table table-hover">
  <thead>
@@ -43,9 +46,9 @@ $allocated=0;
 			</td>
 			<td>
 					@can('product_information_edit')
-					<a href='{{ URL::to('products/'. $product->product_code . '/edit') }}'>
+					<a tabindex='10' href='{{ URL::to('products/'. $product->product_code . '/edit') }}'>
 					@else
-					<a href='{{ URL::to('products/'. $product->product_code.'?detail=true') }}'>
+					<a tabindex='10' href='{{ URL::to('products/'. $product->product_code.'?detail=true') }}'>
 					@endcan
 						{{ $product->product_name }} 
 					</a>
@@ -91,4 +94,5 @@ $allocated=0;
 @else
 	No record found.
 @endif
+
 @endsection

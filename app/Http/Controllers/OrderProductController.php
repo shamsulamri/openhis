@@ -156,6 +156,7 @@ class OrderProductController extends Controller
 	
 	public function search(Request $request)
 	{
+
 			if (empty($request->search)) {
 					if ($request->set_code=='drug_history') {
 						$this->drugHistory($request);
@@ -190,11 +191,29 @@ class OrderProductController extends Controller
 						}
 				}
 
+				/**
 				$order_products = Product::orderBy('product_name')
 					->where(function ($query) use ($request) {
 						$query->where('product_name','like','%'.$request->search.'%')
 							->orWhere('product_name_other','like','%'.$request->search.'%')
 							->orWhere('product_code','like','%'.$request->search.'%');
+					});
+				**/
+
+				$order_products = Product::orderBy('product_name')
+					->where(function ($query) use ($request) {
+						$fields = explode(' ', $request->search);
+						foreach($fields as $field) {
+							$query = $query->where('product_name', 'like', '%'.$field .'%');
+						}
+					});
+
+				$order_products = $order_products
+					->orwhere(function ($query) use ($request) {
+						$fields = explode(' ', $request->search);
+						foreach($fields as $field) {
+							$query = $query->where('product_name_other', 'like', '%'.$field .'%');
+						}
 					});
 
 				if (!empty($request->categories)) {

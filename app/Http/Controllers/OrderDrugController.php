@@ -28,6 +28,9 @@ use App\OrderRoute;
 use App\QueueLocation;
 use App\EncounterHelper;
 use App\Store;
+use App\Drug;
+use App\DrugFrequency;
+use App\DojoUtility;
 
 class OrderDrugController extends Controller
 {
@@ -46,6 +49,392 @@ class OrderDrugController extends Controller
 			return view('order_drugs.index', [
 					'order_drugs'=>$order_drugs
 			]);
+	}
+
+
+	public function medications()
+	{
+			$consultation_id = Session::get('consultation_id');
+			$consultation = Consultation::findOrFail($consultation_id);
+			$encounter_id = $consultation->encounter_id;
+
+			$medications = OrderDrug::orderBy('b.created_at')
+						->leftJoin('orders as b', 'b.order_id', '=', 'order_drugs.order_id')
+						->where('encounter_id', $encounter_id)
+						->get();
+
+			return view('order_drugs.medications', [
+					'medications'=>$medications,
+					'patient'=>$consultation->encounter->patient,
+					'consultation'=>$consultation,
+			]);
+	}
+
+	public function addDrug(Request $request)
+	{
+
+			$product = Product::find($request->drug_code);
+			if ($product) {
+					OrderHelper::orderItem($product, $request->cookie('ward'));
+			}
+
+			return $this->medicationTable();
+	}
+
+	public function renewDrug(Request $request)
+	{
+			$order_id = $request->order_id;
+			$order = Order::find($order_id);
+			$product = Product::find($order->product_code);
+			$renew_drug = OrderDrug::where('order_id', $order_id)->first();
+			if ($product) {
+					OrderHelper::orderItem($product, $request->cookie('ward'), $renew_drug );
+			}
+
+			return $this->medicationTable();
+	}
+
+	public function removeDrug(Request $request)
+	{
+			$order_id = $request->order_id;
+			$order = Order::find($order_id);
+			OrderMultiple::where('order_id', $order_id)->delete();
+			Order::find($order_id)->delete();
+					
+			return $this->medicationTable();
+	}
+
+	public function updateDrug(Request $request)
+	{
+			$order_id = $request->order_id;
+			$drug = OrderDrug::where('order_id', $order_id)->first();
+			$drug->drug_dosage = $request->drug_dosage;
+			$drug->frequency_code = $request->frequency_code;
+			$drug->drug_duration = $request->drug_duration;
+			$drug->period_code = $request->period_code;
+			$drug->save();
+
+			//return $this->medicationTable();
+	}
+
+	public function addDrug2(Request $request)
+	{
+
+			$prescription = DrugPrescription::find($request->id);
+			$product = Product::find($prescription->drug_code);
+			if ($product) {
+					OrderHelper::orderItem($product, $request->cookie('ward'), $prescription->prescription_id);
+			}
+
+			return $this->medicationTable();
+	}
+
+	function drugHistory() {
+
+			$consultation_id = Session::get('consultation_id');
+			$consultation = Consultation::findOrFail($consultation_id);
+			$encounter_id = $consultation->encounter_id;
+
+			$medications = OrderDrug::orderBy('b.created_at')
+						->leftJoin('orders as b', 'b.order_id', '=', 'order_drugs.order_id')
+						->leftJoin('drug_dosages as c', 'c.dosage_code', '=', 'order_drugs.dosage_code')
+						->leftJoin('drug_routes as d', 'd.route_code', '=', 'order_drugs.route_code')
+						->leftJoin('encounters as e', 'e.encounter_id', '=', 'b.encounter_id')
+						->where('e.patient_id', $consultation->patient_id)
+						->get();
+						//->where('e.encounter_id', '<>', $encounter_id)
+
+			$table_row = '';
+			$helper = new OrderHelper();
+			foreach ($medications as $med) {
+					//$html .= $med->order->product->drug->drug_generic_name." ";
+					//$prescriptoin = $helper->getPrescription($med->order_id).'<br>';
+					$drug_add = sprintf("<a class='btn btn-warning btn-xs' href='javascript:renewDrug(%s)'>Renew</a>", $med->order_id);
+					$table_row .=sprintf(" 
+							<tr>
+							        <td width=200>%s</td>
+							        <td width=%s>%s</td>
+							        <td>%s</td>
+							        <td>%s %s</td>
+							        <td>%s</td>
+							        <td>%s</td>
+							        <td>%s</td>
+							        <td width='10'>%s</a></td>
+							</tr>", 
+							DojoUtility::dateLongFormat($med->order->consultation['created_at']),
+							'30%',
+							$med->order->product->drug->drug_generic_name, 
+							$med->order->product->drug->trade_name?:'-',
+							$med->drug_dosage,
+							$med->dosage_name,
+							$med->route_name,
+							$med->frequency['frequency_name'],
+							sprintf("%s", $med->drug_duration?$med->drug_duration.' '.$med->period['period_name']:'-'),
+							$drug_add
+					);
+			}
+
+			$html = '';
+			if (empty($table_row)) {
+				$html = "";
+			} else {
+					$html = sprintf('
+					<h3>History</h3>
+					<div class="widget style1 gray-bg">
+					<table class="table table-hover">
+						 <thead>
+							<tr> 
+							<th>Date</th>
+							<th>Generic</th>
+							<th>Trade</th>
+							<th>Dosage</th> 
+							<th>Route</th> 
+							<th>Freqeuncy</th> 
+							<th>Duration</th>
+							<th></th>
+							</tr>
+						  </thead>
+							%s
+					</table>
+					</div>
+				', $table_row);
+			}
+
+			return $html;
+	}
+
+
+	function medicationTable() {
+
+			$consultation_id = Session::get('consultation_id');
+			$consultation = Consultation::findOrFail($consultation_id);
+			$encounter_id = $consultation->encounter_id;
+
+			$medications = OrderDrug::orderBy('b.created_at')
+						->leftJoin('orders as b', 'b.order_id', '=', 'order_drugs.order_id')
+						->leftJoin('drug_dosages as c', 'c.dosage_code', '=', 'order_drugs.dosage_code')
+						->leftJoin('drug_routes as d', 'd.route_code', '=', 'order_drugs.route_code')
+						->where('encounter_id', $encounter_id)
+						->get();
+
+			$table_row = "";
+			foreach ($medications as $med) {
+					$drug_remove = sprintf("<a class='btn btn-danger' href='javascript:removeDrug(%s)'>-</a>", $med->order_id);
+					$table_row .=sprintf(" 
+							<tr>
+							        <td width=%s>%s<br>%s</td>
+							        <td width=70><input id='dosage_%s' name='%s' class='form-control' type='text' value='%s'></td>
+							        <td width=120><label style='font-weight:normal' class='form-control'>%s</label></td>
+							        <td width=100><label style='font-weight:normal' class='form-control'>%s</label></td>
+							        <td width='100'>%s</td>
+							        <td width=70><input id='duration_%s' name='%s' class='form-control' type='text' value='%s'></td>
+							        <td width='100'>%s</td>
+							        <td width='10'>%s</a></td>
+							</tr>", 
+							'50%',
+							$med->order->product->drug->drug_generic_name, 
+							$med->order->product->drug->trade_name?:'-',
+							$med->order_id,
+							$med->order_id,
+							$med->drug_dosage,
+							$med->dosage_name,
+							$med->route_name,
+							$this->getPrescriptionSelect($med->order->product_code, $med->order_id, $med->frequency_code),
+							$med->order_id,
+							$med->order_id,
+							$med->drug_duration,
+							$this->getPeriods($med->order->product_code, $med->order_id, $med->period_code),
+							$drug_remove
+					);
+			}
+
+			if (empty($table_row)) {
+				$html = "<br>";
+			} else {
+					$html = sprintf('
+					<table class="table table-hover">
+						 <thead>
+							<tr> 
+							<th>Generic / Trade</th>
+							<th>Dosage</th> 
+							<th></th>
+							<th>Route</th> 
+							<th>Freqeuncy</th> 
+							<th>Duration</th>
+							<th></th>
+							<th></th>
+							</tr>
+						  </thead>
+							%s
+					</table>
+				', $table_row);
+			}
+
+			return $html;
+
+	}
+
+	function find(Request $request)
+	{
+			if (!empty($request->search)) {
+
+				$fields = explode(' ', $request->search);
+
+				$sql = "select drug_generic_name, trade_name, a.drug_code
+						from drugs as a
+						where (drug_generic_name like '%".$fields[0]."%'
+						or trade_name like '%".$fields[0]."%') ";
+
+				unset($fields[0]);
+
+				if (count($fields)>0) {
+						$sql .=" and (";
+						foreach($fields as $key=>$field) {
+								$sql .= "drug_generic_name like '%".$field."%'";
+								if ($key<count($fields)) {
+									$sql .= " and ";
+								}
+						}
+
+						$sql .=")";
+				}
+
+				$sql .=' limit 10';
+
+				$data = DB::select($sql);
+
+				$html = '';
+				$table_row = '';
+				$drug_dosage = "";
+				$drug_route = "";
+
+				foreach($data as $row) {
+					$drug_name = $row->drug_generic_name;
+					if (!empty($row->trade_name)) {
+							$drug_name = sprintf('%s (%s)',$row->trade_name, $row->drug_generic_name);
+					}
+
+
+					$prescriptions = $this->getPrescription($row->drug_code);
+					$route_dosage = null;
+					$drug_prescription = "";
+					$i = 0;
+					foreach($prescriptions as $prescription) {
+							if ($route_dosage != $prescription->drug_dosage.$prescription->dosage_code.$prescription->route_code) {
+								$drug_prescription .= sprintf(' %s %s, %s (%s)',
+										$prescription->drug_dosage,
+										$prescription->dosage->dosage_name,
+										$prescription->route->route_name,
+										$prescription->route->route_code);
+
+								$drug_dosage = sprintf("%s %s", $prescription->drug_dosage, $prescription->dosage->dosage_name);
+								$drug_route = $prescription->route_code;
+							}
+
+							/*
+							$drug_frequencies .= "<a class='btn btn-default btn-xs' href='javascript:addDrug(".$prescription->prescription_id.")' title='".$prescription->frequency->frequency_name."'>".$prescription->frequency->frequency_code."</a>";
+							if ($i==5 && count($prescriptions)>6) {
+									//$drug_frequencies .= "<br><br>";
+							}
+							if ($i+1<count($prescriptions)) {
+									$drug_frequencies .= " ";
+							}
+							 */
+							$route_dosage = $prescription->drug_dosage.$prescription->dosage_code.$prescription->route_code;
+							$i++;
+					}
+
+					$drug_add = sprintf("<a class='btn btn-default btn-xs' href='javascript:addDrug(&quot;%s&quot;)' >+</a>", $row->drug_code);
+					$table_row .=sprintf(" 
+							<tr>
+							        <td width=10>%s</td>
+							        <td>%s</td>
+							        <td>%s</td>
+							</tr>", 
+								$drug_add,
+								$row->drug_generic_name, 
+								$row->trade_name?:'-'
+					);
+				}
+
+				$html = sprintf('
+					<table class="table table-hover">
+							%s
+					</table>
+				', $table_row);
+
+				return $html;
+
+			}
+	}
+
+	function getPeriods($drug_code, $order_id, $period_code)
+	{
+			$periods =  Period::whereIn('period_code', array('day','week', 'month'))
+							->select('period_name', 'period_code')
+							->get();
+			$html = '';
+			foreach($periods as $period) {
+				$selected = "";
+				if ($period->period_code == $period_code) $selected = "selected";
+				$html .= sprintf("<option value='%s' %s>%s</option>", $period->period_code, $selected, $period->period_name);
+			}
+
+			$html = sprintf("<select id='period_%s' name='%s' style='width:100px' class='form-control' id='period_%s'>%s</select>", $order_id,  $order_id, $drug_code, $html);
+			
+			return $html;
+	}
+
+	function getPrescriptionSelect($drug_code, $order_id, $frequency_code)
+	{
+			$prescriptions = DrugPrescription::where('drug_code', $drug_code)
+					->orderBy('frequency_code')
+					->get();
+
+			$html = '';
+			foreach($prescriptions as $prescription) {
+				$selected = "";
+				if ($prescription->frequency_code == $frequency_code) $selected = "selected";
+				$html .= sprintf("<option value='%s' %s>%s</option>", $prescription->frequency_code, $selected, $prescription->frequency->frequency_name);
+			}
+
+			$html = sprintf("<select id='frequency_%s' name='%s' style='width:100px' class='form-control' id='prescription_%s'>%s</select>",$order_id, $order_id, $drug_code, $html);
+			
+			return $html;
+	}
+
+	function getPrescription($drug_code)
+	{
+			$data = DrugPrescription::where('drug_code', $drug_code)
+					->orderBy('frequency_code')
+					->get();
+			
+			return $data;
+	}
+
+	function fetch2(Request $request)
+	{
+			if (!empty($request->search)) {
+				$fields = explode(' ', $request->search);
+				Log::info($fields);
+				$data = Product::select('product_name', 'product_code');
+
+				foreach($fields as $field) {
+					$data = $data->where('product_name', 'like', '%'.$field .'%');
+				}
+
+				$data = $data->where('category_code', 'drugs')
+							->limit(10)
+							->orderBy('product_name')
+							->get();	
+
+				$html = '';
+				foreach($data as $row) {
+					$html .= '<button type="button">+</button>'.$row->product_name.'<br>';	
+				}
+				return $html;
+
+			}
 	}
 
 	public function create($product_code)
@@ -68,8 +457,6 @@ class OrderDrugController extends Controller
 					$order_drug->frequency_code = $drug_prescription->frequency_code;
 					$order_drug->drug_period = $drug_prescription->drug_period;
 					$order_drug->period_code = $drug_prescription->period_code;
-					$order_drug->drug_prn = $drug_prescription->drug_prn;
-					$order_drug->drug_meal = $drug_prescription->drug_meal;
 					$order->order_quantity_request = $drug_prescription->drug_total_unit;
 					$order->order_description = $drug_prescription->drug_description;
 			}
@@ -172,8 +559,6 @@ class OrderDrugController extends Controller
 			$stock_helper = new StockHelper();
 			$order_drug = OrderDrug::findOrFail($id);
 			$order_drug->fill($request->input());
-			$order_drug->drug_prn = $request->drug_prn ?: 0;
-			$order_drug->drug_meal = $request->drug_meal ?: 0;
 
 			$order = Order::find($order_drug->order_id);
 			$product= Product::find($order->product_code);

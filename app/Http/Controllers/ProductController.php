@@ -75,6 +75,7 @@ class ProductController extends Controller
 			]);
 	}
 
+
 	public function create()
 	{
 			$product = new Product();

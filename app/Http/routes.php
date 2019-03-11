@@ -47,12 +47,22 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+
 		Route::resource('purchase_request_statuses', 'PurchaseRequestStatusController');
 		Route::get('/purchase_request_statuses/id/{id}', 'PurchaseRequestStatusController@searchById');
 		Route::post('/purchase_request_status/search', 'PurchaseRequestStatusController@search');
 		Route::get('/purchase_request_status/search', 'PurchaseRequestStatusController@search');
 		Route::get('/purchase_request_statuses/delete/{id}', 'PurchaseRequestStatusController@delete');
-		
+
+		Route::post('/medications/find', 'OrderDrugController@find')->name('medications.find');
+		Route::post('/medications/table', 'OrderDrugController@medicationTable')->name('medications.table');
+		Route::post('/medications/add', 'OrderDrugController@addDrug')->name('medications.add');
+		Route::post('/medications/remove', 'OrderDrugController@removeDrug')->name('medications.remove');
+		Route::post('/medications/update', 'OrderDrugController@updateDrug')->name('medications.update');
+		Route::post('/medications/history', 'OrderDrugController@drugHistory')->name('medications.history');
+		Route::post('/medications/renew', 'OrderDrugController@renewDrug')->name('medications.renew');
+		Route::get('/medications', 'OrderDrugController@medications');
+		//Route::get('/medications/add/{id}', 'OrderDrugController@addDrug');
 		
 		Route::resource('stock_tags', 'StockTagController');
 		Route::get('/stock_tags/id/{id}', 'StockTagController@searchById');

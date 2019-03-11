@@ -110,6 +110,11 @@ class Order extends Model
 			return $this->belongsTo('App\Product', 'product_code');
 	}
 
+	public function drug()
+	{
+			return $this->belongsTo('App\Drug', 'drug_code', 'product_code');
+	}
+
 	public function store()
 	{
 			return $this->belongsTo('App\Store', 'store_code');

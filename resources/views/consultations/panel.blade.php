@@ -69,6 +69,7 @@
 	<a href="/consultations/{{ $consultation->consultation_id }}/edit" class="btn btn-primary">Clinical Notes</a>
 	<a href="/consultation_diagnoses" class="btn btn-primary">Diagnoses</a>
 	<a href="/consultation_procedures" class="btn btn-primary">Procedures</a>
+	<a href="/medications" class="btn btn-primary">Medications</a>
 	<a href="/orders/make" class="btn btn-primary">Orders</a>
 </div>
 
