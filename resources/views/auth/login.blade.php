@@ -4,7 +4,7 @@
 	<br>
 	<br>
 	<div align='center'>
-		<img src='logo_400.png'>
+		<img width='280' height='300' src='logo_400.png'>
 	</div>
 
     <div class="middle-box text-center loginscreen animated fadeInDown">

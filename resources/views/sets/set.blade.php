@@ -15,9 +15,18 @@
         </div>
     </div>
 
+	<div class='form-group  @if ($errors->has('set_shortcut')) has-error @endif'>
+        <label for='user_id' class='col-sm-3 control-label'>Order Shortcut</label>
+		<div class='col-sm-9'>
+			{{ Form::checkbox('set_shortcut', '1') }} 
+			@if ($errors->has('set_shortcut')) <p class="help-block">{{ $errors->first('set_shortcut') }}</p> @endif
+		</div>
+	</div>
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/sets" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
+

@@ -49,7 +49,6 @@ class QueueController extends Controller
 					$location = QueueLocation::find($location_code);
 			}
 
-
 			/**
 			if (empty($request->cookie('queue_location')) & empty(Auth::user()->location_code)) {
 					Session::flash('message', 'Location not set. Please select your location or room.');
@@ -196,7 +195,6 @@ class QueueController extends Controller
 	
 	public function search(Request $request)
 	{
-
 			$queues = DB::table('queues as a')
 					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'a.location_code')
 					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')

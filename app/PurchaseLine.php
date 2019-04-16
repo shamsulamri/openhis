@@ -8,6 +8,7 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 use DB;
+use Log;
 
 class PurchaseLine extends Model
 {

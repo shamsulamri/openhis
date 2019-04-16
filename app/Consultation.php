@@ -74,7 +74,7 @@ class Consultation extends Model
 
 	public function annotations()
 	{
-			return $this->hasMany('App\ConsultationAnnotation', 'consultation_id');
+			return $this->hasMany('App\ConsultationAnnotation', 'consultation_id')->orderBy('annotation_index');
 	}
 
 	public function procedures()

@@ -75,9 +75,11 @@
 <!-- iCheck -->
 <script src="/assets/inspinia/js/plugins/iCheck/icheck.min.js"></script>
 
-		<script src="/assets/js/moment.min.2.5.0.js"></script>
-		<script src="/assets/js/combodate.js"></script>
-		<script src="/assets/js/js.cookie.js"></script>
+<script src="/assets/js/moment.min.2.5.0.js"></script>
+<script src="/assets/js/combodate.js"></script>
+<script src="/assets/js/js.cookie.js"></script>
+<script src="/assets/js/bodyScrollLock/bodyScrollLock.js"></script>
+
 <style>
 		#toast-container > .toast {
 			background-image: none !important;

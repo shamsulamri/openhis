@@ -13,6 +13,7 @@ class ConsultationAnnotation extends Model
 	protected $fillable = [
 				'consultation_id',
 				'annotation_image',
+				'annotation_index',
 				'annotation_dataurl'];
 	
     protected $guarded = ['annotation_id'];

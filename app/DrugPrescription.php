@@ -55,6 +55,10 @@ class DrugPrescription extends Model
 			return $this->belongsTo('App\DrugDosage', 'dosage_code');
 	}
 
+	public function period() {
+		return $this->belongsTo('App\Period','period_code');
+	}	
+
 	public function route()
 	{
 			return $this->belongsTo('App\DrugRoute', 'route_code');

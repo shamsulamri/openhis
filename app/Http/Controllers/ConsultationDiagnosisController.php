@@ -29,11 +29,14 @@ class ConsultationDiagnosisController extends Controller
 			$consultation_diagnoses = DB::table('consultation_diagnoses as a')
 					->select('id', 'a.created_at', 'diagnosis_clinical','diagnosis_type','diagnosis_is_principal')
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
-					->where('encounter_id','=',$consultation->encounter_id)
+					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->leftjoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
+					->where('d.patient_id', $consultation->encounter->patient->patient_id)
+					->orderBy('c.encounter_id', 'desc')
 					->orderBy('diagnosis_is_principal', 'desc')
-					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
+					//->where('encounter_id','=',$consultation->encounter_id)
 
 			if ($consultation_diagnoses->count()==0) {
 					return $this->create();
@@ -164,17 +167,18 @@ class ConsultationDiagnosisController extends Controller
 
 						$html = $html."
 							<tr>
-									<td width='5%'>".$principal."</td>
-									<td>".$diagnosis->diagnosis_clinical."</td>
+									<td style='vertical-align:middle' width='5%'>".$principal."</td>
+									<td style='vertical-align:middle'>".$diagnosis->diagnosis_clinical."</td>
 									<td class='col-xs-3'>
 									</td>
 									<td align='right'>
-										<a class='btn btn-danger btn-xs' href='/consultation_diagnoses/delete/". $diagnosis->id."'>Delete</a>
+										<a class='btn btn-danger btn-sm' href='javascript:removeDiagnosis(". $diagnosis->id.")'><span class='glyphicon glyphicon-trash'></span></a>
 									</td>
 							</tr>
 						";
 				}
 				$html = $html."</table>";
+				if (count($diagnoses)==0) $html = '';
 				return $html;
 
 	}
@@ -218,14 +222,20 @@ class ConsultationDiagnosisController extends Controller
 	public function update(Request $request, $id) 
 	{
 			$consultation_diagnosis = ConsultationDiagnosis::findOrFail($id);
+
+			$principal_changed = false;
+			if ($request->diagnosis_is_principal==1 & $consultation_diagnosis->diagnosis_is_principal==0) {
+				$principal_changed = true;
+			}
 			$consultation_diagnosis->fill($request->input());
 
 			$valid = $consultation_diagnosis->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
-					if ($consultation_diagnosis->diagnosis_is_principal) {
+					if ($principal_changed) {
 							$this->changeAllDiagnosisToSecondary();
 					}
+					$consultation_diagnosis->diagnosis_is_principal = $request->diagnosis_is_principal ?: 0;
 					$consultation_diagnosis->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/consultation_diagnoses');
@@ -268,11 +278,18 @@ class ConsultationDiagnosisController extends Controller
 			]);
 
 	}
+
 	public function destroy($id)
 	{	
 			ConsultationDiagnosis::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/consultation_diagnoses');
+	}
+
+	public function drop(Request $request)
+	{	
+			ConsultationDiagnosis::find($request->diagnosis_id)->delete();
+			return $this->generateHTML();
 	}
 
 }

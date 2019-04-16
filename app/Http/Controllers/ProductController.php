@@ -303,7 +303,7 @@ class ProductController extends Controller
 	public function updateTotalOnHand($product_code) 
 	{
 		$stock_helper = new StockHelper();
-		$stock_helper->updateAllStockOnHand($product_code);
+		$stock_helper->updateStockOnHand($product_code);
 	}
 
 	public function show(Request $request, $id)

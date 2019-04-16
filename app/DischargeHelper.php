@@ -15,7 +15,7 @@ class DischargeHelper
 						left join products b on (a.product_code = b.product_code)
 						left join order_cancellations c on (c.order_id = a.order_id)
 						where encounter_id = %d
-						and b.category_code = 'drugs'
+						and (b.category_code = 'drugs' or b.category_code = 'drug_generics')
 						and c.cancel_id is null
 						and order_completed=0
 						and order_is_discharge=1

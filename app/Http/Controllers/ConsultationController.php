@@ -21,6 +21,7 @@ use App\AMQPHelper as Amqp;
 use App\StockHelper;
 use App\OrderHelper;
 use App\OrderDrug;
+use App\Set;
 
 class ConsultationController extends Controller
 {
@@ -81,6 +82,9 @@ class ConsultationController extends Controller
 					$consultation_id = $consultation[0]->consultation_id;
 			}
 
+			$investigations = Set::where('set_shortcut', 1)
+								->orderBy('set_name')
+								->get();
 
 			if (empty($consultation)==true) {
 					Log::info("New consultation");
@@ -93,11 +97,14 @@ class ConsultationController extends Controller
 
 					Session::set('consultation_id', $consultation->consultation_id);
 					Session::set('encounter_id', $encounter->encounter_id);
+
 					return view('consultations.edit', [
 						'consultation'=>$consultation,
 						'patient'=>$consultation->encounter->patient,
 						'tab'=>'clinical',
 						'consultOption'=>'consultation',
+						'investigations'=>$investigations,
+						'orders'=>$consultation->orders->pluck('product_code')->toArray(),
 					]);
 			} else {
 					Log::info("Edit consultation");
@@ -106,6 +113,8 @@ class ConsultationController extends Controller
 						'consultation'=>$consultation,
 						'tab'=>'clinical',
 						'patient'=>$encounter->patient,
+						'investigations'=>$investigations,
+						'orders'=>$consultation->orders->pluck('product_code')->toArray(),
 					]);
 			};
 	}
@@ -416,6 +425,10 @@ class ConsultationController extends Controller
 					];
 			}
 
+			$investigations = Set::where('set_shortcut', 1)
+								->orderBy('set_name')
+								->get();
+
 			return view($landing_page, [
 					'consultation'=>$consultation,
 					'patient'=>$consultation->encounter->patient,
@@ -423,6 +436,8 @@ class ConsultationController extends Controller
 					'consultOption'=>'consultation',
 					'admission'=>$consultation->encounter->admission,
 					'clinical_images'=>$clinical_images,
+					'orders'=>$consultation->orders->pluck('product_code')->toArray(),
+					'investigations'=>$investigations,
 					]);
 	}
 

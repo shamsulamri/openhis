@@ -3,7 +3,13 @@
 @section('content')
 <style>
 iframe { border: 1px #e5e5e5 solid; }
-canvas {border:1px solid #e5e5e5}
+canvas {
+	border:0px solid #e5e5e5;
+}
+
+.small-font {
+	font-size: 12px;
+}
 
 .dropdown-submenu {
     position: relative;
@@ -17,6 +23,10 @@ canvas {border:1px solid #e5e5e5}
     -webkit-border-radius: 0 6px 6px 6px;
     -moz-border-radius: 0 6px 6px;
     border-radius: 0 6px 6px 6px;
+}
+
+.table > tbody > tr:first-child > td {
+    border: none;
 }
 
 .dropdown-submenu:hover>.dropdown-menu {
@@ -52,75 +62,65 @@ canvas {border:1px solid #e5e5e5}
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
 }
+
+label {
+  display: block;
+  padding-top: 5px;
+  text-indent: -15px;
+  font-size: 12px;
+  font-weight: normal;
+}
+input {
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  margin:0;
+  vertical-align: bottom;
+  position: relative;
+  top: -1px;
+  *overflow: hidden;
+}
+
 </style>
 @include('consultations.panel')
-<h1>Clinical Notes</h1>
-{{ Form::model($consultation, ['tabindex'=>1,'id'=>'my_form','route'=>['consultations.update',$consultation->consultation_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
-@include('consultations.consultation')
-{{ Form::close() }}
-
-<!--
-<div class="form-inline">
-	<div class="form-group">
-		<button class='btn btn-success' onclick="loadAnnotation('hopi.png')">Present Illness</button>
-	</div>
-	<div class="form-group">
-		<button class='btn btn-success' onclick="loadAnnotation('examination.png')">Physical Examination</button>
-	</div>
-</div>
 <br>
--->
-<div class="form-inline">
-		<div class="form-group">
-				<button class='btn btn-warning' onclick="loadAnnotation('hopi.png')"><span class='glyphicon glyphicon-pencil'></span></button>
-		</div>
-		@if ($consultation->encounter->patient->gender_code=='P')
-				@include('consultations.female_images')
-		@else
-				@include('consultations.male_images')
-		@endif
-</div>
-<br>
-<canvas tabindex=0 id="myCanvas" width="100%" height="500"></canvas>
-{{ Form::hidden('selected_image',null,['id'=>'selected_image']) }}
-{{ Form::hidden('last_image',null,['id'=>'last_image']) }}
-
-<div>
-	<button class='btn btn-danger pull-right' onclick="clearAnnotation()">Clear</button>
-</div>
-<!--
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
-				<li class="active">
-					<a data-toggle="tab" href="#tab-1">Annotation
-					</a>
-				</li>
-				<li>
-					<a data-toggle="tab" href="#tab-2">Inpatient
-					</a>
-				</li>
+				<li class="active"><a data-toggle="tab" href="#tab-1"><span class="glyphicon glyphicon-comment"></span></a></li>
+				<li class=""><a data-toggle="tab" href="#tab-2"><span class="glyphicon glyphicon-pencil"></span></a></li>
 		</ul>
 		<div class="tab-content">
 			<div id="tab-1" class="tab-pane active">
 				<div class="panel-body">
-xxx
+						{{ Form::model($consultation, ['tabindex'=>1,'id'=>'my_form','route'=>['consultations.update',$consultation->consultation_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
+						@include('consultations.consultation')
+						{{ Form::close() }}
 				</div>
 			</div>
 			<div id="tab-2" class="tab-pane">
 				<div class="panel-body">
-qqq
+						<!--- Annotation -->
+						@include('consultations.annotation')
+						<!--- End -->
 				</div>
 			</div>
 		</div>
 </div>
--->
-<br>
-<h2>Diagnoses</h2>
-{{ Form::text('diagnosis_clinical', null, ['tabindex'=>2,'id'=>'diagnosis_clinical','class'=>'form-control','placeholder'=>'Enter clinical diagnosis','rows'=>'3']) }}
-<br>
-<div id='diagnosisHTML'>
-</div>
 
+
+<br>
+<div class="tabs-container">
+		<ul class="nav nav-tabs">
+		</ul>
+		<div class="tab-content">
+			<div id="tab-1" class="tab-pane active">
+				<div class="panel-body">
+<div id='diagnosisHTML'></div>
+{{ Form::text('diagnosis_clinical', null, ['tabindex'=>2,'id'=>'diagnosis_clinical','class'=>'form-control','placeholder'=>'Enter diagnosis','rows'=>'3']) }}
+				</div>
+			</div>
+		</div>
+</div>
 <!--
 <h2>Procedures</h2>
 {{ Form::text('procedure_description', null, ['tabindex'=>3,'id'=>'procedure_description','class'=>'form-control','placeholder'=>'','rows'=>'3']) }}
@@ -129,6 +129,33 @@ qqq
 </div>
 -->
 
+<!-- Medications -->
+
+<br>
+<div class="tabs-container">
+		<ul class="nav nav-tabs">
+				<li class="active"><a data-toggle="tab" href="#tab-3"><span class="fa fa-eye"></span></a></li>
+				<li class=""><a data-toggle="tab" href="#tab-4"><span class="fa fa-medkit"></span></a></li>
+		</ul>
+		<div class="tab-content">
+			<div id="tab-3" class="tab-pane active">
+				<div class="panel-body">
+						@include('consultations.investigation')
+				</div>
+			</div>
+			<div id="tab-4" class="tab-pane">
+				<div class="panel-body">
+						<div id="medicationList"></div>
+						<input type='text' class='form-control' placeholder="Enter drug name" id='search' name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off'>
+						<div id="drugList"></div>
+				</div>
+			</div>
+		</div>
+</div>
+
+<!-- End -->
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
 	<script>
 		$(document).ready(function(){
 			$('#consultation_notes').focusout(function(){
@@ -198,6 +225,21 @@ qqq
 					$('#procedureHTML').html(data);
 			})
 		});
+
+		function removeDiagnosis(diagnosis_id) {
+				var dataString = "diagnosis_id="+diagnosis_id;
+
+				$.ajax({
+				type: "POST",
+						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+						url: "{{ route('diagnosis.drop') }}",
+						data: dataString,
+						success: function(data){
+								$('#diagnosisHTML').html(data);
+						}
+				});
+		}
+
 </script>
 <script>
 		/*** Annotation Section ***/
@@ -226,6 +268,7 @@ qqq
 		}
 
 		canvas.onmousedown = function(e) {
+				disableBodyScroll(targetElement);
 				drawing = true;
 				lastPos = getMousePos(canvas, e);
 		}
@@ -317,6 +360,8 @@ qqq
 							console.log("Save");
 						}
 				});
+
+				enableBodyScroll(targetElement);
 		}
 
 		/*
@@ -340,7 +385,7 @@ qqq
 					context.moveTo(lastPos.x, lastPos.y);
 					context.lineTo(mousePos.x, mousePos.y);
 					context.strokeStyle = '#0000FF';
-					context.lineWidth=1;
+					context.lineWidth=0.3;
 					context.stroke();
 					lastPos = mousePos;
 			}
@@ -494,5 +539,208 @@ qqq
 		loadAnnotation('hopi.png');
 
 </script>
-<meta name="csrf-token" content="{{ csrf_token() }}">
+<!--- Medication -->
+<script>
+$(document).ready(function(){
+
+
+			$(document).on('focusout', 'input', function(e) {
+					var id = e.currentTarget.name;
+					if (e.currentTarget.name != 'search') {
+						updateDrug(id);
+					}
+			});
+
+			$(document).on('focusout', 'select', function(e) {
+					var id = e.currentTarget.name;
+					if (e.currentTarget.name != 'search') {
+						updateDrug(id);
+					}
+			});
+
+
+			function updateDrug(id) {
+					var dosage = $('#dosage_'.concat(id)).val();
+					var frequency = $('#frequency_'.concat(id)).find('option:selected').val();
+					var duration = $('#duration_'.concat(id)).val();
+					var period = $('#period_'.concat(id)).find('option:selected').val();
+					console.log(dosage,frequency, duration, period);
+
+					var dataString = parse('drug_dosage=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s', dosage, frequency, duration, period, id);
+
+					$.ajax({
+						type: "POST",
+						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+						url: "{{ route('medications.update') }}",
+						data: dataString,
+						success: function(){
+							console.log('drug updated...');
+						}
+					});
+			}
+
+			$('#search').keyup(function(e){
+				if (e.keyCode == 13) {
+						var value = $('#search').val();
+						//if (e.which==13) {
+						if (value.length >= 3) {
+								var dataString = "search="+value+"&consultation_id={{ $consultation->consultation_id }}";
+
+								$.ajax({
+								type: "POST",
+										headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+										url: "{{ route('medications.find') }}",
+										data: dataString,
+										success: function(data){
+												$('#drugList').html(data);
+										}
+								});
+								//$('#search').val('');
+						}
+				}
+			});
+
+			function addDrug2(id) {
+					var dataString = "id="+id+"&consultation_id={{ $consultation->consultation_id }}";
+
+					$.ajax({
+						type: "POST",
+						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+						url: "{{ route('medications.add') }}",
+						data: dataString,
+						success: function(data){
+							$('#medicationList').html(data);
+						}
+					});
+
+					$('#drugList').empty();
+					$('#search').val('');
+					$("#search").focus();
+			}
+
+
+			$(document).on('keydown', function ( e ) {
+					// You may replace `c` with whatever key you want
+					if (e.key == "Escape") {
+							$("#search").focus();
+					}
+			});
+
+			$('#drugList').empty();
+			$('#search').val('');
+
+			var note = $('#consultation_notes').val();
+			$("#consultation_notes").focus().val("").val(note);
+
+			$.ajax({
+					type: "POST",
+					headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+					url: "{{ route('medications.table') }}",
+					success: function(data){
+							$('#medicationList').html(data);
+					}
+			});
+
+});
+
+			function showHistory() {
+					$.ajax({
+							type: "POST",
+							headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+							url: "{{ route('medications.history') }}",
+							success: function(data){
+									$('#drugList').html(data);
+							}
+					});
+			}
+
+			function parse(str) {
+					var args = [].slice.call(arguments, 1),
+							i = 0;
+
+					return str.replace(/%s/g, () => args[i++]);
+			}
+
+			function addDrug(drug_code) {
+					var dataString = "drug_code="+drug_code+"&consultation_id={{ $consultation->consultation_id }}";
+
+					$.ajax({
+						type: "POST",
+						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+						url: "{{ route('medications.add') }}",
+						data: dataString,
+						success: function(data){
+							$('#medicationList').html(data);
+						}
+					});
+
+					$('#drugList').empty();
+					$('#search').val('');
+					$("#search").focus();
+			}
+
+			function removeDrug(order_id) {
+					var dataString = "order_id="+order_id+"&consultation_id={{ $consultation->consultation_id }}";
+
+					$.ajax({
+						type: "POST",
+						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+						url: "{{ route('medications.remove') }}",
+						data: dataString,
+						success: function(data){
+							$('#medicationList').html(data);
+						}
+					});
+			}
+
+			function renewDrug(order_id) {
+					var dataString = "order_id="+order_id+"&consultation_id={{ $consultation->consultation_id }}";
+
+					$.ajax({
+						type: "POST",
+						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+						url: "{{ route('medications.renew') }}",
+						data: dataString,
+						success: function(data){
+							$('#medicationList').html(data);
+						}
+					});
+			}
+
+			function addOrder(product_code) {
+					var dataString = "product_code="+product_code+"&consultation_id={{ $consultation->consultation_id }}";
+
+					console.log(document.getElementById(product_code).checked);
+
+					if (document.getElementById(product_code).checked) {
+							$.ajax({
+								type: "POST",
+								headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+								url: "{{ route('orders.add') }}",
+								data: dataString,
+								success: function(data){
+									$('#orderList').html(data);
+								}
+							});
+
+					} else {
+							$.ajax({
+								type: "POST",
+								headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+								url: "{{ route('orders.remove') }}",
+								data: dataString,
+								success: function(data){
+									$('#orderList').html(data);
+								}
+							});
+					}
+
+			}
+
+			const targetElement = document.querySelector("#myCanvas");
+			const disableBodyScroll = bodyScrollLock.disableBodyScroll;
+			const enableBodyScroll = bodyScrollLock.enableBodyScroll;
+
+			$('#consultation_notes').focus();
+</script>
 @endsection

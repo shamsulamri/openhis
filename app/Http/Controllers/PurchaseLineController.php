@@ -86,21 +86,43 @@ class PurchaseLineController extends Controller
 
 			if ($item) {
 				if ($reason == 'purchase') {
-					//if ($item->balanceQuantity()) {
-							$purchase_line = new PurchaseLine();
-							$purchase_line->purchase_id = $to;
-							$purchase_line->product_code = $item->product_code;
-							$purchase_line->line_unit_price = $item->line_unit_price;
-							$purchase_line->line_quantity = $item->balanceQuantity();
-							$purchase_line->line_subtotal = $item->line_subtotal;
-							$purchase_line->unit_code = $item->unit_code;
-							$purchase_line->uom_rate = $item->uom_rate;
-							$purchase_line->tax_code = $item->tax_code;
-							$purchase_line->tax_rate = $item->tax_rate;
-							$purchase_line->line_subtotal_tax = $item->line_subtotal_tax;
-							$purchase_line->reference_id = $item->line_id;
-							$purchase_line->line_posted = $item->line_posted;
-							$purchase_line->save();
+						$purchase_line = PurchaseLine::where('purchase_id', $to)
+											->where('product_code', $item->product_code)
+											->where('unit_code', $item->unit_code)
+											->first();
+
+						if (!$purchase_line) {
+								$purchase_line = new PurchaseLine();
+								$purchase_line->purchase_id = $to;
+								$purchase_line->product_code = $item->product_code;
+								$purchase_line->line_unit_price = $item->line_unit_price;
+								$purchase_line->line_quantity = $item->balanceQuantity();
+								$purchase_line->line_subtotal = $item->line_subtotal;
+								$purchase_line->unit_code = $item->unit_code;
+								$purchase_line->uom_rate = $item->uom_rate;
+								$purchase_line->tax_code = $item->tax_code;
+								$purchase_line->tax_rate = $item->tax_rate;
+								$purchase_line->line_subtotal_tax = $item->line_subtotal_tax;
+								$purchase_line->reference_id = $item->line_id;
+								$purchase_line->line_posted = 0;
+								$purchase_line->save();
+
+						} else {
+								Log::info("--->>");
+								$purchase_line->purchase_id = $to;
+								$purchase_line->product_code = $item->product_code;
+								$purchase_line->line_unit_price = $item->line_unit_price;
+								$purchase_line->line_quantity = $item->line_quantity + $purchase_line->line_quantity;
+								$purchase_line->line_subtotal = $purchase_line->line_quantity*$purchase_line->line_unit_price;
+								$purchase_line->unit_code = $item->unit_code;
+								$purchase_line->uom_rate = $item->uom_rate;
+								$purchase_line->tax_code = $item->tax_code;
+								$purchase_line->tax_rate = $item->tax_rate;
+								$purchase_line->line_subtotal_tax = $purchase_line->line_subtotal*(1+($purchase_line->tax->tax_rate/100));
+								$purchase_line->reference_id = $item->line_id;
+								$purchase_line->line_posted = 0;
+								$purchase_line->save();
+						}
 					//}
 				} else {
 							$movement = InventoryMovement::find($to);
@@ -136,7 +158,7 @@ class PurchaseLineController extends Controller
 			if ($reason=='purchase') {
 					$purchase = Purchase::find($id);
 					$purchase_lines = $purchase_lines->where('b.purchase_id', '<>', $id);
-					$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code);
+					//$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code);
 			}
 
 			if ($document_id) {
@@ -350,7 +372,7 @@ class PurchaseLineController extends Controller
 			if ($reason=='purchase') {
 					$purchase = Purchase::find($request->id);
 					$purchase_lines = $purchase_lines->where('b.purchase_id', '<>', $request->id);
-					$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code);
+					//$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code);
 			}
 
 			if (!empty($request->document_id)) {
@@ -388,6 +410,7 @@ class PurchaseLineController extends Controller
 
 	public function add($purchase_id, $product_code)
 	{
+			Log::info('----->');
 			$purchase_line = PurchaseLine::where('purchase_id', $purchase_id)
 							->where('product_code', $product_code)
 							->first();

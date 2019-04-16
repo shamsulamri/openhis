@@ -28,11 +28,13 @@ class ConsultationProcedureController extends Controller
 			$consultation_procedures = DB::table('consultation_procedures as a')
 					->select('id', 'a.created_at', 'procedure_description','procedure_is_principal')
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
-					->where('encounter_id','=',$consultation->encounter_id)
+					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->leftjoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
+					->orderBy('c.encounter_id', 'desc')
 					->orderBy('procedure_is_principal', 'desc')
-					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
+					//->where('encounter_id','=',$consultation->encounter_id)
 			if ($consultation_procedures->count()==0) {
 					return $this->create();
 			} else {
@@ -65,7 +67,7 @@ class ConsultationProcedureController extends Controller
 					]);
 	}
 
-	public function store(Request $request)
+	public function store_ajax(Request $request)
 	{
 			if ($request->ajax()) {
 
@@ -99,7 +101,7 @@ class ConsultationProcedureController extends Controller
 
 	}	
 
-	public function store_backup(Request $request) 
+	public function store(Request $request) 
 	{
 			$consultation_procedure = new ConsultationProcedure();
 			$valid = $consultation_procedure->validate($request->all(), $request->_method);

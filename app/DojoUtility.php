@@ -196,6 +196,11 @@ class DojoUtility
 				return Carbon::createFromTimeStamp(strtotime($date))->diffInDays();
 		}
 
+		public static function diffInYears($date) 
+		{
+				return Carbon::createFromTimeStamp(strtotime($date))->diffInYears();
+		}
+
 		public static function diffInMinutesBetweenDates($dateStart, $dateEnd)
 		{
 				$end = Carbon::parse($dateEnd);

@@ -466,4 +466,15 @@ class Patient extends Model
 			return $value;
 	}
 
+	public function patientAgeInDays()
+	{
+			$value = DojoUtility::diffInDays($this->patient_birthdate);
+			return $value;
+	}
+
+	public function patientAgeInYears()
+	{
+			$value = DojoUtility::diffInYears($this->patient_birthdate);
+			return $value;
+	}
 }

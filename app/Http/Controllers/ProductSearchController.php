@@ -357,8 +357,9 @@ class ProductSearchController extends Controller
 									return redirect('/product_searches?reason=bulk&input_id='.$request->input_id);
 									break;
 							case "purchase";
-									$this->add($request->purchase_id, $product_searches[0]->product_code);
-									return redirect('/product_searches?reason=purchase_order&purchase_id='.$request->purchase_id.'&line_id='.$this->gline_id);
+									//$this->add($request->purchase_id, $product_searches[0]->product_code);
+									//return redirect('/product_searches?reason=purchase_order&purchase_id='.$request->purchase_id.'&line_id='.$this->gline_id);
+									return redirect('/purchase_lines/add/'.$request->purchase_id.'/'.$product_searches[0]->product_code);
 									break;
 							case "stock";
 									return redirect('/inventory_movements/add/'.$request->move_id.'/'.$product_searches[0]->product_code);

@@ -49,7 +49,7 @@
             @if ($errors->has('order_discount')) <p class="help-block">{{ $errors->first('order_discount') }}</p> @endif
         </div>
     </div>
-	-->
+
     <div class='form-group  @if ($errors->has('order_completed')) has-error @endif'>
         {{ Form::label('order_completed', 'Completed',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -57,16 +57,19 @@
             @if ($errors->has('order_completed')) <p class="help-block">{{ $errors->first('order_completed') }}</p> @endif
         </div>
     </div>
+	-->
 
+	
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-            <a class="btn btn-default" href="/order_tasks/task/{{ $encounter_id }}/{{ $order_task->product->location_code }}" role="button">Cancel</a>
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+            <a class="btn btn-default" href="/order_tasks/task/{{ $encounter_id }}/{{ $order_task->product->location_code }}" role="button">Cancel</a>
         </div>
     </div>
             {{ Form::hidden('consultation_id', null) }}
 
 
+<!--
 <script type="text/javascript">
 	function taskCompleted() {
 		var report = document.getElementById('order_report').value;
@@ -80,5 +83,6 @@
 	}
 
 </script>
+-->
 
 

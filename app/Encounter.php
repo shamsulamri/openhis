@@ -77,6 +77,11 @@ class Encounter extends Model
 			return $this->hasMany('App\Bill', 'encounter_id');
 	}
 
+	public function forms()
+	{
+			return $this->hasMany('App\FormValue', 'encounter_id');
+	}
+
 	public function queue()
 	{
 			return $this->hasOne('App\Queue', 'encounter_id');

@@ -19,10 +19,13 @@
 					@endcan
 			</div>
 			<div align="right" class="col-xs-6">
-					<a class="btn btn-primary pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
- Label</a>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=order_labels&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+ Lab Label</a>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+ Drug Label</a>
 			</div>
 	</div>
+	<br>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 
 @if ($order_tasks->total()>0)
@@ -34,7 +37,7 @@
     <th>On Hand</th>
     <th>Allocated</th>
     <th>Available</th>
-    <th>Required</th>
+    <th>Require</th>
     <th>Orderer</th>
     <th>Date</th>
 	<th></th>
@@ -56,28 +59,20 @@
 						@endif
 	@endif
 	<tr class='{{ $status }}'>
-			<td width='40'>
+			<td width='48'>
 					@if (!isset($order->cancel_id) && $order->order_completed==0)
-					{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
+						{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
 					@else
-								<span class="fa fa-check-square-o" aria-hidden="true"></span>
+						<span class="fa fa-check-square-o" aria-hidden="true"></span>
 					@endif
 			</td>
 			<td>
-					@if (!isset($order->cancel_id) && $order->order_completed==0)
-							<a href='{{ URL::to('order_tasks/'. $order->order_id . '/edit') }}'>
-							{{$order->product_name}}
-							</a>
-					@elseif ($order->order_completed==1)
-							{{$order->product_name}}
-					@else
-							<strike>
-							{{$order->product_name}}
-							</strike>
-					@endif
+					<a href='{{ URL::to('order_tasks/'. $order->order_id . '/edit') }}'>
+					{{$order->product_name}}
+					</a>
 					<br>{{$order->product_code}}
 
-					@if ($order->category_code=='drugs')
+					@if ($order->category_code=='drugs' | $order->category_code=='drug_generics')
 					<br>
 						{{ $order_helper->getPrescription($order->order_id) }}
 					@endif
@@ -88,21 +83,25 @@
 					@endif
 			</td>
 			<td>
-			@if ($order->product_stocked)
+			@if ($order->product_stocked && $order->order_completed==0)
 					{{ $on_hand }} 
 			@else
 				-
 			@endif
 			</td>
 			<td>
-			@if ($order->product_stocked)
+			@if ($order->product_stocked && $order->order_completed==0)
 					{{ $allocated }} 
 			@else
 				-
 			@endif
 			</td>
 			<td>
+			@if ($order->product_stocked && $order->order_completed==0)
 					{{ $on_hand - $allocated }}
+			@else
+					-
+			@endif
 			</td>
 			<td width='100'>
 			@if ($status=='danger')
@@ -110,14 +109,19 @@
 			@endif
 				@if ($batches->count()==0 && $order->product_stocked==1)
 						@if ($order->order_completed==0) 
+							<div align='center' class='@if ($errors->has('quantity_'.$order->order_id) | $order->order_quantity_request==0) has-error @endif'>
 							{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
+            				@if ($errors->has('quantity_'.$order->order_id)) <p class="help-block">{{ $errors->first('quantity_'.$order->order_id) }}</p> @endif
+							</div>
 						@else
-							{{ $order->order_quantity_request }}
+							{{ $order->order_quantity_supply }}
 							{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_request) }}
 						@endif
 				@else
-								{{ $order->order_quantity_supply }} 
+						{{ $order->order_quantity_supply }} 
+						@if ($order->product_stocked && $order->order_completed==0)
 								{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_supply) }}
+						@endif
 				@endif 
 			@if ($status=='danger')
 				</div>	
@@ -125,8 +129,10 @@
 			</td>
 			<td>
 					{{ $order->name }}
+					<!--
 					<br>
 					{{ $order->ward_name}}
+					-->
 			</td>
 			<td>
 					{{ (DojoUtility::dateReadFormat($order->order_date)) }}
@@ -139,7 +145,7 @@
 					@endif
 			</td>
 	</tr>
-	@if ($batches->count()>0)
+	@if ($batches->count()>0 && $order->order_completed==0)
 	<tr>
 			<td colspan='9'>	
 		<table>
@@ -155,6 +161,9 @@
 			</tr>
 		  </thead>
 	<tbody>
+<?php 
+		$total_supply = 0;
+?>
 		@foreach ($batches as $batch)
 			<?php
 			$supply = 0;
@@ -165,6 +174,7 @@
 				$supply = $quantity_request;
 				$quantity_request = $quantity_request-$supply;
 			}
+			$total_supply += $supply;
 			?>
 			<tr>
 				<td>
@@ -187,8 +197,20 @@
             		{{ Form::label('batch_'.$batch->product_code.'_'.$batch->batch_id, abs($supply?:0), ['class'=>'form-control']) }}
 					@endif
 				</td>
+				
 			</tr>
 		@endforeach
+		@if ($errors->has('batch_'.$batch->product_code.'_'.$batch->batch_id) | $total_supply==0) 
+		<tr>
+			<td colspan=4>
+			</td>
+			<td>
+					<div align='center' class='has-error'>
+            		<p class="help-block">{{ $errors->first('batch_'.$batch->product_code.'_'.$batch->batch_id)?:"Sum cannot be zero" }}</p>
+					</div>
+			</td>
+		</tr>
+		@endif
 	</tbody>
 		</table>
 			</td>
@@ -200,6 +222,7 @@
 </table>
 	{{ Form::hidden('ids', $ids) }}
 	{{ Form::hidden('encounter_id', $encounter_id) }}
+	<button class="btn btn-primary" type="submit" value="Submit">Update Status</button>
 </form>
 @if (isset($search)) 
 	{{ $order_tasks->appends(['search'=>$search])->render() }}

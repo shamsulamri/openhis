@@ -158,7 +158,10 @@ class DependantController extends Controller
 					->whereNotIn('patient_id', $dependants)
 					->where(function ($query) use ($request) {
 							$query->where('patient_name','like','%'.$request->search.'%')
-								  ->orWhere('patient_id', 'like','%'.$request->search.'%');
+								  ->orWhere('patient_new_ic', 'like','%'.$request->search.'%')
+								  ->orWhere('patient_old_ic', 'like','%'.$request->search.'%')
+								  ->orWhere('patient_passport', 'like','%'.$request->search.'%')
+								  ->orWhere('patient_birth_certificate', 'like','%'.$request->search.'%');
 					})
 					->orderBy('patient_name')
 					->paginate($this->paginateValue);

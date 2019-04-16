@@ -76,13 +76,13 @@ $category='';
 					</a>
 			@endif
 			@if ($order->order_report)	
-			<br>
-			{{ $order->order_report }}
+			&nbsp;
+			<span class='fa fa-file-o'></span>
 			@endif
 			</td>
 			<td width='10'>
 				<div align='right'>
-				{{ $order->order_quantity_request }}
+				{{ $order->order_completed?$order->order_quantity_supply:$order->order_quantity_request }}
 				</div>
 			</td>
 			<td align='right'>

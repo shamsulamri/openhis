@@ -30,7 +30,7 @@ use App\ProductUom;
 
 class OrderTaskController extends Controller
 {
-	public $paginateValue=10;
+	public $paginateValue=99;
 
 	public function __construct()
 	{
@@ -192,7 +192,7 @@ class OrderTaskController extends Controller
 			$order_task = OrderTask::findOrFail($id);
 			$order_task->fill($request->input());
 
-			$order_task->order_completed = $request->order_completed ?: 0;
+			//$order_task->order_completed = $request->order_completed ?: 0;
 			$valid = $order_task->validate($request->all(), $request->_method);	
 			
 			
@@ -248,6 +248,7 @@ class OrderTaskController extends Controller
 
 	public function status(Request $request)
 	{
+			$valid = null;
 			if (!empty(Auth::user()->authorization->location_code)) {
 				$location_code = Auth::user()->authorization->location_code;
 			} else {
@@ -257,17 +258,56 @@ class OrderTaskController extends Controller
 			$store_code = $location->store_code;
 
 			$helper = new StockHelper();
+			/*
 			$orders = Order::where('encounter_id', $request->encounter_id)
-							->where('order_completed', 0)
 							->get();
+			*/
+
+			$order_ids = explode(',', $request->ids);
+
+			$orders = Order::where('encounter_id', $request->encounter_id)
+							->whereIn('order_id', $order_ids)
+							->get();
+
+			/*** Validation ***/
+			foreach($orders as $order) {
+				$batches = $helper->getBatches($order->product_code)?:null;
+				if ($batches->count()>0) {
+						$unit_supply = 0;
+						foreach($batches as $batch) {
+								$unit_supply += $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
+						}
+						Log::info("Unit supply:".$unit_supply);
+						if ($unit_supply == 0) {
+									$valid['batch_'.$batch->product_code."_".$batch->batch()->batch_id] = "Sum cannot be zero";
+						}
+				} else {
+						if ($order->product->product_stocked == 1) {
+								$unit_supply = $request["quantity_".$order->order_id];
+								if ($unit_supply == 0) {
+										$valid["quantity_".$order->order_id] = "Cannot be zero";
+								}
+						}
+				}
+			}
+
+			if ($valid) {
+					return redirect('/order_tasks/task/'.$order->encounter_id.'/'.$order->location_code)
+							->withErrors($valid)
+							->withInput();
+			}
+			/*** End Validation ***/
 
 			foreach($orders as $order) {
 					$product = $order->product;
 					$checked = $request[$order->order_id] ?:0;
+					Log::info($order->product->product_name.'-'.$order->order_completed);
+
 					if ($checked == 1) {
 
-						$total_supply = 0;
+						$total_supply = $order->order_quantity_supply;
 						$batches = $helper->getBatches($order->product_code)?:null;
+
 						if ($batches->count()>0) {
 								foreach($batches as $batch) {
 										$unit_supply = $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
@@ -285,7 +325,7 @@ class OrderTaskController extends Controller
 															->first();
 
 												$inventory->uom_rate =  $uom->uom_rate;
-												$inventory->inv_unit_cost =  $uom->uom_cost;
+												$inventory->inv_unit_cost =  $uom->uom_cost?:0;
 												$inventory->inv_quantity = -($unit_supply*$uom->uom_rate);
 												$inventory->inv_physical_quantity = $unit_supply;
 												$inventory->inv_subtotal =  -($uom->uom_cost*$inventory->inv_physical_quantity);
@@ -297,7 +337,7 @@ class OrderTaskController extends Controller
 								}
 						} else {
 							if ($product->product_stocked==1) {
-									$total_supply += $request["quantity_".$order->order_id];
+									$total_supply = $request["quantity_".$order->order_id];
 									$inventory = new Inventory();
 									$inventory->order_id = $order->order_id;
 									$inventory->store_code = $store_code;
@@ -320,9 +360,11 @@ class OrderTaskController extends Controller
 						}
 
 						/** Completed order **/
+						/*
 						$uom = ProductUom::where('product_code', $order->product_code)
 									->where('unit_code', $inventory->unit_code)
 									->first();
+						 */
 
 						$order = Order::find($order->order_id);
 						$order->order_quantity_supply = $total_supply;
@@ -334,6 +376,15 @@ class OrderTaskController extends Controller
 						$order->save();
 
 
+					} else {
+						if ($order->order_completed == 1) {
+							Log::info("ewewewewewe");
+							Inventory::where('order_id', $order->order_id)->delete();
+							$order->order_completed = 0;
+							$order->completed_at = null;
+							$order->order_quantity_supply = null;
+							$order->save();
+						}
 					}
 
 					if ($product->product_stocked == 1) {
@@ -343,6 +394,11 @@ class OrderTaskController extends Controller
 
 			Session::flash('message', 'Record successfully updated.');
 			return redirect('order_queues');
+	}
+
+	public function destroyInventory($id)
+	{	
+			Inventory::find($id)->delete();
 	}
 
 	public function statusBatch(Request $request, $stock) 

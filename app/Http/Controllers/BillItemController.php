@@ -206,7 +206,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount
+				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -240,7 +240,6 @@ class BillItemController extends Controller
 			$orders = DB::select($sql);
 			
 			foreach ($orders as $order) {
-					Log::info($order->product_code);
 					$item = new BillItem();
 					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
@@ -254,12 +253,13 @@ class BillItemController extends Controller
 
 					$product = Product::find($order->product_code);
 
+					$unit_price = $order->order_unit_price;
 					if (!empty($product->charge_code)) {
-							Log::info($product->product_name.' = '. $product->uomDefaultPrice()->uom_price);
-							$sale_price = $this->getPriceTier($encounter_id, $product, $product->uomDefaultPrice()->uom_price);
+							$sale_price = $this->getPriceTier($encounter_id, $product, $unit_price);
 							$item->bill_unit_price = $sale_price;
 					} else {
-							$item->bill_unit_price = $product->uomDefaultPrice()->uom_price;
+							//$item->bill_unit_price = $product->uomDefaultPrice()->uom_price;
+							$item->bill_unit_price = $unit_price;
 					}
 
 					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;

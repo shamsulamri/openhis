@@ -77,6 +77,7 @@ class SetController extends Controller
 	public function edit($id) 
 	{
 			$set = Set::findOrFail($id);
+
 			return view('sets.edit', [
 					'set'=>$set,
 					'consultants' => $this->consultants,
@@ -88,6 +89,7 @@ class SetController extends Controller
 			$set = Set::findOrFail($id);
 			$set->fill($request->input());
 
+			$set->set_shortcut = $request->set_shortcut ?: 0;
 
 			$valid = $set->validate($request->all(), $request->_method);	
 

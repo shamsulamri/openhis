@@ -13,7 +13,7 @@
     <div class='form-group  @if ($errors->has('alert_public')) has-error @endif'>
         <label for='alert_public' class='col-sm-2 control-label'></label>
         <div class='col-sm-10'>
-			{{ Form::checkbox('alert_public', '1') }} Make this information available to everyone.
+			{{ Form::checkbox('alert_public', '1') }} Make this information public.
             @if ($errors->has('alert_public')) <p class="help-block">{{ $errors->first('alert_public') }}</p> @endif
         </div>
     </div>

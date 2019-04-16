@@ -191,15 +191,14 @@ class OrderProductController extends Controller
 						}
 				}
 
-				/**
 				$order_products = Product::orderBy('product_name')
 					->where(function ($query) use ($request) {
 						$query->where('product_name','like','%'.$request->search.'%')
 							->orWhere('product_name_other','like','%'.$request->search.'%')
 							->orWhere('product_code','like','%'.$request->search.'%');
 					});
-				**/
 
+				/*
 				$order_products = Product::orderBy('product_name')
 					->where(function ($query) use ($request) {
 						$fields = explode(' ', $request->search);
@@ -215,16 +214,19 @@ class OrderProductController extends Controller
 							$query = $query->where('product_name_other', 'like', '%'.$field .'%');
 						}
 					});
+				 */
 
 				if (!empty($request->categories)) {
-					$order_products = $order_products->where('category_code',$request->categories);
+					$order_products = $order_products->where('products.category_code','=', $request->categories);
 				}
 
+				/*
 				$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 
 				if (!$product_authorization->get()->isEmpty()) {
 						$order_products = $order_products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
 				}
+				 */
 
 				$order_products = $order_products->paginate($this->paginateValue);
 			} else {

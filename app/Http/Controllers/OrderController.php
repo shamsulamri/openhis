@@ -108,6 +108,7 @@ class OrderController extends Controller
 					'a.order_id', 
 					'a.user_id', 
 					'order_quantity_request',
+					'order_quantity_supply',
 					'post_id', 
 					'd.created_at',
 					'order_is_discharge',
@@ -151,7 +152,7 @@ class OrderController extends Controller
 					$orders = $orders->where('a.location_code','=', $request->cookie('queue_location'));
 			}
 
-			$orders = $orders->paginate(20);
+			$orders = $orders->paginate($this->paginateValue);
 
 			return view('orders.index', [
 					'orders'=>$orders,
@@ -408,14 +409,12 @@ class OrderController extends Controller
 			//return redirect('/orders');
 	}
 
-	public function single(Request $request, $product_code)
+	public function removeOrder(Request $request) 
 	{
-			//$helper = new StockHelper();
-			//$batches = $helper->getBatches($product_code, null, 'consumable');
-			//return $batches;
-
+			$product_code = $request->product_code;
 			$encounter_id = Session::get('encounter_id');
-			$order = Order::where('product_code','=', $product_code)
+			$orders = Order::select('orders.order_id')
+						->where('product_code','=', $product_code)
 						->leftJoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
 						->where('encounter_id','=', $encounter_id)
 						->where('order_completed','=','0')
@@ -424,7 +423,72 @@ class OrderController extends Controller
 
 			$encounter = Encounter::find($encounter_id);
 			if (!$encounter->admission) {
-					if ($order->count()>0) {
+					if ($orders->count()>0) {
+							foreach($orders as $order) {
+									$id = $order->order_id;
+									if (!empty($id)) {
+											$order = Order::find($id);
+											OrderMultiple::where('order_id', $id)->delete();
+											Order::find($id)->delete();
+									}
+							}
+					}
+			}
+	}
+
+	public function addOrder(Request $request)
+	{
+			$product_code = $request->product_code;
+			Log::info($product_code);
+			$encounter_id = Session::get('encounter_id');
+			$orders = Order::where('product_code','=', $product_code)
+						->leftJoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
+						->where('encounter_id','=', $encounter_id)
+						->where('order_completed','=','0')
+						->whereNull('cancel_id')
+						->get();
+
+			$encounter = Encounter::find($encounter_id);
+			if (!$encounter->admission) {
+					if ($orders->count()>0) {
+							foreach($orders as $order) {
+									if ($order->order_completed == 0) {
+											$id = $order->order_id;
+											if (!empty($id)) {
+													$order = Order::find($id);
+													OrderMultiple::where('order_id', $id)->delete();
+													Order::find($id)->delete();
+											}
+									}
+							}
+							Log::info("Item alread exist.");
+							return;
+					}
+			}
+
+			$product = Product::find($product_code);
+			$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));
+			Log::info($order_id);
+			return $order_id;
+	}
+
+	public function single(Request $request, $product_code)
+	{
+			//$helper = new StockHelper();
+			//$batches = $helper->getBatches($product_code, null, 'consumable');
+			//return $batches;
+
+			$encounter_id = Session::get('encounter_id');
+			$orders = Order::where('product_code','=', $product_code)
+						->leftJoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
+						->where('encounter_id','=', $encounter_id)
+						->where('order_completed','=','0')
+						->whereNull('cancel_id')
+						->get();
+
+			$encounter = Encounter::find($encounter_id);
+			if (!$encounter->admission) {
+					if ($orders->count()>0) {
 							Session::flash('message', 'Product already in the order list.');
 							return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
 					}

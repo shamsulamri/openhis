@@ -7,11 +7,11 @@
 @include('patients.id')
 @endif
 <h1>
-<a href='{{ URL::to('form/results',[$encounter_id]) }}'>Forms</a> / {{ $form->form_name }}
+{{ $form->form_name }}
 </h1>
 <br>
 @if ($form->form_has_graph)
-<a href='/graph/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-line-chart'></span> {{ $form->form_name }}</a>
+<a href='/graph/{{ $form->form_code }}/{{ $encounter_id }}' class='btn btn-primary'><span class='fa fa-line-chart'></span> Chart</a>
 @endif
 
 <a href='/form/{{ $form->form_code }}/{{ $patient->patient_id }}/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>

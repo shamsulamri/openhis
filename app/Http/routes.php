@@ -63,6 +63,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/medications/renew', 'OrderDrugController@renewDrug')->name('medications.renew');
 		Route::get('/medications', 'OrderDrugController@medications');
 		//Route::get('/medications/add/{id}', 'OrderDrugController@addDrug');
+		Route::post('/orders/add', 'OrderController@addOrder')->name('orders.add');
+		Route::post('/orders/remove', 'OrderController@removeOrder')->name('orders.remove');
 		
 		Route::resource('stock_tags', 'StockTagController');
 		Route::get('/stock_tags/id/{id}', 'StockTagController@searchById');
@@ -959,6 +961,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/consultation/search', 'ConsultationController@search');
 				Route::get('/consultations/delete/{id}', 'ConsultationController@delete');
 
+				Route::post('/consultation_diagnosis/drop', 'ConsultationDiagnosisController@drop')->name('diagnosis.drop');
 				Route::get('/consultation_diagnoses/encounter', 'ConsultationDiagnosisController@getDiagnoses');
 				Route::resource('consultation_diagnoses', 'ConsultationDiagnosisController');
 				Route::get('/consultation_diagnoses/id/{id}', 'ConsultationDiagnosisController@searchById');

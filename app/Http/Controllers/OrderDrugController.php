@@ -29,7 +29,6 @@ use App\QueueLocation;
 use App\EncounterHelper;
 use App\Store;
 use App\Drug;
-use App\DrugFrequency;
 use App\DojoUtility;
 
 class OrderDrugController extends Controller
@@ -108,11 +107,33 @@ class OrderDrugController extends Controller
 	{
 			$order_id = $request->order_id;
 			$drug = OrderDrug::where('order_id', $order_id)->first();
-			$drug->drug_dosage = $request->drug_dosage;
-			$drug->frequency_code = $request->frequency_code;
-			$drug->drug_duration = $request->drug_duration;
-			$drug->period_code = $request->period_code;
-			$drug->save();
+			if ($drug) {
+					$drug->drug_dosage = $request->drug_dosage;
+					$drug->frequency_code = $request->frequency_code;
+					$drug->drug_duration = $request->drug_duration;
+					$drug->period_code = $request->period_code;
+
+					$dosage = $drug->drug_dosage;
+					$frequency = $drug->frequency->frequency_value?:1;
+					$period = $drug->period->period_mins;
+
+					$total_unit = $dosage*$frequency;
+
+					if ($drug->drug_duration>0) {
+						$total_unit = $total_unit * (($drug->drug_duration*$period)/1440);
+					}
+					
+
+					$order = Order::find($order_id);
+					if ($order->product->product_unit_charge==0) {
+							$total_unit = 1;
+					}
+					$order->order_quantity_request = $total_unit;
+					$order->order_quantity_supply = $total_unit;
+					$order->save();
+
+					$drug->save();
+			}
 
 			//return $this->medicationTable();
 	}
@@ -141,8 +162,9 @@ class OrderDrugController extends Controller
 						->leftJoin('drug_routes as d', 'd.route_code', '=', 'order_drugs.route_code')
 						->leftJoin('encounters as e', 'e.encounter_id', '=', 'b.encounter_id')
 						->where('e.patient_id', $consultation->patient_id)
+						->where('e.encounter_id', '<>', $encounter_id)
+						->limit(10)
 						->get();
-						//->where('e.encounter_id', '<>', $encounter_id)
 
 			$table_row = '';
 			$helper = new OrderHelper();
@@ -152,9 +174,8 @@ class OrderDrugController extends Controller
 					$drug_add = sprintf("<a class='btn btn-warning btn-xs' href='javascript:renewDrug(%s)'>Renew</a>", $med->order_id);
 					$table_row .=sprintf(" 
 							<tr>
-							        <td width=200>%s</td>
-							        <td width=%s>%s</td>
-							        <td>%s</td>
+							        <td width=150>%s</td>
+							        <td width=%s>%s<br>%s</td>
 							        <td>%s %s</td>
 							        <td>%s</td>
 							        <td>%s</td>
@@ -163,8 +184,8 @@ class OrderDrugController extends Controller
 							</tr>", 
 							DojoUtility::dateLongFormat($med->order->consultation['created_at']),
 							'30%',
-							$med->order->product->drug->drug_generic_name, 
-							$med->order->product->drug->trade_name?:'-',
+							$med->order->product->drug?$med->order->product->drug->drug_generic_name:$med->order->product->product_name,
+							$med->order->product->drug?$med->order->product->drug->trade_name:$med->order->product->product_name_other,
 							$med->drug_dosage,
 							$med->dosage_name,
 							$med->route_name,
@@ -176,17 +197,17 @@ class OrderDrugController extends Controller
 
 			$html = '';
 			if (empty($table_row)) {
-				$html = "";
+				$html = "<br>";
 			} else {
 					$html = sprintf('
-					<h3>History</h3>
+					<br>
+					<h3>Drug History</h3>
 					<div class="widget style1 gray-bg">
 					<table class="table table-hover">
 						 <thead>
 							<tr> 
 							<th>Date</th>
-							<th>Generic</th>
-							<th>Trade</th>
+							<th>Drug</th>
 							<th>Dosage</th> 
 							<th>Route</th> 
 							<th>Freqeuncy</th> 
@@ -197,6 +218,7 @@ class OrderDrugController extends Controller
 							%s
 					</table>
 					</div>
+					<br>
 				', $table_row);
 			}
 
@@ -219,21 +241,24 @@ class OrderDrugController extends Controller
 
 			$table_row = "";
 			foreach ($medications as $med) {
-					$drug_remove = sprintf("<a class='btn btn-danger' href='javascript:removeDrug(%s)'>-</a>", $med->order_id);
+					$drug_remove = sprintf("<a class='pull-right btn btn-danger btn-sm' href='javascript:removeDrug(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $med->order_id);
 					$table_row .=sprintf(" 
 							<tr>
-							        <td width=%s>%s<br>%s</td>
-							        <td width=70><input id='dosage_%s' name='%s' class='form-control' type='text' value='%s'></td>
-							        <td width=120><label style='font-weight:normal' class='form-control'>%s</label></td>
-							        <td width=100><label style='font-weight:normal' class='form-control'>%s</label></td>
-							        <td width='100'>%s</td>
-							        <td width=70><input id='duration_%s' name='%s' class='form-control' type='text' value='%s'></td>
-							        <td width='100'>%s</td>
-							        <td width='10'>%s</a></td>
+							        <td width=%s style='vertical-align:middle'><label style='font-weight:normal' class='input-sm small-font pull-left'>%s</label></td>
+							        <td style='vertical-align:middle'><label style='font-weight:normal' class='input-sm small-font pull-left'>%s</label></td>
+							        <td width=80><input id='dosage_%s' name='%s' class='form-control input-sm small-font' type='text' value='%s'></td>
+							        <td width=50 style='vertical-align:middle'><label style='font-weight:normal' class='input-sm small-font pull-left'>%s</label></td>
+									<!--
+							        <td width=100><div style='font-weight:normal' class='form-control input-sm small-font'>%s</div></td>
+									-->
+							        <td width=200>%s</td>
+							        <td width=80><input id='duration_%s' name='%s' class='form-control input-sm small-font' type='text' value='%s'></td>
+							        <td width=100>%s</td>
+							        <td width='1'>%s</a></td>
 							</tr>", 
-							'50%',
-							$med->order->product->drug->drug_generic_name, 
-							$med->order->product->drug->trade_name?:'-',
+							'40%',
+							$med->order->product->drug?$med->order->product->drug->drug_generic_name:$med->order->product->product_name,
+							$med->order->product->drug?$med->order->product->drug->trade_name:$med->order->product->product_name_other,
 							$med->order_id,
 							$med->order_id,
 							$med->drug_dosage,
@@ -255,7 +280,8 @@ class OrderDrugController extends Controller
 					<table class="table table-hover">
 						 <thead>
 							<tr> 
-							<th>Generic / Trade</th>
+							<th>Generic</th>
+							<th>Trade</th>
 							<th>Dosage</th> 
 							<th></th>
 							<th>Route</th> 
@@ -268,7 +294,14 @@ class OrderDrugController extends Controller
 							%s
 					</table>
 				', $table_row);
+					$html = sprintf('
+					<table class="table table-hover">
+							%s
+					</table>
+				', $table_row);
 			}
+
+			if (count($medications)==0) $html = '';
 
 			return $html;
 
@@ -299,7 +332,7 @@ class OrderDrugController extends Controller
 						$sql .=")";
 				}
 
-				$sql .=' limit 10';
+				$sql .=' limit 5';
 
 				$data = DB::select($sql);
 
@@ -358,11 +391,14 @@ class OrderDrugController extends Controller
 				}
 
 				$html = sprintf('
+					<br>
 					<table class="table table-hover">
 							%s
 					</table>
 				', $table_row);
 
+
+				if (count($data)==0) $html = '';
 				return $html;
 
 			}
@@ -380,7 +416,7 @@ class OrderDrugController extends Controller
 				$html .= sprintf("<option value='%s' %s>%s</option>", $period->period_code, $selected, $period->period_name);
 			}
 
-			$html = sprintf("<select id='period_%s' name='%s' style='width:100px' class='form-control' id='period_%s'>%s</select>", $order_id,  $order_id, $drug_code, $html);
+			$html = sprintf("<select id='period_%s' name='%s' class='form-control input-sm small-font' id='period_%s'>%s</select>", $order_id,  $order_id, $drug_code, $html);
 			
 			return $html;
 	}
@@ -389,16 +425,28 @@ class OrderDrugController extends Controller
 	{
 			$prescriptions = DrugPrescription::where('drug_code', $drug_code)
 					->orderBy('frequency_code')
+					->pluck('frequency_code')
+					->toArray();
+
+			$frequencies = Frequency::orderBy('frequency_name')
+					->select('frequency_code', 'frequency_name')
+					->whereIn('frequency_code', $prescriptions)
 					->get();
 
-			$html = '';
-			foreach($prescriptions as $prescription) {
-				$selected = "";
-				if ($prescription->frequency_code == $frequency_code) $selected = "selected";
-				$html .= sprintf("<option value='%s' %s>%s</option>", $prescription->frequency_code, $selected, $prescription->frequency->frequency_name);
+			if (count($frequencies)==0) {
+					$frequencies = Frequency::orderBy('frequency_name')
+							->select('frequency_code', 'frequency_name')
+							->get();
 			}
 
-			$html = sprintf("<select id='frequency_%s' name='%s' style='width:100px' class='form-control' id='prescription_%s'>%s</select>",$order_id, $order_id, $drug_code, $html);
+			$html = '';
+			foreach($frequencies as $frequency) {
+				$selected = "";
+				if ($frequency->frequency_code == $frequency_code) $selected = "selected";
+				$html .= sprintf("<option value='%s' %s>%s</option>", $frequency->frequency_code, $selected, $frequency->frequency_name);
+			}
+
+			$html = sprintf("<select id='frequency_%s' name='%s' class='form-control input-sm small-font' id='prescription_%s'>%s</select>",$order_id, $order_id, $drug_code, $html);
 			
 			return $html;
 	}

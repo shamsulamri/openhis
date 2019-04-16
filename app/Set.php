@@ -12,6 +12,7 @@ class Set extends Model
 	protected $table = 'ref_sets';
 	protected $fillable = [
 				'set_code',
+				'set_shortcut',
 				'user_id',
 				'set_name'];
 	
@@ -41,6 +42,17 @@ class Set extends Model
 	public function owner()
 	{
 			return $this->belongsTo('App\User', 'user_id','id');
+	}
+
+	public function products()
+	{
+			$products = OrderSet::where('set_code', $this->set_code)
+							->select('b.product_code', 'product_name')
+							->leftJoin('products as b', 'b.product_code', '=', 'order_sets.product_code')
+							->orderBy('product_name')
+							->get();
+
+			return $products;
 	}
 	
 }

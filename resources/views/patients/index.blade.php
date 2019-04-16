@@ -13,7 +13,7 @@
 	</div>
 	<br>
 	<div class='input-group'>
-			{{ Form::checkbox('all_records', '1', $all_records,['class'=>'i-checks'])  }} Include dependants
+			{{ Form::checkbox('all_records', '1', $all_records,['class'=>'i-checks'])  }} Include dependants or non-patients
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
@@ -92,7 +92,7 @@
 </tbody>
 </table>
 @if (isset($search)) 
-	{{ $patients->appends(['search'=>$search])->render() }}
+	{{ $patients->appends(['search'=>$search, 'all_records'=>'1'])->render() }}
 	@else
 	{{ $patients->render() }}
 @endif

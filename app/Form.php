@@ -44,4 +44,9 @@ class Form extends Model
 	{
 			return $this->hasMany('App\Product', 'form_code', 'form_code');
 	}
+
+	public function parameters()
+	{
+			return $this->hasMany('App\FormPosition', 'form_code');
+	}
 }

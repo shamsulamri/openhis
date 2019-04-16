@@ -2,21 +2,66 @@
 
 @section('content')
 @include('consultations.panel')
+<style>
+
+.small-font {
+	font-size: 12px;
+}
+
+.table > tbody > tr:first-child > td {
+    border: none;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+	}
+
+.dropdown-submenu>a:after {
+		display: block;
+		content: " ";
+		float: right;
+		width: 0;
+		height: 0;
+		border-color: transparent;
+		border-style: solid;
+		border-width: 5px 0 5px 5px;
+		border-left-color: #ccc;
+		margin-top: 5px;
+		margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+    border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+
+label {
+  display: block;
+  padding-top: 5px;
+  text-indent: -15px;
+  font-size: 12px;
+  font-weight: normal;
+}
+</style>
 <h1>Medications</h1>
-<br>
+<div id="drugHistory"></div>
 <h3>Orders</h3>
 <div class="widget style1 gray-bg">
-<div id="medicationList">
-</div>
-
+	<div id="medicationList"></div>
 	<input type='text' class='form-control' placeholder="Enter medication name" id='search' name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 {{ csrf_field() }}
-<br>
-<div id="drugList">
-</div>
-</div>
-<br>
-<div id="drugHistory">
+<div id="drugList"></div>
 </div>
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -75,6 +120,8 @@ $(document).ready(function(){
 						}
 					});
 					//$('#search').val('');
+				} else {
+					$('#drugList').html('');
 				}
 			});
 
