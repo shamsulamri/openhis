@@ -4,7 +4,7 @@
 @include('consultations.panel')
 <h1>Procedures</h1>
 <br>
-<a href='/consultation_procedures/create/{{ $consultation->consultation_id }}' class='btn btn-primary'>Create</a>
+<a href='/consultation_procedures/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
 @if ($consultation_procedures->total()>0)

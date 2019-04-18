@@ -46,6 +46,7 @@ class AppointmentServiceController extends Controller
 			return view('appointment_services.create', [
 					'appointment_service' => $appointment_service,
 					'department' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
+					'type'=> null,
 					]);
 	}
 
@@ -127,8 +128,7 @@ class AppointmentServiceController extends Controller
 	
 	public function search(Request $request)
 	{
-			$appointment_services = DB::table('appointment_services')
-					->where('service_name','like','%'.$request->search.'%')
+			$appointment_services = AppointmentService::where('service_name','like','%'.$request->search.'%')
 					->orWhere('service_id', 'like','%'.$request->search.'%')
 					->orderBy('service_name')
 					->paginate($this->paginateValue);

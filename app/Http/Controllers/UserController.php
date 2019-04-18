@@ -19,7 +19,6 @@ use Validator;
 use App\QueueLocation;
 use App\Department;
 
-
 class UserController extends Controller
 {
 	public $paginateValue=10;
@@ -29,12 +28,19 @@ class UserController extends Controller
 	{
 			$this->middleware('auth');
 
+			$this->locations = QueueLocation::selectRaw('location_name, location_code, encounter_code')
+					->whereNotNull('encounter_code')
+					->orderBy('location_name')
+					->lists('location_name', 'location_code')
+					->prepend('','');
+			/*
 			$this->locations = QueueLocation::select(DB::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code, encounter_code"))
 					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
 					->whereNotNull('encounter_code')
 					->orderBy('location_name')
 					->lists('location_name', 'location_code')
 					->prepend('','');
+			 */
 	}
 
 	public function index()
@@ -94,19 +100,21 @@ class UserController extends Controller
 	{
 			$user = User::findOrFail($id);
 
+			/*
 			$locations = queuelocation::select(db::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code, encounter_code"))
 					->leftjoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
 					->wherenotnull('encounter_code')
 					->orderby('location_name')
 					->lists('location_name', 'location_code')
 					->prepend('','');
+			 */
 
 			return view('users.edit', [
 					'user'=>$user,
 					'authorizations' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id'),
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
 					'tax_code' => TaxCode::all()->sortBy('tax_name')->lists('tax_name', 'tax_code')->prepend('',''),
-					'location' => $locations,
+					'location' => $this->locations,
 					'departments' => Department::all()->sortBy('department_name')->lists('department_name', 'department_code')->prepend('',''),
 					]);
 	}

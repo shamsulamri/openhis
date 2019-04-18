@@ -80,12 +80,17 @@ class EncounterController extends Controller
 					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
 					->whereNotNull('encounter_code')
 					->get();
-			 */
 
 			$locations = Location::select(DB::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code, encounter_code"))
 					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
 					->whereNotNull('encounter_code')
 					->orderBy('department_name')
+					->orderBy('location_name')
+					->get();
+			 */
+
+			$locations = Location::selectRaw('location_name, location_code, encounter_code')
+					->whereNotNull('encounter_code')
 					->orderBy('location_name')
 					->get();
 
@@ -151,8 +156,10 @@ class EncounterController extends Controller
 			if (!empty($request->appointment_id)) {
 				$appointment = Appointment::find($request->appointment_id);
 				$user = User::where('service_id', $appointment->service_id)->first();
+				if ($user) {
+						$encounter->location_code = $user->location_code;
+				}
 				$encounter->encounter_code = 'outpatient';
-				$encounter->location_code = $user->location_code;
 			}
 
 			$bed_helper = new BedHelper();

@@ -80,7 +80,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
-        {{ Form::label('location_code', 'Consultation Room',['class'=>'col-sm-3 control-label']) }}
+        {{ Form::label('location_code', 'Queue Location',['class'=>'col-sm-3 control-label']) }}
 		<div class='col-sm-9'>
 			{{ Form::select('location_code', $location, null, ['class'=>'form-control','maxlength'=>'10']) }}
 			@if ($errors->has('location_code')) <p class="help-block">{{ $errors->first('location_code') }}</p> @endif

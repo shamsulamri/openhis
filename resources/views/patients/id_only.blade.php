@@ -4,12 +4,14 @@
 						<h2>{{ $patient->getTitleName() }}</h2>
 						<h6>{{ $patient->getMRN() }}</h6>
 						<h6>{{ $patient->patientAge() }}</h6>
+		@if (!empty($encounter))
 			@if ($encounter->admission) 
 						<h4>
 							{{ $encounter->admission->bed->ward->ward_name }}
 							({{ $encounter->admission->bed->bed_name }})
 						</h4>
 			@endif
+		@endif
 						@if ($patient->outstandingBill() < 0) 
 						<h4>
 						<p class='text-warning'>

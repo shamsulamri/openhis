@@ -21,7 +21,7 @@
 	<tr> 
     <th>Date</th>
     <th>Patient</th>
-    <th>Reservation</th>
+    <th>Ward</th>
 	@can('module-ward')
 	<th><div align='right'>Vacant</div></th>
 	@endcan

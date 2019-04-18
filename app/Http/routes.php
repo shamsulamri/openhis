@@ -830,13 +830,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 				Route::get('/appointment_services/forget', 'AppointmentServiceController@forgetCookie');
 				Route::get('/appointment_services/set/{id}', 'AppointmentServiceController@setAppointmentBook');
+				Route::get('/appointment_services/delete/{id}', 'AppointmentServiceController@delete');
 				Route::resource('appointment_services', 'AppointmentServiceController', ['except'=>['show']]);
 				Route::get('/appointment_services/id/{id}', 'AppointmentServiceController@searchById');
 				Route::get('/appointment_services/{id}/{selected_week}/{service_id?}/{appointment_id?}', 'AppointmentServiceController@show');
 				Route::post('/appointment_services/{id}/{selected_week}/{service_id?}/{appointment_id?}', 'AppointmentServiceController@show');
 				Route::post('/appointment_service/search', 'AppointmentServiceController@search');
 				Route::get('/appointment_service/search', 'AppointmentServiceController@search');
-				Route::get('/appointment_services/delete/{id}', 'AppointmentServiceController@delete');
 		});
 
 		Route::group(['middleware' => 'patient'], function () {

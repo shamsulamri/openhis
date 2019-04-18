@@ -129,6 +129,7 @@
 		<button class='btn btn-primary' onclick="loadAnnotation('rectal_f.png')">Rectal</button>
 	</div>
 
+@if ($patient->patientAgeInYears()<=2)
 	<div class="form-group">
 		<div class="dropdown">
 				<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -157,6 +158,7 @@
 				</ul>
 		</div>
 	</div>
+@endif
 <!--
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 		<li><a href="javascript:loadAnnotation('abdomen_f.png')">Abdomen </a></li>

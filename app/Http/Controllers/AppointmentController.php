@@ -32,11 +32,9 @@ class AppointmentController extends Controller
 			$appointments = Appointment::orderBy('appointment_id')
 					->where('appointment_datetime', '>=', Carbon::today());
 
-			/*
 			if (!empty(Auth::user()->service_id)) {
 				$appointments = $appointments->where('service_id', '=', Auth::user()->service_id);
 			}
-			 */
 
 			$service_id = null;
 			$service = null;

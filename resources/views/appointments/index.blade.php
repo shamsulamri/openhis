@@ -73,9 +73,11 @@
 			<td align='right'>
 				@if (!isset($current_encounter)) 
 					<a class='btn btn-danger btn-sm' href='{{ URL::to('appointments/delete/'. $appointment->appointment_id) }}'>Delete</a>
+					@can('module-patient')
 					<a class='btn btn-primary btn-sm' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $appointment->patient_id.'&appointment_id='.$appointment->appointment_id) }}'>
 						<i class="fa fa-stethoscope"></i>
 					</a>
+					@endcan
 				@else
 					@if ($current_encounter->discharge) 
 						Discharge

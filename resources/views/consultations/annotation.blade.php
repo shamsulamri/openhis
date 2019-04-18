@@ -4,7 +4,7 @@
 		<div class="form-group">
 				<button class='btn btn-default' onclick="loadAnnotation('hopi.png')"><span class='fa fa-file-o'></span></button>
 		</div>
-		@if ($consultation->encounter->patient->gender_code=='P')
+		@if ($consultation->encounter->patient->gender_code=='F')
 				@include('consultations.female_images')
 		@else
 				@include('consultations.male_images')

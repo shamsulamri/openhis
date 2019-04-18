@@ -15,7 +15,7 @@ Prints
 
 		<br><br>
 		<span class='fa fa-file-o' aria-hidden='true'></span>
-		<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}">
+		<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_label&id={{ $patient->patient_id }}">
 		Wrist Label
 		</a>
 

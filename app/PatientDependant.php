@@ -37,5 +37,9 @@ class PatientDependant extends Model
 			return $this->belongsTo('App\Patient', 'dependant_id');
 	}
 
+	public function relationship()
+	{
+			return $this->belongsTo('App\Relationship', 'relation_code');
+	}
 	
 }

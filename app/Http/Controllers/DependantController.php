@@ -39,7 +39,9 @@ class DependantController extends Controller
 					->leftJoin('ref_relationships as c','c.relation_code','=','a.relation_code')
 					->where('a.patient_id','=', $request->patient_id)
 					->paginate($this->paginateValue);
-		
+
+			$dependants = PatientDependant::where('patient_id', $request->patient_id)
+							->paginate($this->paginateValue);
 
 			return view('dependants.index', [
 					'dependants'=>$dependants,
@@ -94,7 +96,8 @@ class DependantController extends Controller
 			$dependant = Dependant::findOrFail($id);
 			$patient_dependant = PatientDependant::where('dependant_id','=', $id)
 					->where('patient_id','=', $request->patient_id)
-					->get()[0];
+					->first();
+
 			return view('dependants.edit', [
 					'dependant'=>$dependant,
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),

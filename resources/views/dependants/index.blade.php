@@ -15,12 +15,14 @@
 @foreach ($dependants as $dependant)
 	<tr>
 			<td>
-					<a href='{{ URL::to('dependants/'. $dependant->patient_id . '/edit?patient_id='.$patient_id) }}'>
-						{{ strtoupper($dependant->patient_name) }}
+					<a href='{{ URL::to('dependants/'. $dependant->dependant_id . '/edit?patient_id='.$patient_id) }}'>
+						{{ strtoupper($dependant->patient->patient_name) }}
 					</a>
 			</td>
 			<td>
-					{{$dependant->relation_name}}
+					@if ($dependant->relationship)
+							{{$dependant->relationship->relation_name}}
+					@endif
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='patient_dependants/delete/{{ $dependant->id }}'><span class='fa fa-minus'></span></a>
