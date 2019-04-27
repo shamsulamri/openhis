@@ -1,4 +1,18 @@
 
+    <div class='form-group  @if ($errors->has('arrival_description')) has-error @endif'>
+        {{ Form::label('ward', 'Ward',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::label('ward', $encounter->admission->bed->ward->ward_name, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
+        {{ Form::label('class', 'Class',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+        	{{ Form::label('class', $bed->wardClass->class_name,['class'=>'form-control']) }}
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         {{ Form::label('Bed', 'Bed',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -20,12 +34,6 @@
 	-->
 
 
-    <div class='form-group  @if ($errors->has('arrival_description')) has-error @endif'>
-        {{ Form::label('ward', 'Ward',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('ward', $encounter->admission->bed->ward->ward_name, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
-        </div>
-    </div>
     <div class='form-group  @if ($errors->has('arrival_description')) has-error @endif'>
         {{ Form::label('arrival_description', 'Description',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

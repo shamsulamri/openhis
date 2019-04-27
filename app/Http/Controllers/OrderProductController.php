@@ -156,7 +156,6 @@ class OrderProductController extends Controller
 	
 	public function search(Request $request)
 	{
-
 			if (empty($request->search)) {
 					if ($request->set_code=='drug_history') {
 						$this->drugHistory($request);
@@ -175,8 +174,8 @@ class OrderProductController extends Controller
 								//$store_code = OrderHelper::getStoreAffected($product);
 								$store_code = OrderHelper::getTargetStore($product);
 
-								$allocated = $stock_helper->getStockAllocatedByStore($product->product_code, $store_code);
-								$on_hand = $stock_helper->getStockCountByStore($product->product_code, $store_code);
+								$allocated = $stock_helper->getStockAllocated($product->product_code, $store_code);
+								$on_hand = $stock_helper->getStockOnHand($product->product_code, $store_code);
 
 								if ($on_hand-$allocated>0) {
 										$response = OrderHelper::orderItem($product, $request->cookie('ward'));
@@ -191,45 +190,31 @@ class OrderProductController extends Controller
 						}
 				}
 
+				$fields = explode(' ', $request->search);
 				$order_products = Product::orderBy('product_name')
-					->where(function ($query) use ($request) {
-						$query->where('product_name','like','%'.$request->search.'%')
-							->orWhere('product_name_other','like','%'.$request->search.'%')
-							->orWhere('product_code','like','%'.$request->search.'%');
-					});
+						->whereIn('category_code',Auth::user()->categoryCodes())
+						->where(function ($query) use ($fields, $request) {
+							foreach($fields as $field) {
+								$query->where('product_name','like','%'.$field.'%');
+								if (!empty($request->categories)) {
+										$query->where('category_code','=', $request->categories);
+								}
+							}
+						})
+						->orWhere(function ($query) use ($fields, $request) {
+							foreach($fields as $field) {
+								$query->where('product_name_other','like','%'.$field.'%');
+								if (!empty($request->categories)) {
+										$query->where('category_code','=', $request->categories);
+								}
+							}
+						});
 
-				/*
-				$order_products = Product::orderBy('product_name')
-					->where(function ($query) use ($request) {
-						$fields = explode(' ', $request->search);
-						foreach($fields as $field) {
-							$query = $query->where('product_name', 'like', '%'.$field .'%');
-						}
-					});
-
-				$order_products = $order_products
-					->orwhere(function ($query) use ($request) {
-						$fields = explode(' ', $request->search);
-						foreach($fields as $field) {
-							$query = $query->where('product_name_other', 'like', '%'.$field .'%');
-						}
-					});
-				 */
-
-				if (!empty($request->categories)) {
-					$order_products = $order_products->where('products.category_code','=', $request->categories);
-				}
-
-				/*
-				$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
-
-				if (!$product_authorization->get()->isEmpty()) {
-						$order_products = $order_products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
-				}
-				 */
-
+				Log::info($order_products->toSql());
 				$order_products = $order_products->paginate($this->paginateValue);
+
 			} else {
+
 				$orderSets = DB::table('order_sets')
 							->select('product_code')
 							->where('set_code','=',$request->set_code)

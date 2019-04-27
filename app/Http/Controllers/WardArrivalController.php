@@ -45,15 +45,18 @@ class WardArrivalController extends Controller
 			//$bed = Bed::find($encounter->admission->bed_code);
 			$bed = $encounter->admission->bed;
 			$bed_name = $bed->bed_name;
+			/*
 			if ($bed->room) {
-					$bed_name = $bed_name.' ('.$bed->room->room_name.')';
+					$bed_name = $bed_name.' ('.$bed->wardClass->class_name.')';
 			}
+			 */
 
-			$beds = Bed::select(DB::raw("concat(bed_name, ' (', room_name, ')') as bed_name, bed_code"))
+			$beds = Bed::select(DB::raw("bed_name, bed_code"))
 						->leftJoin('ward_rooms as b', 'b.room_code', '=', 'beds.room_code')
+						->leftJoin('ward_classes as c', 'c.class_code', '=', 'beds.class_code')
 						->where('status_code','01')
 						->where('ward_code', $ward_code)
-						->where('class_code', $bed->class_code)
+						->where('beds.class_code', $bed->class_code)
 						->orderBy('bed_name')
 						->lists('bed_name', 'bed_code')
 						->prepend($bed_name,$bed->bed_code);

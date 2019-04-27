@@ -52,8 +52,11 @@ class OrderQueueController extends Controller
 
 			$location = QueueLocation::find($location_code);
 
-			$queue_encounters = $request->cookie('queue_encounters');
-			$queue_categories = $request->cookie('queue_categories');
+			//$queue_encounters = $request->cookie('queue_encounters');
+			//$queue_categories = $request->cookie('queue_categories');
+
+			$queue_encounters = explode(';',Auth::user()->authorization->queue_encounters);
+			$queue_categories = explode(';',Auth::user()->authorization->queue_categories);
 
 			$fields = ['a.order_id',
 					'patient_name', 

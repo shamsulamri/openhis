@@ -88,7 +88,9 @@ class OrderTaskController extends Controller
 				$location_code = $request->cookie('queue_location');
 			}
 			$location = Location::find($location_code);
-			$queue_categories = $request->cookie('queue_categories');
+			//$queue_categories = $request->cookie('queue_categories');
+			$queue_encounters = explode(';',Auth::user()->authorization->queue_encounters);
+			$queue_categories = explode(';',Auth::user()->authorization->queue_categories);
 
 			$consultation = Consultation::where('patient_id','=',$encounter->patient_id)
 					->orderBy('created_at','desc')

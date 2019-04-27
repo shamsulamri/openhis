@@ -21,6 +21,8 @@
 					<a href='{{ URL::to('products/'. $order_set->product_code.'?id='.$set->set_code ) }}'>
 						{{$order_set->product_name}}
 					</a>
+						<br>
+						{{$order_set->product_code}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_sets/delete/'. $order_set->id) }}'>

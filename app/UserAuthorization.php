@@ -33,6 +33,8 @@ class UserAuthorization extends Model
 				'location_code',
 				'view_progress_note',
 				'appointment_function',
+				'queue_encounters',
+				'queue_categories',
 				'system_administrator'];
 	
     protected $guarded = ['author_id'];

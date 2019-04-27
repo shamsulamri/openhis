@@ -312,6 +312,7 @@ class ProductSearchController extends Controller
 			$product_searches=null;
 			$search = trim($request->search, " ");
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
+
 			switch ($reason) {
 					case "bom":
 							$product_searches = Product::orderBy('product_name')

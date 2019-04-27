@@ -223,30 +223,15 @@ if ($_COOKIE['his-navbar']==1) {
 						<h4>&nbsp;</h4>
 						@endcan
 
-						<!-- Inventory Module -->
-						@can('module-inventory')
-						<div class="dropdown profile-element"> 
-								<h4>&nbsp;Inventory</h4>
-						</div>
-						<li><a title='Products' href="{{ url('/products') }}"><i class='fa fa-glass'></i><span class='nav-label'>Products</span></a></li>
-						<li><a title='Suppliers' href="{{ url('/suppliers') }}"><i class='fa fa-industry' aria-hidden='true'></i><span class='nav-label'>Suppliers</span></a></li>
-						<!--
-						<li><a title='Stores' href="{{ url('/stores') }}"><i class='fa fa-archive'></i><span class='nav-label'>Stores</span></a></li>
-						-->
-						<li><a title='Purchases' href="{{ url('/purchases') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchases</span></a></li>
-						<li><a title='Stock Movements' href="{{ url('/inventory_movements') }}"><i class='fa fa-truck'></i><span class='nav-label'>Stock Movements</span></a></li>
-						<li><a title='Order Sets' href="{{ url('/sets') }}"><i class='fa fa-medkit'></i><span class='nav-label'>Order Sets</span></a></li>
-						<li><a title='Product Authorizations' href="{{ url('/product_authorizations') }}"><i class='fa fa-crosshairs'></i><span class='nav-label'>Product Authorizations</span></a></li>
-						<li><a title='Loans' href="{{ url('/loans') }}"><i class='fa fa-share-square'></i><span class='nav-label'><span class='nav-label'>Loans</span></a></li>
-						@endcan
-
 						<!-- Ward Module -->
 						@can('module-ward')
 						<div class="dropdown profile-element"> 
 								<h4>&nbsp;Ward</h4>
 						</div>
 						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-bed'></i><span class='nav-label'>Admissions</a></li>
+<!--
 						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-question-circle-o'></i><span class='nav-label'>Order Queues</span></a></li>
+-->
 						<li><a title="Admission Tasks" href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Admission Tasks</a></li>
 						@if (!empty($ward->ward_code))
 								@if ($ward->ward_code != 'mortuary')
@@ -260,6 +245,25 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title="Bed Reservations" href="{{ url('/bed_bookings') }}"><i class='glyphicon glyphicon-bookmark'></i><span class='nav-label'>Bed Reservations</a></li>
 						<li><a title="Appointments" href="{{ url('/appointments') }}"><i class='fa fa-calendar'></i><span class='nav-label'>Appointments</a></li>
 						<li><a title="Loans" href="{{ url('/loans/ward') }}"><i class='fa fa-share-square'></i><span class='nav-label'>Loans</a></li>
+						@endcan
+
+						<!-- Inventory Module -->
+						@can('module-inventory')
+						<div class="dropdown profile-element"> 
+								<h4>&nbsp;Inventory</h4>
+						</div>
+						<li><a title='Products' href="{{ url('/products') }}"><i class='fa fa-glass'></i><span class='nav-label'>Products</span></a></li>
+						<li><a title='Suppliers' href="{{ url('/suppliers') }}"><i class='fa fa-industry' aria-hidden='true'></i><span class='nav-label'>Suppliers</span></a></li>
+						<!--
+						<li><a title='Stores' href="{{ url('/stores') }}"><i class='fa fa-archive'></i><span class='nav-label'>Stores</span></a></li>
+						-->
+						<li><a title='Purchases' href="{{ url('/purchases') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchases</span></a></li>
+						<li><a title='Stock Movements' href="{{ url('/inventory_movements') }}"><i class='fa fa-truck'></i><span class='nav-label'>Stock Movements</span></a></li>
+<!--
+						<li><a title='Order Sets' href="{{ url('/sets') }}"><i class='fa fa-medkit'></i><span class='nav-label'>Order Sets</span></a></li>
+						<li><a title='Product Authorizations' href="{{ url('/product_authorizations') }}"><i class='fa fa-crosshairs'></i><span class='nav-label'>Product Authorizations</span></a></li>
+-->
+						<li><a title='Loans' href="{{ url('/loans') }}"><i class='fa fa-share-square'></i><span class='nav-label'><span class='nav-label'>Loans</span></a></li>
 						@endcan
 
 						<!-- Medical Record -->

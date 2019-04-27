@@ -45,4 +45,14 @@ class Queue extends Model
 			return $this->belongsTo('App\Encounter', 'encounter_id', 'encounter_id');
 	}
 
+	public static function boot()
+	{
+			parent::boot();
+
+			static::deleted(function($queue)
+			{
+				$queue->encounter()->delete();
+			});
+
+	}
 }

@@ -135,4 +135,14 @@ class Admission extends Model
 	}
 	**/
 
+	public static function boot()
+	{
+			parent::boot();
+
+			static::deleted(function($admission)
+			{
+				$admission->encounter()->delete();
+			});
+
+	}
 }

@@ -21,7 +21,9 @@ Future Orders
 @else
 Order Queues
 @endif
+<!--
 <a class='pull-right' href='{{ URL::to('order_queues/setup') }}'><i class="fa fa-cog"></i></a>
+-->
 </h1>
 <h3>{{ $location->location_name }}</h3>
 <br>

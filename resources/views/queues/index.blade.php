@@ -73,9 +73,7 @@
 						<i class="fa fa-stethoscope"></i>
 					</a>
 					@endcan
-					@can('system-administrator')
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
-					@endcan
+					<a class='btn btn-danger' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
 			</td>
 	</tr>
 @endforeach

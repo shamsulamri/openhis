@@ -88,7 +88,6 @@
 							{{ strtoupper($admission_bed->patient_name) }}
 					</td>
 					<td align='right'>
-					@if ($admission_bed->status_code == '03')
 								@if (!empty($encounter->admission->bed))
 										@if ($admission->encounter->patient_id<>$admission_bed->patient_id)
 											@if (empty($move))
@@ -98,7 +97,6 @@
 											@endif
 										@endif
 								@endif
-					@endif
 					@if ($admission_bed->status_code == '01' && $admission_bed->bed_code != $admission->anchor_bed) 
 							@if (empty($admission_bed->patient_name))
 									@if (!empty($book_id))

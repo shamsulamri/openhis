@@ -12,6 +12,8 @@ use DB;
 use Session;
 use App\Store;
 use App\QueueLocation;
+use App\ProductCategory;
+use App\EncounterType;
 
 class UserAuthorizationController extends Controller
 {
@@ -61,16 +63,39 @@ class UserAuthorizationController extends Controller
 
 	public function edit($id) 
 	{
+			$encounters = EncounterType::all();
+			$categories = ProductCategory::all();
 			$user_authorization = UserAuthorization::findOrFail($id);
 			return view('user_authorizations.edit', [
 					'user_authorization'=>$user_authorization,
 					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'encounters' => $encounters,
+					'categories' => $categories,
+					'queue_encounters' => explode(';', $user_authorization->queue_encounters),
+					'queue_categories' => explode(';', $user_authorization->queue_categories),
 					]);
 	}
 
 	public function update(Request $request, $id) 
 	{
+			$encounters = EncounterType::all();
+			$categories = ProductCategory::all();
+
+			$queue_encounters = [];
+			foreach ($encounters as $encounter) {
+					if ($request[$encounter->encounter_code]) {
+						array_push($queue_encounters, $encounter->encounter_code);
+					}
+			}
+
+			$queue_categories = [];
+			foreach ($categories as $category) {
+					if ($request[$category->category_code]) {
+						array_push($queue_categories, $category->category_code);
+					}
+			}
+
 			$user_authorization = UserAuthorization::findOrFail($id);
 			$user_authorization->fill($request->input());
 
@@ -97,6 +122,8 @@ class UserAuthorizationController extends Controller
 			$valid = $user_authorization->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					$user_authorization->queue_encounters = implode(';', $queue_encounters);
+					$user_authorization->queue_categories = implode(';', $queue_categories);
 					$user_authorization->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/user_authorizations/id/'.$id);

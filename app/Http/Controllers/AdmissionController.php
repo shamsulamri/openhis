@@ -115,13 +115,17 @@ class AdmissionController extends Controller
 			}
 
 			$admissions = $admissions->whereNull('f.encounter_id')
-					->orderBy('admission_id', 'desc');
+					->orderBy('arrival_id')
+					->orderBy('patient_name');
 					
+			/*
 			if (Auth::user()->can('module-patient')) {
 					$admissions = $admissions->orderBy('patient_name');
 			} else {
-					$admissions = $admissions->orderBy('b.encounter_id')->orderBy('a.bed_code');
+					$admissions = $admissions->orderBy('b.encounter_id')
+							->orderBy('a.bed_code');
 			}
+			 */
 
 			$admissions = $admissions->paginate($this->paginateValue);
 
@@ -197,6 +201,10 @@ class AdmissionController extends Controller
 	public function show($id) 
 	{
 			$admission = Admission::findOrFail($id);
+			if (empty($admission->arrival)) {
+				return redirect('/ward_arrivals/create/'.$admission->encounter_id);
+			}
+
 			$wardHelper = new WardHelper();
 
 			return view('admissions.show', [
@@ -464,7 +472,7 @@ class AdmissionController extends Controller
 			$bed->save();
 			BedMovement::where('admission_id', $admission->admission_id)->delete();
 			Admission::find($id)->delete();
-			Encounter::find($admission->encounter_id)->delete();
+			//Encounter::find($admission->encounter_id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/admissions');
 	}

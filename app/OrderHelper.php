@@ -201,14 +201,30 @@ class OrderHelper
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 
-			$order = new Order();
+
+			$order = Order::where('consultation_id', Session::get('consultation_id'))
+						->where('encounter_id', Session::get('encounter_id'))
+						->where('product_code', $product->product_code)
+						->where('post_id','=',0)
+						->first();
+
+			Log::info(Session::get('consultation_id'));
+			Log::info('---'.$order);
+			if (empty($order)) {
+				/** New order **/
+				$order = new Order();
+				$order->order_quantity_request = 1;
+			} else {
+				/** Update existing order **/
+				$order->order_quantity_request += 1;
+			}
+
 			$order->consultation_id = Session::get('consultation_id');
 			$order->encounter_id = Session::get('encounter_id');
 			$order->user_id = Auth::user()->id;
 			$order->unit_code = $product->uomDefaultPrice()?$product->uomDefaultPrice()->unit_code:'unit';
 			$order->order_unit_price = $product->uomDefaultPrice()?$product->uomDefaultPrice()->uom_price:'unit';
 			$order->product_code = $product->product_code;
-			$order->order_quantity_request = 1;
 
 			if ($admission) {
 					$order->admission_id = $admission->admission_id;

@@ -5,10 +5,10 @@
 
 <h1>Admission Options</h1>
 <br>
-<h4>
+<h3>
 		@if (is_null($admission->arrival) && empty($admission->discharge_id))
 			<span class='fa fa-sign-in' aria-hidden='true'></span>
-			<a href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}'>Log Arrival</a>
+			<a href='{{ URL::to('ward_arrivals/create/'. $admission->encounter_id) }}'>Log Ward Arrival</a>
 		@endif
 
 		@if ($admission->arrival) 
@@ -75,5 +75,5 @@
 				@endif
 			@endif
 		@endif
-</h4>
+</h3>
 @endsection

@@ -173,13 +173,13 @@
 					@endif
 			@endcan
 
-			@can('module-patient')
-			<td>
+			<td widht='10'>
+			<div class='pull-right'>
 			@if (empty($admission->arrival_id))
-					<a class='btn btn-danger pull-right btn-sm' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
+					<a class='btn btn-danger' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 			@endif
+			</div>
 			</td>
-			@endcan
 	</tr>
 @endforeach
 @endif
