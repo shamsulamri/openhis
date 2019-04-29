@@ -14,6 +14,7 @@ class StockLimit extends Model
 				'product_code',
 				'store_code',
 				'limit_max',
+				'reorder_quantity',
 				'limit_min'];
 	
     protected $guarded = ['limit_id'];

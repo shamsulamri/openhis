@@ -76,7 +76,7 @@
 				@elseif ($reason=='stock')
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('inventory_movements/add/'. $move_id . '/' . $product_search->product_code) }}'>
 				@else
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('purchase_lines/add/'. $purchase_id . '/' . $product_search->product_code) }}'>
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('purchase_lines/add/'. $purchase_id . '/' . $product_search->product_code.'/'.$type) }}'>
 				@endif
 					<span class='glyphicon glyphicon-plus'></span></a>
 			</td>

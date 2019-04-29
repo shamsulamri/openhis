@@ -141,7 +141,7 @@ class StockLimitController extends Controller
 					$stores = Store::all();
 			}
 
-			$limits = StockLimit::select('store_code', 'limit_min','limit_max')
+			$limits = StockLimit::select('store_code', 'limit_min','limit_max', 'reorder_quantity')
 					->where('product_code', $id)
 					->get();
 
@@ -165,19 +165,20 @@ class StockLimitController extends Controller
 								->where('product_code',$id)
 								->first();
 
-				Log::info(empty($limit));
-
 				if (empty($limit)) {
 						$limit = new StockLimit();
 						$limit->store_code = $store_code;
 						$limit->product_code = $id;
 						$limit->limit_min = $request[$store_code."_min"];
 						$limit->limit_max = $request[$store_code."_max"];
+						$limit->reorder_quantity = $request[$store_code."_reorder"];
 						$limit->save();
 				} else {
 						$limit->limit_min = $request[$store_code."_min"];
 						$limit->limit_max = $request[$store_code."_max"];
+						$limit->reorder_quantity = $request[$store_code."_reorder"];
 						$limit->save();
+						Log::info($limit->reorder_quantity);
 				}
 			}
 

@@ -268,11 +268,17 @@ class ChartController extends Controller
 			$graph_values = DB::select($sql);
 
 
+			/*
 			$consultation = null;
 			if (Session::get('consultation_id')) {
 				$consultation = Consultation::find(Session::get('consultation_id'));
 			}
+			 */
 
+			$id = Session::get('consultation_id');
+			$consultation = Consultation::where('consultation_id', $id)
+					->where('consultation_status', 1)
+					->first();
 
 			return view($blade, [
 				'graph'=>$graph,
@@ -282,6 +288,7 @@ class ChartController extends Controller
 				'consultation'=>$consultation,
 				'encounter_id'=>$encounter_id,
 				'form'=>$form,
+				'encounter'=>$encounter,
 			]);
 	}
 }

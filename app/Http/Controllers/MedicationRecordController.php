@@ -174,12 +174,16 @@ class MedicationRecordController extends Controller
 			]);
 	}
 
-	public function medicationAdministrationRecord($encounter_id=null) {
+	public function medicationAdministrationRecord(Request $request, $encounter_id=null) {
 			$id = Session::get('consultation_id');
-			$consultation = Consultation::find($id);
+			$consultation = Consultation::where('consultation_id', $id)
+					->where('consultation_status', 1)
+					->first();
+
 			if (empty($encounter_id)) {
-				$encounter_id = $consultation->encounter_id;
+					$encounter_id = $consultation->encounter_id;
 			}
+
 			$encounter = Encounter::find($encounter_id);
 
 			$fields = ['product_name', 

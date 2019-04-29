@@ -5,11 +5,14 @@
 <h1>Stock Limits</h1>
 <br>
     <div class='form-group'>
-        <div class='col-sm-3 col-sm-offset-4'>
+        <div class='col-sm-2 col-sm-offset-4'>
 			<label>Min</label>
         </div>
-        <div class='col-sm-5'>
+        <div class='col-sm-2'>
 			<label>Max</label>
+        </div>
+        <div class='col-sm-2'>
+			<label>Reorder</label>
         </div>
     </div>
 {{ Form::open(['url'=>['stock_limit', $product->product_code], 'class'=>'form-horizontal']) }} 
@@ -17,9 +20,11 @@
 	<?php
 	$min=NULL;
 	$max=NULL;
+	$reorder=NULL;
 	if (!empty($limits[$store->store_code])) {
 		$min = $limits[$store->store_code]->limit_min;
 		$max = $limits[$store->store_code]->limit_max;
+		$reorder = $limits[$store->store_code]->reorder_quantity;
 	}
 	?>
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
@@ -30,11 +35,14 @@
 			{{ $store->store_name }}
 			@endif
 		</label>
-        <div class='col-sm-3'>
+        <div class='col-sm-2'>
 			{{ Form::text($store->store_code."_min", $min, ['class'=>'form-control']) }}
         </div>
-        <div class='col-sm-3'>
+        <div class='col-sm-2'>
 			{{ Form::text($store->store_code."_max", $max, ['class'=>'form-control']) }}
+        </div>
+        <div class='col-sm-2'>
+			{{ Form::text($store->store_code."_reorder", $reorder, ['class'=>'form-control']) }}
         </div>
     </div>
 @endforeach

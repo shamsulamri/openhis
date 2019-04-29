@@ -148,5 +148,9 @@
 	function clearOrderSet() {
 			document.getElementById('orderset').selectedIndex=0;
 	}
+
+	$("#search").on("paste", function() {
+			$(this).val($(this).val().concat(";"));
+	});
 </script>
 @endsection

@@ -300,11 +300,9 @@ class OrderQueueController extends Controller
 	public function search(Request $request)
 	{
 			if (empty($request->cookie('queue_location'))) {
-					//return "Location not set";
 					return redirect('queue_locations');
 			}
 
-			//if (empty($request->cookie('queue_location'))) {
 			if (!empty(Auth::user()->authorization->location_code)) {
 				$location_code = Auth::user()->authorization->location_code;
 			} else {
@@ -312,8 +310,14 @@ class OrderQueueController extends Controller
 			}
 			$location = QueueLocation::find($location_code);
 
+			/*
 			$queue_encounters = $request->cookie('queue_encounters');
 			$queue_categories = $request->cookie('queue_categories');
+			 */
+
+			$queue_encounters = explode(';',Auth::user()->authorization->queue_encounters);
+			$queue_categories = explode(';',Auth::user()->authorization->queue_categories);
+
 			/*
 			$fields = ['a.order_id',
 					'patient_name', 
@@ -371,7 +375,7 @@ class OrderQueueController extends Controller
 					$order_queues = $order_queues->where('c.encounter_code','=', $request->encounter_code);
 			}
 
-			if ($request->status_code =='incomplete') {
+			if ($request->status_code =='incomplete' or empty($request->status_code)) {
 					$order_queues = $order_queues->where('order_completed', '=', 0);
 			} 
 

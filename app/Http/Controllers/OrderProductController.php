@@ -164,30 +164,40 @@ class OrderProductController extends Controller
 			}
 
 			if (!empty($request->search)) {
-				$product = Product::find($request->search);
-				if ($product) {
-						if ($product->product_drop_charge == 1) {
+				$searches = explode(";",$request->search);
+				$order_bulk = False;
+				foreach($searches as $search) {
+						if (!empty($search)) {
+								$product = Product::find($search);
+								if ($product) {
+										if ($product->product_drop_charge == 1) {
 
-							$response=0;
-							if ($product->product_stocked==1) {
-								$stock_helper = new StockHelper();
-								//$store_code = OrderHelper::getStoreAffected($product);
-								$store_code = OrderHelper::getTargetStore($product);
+												$response=0;
+												if ($product->product_stocked==1) {
+														$stock_helper = new StockHelper();
+														//$store_code = OrderHelper::getStoreAffected($product);
+														$store_code = OrderHelper::getTargetStore($product);
 
-								$allocated = $stock_helper->getStockAllocated($product->product_code, $store_code);
-								$on_hand = $stock_helper->getStockOnHand($product->product_code, $store_code);
+														$allocated = $stock_helper->getStockAllocated($product->product_code, $store_code);
+														$on_hand = $stock_helper->getStockOnHand($product->product_code, $store_code);
 
-								if ($on_hand-$allocated>0) {
-										$response = OrderHelper::orderItem($product, $request->cookie('ward'));
+														if ($on_hand-$allocated>0) {
+																$response = OrderHelper::orderItem($product, $request->cookie('ward'));
+														}
+												} else {
+														$response = OrderHelper::orderItem($product, $request->cookie('ward'));
+												}
+
+												if ($response>0) {
+														$order_bulk = True;
+												}
+
+										}
 								}
-							} else {
-										$response = OrderHelper::orderItem($product, $request->cookie('ward'));
-							}
-
-							if ($response>0) {
-									return redirect('/order_product/search');
-							}
 						}
+				}
+				if ($order_bulk == True) {
+						return redirect('/order_product/search');
 				}
 
 				$fields = explode(' ', $request->search);

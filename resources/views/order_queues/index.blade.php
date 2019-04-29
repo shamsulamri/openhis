@@ -37,8 +37,16 @@ Order Queues
 						</div>
 					</div>
 			</div>
-	<div class="col-xs-4">
-	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Encounter</div></label>
+						<div class='col-sm-9'>
+								{{ Form::select('encounter_code', $encounters,$encounter_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+				<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 			</div>
 	</div>
 	<!--

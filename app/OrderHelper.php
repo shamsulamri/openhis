@@ -217,6 +217,7 @@ class OrderHelper
 			} else {
 				/** Update existing order **/
 				$order->order_quantity_request += 1;
+				$order->order_quantity_supply = $order->order_quantity_request;
 			}
 
 			$order->consultation_id = Session::get('consultation_id');
@@ -447,6 +448,7 @@ class OrderHelper
 			}
 
 			if ($drop_now) {
+				Log::info("--------------------------------");
 				if (!$order->orderCancel) {
 						$order->order_completed=1;
 						$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
@@ -502,6 +504,7 @@ class OrderHelper
 		$inventory->move_code = 'sale';
 		$inventory->inv_posted = 1;
 		$inventory->save();
+		Log::info("=================================");
 				
 	}
 }

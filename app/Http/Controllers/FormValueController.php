@@ -25,13 +25,17 @@ class FormValueController extends Controller
 
 	public function create($form_code, $patient_id)
 	{
-			$consultation = Consultation::find(Session::get('consultation_id'));
+			$id = Session::get('consultation_id');
+			$consultation = Consultation::where('consultation_id', $id)
+					->where('consultation_status', 1)
+					->first();
 			$properties = FormPosition::where('form_code', '=', $form_code)
 					->orderBy('property_position')
 					->get();
 			$form = Form::find($form_code);
 			$patient = Patient::find($patient_id);
 			$encounter_id = EncounterHelper::getActiveEncounter($patient_id)->encounter_id;
+			$encounter = Encounter::find($encounter_id);
 
 			return view('form_values.create', [
 					'properties' => $properties,
@@ -43,6 +47,7 @@ class FormValueController extends Controller
 					'admission'=>EncounterHelper::getCurrentAdmission($encounter_id),
 					'consultation'=>$consultation,
 					'is_create'=>True,
+					'encounter'=>$encounter,
 			]);
 	}
 
@@ -85,7 +90,11 @@ class FormValueController extends Controller
 
 	public function edit($id) 
 	{
-			$consultation = Consultation::find(Session::get('consultation_id'));
+			$consultation_id = Session::get('consultation_id');
+			$consultation = Consultation::where('consultation_id', $consultation_id)
+					->where('consultation_status', 1)
+					->first();
+
 			$form_value = FormValue::find($id);
 			$json = json_decode($form_value->form_value,true);
 
@@ -106,13 +115,17 @@ class FormValueController extends Controller
 					'patient'=>$encounter->patient,
 					'admission'=>null,
 					'consultation'=>$consultation,
+					'encounter'=>$encounter,
 			]);
 
 	}
 
 	public function show($form_code, $encounter_id)
 	{
-			$consultation = Consultation::find(Session::get('consultation_id'));
+			$id = Session::get('consultation_id');
+			$consultation = Consultation::where('consultation_id', $id)
+					->where('consultation_status', 1)
+					->first();
 			$encounter = Encounter::find($encounter_id);
 			$admission = EncounterHelper::getCurrentAdmission($encounter_id);
 			$json_values = FormValue::where('encounter_id', '=', $encounter_id)
@@ -137,12 +150,17 @@ class FormValueController extends Controller
 					'admission'=>$admission,
 					'encounter_id'=>$encounter_id,
 					'consultation'=>$consultation,
+					'encounter'=>$encounter,
 			]);
 	}
 
 	public function results(Request $request, $encounter_id)
 	{
-			$consultation = Consultation::find(Session::get('consultation_id'));
+			$id = Session::get('consultation_id');
+			$consultation = Consultation::where('consultation_id', $id)
+					->where('encounter_id', $encounter_id)
+					->where('consultation_status', 1)
+					->first();
 			$encounter = Encounter::find($encounter_id);
 			$admission = EncounterHelper::getCurrentAdmission($encounter_id);
 
@@ -185,6 +203,7 @@ class FormValueController extends Controller
 					'encounter_id'=>$encounter_id,
 					'search'=>$request->search,
 					'consultation'=>$consultation,
+					'encounter'=>$encounter,
 			]);
 	}
 

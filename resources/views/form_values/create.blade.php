@@ -6,6 +6,8 @@
 @else
 @include('patients.id')
 @endif
+<div class="row">
+  <div class="col-md-6">
 <h1>
 {{ $form->form_name }}
 </h1>
@@ -77,6 +79,8 @@
 	{{ Form::hidden('value_id', $value_id) }}
 {{ Form::close() }}
 	<script>
+	</div>
+</div>
 	$("#myForm").validate();
 @foreach ($properties as $property)
 	@if ($property->property->property_type == "date")

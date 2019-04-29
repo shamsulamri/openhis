@@ -24,6 +24,7 @@ use App\ProductUom;
 use App\Supplier;
 use App\PurchaseRequestStatus;
 use App\InventoryBatch;
+use App\StockLimit;
 
 class PurchaseLineController extends Controller
 {
@@ -408,9 +409,21 @@ class PurchaseLineController extends Controller
 			]);
 	}
 
-	public function add($purchase_id, $product_code)
+	public function add($purchase_id, $product_code, $type=null, $quantity=0)
 	{
-			Log::info('----->');
+			if ($type=='reorder') {
+				$purchase = Purchase::find($purchase_id);
+				$store_code = $purchase->store_code;
+
+				$reorder = StockLimit::where('store_code',$store_code)
+								->where('product_code',$product_code)
+								->first();
+
+				if ($reorder) {
+					$quantity = $reorder->reorder_quantity;
+				} 
+			}
+
 			$purchase_line = PurchaseLine::where('purchase_id', $purchase_id)
 							->where('product_code', $product_code)
 							->first();
@@ -425,7 +438,7 @@ class PurchaseLineController extends Controller
 
 			$purchase_line->purchase_id = $purchase_id;
 			$purchase_line->product_code = $product_code;
-			$purchase_line->line_quantity += 1;
+			$purchase_line->line_quantity += $quantity;
 			$purchase_line->uom_rate = $product->uomDefaultCost()->uom_rate;
 			$purchase_line->unit_code = $product->uomDefaultCost()->unit_code;
 			$purchase_line->line_unit_price = $product->uomDefaultCost()->uom_cost;
@@ -446,39 +459,38 @@ class PurchaseLineController extends Controller
 			$purchase_line->save();
 
 			Session::flash('message', 'Record added successfully.');
-			return redirect('/product_searches?reason=purchase&purchase_id='.$purchase_id.'&line_id='.$purchase->line_id);
+			if ($type=='reorder') {
+					return redirect('/product_searches?reason=purchase&type=reorder&purchase_id='.$purchase_id.'&line_id='.$purchase->line_id);
+			} else {
+					return redirect('/product_searches?reason=purchase&purchase_id='.$purchase_id.'&line_id='.$purchase->line_id);
+			}
 	}
 
 	public function addReorder($purchase_id)
 	{
-		$stores = Auth::user()->storeCodeInString();
+		$purchase = Purchase::find($purchase_id);
 		$sql = "
-				select a.product_code, sum(inv_quantity) as stock_quantity
-				from inventories as a
-				left join stock_limits as b on (a.product_code = b.product_code and b.store_code = a.store_code)
-				left join products as c on (c.product_code = a.product_code)
-				left join stores as d on (d.store_code = a.store_code)
-				left join ref_unit_measures as e on (e.unit_code = a.unit_code)
+				select a.product_code, limit_min, reorder_quantity, stock_quantity
+				from stock_limits as a
 				left join (
-						select a.product_code, sum(line_quantity) as on_purchase
-						from purchase_lines as a
-						left join purchases as b on (b.purchase_id = a.purchase_id)
-						left join inventories as c on (c.line_id = a.line_id)
-						where document_code = 'purchase_order'
-						and purchase_posted = 1
-						and inv_id is null
-						group by a.product_code
-				) as f on (f.product_code = a.product_code)
-				where a.store_code in (". $stores .")
-				group by a.product_code, a.store_code, limit_min, limit_max, unit_name, unit_shortname
-				having stock_quantity<limit_min
+					select product_code, sum(inv_quantity) as stock_quantity
+					from inventories
+					where store_code = '". $purchase->store_code ."'
+					group by product_code
+				) as b on (b.product_code = a.product_code)
+				where a.store_code = '". $purchase->store_code ."'
+				having stock_quantity<limit_min 
+				or stock_quantity is null 
+				and reorder_quantity>0
 		";
 
 		$reorders = DB::select($sql);
 
+		Log::info($purchase_id);
 		foreach ($reorders as $reorder) {
-			$this->add($purchase_id, $reorder->product_code);
-			Log::info($reorder->product_code);
+
+			$this->add($purchase_id, $reorder->product_code, 'reorder', $reorder->reorder_quantity);
+			Log::info($reorder->reorder_quantity);
 		}
 
 		Session::flash('message', 'Record added successfully.');

@@ -21,10 +21,10 @@ Are you sure you want to move the patient ?
 	</tr>
 	@if ($admission->bed->wardClass)
 	<tr>
-		<td width='100' height='30'>Room</td>
+		<td width='100' height='30'>Class</td>
 		<td><strong>{{ $admission->bed->wardClass->class_name }}</strong></td>
 		<td width='200'><div align='center'>→</div></td>
-		<td><strong>{{ $admission->bed->wardClass->class_name }}</strong></td>
+		<td><strong>{{ $bed->wardClass->class_name }}</strong></td>
 	</tr>
 	@endif
 	<tr>

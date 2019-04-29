@@ -83,27 +83,21 @@ class ProductSearchController extends Controller
 			$product_searches = $product_searches->paginate($this->paginateValue);
 			
 			if ($request->type == 'reorder') {
-				$stores = Auth::user()->storeCodeInString();
+				$purchase = Purchase::find($request->purchase_id);
 				$sql = "
-						select product_name, a.product_code, a.store_code, store_name, sum(inv_quantity) as stock_quantity, limit_min, limit_max, unit_name, unit_shortname, on_purchase
-						from inventories as a
-						left join stock_limits as b on (a.product_code = b.product_code and b.store_code = a.store_code)
-						left join products as c on (c.product_code = a.product_code)
-						left join stores as d on (d.store_code = a.store_code)
-						left join ref_unit_measures as e on (e.unit_code = a.unit_code)
+						select a.product_code, limit_min, reorder_quantity, stock_quantity, product_name
+						from stock_limits as a
 						left join (
-								select a.product_code, sum(line_quantity) as on_purchase
-								from purchase_lines as a
-								left join purchases as b on (b.purchase_id = a.purchase_id)
-								left join inventories as c on (c.line_id = a.line_id)
-								where document_code = 'purchase_order'
-								and purchase_posted = 1
-								and inv_id is null
-								group by a.product_code
-						) as f on (f.product_code = a.product_code)
-						where a.store_code in (". $stores .")
-						group by a.product_code, a.store_code, limit_min, limit_max, unit_name, unit_shortname
-						having stock_quantity<limit_min
+							select product_code, sum(inv_quantity) as stock_quantity
+							from inventories
+							where store_code = '". $purchase->store_code ."'
+							group by product_code
+						) as b on (b.product_code = a.product_code)
+						left join products as c on (c.product_code = a.product_code)
+						where a.store_code = '". $purchase->store_code ."'
+						having stock_quantity<limit_min 
+						or stock_quantity is null 
+						and reorder_quantity>0
 				";
 
 					$data = DB::select($sql);

@@ -304,12 +304,15 @@ class AssemblyController extends Controller
 			$helper = new StockHelper();
 			$on_hand = $helper->getStockOnHand($id, $store_code);
 
+			$boms = BillMaterial::where('product_code', '=', $id)->get();
+
 			return view('assemblies.explode', [
 					'product'=>$product,
 					'store'=>Auth::user()->storeList(),
 					'stock_helper'=>new StockHelper(),
 					'store_code'=>$request->store_code?:$store_code,
 					'on_hand'=>$on_hand,
+					'boms'=>$boms,
 			]);
 	}
 

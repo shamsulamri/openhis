@@ -5,7 +5,7 @@
 @if ($consultation)
 @include('consultations.panel')
 @else
-@include('patients.id')
+@include('patients.id_only')
 @endif
 <h1>
 <a href='{{ URL::to('form',[$form->form_code, $encounter_id]) }}'>Forms</a> / Vital Signs

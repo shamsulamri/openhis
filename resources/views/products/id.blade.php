@@ -5,7 +5,8 @@
 		<h6>{{ $product->product_code }}</strong></h6>
 		@if ($product->product_on_hand>0)
 		<h3>
-		Stock On Hand: {{ $product->product_on_hand }}
+		Stock On Hand: 
+					{{ DojoUtility::stockOnHand($product->product_code, Auth::user()->defaultStore()) }}
 		</h3>
 		@endif
 		<br>

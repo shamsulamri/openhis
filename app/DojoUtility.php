@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use DateTime;
 use Log;
 use Excel;
+use App\StockHelper;
 
 class DojoUtility 
 {
@@ -320,6 +321,12 @@ class DojoUtility
 		public static function weekOfMonth($date) {
 				$dt = Carbon::parse($date);
 				return $dt->weekOfMonth;
+		}
+
+		public static function stockOnHand($product_code, $store_code = null, $batch_number = null)
+		{
+				$helper = new StockHelper();
+				return $helper->getstockOnHand($product_code, $store_code, $batch_number);
 		}
 }
 

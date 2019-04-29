@@ -50,6 +50,7 @@ class ConsultationController extends Controller
 	public function progress($consultation_id) {
 			$consultation = Consultation::find($consultation_id);
 			$notes = Consultation::where('patient_id', $consultation->patient_id)
+					->where('user_id', Auth::user()->id)
 					->orderBy('created_at','desc')
 					->paginate($this->paginateValue);
 
