@@ -15,6 +15,8 @@ class MedicationRecord extends Model
 				'user_id',
 				'medication_index',
 				'medication_slot',
+				'medication_fail',
+				'medication_description',
 				'medication_datetime'];
 	
     protected $guarded = ['medication_id'];

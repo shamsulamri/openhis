@@ -15,15 +15,6 @@ Medication Administration Record
 			{{ Form::label('drug', $order->product->product_name, ['class'=>'form-control']) }}
 		</div>
 	</div>
-    <div class='form-group  @if ($errors->has('medication_datetime')) has-error @endif'>
-        <label for='medication_datetime' class='col-sm-2 control-label'>Record</label>
-        <div class='col-sm-10'>
-            {{ Form::label('medication_datetime', DojoUtility::dateTimeReadFormat($medication_record->medication_datetime), ['class'=>'form-control']) }}
-            @if ($errors->has('medication_datetime')) <p class="help-block">{{ $errors->first('medication_datetime') }}</p> @endif
-        </div>
-    </div>
-
-	<hr>
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('medication_date')) has-error @endif'>
@@ -50,6 +41,18 @@ Medication Administration Record
 						</div>
 					</div>
 			</div>
+	</div>
+	<div class='form-group  @if ($errors->has('medication_description')) has-error @endif'>
+		<label for='order' class='col-sm-2 control-label'>Description</label>
+		<div class='col-sm-10'>
+            {{ Form::textarea('medication_description', null, ['class'=>'form-control','rows'=>'4']) }}
+		</div>
+	</div>
+	<div class='form-group  @if ($errors->has('medication_fail')) has-error @endif'>
+		<label for='order' class='col-sm-2 control-label'>Miss</label>
+		<div class='col-sm-10'>
+			{{ Form::checkbox('medication_fail', '1',null,['id'=>'medication_fail']) }}
+		</div>
 	</div>
 
     <div class='form-group'>

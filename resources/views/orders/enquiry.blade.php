@@ -104,6 +104,7 @@
     <th>Patient</th>
 	<th>Order Date</th>
 	<th>Product</th>
+	<th>Units</th>
 	<th>User</th>
 	<th>Age</th>
 	<th>Turnaround</th>
@@ -134,6 +135,9 @@
 							<small>Reason: {{$order->cancel_reason}}</small>
 							</strong>
 					@endif
+			</td>
+			<td>
+					{{ $order->order_quantity_supply }}
 			</td>
 			<td>
 					{{ $order->name }}

@@ -54,7 +54,7 @@ class AdmissionTaskController extends Controller
 			$location = QueueLocation::find($location_code);
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id','product_duration_use', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name','ward_name','a.encounter_id','a.updated_by', 'category_code', 'stop_id', 'a.updated_at')
+					->select('a.order_id','product_duration_use', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name','ward_name','a.encounter_id','a.updated_by', 'category_code', 'stop_id', 'a.updated_at', 'q.id as order_drug_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -68,6 +68,7 @@ class AdmissionTaskController extends Controller
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'k.consultation_id')
 					->leftjoin('ward_discharges as o', 'o.encounter_id', '=', 'b.encounter_id')
 					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
+					->leftjoin('order_drugs as q', 'q.order_id', '=', 'a.order_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('a.product_code','<>','consultation_fee')
 					->where('d.product_drop_charge','=',0)
@@ -75,11 +76,11 @@ class AdmissionTaskController extends Controller
 					->whereNull('cancel_id')
 					->whereNull('o.discharge_id')
 					->where(function ($query) use ($request) {
-						$query->where('order_completed','=',0)
-							->orWhere('category_code','=', 'drugs');
+						$query->where('order_completed','=',0);
+							//->orWhere('category_code','=', 'drugs');
 					})
 					->whereNotNull('n.post_id')
-					->orderBy('product_name')
+					->orderBy('patient_name')
 					->orderBy('bed_name');
 
 			//->whereNull('discharge_id')
@@ -219,7 +220,7 @@ class AdmissionTaskController extends Controller
 			$location = QueueLocation::find($location_code);
 
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by','cancel_id','category_code','stop_id', 'product_duration_use')
+					->select('a.order_id', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by','cancel_id','category_code','stop_id', 'product_duration_use','q.id as order_drug_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -231,6 +232,7 @@ class AdmissionTaskController extends Controller
 					->leftjoin('order_cancellations as j', 'j.order_id', '=', 'a.order_id')
 					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
 					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
+					->leftjoin('order_drugs as q', 'q.order_id', '=', 'a.order_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('a.product_code','<>','consultation_fee')
 					->where('d.product_drop_charge','=',0)

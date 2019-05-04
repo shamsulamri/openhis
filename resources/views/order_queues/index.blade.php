@@ -54,6 +54,7 @@ Order Queues
 	-->
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<input type='hidden' name="future" value="{{ $is_future }}">
+	<input type='hidden' name="location_code" value="{{ $location_code }}">
 </form>
 
 <br>
@@ -64,6 +65,7 @@ Order Queues
     <th width='10'>Encounter</th>
     <th>Date</th>
     <th>Patient</th>
+    <th>Location</th>
     <th>Orderer</th>
 	<th></th>
 	</tr>
@@ -104,16 +106,15 @@ Order Queues
 					<small>{{ $order->consultation->encounter->patient->patient_mrn }}</small>
 			</td>
 			<td>
-					{{ $order->consultation->user->name }}<br>
 					@if ($order->admission) 
-					{{ $order->admission->bed->bed_name }}
-						@if ($order->admission->bed->room)
-								, {{ $order->admission->bed->room->room_name }}, 
-						@endif
-					{{ $order->admission->bed->ward->ward_name }}
+							{{ $order->admission->bed->bed_name }}
+							({{ $order->admission->bed->ward->ward_name }})
 					@else
-					{{ $order->consultation->encounter->queue->location->location_name }}
+							{{ $order->consultation->encounter->queue->location->location_name }}
 					@endif						
+			</td>
+			<td>
+					{{ $order->consultation->user->name }}<br>
 
 			</td>
 			<td align='right'>

@@ -543,7 +543,7 @@ class OrderController extends Controller
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
-			$orders = Order::select('b.encounter_id', 'e.product_code', 'product_name', 'orders.order_id', 'order_completed', 'patient_name', 'patient_mrn', 'orders.created_at as order_date', 'name', 'cancel_id', 'cancel_reason', 'post_id', 'order_report', DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),DB::raw('TIMEDIFF(IFNULL(completed_at, now()),orders.created_at) as age'))
+			$orders = Order::select('b.encounter_id', 'e.product_code', 'product_name', 'orders.order_id', 'order_completed', 'patient_name', 'patient_mrn', 'orders.created_at as order_date', 'name', 'cancel_id', 'cancel_reason', 'post_id', 'order_report', DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),DB::raw('TIMEDIFF(IFNULL(completed_at, now()),orders.created_at) as age'), 'order_quantity_supply')
 					->leftJoin('encounters as b', 'b.encounter_id', '=', 'orders.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftJoin('products as e', 'e.product_code', '=', 'orders.product_code')

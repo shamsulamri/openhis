@@ -29,7 +29,7 @@
 <form action='/admission_bed/search' method='post'>
 @if ($current_bed->bed->bed_transit == 1 && $admission->anchorBed->ward_code != $current_ward)
 	<a class='btn btn-primary' href='{{ URL::to('admission_beds/confirm/'.$admission->admission_id.'/'. $admission->anchor_bed) }}'>
-	Return to ward
+	Return to {{ $admission->anchorBed->ward->ward_name }}
 	</a>
 @endif
 	@can('module-patient')

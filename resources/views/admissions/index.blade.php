@@ -3,12 +3,26 @@
 @section('content')
 <h1>Admission List</h1>
 @can('module-ward')
-		@if ($ward)
-		<h3>{{ $ward->ward_name }}</h3>
-		<br>
-		@endif
-@endcan
-@can('module-ward')
+<form action='/admission/search' method='post' class='form-horizontal'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Ward</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<div class='col-sm-12'>
+									<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+						</div>
+					</div>
+			</div>
+	</div>
+	<input type='hidden' name="_token" value="{{ csrf_token() }}">
+</form>
 <div class="row">
 	<div class="col-md-3">
 		<div class='panel panel-default'>
@@ -45,14 +59,32 @@
 </div>
 @endcan
 @can('module-patient')
-<form action='/admission/search' method='post' class='form-inline'>
-	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	@can('module-patient')
-	<label>Ward</label>
-	{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Type</label>
-	{{ Form::select('admission_code', $admission_type, $admission_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	@endcan
+<form action='/admission/search' method='post' class='form-horizontal'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<div class='col-sm-12'>
+							<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Ward</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Type</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('admission_code', $admission_type, $admission_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+	</div>
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
@@ -102,9 +134,9 @@
 			</td>
 			<td>
 					@can('module-ward')
-					<a href='admissions/{{ $admission->admission_id }}'>
+					<a href='/admissions/{{ $admission->admission_id }}'>
 					@else
-					<a href='admissions/{{ $admission->admission_id }}/edit'>
+					<a href='/admissions/{{ $admission->admission_id }}/edit'>
 					@endcan
 					{{ strtoupper($admission->patient_name) }}
 					</a>

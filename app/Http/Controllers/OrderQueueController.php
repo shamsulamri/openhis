@@ -39,15 +39,9 @@ class OrderQueueController extends Controller
 
 	public function index(Request $request)
 	{
-			if (empty($request->cookie('queue_location'))) {
-					//return "Location not set";
+			$location_code = Auth::user()->defaultLocation($request);
+			if (empty($location_code)) {
 					return redirect('queue_locations');
-			}
-
-			if (!empty(Auth::user()->authorization->location_code)) {
-				$location_code = Auth::user()->authorization->location_code;
-			} else {
-				$location_code = $request->cookie('queue_location');
 			}
 
 			$location = QueueLocation::find($location_code);
@@ -166,6 +160,7 @@ class OrderQueueController extends Controller
 					'status_code'=>null,
 					'queue_encounters'=>$queue_encounters,
 					'queue_categories'=>$queue_categories,
+					'location_code'=>$location_code,
 					]);
 	}
 
@@ -416,6 +411,7 @@ class OrderQueueController extends Controller
 					'status'=>$status,
 					'status_code'=>$request->status_code,
 					'is_future'=>$is_future,
+					'location_code'=>$request->location_code,
 					]);
 	}
 

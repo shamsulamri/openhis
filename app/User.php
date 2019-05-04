@@ -128,6 +128,18 @@ class User extends Authenticatable
 			return $codes;
 	}
 
+	public function defaultLocation($request = null) 
+	{
+			$location_code = null;
+			if ($this->authorization->location_code) {
+				$location_code = $this->authorization->location_code;
+			} else {
+				$location_code = $request->cookie('queue_location');
+			}
+
+			return $location_code;
+	}
+
 	public function defaultStore($request = null)
 	{
 			$default_store=null;

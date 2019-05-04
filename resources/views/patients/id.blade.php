@@ -7,8 +7,8 @@
 		@if (!empty($encounter))
 			@if ($encounter->admission) 
 						<h4>
-							{{ $encounter->admission->bed->ward->ward_name }}
-							({{ $encounter->admission->bed->bed_name }})
+							{{ $encounter->admission->bed->bed_name }}
+							({{ $encounter->admission->bed->ward->ward_name }})
 						</h4>
 			@endif
 		@endif

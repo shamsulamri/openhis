@@ -40,7 +40,7 @@ use App\PatientClassification;
 
 class AdmissionController extends Controller
 {
-	public $paginateValue=10;
+	public $paginateValue=30;
 
 	public $selectFields = ['h.bed_name', 'a.admission_id','c.patient_id','patient_name','a.encounter_id','a.user_id','e.discharge_id', 
 					'f.discharge_id as ward_discharge',
@@ -62,9 +62,14 @@ class AdmissionController extends Controller
 					'p.ward_code as anchor_ward',
 			];
 
+	public $wards = null;
 
 	public function __construct()
 	{
+			$this->wards = Ward::all()
+					->sortBy('ward_name')
+					->lists('ward_name', 'ward_code');
+
 			$this->middleware('auth');
 	}
 
@@ -136,14 +141,15 @@ class AdmissionController extends Controller
 			return view('admissions.index', [
 					'admissions'=>$admissions,
 					'user'=>Auth::user(),
-					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
+					'wards' => $this->wards,
 					'ward' => $ward, 
 					'setWard' => $setWard, 
 					'dojo' => new DojoUtility(),
 					'admission_code'=>null,
 					'wardHelper'=> $wardHelper,
 					'bedHelper'=> new BedHelper(),
+					'ward_code'=>$ward_code,
+					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 			]);
 	}
 
@@ -488,6 +494,67 @@ class AdmissionController extends Controller
 	
 	public function search(Request $request)
 	{
+			$ward_code = $request->ward_code;
+			$admissions = DB::table('admissions as a')
+					->select($this->selectFields)
+					->leftJoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->join('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'a.encounter_id')
+					->leftJoin('ward_discharges as f', 'f.encounter_id','=', 'a.encounter_id')
+					->leftJoin('ward_arrivals as g', 'g.encounter_id', '=', 'a.encounter_id')
+					->leftJoin('beds as h', 'h.bed_code', '=', 'a.bed_code')
+					->leftJoin('wards as i', 'i.ward_code', '=', 'h.ward_code')
+					->leftJoin('ward_rooms as j', 'j.room_code', '=', 'h.room_code')
+					->leftJoin('users as k', 'k.id', '=', 'a.user_id')
+					->leftJoin('diets as l', 'l.diet_code', '=', 'a.diet_code')
+					->leftJoin('diet_classes as m', 'm.class_code', '=', 'a.class_code')
+					->leftJoin('teams as n', 'n.team_code', '=', 'a.team_code')
+					->leftJoin('beds as o', 'o.bed_code', '=', 'a.anchor_bed')
+					->leftJoin('wards as p', 'p.ward_code', '=', 'o.ward_code');
+
+			if (!empty($ward_code)) {
+					$admissions = $admissions->where(function ($query) use ($request, $ward_code) {
+						$query->where('h.ward_code', '=', $ward_code)
+							->orwhere('p.ward_code', '=', $ward_code);
+					});
+			}
+
+			$admissions = $admissions->whereNull('f.encounter_id')
+					->orderBy('arrival_id')
+					->orderBy('patient_name');
+					
+			/*
+			if (Auth::user()->can('module-patient')) {
+					$admissions = $admissions->orderBy('patient_name');
+			} else {
+					$admissions = $admissions->orderBy('b.encounter_id')
+							->orderBy('a.bed_code');
+			}
+			 */
+
+			$admissions = $admissions->paginate($this->paginateValue);
+
+			$wardHelper = null;
+			$ward = Ward::find($ward_code);
+			if ($ward) $wardHelper = new WardHelper($ward->ward_code);
+
+
+			return view('admissions.index', [
+					'admissions'=>$admissions,
+					'user'=>Auth::user(),
+					'wards' => $this->wards,
+					'ward' => $ward, 
+					'dojo' => new DojoUtility(),
+					'admission_code'=>null,
+					'wardHelper'=> $wardHelper,
+					'bedHelper'=> new BedHelper(),
+					'ward_code'=>$ward_code,
+					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
+			]);
+
+	}
+	public function search3(Request $request)
+	{
 			$ward = $request->ward;
 			$setWard = $request->cookie('ward');
 
@@ -508,6 +575,8 @@ class AdmissionController extends Controller
 					'dojo' => new DojoUtility(),
 					'admission_code'=>$request->admission_code,
 					'wardHelper'=>$wardHelper,
+					'wards'=>$this->wards,
+					'ward_code'=>$request->ward_code,
 			]);
 	}
 

@@ -7,6 +7,7 @@
 @include('patients.id')
 @endif
 <h1>
+<a href='/form/results/{{ $encounter_id }}'>Forms</a> /
 {{ $form->form_name }}
 </h1>
 <br>

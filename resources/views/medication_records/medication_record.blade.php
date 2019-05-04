@@ -1,4 +1,4 @@
-@include('common.errors')
+medication_fail('common.errors')
 			<div class='form-group  @if ($errors->has('medication_datetime')) has-error @endif'>
     		    <label for='order' class='col-sm-2 control-label'>Drug</label>
 				<div class='col-sm-10'>
@@ -31,6 +31,18 @@
 						</div>
 					</div>
 			</div>
+	</div>
+	<div class='form-group  @if ($errors->has('medication_description')) has-error @endif'>
+		<label for='order' class='col-sm-2 control-label'>Description</label>
+		<div class='col-sm-10'>
+            {{ Form::textarea('medication_description', null, ['class'=>'form-control','rows'=>'4']) }}
+		</div>
+	</div>
+	<div class='form-group  @if ($errors->has('medication_fail')) has-error @endif'>
+		<label for='order' class='col-sm-2 control-label'>Miss</label>
+		<div class='col-sm-10'>
+			{{ Form::checkbox('medication_fail', '1',null,['id'=>'medication_fail']) }}
+		</div>
 	</div>
 
     <div class='form-group'>

@@ -303,6 +303,7 @@ class AdmissionBedController extends Controller
 					'book' => $book,
 					'book_id' => $book_id,
 					'current_bed'=>$this->getCurrentBed($admission->encounter_id),
+					'current_ward'=>$request->cookie('ward'),
 					]);
 	}
 

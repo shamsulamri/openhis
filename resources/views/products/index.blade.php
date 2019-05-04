@@ -2,21 +2,35 @@
 
 @section('content')
 <h1>Product List<a href='/products/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></a></h1>
-@if ($store)
-<h3>{{ $store->store_name }}</h3>
-@endif
-<br>
-<form action='/product/search' method='post' class='form-inline'>
-	<label>Product</label>
-	<div class="form-group">
-			<input type='text' class='form-control' placeholder="Name or code" id='search' name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-   </div>
-	<label>Category</label>
-	{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
+<form action='/product/search' method='post' class='form-horizontal'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Product</div></label>
+						<div class='col-sm-9'>
+							<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Category</label>
+						<div class='col-sm-9'>
+							{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Store</label>
+						<div class='col-sm-9'>
+							{{ Form::select('store_code', $stores, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+	</div>
 	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-
-
 </form>
 <br>
 @if ($products->total()>0)
@@ -71,7 +85,7 @@ $allocated=0;
 						@endif
 			</td>
 			<td align='right'>
-					{{ $helper->getStockOnHand($product->product_code, $store?$store->store_code:null) }}
+					{{ $helper->getStockOnHand($product->product_code, $store_code?:null) }}
 			</td>
 			@can('system-administrator')
 			<td align='right'>

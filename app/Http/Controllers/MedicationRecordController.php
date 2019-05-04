@@ -78,6 +78,8 @@ class MedicationRecordController extends Controller
 			$datetime = $request->medication_date.' '.$request->medication_time;
 			$datetime = DojoUtility::datetimeWriteFormat($datetime);
 			$mar->medication_datetime = $datetime;
+			$mar->medication_description = $request->medication_description;
+			$mar->medication_fail = $request->medication_fail ?: 0;
 			$mar->save();
 
 			return redirect('/medication_record/mar/'.$mar->order->encounter_id);
@@ -108,6 +110,8 @@ class MedicationRecordController extends Controller
 			$datetime = $request->medication_date.' '.$request->medication_time;
 			$datetime = DojoUtility::datetimeWriteFormat($datetime);
 			$medication_record->medication_datetime = $datetime;
+			$medication_record->medication_description = $request->medication_description;
+			$medication_record->medication_fail = $request->medication_fail ?: 0;
 			$medication_record->save();
 
 			return redirect('/medication_record/mar/'.$medication_record->order->encounter_id);
@@ -214,7 +218,7 @@ class MedicationRecordController extends Controller
 					->leftjoin('users as h', 'h.id', '=', 'a.user_id')
 					->where('a.post_id','>',0)
 					->where('a.encounter_id','=',$encounter_id)
-					->where('b.category_code','=','drugs')
+					->whereNotNull('f.order_id')
 					->orderBy('b.category_code')
 					->orderBy('cancel_id', 'asc')
 					->orderBy('a.created_at', 'desc')

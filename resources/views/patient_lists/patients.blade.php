@@ -37,12 +37,7 @@
 					<small>{{ DojoUtility::formatMRN($patient->patient_mrn) }}</small>
 			</td>
 			<td>
-					{{ $patient->bed_name }} 
-					@if ($patient->room_name)
-					/ {{ $patient->room_name }} 
-					@endif
-					<br>
-					<small>{{ $patient->ward_name }}</small>
+					{{ $patient->bed_name }} ({{ $patient->ward_name }})
 			</td>
 			<td align='right'>
 				@if (empty($openConsultation))

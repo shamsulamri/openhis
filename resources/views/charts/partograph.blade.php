@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('content')
@@ -10,6 +9,7 @@
 <h1>
 <a href='{{ URL::to('form/partograph',[$encounter_id]) }}'>Forms</a> / Partograph
 </h1>
+@include('charts.graph_functions')
 <!--
 <br>
 <a href='/form/{{ $form->form_code }}/{{ $patient->patient_id }}/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
@@ -87,7 +87,7 @@
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text(ctx,"{{ $value['liquor'] }}", {{ $x_value }}, 0 );
@@ -119,7 +119,7 @@
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text(ctx,"{{ $value[$graph->id] }}", {{ $x_value }}, 0 );
@@ -159,21 +159,22 @@
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = (DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			mark(ctx, {{ $x_value }}, {{ $value['partograph_cervix']?:0 }}, "x");
 			mark(ctx, {{ $x_value }}, {{ $value['partograph_descent']?:0 }}, "o");
 @endforeach
 
-line(ctx, 0,3,8,3,1);
-line(ctx, 8,3,15,10,2);
-line(ctx, 8,0,8,3,1);
-line(ctx, 12,3,19,10,2);
+line(ctx, 0,4,8,4,1);
+line(ctx, 8,4,14,10,2);
+//line(ctx, 8,3,15,10,2);
+line(ctx, 8,0,8,4,1);
+line(ctx, 12,4,18,10,2);
 label(ctx, "Latent Phase", 1,9);
 label(ctx, "Active Phase", 10, 9);
-label(ctx, "Alert", 9.7,6);
-label(ctx, "Action", 13.5,6);
+label(ctx, "Alert", 10.7,6);
+label(ctx, "Action", 14.5,6);
 </script>
 
 
@@ -202,10 +203,16 @@ label(ctx, "Action", 13.5,6);
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$fillColor = "#d6d6d6";
  
+			if ($value['parto_contraction']>3) {
+				$fillColor = '#000000';
+			}
+
+
 ?>
-			bar(ctx, {{ $x_value }}, {{ $value['parto_contraction']?:0 }});
+			bar(ctx, {{ $x_value }}, {{ $value['parto_contraction']?:0 }}, '{{ $fillColor }}');
 @endforeach
 </script>
 
@@ -234,7 +241,7 @@ label(ctx, "Action", 13.5,6);
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text(ctx,"{{ $value['oxytocin'] }}", {{ $x_value }}, 0 );
@@ -252,7 +259,7 @@ label(ctx, "Action", 13.5,6);
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text(ctx,"{{ $value['oxytocin_drop_mins'] }}", {{ $x_value }}, 0 );
@@ -272,7 +279,7 @@ label(ctx, "Action", 13.5,6);
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text_rotate(ctx,"{{ $value['drugs_given'] }}", {{ $x_value }}, 0 );
@@ -338,7 +345,7 @@ label(ctx, "Action", 13.5,6);
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text(ctx,"{{ $value['temperature'] }}", {{ $x_value }}, 0 );
@@ -356,7 +363,7 @@ label(ctx, "Action", 13.5,6);
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text(ctx,"{{ $value['albumin_list'] }}", {{ $x_value }}, 0 );
@@ -374,7 +381,7 @@ label(ctx, "Action", 13.5,6);
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text(ctx,"{{ $value['sugar_list'] }}", {{ $x_value }}, 0 );
@@ -392,7 +399,7 @@ label(ctx, "Action", 13.5,6);
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text(ctx,"{{ $value['acetone_list'] }}", {{ $x_value }}, 0 );
@@ -409,7 +416,7 @@ label(ctx, "Action", 13.5,6);
 @foreach ($graph_values as $graph_value)
 <?php
 			$value = json_decode($graph_value->form_value,true);
-			$x_value = round(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
+			$x_value = intval(DojoUtility::diffInMinutesBetweenDates($graph_values[0]->created_at, $graph_value->created_at)/$graph->x_value_scale);
  
 ?>
 			text(ctx,"{{ $value['parto_urine_vol'] }}", {{ $x_value }}, 0 );

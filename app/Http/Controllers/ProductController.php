@@ -39,9 +39,11 @@ use App\StockHelper;
 class ProductController extends Controller
 {
 	public $paginateValue=10;
+	public $stores = null;
 
 	public function __construct()
 	{
+			$this->stores = Auth::user()->storeList()->prepend('','');
 			$this->middleware('auth');
 	}
 
@@ -63,7 +65,7 @@ class ProductController extends Controller
 			$products = $products->orderBy('products.created_at','desc')
 							->paginate($this->paginateValue);
 
-			$store = Store::find(Auth::user()->defaultStore($request));
+			$store_code = Store::find(Auth::user()->defaultStore($request))->store_code;
 
 			return view('products.index', [
 					'products'=>$products,
@@ -71,7 +73,8 @@ class ProductController extends Controller
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>null,
 					'helper'=>new StockHelper(),
-					'store'=>$store,
+					'store_code'=>$store_code,
+					'stores'=>$this->stores,
 			]);
 	}
 
@@ -223,15 +226,15 @@ class ProductController extends Controller
 
 			$products = $this->search_query($request, TRUE);
 
-			$store = Store::find(Auth::user()->defaultStore($request));
+			//$store = Store::find(Auth::user()->defaultStore($request));
 
 			return view('products.index', [
 					'products'=>$products,
 					'search'=>$request->search,
 					'loan'=>$loan,
-					'store'=>Auth::user()->storeList()->prepend('All Store','all')->prepend('',''),
+					'stores'=>$this->stores,
 					'categories'=>Auth::user()->categoryList(),
-					'store'=>$store,
+					'store_code'=>$request->store_code,
 					'helper'=>new StockHelper(),
 					'category_code'=>$request->category_code,
 					]);
@@ -531,12 +534,14 @@ class ProductController extends Controller
 					'query' => $request->query()]
 			);
 
+			$store_code = $request->store_code; //?:Store::find(Auth::user()->defaultStore($request))->store_code;
+
 			return view('products.on_hand', [
 					'products'=>$data,
 					'search'=>$request->search,
 					'store'=>Auth::user()->storeList()->prepend('',''),
 					'categories'=>Auth::user()->categoryList(),
-					'store_code'=>$request->store_code,
+					'store_code'=>$store_code,
 					'stock_helper'=> new StockHelper(),
 					'category_code'=>$request->category_code,
 					'batch_number'=>$request->batch_number,

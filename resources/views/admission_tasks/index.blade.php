@@ -41,11 +41,6 @@ $multiple_ids="";
 
 @if ($admission_tasks->total()>0)
 <form action='/admission_task/status' method='post'>
-@if ($admission_tasks->total()>0)
-{{ Form::submit('Update Task', ['class'=>'btn btn-default']) }}
-<br>
-<br>
-@endif
 <input type='hidden' name="_token" value="{{ csrf_token() }}">
 <table class="table table-hover table-condensed">
 <!--
@@ -111,15 +106,6 @@ $header_count=0;
 			@endif
 	@endif
 			<tr>
-			<td width='10'>
-				@if ($admission_task->category_code != 'drugs')
-						@if ($admission_task->order_multiple==0)
-								@if (!$admission_task->updated_by && empty($admission_task->cancel_id))
-								{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed) }}
-								@endif
-						@endif
-				@endif
-			</td>
 			@if ($group_by=='order')
 			<td width='150'>
 					{{$admission_task->bed_name}}
@@ -171,7 +157,7 @@ $header_count=0;
 				@endif
 			</td>
 			<td align='right'>
-					@if ($admission_task->category_code == 'drugs')
+					@if ($admission_task->order_drug_id)
 						<a href='{{ URL::to('medication_record/mar/'. $admission_task->encounter_id) }}' class='btn btn-primary btn-xs'>
 						&nbsp;&nbsp;&nbsp;&nbsp; MAR &nbsp;&nbsp;&nbsp;&nbsp;
 						</a>
@@ -188,7 +174,7 @@ $header_count=0;
 									Stop
 									</a>
 									@endif
-									@if ($admission_task->category_code != 'drugs')
+									@if (empty($admission_task->order_drug_id))
 									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=order_label&id={{ $admission_task->order_id }}'>
 										Print Label
 									</a>
@@ -220,12 +206,6 @@ $header_count=0;
 @endif
 </tbody>
 </table>
-@if ($admission_tasks->total()>0)
-		{{ Form::submit('Update Task', ['class'=>'btn btn-default']) }}
-		{{ Form::hidden('completed_ids',$order_ids) }}
-		{{ Form::hidden('multiple_ids',$multiple_ids) }}
-@endif
-
 
 {{ Form::hidden('group_by', $group_by) }}
 {{ Form::hidden('show_all', $show_all) }}
