@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use Log;
 
 class BedBooking extends Model
 {
@@ -18,6 +19,7 @@ class BedBooking extends Model
 				'book_date',
 				'user_id',
 				'priority_code',
+				'book_preadmission',
 				'book_description'];
 	
     protected $guarded = ['book_id'];
@@ -26,13 +28,22 @@ class BedBooking extends Model
     
 
 	public function validate($input, $method) {
+
 			$rules = [
 				'patient_id'=>'required',
 				'class_code'=>'required',
 				'ward_code'=>'required',
 				'user_id'=>'required',
-				'book_date'=>'required|size:10|date_format:d/m/Y|after:now',
 			];
+
+
+			if (!empty($this->attributes['book_preadmission'])) {
+					if ($this->attributes['book_preadmission']==1) {
+						$rules['book_date'] = 'required|size:10|date_format:d/m/Y|after:now';
+					}
+			} else {
+					//$rules['book_date'] = 'required|size:10|date_format:d/m/Y|after_or_equal:now';
+			}
 
 			$messages = [
 					'required' => 'This field is required',

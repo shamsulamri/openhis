@@ -84,7 +84,7 @@
 <a class='btn btn-default'  href='{{ URL::to('preadmissions/create/'. $patient->patient_id.'?book=preadmission') }}'>
 		<span class='glyphicon glyphicon-bed' aria-hidden='true'></span>
 		<br>
-		Preadmission 
+		Reservation 
 </a>
 <a class='btn btn-default' href='{{ URL::to('patient/prints/'. $patient->patient_id) }}'>
 	<span class='glyphicon glyphicon-print' aria-hidden='true'></span>

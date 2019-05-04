@@ -1,4 +1,11 @@
-    <div class='form-group  @if ($errors->has('book_date')) has-error @endif'>
+	
+    <div class='form-group'>
+        {{ Form::label('preadmission', 'Pre-admission',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+			{{ Form::checkbox('book_preadmission', '1', null) }}
+        </div>
+    </div>
+	<div class='form-group  @if ($errors->has('book_date')) has-error @endif'>
         <label for='book_date' class='col-sm-3 control-label'>Date<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
 			<div class="input-group date">

@@ -87,6 +87,17 @@ class BedBookingController extends Controller
 			$bed_booking->admission_id = $admission_id;
 			$bed_booking->ward_code = $request->ward_code;
 			$bed_booking->class_code = $request->class_code;
+			$bed_booking->book_date = DojoUtility::today();
+			$bed_booking->book_preadmission = $request->book_preadmission;
+
+
+			$patient = Patient::find($patient_id);
+			$encounter = $patient->getCurrentEncounterModel();
+			if (!empty($encounter->admission)) {
+					$bed_booking->user_id = $encounter->admission->user_id;
+					$bed_booking->ward_code = $encounter->admission->bed->ward_code;
+					$bed_booking->class_code = $encounter->admission->bed->class_code;
+			}
 
 			$title = "Bed Reservation";
 			if ($request->book=='preadmission') $title = "Preadmission";
@@ -143,6 +154,7 @@ class BedBookingController extends Controller
 							->withInput();
 			}
 			
+			$bed_booking = new BedBooking($request->all());
 			$valid = $bed_booking->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
@@ -190,6 +202,7 @@ class BedBookingController extends Controller
 			$bed_booking = BedBooking::findOrFail($id);
 			$bed_booking->fill($request->input());
 
+			$bed_booking->book_preadmission = $request->book_preadmission ?: 0;
 
 			$valid = $bed_booking->validate($request->all(), $request->_method);	
 

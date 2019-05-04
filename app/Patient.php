@@ -351,6 +351,24 @@ class Patient extends Model
 			}
 	}
 
+	public function getCurrentEncounterModel() 
+	{
+			$encounter = Encounter::where('patient_id', $this->patient_id)
+							->orderBy('encounter_id','desc')
+							->first();
+			
+			if ($encounter) {
+					if (!$encounter->discharge) {
+							return $encounter;
+					} else {
+							return null;
+					}
+			} else {
+					return null;
+			}
+
+	}
+
 	public function getCurrentEncounter()
 	{
 			$encounter = Encounter::where('patient_id', $this->patient_id)
