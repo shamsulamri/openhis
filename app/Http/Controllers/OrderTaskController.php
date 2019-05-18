@@ -346,7 +346,7 @@ class OrderTaskController extends Controller
 									$inventory->order_id = $order->order_id;
 									$inventory->store_code = $store_code;
 									$inventory->product_code = $order->product_code;
-									$inventory->unit_code = $order->product->unit_code;
+									$inventory->unit_code = $order->unit_code;
 
 									$uom = ProductUom::where('product_code', $order->product_code)
 											->where('unit_code', $inventory->unit_code)

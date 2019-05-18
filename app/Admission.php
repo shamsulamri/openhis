@@ -117,6 +117,15 @@ class Admission extends Model
 			return $this->hasMany('App\BedMovement', 'admission_id'); 
 	}
 
+	public function bedReservations() 
+	{
+			return $this->hasMany('App\BedBooking', 'admission_id')->where('book_preadmission',0)->orderBy('book_date');
+	}
+
+	public function bedReserved() 
+	{
+			return $this->hasOne('App\BedBooking', 'admission_id')->where('book_preadmission',0)->orderBy('book_date');
+	}
 	/**
 	public function hasOpenConsultation($patientId, $encounter_id)
 	{

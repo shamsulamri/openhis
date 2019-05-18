@@ -1,9 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.id')
 <h1>
-Delete Booking
+Delete Reservation
 </h1>
 <br>
 <h3>

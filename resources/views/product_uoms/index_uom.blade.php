@@ -13,7 +13,8 @@
     <th>Unit</th>
     <th>Rate</th> 
     <th>Cost</th> 
-    <th>Price</th>
+    <th>Price 1<br><small>(Outpatient/Public)</small></th>
+    <th>Price 2<br><small>(Inpatient/Sponsor)</small></th>
 	<th><div align='center'>Default Cost</div></th> 
 	<th><div align='center'>Default Price</div></th> 
 	<th></th>
@@ -35,6 +36,9 @@
 			</td>
 			<td>
 					{{number_format($product_uom->uom_price,2)}}
+			</td>
+			<td>
+					{{number_format($product_uom->uom_price_2,2)}}
 			</td>
 			<td align='center' width='150'>
 					{{$product_uom->uom_default_cost?'X':''}}

@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use DB;
 use App\Encounter;
 use App\Consultation;
+use App\BedHelper;
 use Log;
 
 class WardHelper 
@@ -19,9 +20,8 @@ class WardHelper
 
 	public function totalBed() 
 	{
-			$beds = Bed::where('ward_code', $this->ward_code)
-						->count();
-			return $beds;
+			$helper = new BedHelper();
+			return $helper->totalBed($this->ward_code);
 	}
 
 	public function totalAdmission()
@@ -53,25 +53,10 @@ class WardHelper
 
 	}
 
-	public function bedAvailable() {
-
-			$sql = "select count(*) as bed_available from admissions as a
-					left join ward_discharges b on (a.encounter_id = b.encounter_id)
-					left join beds c on (c.bed_code = a.bed_code)
-					where discharge_id is null
-					and ward_code = '".$this->ward_code."'";
-
-			$results = DB::select($sql);
-
-			if (!empty($results)) {
-				$beds = Bed::where('ward_code', $this->ward_code)
-						->count();
-				return $beds-$results[0]->bed_available;
-			} else {
-				return 0;
-			}
-
-	
+	public function bedAvailable() 
+	{
+			$helper = new BedHelper();
+			return $helper->bedAvailable($this->ward_code);
 	}
 
 	public function wardDischarge() {

@@ -7,6 +7,17 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('category_price')) has-error @endif'>
+        <label for='category_price' class='col-sm-3 control-label'>Price</label>
+        <div class='col-sm-9'>
+            {{ Form::radio('category_price', 'na', ['class'=>'form-control']) }} Not Applicable
+			<br>
+            {{ Form::radio('category_price', 'public_vs_sponsor', ['class'=>'form-control']) }} Public vs Sponsor
+			<br>
+            {{ Form::radio('category_price', 'outpatient_vs_inpatient', ['class'=>'form-control']) }} Outpatient vs Inpatient
+        </div>
+    </div>
+
 	<div class='form-group  @if ($errors->has('group_code')) has-error @endif'>
 		{{ Form::label('group_code', 'Group',['class'=>'col-sm-3 control-label']) }}
 		<div class='col-sm-9'>

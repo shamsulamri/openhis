@@ -17,13 +17,13 @@
 <h3>
 <div class="row">
 	<div class="col-xs-6">
-		<a href="{{ url('/admission/enquiry') }}">Admission Enquiry</a><br>
+		<a href="{{ url('/admission/enquiry?ward_code='.$ward_code) }}">Admission Enquiry</a><br>
 		<a href="{{ url('/discharge/enquiry') }}">Discharge Enquiry</a><br>
 		<a href="{{ url('/admission/diet_enquiry') }}">Diet Enquiry</a><br>
 		<a href="{{ url('/diet_census/enquiry') }}">Diet Census Enquiry</a><br>
 		<a href="{{ url('/bed/enquiry') }}">Bed Enquiry</a><br>
 		<a href="{{ url('/bed_movement/enquiry') }}">Bed Movement History</a><br>
-		<a href="{{ url('/preadmission/enquiry') }}">Preadmission Enquiry</a><br>
+		<a href="{{ url('/preadmission/enquiry') }}">Bed Reservation Enquiry</a><br>
 	</div>
 	<div class="col-xs-6">
 		<a href="{{ url('/discharge/discharge_count') }}">Discharge Count Report</a><br>
@@ -64,10 +64,10 @@
 <div class="row">
 	<div class="col-xs-6">
 		<a href="{{ url('/products/enquiry') }}">Product Enquiry</a><br>
-		<a href="{{ url('/products/on_hand') }}">Stock On Hand Enquiry</a><br>
-		<a href="{{ url('/inventory/enquiry') }}">Stock Movement Enquiry</a><br>
+		<a href="{{ url('/products/on_hand?store_code='.$store_code) }}">Stock On Hand Enquiry</a><br>
+		<a href="{{ url('/inventory/enquiry?store_code='.$store_code) }}">Stock Movement Enquiry</a><br>
 		<a href="{{ url('/purchase_line/enquiry') }}">Purchase Enquiry</a><br>
-		<a href="{{ url('/products/reorder') }}">Product Reorder Enquiry</a><br>
+		<a href="{{ url('/products/reorder?store_code='.$store_code) }}">Product Reorder Enquiry</a><br>
 		<a href="{{ url('/loan/enquiry') }}">Loan - Request Enquiry</a><br>
 		<a href="{{ url('/loan/workload') }}">Loan - Workload Enquiry</a><br>
 	</div>

@@ -173,13 +173,34 @@ class Product extends Model
 			return $uom?:null;
 	}
 
-	public function uomDefaultPrice()
+	public function uomDefaultPrice($encounter = null)
 	{
 			$product_code = $this->attributes['product_code'];
-			$uom = ProductUom::where('product_code', '=', $product_code)
+
+			$category = ProductCategory::find($this->attributes['category_code']);
+
+			$uom = ProductUom::select('unit_code', 'uom_price')
+					->where('product_code', '=', $product_code)
 					->where('uom_default_price', '=', 1)
-					->select('unit_code', 'uom_price')
 					->first();
+
+			if ($category->category_price == 'public_vs_sponsor') {
+					if ($encounter->type_code=='sponsored') {
+							$uom = ProductUom::select('unit_code', 'uom_price_2 as uom_price')
+									->where('product_code', '=', $product_code)
+									->where('uom_default_price', '=', 1)
+									->first();
+					}
+			}
+
+			if ($category->category_price == 'outpatient_vs_inpatient') {
+					if ($encounter->encounter_code=='inpatient') {
+							$uom = ProductUom::select('unit_code', 'uom_price_2 as uom_price')
+									->where('product_code', '=', $product_code)
+									->where('uom_default_price', '=', 1)
+									->first();
+					}
+			}
 
 			return $uom?:null;
 	}

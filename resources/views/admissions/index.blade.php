@@ -16,7 +16,7 @@
 			<div class="col-xs-4">
 					<div class='form-group'>
 						<div class='col-sm-12'>
-									<button class="btn btn-primary" type="submit" value="Submit">Search</button>
+									<button class="btn btn-primary" type="submit" value="Submit">Refresh</button>
 						</div>
 					</div>
 			</div>
@@ -24,34 +24,50 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <div class="row">
-	<div class="col-md-3">
+	<div class="col-md-2">
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
-				<h5><strong>Total Admission</strong></h5>	
+				<h5><strong>Admission</strong></h5>	
 				<h4><strong>{{ $wardHelper->totalAdmission() }}</strong></h4>	
 			</div>
 		</div>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-2">
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
-				<h5><strong>Available / Total</strong></h5>	
-				<h4><strong>{{ $wardHelper->bedAvailable() }} / {{ $wardHelper->totalBed() }}</strong></h4>	
-			</div>
-		</div>
-	</div>
-	<div class="col-md-3">
-		<div class='panel panel-default'>
-			<div class='panel-body' align='middle'>
-				<h5><strong>Awaiting Discharge</strong></h5>	
+				<h5><strong>Discharge</strong></h5>	
 				<h4><strong>{{ $wardHelper->wardDischarge() }}</strong></h4>	
 			</div>
 		</div>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-2">
 		<div class='panel panel-default'>
 			<div class='panel-body' align='middle'>
-				<h5><strong>Bed Occupancy Rate</strong></h5>	
+				<h5><strong>Available</strong></h5>	
+				<h4><strong>{{ $wardHelper->bedAvailable() }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Disabled Bed</strong></h5>	
+				<h4><strong>{{ $bedHelper->bedDisabled($ward_code) }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Total Bed</strong></h5>	
+				<h4><strong>{{ $wardHelper->totalBed() }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Bed Occupancy</strong></h5>	
 				<h4><strong>{{ $bedHelper->bedOccupancyRate($ward->department->department_code, DojoUtility::thisYear(), DojoUtility::thisMonth()) }}%</strong></h4>	
 			</div>
 		</div>
@@ -144,6 +160,12 @@
 					<small>{{ DojoUtility::formatMRN($admission->patient_mrn) }}
 					<br>
 					</small>
+					@if ($bedHelper->reservationAvailable($admission))
+							<div class='label label-primary'>
+							Reserved Bed Availble
+							</div>
+					@endif
+
 			</td>
 			<td>
 					{{$admission->name}}
@@ -194,22 +216,17 @@
 			</td>
 			@endif
 			@endcan
-			@can('module-discharge')
-					@if (!$admission->discharge_id)
-					<td align='right' width='20'>
-							<a class='btn btn-primary ' href='{{ URL::to('bill_items/'. $admission->encounter_id) }}'>Interim Bill</a>
-					</td>
-					@else
-					<td align='right'>
-					</td>
-					@endif
-			@endcan
 
 			<td widht='10'>
 			<div class='pull-right'>
 			@if (empty($admission->arrival_id))
 					<a class='btn btn-danger' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 			@endif
+			@can('module-discharge')
+					@if (!$admission->discharge_id)
+							<a class='btn btn-primary ' href='{{ URL::to('bill_items/'. $admission->encounter_id) }}'>Interim Bill</a>
+					@endif
+			@endcan
 			</div>
 			</td>
 	</tr>

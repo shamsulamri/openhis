@@ -22,6 +22,9 @@
 				<li class=""><a data-toggle="tab" href="#tab-3">Contact Information</a></li>
 				<li class=""><a data-toggle="tab" href="#tab-4">Work Information</a></li>
 				<li class=""><a data-toggle="tab" href="#tab-5">Photo</a></li>
+				@can('system-administrator')
+				<li class=""><a data-toggle="tab" href="#tab-6">Account</a></li>
+				@endcan
 		</ul>
 		<div class="tab-content">
 			<div id="tab-1" class="tab-pane active">
@@ -171,7 +174,7 @@
 							<h4>Identification</h4>
 							<hr>
 							<h4>
-							{{ Form::checkbox('patient_is_unknown', '1',['class'=>'checkbox']) }} No personal identification can be obtained
+							{{ Form::checkbox('patient_is_unknown', '1') }} No personal identification can be obtained
 							</h4>
 							<br>
 						</div>
@@ -539,9 +542,9 @@
 									<div class='form-group'>
 										<div class='col-sm-8'>
 											@if (Storage::disk('local')->has('/'.$patient->patient_mrn.'/'.$patient->patient_mrn))	
-											<img id='show_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='200' width='150'>
+											<img id='show_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='200' width=auto>
 											@else
-													<img id='show_image' src='/profile-img.png' style='border:2px solid gray' height='200' width='150'>
+													<img id='show_image' src='/profile-img.png' style='border:2px solid gray' height='200' width=auto>
 											@endif
 											<br>
 											<br>
@@ -553,8 +556,23 @@
 									</div>
 							</div>
 					</div>
-				<div>	
-			<div>
+				</div>	
+			</div>
+			@can('system-administrator')
+			<div id="tab-6" class="tab-pane">
+				<div class="panel-body">
+					<div class="row">
+							<div class="col-xs-12">
+								<h4>
+								{{ Form::checkbox('patient_block', '1') }} Block account
+								</h4>
+								Blocked account cannot received treatment. Please refer to administration for further instructions.
+							</div>
+					</div>
+				</div>
+			</div>
+			@endcan
+
 	</div>
 
 <script>
@@ -596,7 +614,7 @@
 					reader.onload = function (e) {
 						$('#show_image')
 							.attr('src', e.target.result)
-							.width(150)
+							.width(auto)
 							.heigt(200);
 					};
 					reader.readAsDataURL(input.files[0]);
@@ -677,6 +695,7 @@
                     
 					show(document.querySelectorAll('.mykad_reading'));
 					hide(document.querySelectorAll('.mykad_error'));
+					hide(document.querySelectorAll('.mykad_complete'));
                     // ReadCard("ACS ACR128U ICC Interface 0", "C:\\test\\mykad.jpeg")))
                     cmd = "R";
                     var readerName = "IRIS SCR18U 0";
@@ -741,7 +760,7 @@
 							document.getElementById('gender_code').value = cleanData(data[3]);
 
 							var patient_new_ic = cleanData(data[2]);
-							patient_new_ic = patient_new_ic.substring(0,6) + "-" + patient_new_ic.substring(6,8) + "-" + patient_new_ic.substring(8,12);
+							//patient_new_ic = patient_new_ic.substring(0,6) + "-" + patient_new_ic.substring(6,8) + "-" + patient_new_ic.substring(8,12);
 							document.getElementById('patient_new_ic').value = patient_new_ic;
 
 							document.getElementById('patient_cur_street_1').value = cleanData(data[4]) + " " + cleanData(data[5]);
@@ -749,6 +768,7 @@
 							document.getElementById('patient_cur_city').value = cleanData(data[7]);
 							document.getElementById('patient_cur_postcode').value = cleanData(data[8]);
 							document.getElementById('patient_cur_state').value = cleanData(data[9]);
+							//document.getElementById('patient_birthdate').value = patient_new_ic.substring(4,6)+"/"+patient_new_ic.substring(2,4);
 							current_postcode_change();
 							hide(document.querySelectorAll('.mykad_reading'));
 							show(document.querySelectorAll('.mykad_complete'));

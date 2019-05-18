@@ -1,19 +1,23 @@
-<div class="row border-bottom gray-bg">
-			<div class='col-sm-10'>
-						<h2>{{ $patient->getTitle() }} {{ $patient->patient_name }}</h2>
-						<h6>{{ $patient->getMRN() }}</h6>
-						<h6>{{ $patient->patientAge() }}</h6>
-			</div>
-			<div class='col-md-2' align='right'>
-					<h2>
-					@if (Storage::disk('local')->has('/'.$patient->patient_mrn.'/'.$patient->patient_mrn))	
-					<img id='current_image' src='{{ route('patient.image', ['id'=>$patient->patient_mrn]) }}' style='border:2px solid gray' height='80' width='70'>
-					@else
-							<img id='current_image' src='/profile-img.png' style='border:2px solid gray' height='80' width='70'>
-					@endif
-					</h2>
-			</div>
-</div>
+@include('patients.id_only')
+	<br>
+<?php
+	$alerts = $patient->alert;
+?>
+@if (count($alerts)>0)
+	<div class='alert alert-warning' role='alert'>
+	<p>
+	@foreach ($alerts as $alert)
+		@if ($alert->alert_public==1) 
+		- {{ $alert->alert_description }}
+		@if ($alert != end($patient->alert))
+			<br>
+		@endif
+		@endif
+	@endforeach
+	</p>
+	</div>
+@else
+@endif
 
 @if (!empty($consultation->encounter->discharge->discharge_id))
 <div class="row white-bg">
@@ -22,21 +26,6 @@
 					<h3 class="text-danger"><i class="fa fa-warning"></i>Warning you are editting discharged cases.</h3>
 			</div>
 </div>
-@endif
-@if (count($patient->alert)>0)
-	<br>
-	<div class='alert alert-danger' role='alert'>
-	<p>
-	@foreach ($patient->alert as $alert)
-		- {{ $alert->alert_description }}
-		@if ($alert != end($patient->alert))
-			<br>
-		@endif
-	@endforeach
-	</p>
-	</div>
-@else
-	<br>
 @endif
 
 <div class="btn-group" role="group" aria-label="...">
@@ -72,9 +61,6 @@
 	<a href="/orders/make" class="btn btn-primary">Orders</a>
 	<a href="/medications" class="btn btn-primary">Medications</a>
 </div>
-
-
-
 
 <div class="dropdown pull-right">
   <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

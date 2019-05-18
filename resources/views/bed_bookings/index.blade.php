@@ -1,18 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-@can('module-ward')
 <h1>Bed Reservations</h1>
-<h3>{{ $ward->ward_name }}</h3>
-@endcan
-@can('module-patient')
-<h1>Preadmissions</h1>
-@endcan
-<br>
 <form action='/bed_booking/search' method='post'>
 	<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-	{{ Form::hidden('is_preadmission', $is_preadmission) }}
 </form>
 <br>
 @if ($bed_bookings->total()>0)
@@ -21,10 +13,9 @@
 	<tr> 
     <th>Date</th>
     <th>Patient</th>
-    <th>Ward</th>
-	@can('module-ward')
-	<th><div align='right'>Vacant</div></th>
-	@endcan
+    <th>Reservation</th>
+    <th>Type</th>
+    <th><div align='middle'>Vacant</div></th>
 	<th></th>
 	</tr>
   </thead>
@@ -32,8 +23,8 @@
 @foreach ($bed_bookings as $bed_booking)
 	<?php
 	$status="";
-	$bedVacant = $bedController->bedVacant($bed_booking->ward_code, $bed_booking->class_code);
-	if ($bedVacant>0) {
+	$bedAvailable = $bedHelper->bedAvailable($bed_booking->ward_code, $bed_booking->class_code);
+	if ($bedAvailable>0) {
 		$status='success';
 	}
 	?>
@@ -61,18 +52,22 @@
 					{{$bed_booking->class_name }} 
 					</small>
 			</td>
-			@can('module-ward')
-			<td align='right'>
-					{{ $bedVacant }}
+			<td>
+				{{ $bed_booking->book_preadmission?'Preadmission':'-' }}
 			</td>
-			@endcan
+				
+			<td align='middle'>
+					{{ $bedAvailable }}
+			</td>
 			<td align='right'>
 					
+					<!--
 					<a class='btn btn-primary btn-sm pull-right' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $bed_booking->patient_id.'&book_id='.$bed_booking->book_id) }}'>
 						<i class="fa fa-stethoscope"></i>
 					</a>
+					-->
 					@can('module-ward')
-					@if ($bedVacant>0 && !empty($bed_booking->admission_id))
+					@if ($bedAvailable>0 && !empty($bed_booking->admission_id))
 					<a class='btn btn-default btn-sm' href='{{ URL::to('admission_beds?move=1&flag=1&admission_id='.$bed_booking->admission_id.'&book_id='.$bed_booking->book_id) }}'>&nbsp; Move &nbsp;</a>
 					@endif
 					@endcan

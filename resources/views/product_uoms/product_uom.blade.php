@@ -16,10 +16,18 @@
     </div>
 
     <div class='form-group  @if ($errors->has('uom_price')) has-error @endif'>
-        {{ Form::label('uom_price', 'Price',['class'=>'col-sm-2 control-label']) }}
+        {{ Form::label('uom_price', 'Price 1',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
             {{ Form::text('uom_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('uom_price')) <p class="help-block">{{ $errors->first('uom_price') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('uom_price_2')) has-error @endif'>
+        {{ Form::label('uom_price_2', 'Price 2',['class'=>'col-sm-2 control-label']) }}
+        <div class='col-sm-10'>
+            {{ Form::text('uom_price_2', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('uom_price_2')) <p class="help-block">{{ $errors->first('uom_price_2') }}</p> @endif
         </div>
     </div>
 
@@ -44,5 +52,9 @@
         </div>
     </div>
 
+	<br>
+	<h5>Note</h5>
+	Price 1: Outpatient/Public price<br>
+	Price 2: Inpatient/Sponsor price
 	{{ Form::hidden('product_code', $product->product_code) }}
 

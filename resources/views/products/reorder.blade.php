@@ -2,13 +2,33 @@
 
 @section('content')
 <h1>Reorder Enquiry</h1>
-<form id='form' action='/products/reorder' method='post' class='form-inline'>
-	<label>Product</label>
-	<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-	<label>Category</label>
-	{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Store</label>
-	{{ Form::select('store', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+<form id='form' action='/products/reorder' method='post' class='form-horizontal'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Product</div></label>
+						<div class='col-sm-9'>
+							<input type='text' class='form-control' placeholder="Name or code" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Store</label>
+						<div class='col-sm-9'>
+							{{ Form::select('store_code', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Category</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('category_code', $categories, $category_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+	</div>
 	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
 	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
 	<input type='hidden' id='export_report' name="export_report">

@@ -1,4 +1,3 @@
-
 @if (!empty($consultation->encounter->discharge->discharge_id))
 <div class='alert alert-warning' role='warning'>
 <strong>Warning ! </strong>Editting discharged case.

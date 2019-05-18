@@ -69,6 +69,7 @@ class Patient extends Model
 				'patient_parity',
 				'patient_parity_plus',
 				'patient_lnmp',
+				'patient_block',
 				'patient_age'];
 	
 	protected $defaults = [
@@ -88,14 +89,17 @@ class Patient extends Model
 	public function getCurrentAddress() 
 	{
 		$value = "";
-		if (!empty($this->patient_cur_street_1)) $value = $value.$this->patient_cur_street_1;
-		if (!empty($this->patient_cur_street_2)) $value = $value.$this->patient_cur_street_2;
-		if (!empty($this->patient_cur_street_3)) $value = $value.$this->patient_cur_street_3;
+		if (!empty($this->patient_cur_street_1)) $value = $value.$this->patient_cur_street_1.", ";
+		if (!empty($this->patient_cur_street_2)) $value = $value.$this->patient_cur_street_2.", ";
+		if (!empty($this->patient_cur_street_3)) $value = $value.$this->patient_cur_street_3.", ";
 		if (!empty($this->patient_cur_postcode)) {
+			$value = $value.' '.$this->patient_cur_postcode;
+
 			$postcode = Postcode::find($this->patient_cur_postcode);
-			$value = $value.', '.$this->patient_cur_postcode;
-			$value = $value.' '.$postcode->city->city_name;
-			$value = $value.', '.$postcode->state->state_name;
+			if (!empty($postcode)) {
+				$value = $value.' '.$postcode->city->city_name;
+				$value = $value.', '.$postcode->state->state_name;
+			}
 		}
 
 		return $value;

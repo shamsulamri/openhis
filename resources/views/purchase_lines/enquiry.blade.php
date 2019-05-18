@@ -93,7 +93,11 @@
 					{{ DojoUtility::dateReadFormat($purchase_line->purchase->created_at) }}
 			</td>
 			<td>
+					@if ($purchase_line->purchase->supplier)
 					{{$purchase_line->purchase->supplier->supplier_name}}
+					@else
+					-
+					@endif
 			</td>
 			<td>
 					{{$purchase_line->product->product_name}}

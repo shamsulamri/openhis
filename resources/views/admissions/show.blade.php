@@ -5,7 +5,7 @@
 
 <h1>Admission Options</h1>
 <br>
-<h3>
+<h4>
 				@if (!empty($admission->encounter->discharge))
 						<span class='fa fa-sign-out' aria-hidden='true'></span>
 						<a href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}'>Ward Discharge</a>
@@ -37,7 +37,8 @@
 						<span class='fa fa-calendar' aria-hidden='true'></span>
 						<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>Appointment</a>
 
-						<hr>
+						<br>
+						<br>
 						<span class='fa fa-file-o' aria-hidden='true'></span>
 						<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}">
 								Patient Label
@@ -64,7 +65,6 @@
 
 				<br><br>
 			@if (!$admission->encounter->discharge)
-				<hr>
 				@if (empty($consultation))
 				<span class='fa fa-stethoscope' aria-hidden='true'></span>
 				<a href='{{ URL::to('admission/consultation/'. $admission->admission_id) }}'>Start Consultation</a>
@@ -73,5 +73,5 @@
 				<a href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'>Resume Consultation</a>
 				@endif
 			@endif
-</h3>
+</h4>
 @endsection

@@ -223,8 +223,13 @@ class OrderHelper
 			$order->consultation_id = Session::get('consultation_id');
 			$order->encounter_id = Session::get('encounter_id');
 			$order->user_id = Auth::user()->id;
-			$order->unit_code = $product->uomDefaultPrice()?$product->uomDefaultPrice()->unit_code:'unit';
-			$order->order_unit_price = $product->uomDefaultPrice()?$product->uomDefaultPrice()->uom_price:'unit';
+
+			$encounter = Encounter::find($order->encounter_id);
+			$default_price = $product->uomDefaultPrice($encounter);
+
+			$order->unit_code = $default_price?$default_price->unit_code:'unit';
+			$order->order_unit_price = $default_price?$default_price->uom_price:'unit';
+
 			$order->product_code = $product->product_code;
 
 			if ($admission) {

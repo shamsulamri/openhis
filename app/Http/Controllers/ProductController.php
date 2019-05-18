@@ -384,8 +384,8 @@ class ProductController extends Controller
 				having stock_quantity<limit_min
 				";
 
-			if (!empty($request->store)) {
-				$sql = $sql." and a.store_code = '".$request->store."'";
+			if (!empty($request->store_code)) {
+				$sql = $sql." and a.store_code = '".$request->store_code."'";
 			}
 
 			if (!empty($request->category_code)) {
@@ -415,7 +415,7 @@ class ProductController extends Controller
 					'search'=>$request->search,
 					'store'=>Auth::user()->storeList()->prepend('',''),
 					'categories'=>Auth::user()->categoryList(),
-					'store_code'=>$request->store,
+					'store_code'=>$request->store_code,
 					'stock_helper'=> new StockHelper(),
 					'category_code'=>$request->category_code,
 			]);
@@ -534,7 +534,8 @@ class ProductController extends Controller
 					'query' => $request->query()]
 			);
 
-			$store_code = $request->store_code; //?:Store::find(Auth::user()->defaultStore($request))->store_code;
+			//$store_code = empty($request->store_code)?'':Store::find(Auth::user()->defaultStore($request))->store_code;
+			$store_code = $request->store_code;
 
 			return view('products.on_hand', [
 					'products'=>$data,

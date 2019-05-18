@@ -99,7 +99,6 @@ class BedHelper
 
 			$results = DB::select($sql);
 
-			Log::info($sql);
 			if (!empty($results)) {
 				return number_format($results[0]->bor,2);
 			} else {
@@ -122,7 +121,38 @@ class BedHelper
 			return $beds->count();
 	}
 
-	public function bedAvailable($ward_code=null, $class_code=null) {
+	public function bedAvailable($ward_code=null, $class_code=null) 
+	{
+			$beds = Bed::where('status_code', '01');
+
+			if ($ward_code) {
+				$beds = $beds->where('ward_code', $ward_code);
+			}
+
+			if ($class_code) {
+				$beds = $beds->where('class_code', $class_code);
+			}
+
+			return $beds->count();
+	}
+
+	public function bedDisabled($ward_code=null, $class_code=null) 
+	{
+			$beds = Bed::where('status_code', '<>', '01')
+						->where('status_code', '<>', '03');
+
+			if ($ward_code) {
+				$beds = $beds->where('ward_code', $ward_code);
+			}
+
+			if ($class_code) {
+				$beds = $beds->where('class_code', $class_code);
+			}
+
+			return $beds->count();
+	}
+
+	public function bedAvailable2($ward_code=null, $class_code=null, $bed_code=null) {
 
 			$beds = Admission::leftJoin('ward_discharges as b', 'admissions.encounter_id', '=', 'b.encounter_id')
 						->leftJoin('beds as c', 'c.bed_code', '=', 'admissions.bed_code');
@@ -133,6 +163,10 @@ class BedHelper
 
 			if ($class_code) {
 				$beds = $beds->where('c.class_code', $class_code);
+			}
+
+			if ($bed_code) {
+					$bed = $bed->where('c.bed_code', $bed_code);
 			}
 
 			$beds = $beds->whereNull('discharge_id');
@@ -169,5 +203,63 @@ class BedHelper
 			return $beds->count();
 	
 	
+	}
+
+	/*
+	public function bedVacant($ward_code, $class_code) 
+	{
+			$sql = "
+				select count(*) as count
+				from beds a
+				left join (
+						select a.encounter_id,discharge_id, bed_code from admissions a
+						left join discharges b on (a.encounter_id = b.encounter_id)
+						where discharge_id is null
+				) as b on (a.bed_code = b.bed_code) 
+				where discharge_id is null
+				and ward_code='".$ward_code."'
+				and a.class_code = '".$class_code."'
+				and encounter_id is null";
+			$beds = DB::select($sql);
+			return $beds[0]->count;
+	}
+	 */
+
+	public function bedReservations($ward_code=null, $class_code)
+	{
+			$beds = BedBooking::where('class_code', $class_code)
+					->where('book_date','>=', Carbon::today())
+					->orderBy('book_date')
+					->limit(10)
+					->get();
+
+			$reservations = [];
+
+			Log::info($class_code);
+			foreach($beds as $bed) {
+				$reservations[$bed->patient_id] = $this->bedAvailable($ward_code, $class_code);
+				Log::info($reservations[$bed->patient_id]);
+			}
+
+			return $reservations;
+	}
+
+	public function reservationAvailable($admission)
+	{
+			if ($admission->bedReserved) {
+					$reserved = $admission->bedReserved;
+					$class_code = $reserved->class_code;
+					$ward_code = $reserved->ward_code;
+					$reservations = $this->bedReservations($ward_code, $class_code);
+
+					if ($reservations) {
+							if (array_keys($reservations)[0] == $admission->patient_id && $reservations[$admission->patient_id] > 0) {
+									return true;
+							}
+					}
+
+			}
+
+			return false;
 	}
 }

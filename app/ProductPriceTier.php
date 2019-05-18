@@ -16,10 +16,20 @@ class ProductPriceTier extends Model
 				'tier_max',
 				'tier_outpatient',
 				'tier_inpatient',
+				'tier_outpatient_markup',
+				'tier_inpatient_markup',
 				'tier_outpatient_multiplier',
 				'tier_inpatient_multiplier',
 				'tier_outpatient_limit',
-				'tier_inpatient_limit'];
+				'tier_inpatient_limit',
+				'tier_public',
+				'tier_sponsor',
+				'tier_public_markup',
+				'tier_sponsor_markup',
+				'tier_public_multiplier',
+				'tier_sponsor_multiplier',
+				'tier_public_limit',
+				'tier_sponsor_limit'];
 	
     protected $guarded = ['tier_id'];
     protected $primaryKey = 'tier_id';

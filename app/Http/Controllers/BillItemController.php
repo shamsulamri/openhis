@@ -88,10 +88,11 @@ class BillItemController extends Controller
 					$item->tax_code = $bed->tax_code;
 					$item->tax_rate = $bed->tax_rate;
 					$item->bill_quantity = $bed_los*$bed_unit;
-					$item->bill_unit_price = $bed->product_sale_price;
+					$item->bill_unit_price = $this->getPriceTier($encounter_id, $bed->product_code, $bed->product_sale_price);
 					$item->bill_amount_exclude_tax = $item->bill_unit_price*$item->bill_quantity;
 					$item->bill_amount = $item->bill_unit_price*$item->bill_quantity;
 					$item->bill_non_claimable = 2;
+
 					if (!empty($encounter->sponsor_code)) {
 						$item->bill_non_claimable = 0;
 					}
@@ -138,15 +139,24 @@ class BillItemController extends Controller
 			}
 	}
 
-	public function getPriceTier($encounter_id, $product, $price)
+	public function getPriceTier($encounter_id, $product_code, $price=null)
 	{
 			$encounter = Encounter::find($encounter_id);
+			$product = Product::find($product_code);
+
+			if (empty($product->charge_code)) {
+					return $product->uomDefaultPrice($encounter)->uom_price?:0;
+			}
 
 			$value=0;
 			$tiers = ProductPriceTier::where('charge_code','=', $product->charge_code)->get();
 
 			if (empty($tiers)) {
 					return $price;
+			}
+
+			if (empty($price)) {
+				$price = $product->uomDefaultPrice($encounter)->uom_price?:0;
 			}
 
 			if ($tiers->count()>0) {
@@ -165,9 +175,27 @@ class BillItemController extends Controller
 					$tier = $tiers[0];
 			}
 
-			//if ($encounter->encounter_code=='inpatient') {
-			if ($encounter->type_code=='sponsored') {
-					if (!empty($tier->tier_inpatient_multiplier)) {
+			/*** Outpatient vs Inpatient ***/
+			if ($encounter->encounter_code=='outpatient' or $encounter->encounter_code=='emergency') {
+					if (!empty($tier->tier_outpatient_markup)) {
+							$value = $price + $tier->tier_outpatientt_markup;
+					} elseif (!empty($tier->tier_outpatient_multiplier)) {
+							$value = $tier->tier_outpatient_multiplier*$price;
+							if (!empty($tier->tier_outpatient_limit)) {
+								if ($value>$tier->tier_outpatient_limit) $value = $tier->tier_outpatient_limit;
+							}
+					} elseif (!empty($tier->tier_outpatient)) {
+							$value = $tier->tier_outpatient;
+					} else {
+							$value = $price;
+					}
+
+			}
+
+			if ($encounter->encounter_code=='inpatient') {
+					if (!empty($tier->tier_inptient_markup)) {
+							$value = $price + $tier->tier_inpatient_markup;
+					} elseif (!empty($tier->tier_inpatient_multiplier)) {
 							$value = $tier->tier_inpatient_multiplier*$price;
 							if (!empty($tier->tier_inpatient_limit)) {
 								if ($value>$tier->tier_inpatient_limit) $value = $tier->tier_inpatient_limit;
@@ -180,15 +208,33 @@ class BillItemController extends Controller
 
 			}
 
-			//if ($encounter->encounter_code=='outpatient' or $encounter->encounter_code=='emergency') {
+			/*** Public vs Sponsor ***/
 			if ($encounter->type_code=='public') {
-					if (!empty($tier->tier_outpatient_multiplier)) {
-							$value = $tier->tier_outpatient_multiplier*$price;
-							if (!empty($tier->tier_outpatient_limit)) {
-								if ($value>$tier->tier_outpatient_limit) $value = $tier->tier_outpatient_limit;
+					if (!empty($tier->tier_public_markup)) {
+							$value = $price + $tier->tier_public_markup;
+					} elseif (!empty($tier->tier_public_multiplier)) {
+							$value = $tier->tier_public_multiplier*$price;
+							if (!empty($tier->tier_public_limit)) {
+								if ($value>$tier->tier_public_limit) $value = $tier->tier_public_limit;
 							}
-					} elseif (!empty($tier->tier_outpatient)) {
-							$value = $tier->tier_outpatient;
+					} elseif (!empty($tier->tier_public)) {
+							$value = $tier->tier_public;
+					} else {
+							$value = $price;
+					}
+
+			}
+
+			if ($encounter->type_code=='sponsored') {
+					if (!empty($tier->tier_sponsor_markup)) {
+							$value = $price + $tier->tier_sponsor_markup;
+					} elseif (!empty($tier->tier_sponsor_multiplier)) {
+							$value = $tier->tier_sponsor_multiplier*$price;
+							if (!empty($tier->tier_sponsor_limit)) {
+								if ($value>$tier->tier_sponsor_limit) $value = $tier->tier_sponsor_limit;
+							}
+					} elseif (!empty($tier->tier_sponsor)) {
+							$value = $tier->tier_sponsor;
 					} else {
 							$value = $price;
 					}
@@ -250,18 +296,7 @@ class BillItemController extends Controller
 					$item->bill_unit_code = $order->unit_code;
 					$item->bill_discount = $order->order_discount;
 					$item->bill_non_claimable = $non_claimable;
-
-					$product = Product::find($order->product_code);
-
-					$unit_price = $order->order_unit_price;
-					if (!empty($product->charge_code)) {
-							$sale_price = $this->getPriceTier($encounter_id, $product, $unit_price);
-							$item->bill_unit_price = $sale_price;
-					} else {
-							//$item->bill_unit_price = $product->uomDefaultPrice()->uom_price;
-							$item->bill_unit_price = $unit_price;
-					}
-
+					$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
 					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
@@ -326,15 +361,7 @@ class BillItemController extends Controller
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity;
 					$item->bill_discount = $order->order_discount;
-
-					$product = Product::find($order->product_code);
-					if (!empty($product->charge_code)) {
-							$sale_price = $this->getPriceTier($encounter_id, $product, $order->order_unit_price);
-							$item->bill_unit_price = $sale_price;
-					} else {
-							$item->bill_unit_price = $order->order_unit_price;
-					}
-
+					$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
 					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
@@ -506,7 +533,6 @@ class BillItemController extends Controller
 					$this->compileConsultation($id, 1);
 					$this->compileConsultation($id, 0);
 				} else {
-					Log::info("CASH!!!!!!!!!!!!!");
 					$this->compileBill($id);
 					$this->forms($id);
 					$this->compileConsultation($id);

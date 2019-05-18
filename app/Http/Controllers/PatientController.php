@@ -54,8 +54,8 @@ class PatientController extends Controller
 
 			//Amqp::pushMessage('lab','This is a new message');
 
-			$patients = Patient::whereNotNull('patient_mrn')
-					->orderBy('patient_id','desc')
+			//$patients = Patient::whereNotNull('patient_mrn')
+			$patients = Patient::orderBy('patient_id','desc')
 					->paginate($this->paginateValue);
 			/**
 					->whereNotNull('patient_mrn')
@@ -138,7 +138,7 @@ class PatientController extends Controller
 	public function edit(Request $request, $id) 
 	{
 			$patient = Patient::findOrFail($id);
-		
+
 			return view('patients.demography', [
 					'patient'=>$patient,
 					'gender' => Gender::all()->sortBy('gender_name')->lists('gender_name', 'gender_code')->prepend('',''),
@@ -163,6 +163,7 @@ class PatientController extends Controller
 			$patient = Patient::findOrFail($id);
 			$patient->fill($request->input());
 			$patient->patient_is_unknown = $request->patient_is_unknown ?: 0;
+			$patient->patient_block = $request->patient_block ?: 0;
 			
 			$valid = $patient->validate($request->all(), $request->_method);	
 			if ($valid->passes()) {
@@ -210,12 +211,15 @@ class PatientController extends Controller
 					->orWhere('patient_military_id', 'like','%'.$search.'%');
 			 */
 
+			/*
 			if ($request->all_records == 1) {
 				$patients = Patient::orderBy('patient_name');
 			} else {
 				$patients = Patient::whereNotNull('patient_mrn');
 			}
+			 */
 
+			$patients = Patient::orderBy('patient_name');
 			$patients = $patients->where(function ($query) use ($request,$search) {
 							$query->orWhere('patient_name','like','%'.$search.'%')
 									->orWhere('patient_mrn', 'like','%'.$search.'%')
@@ -286,14 +290,16 @@ class PatientController extends Controller
 	public function saveImage($patient, $file) {
 			Log::info($file);
 			if ($file) {
-					$filename = $patient->patient_mrn.'/'.$patient->patient_mrn;
+					//$filename = $patient->patient_mrn.'/'.$patient->patient_mrn;
+					//$filename = $patient->patient_id.'/'.$patient->patient_id;
+					$filename = 'mykad_photos/'.$patient->patient_id;
 					Storage::disk('local')->put($filename, File::get($file));
 			}
 	}
 
 	public function getImage($id)
 	{
-			$file = Storage::disk('local')->get($id.'/'.$id);
+			$file = Storage::disk('local')->get('mykad_photos/'.$id);
 			ob_end_clean();
 			return new Response($file, 200);
 	}

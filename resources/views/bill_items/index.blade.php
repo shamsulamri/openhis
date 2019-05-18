@@ -13,7 +13,6 @@ Interim Bill
 <h3>
 Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 </h3>
-<br>
 @if (!$encounter->discharge && !$billPosted)
 	<div class='alert alert-warning'>
 	Click Reload button to compile latest bill items.
@@ -64,8 +63,10 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button" target="_blank">Print Medical Certificate</a>
 @endif
+@if (empty($encounter->sponsor_code))
 <br>
 <br>
+@endif
 <!-- Bill Method -->
 @if (!empty($encounter->sponsor))
 	<br>

@@ -52,7 +52,7 @@
 									$show_checkbox = False;
 									$button_status="btn-primary";
 									if ($order_product->product_stocked==1) {
-											if ($total_on_hand>0) {
+											if ($total_on_hand>0 & $negetive_stock==0) {
 													$show_checkbox = True;
 											}
 									}
@@ -100,7 +100,7 @@
 <?php
 	$button_status="btn-primary";
 	if ($order_product->product_stocked==1) {
-			if ($total_on_hand==0) $button_status = "btn-default disabled";
+			if ($total_on_hand==0 & $negetive_stock==0) $button_status = "btn-default disabled";
 	}
 ?>
 										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}' class='btn {{ $button_status }}'>

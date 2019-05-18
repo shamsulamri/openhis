@@ -9,12 +9,16 @@ use App\DojoUtility;
 use App\User;
 use App\Ward;
 use App\AppointmentService;
+use Auth;
 
 class ReportController extends Controller
 {
-		public function index()
+		public function index(Request $request)
 		{
-			return view('reports.index');
+				return view('reports.index', [
+						'store_code'=>Auth::user()->defaultStore(),
+						'ward_code'=>$request->cookie('ward')?:null,
+				]);
 		}
 
 		public function aggregate()

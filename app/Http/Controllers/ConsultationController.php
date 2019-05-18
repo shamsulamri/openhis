@@ -110,6 +110,8 @@ class ConsultationController extends Controller
 			} else {
 					Log::info("Edit consultation");
 					$consultation = Consultation::find($consultation[0]->consultation_id);
+					Session::set('consultation_id', $consultation->consultation_id);
+					Session::set('encounter_id', $encounter->encounter_id);
 					return view('consultations.edit', [
 						'consultation'=>$consultation,
 						'tab'=>'clinical',

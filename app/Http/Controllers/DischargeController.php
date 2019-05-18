@@ -306,6 +306,7 @@ class DischargeController extends Controller
 					'dischargeHelper' => new DischargeHelper(),
 					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'encounter_code'=>$request->encounter_code,
+					'bill_helper'=>new BillHelper(),
 					]);
 	}
 

@@ -27,11 +27,12 @@
 
 	
 	<hr>
+	<h3>Outpatient vs Inpatient</h3>
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('tier_outpatient')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-								<h3>Public</h3>
+								<h3>Outpatient</h3>
 						</div>
 					</div>
 					<div class='form-group  @if ($errors->has('tier_outpatient')) has-error @endif'>
@@ -48,6 +49,7 @@
 						<div class='col-sm-3'>
 							{{ Form::text('tier_outpatient_multiplier', null, ['class'=>'form-control','placeholder'=>'',]) }}
 							@if ($errors->has('tier_outpatient_multiplier')) <p class="help-block">{{ $errors->first('tier_outpatient_multiplier') }}</p> @endif
+							<br>or
 						</div>
 						{{ Form::label('tier_outpatient_limit', 'Cap',['class'=>'col-sm-2 control-label']) }}
 						<div class='col-sm-3'>
@@ -55,12 +57,19 @@
 							@if ($errors->has('tier_outpatient_limit')) <p class="help-block">{{ $errors->first('tier_outpatient_limit') }}</p> @endif
 						</div>
 					</div>
+					<div class='form-group  @if ($errors->has('tier_outpatient_markup')) has-error @endif'>
+						{{ Form::label('tier_outpatient_markup', 'Markup Price',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('tier_outpatient_markup', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_outpatient_markup')) <p class="help-block">{{ $errors->first('tier_outpatient_markup') }}</p> @endif
+						</div>
+					</div>
 			</div>
 
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('tier_outpatient')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-									<h3>Sponsor</h3>
+									<h3>Inpatient</h3>
 						</div>
 					</div>
 
@@ -79,6 +88,7 @@
 						<div class='col-sm-3'>
 							{{ Form::text('tier_inpatient_multiplier', null, ['class'=>'form-control','placeholder'=>'',]) }}
 							@if ($errors->has('tier_inpatient_multiplier')) <p class="help-block">{{ $errors->first('tier_inpatient_multiplier') }}</p> @endif
+							<br>or
 						</div>
 						{{ Form::label('tier_inpatient_limit', 'Cap',['class'=>'col-sm-2 control-label']) }}
 						<div class='col-sm-3'>
@@ -87,6 +97,95 @@
 						</div>
 					</div>
 
+					<div class='form-group  @if ($errors->has('tier_inpatient_markup')) has-error @endif'>
+						{{ Form::label('tier_inpatient_markup', 'Markup Price',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('tier_inpatient_markup', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_inpatient_markup')) <p class="help-block">{{ $errors->first('tier_inpatient_markup') }}</p> @endif
+						</div>
+					</div>
+			</div>
+	</div>
+
+	<!-- Public vs Sponsor -->
+	<hr>
+	<h3>Public vs Sponsor</h3>
+	<div class="row">
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('tier_public')) has-error @endif'>
+						<div class='col-sm-offset-4 col-sm-8'>
+								<h3>Public</h3>
+						</div>
+					</div>
+					<div class='form-group  @if ($errors->has('tier_public')) has-error @endif'>
+						{{ Form::label('tier_public', 'Price',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('tier_public', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_public')) <p class="help-block">{{ $errors->first('tier_public') }}</p> @endif
+							<br>or
+						</div>
+					</div>
+			
+					<div class='form-group  @if ($errors->has('tier_public_multiplier')) has-error @endif'>
+						{{ Form::label('tier_public_multiplier', 'Multiplier',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-3'>
+							{{ Form::text('tier_public_multiplier', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_public_multiplier')) <p class="help-block">{{ $errors->first('tier_public_multiplier') }}</p> @endif
+							<br>or
+						</div>
+						{{ Form::label('tier_public_limit', 'Cap',['class'=>'col-sm-2 control-label']) }}
+						<div class='col-sm-3'>
+							{{ Form::text('tier_public_limit', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_public_limit')) <p class="help-block">{{ $errors->first('tier_public_limit') }}</p> @endif
+						</div>
+					</div>
+					<div class='form-group  @if ($errors->has('tier_public_markup')) has-error @endif'>
+						{{ Form::label('tier_public_markup', 'Markup Price',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('tier_public_markup', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_public_markup')) <p class="help-block">{{ $errors->first('tier_public_markup') }}</p> @endif
+						</div>
+					</div>
+			</div>
+
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('tier_sponsor')) has-error @endif'>
+						<div class='col-sm-offset-4 col-sm-8'>
+									<h3>Sponsor</h3>
+						</div>
+					</div>
+
+					<div class='form-group  @if ($errors->has('tier_sponsor')) has-error @endif'>
+						{{ Form::label('tier_sponsor', 'Price',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('tier_sponsor', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_sponsor')) <p class="help-block">{{ $errors->first('tier_sponsor') }}</p> @endif
+							<br>or
+						</div>
+					</div>
+
+
+					<div class='form-group  @if ($errors->has('tier_sponsor_multiplier')) has-error @endif'>
+						{{ Form::label('tier_sponsor_multiplier', 'Multiplier',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-3'>
+							{{ Form::text('tier_sponsor_multiplier', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_sponsor_multiplier')) <p class="help-block">{{ $errors->first('tier_sponsor_multiplier') }}</p> @endif
+							<br>or
+						</div>
+						{{ Form::label('tier_sponsor_limit', 'Cap',['class'=>'col-sm-2 control-label']) }}
+						<div class='col-sm-3'>
+							{{ Form::text('tier_sponsor_limit', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_sponsor_limit')) <p class="help-block">{{ $errors->first('tier_sponsor_limit') }}</p> @endif
+						</div>
+					</div>
+
+					<div class='form-group  @if ($errors->has('tier_sponsor_markup')) has-error @endif'>
+						{{ Form::label('tier_sponsor_markup', 'Markup Price',['class'=>'col-sm-4 control-label']) }}
+						<div class='col-sm-8'>
+							{{ Form::text('tier_sponsor_markup', null, ['class'=>'form-control','placeholder'=>'',]) }}
+							@if ($errors->has('tier_sponsor_markup')) <p class="help-block">{{ $errors->first('tier_sponsor_markup') }}</p> @endif
+						</div>
+					</div>
 			</div>
 	</div>
 

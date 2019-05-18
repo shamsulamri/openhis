@@ -66,6 +66,7 @@ class OrderProductController extends Controller
 					'search' => '',
 					'categories' => $this->getCategories(),
 					'category_code'=> NULL,
+					'negetive_stock'=>env('ALLOW_NEGETIVE_STOCK')?:0,
 			]);
 	}
 
@@ -269,6 +270,7 @@ class OrderProductController extends Controller
 					'categories' => $this->getCategories(),
 					'category_code'=> $request->categories,
 					'order_id'=>$order_id,
+					'negetive_stock'=>env('ALLOW_NEGETIVE_STOCK')?:0,
 					]);
 	}
 

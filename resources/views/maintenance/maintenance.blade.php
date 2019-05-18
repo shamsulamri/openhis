@@ -240,6 +240,14 @@
 			</div>
 	</div>
 	</h4>
+<h3>Downloads</h3>
+	<h4>
+	<div class="row">
+			<div class="col-xs-6">
+				<a href="MyKadSetup.exe">MyKad Setup</a><br>
+			</div>
+	</div>
+	</h4>
 <br>
 <br>
 

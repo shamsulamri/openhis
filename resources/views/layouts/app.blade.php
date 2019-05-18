@@ -184,7 +184,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Future Orders' href="{{ url('/futures') }}"><i class="fa fa-question-circle"></i><span class='nav-label'>Future Orders</span></a></li>
 						<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-users"></i><span class='nav-label'>Queues</span></a></li>
 						<li><a title='Admissions' href="{{ url('/admissions') }}"><i class="fa fa-bed"></i><span class='nav-label'>Admissions</span></a></li>
-						<li><a title='Preadmissions' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="fa fa-building"></i><span class='nav-label'>Preadmissions</span></a></li>
+						<li><a title='Bed Reservation' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="fa fa-calendar-check-o"></i><span class='nav-label'>Bed Reservations</span></a></li>
 						<li><a title='Discharges' href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
 						<!--
 						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
@@ -242,7 +242,7 @@ if ($_COOKIE['his-navbar']==1) {
 								@endif
 						@endif
 						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
-						<li><a title="Bed Reservations" href="{{ url('/bed_bookings') }}"><i class='glyphicon glyphicon-bookmark'></i><span class='nav-label'>Bed Reservations</a></li>
+						<li><a title="Bed Reservations" href="{{ url('/bed_bookings') }}"><i class='fa fa-calendar-check-o'></i><span class='nav-label'>Bed Reservations</a></li>
 						<li><a title="Appointments" href="{{ url('/appointments') }}"><i class='fa fa-calendar'></i><span class='nav-label'>Appointments</a></li>
 						<li><a title="Loans" href="{{ url('/loans/ward') }}"><i class='fa fa-share-square'></i><span class='nav-label'>Loans</a></li>
 						@endcan

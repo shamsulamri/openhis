@@ -54,6 +54,7 @@ trait RegistersUsers
     {
         $validator = $this->validator($request->all());
 
+		return $validator;
         if ($validator->fails()) {
             $this->throwValidationException(
                 $request, $validator

@@ -36,6 +36,7 @@ class ProductCategoryController extends Controller
 	public function create()
 	{
 			$product_category = new ProductCategory();
+			$product_category->category_price = "na";
 			return view('product_categories.create', [
 					'product_category' => $product_category,
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
@@ -65,6 +66,7 @@ class ProductCategoryController extends Controller
 	public function edit($id) 
 	{
 			$product_category = ProductCategory::findOrFail($id);
+			$product_category->category_price = $product_category->category_price?:'na';
 			return view('product_categories.edit', [
 					'product_category'=>$product_category,
 					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
@@ -81,6 +83,9 @@ class ProductCategoryController extends Controller
 			$valid = $product_category->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					if ($product_category->category_price=='na') {
+						$product_category->category_price = null;
+					}
 					$product_category->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/product_categories/id/'.$id);

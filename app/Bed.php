@@ -58,6 +58,11 @@ class Bed extends Model
 			return $this->belongsTo('App\Room', 'room_code', 'room_code');
 	}
 
+	public function product()
+	{
+			return $this->hasOne('App\Product', 'product_code', 'bed_code');
+	}
+
 	public function status()
 	{
 			return $this->belongsTo('App\BedStatus', 'status_code', 'status_code');

@@ -15,6 +15,7 @@ class ProductUom extends Model
 				'unit_code',
 				'uom_rate',
 				'uom_price',
+				'uom_price_2',
 				'uom_default_cost',
 				'uom_default_price',
 				'uom_cost'];

@@ -41,7 +41,6 @@
     <th>Name</th> 
     <th>Other</th> 
     <th>Category</th> 
-    <th>UOM</th> 
     <th><div align='right'>On Hand</div></th> 
 	@can('system-administrator')
 	<th></th>
@@ -74,15 +73,6 @@ $allocated=0;
 					@if ($product->category)
 					{{ $product->category->category_name }}
 					@endif
-			</td>
-			<td>
-						@if ($product->product) 
-							{{ $product->product->unitMeasure->unit_shortname }}
-						@else
-							@if ($product->unitMeasure)
-									{{ $product->unitMeasure->unit_shortname }}
-							@endif
-						@endif
 			</td>
 			<td align='right'>
 					{{ $helper->getStockOnHand($product->product_code, $store_code?:null) }}

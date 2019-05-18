@@ -41,6 +41,7 @@
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 
+<!--
 <div class="row">
 	<div class="col-md-4">
 		<div class='panel panel-default'>
@@ -67,6 +68,7 @@
 		</div>
 	</div>
 </div>
+-->
 
 @can('system-administrator')
 <br>

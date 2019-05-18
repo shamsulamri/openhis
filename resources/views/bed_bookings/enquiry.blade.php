@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Preadmission Enquiry</h1>
+<h1>Bed Reservation Enquiry</h1>
 <form id='form' action='/preadmission/enquiry' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">

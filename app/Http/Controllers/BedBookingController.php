@@ -22,6 +22,7 @@ use Auth;
 use App\User;
 use App\Priority;
 use Config;
+use App\BedHelper;
 
 class BedBookingController extends Controller
 {
@@ -34,18 +35,8 @@ class BedBookingController extends Controller
 
 	public function index(Request $request)
 	{
-			$is_preadmission = False;
-			if ($request->type=='preadmission') {
-					$is_preadmission = True;
-			} else {
-					if (empty($request->cookie('ward'))) {
-							Session::flash('message', 'Ward not set. Please select your ward.');
-							return redirect('/wards');
-					}
-			}
-
 			$bed_bookings = DB::table('bed_bookings as a')
-					->select(['d.ward_code', 'a.book_id', 'book_date', 'a.created_at', 'a.admission_id','patient_mrn', 'patient_name', 'b.class_name', 'a.class_code','ward_name', 'c.patient_id'])
+					->select(['d.ward_code', 'a.book_id', 'book_date', 'a.created_at', 'a.admission_id','patient_mrn', 'patient_name', 'b.class_name', 'a.class_code','ward_name', 'c.patient_id', 'book_preadmission'])
 					->leftJoin('ward_classes as b', 'b.class_code','=', 'a.class_code')
 					->leftJoin('patients as c', 'c.patient_id','=', 'a.patient_id')
 					->leftJoin('wards as d', 'd.ward_code', '=', 'a.ward_code')
@@ -55,12 +46,6 @@ class BedBookingController extends Controller
 					->where('book_date','>=', Carbon::today())
 					->orderBy('a.book_date');
 
-
-			if ($is_preadmission) {
-					$bed_bookings = $bed_bookings->whereNull('f.encounter_id');
-			} else {
-					$bed_bookings = $bed_bookings->whereNull('discharge_id');
-			}
 
 			if (!empty($request->search)) {
 					$bed_bookings = $bed_bookings->where(function ($query) use ($request) {
@@ -75,7 +60,7 @@ class BedBookingController extends Controller
 					'bed_bookings'=>$bed_bookings,
 					'bedController' => new BedController(),
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
-					'is_preadmission' => $is_preadmission,
+					'bedHelper'=> new BedHelper(),
 			]);
 	}
 
@@ -92,18 +77,15 @@ class BedBookingController extends Controller
 
 
 			$patient = Patient::find($patient_id);
-			$encounter = $patient->getCurrentEncounterModel();
+			$encounter = $patient->hasActiveEncounter();
 			if (!empty($encounter->admission)) {
 					$bed_booking->user_id = $encounter->admission->user_id;
 					$bed_booking->ward_code = $encounter->admission->bed->ward_code;
 					$bed_booking->class_code = $encounter->admission->bed->class_code;
+					$bed_booking->admission_id = $encounter->admission->admission_id;
 			}
 
 			$title = "Bed Reservation";
-			if ($request->book=='preadmission') $title = "Preadmission";
-			if ($admission_id != null) {
-					$admission = Admission::find($admission_id);
-			}
 
 			$wards = Ward::select(DB::raw("ward_name, ward_code"))
 							->where('ward_omission', '=', '0')	
