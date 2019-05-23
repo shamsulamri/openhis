@@ -497,7 +497,9 @@ class OrderController extends Controller
 			$product = Product::find($product_code);
 			$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));
 			if ($order_id>0) {
-				return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page.'&order_id='.$order_id);
+					Log::info('----');
+					Log::info($request->category_code);
+				return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page.'&order_id='.$order_id.'&categories='.$request->category_code);
 			} else {
 				return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
 

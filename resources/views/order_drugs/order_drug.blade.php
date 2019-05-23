@@ -64,6 +64,25 @@
 
 	<div class="row">
 			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('drug_strength')) has-error @endif'>
+						{{ Form::label('drug_strength', 'Strength',['class'=>'col-md-4 control-label']) }}
+						<div class='col-md-8'>
+							{{ Form::text('drug_strength', null, ['id'=>'dosage','class'=>'form-control input-sm','placeholder'=>'']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-6">
+					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
+						{{ Form::label('unit', '&nbsp;',['class'=>'col-md-4 control-label']) }}
+						<div class='col-md-8'>
+							{{ Form::select('unit_code', $unit,null, ['id'=>'unit_code','class'=>'form-control input-sm','maxlength'=>'20']) }}
+						</div>
+					</div>
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('drug_dosage')) has-error @endif'>
 						{{ Form::label('drug_dosage', 'Dosage',['class'=>'col-md-4 control-label']) }}
 						<div class='col-md-8'>

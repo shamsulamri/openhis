@@ -101,7 +101,8 @@ class PatientController extends Controller
 					$patient->save();
 					$this->saveImage($patient,$request->file('file'));
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/patients/'.$patient->patient_id.'/edit');
+					//return redirect('/patients/'.$patient->patient_id.'/edit');
+					return redirect('/encounters/create?patient_id='.$patient->patient_id);
 			} else {
 					return redirect('/patients/create')
 							->withErrors($valid)

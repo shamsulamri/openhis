@@ -55,7 +55,6 @@ label {
 }
 </style>
 <h1>Medications</h1>
-<div id="drugHistory"></div>
 <h3>Orders</h3>
 <div class="widget style1 gray-bg">
 	<div id="medicationList"></div>
@@ -63,6 +62,7 @@ label {
 {{ csrf_field() }}
 <div id="drugList"></div>
 </div>
+<div id="drugHistory"></div>
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script>
@@ -85,13 +85,26 @@ $(document).ready(function(){
 
 
 			function updateDrug(id) {
+					var strength = $('#strength_'.concat(id)).val();
+					var unit_code = $('#unit_'.concat(id)).find('option:selected').val();
 					var dosage = $('#dosage_'.concat(id)).val();
+					var dosage_code = $('#dosage_code_'.concat(id)).find('option:selected').val();
+					var route = $('#route_'.concat(id)).find('option:selected').val();
 					var frequency = $('#frequency_'.concat(id)).find('option:selected').val();
 					var duration = $('#duration_'.concat(id)).val();
 					var period = $('#period_'.concat(id)).find('option:selected').val();
-					console.log(dosage,frequency, duration, period);
+					console.log(strength, unit_code, dosage,frequency, duration, period);
 
-					var dataString = parse('drug_dosage=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s', dosage, frequency, duration, period, id);
+					var dataString = parse('drug_strength=%s&unit_code=%s&drug_dosage=%s&dosage_code=%s&route_code=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s', 
+							strength,
+							unit_code,
+							dosage, 
+							dosage_code,
+							route,
+							frequency, 
+							duration, 
+							period, 
+							id);
 
 					$.ajax({
 						type: "POST",
@@ -202,12 +215,15 @@ $(document).ready(function(){
 						data: dataString,
 						success: function(data){
 							$('#medicationList').html(data);
+							lastId = $('#last_id').val();
+							$("#strength_"+lastId).focus();
 						}
 					});
 
 					$('#drugList').empty();
 					$('#search').val('');
-					$("#search").focus();
+					//$("#search").focus();
+
 			}
 
 			function removeDrug(order_id) {

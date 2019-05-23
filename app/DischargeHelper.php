@@ -18,7 +18,6 @@ class DischargeHelper
 						and (b.category_code = 'drugs' or b.category_code = 'drug_generics')
 						and c.cancel_id is null
 						and order_completed=0
-						and order_is_discharge=1
 					", $id);
 
 			$results = DB::select($sql);

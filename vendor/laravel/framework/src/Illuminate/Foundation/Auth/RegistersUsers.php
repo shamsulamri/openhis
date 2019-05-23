@@ -4,6 +4,9 @@ namespace Illuminate\Foundation\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\UserAuthorization;
+use Log;
+use Session;
 
 trait RegistersUsers
 {
@@ -30,7 +33,9 @@ trait RegistersUsers
             return view($this->registerView);
         }
 
-        return view('auth.register');
+		return view('auth.register',[
+					'authorizations' => UserAuthorization::where('author_id', '<>', 3)->orderBy('author_name')->lists('author_name', 'author_id')->prepend('',''),
+		]);
     }
 
     /**
@@ -50,16 +55,25 @@ trait RegistersUsers
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+	
     public function register(Request $request)
     {
         $validator = $this->validator($request->all());
 
-		return $validator;
         if ($validator->fails()) {
             $this->throwValidationException(
                 $request, $validator
             );
-        }
+		} else {
+			$user = new User();
+			$user->name = $request->name;
+			$user->username = $request->username;
+			$user->author_id = $request->author_id;
+			$user->password = bcrypt($request->password);
+			$user->save();
+			Session::flash('message', 'Account created. Please login with your new credentials.');
+			return redirect('/login');
+		}
 
         Auth::guard($this->getGuard())->login($this->create($request->all()));
 

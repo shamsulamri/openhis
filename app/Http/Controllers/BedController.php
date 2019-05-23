@@ -24,6 +24,7 @@ use App\BedHelper;
 use App\Product;
 use App\DojoUtility;
 use App\WardDischarge;
+use App\ProductUom;
 
 class BedController extends Controller
 {
@@ -104,10 +105,17 @@ class BedController extends Controller
 					$product = new Product();
 					$product->product_code = $bed->bed_code;
 					$product->product_name = $bed->bed_name;
-					$product->category_code = "srv";
-					$product->product_sale_price = $class->class_price;
+					$product->category_code = "bed";
 					$product->order_form="1";
 					$product->save();
+
+					$product_uom = new ProductUom();
+					$product_uom->product_code = $product->product_code;
+					$product_uom->unit_code = 'unit';
+					$product_uom->uom_rate = 1;
+					$product_uom->uom_price = $bed->wardClass->class_price;
+					$product_uom->save();
+
 					Session::flash('message', 'Record successfully created. Please update the product price information.');
 					return redirect('/beds/id/'.$bed->bed_code);
 			} else {
@@ -190,10 +198,12 @@ class BedController extends Controller
 	public function destroy($id)
 	{	
 			$bed = Bed::find($id);
+			/*
 			$product = Product::find($id);
 			if (!empty($product)) {
 					$product->forceDelete();
 			}
+			 */
 			Bed::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/beds');

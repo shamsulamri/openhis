@@ -276,6 +276,7 @@ class ProductController extends Controller
 			}
 
 			//dd($products->toSql());
+			$products = $products->where('deleted_at', null);
 			$products = $products->paginate($this->paginateValue);
 
 			return $products;
@@ -299,6 +300,8 @@ class ProductController extends Controller
 					'categories'=>Auth::user()->categoryList(),
 					'category_code'=>$request->category_code,
 					'helper'=>new StockHelper(),
+					'stores'=>$this->stores,
+					'store_code'=>$request->store_code,
 			]);
 	}
 

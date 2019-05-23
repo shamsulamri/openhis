@@ -86,6 +86,7 @@ class ProductCategoryController extends Controller
 					if ($product_category->category_price=='na') {
 						$product_category->category_price = null;
 					}
+					$product_category->category_is_consultation = $request->category_is_consultation ?: 0;
 					$product_category->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/product_categories/id/'.$id);

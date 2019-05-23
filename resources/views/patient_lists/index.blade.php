@@ -3,7 +3,7 @@
 @section('content')
 <h1>Patient List</h1>
 @if ($hasOpenOrders->count()>0)
-<div class="alert alert-danger" role="alert">You have unposted order in {{ $hasOpenOrders->count() }} consultation(s). Please close pending consultation to post the order.
+<div class="alert alert-danger" role="alert">You have pending order in {{ $hasOpenOrders->count() }} consultation(s). Please close the related consultation to post the order.
 	<br>
 	<br>
 		@foreach($hasOpenOrders as $openOrder)

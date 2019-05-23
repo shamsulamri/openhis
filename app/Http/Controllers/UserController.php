@@ -51,6 +51,8 @@ class UserController extends Controller
 
 			return view('users.index', [
 					'users'=>$users,
+					'groups' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id')->prepend('',''),
+					'author_id'=>null,
 			]);
 	}
 
@@ -192,15 +194,27 @@ class UserController extends Controller
 	
 	public function search(Request $request)
 	{
-			$users = User::orderBy('name')
-					->where('name','like','%'.$request->search.'%')
-					->orWhere('id', 'like','%'.$request->search.'%')
-					->orderBy('name')
-					->paginate($this->paginateValue);
+			$users = User::orderBy('name');
+
+			if (!empty($request->search)) {
+					$users = $users->where(function ($query) use ($request) {
+							$search_param = trim($request->search, " ");
+								$query->where('name','like','%'.$search_param.'%')
+								->orWhere('employee_id','like','%'.$search_param.'%');
+					});
+			}
+
+			if ($request->author_id) {
+				$users = $users->where('author_id', '=', $request->author_id);
+			}
+
+			$users = $users->paginate($this->paginateValue);
 
 			return view('users.index', [
 					'users'=>$users,
-					'search'=>$request->search
+					'search'=>$request->search,
+					'groups' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id')->prepend('',''),
+					'author_id'=>$request->author_id,
 					]);
 	}
 
@@ -228,12 +242,13 @@ class UserController extends Controller
 				'current_password'	=> 'required',                        
 				'new_password'      => ['required',
 										'min:6',
-										'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%]).*$/',
+										'regex:/^(?=.*\d).{6,10}$/',
 										]
 										,
 				'verify_password' 	=> 'required|same:new_password'           
 			);
 
+			// ^(?=.*\d).{4,8}$
 			$validator = Validator::make($request->all(), $rules);
 
 			if ($validator->fails()) {

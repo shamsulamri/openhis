@@ -127,7 +127,7 @@
 	<h4>
 	<div class="row">
 			<div class="col-xs-6">
-				<a href="{{ url('/products') }}">Bills</a><br>
+				<a href="{{ url('/bills') }}">Bills</a><br>
 				<a href="{{ url('/payments') }}">Payments</a><br>
 				<a href="{{ url('/refunds') }}">Refunds</a><br>
 				<a href="{{ url('/payment_credits') }}">Credit Payments</a><br>

@@ -73,12 +73,12 @@
 					<br>{{$order->product_code}}
 
 					@if ($order->category_code=='drugs' | $order->category_code=='drug_generics')
-					<br>
+						<h3>
 						{{ $order_helper->getPrescription($order->order_id) }}
+						</h3>
 					@endif
 
 					@if ($status=='danger')
-						<br>
 						<span class='label label-danger'>Insufficient supply.</span>
 					@endif
 			</td>

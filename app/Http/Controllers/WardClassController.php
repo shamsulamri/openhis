@@ -13,6 +13,7 @@ use Session;
 use App\Bed;
 use App\Product;
 use App\DietClass;
+use App\ProductUom;
 
 class WardClassController extends Controller
 {
@@ -82,7 +83,7 @@ class WardClassController extends Controller
 					$ward_class->save();
 
 					$beds = Bed::select('bed_code')->where('class_code','=',$ward_class->class_code)->pluck('bed_code');
-					$products = Product::whereIn('product_code', $beds)->update(array('product_sale_price'=>$ward_class->class_price));
+					$uoms = ProductUom::whereIn('product_code', $beds)->update(array('uom_price'=>$ward_class->class_price));
 					
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/ward_classes/id/'.$id);

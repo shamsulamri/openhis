@@ -97,4 +97,15 @@ class Bed extends Model
 
 			return $beds->count();
 	}
+
+	public static function boot()
+	{
+			parent::boot();
+
+			static::deleted(function($bed)
+			{
+				$bed->product()->delete();
+			});
+
+	}
 }

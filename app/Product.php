@@ -214,4 +214,14 @@ class Product extends Model
 			return $limits;
 	}
 
+	public static function boot()
+	{
+			parent::boot();
+
+			static::deleted(function($product)
+			{
+				$product->uom()->delete();
+			});
+
+	}
 }

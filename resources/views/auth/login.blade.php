@@ -9,6 +9,13 @@
 
     <div class="middle-box text-center loginscreen animated fadeInDown">
         <div>
+		@if (Session::has('message'))
+		<div class='alert alert-success'>
+		<h3>
+				{{ Session::get('message') }}
+		</h3>
+		</div>
+		@endif
             <p>Enter your username and password to login</p>
             <form class="m-t" role="form" method="POST" action="{{ url('/login') }}">
                         {{ csrf_field() }}
@@ -20,7 +27,9 @@
                 </div>
                 <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
 
+				<!--
                 <a href="{{ url('/password/reset') }}">Forgot password</a>
+				-->
 
             </form>
 					

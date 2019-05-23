@@ -52,7 +52,6 @@ class OrderProductController extends Controller
 						->whereNull('user_id')
 						->orWhere('user_id', '=', Auth::user()->id)
 						->lists('set_name', 'set_code')
-						->prepend('Drug History','drug_history')
 						->prepend('','');
 
 			return view('order_products.index', [
@@ -240,6 +239,7 @@ class OrderProductController extends Controller
 							->orderBy('product_name')
 							->paginate($this->paginateValue);
 				}
+
 			}
 
 			$consultation_id = Session::get('consultation_id'); //$request->consultation_id;
@@ -254,9 +254,9 @@ class OrderProductController extends Controller
 						->whereNull('user_id')
 						->orWhere('user_id', '=', Auth::user()->id)
 						->lists('set_name', 'set_code')
-						->prepend('Drug History','drug_history')
 						->prepend('','');
 
+			//->prepend('Drug History','drug_history')
 			return view('order_products.index', [
 					'order_products'=>$order_products,
 					'search'=>$request->search,

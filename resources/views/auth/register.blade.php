@@ -2,14 +2,12 @@
 
 @section('content')
 <br>
-<div class="container">
     <div class="row">
-        <div class="col-md-6 col-md-offset-6">
+        <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">Register</div>
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/register') }}">
-                        {!! csrf_field() !!}
 
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">Name</label>
@@ -25,15 +23,29 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">Username</label>
 
                             <div class="col-md-6">
-                                <input type="text" class="form-control" name="email" value="{{ old('email') }}">
+                                <input type="text" class="form-control" name="username" value="{{ old('username') }}">
 
-                                @if ($errors->has('email'))
+                                @if ($errors->has('username'))
                                     <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
+                                        <strong>{{ $errors->first('username') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('author_id') ? ' has-error' : '' }}">
+                            <label class="col-md-4 control-label">User Group</label>
+
+                            <div class="col-md-6">
+								{{ Form::select('author_id', $authorizations,null, ['class'=>'form-control','maxlength'=>'10']) }}
+
+                                @if ($errors->has('author_id'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('author_id') }}</strong>
                                     </span>
                                 @endif
                             </div>
@@ -74,10 +86,10 @@
                                 </button>
                             </div>
                         </div>
+                        {{ csrf_field() }}
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection

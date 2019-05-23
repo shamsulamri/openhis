@@ -13,6 +13,7 @@ class ProductCategory extends Model
 	protected $fillable = [
 				'category_name',
 				'category_price',
+				'category_is_consultation',
 				'group_code',
 				'gl_code',
 		];

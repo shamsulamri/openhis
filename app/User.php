@@ -32,11 +32,12 @@ class User extends Authenticatable
 			$rules = [
 				'email'=>'email|required|unique:users',
 				'name'=>'required',
+				'author_id'=>'required',
 				'username'=>'required|unique:users',
-				'employee_id'=>'required|unique:users',
-				'department_code'=>'required_if:consultant,==,"1"'
 			];
 
+			//'department_code'=>'required_if:consultant,==,"1"'
+			//'employee_id'=>'required|unique:users',
         	if ($method=='PUT') {
 					$rules = [
 						'name'=>'required',

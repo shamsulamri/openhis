@@ -59,6 +59,10 @@
 									if ($order_product->product_stocked==0) {
 										$show_checkbox = True;
 									}
+
+									if ($negetive_stock == 1) {
+										$show_checkbox = True;
+									}
 								?>
 									@if ($show_checkbox)
 										{{ Form::checkbox($order_product->product_code, 1, null,['class'=>'i-checks']) }}
@@ -70,7 +74,7 @@
 										<small>
 										{{ $order_product->product_code }}
 										@if (!empty($order_product->category))
-										({{ $order_product->category->category_name }})
+										- {{ $order_product->category->category_name }}
 										@endif
 										</small>
 										@if ($tab=='drug')
@@ -103,7 +107,7 @@
 			if ($total_on_hand==0 & $negetive_stock==0) $button_status = "btn-default disabled";
 	}
 ?>
-										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}' class='btn {{ $button_status }}'>
+										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}&category_code={{ $category_code }}' class='btn {{ $button_status }}'>
 											<span class='glyphicon glyphicon-plus'></span>
 										</a>
 									</td>
@@ -133,11 +137,14 @@
 @endif
 <script>
 	var frame = parent.document.getElementById('frameDetail');
+	frame.src = "/orders";
+	/*
 	@if (!empty($order_id))
 	frame.src = "/orders/{{ $order_id }}/edit?order_single=1";
 	@else
 	frame.src = "/orders";
 	@endif
+	*/
 
 	function orderSet() {
 			document.getElementById('categories').selectedIndex=0;

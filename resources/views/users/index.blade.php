@@ -4,13 +4,27 @@
 <h1>User List
 <a href='/users/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
-<form action='/user/search' method='post'>
-	<div class='input-group'>
-		<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
-		<span class='input-group-btn'>
-			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
-		</span>
+<form action='/user/search' method='post' class='form-horizontal'>
+
+	<div class="row">
+			<div class="col-xs-5">
+					<div class='form-group'>
+						<label class='col-sm-1 control-label'><div align='left'>Find</div></label>
+						<div class='col-sm-11'>
+							<input type='text' class='form-control' placeholder="Enter name or employee identification" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-7">
+					<div class='form-group'>
+						<label class='col-sm-4 control-label'>Authorization Group</label>
+						<div class='col-sm-8'>
+							{{ Form::select('author_id', $groups, $author_id, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
 	</div>
+	<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
 <!--
@@ -40,6 +54,9 @@
 					{{ $user->authorization->author_name }}
 			</td>
 			<td>
+					{{$user->username}}
+			</td>
+			<td>
 					{{$user->employee_id}}
 			</td>
 			<td align='right'>
@@ -50,8 +67,8 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $users->appends(['search'=>$search])->render() }}
+@if (isset($search) | isset($author_id)) 
+	{{ $users->appends(['search'=>$search, 'author_id'=>$author_id])->render() }}
 	@else
 	{{ $users->render() }}
 @endif

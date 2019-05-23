@@ -130,7 +130,7 @@ input {
 -->
 
 <!-- Medications -->
-
+<!--
 <br>
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
@@ -152,7 +152,7 @@ input {
 			</div>
 		</div>
 </div>
-
+-->
 <!-- End -->
 
 <meta name="csrf-token" content="{{ csrf_token() }}">

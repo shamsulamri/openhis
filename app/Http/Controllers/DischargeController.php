@@ -122,9 +122,10 @@ class DischargeController extends Controller
 							->prepend('','');
 			}
 
-			$fees = Order::where('category_code','consultation')
+			$fees = Order::where('category_is_consultation',1)
 					->leftJoin('products as b', 'b.product_code', '=','orders.product_code')
 					->leftJoin('order_cancellations as c', 'c.order_id', '=', 'orders.order_id')
+					->leftJoin('product_categories as d', 'd.category_code', '=', 'b.category_code')
 					->where('encounter_id','=', $consultation->encounter_id)
 					->where('orders.user_id','=', Auth::user()->id)
 					->whereNull('cancel_id')

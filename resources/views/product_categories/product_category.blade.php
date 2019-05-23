@@ -18,6 +18,14 @@
         </div>
     </div>
 
+	<div class='form-group  @if ($errors->has('category_is_consultation')) has-error @endif'>
+		{{ Form::label('category_is_consultation', ' ',['class'=>'col-sm-3 control-label']) }}
+		<div class='col-sm-9'>
+			{{ Form::checkbox('category_is_consultation', '1') }} Contains consultation fees.
+			@if ($errors->has('category_is_consultation')) <p class="help-block">{{ $errors->first('category_is_consultation') }}</p> @endif
+		</div>
+	</div>
+
 	<div class='form-group  @if ($errors->has('group_code')) has-error @endif'>
 		{{ Form::label('group_code', 'Group',['class'=>'col-sm-3 control-label']) }}
 		<div class='col-sm-9'>
