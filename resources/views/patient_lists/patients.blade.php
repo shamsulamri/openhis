@@ -41,9 +41,9 @@
 			</td>
 			<td align='right'>
 				@if (empty($openConsultation))
-				<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/create?encounter_id='. $patient->encounter_id) }}'>&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;</a>
+				<a class='btn btn-default' href='{{ URL::to('consultations/create?encounter_id='. $patient->encounter_id) }}'>&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;</a>
 				@else
-				<a class='btn btn-warning btn-xs' href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'>Resume</a>
+				<a class='btn btn-warning' href='{{ URL::to('consultations/'. $wardHelper->openConsultationId. '/edit') }}'>Resume</a>
 				@endif
 			</td>
 	</tr>

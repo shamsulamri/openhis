@@ -226,6 +226,8 @@ class UserController extends Controller
 
 			return view('users.index', [
 					'users'=>$users,
+					'groups' => UserAuthorization::all()->sortBy('author_name')->lists('author_name', 'author_id')->prepend('',''),
+					'author_id'=>null,
 			]);
 	}
 
