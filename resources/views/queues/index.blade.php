@@ -73,7 +73,9 @@
 						<i class="fa fa-stethoscope"></i>
 					</a>
 					@endcan
+					@can('module-patient')
 					<a class='btn btn-danger' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
+					@endcan
 			</td>
 	</tr>
 @endforeach

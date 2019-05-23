@@ -28,7 +28,13 @@
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
 				<li class="active">
-					<a data-toggle="tab" href="#tab-1">Outpatient
+					<a data-toggle="tab" href="#tab-1">
+
+				@if ($location->encounter_code =='emergency')
+						Emergency
+				@else
+						Outpatient
+				@endif
 						@if (count($outpatients)>0)
 							 <label class="label label-primary">{{ count($outpatients) }}</label>
 						@endif
