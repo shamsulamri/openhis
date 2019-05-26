@@ -155,6 +155,7 @@ class OrderHelper
 					$location_code = (new self)->getTargetLocation($product);
 
 					if (!empty($location_code)) {
+							Log::info("------->".$location_code);
 								$store_code = QueueLocation::find($location_code)->store_code;
 					} else {
 								$store_code = (new self)->getLocalStore($encounter, $admission);

@@ -40,7 +40,7 @@
 			<li><a href='{{ URL::to('form/results',$consultation->encounter->encounter_id) }}'>Forms</a></li>
 			<li><a href="/documents?patient_mrn={{ $patient->patient_mrn }}">Documents</a></li>
 			<li><a href="{{ URL::to('medical_alerts') }}">Medical Alerts</a></li>
-			@if ($patient->gender_code=='F')
+			@if ($patient->gender_code=='P')
 			<li><a href="{{ URL::to('obstetric') }}">Obstetric History</a></li>
 			<li><a href="{{ URL::to('newborns') }}">Newborn Registration</a></li>
 			@endif

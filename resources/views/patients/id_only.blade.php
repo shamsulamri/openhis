@@ -4,7 +4,14 @@
 						<h5>{{ $patient->patientAge() }}</h5>
 						<h5>{{ $patient->getMRN() }}</h5>
 						<h5>{{ $patient->getCurrentAddress() }}</h5>
-
+@if ($patient->patient_gravida)
+						<h5>
+							G{{ $patient->patient_gravida }}
+							P{{ $patient->patient_parity }}{{ $patient->patient_parity_plus?'+'.$patient->patient_parity_plus:'' }}
+{{ $patient->patient_lnmp?'LNMP: '.$patient->patient_lnmp:'' }}
+								
+						</h5>
+@endif
 		@if (!empty($encounter))
 			@if ($encounter->admission) 
 						<h3>

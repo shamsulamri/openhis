@@ -10,6 +10,7 @@
 <h1>
 <a href='{{ URL::to('form',[$form->form_code, $encounter_id]) }}'>Forms</a> / {{ $form->form_name }}
 </h1>
+@include('charts.graph_functions')
 <!-- Weight -->
 <?php
 	$graph = $Graph;

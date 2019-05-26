@@ -186,9 +186,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Admissions' href="{{ url('/admissions') }}"><i class="fa fa-bed"></i><span class='nav-label'>Admissions</span></a></li>
 						<li><a title='Bed Reservation' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="fa fa-calendar-check-o"></i><span class='nav-label'>Bed Reservations</span></a></li>
 						<li><a title='Discharges' href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
-						<!--
 						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
-						-->
 						<li><a title='Loans' href="{{ url('/loans?type=folder') }}"><i class='glyphicon glyphicon-transfer'></i><span class='nav-label'><span class='nav-label'>Loans</span></a></li>
 						@endcan
 						<!-- Consultation Module -->
@@ -203,6 +201,7 @@ if ($_COOKIE['his-navbar']==1) {
 										<li><a title='Patient List' href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
 										<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 								@endcannot
+						<li><a title='Patient List' href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
 										<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
 						@endcan
 

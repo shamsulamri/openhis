@@ -69,7 +69,7 @@ class OrderDrugController extends Controller
 			]);
 	}
 
-			public function addDrug(Request $request)
+	public function addDrug(Request $request)
 			{
 
 			$product = Product::find($request->drug_code);
