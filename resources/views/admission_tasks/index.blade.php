@@ -2,15 +2,9 @@
 
 @section('content')
 <?php
-$multiple_ids="";
+$ids='';
 ?>
-<h1>Admission Tasks</h1>
-@if (Auth::user()->authorization->module_support!=1)
-<h3>{{ $ward->ward_name }}</h3>
-@else
-<h3>{{ $location->location_name }}</h3>
-@endif
-<br>
+<h1>Order Tasks</h1>
 <form class='form-inline' action='/admission_task/search' method='post'>
 	<label>Location&nbsp;</label>
 	{{ Form::select('location_code', $locations, $location_code, ['class'=>'form-control','maxlength'=>'10']) }}
@@ -37,7 +31,7 @@ $multiple_ids="";
 @if ($admission_tasks->total()>0)
 <form action='/admission_task/status' method='post'>
 @if ($admission_tasks->total()>0)
-{{ Form::submit('Update Task', ['class'=>'btn btn-default']) }}
+{{ Form::submit('Update Task', ['class'=>'btn btn-primary']) }}
 <br>
 <br>
 @endif
@@ -76,13 +70,8 @@ $header_count=0;
 			@endif
 			<?php $header_count=0; ?>
 			<tr>
-					<th colspan=4>
+					<th colspan=8>
 						{{strtoupper($admission_task->product_name)}} (<span id='{{ $admission_task->product_code }}'>#</span>)
-
-					</th>
-					<th colspan=3>
-						{!! $order_helper->drugDescription($admission_task->order_id, "") !!}
-
 					</th>
 			</tr>
 			@endif
@@ -91,70 +80,83 @@ $header_count=0;
 			@if ($admission_task->patient_id != $header_code)
 			<?php $header_count=0; ?>
 			<tr>
-					<th colspan=4>
-						<h4>
+					<th colspan=6>
 						<strong>
 						{{$admission_task->patient_name}} ({{$admission_task->patient_mrn}})
 						</strong>
-						</h4>
+					</th>
+					<th>
 						@if ($admission_task->bed_name)
 						<br>
 						<small>
 						{{$admission_task->bed_name}}, {{ $admission_task->ward_name }}
 						</small>
 						@endif
+
 					</th>
+
 			</tr>
 			@endif
 	@endif
+<?php
+	$ids = $ids.$admission_task->order_id.';';
+	$label = '';
+	$color = '';
+	if ($admission_task->urgency_index==1) $color = 'danger';
+	if ($admission_task->urgency_index==2) $color = 'warning';
+	if ($admission_task->urgency_name) $label = $admission_task->urgency_name;
+	if ($admission_task->frequency_code == 'STAT') {
+			$label = 'STAT';
+			$color = 'danger';
+	}
+?>
 			<tr>
-			@if ($group_by=='order')
-			<td>
-					{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed, ['class'=>'i-checks']) }} &nbsp;
-					{{$admission_task->bed_name}}
+
+			<td width=10>
+					{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed, ['class'=>'i-checks']) }} 
 			</td>
-			<td>
-					{{$admission_task->patient_mrn}}
-			</td>
-			@endif
-			<td>
-				@if ($group_by=='patient')
-						{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed, ['class'=>'i-checks']) }} &nbsp;
-						{{strtoupper($admission_task->product_name)}}
-					<strong>
-						{!! $order_helper->drugDescription($admission_task->order_id, " - ") !!}
-					</strong>
-					@if ($admission_task->order_multiple==1)
-						<br>
-						<?php
-							$multis = $order_helper->getMultipleOrder($admission_task->order_id);
-						?>
-						@include('admission_tasks.multiple')
-						@foreach ($multis as $multi)
-						<?php $multiple_ids = $multiple_ids.$multi->multiple_id.","; ?>
-						@endforeach
-					@endif
-				@else
-					{{strtoupper($admission_task->patient_name)}}
-					@if ($admission_task->order_multiple==1)
-						<br>
-						<?php
-							$multis = $order_helper->getMultipleOrder($admission_task->order_id);
-						?>
-						@include('admission_tasks.multiple')
-						@foreach ($multis as $multi)
-						<?php $multiple_ids = $multiple_ids.$multi->multiple_id.","; ?>
-						@endforeach
-					@endif
+			<td width=10>
+				@if ($label)
+					<span class="label label-{{ $color }}">
+					{{ $label }}
+					</span>
 				@endif
 			</td>
+	<!-- Patient -->
+	@if ($group_by=='patient')
 			<td>
+				{{strtoupper($admission_task->product_name)}}<br>
+				{{ $order_helper->drugDescription($admission_task->order_id, "") }}
+			</td>
+			<td>
+			</td>
+	@endif
+
+	<!-- Order -->
+	@if ($group_by=='order')
+			<td>
+					{{strtoupper($admission_task->patient_name)}}<br>
+					{{$admission_task->patient_mrn}}
+			</td>
+			<td>
+					{{ $order_helper->drugDescription($admission_task->order_id, "") }}
+			</td>
+			<td width=10>
+					@if ($admission_task->bed_name)
+					&nbsp;{{$admission_task->bed_name}}
+					@endif
+			</td>
+	@endif
+
+			<td>
+				Ordered by {{ $admission_task->order_by }}
 				@if (!empty($admission_task->name))
-					{{$admission_task->name }},	{{ date('d M, H:i', strtotime($admission_task->updated_at)) }}
+					<br>Done by 
+					{{$admission_task->name }}, {{ date('d M H:i', strtotime($admission_task->updated_at)) }}
 				@endif
 			</td>
 			<td align='right'>
-					@if ($admission_task->order_drug_id)
+					@if ($admission_task->order_drug_id & $admission_task->ward_name)
 						<a href='{{ URL::to('medication_record/mar/'. $admission_task->encounter_id) }}' class='btn btn-primary btn-xs'>
 						&nbsp;&nbsp;&nbsp;&nbsp; MAR &nbsp;&nbsp;&nbsp;&nbsp;
 						</a>
@@ -175,10 +177,16 @@ $header_count=0;
 									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=order_label&id={{ $admission_task->order_id }}'>
 										Print Label
 									</a>
+									@else
+									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $admission_task->order_id }}'>
+										Print Label
+									</a>
 									@endif
+									<!--
 									<a href="{{ URL::to('task_cancellations/create/'. $admission_task->order_id . '?source=nurse') }}" class='btn btn-warning btn-xs'>
 									&nbsp;&nbsp;&nbsp;Cancel&nbsp;&nbsp;&nbsp;
 									</a>
+									-->
 						@endif
 					@endif
 				@endif
@@ -206,6 +214,10 @@ $header_count=0;
 
 {{ Form::hidden('group_by', $group_by) }}
 {{ Form::hidden('show_all', $show_all) }}
+@if ($ids)
+{{ Form::hidden('ids', $ids) }}
+@endif
+
 @if (Auth::user()->authorization->module_support==1)
 		{{ Form::hidden('ward_code', $ward_code) }}
 @else

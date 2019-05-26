@@ -12,6 +12,7 @@ class Urgency extends Model
 	protected $table = 'ref_urgencies';
 	protected $fillable = [
 				'urgency_code',
+				'urgency_index',
 				'urgency_name'];
 	
     protected $guarded = ['urgency_code'];

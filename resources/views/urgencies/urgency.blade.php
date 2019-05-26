@@ -7,6 +7,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('urgency_index')) has-error @endif'>
+        <label for='urgency_index' class='col-sm-3 control-label'>Index<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+            {{ Form::text('urgency_index', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'1']) }}
+            @if ($errors->has('urgency_index')) <p class="help-block">{{ $errors->first('urgency_index') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/urgencies" role="button">Cancel</a>

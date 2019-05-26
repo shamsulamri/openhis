@@ -14,6 +14,7 @@ class DrugFrequency extends Model
 				'frequency_name',
 				'frequency_label',
 				'frequency_value',
+				'frequency_index',
 				'frequency_mar'];
 	
     protected $guarded = ['frequency_code'];

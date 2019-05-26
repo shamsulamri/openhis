@@ -54,8 +54,50 @@ class AdmissionTaskController extends Controller
 			}
 			$location = QueueLocation::find($location_code);
 
+			$sql_select = "
+ a.order_id, a.order_completed,order_multiple, a.updated_at, a.created_at,patient_name, patient_mrn, bed_name,a.product_code,product_name,c.patient_id, i.name, ward_name, a.encounter_id,updated_by,cancel_id,category_code,stop_id, product_duration_use,q.id as order_drug_id, a.created_at as order_created,urgency_name,q.frequency_code, case when t.frequency_code = 'STAT' then frequency_index else coalesce(urgency_index,9) end as urgency_index, v.name as order_by
+";
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id','product_duration_use', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name','ward_name','a.encounter_id','a.updated_by', 'category_code', 'stop_id', 'a.updated_at', 'q.id as order_drug_id')
+					->selectRaw($sql_select)
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
+					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
+					->leftjoin('admissions as e', 'e.encounter_id', '=', 'b.encounter_id')
+					->leftjoin('beds as f', 'f.bed_code', '=', 'e.bed_code')
+					->leftjoin('wards as g', 'g.ward_code', '=', 'f.ward_code')
+					->leftjoin('order_drugs as h', 'h.order_id', '=', 'a.order_id')
+					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
+					->leftjoin('order_cancellations as j', 'j.order_id', '=', 'a.order_id')
+					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
+					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
+					->leftjoin('order_drugs as q', 'q.order_id', '=', 'a.order_id')
+					->leftjoin('order_investigations as r', 'r.order_id', '=', 'a.order_id')
+					->leftjoin('ref_urgencies as s', 's.urgency_code', '=', 'r.urgency_code')
+					->leftjoin('drug_frequencies as t', 't.frequency_code', '=', 'q.frequency_code')
+					->leftJoin('consultations as u', 'u.consultation_id', '=', 'a.consultation_id')
+					->leftjoin('users as v', 'v.id', '=', 'u.user_id')
+					->where('b.encounter_code','<>', 'outpatient')
+					->where('a.product_code','<>','consultation_fee')
+					->where('d.product_drop_charge','=',0)
+					->whereNull('cancel_id');
+
+			switch($request->group_by) {
+				case "order":
+					$admission_tasks= $admission_tasks->orderBy("product_name")
+													->orderBy('urgency_index')
+													->orderBy('order_created');
+					break;
+				default: 
+					$admission_tasks= $admission_tasks->orderBy("patient_mrn")
+													->orderBy('urgency_index')
+													->orderBy("product_name")
+													->orderBy('order_created');
+					break;
+			}
+
+			/*
+			$admission_tasks = DB::table('orders as a')
+					->selectRaw($sql_select)
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -70,32 +112,26 @@ class AdmissionTaskController extends Controller
 					->leftjoin('ward_discharges as o', 'o.encounter_id', '=', 'b.encounter_id')
 					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
 					->leftjoin('order_drugs as q', 'q.order_id', '=', 'a.order_id')
+					->leftjoin('order_investigations as r', 'r.order_id', '=', 'a.order_id')
+					->leftjoin('ref_urgencies as s', 's.urgency_code', '=', 'r.urgency_code')
+					->leftjoin('drug_frequencies as t', 't.frequency_code', '=', 'q.frequency_code')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('a.product_code','<>','consultation_fee')
 					->where('d.product_drop_charge','=',0)
 					->whereNull('cancel_id')
 					->whereNull('o.discharge_id')
+					->whereNotNull('n.post_id')
+					->orderBy('patient_name')
+					->orderBy('urgency_index')
+					->orderBy('order_created');
+
 					->where(function ($query) use ($request) {
 						$query->where('order_completed','=',0);
 							//->orWhere('category_code','=', 'drugs');
 					})
-					->whereNotNull('n.post_id')
-					->orderBy('patient_name')
-					->orderBy('bed_name');
-
-					//->where('a.ward_code','=', $ward_code)
-
-			/**
-			if (Auth::user()->authorization->module_support==1) {
-					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
-			} else {
-					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
-			}
-			**/
-
+			 */
 			$order_ids = $admission_tasks->implode('order_id',',');
 			
-			//return $admission_tasks->toSql();
 			$admission_tasks = $admission_tasks->paginate($this->paginateValue);
 				
 			$categories = ProductCategory::select('category_name', 'category_code')
@@ -111,11 +147,11 @@ class AdmissionTaskController extends Controller
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'locations' => QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'category' => '',
-					'group_by' => 'patient',
+					'group_by' => $request->group_by?:'patient',
 					'order_ids' => $order_ids,
 					'show_all' => null,
-					'ward_code'=>$ward_code,
-					'location_code'=>$location_code,
+					'ward_code'=>null,
+					'location_code'=>null,
 					'location'=>Location::find($location_code),
 					'order_helper'=>new OrderHelper(),
 					'multiple_ids'=>'',
@@ -220,8 +256,11 @@ class AdmissionTaskController extends Controller
 
 			$location = QueueLocation::find($location_code);
 
+			$sql_select = "
+ a.order_id, a.order_completed,order_multiple, a.updated_at, a.created_at,patient_name, patient_mrn, bed_name,a.product_code,product_name,c.patient_id, i.name, ward_name, a.encounter_id,updated_by,cancel_id,category_code,stop_id, product_duration_use,q.id as order_drug_id, a.created_at as order_created,urgency_name,q.frequency_code, case when t.frequency_code = 'STAT' then frequency_index else coalesce(urgency_index,9) end as urgency_index, v.name as order_by
+";
 			$admission_tasks = DB::table('orders as a')
-					->select('a.order_id', 'a.order_completed','order_multiple', 'a.updated_at', 'a.created_at','patient_name', 'patient_mrn', 'bed_name','a.product_code','product_name','c.patient_id', 'i.name', 'ward_name', 'a.encounter_id','updated_by','cancel_id','category_code','stop_id', 'product_duration_use','q.id as order_drug_id')
+					->selectRaw($sql_select)
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
@@ -234,6 +273,11 @@ class AdmissionTaskController extends Controller
 					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
 					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
 					->leftjoin('order_drugs as q', 'q.order_id', '=', 'a.order_id')
+					->leftjoin('order_investigations as r', 'r.order_id', '=', 'a.order_id')
+					->leftjoin('ref_urgencies as s', 's.urgency_code', '=', 'r.urgency_code')
+					->leftjoin('drug_frequencies as t', 't.frequency_code', '=', 'q.frequency_code')
+					->leftJoin('consultations as u', 'u.consultation_id', '=', 'a.consultation_id')
+					->leftjoin('users as v', 'v.id', '=', 'u.user_id')
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('a.product_code','<>','consultation_fee')
 					->where('d.product_drop_charge','=',0)
@@ -271,21 +315,26 @@ class AdmissionTaskController extends Controller
 			}
 			**/
 
+			/**
 			if (empty($request->show_all)) {
 					$admission_tasks = $admission_tasks->where('order_completed','=',0);
 			}
+			**/
 					
 			$order_ids = $admission_tasks->implode('order_id',',');
 
 			switch($request->group_by) {
 				case "order":
 					$admission_tasks= $admission_tasks->orderBy("product_name")
-													->orderBy("bed_name")
+													->orderBy('urgency_index')
+													->orderBy('order_created')
 													->paginate($this->paginateValue);
 					break;
 				default: 
 					$admission_tasks= $admission_tasks->orderBy("patient_mrn")
+													->orderBy('urgency_index')
 													->orderBy("product_name")
+													->orderBy('order_created')
 													->paginate($this->paginateValue);
 					break;
 			}
@@ -336,23 +385,22 @@ class AdmissionTaskController extends Controller
 					}
 			}
 
-			$ids = explode(",",$request->completed_ids);
+			$ids = explode(";",$request->ids);
 
 			foreach($ids as $id) {
-					$order = Order::where('order_id','=',$id)
-								->whereNull('updated_by')
-								->first();
+
+					$order = Order::find($id);
 
 					$name = "order:".$id;
-					if (!empty($order)) {
-							if ($request->$name==1) {
-									$order->order_completed=1;
-									$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
-									$order->updated_by = Auth::user()->id;
+					if ($order) {
+					Log::info($name);
+									$order->order_completed=$request->$name?1:0;
+									$order->completed_at = $request->$name==1?DojoUtility::dateTimeWriteFormat(DojoUtility::now()):null;
+									$order->updated_by = $request->$name==1?Auth::user()->id:null;
 									$order->store_code = $store_code;
 									$order->location_code = null;
 									$order->save();
-							} 
+									Log::info($order->order_completed);
 					}
 					/*
 					else {
@@ -399,7 +447,8 @@ class AdmissionTaskController extends Controller
 					 */
 			}
 
-			return redirect('/admission_tasks');
+			Session::flash('message', 'Record successfully updated.');
+			return redirect('/admission_tasks?group_by='.$request->group_by);
 			//return redirect()->action('AdmissionTaskController@search', $request);
 	}
 
