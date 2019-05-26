@@ -23,6 +23,7 @@ use Auth;
 use Route;
 use App\DojoUtility;
 use App\StockHelper;
+use App\EncounterType;
 
 class AdmissionTaskController extends Controller
 {
@@ -72,7 +73,6 @@ class AdmissionTaskController extends Controller
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('a.product_code','<>','consultation_fee')
 					->where('d.product_drop_charge','=',0)
-					->where('a.ward_code','=', $ward_code)
 					->whereNull('cancel_id')
 					->whereNull('o.discharge_id')
 					->where(function ($query) use ($request) {
@@ -83,7 +83,7 @@ class AdmissionTaskController extends Controller
 					->orderBy('patient_name')
 					->orderBy('bed_name');
 
-			//->whereNull('discharge_id')
+					//->where('a.ward_code','=', $ward_code)
 
 			/**
 			if (Auth::user()->authorization->module_support==1) {
@@ -109,7 +109,7 @@ class AdmissionTaskController extends Controller
 					'categories' => $categories, //ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('',''),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
-					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'locations' => QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'category' => '',
 					'group_by' => 'patient',
 					'order_ids' => $order_ids,
@@ -119,6 +119,7 @@ class AdmissionTaskController extends Controller
 					'location'=>Location::find($location_code),
 					'order_helper'=>new OrderHelper(),
 					'multiple_ids'=>'',
+					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 			]);
 	}
 
@@ -236,7 +237,6 @@ class AdmissionTaskController extends Controller
 					->where('b.encounter_code','<>', 'outpatient')
 					->where('a.product_code','<>','consultation_fee')
 					->where('d.product_drop_charge','=',0)
-					->where('a.ward_code','=', $ward_code)
 					->whereNull('cancel_id');
 
 			$categories = ProductCategory::select('category_name', 'category_code')
@@ -248,6 +248,15 @@ class AdmissionTaskController extends Controller
 			if ($request->categories) {
 				$admission_tasks = $admission_tasks->where('d.category_code','like', '%'.$request->categories.'%');
 			}
+
+			if ($request->location_code) {
+					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
+			}
+
+			if ($request->ward_code) {
+					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
+			}
+
 
 			//->whereNull('discharge_id')
 			
@@ -287,16 +296,17 @@ class AdmissionTaskController extends Controller
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'categories' => $categories,
-					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'locations' => QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'category' => $request->categories,
 					'group_by' => $request->group_by,
 					'order_ids' => $order_ids,
 					'show_all' => $request->show_all,
-					'ward_code'=>$ward_code,
-					'location_code'=>$location_code,
+					'ward_code'=>$request->ward_code,
+					'location_code'=>$request->location_code,
 					'location'=>Location::find($location_code),
 					'order_helper'=>new OrderHelper(),
 					'multiple_ids'=>'',
+					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 			]);
 	}
 

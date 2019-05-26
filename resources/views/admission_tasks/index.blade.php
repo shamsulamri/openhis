@@ -12,17 +12,12 @@ $multiple_ids="";
 @endif
 <br>
 <form class='form-inline' action='/admission_task/search' method='post'>
-	@if (Auth::user()->authorization->module_support==1)
-	<!--
 	<label>Location&nbsp;</label>
 	{{ Form::select('location_code', $locations, $location_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	-->
 	<label>Ward&nbsp;</label>
 	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	@else
 	<label>Type&nbsp;</label>
 	{{ Form::select('categories', $categories, $category, ['class'=>'form-control','maxlength'=>'10']) }}
-	@endif
 	<label>Group by&nbsp;</label>
 
 	{{ Form::select('group_by', array('order'=>'Order','patient'=>'Patient'),$group_by, ['class'=>'form-control']) }}
@@ -41,6 +36,11 @@ $multiple_ids="";
 
 @if ($admission_tasks->total()>0)
 <form action='/admission_task/status' method='post'>
+@if ($admission_tasks->total()>0)
+{{ Form::submit('Update Task', ['class'=>'btn btn-default']) }}
+<br>
+<br>
+@endif
 <input type='hidden' name="_token" value="{{ csrf_token() }}">
 <table class="table table-hover table-condensed">
 <!--
@@ -92,37 +92,34 @@ $header_count=0;
 			<?php $header_count=0; ?>
 			<tr>
 					<th colspan=4>
-						<h5>
+						<h4>
 						<strong>
 						{{$admission_task->patient_name}} ({{$admission_task->patient_mrn}})
 						</strong>
+						</h4>
+						@if ($admission_task->bed_name)
 						<br>
 						<small>
 						{{$admission_task->bed_name}}, {{ $admission_task->ward_name }}
 						</small>
-						</h5>
+						@endif
 					</th>
 			</tr>
 			@endif
 	@endif
 			<tr>
 			@if ($group_by=='order')
-			<td width='150'>
+			<td>
+					{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed, ['class'=>'i-checks']) }} &nbsp;
 					{{$admission_task->bed_name}}
-					@if (Auth::user()->authorization->module_support==1)
-					<br>
-					<small>
-					{{$admission_task->ward_name}}
-					</small>
-					@endif
 			</td>
-			<td width='30'>
+			<td>
 					{{$admission_task->patient_mrn}}
 			</td>
 			@endif
 			<td>
 				@if ($group_by=='patient')
-
+						{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed, ['class'=>'i-checks']) }} &nbsp;
 						{{strtoupper($admission_task->product_name)}}
 					<strong>
 						{!! $order_helper->drugDescription($admission_task->order_id, " - ") !!}
