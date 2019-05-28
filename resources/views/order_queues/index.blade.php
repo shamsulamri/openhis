@@ -128,6 +128,7 @@ Order Queues
 			</td> 
 	</tr>
 @endforeach
+
 @endif
 </tbody>
 </table>

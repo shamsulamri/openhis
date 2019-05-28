@@ -19,6 +19,8 @@ class Sponsor extends Model
 				'sponsor_postcode',
 				'sponsor_state',
 				'sponsor_country',
+				'entitlement_code',
+				'sponsor_description',
 				'sponsor_phone'];
 	
     protected $guarded = ['sponsor_code'];

@@ -17,6 +17,8 @@ use Auth;
 use App\Order;
 use App\ProductCategory;
 use Gate;
+use App\OrderHelper;
+use App\Encounter;
 
 class OrderQueueController extends Controller
 {
@@ -103,41 +105,18 @@ class OrderQueueController extends Controller
 					->whereIn('c.encounter_code', $queue_encounters)
 					->where('order_completed','=',0)
 					->whereNull('cancel_id')
-					->whereNotNull('n.post_id');
+					->whereNotNull('n.post_id')
+					->whereNull('c.deleted_at');
 
-					//->where('orders.location_code','=',$location_code)
 			if ($request->future) {
-					/**
-					$order_queues = $order_queues->leftjoin('bills as q', 'q.encounter_id', '=', 'orders.encounter_id')
-									->whereNotNull('q.id')
-									->where('investigation_date','>=', Carbon::today());
-					**/
 					$order_queues = $order_queues->where('order_is_future','=', 1);
 			} else {
-					/*
-					$order_queues = $order_queues->where('investigation_date','<=', Carbon::today())
-							->orWhereNull('investigation_date');
-					 */
 					$order_queues = $order_queues->where('order_is_future','=', 0);
 			}
 
-			/*
-			$order_queues = Order::selectRaw('*, count(*) as order_count')
-					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
-					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
-					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
-					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
-					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
-					->where('orders.location_code','=',$location_code)
-					->whereNull('cancel_id')
-					->whereNotNull('n.post_id')
-					->groupBy('orders.encounter_id');
-			 */
-					
 			$order_queues = $order_queues->paginate($this->paginateValue);
 
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
-			//return $locations;
 			
 			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed', 'unreported'=>'Unreported');
 
@@ -145,7 +124,6 @@ class OrderQueueController extends Controller
 			if (!empty($request->future)) $is_future=true;
 
 			$count = $request->count ?: 0;
-
 
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
@@ -161,6 +139,7 @@ class OrderQueueController extends Controller
 					'queue_encounters'=>$queue_encounters,
 					'queue_categories'=>$queue_categories,
 					'location_code'=>$location_code,
+					'helper'=> new OrderHelper(),
 					]);
 	}
 

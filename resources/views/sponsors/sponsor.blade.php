@@ -15,6 +15,22 @@
         </div>
     </div>
 
+	<div class='form-group  @if ($errors->has('entitlement_code')) has-error @endif'>
+		{{ Form::label('entitlement_code', 'Entitlement',['class'=>'col-sm-2 control-label']) }}
+		<div class='col-sm-10'>
+			{{ Form::select('entitlement_code', $entitlement, null, ['class'=>'form-control','maxlength'=>'10']) }}
+			@if ($errors->has('entitlement_code')) <p class="help-block">{{ $errors->first('entitlement_code') }}</p> @endif
+		</div>
+	</div>
+
+    <div class='form-group  @if ($errors->has('sponsor_description')) has-error @endif'>
+        <label for='sponsor_description' class='col-sm-2 control-label'>Description<span style='color:red;'> *</span></label>
+        <div class='col-sm-10'>
+            {{ Form::text('sponsor_description', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+            @if ($errors->has('sponsor_description')) <p class="help-block">{{ $errors->first('sponsor_description') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('sponsor_street_1')) has-error @endif'>
         {{ Form::label('sponsor_street_1', 'Street 1',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>

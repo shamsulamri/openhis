@@ -6,17 +6,13 @@ $ids='';
 ?>
 <h1>Order Tasks</h1>
 <form class='form-inline' action='/admission_task/search' method='post'>
+	{{ Form::select('encounter_code', $encounter_type, $encounter_code, ['id'=>'encounter','class'=>'form-control','onchange'=>'checkTriage()']) }}
 	<label>Location&nbsp;</label>
 	{{ Form::select('location_code', $locations, $location_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>Ward&nbsp;</label>
 	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
 	<label>Type&nbsp;</label>
 	{{ Form::select('categories', $categories, $category, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Group by&nbsp;</label>
-
-	{{ Form::select('group_by', array('order'=>'Order','patient'=>'Patient'),$group_by, ['class'=>'form-control']) }}
-	{{ Form::submit('Refresh', ['class'=>'btn btn-default']) }}
-&nbsp;
 	{{ Form::checkbox('show_all',1, $show_all, ['class'=>'form-control']) }} 
 	<label>
 	Show All
@@ -24,6 +20,7 @@ $ids='';
 
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 
+	{{ Form::submit('Refresh', ['class'=>'btn btn-default']) }}
 </form>
 <br>
 <br>
@@ -44,11 +41,7 @@ $ids='';
     <th>Bed</th> 
     <th>MRN</th> 
 	<th>
-		@if ($group_by=='order')
 		Patient
-		@else
-		Order
-		@endif
 	</th> 
     <th>Date</th>
 	<th></th>
@@ -61,42 +54,25 @@ $header_code = null;
 $header_count=0;
 ?>
 @foreach ($admission_tasks as $admission_task)
-	@if ($group_by=='order')
-			@if ($admission_task->product_code != $header_code)
-			@if ($header_count>0)
-				<script>
-				document.getElementById("{{ $header_code }}").textContent="{{ $header_count }}";
-				</script>
-			@endif
-			<?php $header_count=0; ?>
-			<tr>
-					<th colspan=8>
-						{{strtoupper($admission_task->product_name)}} (<span id='{{ $admission_task->product_code }}'>#</span>)
-					</th>
-			</tr>
-			@endif
-	@endif
-	@if ($group_by=='patient')
-			@if ($admission_task->patient_id != $header_code)
-			<?php $header_count=0; ?>
-			<tr>
-					<th colspan=6>
-						<strong>
-						{{$admission_task->patient_name}} ({{$admission_task->patient_mrn}})
-						</strong>
-					</th>
-					<th>
-						@if ($admission_task->bed_name)
-						<br>
-						<small>
-						{{$admission_task->bed_name}}, {{ $admission_task->ward_name }}
-						</small>
-						@endif
+	@if ($admission_task->patient_id != $header_code)
+	<?php $header_count=0; ?>
+	<tr>
+			<th colspan=6>
+				<strong>
+				{{$admission_task->patient_name}} ({{$admission_task->patient_mrn}})
+				</strong>
+			</th>
+			<th>
+				@if ($admission_task->bed_name)
+				<br>
+				<small>
+				{{$admission_task->bed_name}}, {{ $admission_task->ward_name }}
+				</small>
+				@endif
 
-					</th>
+			</th>
 
-			</tr>
-			@endif
+	</tr>
 	@endif
 <?php
 	$ids = $ids.$admission_task->order_id.';';
@@ -122,32 +98,10 @@ $header_count=0;
 					</span>
 				@endif
 			</td>
-	<!-- Patient -->
-	@if ($group_by=='patient')
 			<td>
 				{{strtoupper($admission_task->product_name)}}<br>
 				{{ $order_helper->drugDescription($admission_task->order_id, "") }}
 			</td>
-			<td>
-			</td>
-	@endif
-
-	<!-- Order -->
-	@if ($group_by=='order')
-			<td>
-					{{strtoupper($admission_task->patient_name)}}<br>
-					{{$admission_task->patient_mrn}}
-			</td>
-			<td>
-					{{ $order_helper->drugDescription($admission_task->order_id, "") }}
-			</td>
-			<td width=10>
-					@if ($admission_task->bed_name)
-					&nbsp;{{$admission_task->bed_name}}
-					@endif
-			</td>
-	@endif
-
 			<td>
 				Ordered by {{ $admission_task->order_by }}
 				@if (!empty($admission_task->name))
@@ -196,12 +150,7 @@ $header_count=0;
 			</td>
 	</tr>
 	<?php $header_count+=1; ?>
-	@if ($group_by=='order')
-	<?php $header_code = $admission_task->product_code ?>
-	@endif
-	@if ($group_by=='patient')
 	<?php $header_code = $admission_task->patient_id ?>
-	@endif
 @endforeach
 			@if ($header_count>0)
 				<script>
@@ -212,7 +161,6 @@ $header_count=0;
 </tbody>
 </table>
 
-{{ Form::hidden('group_by', $group_by) }}
 {{ Form::hidden('show_all', $show_all) }}
 @if ($ids)
 {{ Form::hidden('ids', $ids) }}
@@ -236,4 +184,5 @@ $header_count=0;
 @else
 	No record found.
 @endif
+
 @endsection

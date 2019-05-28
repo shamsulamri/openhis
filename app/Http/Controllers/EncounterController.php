@@ -169,6 +169,7 @@ class EncounterController extends Controller
 					'patient' => $patient,
 					'patient_type' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code'),
 					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
+					'sponsors' => Sponsor::all(),
 					'entitlement' => Entitlement::all()->sortBy('entitlement_name')->lists('entitlement_name', 'entitlement_code')->prepend('',''),
 					'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),

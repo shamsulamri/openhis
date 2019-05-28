@@ -49,7 +49,7 @@ class Consultation extends Model
 
 	public function encounter()
 	{
-			return $this->belongsTo('App\Encounter');
+			return $this->belongsTo('App\Encounter', 'encounter_id', 'encounter_id');
 	}
 
  	public function user()

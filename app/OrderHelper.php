@@ -20,6 +20,11 @@ use Config;
 
 class OrderHelper 
 {
+	public function getEncounter($encounter_id) 
+	{
+		$encounter = Encounter::find($encounter_id);
+		return $encounter;
+	}
 	public function getMultipleOrder($order_id) 
 	{
 			$orders = OrderMultiple::where('order_id', '=',$order_id)->get();

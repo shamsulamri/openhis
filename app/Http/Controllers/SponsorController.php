@@ -12,6 +12,7 @@ use DB;
 use Session;
 use App\State;
 use App\Nation;
+use App\Entitlement;
 
 class SponsorController extends Controller
 {
@@ -39,6 +40,7 @@ class SponsorController extends Controller
 					'sponsor' => $sponsor,
 					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
 					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
+					'entitlement' => Entitlement::all()->sortBy('entitlement_name')->lists('entitlement_name', 'entitlement_code')->prepend('',''),
 					]);
 	}
 
@@ -67,6 +69,7 @@ class SponsorController extends Controller
 					'sponsor'=>$sponsor,
 					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
 					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
+					'entitlement' => Entitlement::all()->sortBy('entitlement_name')->lists('entitlement_name', 'entitlement_code')->prepend('',''),
 					]);
 	}
 
@@ -75,7 +78,6 @@ class SponsorController extends Controller
 			$sponsor = Sponsor::findOrFail($id);
 			$sponsor->fill($request->input());
 
-
 			$valid = $sponsor->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
@@ -83,11 +85,9 @@ class SponsorController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/sponsors/id/'.$id);
 			} else {
-					return view('sponsors.edit', [
-							'sponsor'=>$sponsor,
-				
-							])
-							->withErrors($valid);			
+					return redirect('/sponsors/'.$id.'/edit')
+							->withErrors($valid)
+							->withInput();
 			}
 	}
 	

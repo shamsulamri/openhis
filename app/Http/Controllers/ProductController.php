@@ -287,10 +287,7 @@ class ProductController extends Controller
 			$products = Product::where('product_code','=',$id)
 					->paginate($this->paginateValue);
 
-			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
-			if (!$product_authorization->get()->isEmpty()) {
-					$products = $products->whereIn('products.category_code',$product_authorization->pluck('category_code'));
-			}
+			$category_codes = Auth::user()->categoryCodes();
 
 			$store = Store::find(Auth::user()->defaultStore($request));
 

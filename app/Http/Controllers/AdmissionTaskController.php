@@ -54,6 +54,8 @@ class AdmissionTaskController extends Controller
 			}
 			$location = QueueLocation::find($location_code);
 
+			$encounter_code = $request->cookie('encounter')?:null;
+
 			$sql_select = "
  a.order_id, a.order_completed,order_multiple, a.updated_at, a.created_at,patient_name, patient_mrn, bed_name,a.product_code,product_name,c.patient_id, i.name, ward_name, a.encounter_id,updated_by,cancel_id,category_code,stop_id, product_duration_use,q.id as order_drug_id, a.created_at as order_created,urgency_name,q.frequency_code, case when t.frequency_code = 'STAT' then frequency_index else coalesce(urgency_index,9) end as urgency_index, v.name as order_by
 ";
@@ -81,19 +83,10 @@ class AdmissionTaskController extends Controller
 					->where('d.product_drop_charge','=',0)
 					->whereNull('cancel_id');
 
-			switch($request->group_by) {
-				case "order":
-					$admission_tasks= $admission_tasks->orderBy("product_name")
-													->orderBy('urgency_index')
-													->orderBy('order_created');
-					break;
-				default: 
-					$admission_tasks= $admission_tasks->orderBy("patient_mrn")
-													->orderBy('urgency_index')
-													->orderBy("product_name")
-													->orderBy('order_created');
-					break;
-			}
+			$admission_tasks= $admission_tasks->orderBy("patient_mrn")
+					->orderBy('urgency_index')
+					->orderBy("product_name")
+					->orderBy('order_created');
 
 			/*
 			$admission_tasks = DB::table('orders as a')
@@ -147,7 +140,6 @@ class AdmissionTaskController extends Controller
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'locations' => QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'category' => '',
-					'group_by' => $request->group_by?:'patient',
 					'order_ids' => $order_ids,
 					'show_all' => null,
 					'ward_code'=>null,
@@ -155,6 +147,7 @@ class AdmissionTaskController extends Controller
 					'location'=>Location::find($location_code),
 					'order_helper'=>new OrderHelper(),
 					'multiple_ids'=>'',
+					'encounter_code'=>$encounter_code,
 					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 			]);
 	}
@@ -256,6 +249,8 @@ class AdmissionTaskController extends Controller
 
 			$location = QueueLocation::find($location_code);
 
+			$encounter_code = $request->encounter_code;
+
 			$sql_select = "
  a.order_id, a.order_completed,order_multiple, a.updated_at, a.created_at,patient_name, patient_mrn, bed_name,a.product_code,product_name,c.patient_id, i.name, ward_name, a.encounter_id,updated_by,cancel_id,category_code,stop_id, product_duration_use,q.id as order_drug_id, a.created_at as order_created,urgency_name,q.frequency_code, case when t.frequency_code = 'STAT' then frequency_index else coalesce(urgency_index,9) end as urgency_index, v.name as order_by
 ";
@@ -323,22 +318,11 @@ class AdmissionTaskController extends Controller
 					
 			$order_ids = $admission_tasks->implode('order_id',',');
 
-			switch($request->group_by) {
-				case "order":
-					$admission_tasks= $admission_tasks->orderBy("product_name")
-													->orderBy('urgency_index')
-													->orderBy('order_created')
-													->paginate($this->paginateValue);
-					break;
-				default: 
-					$admission_tasks= $admission_tasks->orderBy("patient_mrn")
-													->orderBy('urgency_index')
-													->orderBy("product_name")
-													->orderBy('order_created')
-													->paginate($this->paginateValue);
-					break;
-			}
-
+			$admission_tasks= $admission_tasks->orderBy("patient_mrn")
+											->orderBy('urgency_index')
+											->orderBy("product_name")
+											->orderBy('order_created')
+											->paginate($this->paginateValue);
 
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,
@@ -347,7 +331,6 @@ class AdmissionTaskController extends Controller
 					'categories' => $categories,
 					'locations' => QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'category' => $request->categories,
-					'group_by' => $request->group_by,
 					'order_ids' => $order_ids,
 					'show_all' => $request->show_all,
 					'ward_code'=>$request->ward_code,
@@ -356,7 +339,8 @@ class AdmissionTaskController extends Controller
 					'order_helper'=>new OrderHelper(),
 					'multiple_ids'=>'',
 					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
-			]);
+					'encounter_code'=>$encounter_code,
+			])->withCookie(cookie('encounter',$encounter_code, 2628000));
 	}
 
 	public function searchById($id)
@@ -448,7 +432,7 @@ class AdmissionTaskController extends Controller
 			}
 
 			Session::flash('message', 'Record successfully updated.');
-			return redirect('/admission_tasks?group_by='.$request->group_by);
+			return redirect('/admission_tasks');
 			//return redirect()->action('AdmissionTaskController@search', $request);
 	}
 
