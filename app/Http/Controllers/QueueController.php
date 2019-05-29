@@ -47,7 +47,13 @@ class QueueController extends Controller
 			if (!empty($request->cookie('queue_location'))) {
 					$location_code = $request->cookie('queue_location');
 					$location = QueueLocation::find($location_code);
+					if (empty($location)) {
+						$location = null;
+						$location_code = null;
+					}
 			}
+
+
 
 			/**
 			if (empty($request->cookie('queue_location')) & empty(Auth::user()->location_code)) {
@@ -75,9 +81,11 @@ class QueueController extends Controller
 			$encounter_code = null;
 			$locations = Location::whereNotNull('encounter_code');
 
-			if (!empty($request->cookie('queue_location'))) {
+			if (!empty($location)) {
 					$locations = $locations->where('encounter_code', $location->encounter_code);
-					$encounter_code = $location->encounter_code;
+					if (!empty($locations)) {
+						$encounter_code = $location->encounter_code;
+					}
 			}
 
 			$locations = $locations->orderBy('location_name')
@@ -223,6 +231,12 @@ class QueueController extends Controller
 							->where('encounter_code', $request->encounter_code)
 							->orderBy('location_name')
 							->lists('location_name', 'location_code')->prepend('','');
+
+			if (empty($request->encounter_code)) {
+					$locations = Location::whereNotNull('encounter_code')
+							->orderBy('location_name')
+							->lists('location_name', 'location_code')->prepend('','');
+			}
 
 			$encounters = EncounterType::all()->lists('encounter_name', 'encounter_code')
 					->sortBy('encounter_name')

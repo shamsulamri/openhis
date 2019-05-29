@@ -36,7 +36,6 @@ class PurchaseController extends Controller
 					->where('author_id', '=', Auth::user()->author_id)
 					->orderBy('purchase_id', 'desc');
 
-
 			$purchases = $purchases->paginate($this->paginateValue);
 
 			return view('purchases.index', [

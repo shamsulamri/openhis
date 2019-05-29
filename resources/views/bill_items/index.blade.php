@@ -13,6 +13,11 @@ Interim Bill
 <h3>
 Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 </h3>
+@if ($encounter->queue)
+<h3>
+{{ $encounter->queue->location->location_name }}
+</h3>
+@endif
 @if (!$encounter->discharge && !$billPosted)
 	<div class='alert alert-warning'>
 	Click Reload button to compile latest bill items.

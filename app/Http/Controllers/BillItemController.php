@@ -260,8 +260,7 @@ class BillItemController extends Controller
 				left join encounters as g on (g.encounter_id=a.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
-				where order_completed = 1 
-				and b.deleted_at is null
+				where b.deleted_at is null
 				%s
 				and b.category_code<>'consultation'
 				and h.patient_id = %d

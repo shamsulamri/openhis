@@ -335,6 +335,7 @@ class OrderProductController extends Controller
 								->prepend('','');
 			}
 
+			Log::info($categories);
 			return $categories;
 	}
 }

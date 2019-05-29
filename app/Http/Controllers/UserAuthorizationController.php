@@ -36,11 +36,15 @@ class UserAuthorizationController extends Controller
 
 	public function create()
 	{
+			$encounters = EncounterType::all();
+			$categories = ProductCategory::all();
 			$user_authorization = new UserAuthorization();
 			return view('user_authorizations.create', [
 					'user_authorization' => $user_authorization,
 					'location' => QueueLocation::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'encounters' => $encounters,
+					'categories' => $categories,
 					]);
 	}
 

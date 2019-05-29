@@ -18,10 +18,8 @@
 			</div>
 			</div>
 	</div>
-	@if (count($categories)>2)
 	<br>
 	{{ Form::select('categories', $categories, $category_code, ['id'=>'categories','class'=>'form-control']) }}
-	@endif
 	@can('module-consultation')
 	<br>	
 	<div class="row">

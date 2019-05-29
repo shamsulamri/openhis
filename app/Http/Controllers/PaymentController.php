@@ -170,7 +170,7 @@ class PaymentController extends Controller
 					}
 			} else {
 					$payment = new Payment($request->all());
-					return $valid->errors();
+					//return $valid->errors();
 					return redirect('/payments/create/'.$payment->patient_id.'/'.$payment->encounter_id.'/'.$payment->payment_non_claimable)
 							->withErrors($valid)
 							->withInput();

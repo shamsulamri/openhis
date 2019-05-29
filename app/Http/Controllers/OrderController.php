@@ -133,9 +133,9 @@ class OrderController extends Controller
 					->orderBy('b.category_code')
 					->orderBy('a.created_at', 'desc');
 
-			if (Auth::user()->authorization->module_support != 1) {
+			//if (Auth::user()->authorization->module_support != 1) {
 					$orders = $orders->where('a.user_id','=',Auth::user()->id);
-			}
+			//}
 
 			if ($encounter->admission) {
 				$orders = $orders->where('ward_code', $encounter->admission->bed->ward_code);
@@ -149,7 +149,7 @@ class OrderController extends Controller
 			 */
 
 			if (Auth::user()->authorization->module_support == 1) {
-					$orders = $orders->where('a.location_code','=', $request->cookie('queue_location'));
+					//$orders = $orders->where('a.location_code','=', $request->cookie('queue_location'));
 			}
 
 			$orders = $orders->paginate($this->paginateValue);

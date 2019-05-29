@@ -8,7 +8,6 @@
 		<br>
 		Dependants
 </a>
-@if (Gate::check('module-patient'))
 <a class='btn btn-default' href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}'>
 						<span class='glyphicon glyphicon-calendar' aria-hidden='true'></span><br>Appointment
 </a>
@@ -22,7 +21,6 @@
 	<br>
 	&nbsp;&nbsp;Prints&nbsp;&nbsp;
 </a>
-@endif
 
 @can('module-discharge')
 		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>

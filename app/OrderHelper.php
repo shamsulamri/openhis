@@ -309,7 +309,7 @@ class OrderHelper
 					$order_investigation->save();
 			}
 
-			Log::info($order->order_quantity_supply);
+			Log::info($order->product_code);
 			return $order->order_id;
 
 	}	
