@@ -219,9 +219,9 @@
 
 			<td widht='10'>
 			<div class='pull-right'>
-			@if (empty($admission->arrival_id))
+			@can('system-administrator')
 					<a class='btn btn-danger' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
-			@endif
+			@endcan
 			@can('module-discharge')
 					@if (!$admission->discharge_id)
 							<a class='btn btn-primary ' href='{{ URL::to('bill_items/'. $admission->encounter_id) }}'>Interim Bill</a>

@@ -83,17 +83,12 @@ $header_count=0;
 				<strong>
 				{{$admission_task->patient_name}} ({{$admission_task->patient_mrn}})
 				</strong>
-			</th>
-			<th>
 				@if ($admission_task->bed_name)
-				<br>
-				<small>
-				{{$admission_task->bed_name}}, {{ $admission_task->ward_name }}
-				</small>
+				<div class='pull-right'>
+				{{$admission_task->bed_name}} ({{ $admission_task->ward_name }})
+				</div>
 				@endif
-
 			</th>
-
 	</tr>
 	@endif
 <?php
