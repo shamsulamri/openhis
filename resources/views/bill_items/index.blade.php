@@ -57,12 +57,18 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Interim Bill</a> 
 <p class='pull-right'>&nbsp;</p>
+<!--
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Simple Invoice</a> 
+-->
 @else
+<p class='pull-right'>&nbsp;</p>
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_receipt&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Receipt</a> 
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Invoice</a> 
 <p class='pull-right'>&nbsp;</p>
+<!--
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Simple Invoice</a> 
+-->
 @endif
 @if ($hasMc) 
 <p class='pull-right'>&nbsp;</p>
@@ -223,10 +229,27 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 			<td align='right'>
 			<?php
 			if ($bill_discount) {
+				$bill_total = $bill_total*(1-($bill_discount->discount_amount/100));
+			}
+			?>
+					<strong>{{ number_format($bill_total,2) }}<strong>
+			</td>
+			@can('system-administrator')
+			<td align='right'>
+			</td>
+			@endcan
+	</tr>
+	<tr>
+			<td colspan=7 align='right'>
+					<strong>Total Payable include tax</strong>
+			</td>
+			<td align='right'>
+			<?php
+			if ($bill_discount) {
 				$bill_grand_total = $bill_grand_total*(1-($bill_discount->discount_amount/100));
 			}
 			?>
-					<strong>{{ DojoUtility::roundUp($bill_grand_total) }}<strong>
+					<strong>{{ number_format($bill_grand_total,2) }}<strong>
 			</td>
 			@can('system-administrator')
 			<td align='right'>

@@ -18,6 +18,13 @@
         </div>
     </div>
 	@endif
+    <div class='form-group  @if ($errors->has('order_custom_id')) has-error @endif'>
+        {{ Form::label('order_custom_id', 'Custom Id',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('order_custom_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_custom_id')) <p class="help-block">{{ $errors->first('order_custom_id') }}</p> @endif
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
         {{ Form::label('order_quantity_supply', 'Quantity Supply',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

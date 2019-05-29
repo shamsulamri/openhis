@@ -5,18 +5,40 @@
 $ids='';
 ?>
 <h1>Order Tasks</h1>
-<form class='form-inline' action='/admission_task/search' method='post'>
+<form class='form-horizontal' action='/admission_task/search' method='post'>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Location</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('location_code', $locations, $location_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Ward</label>
+						<div class='col-sm-9'>
+							{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Type</label>
+						<div class='col-sm-9'>
+							{{ Form::select('categories', $categories, $category, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+	</div>
+	<!--
 	{{ Form::select('encounter_code', $encounter_type, $encounter_code, ['id'=>'encounter','class'=>'form-control','onchange'=>'checkTriage()']) }}
-	<label>Location&nbsp;</label>
-	{{ Form::select('location_code', $locations, $location_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Ward&nbsp;</label>
-	{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
-	<label>Type&nbsp;</label>
-	{{ Form::select('categories', $categories, $category, ['class'=>'form-control','maxlength'=>'10']) }}
 	{{ Form::checkbox('show_all',1, $show_all, ['class'=>'form-control']) }} 
 	<label>
 	Show All
 	</label>
+	-->
 
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 

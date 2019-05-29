@@ -29,6 +29,10 @@ class BillHelper
 
 			$bill_grand_total = $bill_grand_total->sum('bill_amount');
 
+			$bill_discount = BillDiscount::where('encounter_id', $encounter_id)->first();
+
+			$bill_grand_total = $bill_grand_total*(1-($bill_discount->discount_amount/100));
+
 			$payment_total = DB::table('payments as a')
 					->where('patient_id','=', $patient_id)
 					->where('encounter_id','=', $encounter_id)
@@ -41,7 +45,7 @@ class BillHelper
 					->sum('deposit_amount');
 			
 			log::info($deposit_total);
-			return $bill_grand_total-$deposit_total-$payment_total;
+			return DojoUtility::roundUp10($bill_grand_total)-$deposit_total-$payment_total;
 	}
 
 	public function agingPatient($group) {

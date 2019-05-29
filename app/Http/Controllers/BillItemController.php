@@ -650,7 +650,7 @@ class BillItemController extends Controller
 			return view('bill_items.index', [
 					'bills'=>$bills,
 					'billPosted'=>$billPosted,
-					'bill_grand_total'=>$bill_grand_total,
+					'bill_grand_total'=>DojoUtility::roundUp10($bill_grand_total),
 					'bill_total'=>$bill_grand_total,
 					'patient' => $encounter->patient,
 					'payments' => $payments,

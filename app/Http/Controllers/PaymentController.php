@@ -187,6 +187,18 @@ class PaymentController extends Controller
 			}
 
 			$encounter = Encounter::find($payment->encounter_id);
+
+			$discharges = Discharge::select('discharges.encounter_id', 'discharge_date')
+					->where('b.patient_id',$payment->patient_id)
+					->leftJoin('encounters as b', 'b.encounter_id', '=', 'discharges.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
+					->lists('encounter_id','encounter_id');
+
+			$bills = Bill::where('patient_id', $payment->patient_id)
+						->select('id as bill_id')
+						->leftJoin('encounters as b', 'b.encounter_id', '=', 'bills.encounter_id')
+						->lists('bill_id','bill_id');
+				
 			return view('payments.edit', [
 					'payment'=>$payment,
 					'payment_methods' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
@@ -202,6 +214,8 @@ class PaymentController extends Controller
 					'credit'=> $credit,
 					'non_claimable' => $payment->payment_non_claimable,
 					'edit' => true,
+					'discharges' => $discharges,
+					'bills' => $bills,
 					]);
 	}
 

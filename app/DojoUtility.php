@@ -293,6 +293,12 @@ class DojoUtility
 				})->export('csv');
 		}
 
+		public static function roundUp10($value) {
+				$newvalue = ceil($value/1)*1;
+
+				return number_format($newvalue,2);
+		}
+
 		public static function roundUp($value) {
 				$value = str_replace(",", "", $value);
 				$valueInString = strval(round($value,2));

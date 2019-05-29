@@ -2,7 +2,10 @@
 
 @section('content')
 <h1>Ward List
-<a href='/wards/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+<div class='pull-right'>
+<a href='/wards/forget' class='btn btn-primary'><span class='fa fa-stop-circle'></span></a>
+<a href='/wards/create' class='btn btn-primary'><span class='glyphicon glyphicon-plus'></span></a>
+</div>
 </h1>
 <form action='/ward/search' method='post'>
 	<div class='input-group'>

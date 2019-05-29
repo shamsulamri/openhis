@@ -36,22 +36,18 @@ class AdmissionTaskController extends Controller
 
 	public function index(Request $request)
 	{
-			if (empty($request->cookie('ward'))) {
-					Session::flash('message', 'Ward not set. Please select your ward.');
-					return redirect('/wards');
-			}
 
-			if (Auth::user()->authorization->module_support==1) { 
-					$ward_code = $request->ward_code; 
-			} else {
+			$ward_code = null;
+			if (!empty($request->cookie('ward'))) {
 					$ward_code=$request->cookie('ward');
 			}
 
-			if (!empty(Auth::user()->authorization->location_code)) {
-				$location_code = Auth::user()->authorization->location_code;
-			} else {
+			$location_code = null;
+
+			if (!empty($request->cookie('queue_location'))) {
 				$location_code = $request->cookie('queue_location');
 			}
+
 			$location = QueueLocation::find($location_code);
 
 			$encounter_code = $request->cookie('encounter')?:null;
@@ -82,6 +78,13 @@ class AdmissionTaskController extends Controller
 					->whereNull('k.id')
 					->whereNull('cancel_id');
 
+			if ($location_code) {
+					$admission_tasks = $admission_tasks->where('v.location_code', '=', $location_code);
+			}
+
+			if ($ward_code) {
+					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
+			}
 					//->where('b.encounter_code','<>', 'outpatient')
 			$admission_tasks= $admission_tasks->orderBy("patient_mrn")
 					->orderBy('urgency_index')
@@ -142,8 +145,8 @@ class AdmissionTaskController extends Controller
 					'category' => '',
 					'order_ids' => $order_ids,
 					'show_all' => null,
-					'ward_code'=>null,
-					'location_code'=>null,
+					'ward_code'=>$ward_code,
+					'location_code'=>$location_code,
 					'location'=>Location::find($location_code),
 					'order_helper'=>new OrderHelper(),
 					'multiple_ids'=>'',
@@ -233,22 +236,6 @@ class AdmissionTaskController extends Controller
 	
 	public function search(Request $request)
 	{
-			if (Auth::user()->authorization->module_support==1) { 
-					$ward_code = $request->ward_code; 
-			} else {
-					$ward_code=$request->cookie('ward');
-			}
-
-			//$location_code = $request->cookie('queue_location');
-
-			if (!empty(Auth::user()->authorization->location_code)) {
-				$location_code = Auth::user()->authorization->location_code;
-			} else {
-				$location_code = $request->cookie('queue_location');
-			}
-
-			$location = QueueLocation::find($location_code);
-
 			$encounter_code = $request->encounter_code;
 
 			$sql_select = "
@@ -292,7 +279,7 @@ class AdmissionTaskController extends Controller
 			}
 
 			if ($request->ward_code) {
-					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
+					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $request->ward_code);
 			}
 
 
@@ -334,7 +321,7 @@ class AdmissionTaskController extends Controller
 					'show_all' => $request->show_all,
 					'ward_code'=>$request->ward_code,
 					'location_code'=>$request->location_code,
-					'location'=>Location::find($location_code),
+					'location'=>Location::find($request->location_code),
 					'order_helper'=>new OrderHelper(),
 					'multiple_ids'=>'',
 					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),

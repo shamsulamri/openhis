@@ -601,6 +601,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/order_tasks/delete/{id}', 'OrderTaskController@delete');
 
 		Route::get('/wards/set/{id}', 'WardController@setWard');
+		Route::get('/wards/forget', 'WardController@forgetCookie');
 		Route::resource('wards', 'WardController');
 		Route::get('/wards/id/{id}', 'WardController@searchById');
 		Route::post('/ward/search', 'WardController@search');

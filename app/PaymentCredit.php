@@ -37,14 +37,16 @@ class PaymentCredit extends Model
 				'credit_expiry_year'=>'required',
 				'credit_first_name'=>'required',
 				'credit_last_name'=>'required',
+			];
+
+			/*
 				'credit_address_1'=>'required',
 				'credit_address_2'=>'required',
 				'credit_city'=>'required',
 				'credit_postcode'=>'required',
 				'nation_code'=>'required',
 				'credit_phone_number'=>'required',
-			];
-
+			*/
 			
 			
 			$messages = [

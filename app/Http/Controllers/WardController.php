@@ -146,6 +146,12 @@ class WardController extends Controller
 					//->withCookie(\Cookie::forget('queue_location'));
 	}
 
+	public function forgetCookie() {
+			Session::flash('message', 'Ward detached.');
+			return redirect('/wards')
+				->withCookie(\Cookie::forget('ward'));
+	}
+
 	public function getWard(Request $request)
 	{
 			return $request->cookie('ward');

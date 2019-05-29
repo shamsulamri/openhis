@@ -23,11 +23,13 @@
 </a>
 
 @can('module-discharge')
+		<!--
 		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
 				<span class='fa fa-money' aria-hidden='true'></span>
 				<br>
 				Payment 
 		</a>
+		-->
 		@if ($patient->hasActiveEncounter()) 
 		<a class='btn btn-default'  href='{{ URL::to('deposits/index/'. $patient->hasActiveEncounter()->encounter_id) }}'>
 				<span class='fa fa-money' aria-hidden='true'></span>
@@ -35,11 +37,13 @@
 				Deposit 
 		</a>
 		@endif
+		<!--
 		<a class='btn btn-default'  href='{{ URL::to('refund/transactions/'. $patient->patient_id) }}'>
 				<span class='fa fa-money' aria-hidden='true'></span>
 				<br>
 				Refund 
 		</a>
+		-->
 @endcan
 
 @can('module-medical-record')

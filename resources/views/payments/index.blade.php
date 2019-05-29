@@ -37,18 +37,16 @@
 			<td>
 					{{ number_format($payment->payment_amount,2) }}
 			</td>
+			<td align='right'>
+<!--
 			@if ($payment->encounter_id==0)
-			<td align='right'>
 					<a class="btn btn-default btn-xs pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=receipt&id={{ $payment->payment_id }}" role="button">Print Receipt</a> 
-			</td>
 			@endif
-			<td align='right'>
+-->
 				<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=payment_receipt&id={{ $payment->payment_id }}'>
 				Print Receipt
 				</a>
-			@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('payments/delete/'. $payment->payment_id) }}'>Delete</a>
-			@endcan
 			</td>
 	</tr>
 @endforeach
