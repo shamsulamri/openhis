@@ -839,13 +839,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/appointment_service/search', 'AppointmentServiceController@search');
 		});
 
-		Route::group(['middleware' => 'patient'], function () {
-
 				Route::resource('encounters', 'EncounterController');
 				Route::get('/encounters/id/{id}', 'EncounterController@searchById');
 				Route::post('/encounter/search', 'EncounterController@search');
 				Route::get('/encounter/search', 'EncounterController@search');
 				Route::get('/encounters/delete/{id}', 'EncounterController@delete');
+
+		Route::group(['middleware' => 'patient'], function () {
+
 
 				/*
 				Route::resource('queues', 'QueueController');

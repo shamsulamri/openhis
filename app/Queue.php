@@ -25,8 +25,11 @@ class Queue extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
-				'location_code'=>'required',
 			];
+
+        	if ($method=='') {
+        	    $rules['location_code'] = 'required';
+        	}
 
 			$messages = [
 				'required' => 'This field is required'

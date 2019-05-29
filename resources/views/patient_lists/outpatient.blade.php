@@ -6,7 +6,7 @@
 		<tr>
 			<th>Date</th>
 			<th>Patient</th>
-			<th>Room</th>
+			<th>Description / Queue Number</th>
 		</tr>
  		</thead>
 		<tbody>
@@ -42,7 +42,7 @@
 						<small>{{ $list->patient_mrn }}</small>
 					</td>
 					<td>
-						{{ $list->location_name }}
+						{{ $list->encounter_description }}
 					</td>
 					<td align='right'>
 							@if (empty($list->discharge_id))

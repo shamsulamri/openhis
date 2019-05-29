@@ -56,7 +56,6 @@
 @endcan
 
 
-@can('module-patient')
 @if ($patient->patient_block==0)
 <a class='btn btn-primary pull-right @If ($patient->hasActiveEncounter()) disabled @endif' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
 <span class='fa fa-stethoscope' aria-hidden='true'></span>
@@ -64,4 +63,3 @@
 Encounter
 </a>
 @endif
-@endcan

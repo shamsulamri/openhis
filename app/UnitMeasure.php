@@ -40,6 +40,7 @@ class UnitMeasure extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	/*
 	public function getUnitShortnameAttribute($value)
 	{
 			if (empty($value)) {
@@ -48,6 +49,6 @@ class UnitMeasure extends Model
 					return $value;
 			}	
 	}	
-
+	*/
 	
 }

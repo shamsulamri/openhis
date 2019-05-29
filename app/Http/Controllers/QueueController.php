@@ -62,6 +62,7 @@ class QueueController extends Controller
 			}
 			**/
 
+			/**
 			$queues = DB::table('queues as a')
 					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.location_code', 'a.created_at', 'a.encounter_id')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
@@ -71,9 +72,19 @@ class QueueController extends Controller
 					->whereNull('discharge_id')
 					->whereNull('a.deleted_at')
 					->orderBy('a.created_at');
+			**/
+
+			$queues = Queue::select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'queues.location_code', 'queues.created_at', 'queues.encounter_id')
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'queues.encounter_id')
+					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftjoin('queue_locations as d', 'd.location_code','=', 'queues.location_code')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->whereNull('discharge_id')
+					->whereNull('queues.deleted_at')
+					->orderBy('queues.created_at');
 
 			if (!empty($location_code)) {
-					$queues = $queues->where('a.location_code','=',$location_code);
+					$queues = $queues->where('queues.location_code','=',$location_code);
 			}
 
 			$queues = $queues->paginate($this->paginateValue);
@@ -152,7 +163,6 @@ class QueueController extends Controller
 			$encounter = Encounter::findOrFail($queue->encounter_id);
 			$locations = Location::where('encounter_code',$encounter->encounter_code)->orderBy('location_name')->get();
 			$location = Location::where('encounter_code',$encounter->encounter_code)
-					->where('location_code','<>', $queue->location_code)
 					->orderBy('location_name')
 					->lists('location_name', 'location_code');
 
@@ -167,9 +177,13 @@ class QueueController extends Controller
 
 	public function update(Request $request, $id) 
 	{
+
 			$queue = Queue::findOrFail($id);
 			$queue->fill($request->input());
+			$encounter = $queue->encounter;
 
+			$encounter->encounter_description = $request->encounter_description;
+			$encounter->save();
 
 			$valid = $queue->validate($request->all(), $request->_method);	
 
@@ -203,6 +217,7 @@ class QueueController extends Controller
 	
 	public function search(Request $request)
 	{
+			/*
 			$queues = DB::table('queues as a')
 					->select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'a.created_at', 'a.encounter_id', 'a.location_code')
 					->join('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
@@ -213,6 +228,18 @@ class QueueController extends Controller
 					->where('patient_name', 'like','%'.$request->search.'%')
 					->whereNull('discharge_id')
 					->orderBy('a.created_at');
+			 */
+
+			$queues = Queue::select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'queues.location_code', 'queues.created_at', 'queues.encounter_id')
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'queues.encounter_id')
+					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftjoin('queue_locations as d', 'd.location_code','=', 'queues.location_code')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->whereNull('discharge_id')
+					->whereNull('queues.deleted_at')
+					->where('queues.location_code','like','%'.$request->locations.'%')
+					->where('patient_name', 'like','%'.$request->search.'%')
+					->orderBy('queues.created_at');
 
 			if ($request->encounter_code) {
 					$queues = $queues->where('b.encounter_code', $request->encounter_code);

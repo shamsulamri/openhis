@@ -202,7 +202,9 @@ if ($_COOKIE['his-navbar']==1) {
 										<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 								@endcannot
 										<li><a title='Patient List' href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
+										<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 										<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
+										<li><a title="Patient Tasks" href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Patient Tasks</a></li>
 						@endcan
 
 						<!-- Diet Module -->
@@ -231,7 +233,6 @@ if ($_COOKIE['his-navbar']==1) {
 <!--
 						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-question-circle-o'></i><span class='nav-label'>Order Queues</span></a></li>
 -->
-						<li><a title="Admission Tasks" href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Admission Tasks</a></li>
 						@if (!empty($ward->ward_code))
 								@if ($ward->ward_code != 'mortuary')
 								<!--

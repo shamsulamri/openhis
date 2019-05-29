@@ -70,7 +70,7 @@ class AdmissionTaskController extends Controller
 					->leftjoin('order_drugs as h', 'h.order_id', '=', 'a.order_id')
 					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
 					->leftjoin('order_cancellations as j', 'j.order_id', '=', 'a.order_id')
-					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
+					->leftjoin('bills as k', 'k.encounter_id','=','b.encounter_id')
 					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
 					->leftjoin('order_drugs as q', 'q.order_id', '=', 'a.order_id')
 					->leftjoin('order_investigations as r', 'r.order_id', '=', 'a.order_id')
@@ -78,11 +78,11 @@ class AdmissionTaskController extends Controller
 					->leftjoin('drug_frequencies as t', 't.frequency_code', '=', 'q.frequency_code')
 					->leftJoin('consultations as u', 'u.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('users as v', 'v.id', '=', 'u.user_id')
-					->where('b.encounter_code','<>', 'outpatient')
 					->where('a.product_code','<>','consultation_fee')
-					->where('d.product_drop_charge','=',0)
+					->whereNull('k.id')
 					->whereNull('cancel_id');
 
+					//->where('b.encounter_code','<>', 'outpatient')
 			$admission_tasks= $admission_tasks->orderBy("patient_mrn")
 					->orderBy('urgency_index')
 					->orderBy("product_name")
@@ -252,7 +252,7 @@ class AdmissionTaskController extends Controller
 			$encounter_code = $request->encounter_code;
 
 			$sql_select = "
- a.order_id, a.order_completed,order_multiple, a.updated_at, a.created_at,patient_name, patient_mrn, bed_name,a.product_code,product_name,c.patient_id, i.name, ward_name, a.encounter_id,updated_by,cancel_id,category_code,stop_id, product_duration_use,q.id as order_drug_id, a.created_at as order_created,urgency_name,q.frequency_code, case when t.frequency_code = 'STAT' then frequency_index else coalesce(urgency_index,9) end as urgency_index, v.name as order_by
+ a.order_id, a.order_completed,order_multiple, a.updated_at, a.created_at,patient_name, patient_mrn, bed_name,a.product_code,product_name,c.patient_id, i.name, ward_name, a.encounter_id,updated_by,cancel_id,category_code,stop_id, product_duration_use,q.id as order_drug_id, a.created_at as order_created,urgency_name,q.frequency_code, case when t.frequency_code = 'STAT' then frequency_index else coalesce(urgency_index,9) end as urgency_index, v.name as order_by, v.location_code
 ";
 			$admission_tasks = DB::table('orders as a')
 					->selectRaw($sql_select)
@@ -265,7 +265,7 @@ class AdmissionTaskController extends Controller
 					->leftjoin('order_drugs as h', 'h.order_id', '=', 'a.order_id')
 					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
 					->leftjoin('order_cancellations as j', 'j.order_id', '=', 'a.order_id')
-					->leftjoin('discharges as k', 'k.encounter_id','=','b.encounter_id')
+					->leftjoin('bills as k', 'k.encounter_id','=','b.encounter_id')
 					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
 					->leftjoin('order_drugs as q', 'q.order_id', '=', 'a.order_id')
 					->leftjoin('order_investigations as r', 'r.order_id', '=', 'a.order_id')
@@ -273,9 +273,8 @@ class AdmissionTaskController extends Controller
 					->leftjoin('drug_frequencies as t', 't.frequency_code', '=', 'q.frequency_code')
 					->leftJoin('consultations as u', 'u.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('users as v', 'v.id', '=', 'u.user_id')
-					->where('b.encounter_code','<>', 'outpatient')
 					->where('a.product_code','<>','consultation_fee')
-					->where('d.product_drop_charge','=',0)
+					->whereNull('k.id')
 					->whereNull('cancel_id');
 
 			$categories = ProductCategory::select('category_name', 'category_code')
@@ -289,7 +288,7 @@ class AdmissionTaskController extends Controller
 			}
 
 			if ($request->location_code) {
-					$admission_tasks = $admission_tasks->where('a.location_code', '=', $location_code);
+					$admission_tasks = $admission_tasks->where('v.location_code', '=', $request->location_code);
 			}
 
 			if ($request->ward_code) {
