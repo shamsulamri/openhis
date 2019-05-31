@@ -22,6 +22,7 @@
 		<a class='btn btn-default btn-sm' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
 		<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
 		<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Request</a>
 		<br><br>
 	@endif
 @endif

@@ -86,11 +86,11 @@ class PurchaseLine extends Model
 	{
 			$balance = null;
 			$total = $this->line_quantity;
-			if (!$this->reference_id) {
+			if (!empty($this->reference_id)) {
 					$balance = PurchaseLine::where('reference_id', $this->line_id)
 							->sum('line_quantity');
 					$total = $total - $balance;
-			}
+			} 
 
 			return $total;
 	}

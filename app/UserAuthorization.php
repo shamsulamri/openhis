@@ -35,6 +35,7 @@ class UserAuthorization extends Model
 				'appointment_function',
 				'queue_encounters',
 				'queue_categories',
+				'document_postfix',
 				'system_administrator'];
 	
     protected $guarded = ['author_id'];

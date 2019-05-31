@@ -76,6 +76,8 @@ class PurchaseLineController extends Controller
 
 			if ($reason == 'purchase') {
 					return redirect('/purchases/master_document?reason=purchase&reload=true&purchase_id='.$to);
+			} elseif ($reason =='request') {
+					return redirect('/purchases/master_document?reason=request&reload=true&move_id='.$to);
 			} else {
 					return redirect('/purchases/master_document?reason=stock&reload=true&move_id='.$to);
 			}
@@ -154,7 +156,12 @@ class PurchaseLineController extends Controller
 
 			$purchase_lines = PurchaseLine::orderBy('purchase_lines.purchase_id', 'desc')
 					->leftjoin('purchases as b', 'b.purchase_id', '=', 'purchase_lines.purchase_id')
-					->where('purchase_posted',1);
+					->where('purchase_posted',1)
+					->where(function ($query) use ($request) {
+							$query->where('author_id', '=', Auth::user()->author_id)
+									->orWhere('author_id','=', 7);
+					});
+					//->where('author_id', '=', Auth::user()->author_id);
 
 			if ($reason=='purchase') {
 					$purchase = Purchase::find($id);
@@ -362,10 +369,13 @@ class PurchaseLineController extends Controller
 					->leftjoin('products as c', 'c.product_code', '=', 'purchase_lines.product_code')
 					->leftjoin('ref_unit_measures as d', 'd.unit_code', '=', 'purchase_lines.unit_code');
 
-			$purchase_lines = $purchase_lines->where(function ($query) use ($request) {
-					$query->where('purchase_lines.product_code','like','%'.$request->search.'%')
-					->orWhere('purchase_number', 'like','%'.$request->search.'%')
-					->orWhere('product_name', 'like','%'.$request->search.'%');
+			$search = $request->search;
+			$search = trim($search, ' ');
+
+			$purchase_lines = $purchase_lines->where(function ($query) use ($request, $search) {
+					$query->where('purchase_lines.product_code','like','%'.$search.'%')
+					->orWhere('purchase_number', 'like','%'.$search.'%')
+					->orWhere('product_name', 'like','%'.$search.'%');
 			});
 
 			$purchase_lines = $purchase_lines->where('purchase_posted',1);

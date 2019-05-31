@@ -394,11 +394,13 @@ class OrderHelper
 
 			if ($order_drug) {
 					if ($order_drug->drug_strength>0) {
-						$description .= $order_drug->drug_strength." ".$order_drug->unit->unit_name.", ";
+							$description .= $order_drug->drug_strength;
+							if ($order_drug->unit) { $description .= " ".$order_drug->unit->unit_name.", "; }
 					}
 
 					if ($order_drug->drug_dosage>0) {
-						$description .= $order_drug->drug_dosage." ".$order_drug->dosage->dosage_name.", ";
+							$description .= $order_drug->drug_dosage;
+							if ($order_drug->dosage) { $description .= " ".$order_drug->dosage->dosage_name.", "; }
 					}
 
 					if ($order_drug->route) {

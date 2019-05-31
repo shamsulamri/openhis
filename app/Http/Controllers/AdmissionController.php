@@ -582,7 +582,7 @@ class AdmissionController extends Controller
 					'admission_code'=>null,
 					'wardHelper'=> $wardHelper,
 					'bedHelper'=> new BedHelper(),
-					'ward_code'=>$ward_code,
+					'ward_code'=>$request->ward_code,
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 			]);
 

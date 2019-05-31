@@ -40,7 +40,7 @@ $stock_limit = $product->getStockLimits($store_code);
 					<div class='form-group'>
 						{{ Form::label('unit_code', 'Unit',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('unit_code', $product->unit->unit_name?:'-', ['class'=>'form-control']) }}
+            				{{ Form::label('unit_code', $product->unit?$product->unit->unit_name:'-', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>

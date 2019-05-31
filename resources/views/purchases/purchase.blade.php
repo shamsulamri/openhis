@@ -35,7 +35,7 @@
     <div class='form-group  @if ($errors->has('purchase_reference')) has-error @endif'>
         {{ Form::label('purchase_reference', 'Reference',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('purchase_reference', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'65535']) }}
+            {{ Form::text('purchase_reference', null, ['class'=>'form-control','placeholder'=>'External document such as quotation','maxlength'=>'65535']) }}
             @if ($errors->has('purchase_reference')) <p class="help-block">{{ $errors->first('purchase_reference') }}</p> @endif
         </div>
     </div>

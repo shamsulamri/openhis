@@ -392,6 +392,7 @@ class ProductController extends Controller
 				$sql = $sql." and b.category_code = '".$request->category_code."'";
 			}
 
+			return $sql;
 			$data = DB::select($sql);
 
 			if ($request->export_report) {

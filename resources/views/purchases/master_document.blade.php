@@ -12,9 +12,18 @@
 		<a class='btn btn-default btn-sm' href='/product_searches?reason=purchase&type=reorder&purchase_id={{ $purchase->purchase_id }}'>Reorder</a>
 	@endif
 @else
-<a class='btn btn-default' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
-<a class='btn btn-default' href='/purchases/master_document?reason=stock&move_id={{ $movement->move_id }}'>Documents</a>
-<a class='btn btn-default' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a> 
+	@if ($reason == 'request')
+<a class='btn btn-default btn-sm' href='/inventory_movements/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
+<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
+<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Request</a>
+		
+	@else
+		<a class='btn btn-default btn-sm' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=stock&move_id={{ $movement->move_id }}'>Documents</a>
+		<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a> 
+<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Request</a>
+	@endif
 @endif
 <br><br>
 <form action='/purchase/master_search' method='post'>
@@ -79,10 +88,10 @@
 	var frameLine = parent.document.getElementById('frameLine');
 
 	@if($reload=='true')
-			@if($reason=='stock')
-					frameLine.src='/inventories/detail/{{ $movement->move_id }}';
-			@else
+			@if($reason=='purchase')
 					frameLine.src='/purchase_lines/detail/{{ $purchase->purchase_id }}';
+			@else
+					frameLine.src='/inventories/detail/{{ $movement->move_id }}';
 			@endif
 	@endif
 </script>

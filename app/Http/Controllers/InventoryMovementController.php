@@ -238,12 +238,15 @@ class InventoryMovementController extends Controller
 	public function edit($id) 
 	{
 			$inventory_movement = InventoryMovement::findOrFail($id);
+			$tags = StockTag::select(DB::raw("tag_name, tag_code, move_code"))->get();
 			return view('inventory_movements.edit', [
 					'inventory_movement'=>$inventory_movement,
 					'move' => array(''=>'','stock_adjust'=>'Stock Adjustment', 'stock_receive'=>'Stock Receive', 'stock_issue'=>'Stock Issue'),
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'store_transfer' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'tag' => StockTag::all()->sortBy('tag_name')->lists('tag_name', 'tag_code')->prepend('',''),
+					'target_stores' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'tags' => $tags,
 					]);
 	}
 

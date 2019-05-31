@@ -33,8 +33,11 @@ class PurchaseController extends Controller
 	public function index(Request $request)
 	{
 			$purchases = Purchase::orderBy('purchase_posted')
-					->where('author_id', '=', Auth::user()->author_id)
-					->orderBy('purchase_id', 'desc');
+					->where(function ($query) use ($request) {
+							$query->where('author_id', '=', Auth::user()->author_id)
+								  ->orWhere('status_code', '=', 'approved');
+					});
+			$purchases = $purchases->orderBy('purchase_id', 'desc');
 
 			$purchases = $purchases->paginate($this->paginateValue);
 
@@ -55,7 +58,13 @@ class PurchaseController extends Controller
 
 			$purchases = Purchase::orderBy('purchase_id', 'desc')
 					->where('purchase_id', '<>', $id)
-					->where('purchase_posted','=', 1);
+					->where('purchase_posted','=', 1)
+					->where(function ($query) use ($request) {
+							$query->where('author_id', '=', Auth::user()->author_id)
+									->orWhere('author_id','=', 7);
+					});
+			//		->where('author_id', '=', Auth::user()->author_id);
+
 
 			$purchases = $purchases
 					->where(function ($query) use ($request) {
@@ -63,12 +72,17 @@ class PurchaseController extends Controller
 									->orWhere('status_code','!=', 'declined');
 					});
 
-			//return $purchases->get();
 
 			if ($reason == 'purchase') {
 					$purchase = Purchase::find($request->purchase_id);
 					//$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
 					$id = $request->purchase_id;
+			}
+
+			if ($reason == 'request') {
+				$purchases = Purchase::where('document_code', '=', 'purchase_request');
+				$id = $request->move_id;
+				$movement = InventoryMovement::find($request->move_id);		
 			}
 
 			$purchases = $purchases->paginate($this->paginateValue);
@@ -181,7 +195,11 @@ class PurchaseController extends Controller
 
 			$number = str_pad($id, 8, '0', STR_PAD_LEFT);
 
-			$purchase->purchase_number = $prefix. '-'.$number;
+			$postfix = Auth::user()->authorization->document_postfix;
+			if (!empty($postfix)) {
+					$postfix = '-'.$postfix;
+			}
+			$purchase->purchase_number = $prefix. '-'.$number.''.$postfix;
 			$purchase->save();
 
 			$affected = DB::update('update '.$table.' set document_number= ? where id=?', [$purchase->purchase_number, $id]);

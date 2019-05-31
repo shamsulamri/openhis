@@ -30,6 +30,7 @@ class ConsultationProcedureController extends Controller
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftjoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
+					->where('d.patient_id', $consultation->encounter->patient->patient_id)
 					->orderBy('c.encounter_id', 'desc')
 					->orderBy('procedure_is_principal', 'desc')
 					->paginate($this->paginateValue);

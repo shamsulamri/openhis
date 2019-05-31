@@ -27,7 +27,7 @@ use App\EncounterType;
 
 class AdmissionTaskController extends Controller
 {
-	public $paginateValue=10;
+	public $paginateValue=1000;
 
 	public function __construct()
 	{
@@ -86,7 +86,7 @@ class AdmissionTaskController extends Controller
 					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
 			}
 					//->where('b.encounter_code','<>', 'outpatient')
-			$admission_tasks= $admission_tasks->orderBy("patient_mrn")
+			$admission_tasks= $admission_tasks->orderBy("bed_name")
 					->orderBy('urgency_index')
 					->orderBy("product_name")
 					->orderBy('order_created');
@@ -304,7 +304,7 @@ class AdmissionTaskController extends Controller
 					
 			$order_ids = $admission_tasks->implode('order_id',',');
 
-			$admission_tasks= $admission_tasks->orderBy("patient_mrn")
+			$admission_tasks= $admission_tasks->orderBy("bed_name")
 											->orderBy('urgency_index')
 											->orderBy("product_name")
 											->orderBy('order_created')

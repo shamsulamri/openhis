@@ -27,7 +27,7 @@
 			<span class='fa fa-tags' aria-hidden='true'></span><br>Stock<br>Batches
 		</a>
 		<a class='btn btn-default' href='{{ URL::to('stock_limit/'. $product->product_code) }}'>
-			<span class='fa fa-cart-plus' aria-hidden='true'></span><br>Stock<br>Limits
+			<span class='fa fa-cart-plus' aria-hidden='true'></span><br>Stock<br>&nbsp;&nbsp;&nbsp;Limits&nbsp;&nbsp;&nbsp;
 		</a>
 @endif
 @can('module-inventory')
@@ -40,9 +40,11 @@
 		<a class='btn btn-default' href='{{ URL::to('explode_assembly/'. $product->product_code) }}'>
 			<span class='glyphicon glyphicon-fire' aria-hidden='true'></span><br>Explode<br>Assembly
 		</a>
+		<!--
 		<a class='btn btn-default' href='{{ URL::to('product_maintenances/'. $product->product_code) }}'>
 			<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span><br>Product<br>Maintenance
 		</a>
+		-->
 @endcan
 
 @can('loan_function')

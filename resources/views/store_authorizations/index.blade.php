@@ -17,7 +17,7 @@
  <thead>
 	<tr> 
     <th>Authorization</th>
-    <th>Category</th> 
+    <th>Store</th> 
 	<th></th>
 	</tr>
   </thead>
