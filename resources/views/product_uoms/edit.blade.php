@@ -2,7 +2,7 @@
 
 @section('content')
 @include('products.id')
-<h1>Edit Unit of Measure</h1>
+<h1>Edit Store Keeping Unit</h1>
 @include('common.errors')
 <br>
 {{ Form::model($product_uom, ['route'=>['product_uoms.update',$product_uom->id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 

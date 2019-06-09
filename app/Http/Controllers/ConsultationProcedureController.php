@@ -326,7 +326,7 @@ class ConsultationProcedureController extends Controller
 
 				}
 
-				$sql .=") and category_code = 'fee_procedure' limit 5";
+				$sql .=") and category_code = 'fee_procedure' limit 10";
 
 				$data = DB::select($sql);
 
@@ -384,36 +384,63 @@ class ConsultationProcedureController extends Controller
 			$html = '';
 			$table_row = '';
 			foreach($procedures as $procedure) {
-				$item_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeProcedure(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $procedure->order_id);
+				$item_remove = '';
+				$item_price = '';
+				$item_discount = '';
+				if ($procedure->user_id == $consultation->user_id) {
+						$item_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeProcedure(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $procedure->order_id);
+				
+						$item_price = sprintf("<input id='price_%s' name='price_%s' class='form-control input-sm small-font' type='text' value='%s'>",
+							$procedure->order_id,
+							$procedure->order_id,
+							$procedure->order_unit_price
+						);
+
+						$item_discount = sprintf("<input id='discount_%s' name='discount_%s' class='form-control input-sm small-font' type='text' value='%s'>",
+							$procedure->order_id,
+							$procedure->order_id,
+							$procedure->order_discount
+						);
+				} else {
+						$item_price = sprintf("<label id='price_%s' name='price_%s' class='form-control input-sm small-font'>%s</label>",
+							$procedure->order_id,
+							$procedure->order_id,
+							$procedure->order_unit_price
+						);
+
+						$item_discount = sprintf("<label id='discount_%s' name='discount_%s' class='form-control input-sm small-font'>%s</label>",
+							$procedure->order_id,
+							$procedure->order_id,
+							$procedure->order_discount
+						);
+				}
+
 				$table_row .=sprintf(" 
 							<tr height=35>
-							        <td width='100'>%s</td>
+							        <td width='100' style='vertical-align:top'>%s</td>
 							        <td>%s</td>
-							        <td width=100><input id='price_%s' name='price_%s' class='form-control input-sm small-font' type='text' value='%s'></td>
+							        <td width=100>%s</td>
 							        <td width=5></td>
-							        <td width=100><input id='discount_%s' name='discount_%s' class='form-control input-sm small-font' type='text' value='%s'></td>
+							        <td width=100>%s</td>
 							        <td width=100>%s</td>
 							</tr>
+							<tr height=10></tr>
 					", 
 					$procedure->product_code,
 					$procedure->product_name.'<br><small>'.$procedure->user->name.'</small>',
-					$procedure->order_id,
-					$procedure->order_id,
-					$procedure->order_unit_price,
-					$procedure->order_id,
-					$procedure->order_id,
-					$procedure->order_discount,
+					$item_price,
+					$item_discount,
 					$item_remove
 				);
 			}
 
 			if (empty($table_row)) {
-				$html = "<br>";
+				$html = "";
 			} else {
 					$html = sprintf("
-					<table class='table table-hover'>
+					<table width='%s'>
 						 <thead>
-							<tr>
+							<tr height=35>
 									<th>Code</th>
 									<th>Procedure</th>
 									<th>Price (RM)</th>
@@ -423,7 +450,7 @@ class ConsultationProcedureController extends Controller
 						  </thead>
 							%s
 					</table>
-				", '%', $table_row);
+				", '100%', '%', $table_row);
 			}
 
 			return $html;

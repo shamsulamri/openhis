@@ -191,19 +191,20 @@ if ($_COOKIE['his-navbar']==1) {
 						@endcan
 						<!-- Consultation Module -->
 						@can('module-consultation')
-								@if (!Auth::user()->consultant)
+								@cannot('discharge_patient')
 								<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-users"></i><span class='nav-label'>Queues</span></a></li>
-								@endif
-								@cannot('module-ward')
-						<div class="dropdown profile-element"> 
-								<h4>&nbsp;Consultation</h4>
-						</div>
-										<li><a title='Patient List' href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
-										<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 								@endcannot
+								@cannot('module-ward')
+								<div class="dropdown profile-element"> 
+										<h4>&nbsp;Consultation</h4>
+								</div>
+										<li><a title='Patient List' href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
+								@endcannot
+								@cannot('discharge_patient')
 										<li><a title='Patient List' href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
-										<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
+								@endcannot
 										<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
+										<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 								@cannot('module-support')
 										<li><a title="Order Tasks" href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Order Tasks</a></li>
 								@endcannot
@@ -262,6 +263,7 @@ if ($_COOKIE['his-navbar']==1) {
 						-->
 						<li><a title='Purchases' href="{{ url('/purchases') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchases</span></a></li>
 						<li><a title='Stock Movements' href="{{ url('/inventory_movements') }}"><i class='fa fa-truck'></i><span class='nav-label'>Stock Movements</span></a></li>
+						<li><a title='Unit Measures' href="{{ url('/unit_measures') }}"><i class='fa fa-gear'></i><span class='nav-label'>Unit Measures</span></a></li>
 <!--
 						<li><a title='Order Sets' href="{{ url('/sets') }}"><i class='fa fa-medkit'></i><span class='nav-label'>Order Sets</span></a></li>
 						<li><a title='Product Authorizations' href="{{ url('/product_authorizations') }}"><i class='fa fa-crosshairs'></i><span class='nav-label'>Product Authorizations</span></a></li>

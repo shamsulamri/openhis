@@ -4,7 +4,7 @@
     <div class='form-group  @if ($errors->has('product_name')) has-error @endif'>
         <label for='product_name' class='col-sm-2 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-            {{ Form::text('product_name', null, ['id'=>'product_name','class'=>'form-control','placeholder'=>'','maxlength'=>'200','style'=>'text-transform: uppercase']) }}
+            {{ Form::text('product_name', null, ['id'=>'product_name','class'=>'form-control','placeholder'=>'','maxlength'=>'250','style'=>'text-transform: uppercase']) }}
             @if ($errors->has('product_name')) <p class="help-block">{{ $errors->first('product_name') }}</p> @endif
         </div>
     </div>
@@ -13,7 +13,7 @@
         <label for='product_name_other' class='col-sm-2 control-label'>Other</label>
         <div class='col-sm-10'>
             {{ Form::text('product_name_other', null, ['id'=>'product_name_other','class'=>'form-control','placeholder'=>'Long, generic or other name for the product
-','maxlength'=>'200']) }}
+','maxlength'=>'250']) }}
             @if ($errors->has('product_name_other')) <p class="help-block">{{ $errors->first('product_name_other') }}</p> @endif
         </div>
     </div>
@@ -28,6 +28,7 @@
 						</div>
 					</div>
 			</div>
+			<!--
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
 						{{ Form::label('unit_code', 'Unit',['class'=>'col-sm-4 control-label']) }}
@@ -37,6 +38,7 @@
 						</div>
 					</div>
 			</div>
+			-->
 	</div>
 
 

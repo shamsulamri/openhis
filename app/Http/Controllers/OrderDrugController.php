@@ -106,8 +106,10 @@ class OrderDrugController extends Controller
 	public function updateDrug(Request $request)
 	{
 			$order_id = $request->order_id;
+			Log::info($order_id);
 			$drug = OrderDrug::where('order_id', $order_id)->first();
 			if ($drug) {
+					Log::info('Update drug............');
 					$drug->drug_strength = $request->drug_strength;
 					$drug->unit_code = $request->unit_code;
 					$drug->drug_dosage = $request->drug_dosage;
@@ -261,14 +263,14 @@ class OrderDrugController extends Controller
 							        <td width=80 style='vertical-align:top'><input id='strength_%s' name='strength_%s' class='form-control input-sm small-font' type='text' value='%s'></td>
 							        <td width=150 style='vertical-align:top'>%s</td>
 							        <td width=20></td>
-							        <td width=80 style='vertical-align:top'><input id='dosage_%s' name='%s' class='form-control input-sm small-font' type='text' value='%s'></td>
+							        <td width=80 style='vertical-align:top'><input id='dosage_%s' name='dosage_%s' class='form-control input-sm small-font' type='text' value='%s'></td>
 							        <td width=150 style='vertical-align:top'>%s</td>
 							        <td width=20></td>
 							        <td width=150 style='vertical-align:top'>%s</td>
 							        <td width=20></td>
 							        <td width=150 style='vertical-align:top'>%s</td>
 							        <td width=20></td>
-							        <td width=80 style='vertical-align:top'><input id='duration_%s' name='%s' class='form-control input-sm small-font' type='text' value='%s'></td>
+							        <td width=80 style='vertical-align:top'><input id='duration_%s' name='duration_%s' class='form-control input-sm small-font' type='text' value='%s'></td>
 							        <td width=150 style='vertical-align:top'>%s</td>
 							        <td width=20></td>
 							        <td width='1' style='vertical-align:top'>%s</td>
@@ -292,7 +294,7 @@ class OrderDrugController extends Controller
 			}
 
 			if (empty($table_row)) {
-				$html = "<br>";
+				$html = "";
 			} else {
 					$html = sprintf("
 					<table>
@@ -316,7 +318,6 @@ class OrderDrugController extends Controller
 							%s
 					</table>
 					<input type='hidden' id='last_id' name='last_id' value='%s'>
-					<br>
 				", $table_row, $last_id);
 
 					/**
@@ -366,7 +367,7 @@ class OrderDrugController extends Controller
 						$sql .=")";
 				}
 
-				$sql .=" and category_code = 'drugs' limit 5";
+				$sql .=" and category_code = 'drugs' limit 10";
 
 				$data = DB::select($sql);
 
@@ -410,8 +411,8 @@ class OrderDrugController extends Controller
 							        <td>%s</td>
 							</tr>", 
 								$drug_add,
-								$row->drug_generic_name, 
-								$row->trade_name?:'-'
+								$row->trade_name?:'-',
+								$row->drug_generic_name
 					);
 				}
 
@@ -539,7 +540,7 @@ class OrderDrugController extends Controller
 				$html .= sprintf("<option value='%s' %s>%s</option>", $period->period_code, $selected, $period->period_name);
 			}
 
-			$html = sprintf("<select id='period_%s' name='%s' class='form-control input-sm small-font' id='period_%s'>%s</select>", $order_id,  $order_id, $drug_code, $html);
+			$html = sprintf("<select id='period_%s' name='period_%s' class='form-control input-sm small-font' id='period_%s'>%s</select>", $order_id,  $order_id, $drug_code, $html);
 			
 			return $html;
 	}
@@ -556,7 +557,7 @@ class OrderDrugController extends Controller
 				$html .= sprintf("<option value='%s' %s>%s</option>", $unit->unit_code, $selected, $unit->unit_name);
 			}
 
-			$html = sprintf("<select id='unit_%s' name='%s' class='form-control input-sm small-font' id='unit_%s'>%s</select>", $order_id,  $order_id, $drug_code, $html);
+			$html = sprintf("<select id='unit_%s' name='unit_%s' class='form-control input-sm small-font' >%s</select>", $order_id,  $order_id, $html);
 			
 			return $html;
 	}
@@ -573,7 +574,7 @@ class OrderDrugController extends Controller
 				$html .= sprintf("<option value='%s' %s>%s</option>", $route->route_code, $selected, $route->route_name);
 			}
 
-			$html = sprintf("<select id='route_%s' name='%s' class='form-control input-sm small-font' id='route_%s'>%s</select>", $order_id,  $order_id, $drug_code, $html);
+			$html = sprintf("<select id='route_%s' name='route_%s' class='form-control input-sm small-font' id='route_%s'>%s</select>", $order_id,  $order_id, $drug_code, $html);
 			
 			return $html;
 	}
@@ -590,7 +591,8 @@ class OrderDrugController extends Controller
 				$html .= sprintf("<option value='%s' %s>%s</option>", $dosage->dosage_code, $selected, $dosage->dosage_name);
 			}
 
-			$html = sprintf("<select id='dosage_code_%s' name='%s' class='form-control input-sm small-font' id='dosage_%s'>%s</select>", $order_id,  $order_id, $drug_code, $html);
+			$html = sprintf("<select id='dosagecode_%s' name='dosagecode_%s' class='form-control input-sm small-font'>%s</select>", 
+					$order_id,  $order_id, $html);
 			
 			return $html;
 	}
@@ -621,7 +623,7 @@ class OrderDrugController extends Controller
 				$html .= sprintf("<option value='%s' %s>%s</option>", $frequency->frequency_code, $selected, $frequency->frequency_name);
 			}
 
-			$html = sprintf("<select id='frequency_%s' name='%s' class='form-control input-sm small-font' id='prescription_%s'>%s</select>",$order_id, $order_id, $drug_code, $html);
+			$html = sprintf("<select id='frequency_%s' name='frequency_%s' class='form-control input-sm small-font' id='prescription_%s'>%s</select>",$order_id, $order_id, $drug_code, $html);
 			
 			return $html;
 	}

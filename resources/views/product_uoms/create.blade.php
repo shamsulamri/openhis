@@ -2,7 +2,7 @@
 
 @section('content')
 @include('products.id')
-<h1>New Unit of Measure</h1>
+<h1>New Store Keeping Unit</h1>
 @include('common.errors')
 <br>
 {{ Form::model($product_uom, ['url'=>'product_uoms', 'class'=>'form-horizontal']) }} 

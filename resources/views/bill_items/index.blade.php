@@ -249,7 +249,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 				$bill_grand_total = $bill_grand_total*(1-($bill_discount->discount_amount/100));
 			}
 			?>
-					<strong>{{ number_format($bill_grand_total,2) }}<strong>
+					<strong>{{ $bill_grand_total }}<strong>
 			</td>
 			@can('system-administrator')
 			<td align='right'>

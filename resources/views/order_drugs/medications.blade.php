@@ -56,8 +56,8 @@ label {
 </style>
 <h1>Medications</h1>
 <h3>Orders</h3>
-<div class="widget style1 gray-bg">
 	<div id="medicationList"></div>
+<div class="widget style1 gray-bg">
 	<input type='text' class='form-control' placeholder="Enter medication name" id='search' name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 {{ csrf_field() }}
 <div id="drugList"></div>
@@ -85,11 +85,12 @@ $(document).ready(function(){
 
 
 			function updateDrug(id) {
+					console.log(id);
 					id = id.split('_')[1];
 					var strength = $('#strength_'.concat(id)).val();
 					var unit_code = $('#unit_'.concat(id)).find('option:selected').val();
 					var dosage = $('#dosage_'.concat(id)).val();
-					var dosage_code = $('#dosage_code_'.concat(id)).find('option:selected').val();
+					var dosage_code = $('#dosagecode_'.concat(id)).find('option:selected').val();
 					var route = $('#route_'.concat(id)).find('option:selected').val();
 					var frequency = $('#frequency_'.concat(id)).find('option:selected').val();
 					var duration = $('#duration_'.concat(id)).val();
@@ -107,7 +108,6 @@ $(document).ready(function(){
 							period, 
 							id);
 
-					alert(dataString);
 					$.ajax({
 						type: "POST",
 						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},

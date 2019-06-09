@@ -263,6 +263,7 @@ class BillItemController extends Controller
 				where b.deleted_at is null
 				%s
 				and b.category_code<>'consultation'
+				and b.category_code<>'fee_procedure'
 				and h.patient_id = %d
 				and bill_id is null 
 				and order_multiple=0
@@ -313,6 +314,71 @@ class BillItemController extends Controller
 			//$this->outstandingCharges($encounter_id);
 	}
 
+	public function compileProcedure($encounter_id, $non_claimable=2) 
+	{
+			$encounter = Encounter::find($encounter_id);
+			$patient_id = $encounter->patient_id;
+
+			$base_sql = "
+				select a.product_code, sum(order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, 1 as total_quantity
+				from orders as a
+				left join products as b on b.product_code = a.product_code 
+				left join tax_codes as c on c.tax_code = b.product_output_tax 
+				left join bill_items as f on (f.encounter_id=a.encounter_id and f.product_code = a.product_code)
+				left join encounters as g on (g.encounter_id=a.encounter_id)
+				left join patients as h on (h.patient_id = g.patient_id)
+				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				where b.deleted_at is null
+				%s
+				and b.category_code='fee_procedure'
+				and h.patient_id = %d
+				and bill_id is null 
+				and order_multiple=0
+				group by product_code,order_unit_price
+			";
+
+			$sql = sprintf($base_sql, "", $patient_id);
+
+
+			if (!empty($encounter->sponsor_code)) {
+					if ($non_claimable==1) {
+						$sql = sprintf($base_sql, "and product_non_claimable = 1", $patient_id);
+					}
+
+					if ($non_claimable==0) {
+						$sql = sprintf($base_sql, "and product_non_claimable<>1", $patient_id);
+					}
+			}
+			
+			$orders = DB::select($sql);
+			
+			foreach ($orders as $order) {
+					$item = new BillItem();
+					//$item->order_id = $order->order_id;
+					$item->encounter_id = $encounter_id;
+					$item->product_code = $order->product_code;
+					$item->tax_code = $order->tax_code;
+					$item->tax_rate = $order->tax_rate;
+					$item->bill_quantity = $order->total_quantity;
+					//$item->bill_unit_code = "unit";
+					//$item->bill_discount = $order->order_discount;
+					$item->bill_non_claimable = $non_claimable;
+					$item->bill_unit_price = $order->order_unit_price;
+					$item->bill_amount = $order->order_unit_price;
+					$item->bill_amount_exclude_tax = $item->bill_amount;
+					if ($order->tax_rate) {
+						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
+					}
+					try {
+							$item->save();
+					} catch (\Exception $e) {
+							\Log::info($e->getMessage());
+					}
+			}
+
+			//$this->multipleOrders($encounter_id);
+			//$this->outstandingCharges($encounter_id);
+	}
 	public function compileConsultation($encounter_id, $non_claimable = 2) 
 	{
 			$encounter = Encounter::find($encounter_id);
@@ -527,12 +593,15 @@ class BillItemController extends Controller
 				if (!empty($encounter->sponsor_code)) {
 					$this->compileBill($id, 1);
 					$this->compileBill($id, 0);
+					$this->compileProcedure($id, 1);
+					$this->compileProcedure($id, 0);
 					$this->forms($id, 1);
 					$this->forms($id, 0);
 					$this->compileConsultation($id, 1);
 					$this->compileConsultation($id, 0);
 				} else {
 					$this->compileBill($id);
+					$this->compileProcedure($id);
 					$this->forms($id);
 					$this->compileConsultation($id);
 				}

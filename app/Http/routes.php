@@ -1152,6 +1152,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/move_beds/move/{admission_id}/{bed_code}', 'AdmissionBedController@move');
 		});
 		
+				Route::resource('unit_measures', 'UnitMeasureController');
+				Route::get('/unit_measures/id/{id}', 'UnitMeasureController@searchById');
+				Route::post('/unit_measure/search', 'UnitMeasureController@search');
+				Route::get('/unit_measure/search', 'UnitMeasureController@search');
+				Route::get('/unit_measures/delete/{id}', 'UnitMeasureController@delete');
+				
 		Route::group(['middleware' => 'admin'], function () {
 
 				Route::get('/maintenance', function() {
@@ -1251,12 +1257,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/relationship/search', 'RelationshipController@search');
 				Route::get('/relationship/search', 'RelationshipController@search');
 				Route::get('/relationships/delete/{id}', 'RelationshipController@delete');
-				
-				Route::resource('unit_measures', 'UnitMeasureController');
-				Route::get('/unit_measures/id/{id}', 'UnitMeasureController@searchById');
-				Route::post('/unit_measure/search', 'UnitMeasureController@search');
-				Route::get('/unit_measure/search', 'UnitMeasureController@search');
-				Route::get('/unit_measures/delete/{id}', 'UnitMeasureController@delete');
 				
 				Route::resource('marital_statuses', 'MaritalStatusController');
 				Route::get('/marital_statuses/id/{id}', 'MaritalStatusController@searchById');

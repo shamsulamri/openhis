@@ -2,7 +2,7 @@
 
 @section('content')
 @include('products.id')
-<h1>Unit of Measure
+<h1>Store Keeping Unit
 
 <a href='/product_uoms/create?id={{$product->product_code}}' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
@@ -24,9 +24,13 @@
 @foreach ($product_uoms as $product_uom)
 	<tr>
 			<td>
+				@if ($product_uom->unitMeasure)
 					<a href='{{ URL::to('product_uoms/'. $product_uom->id . '/edit') }}'>
 						{{$product_uom->unitMeasure->unit_name}}
 					</a>
+				@else
+					{{ $product_oum->unit_code }}	
+				@endif
 			</td>
 			<td>
 					{{$product_uom->uom_rate}}
