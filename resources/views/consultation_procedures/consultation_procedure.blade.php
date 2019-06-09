@@ -15,6 +15,7 @@
         </div>
     </div>
 
+	
     <div class='form-group'>
         <div class="col-sm-12">
             <a class="btn btn-default" href="/consultation_procedures/{{ $consultation->consultation_id }}" role="button">Cancel</a>

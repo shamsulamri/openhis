@@ -3,10 +3,13 @@
 @section('content')
 @include('consultations.panel')
 <h1>Procedures</h1>
+	@include('consultation_procedures.procedure')
+<!--
 <br>
 <a href='/consultation_procedures/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
+<?php $hasPrincipal=False; ?>
 @if ($consultation_procedures->total()>0)
 <table class="table table-hover">
  <thead>
@@ -18,7 +21,6 @@
 	</tr>
   </thead>
 	<tbody>
-<?php $hasPrincipal=False; ?>
 @foreach ($consultation_procedures as $consultation_procedure)
 	<tr>
 			<td width='5%'>
@@ -67,4 +69,5 @@
 @else
 	No record found.
 @endif
+-->
 @endsection

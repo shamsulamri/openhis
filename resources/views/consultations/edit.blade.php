@@ -169,7 +169,7 @@ input {
 						data: dataString
 					});
 
-					    setTimeout(function () { $('#diagnosis_clinical').focus(); }, 20);
+				    //setTimeout(function () { $('#diagnosis_clinical').focus(); }, 20);
 			});
 
 

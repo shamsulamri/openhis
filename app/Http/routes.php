@@ -54,6 +54,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/purchase_request_status/search', 'PurchaseRequestStatusController@search');
 		Route::get('/purchase_request_statuses/delete/{id}', 'PurchaseRequestStatusController@delete');
 
+		Route::post('/procedures/find', 'ConsultationProcedureController@find')->name('procedures.find');
+		Route::post('/procedures/add', 'ConsultationProcedureController@addProcedure')->name('procedures.add');
+		Route::post('/procedures/list', 'ConsultationProcedureController@listProcedure')->name('procedures.list');
+		Route::post('/procedures/remove', 'ConsultationProcedureController@removeProcedure')->name('procedures.remove');
+		Route::post('/procedures/update', 'ConsultationProcedureController@updateProcedure')->name('procedures.update');
+
 		Route::post('/medications/find', 'OrderDrugController@find')->name('medications.find');
 		Route::post('/medications/table', 'OrderDrugController@medicationTable')->name('medications.table');
 		Route::post('/medications/add', 'OrderDrugController@addDrug')->name('medications.add');

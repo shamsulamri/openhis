@@ -497,8 +497,6 @@ class OrderController extends Controller
 			$product = Product::find($product_code);
 			$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));
 			if ($order_id>0) {
-					Log::info('----');
-					Log::info($request->category_code);
 				return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page.'&order_id='.$order_id.'&categories='.$request->category_code);
 			} else {
 				return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
@@ -511,6 +509,7 @@ class OrderController extends Controller
 			$encounter= Encounter::find(Session::get('encounter_id'));
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 
+			/*
 			$fields = ['product_name', 
 					'a.product_code', 
 					'cancel_id', 
@@ -530,8 +529,9 @@ class OrderController extends Controller
 					->orderBy('a.created_at', 'desc')
 					->paginate($this->paginateValue);
 
-			return view('orders.make', [
 					'orders'=>$orders,
+			*/
+			return view('orders.make', [
 					'consultation'=>$consultation,
 					'patient'=>$encounter->patient,
 					'encounter'=>$encounter,

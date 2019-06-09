@@ -70,7 +70,7 @@ class OrderDrugController extends Controller
 	}
 
 	public function addDrug(Request $request)
-			{
+	{
 
 			$product = Product::find($request->drug_code);
 			if ($product) {
@@ -271,7 +271,7 @@ class OrderDrugController extends Controller
 							        <td width=80 style='vertical-align:top'><input id='duration_%s' name='%s' class='form-control input-sm small-font' type='text' value='%s'></td>
 							        <td width=150 style='vertical-align:top'>%s</td>
 							        <td width=20></td>
-							        <td width='1' style='vertical-align:top'>%s</a></td>
+							        <td width='1' style='vertical-align:top'>%s</td>
 							</tr>
 							", 
 							'30%',
@@ -349,8 +349,8 @@ class OrderDrugController extends Controller
 
 				$sql = "select product_name as drug_generic_name, product_name_other as trade_name, product_code as drug_code
 						from products as a
-						where (product_name like '%".$fields[0]."%'
-						or product_name_other like '%".$fields[0]."%') ";
+						where (product_name like '".$fields[0]."%'
+						or product_name_other like '".$fields[0]."%') ";
 
 				unset($fields[0]);
 

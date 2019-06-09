@@ -85,6 +85,7 @@ $(document).ready(function(){
 
 
 			function updateDrug(id) {
+					id = id.split('_')[1];
 					var strength = $('#strength_'.concat(id)).val();
 					var unit_code = $('#unit_'.concat(id)).find('option:selected').val();
 					var dosage = $('#dosage_'.concat(id)).val();
@@ -106,6 +107,7 @@ $(document).ready(function(){
 							period, 
 							id);
 
+					alert(dataString);
 					$.ajax({
 						type: "POST",
 						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},

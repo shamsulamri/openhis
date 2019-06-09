@@ -75,6 +75,9 @@ $category='';
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>
 			@endif
+			<!-- Ordered by -->
+
+			<!-- -->
 			@if ($order->order_report)	
 			&nbsp;
 			<span class='fa fa-file-o'></span>

@@ -11,6 +11,10 @@ use Log;
 use DB;
 use Session;
 use App\Consultation;
+use App\Order;
+use App\Product;
+use App\OrderHelper;
+use App\OrderMultiple;
 
 class ConsultationProcedureController extends Controller
 {
@@ -30,12 +34,14 @@ class ConsultationProcedureController extends Controller
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftjoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
-					->where('d.patient_id', $consultation->encounter->patient->patient_id)
+					->where('c.encounter_id','=',$consultation->encounter_id)
 					->orderBy('c.encounter_id', 'desc')
 					->orderBy('procedure_is_principal', 'desc')
 					->paginate($this->paginateValue);
 
-					//->where('encounter_id','=',$consultation->encounter_id)
+					//->where('d.patient_id', $consultation->encounter->patient->patient_id)
+
+			/*
 			if ($consultation_procedures->count()==0) {
 					return $this->create();
 			} else {
@@ -47,6 +53,15 @@ class ConsultationProcedureController extends Controller
 							'consultOption' => 'consultation',
 					]);
 			}
+			 */
+
+			return view('consultation_procedures.index', [
+					'consultation_procedures'=>$consultation_procedures,
+					'consultation' => $consultation,
+					'patient'=>$consultation->encounter->patient,
+					'tab'=>'procedure',
+					'consultOption' => 'consultation',
+			]);
 	}
 
 	public function create()
@@ -59,12 +74,18 @@ class ConsultationProcedureController extends Controller
 
 			$consultation = Consultation::findOrFail($consultation_id);
 
+			$orders = Order::where('encounter_id', $consultation->encounter_id)
+					->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
+					->where('category_code', 'fee_procedure')
+					->get();
+
 			return view('consultation_procedures.create', [
 					'consultation_procedure' => $consultation_procedure,
 					'consultation'=>$consultation,
 					'patient'=>$consultation->encounter->patient,
 					'tab'=>'procedure',
 					'consultOption' => 'consultation',
+					'orders'=>$orders,
 					]);
 	}
 
@@ -171,8 +192,6 @@ class ConsultationProcedureController extends Controller
 					->leftjoin('consultations as b','b.consultation_id', '=', 'a.consultation_id')
 					->where('encounter_id','=',$consultation->encounter_id)
 					->get();
-
-			Log::info($procedures);
 
 			foreach ($procedures as $procedure) {
 					DB::table('consultation_procedures')
@@ -282,4 +301,157 @@ class ConsultationProcedureController extends Controller
 				return $html;
 
 	}
+
+
+	function find(Request $request)
+	{
+			if (!empty($request->search)) {
+
+				$fields = explode(' ', $request->search);
+
+				$sql = "select product_name, product_code 
+						from products as a
+						where (product_name like '".$fields[0]."%'";
+
+				unset($fields[0]);
+
+				if (count($fields)>0) {
+						$sql .=" and ";
+						foreach($fields as $key=>$field) {
+								$sql .= "product_name like '%".$field."%'";
+								if ($key<count($fields)) {
+									$sql .= " and ";
+								}
+						}
+
+				}
+
+				$sql .=") and category_code = 'fee_procedure' limit 5";
+
+				$data = DB::select($sql);
+
+				$html = '';
+				$table_row = '';
+
+				foreach($data as $row) {
+					$add_link = sprintf("<a class='btn btn-default btn-xs' href='javascript:addItem(&quot;%s&quot;)' >+</a>", $row->product_code);
+					$table_row .=sprintf(" 
+							<tr>
+							        <td width=10>%s</td>
+							        <td>%s</td>
+							        <td>%s</td>
+							</tr>", 
+								$add_link,
+								$row->product_name, 
+								$row->product_code?:'-'
+					);
+				}
+
+				$html = sprintf('
+					<br>
+					<table class="table table-hover">
+							%s
+					</table>
+				', $table_row);
+
+				if (count($data)==0) $html = '';
+				return $html;
+			}
+	}
+
+	function addProcedure(Request $request)
+	{
+			$product = Product::find($request->product_code);
+			if ($product) {
+					OrderHelper::orderItem($product, $request->cookie('ward'));
+			}
+			return $this->listProcedure();
+	}
+
+	function listProcedure() 
+	{
+			Log::info("List procedure..........");
+			$consultation_id = Session::get('consultation_id');
+			$consultation = Consultation::findOrFail($consultation_id);
+			$encounter_id = $consultation->encounter_id;
+
+			$procedures = Order::orderBy('order_id')
+					->leftJoin('products as c', 'c.product_code', '=', 'orders.product_code')
+					->where('category_code', 'fee_procedure')
+					->get();
+
+
+			$html = '';
+			$table_row = '';
+			foreach($procedures as $procedure) {
+				$item_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeProcedure(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $procedure->order_id);
+				$table_row .=sprintf(" 
+							<tr height=35>
+							        <td width='100'>%s</td>
+							        <td>%s</td>
+							        <td width=100><input id='price_%s' name='price_%s' class='form-control input-sm small-font' type='text' value='%s'></td>
+							        <td width=5></td>
+							        <td width=100><input id='discount_%s' name='discount_%s' class='form-control input-sm small-font' type='text' value='%s'></td>
+							        <td width=100>%s</td>
+							</tr>
+					", 
+					$procedure->product_code,
+					$procedure->product_name.'<br><small>'.$procedure->user->name.'</small>',
+					$procedure->order_id,
+					$procedure->order_id,
+					$procedure->order_unit_price,
+					$procedure->order_id,
+					$procedure->order_id,
+					$procedure->order_discount,
+					$item_remove
+				);
+			}
+
+			if (empty($table_row)) {
+				$html = "<br>";
+			} else {
+					$html = sprintf("
+					<table class='table table-hover'>
+						 <thead>
+							<tr>
+									<th>Code</th>
+									<th>Procedure</th>
+									<th>Price (RM)</th>
+									<th></th>
+									<th>Discount (%s)</th>
+							</tr>
+						  </thead>
+							%s
+					</table>
+				", '%', $table_row);
+			}
+
+			return $html;
+	}
+
+	public function removeProcedure(Request $request)
+	{
+			$order_id = $request->order_id;
+			$order = Order::find($order_id);
+			OrderMultiple::where('order_id', $order_id)->delete();
+			Order::find($order_id)->delete();
+					
+			return $this->listProcedure();
+	}
+
+	public function updateProcedure(Request $request)
+	{
+			$order_id = $request->order_id;
+			$order = Order::where('order_id', $order_id)->first();
+
+			if ($order) {
+					$order->order_unit_price = $request->price;
+					$order->order_discount = $request->discount;
+					$order->save();
+					Log::info($order);
+			}
+
+			Log::info("Update procedure......");
+	}
+
 }
