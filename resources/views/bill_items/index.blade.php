@@ -239,7 +239,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 					<strong>Total Payable include tax</strong>
 			</td>
 			<td align='right'>
-					<strong>{{ $total_payable }}<strong>
+					<strong>{{ number_format($total_payable,2) }}<strong>
 			</td>
 			@can('system-administrator')
 			<td align='right'>

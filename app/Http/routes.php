@@ -48,6 +48,12 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('bill_totals', 'BillTotalController');
+		Route::get('/bill_totals/id/{id}', 'BillTotalController@searchById');
+		Route::post('/bill_total/search', 'BillTotalController@search');
+		Route::get('/bill_total/search', 'BillTotalController@search');
+		Route::get('/bill_totals/delete/{id}', 'BillTotalController@delete');
+
 		Route::resource('purchase_request_statuses', 'PurchaseRequestStatusController');
 		Route::get('/purchase_request_statuses/id/{id}', 'PurchaseRequestStatusController@searchById');
 		Route::post('/purchase_request_status/search', 'PurchaseRequestStatusController@search');

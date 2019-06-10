@@ -27,6 +27,7 @@ use App\BedMovement;
 use App\Bed;
 use App\MedicalCertificate;
 use App\ProductUom;
+use App\BillTotal;
 
 class BillItemController extends Controller
 {
@@ -722,6 +723,19 @@ class BillItemController extends Controller
 			}
 
 			$total_payable = DojoUtility::roundUp10($bill_grand_total);
+
+
+
+			$billFooter = BillTotal::where('encounter_id', $id);
+			if ($billFooter) {
+					$billFooter->delete();
+			}
+			$billFooter = new BillTotal();
+			$billFooter->encounter_id = $id;
+			$billFooter->bill_total = $bill_total;
+			$billFooter->bill_grand_total = $bill_grand_total;
+			$billFooter->bill_total_payable = $total_payable;
+			$billFooter->save();
 
 			return view('bill_items.index', [
 					'bills'=>$bills,

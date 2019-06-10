@@ -316,7 +316,7 @@ class DojoUtility
 						$newvalue = $valueArray[0]+1;
 				}
 				 
-				return number_format($newvalue,2);
+				return $newvalue;
 
 				//$newvalue = ceil($value/1)*1;
 				//return number_format($newvalue,2);
