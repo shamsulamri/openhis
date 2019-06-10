@@ -311,7 +311,7 @@ class ConsultationProcedureController extends Controller
 
 				$sql = "select product_name, product_code 
 						from products as a
-						where (product_name like '".$fields[0]."%'";
+						where (product_name like '%".$fields[0]."%'";
 
 				unset($fields[0]);
 
@@ -378,6 +378,7 @@ class ConsultationProcedureController extends Controller
 			$procedures = Order::orderBy('order_id')
 					->leftJoin('products as c', 'c.product_code', '=', 'orders.product_code')
 					->where('category_code', 'fee_procedure')
+					->where('orders.encounter_id','=',$encounter_id)
 					->get();
 
 

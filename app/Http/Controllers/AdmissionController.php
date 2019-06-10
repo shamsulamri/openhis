@@ -68,7 +68,8 @@ class AdmissionController extends Controller
 	{
 			$this->wards = Ward::all()
 					->sortBy('ward_name')
-					->lists('ward_name', 'ward_code');
+					->lists('ward_name', 'ward_code')
+					->prepend('','');
 
 			$this->middleware('auth');
 	}
@@ -553,6 +554,13 @@ class AdmissionController extends Controller
 					});
 			}
 
+			if (!empty($request->search)) {
+					$admissions = $admissions->where('patient_name', 'like', '%'.$request->search.'%');
+			}
+
+			if (!empty($request->admission_code)) {
+					$admissions = $admissions->where('admission_code', '=', $request->admission_code);
+			}
 			$admissions = $admissions->whereNull('f.encounter_id')
 					->orderBy('arrival_id')
 					->orderBy('patient_name');
@@ -583,6 +591,8 @@ class AdmissionController extends Controller
 					'wardHelper'=> $wardHelper,
 					'bedHelper'=> new BedHelper(),
 					'ward_code'=>$request->ward_code,
+					'search'=>$request->search,
+					'admission_code'=>$request->admission_code,
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 			]);
 

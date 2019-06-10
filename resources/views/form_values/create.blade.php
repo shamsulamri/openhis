@@ -11,8 +11,7 @@
 <h1>
 {{ $form->form_name }}
 </h1>
-<hr>
-
+<br>
 {{ Form::model(null, ['id'=>'myForm','url'=>'form/entry', 'class'=>'form-horizontal']) }} 
 @foreach ($properties as $property)
 	<?php

@@ -207,6 +207,7 @@ if ($_COOKIE['his-navbar']==1) {
 										<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 								@cannot('module-support')
 										<li><a title="Order Tasks" href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Order Tasks</a></li>
+										<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-bed'></i><span class='nav-label'>Admissions</a></li>
 								@endcannot
 						@endcan
 
@@ -232,7 +233,9 @@ if ($_COOKIE['his-navbar']==1) {
 						<div class="dropdown profile-element"> 
 								<h4>&nbsp;Ward</h4>
 						</div>
+<!--
 						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-bed'></i><span class='nav-label'>Admissions</a></li>
+-->
 <!--
 						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-question-circle-o'></i><span class='nav-label'>Order Queues</span></a></li>
 -->

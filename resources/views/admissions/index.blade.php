@@ -2,14 +2,14 @@
 
 @section('content')
 <h1>Admission List</h1>
-@can('module-ward')
+@can('module-consultation')
 <form action='/admission/search' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
 						<label class='col-sm-3 control-label'><div align='left'>Ward</div></label>
 						<div class='col-sm-9'>
-							{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -23,6 +23,8 @@
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>
+@endcan
+@can('module-ward')
 <div class="row">
 	<div class="col-md-2">
 		<div class='panel panel-default'>
@@ -88,7 +90,7 @@
 					<div class='form-group'>
 						<label class='col-sm-3 control-label'><div align='left'>Ward</div></label>
 						<div class='col-sm-9'>
-							{{ Form::select('ward', $wards, $ward, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
@@ -219,6 +221,11 @@
 
 			<td widht='10'>
 			<div class='pull-right'>
+			@can('module-consultation')
+			<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$admission->admission_id) }}'>
+				<i class="fa fa-stethoscope"></i>
+			</a>
+			@endcan
 			@can('system-administrator')
 					<a class='btn btn-danger' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 			@endcan
