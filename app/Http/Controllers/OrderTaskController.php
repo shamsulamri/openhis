@@ -27,6 +27,7 @@ use App\OrderHelper;
 use App\DojoUtility;
 use App\Inventory;
 use App\ProductUom;
+use App\DrugDosage as Dosage;
 
 class OrderTaskController extends Controller
 {
@@ -188,12 +189,14 @@ class OrderTaskController extends Controller
 					'encounter'=>$order_task->consultation->encounter,
 					'encounter_id' => $order_task->consultation->encounter_id,
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
+					'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
 					]);
 	}
 
 	public function update(Request $request, $id) 
 	{
 			$order_task = OrderTask::findOrFail($id);
+
 			$order_task->fill($request->input());
 
 			//$order_task->order_completed = $request->order_completed ?: 0;
@@ -203,6 +206,12 @@ class OrderTaskController extends Controller
 
 			if ($valid->passes()) {
 					$order_task->save();
+					if ($order_task->orderDrug()) {
+							$orderDrug = OrderDrug::find($order_task->order_id);
+							$orderDrug->dosage_code = $request->dosage_code;
+							$orderDrug->drug_dosage = $request->drug_dosage;
+							$orderDrug->save();
+					}
 					$productController = new ProductController();
 					$productController->updateTotalOnHand($order_task->product_code);
 					Session::flash('message', 'Record successfully updated.');

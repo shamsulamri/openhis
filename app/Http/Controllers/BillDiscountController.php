@@ -57,7 +57,7 @@ class BillDiscountController extends Controller
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/bill_items/'.$bill_discount->encounter_id);
 			} else {
-					return redirect('/bill_discounts/create')
+					return redirect('/bill_discounts/create/'.$request->encounter_id)
 							->withErrors($valid)
 							->withInput();
 			}
@@ -76,22 +76,25 @@ class BillDiscountController extends Controller
 
 	public function update(Request $request, $id) 
 	{
-			$bill_discount = BillDiscount::findOrFail($id);
-			$bill_discount->fill($request->input());
-
-
-			$valid = $bill_discount->validate($request->all(), $request->_method);	
-
-			if ($valid->passes()) {
-					$bill_discount->save();
-					Session::flash('message', 'Record successfully updated.');
-					return redirect('/bill_items/'.$bill_discount->encounter_id);
+			if (empty($request->discount_amount)) {
+					BillDiscount::find($id)->delete();
+					return redirect('/bill_items/'.$request->encounter_id);
 			} else {
-					return view('bill_discounts.edit', [
-							'bill_discount'=>$bill_discount,
-				
-							])
-							->withErrors($valid);			
+					$bill_discount = BillDiscount::findOrFail($id);
+					$bill_discount->fill($request->input());
+
+
+					$valid = $bill_discount->validate($request->all(), $request->_method);	
+
+					if ($valid->passes()) {
+							$bill_discount->save();
+							Session::flash('message', 'Record successfully updated.');
+							return redirect('/bill_items/'.$bill_discount->encounter_id);
+					} else {
+							return redirect('/bill_discounts/'.$request->encounter_id.'/edit')
+									->withErrors($valid)
+									->withInput();
+					}
 			}
 	}
 	

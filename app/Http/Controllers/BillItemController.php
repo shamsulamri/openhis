@@ -716,11 +716,18 @@ class BillItemController extends Controller
 									->where('bill_non_claimable', '=', 1)
 									->sum('bill_amount');
 
+			$bill_total = $bill_grand_total;
+			if ($bill_discount) {
+					$bill_grand_total = $bill_grand_total * (1-($bill_discount->discount_amount/100));
+			}
+
+			$total_payable = DojoUtility::roundUp10($bill_grand_total);
+
 			return view('bill_items.index', [
 					'bills'=>$bills,
 					'billPosted'=>$billPosted,
-					'bill_grand_total'=>DojoUtility::roundUp10($bill_grand_total),
-					'bill_total'=>$bill_grand_total,
+					'bill_total'=>$bill_total,
+					'bill_grand_total'=>$bill_grand_total,
 					'patient' => $encounter->patient,
 					'payments' => $payments,
 					'payment_total' => $payment_total,
@@ -737,6 +744,7 @@ class BillItemController extends Controller
 					'non_claimable_amount'=>$non_claimable_amount,
 					'claimable_amount'=>$claimable_amount,
 					'hasMc'=>$hasMc,
+					'total_payable'=>$total_payable,
 			]);
 	}
 

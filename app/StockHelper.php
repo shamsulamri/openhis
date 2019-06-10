@@ -243,7 +243,6 @@ class StockHelper
 			$product_uoms =  $product->productUnitMeasures();
 
 			$uom_list = [];
-			$uom_list['unit'] = 'Unit';
 			foreach ($product_uoms as $uom) {
 					if ($uom->unit_code != 'unit') {
 						$uom_list[$uom->unit_code] = $uom->unitMeasure->unit_name.' ('.$uom->uom_rate.')';

@@ -6,7 +6,6 @@
 Bill Discount
 </h1>
 @include('common.errors')
-<br>
 {{ Form::model($bill_discount, ['url'=>'bill_discounts', 'class'=>'form-horizontal']) }} 
     
 	@include('bill_discounts.bill_discount')

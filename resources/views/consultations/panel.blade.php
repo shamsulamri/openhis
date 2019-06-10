@@ -21,11 +21,11 @@
 
 @if (!empty($consultation->encounter->discharge->discharge_id))
 <div class="row white-bg">
-			<br>
 			<div class='col-sm-10'>
 					<h3 class="text-danger"><i class="fa fa-warning"></i>Warning you are editting discharged cases.</h3>
 			</div>
 </div>
+<br>
 @endif
 
 <div class="btn-group" role="group" aria-label="...">

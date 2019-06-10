@@ -227,12 +227,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 					<strong>Grand Total</strong>
 			</td>
 			<td align='right'>
-			<?php
-			if ($bill_discount) {
-				$bill_total = $bill_total*(1-($bill_discount->discount_amount/100));
-			}
-			?>
-					<strong>{{ number_format($bill_total,2) }}<strong>
+					<strong>{{ number_format($bill_grand_total,2) }}<strong>
 			</td>
 			@can('system-administrator')
 			<td align='right'>
@@ -244,12 +239,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 					<strong>Total Payable include tax</strong>
 			</td>
 			<td align='right'>
-			<?php
-			if ($bill_discount) {
-				$bill_grand_total = $bill_grand_total*(1-($bill_discount->discount_amount/100));
-			}
-			?>
-					<strong>{{ $bill_grand_total }}<strong>
+					<strong>{{ $total_payable }}<strong>
 			</td>
 			@can('system-administrator')
 			<td align='right'>

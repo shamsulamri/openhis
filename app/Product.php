@@ -173,6 +173,19 @@ class Product extends Model
 			return $uom?:null;
 	}
 
+	public function hasBatches()
+	{
+			$helper = new StockHelper();
+			$batches = $helper->getBatches($this->attributes['product_code'])?:null;
+
+			Log::info("Batche == ".$batches->count());
+			if ($batches->count()>0) {
+					return true;
+			} else {
+					return false;
+			}
+	}
+
 	public function uomDefaultPrice($encounter = null)
 	{
 			$product_code = $this->attributes['product_code'];

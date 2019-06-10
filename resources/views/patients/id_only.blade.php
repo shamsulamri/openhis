@@ -2,7 +2,17 @@
 			<div class='col-sm-10'>
 						<h2>{{ $patient->getTitleName() }}</h2>
 						<h5>{{ $patient->patientAge() }}</h5>
-						<h5>{{ $patient->getMRN() }}</h5>
+						<h5>{{ $patient->getMRN() }} 
+	@if (!empty($consultation))
+		@if ($consultation->encounter->sponsor)
+			({{ $consultation->encounter->sponsor->sponsor_name }})
+		@else
+			(Full paying patient)
+		@endif
+	@endif
+
+
+						</h5>
 						<h5>{{ $patient->getCurrentAddress() }}</h5>
 @if ($patient->patient_gravida)
 						<h5>

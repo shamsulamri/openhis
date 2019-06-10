@@ -22,12 +22,14 @@ class BillDiscount extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_id'=>'required',
+				'discount_amount'=>'required|numeric|min:1',
 			];
 
 			
 			
 			$messages = [
-				'required' => 'This field is required'
+				'required' => 'This field is required',
+				'min' => 'Must be greater than 0',
 			];
 			
 			return validator::make($input, $rules ,$messages);

@@ -37,8 +37,8 @@
     <th>On Hand</th>
     <th>Allocated</th>
     <th>Available</th>
-    <th>Require</th>
-    <th>Orderer</th>
+    <th>Quantity</th>
+    <th>Order By</th>
     <th>Date</th>
 	<th></th>
 	</tr>

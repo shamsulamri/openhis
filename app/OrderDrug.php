@@ -22,6 +22,9 @@ class OrderDrug extends Model
 				'period_code',
 				'drug_total_unit'];
 
+    protected $guarded = ['order_id'];
+    protected $primaryKey = 'order_id';
+
 	public function validate($input, $method) {
 			$rules = [
 			];

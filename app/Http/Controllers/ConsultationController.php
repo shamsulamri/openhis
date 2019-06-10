@@ -59,6 +59,7 @@ class ConsultationController extends Controller
 					'consultation'=>$consultation,
 					'patient'=>$consultation->encounter->patient,
 					'consultOption' => 'consultation',
+					'order_helper'=>new OrderHelper(),
 			]);
 	}
 

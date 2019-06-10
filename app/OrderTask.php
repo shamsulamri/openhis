@@ -59,6 +59,11 @@ class OrderTask extends Model
 			return $this->hasOne('App\OrderInvestigation','order_id');
 	}
 
+	public function orderDrug() 
+	{
+			return $this->hasOne('App\OrderDrug','order_id');
+	}
+
 	public function save(array $options = array())
 	{
 			$changed = $this->isDirty() ? $this->getDirty() : false;

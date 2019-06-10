@@ -75,10 +75,8 @@ Progress Notes
 					@if (count($note->orders)>0)
 							@foreach ($note->orders as $order)
 								@if ($order->orderCancel) <strike> @endif
-								{{ $order->product->product_name }}
-								@if (!empty($order->orderDrug->frequency))
-										, {{ $order->orderDrug->frequency->frequency_name }}
-								@endif
+								{{ $order->product->product_name }},
+								{{ $order_helper->getPrescription($order->order_id) }}
 								<br>
 								@if ($order->orderCancel) </strike> @endif
 							@endforeach
