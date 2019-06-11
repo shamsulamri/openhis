@@ -65,7 +65,10 @@ class ProductController extends Controller
 			$products = $products->orderBy('products.created_at','desc')
 							->paginate($this->paginateValue);
 
-			$store_code = Store::find(Auth::user()->defaultStore($request))->store_code;
+			$store_code = null;
+			if (!empty(Auth::user()->defaultStore($request)->store_code)) {
+				$store_code = Store::find(Auth::user()->defaultStore($request))->store_code;
+			}
 
 			return view('products.index', [
 					'products'=>$products,

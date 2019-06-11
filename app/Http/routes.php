@@ -740,8 +740,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 		});
 
-		Route::group(['middleware' => 'discharge'], function () {
-
 				Route::resource('deposits', 'DepositController',['except'=>['create','index']]);
 				Route::get('/deposits/index/{id}', 'DepositController@index');
 				Route::get('/deposits/create/{id}', 'DepositController@create');
@@ -751,6 +749,9 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/deposits/delete/{id}', 'DepositController@delete');
 				Route::post('/deposit/enquiry', 'DepositController@enquiry');
 				Route::get('/deposit/enquiry', 'DepositController@enquiry');
+
+		Route::group(['middleware' => 'discharge'], function () {
+
 
 				Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
 				Route::get('/payments/{id?}', 'PaymentController@index');

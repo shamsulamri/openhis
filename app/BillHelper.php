@@ -31,7 +31,9 @@ class BillHelper
 
 			$bill_discount = BillDiscount::where('encounter_id', $encounter_id)->first();
 
-			$bill_grand_total = $bill_grand_total*(1-($bill_discount->discount_amount/100));
+			if ($bill_discount) {
+				$bill_grand_total = $bill_grand_total*(1-($bill_discount->discount_amount/100));
+			}
 
 			$payment_total = DB::table('payments as a')
 					->where('patient_id','=', $patient_id)
