@@ -75,7 +75,7 @@ $allocated=0;
 					@endif
 			</td>
 			<td align='right'>
-					{{ $helper->getStockOnHand($product->product_code, $store_code?:null) }}
+					{{ $helper->getStockOnHand($product->product_code, $store_code) }}
 			</td>
 			@can('system-administrator')
 			<td align='right'>

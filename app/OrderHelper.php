@@ -416,7 +416,10 @@ class OrderHelper
 					}
 
 					if ($order_drug->drug_duration>0) {
-						$description .= $order_drug->drug_duration." ".strtolower($order_drug->period->period_name);
+							$description .= $order_drug->drug_duration;
+							if ($order_drug->period) {
+						   		$description .= " ".strtolower($order_drug->period->period_name);
+							}
 					}
 
 					$description = trim($description);

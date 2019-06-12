@@ -1,5 +1,5 @@
 @include('patients.id_only')
-
+<br>
 @if (!empty($consultation->encounter->discharge->discharge_id))
 <div class="row white-bg">
 			<div class='col-sm-10'>

@@ -70,6 +70,7 @@ class ProductController extends Controller
 				$store_code = Store::find(Auth::user()->defaultStore($request))->store_code;
 			}
 
+				$store_code = Store::find(Auth::user()->defaultStore($request))->store_code;
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,
@@ -538,8 +539,8 @@ class ProductController extends Controller
 					'query' => $request->query()]
 			);
 
-			//$store_code = empty($request->store_code)?'':Store::find(Auth::user()->defaultStore($request))->store_code;
-			$store_code = $request->store_code;
+			$store_code = empty($request->store_code)?'':Store::find(Auth::user()->defaultStore($request))->store_code;
+			//$store_code = $request->store_code;
 
 			return view('products.on_hand', [
 					'products'=>$data,

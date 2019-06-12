@@ -84,12 +84,15 @@ class AdmissionBedController extends Controller
 					->orderBy('ward_name')
 					->paginate($this->paginateValue);
 
-			return view('admission_beds.index', [
-					'admission_beds'=>$admission_beds,
-					'wards' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'wards2' => Ward::where('encounter_code','=', $encounter->encounter_code)
+			/*
+					$wards2 = Ward::where('encounter_code','=', $encounter->encounter_code)
 								->orWhere('encounter_code','=','daycare')
 								->orderBy('ward_name')->get(),
+					'wards' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
+			 */
+			return view('admission_beds.index', [
+					'admission_beds'=>$admission_beds,
+					'wards2' => Ward::where('ward_code', '<>', 'mortuary')->where('ward_code', '<>', 'observation')->orderBy('ward_name')->get(),
 					'ward_code'=>$ward_code,
 					'current_ward'=>$current_ward,
 					'ward_class' => $ward_class,
@@ -289,10 +292,7 @@ class AdmissionBedController extends Controller
 
 			return view('admission_beds.index', [
 					'admission_beds'=>$admission_beds,
-					'wards' => Ward::where('encounter_code','=', $encounter->encounter_code)->orderBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
-					'wards2' => Ward::where('encounter_code','=', $encounter->encounter_code)
-								->orWhere('encounter_code','=', 'daycare')
-								->orderBy('ward_name')->get(),
+					'wards2' => Ward::where('ward_code', '<>', 'mortuary')->where('ward_code', '<>', 'observation')->orderBy('ward_name')->get(),
 					'ward_code'=>$request->ward_code,
 					'ward_class'=>$request->ward_class,
 					'admission' => $admission,
