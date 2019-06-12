@@ -215,8 +215,12 @@ class OrderHelper
 						->where('post_id','=',0)
 						->first();
 
-			Log::info(Session::get('consultation_id'));
-			Log::info('---'.$order);
+			if (!empty($order)) {
+				if ($product->category_code == 'drugs') {
+					$order = null;
+				}
+			}
+
 			if (empty($order)) {
 				/** New order **/
 				$order = new Order();

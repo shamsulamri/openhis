@@ -111,7 +111,6 @@ class PurchaseLineController extends Controller
 								$purchase_line->save();
 
 						} else {
-								Log::info("--->>");
 								$purchase_line->purchase_id = $to;
 								$purchase_line->product_code = $item->product_code;
 								$purchase_line->line_unit_price = $item->line_unit_price;
@@ -449,9 +448,12 @@ class PurchaseLineController extends Controller
 			$purchase_line->purchase_id = $purchase_id;
 			$purchase_line->product_code = $product_code;
 			$purchase_line->line_quantity += $quantity;
-			$purchase_line->uom_rate = $product->uomDefaultCost()->uom_rate;
-			$purchase_line->unit_code = $product->uomDefaultCost()->unit_code;
-			$purchase_line->line_unit_price = $product->uomDefaultCost()->uom_cost;
+			if ($product->uomDefaultCost()) {
+					$purchase_line->uom_rate = $product->uomDefaultCost()->uom_rate;
+					$purchase_line->unit_code = $product->uomDefaultCost()->unit_code;
+					$purchase_line->line_unit_price = $product->uomDefaultCost()->uom_cost;
+			}
+					
 			$purchase_line->line_subtotal = $purchase_line->line_quantity*$purchase_line->line_unit_price;
 			if ($product->product_input_tax) {
 				$purchase_line->tax_code = $product->product_input_tax;

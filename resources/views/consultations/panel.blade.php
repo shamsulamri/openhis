@@ -1,23 +1,4 @@
 @include('patients.id_only')
-	<br>
-<?php
-	$alerts = $patient->alert;
-?>
-@if (count($alerts)>0)
-	<div class='alert alert-warning' role='alert'>
-	<p>
-	@foreach ($alerts as $alert)
-		@if ($alert->alert_public==1) 
-		- {{ $alert->alert_description }}
-		@if ($alert != end($patient->alert))
-			<br>
-		@endif
-		@endif
-	@endforeach
-	</p>
-	</div>
-@else
-@endif
 
 @if (!empty($consultation->encounter->discharge->discharge_id))
 <div class="row white-bg">

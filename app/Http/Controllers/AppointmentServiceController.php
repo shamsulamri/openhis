@@ -17,6 +17,7 @@ use App\Appointment;
 use App\User;
 use App\BlockDate;
 use App\DojoUtility;
+use App\Admission;
 
 class AppointmentServiceController extends Controller
 {
@@ -212,8 +213,12 @@ class AppointmentServiceController extends Controller
 
 
 			$admission_id = 0;
+			$admission = null;
+			$encounter = null;
 			if (isset($request->admission_id)) {
 				$admission_id = $request->admission_id;
+				$admission = Admission::find($admission_id);
+				$encounter = $admission->encounter;
 			}
 
 			
@@ -224,6 +229,7 @@ class AppointmentServiceController extends Controller
 			}
 
 			return view('appointment_services.render', [
+					'encounter'=>$encounter,
 					'services'=>$services,
 					'start'=>$start_week,
 					'end'=>$end_week,

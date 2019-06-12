@@ -222,9 +222,11 @@
 			<td widht='10'>
 			<div class='pull-right'>
 			@can('module-consultation')
+				@can('discharge_patient')
 			<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$admission->admission_id) }}'>
 				<i class="fa fa-stethoscope"></i>
 			</a>
+				@endcan
 			@endcan
 			@can('system-administrator')
 					<a class='btn btn-danger' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>

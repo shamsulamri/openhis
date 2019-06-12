@@ -442,6 +442,7 @@ class ConsultationController extends Controller
 					'clinical_images'=>$clinical_images,
 					'orders'=>$consultation->orders->pluck('product_code')->toArray(),
 					'investigations'=>$investigations,
+					'encounter'=>$consultation->encounter,
 					]);
 	}
 

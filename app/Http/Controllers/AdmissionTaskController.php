@@ -131,10 +131,10 @@ class AdmissionTaskController extends Controller
 			$admission_tasks = $admission_tasks->paginate($this->paginateValue);
 				
 			$categories = ProductCategory::select('category_name', 'category_code')
-							->whereIn('category_code',$admission_tasks->pluck('category_code'))
 							->lists('category_name', 'category_code')
 							->sortBy('category_name')
 							->prepend('','');
+							//->whereIn('category_code',$admission_tasks->pluck('category_code'))
 
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,

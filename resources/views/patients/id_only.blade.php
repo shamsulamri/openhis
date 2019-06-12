@@ -22,11 +22,11 @@
 								
 						</h5>
 @endif
-		@if (!empty($encounter))
-			@if ($encounter->admission) 
+		@if (!empty($consultation->encounter))
+			@if ($consultation->encounter->admission) 
 						<h3>
-							{{ $encounter->admission->bed->bed_name }}
-							({{ $encounter->admission->bed->ward->ward_name }})
+							{{ $consultation->encounter->admission->bed->bed_name }}
+							({{ $consultation->encounter->admission->bed->ward->ward_name }})
 						</h3>
 			@endif
 		@endif
@@ -42,3 +42,22 @@
 					</h2>
 			</div>
 </div>
+<?php
+	$alerts = $patient->alert;
+?>
+@if (count($alerts)>0)
+	<br>
+	<div class='alert alert-warning' role='alert'>
+	<p>
+	@foreach ($alerts as $alert)
+		@if ($alert->alert_public==1) 
+		- {{ $alert->alert_description }}
+		@if ($alert != end($patient->alert))
+			<br>
+		@endif
+		@endif
+	@endforeach
+	</p>
+	</div>
+@else
+@endif

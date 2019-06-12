@@ -8,7 +8,11 @@ table, th, td {
 	border-bottom: none !important;
 }
 </style>
-@include('patients.id')
+@can('module-patient')
+	@include('patients.id')
+@else
+	@include('patients.id_only')
+@endcan
 @if ($appointment_id == null)
 <h1>Appointment</h1>
 <br>

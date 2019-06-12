@@ -10,7 +10,7 @@
  <thead>
 	<tr> 
     <th>Method</th>
-    <th>Description</th>
+    <th>Note</th>
     <th>Date</th> 
     <th>Amount</th> 
 	<th></th>
@@ -37,7 +37,9 @@
 				<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=deposit_receipt&id={{ $deposit->deposit_id }}'>
 				Print Receipt
 				</a>
+				@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('deposits/delete/'. $deposit->deposit_id) }}'>Delete</a>
+				@endcan
 			</td>
 	</tr>
 @endforeach

@@ -2,8 +2,6 @@
 	$notifyFlag = false;
 ?>
 
-<br>
-
 @if ($patient->patient_block==1)
 <?php $notifyFlag = true; ?>
 	<div class='alert alert-danger'>

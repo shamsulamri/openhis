@@ -294,15 +294,16 @@ class DojoUtility
 		}
 
 		public static function roundUp10($value) {
+				Log::info($value);
 				$value = str_replace(",", "", $value);
 				$valueInString = strval(round($value,2));
 				if (strpos($valueInString, ".") == 0) $valueInString = $valueInString.".00";
 				$valueArray = explode(".", $valueInString);
 				$substringValue = substr($valueArray[1], 1);
 				$substringValue = (int)$valueArray[1];
-				 
-				//Log::info($valueArray);
-				//Log::info($substringValue);
+				if ($substringValue<10) { $substringValue = $substringValue*10; } 
+				Log::info($valueArray);
+				Log::info('----'.$substringValue);
 				if ($substringValue >= 1 && $substringValue <= 50) {
 						$tempValue = 0; //str_replace(substr($valueArray[1], 1), 5, substr($valueArray[1], 1));
 						$tempValue = substr($valueArray[1],0,1).$tempValue;
