@@ -160,6 +160,8 @@ input {
 		$(document).ready(function(){
 			$('#consultation_notes').focusout(function(){
 					var note = $('#consultation_notes').val();
+					//note = note.replace("&", "and");
+					note = note.replace(new RegExp('&', 'g'), '%26');
 					var dataString = "consultation_note="+note+"&id={{ $consultation->consultation_id }}";
 
 					$.ajax({

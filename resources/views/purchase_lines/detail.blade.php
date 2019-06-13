@@ -112,7 +112,7 @@ $count=($page-1)*10;
 			<td @if ($purchase->purchase_posted==0) width='80' @endif align='right'>
 						{{ number_format($purchase_line->line_quantity) }} 
 						@if ($purchase_line->unit_code != null)
-							{{ $purchase_line->uom->unit_shortname }}
+							{{ $purchase_line->uom->unit_name }}
 						@endif
 			</td>
 			<td @if ($purchase->purchase_posted==0) width='50' @endif align='right'>

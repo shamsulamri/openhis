@@ -402,6 +402,11 @@ class ConsultationProcedureController extends Controller
 							$procedure->order_id,
 							$procedure->order_discount
 						);
+						$item_markup = sprintf("<input id='markup_%s' name='markup_%s' class='form-control input-sm small-font' type='text' value='%s'>",
+							$procedure->order_id,
+							$procedure->order_id,
+							$procedure->order_discount
+						);
 				} else {
 						$item_price = sprintf("<label id='price_%s' name='price_%s' class='form-control input-sm small-font'>%s</label>",
 							$procedure->order_id,
@@ -410,6 +415,11 @@ class ConsultationProcedureController extends Controller
 						);
 
 						$item_discount = sprintf("<label id='discount_%s' name='discount_%s' class='form-control input-sm small-font'>%s</label>",
+							$procedure->order_id,
+							$procedure->order_id,
+							$procedure->order_discount
+						);
+						$item_markup = sprintf("<label id='markup_%s' name='markup_%s' class='form-control input-sm small-font'>%s</label>",
 							$procedure->order_id,
 							$procedure->order_id,
 							$procedure->order_discount
@@ -423,6 +433,8 @@ class ConsultationProcedureController extends Controller
 							        <td width=100>%s</td>
 							        <td width=5></td>
 							        <td width=100>%s</td>
+							        <td width=5></td>
+							        <td width=100>%s</td>
 							        <td width=100>%s</td>
 							</tr>
 							<tr height=10></tr>
@@ -431,6 +443,7 @@ class ConsultationProcedureController extends Controller
 					$procedure->product_name.'<br><small>'.$procedure->user->name.'</small>',
 					$item_price,
 					$item_discount,
+					$item_markup,
 					$item_remove
 				);
 			}
@@ -447,11 +460,13 @@ class ConsultationProcedureController extends Controller
 									<th>Price (RM)</th>
 									<th></th>
 									<th>Discount (%s)</th>
+									<th></th>
+									<th>Mark-up (%s)</th>
 							</tr>
 						  </thead>
 							%s
 					</table>
-				", '100%', '%', $table_row);
+				", '100%', '%', '%', $table_row);
 			}
 
 			return $html;

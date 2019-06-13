@@ -122,11 +122,19 @@ class AssemblyController extends Controller
 						->where('unit_code', $inventory->unit_code)
 						->first();
 
-				$inventory->uom_rate =  $uom->uom_rate;
-				$inventory->inv_unit_cost =  $uom->uom_cost;
-				$inventory->inv_quantity = $quantity*$uom->uom_rate;
+				if (!empty($uom)) {
+						$inventory->uom_rate =  $uom->uom_rate;
+						$inventory->inv_unit_cost =  $uom->uom_cost;
+						$inventory->inv_quantity = $quantity*$uom->uom_rate;
+						$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
+				} else {
+						$inventory->uom_rate =  1;
+						$inventory->inv_unit_cost =  0;
+						$inventory->inv_quantity = $quantity;
+						$inventory->inv_subtotal =  $inventory->inv_physical_quantity;
+				}
+
 				$inventory->inv_physical_quantity = $quantity;
-				$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
 				$inventory->inv_posted = 1;
 
 				/*
@@ -147,10 +155,10 @@ class AssemblyController extends Controller
 						$inventory->product_code = $product->product_code;
 						$inventory->inv_book_quantity = $helper->getStockOnHand($product->product_code, $request->store_code);
 						$inventory->inv_physical_quantity = $quantity*$bom->bom_quantity;
-						$inventory->unit_code = $product->unit_code;
+						$inventory->unit_code = $product->unit_code?:'unit';
 
 						$uom = ProductUom::where('product_code', $inventory->product_code)
-								->where('unit_code', $inventory->unit_code)
+								->where('unit_code', $inventory->unit_code?:'unit')
 								->first();
 
 						$inventory->uom_rate = $uom->uom_rate;

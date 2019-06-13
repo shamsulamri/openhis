@@ -165,9 +165,11 @@ class User extends Authenticatable
 					}
 				}
 
+				/*
 				if ($default_store == null) {
 						$default_store = $this->authorizedStores()[0];
 				}
+				 */
 			}
 			return $default_store;
 	}

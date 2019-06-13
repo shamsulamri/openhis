@@ -94,7 +94,7 @@ $allocated=0;
 @endif
 </tbody>
 </table>
-{{ $products->appends(['search'=>$search,'batch_number'=>$batch_number, 'store'=>$store_code])->render() }}
+{{ $products->appends(['search'=>$search,'batch_number'=>$batch_number, 'store_code'=>$store_code])->render() }}
 <br>
 @if ($products->total()>0)
 	{{ $products->total() }} records found.

@@ -4,7 +4,7 @@
 @if ($consultation)
 @include('consultations.panel')
 @else
-@include('patients.id')
+@include('patients.id_only')
 @endif
 <div class="row">
   <div class="col-md-12">

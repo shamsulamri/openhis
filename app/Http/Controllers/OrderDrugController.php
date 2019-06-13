@@ -348,7 +348,7 @@ class OrderDrugController extends Controller
 						or trade_name like '%".$fields[0]."%') ";
 				*/
 
-				$sql = "select product_name as drug_generic_name, product_name_other as trade_name, product_code as drug_code
+				$sql = "select product_name_other as drug_generic_name, product_name as trade_name, product_code as drug_code
 						from products as a
 						where (product_name like '".$fields[0]."%'
 						or product_name_other like '".$fields[0]."%') ";
