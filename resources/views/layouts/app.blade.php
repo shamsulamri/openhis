@@ -204,6 +204,7 @@ if ($_COOKIE['his-navbar']==1) {
 								@can('module-ward')
 								<li><a title='Patient List' href="{{ url('/patients') }}" title='Patients'><i class="fa fa-user"></i><span class='nav-label'>Patients</span></a></li>
 								<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
+								<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-bullseye'></i><span class='nav-label'>Order Tasks<span></a></li>
 								<li><a title='Future Orders' href="{{ url('/futures') }}"><i class="fa fa-question-circle"></i><span class='nav-label'>Future Orders</span></a></li>
 								<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-users"></i><span class='nav-label'>Queues</span></a></li>
 								<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-bed'></i><span class='nav-label'>Admissions</a></li>
