@@ -108,6 +108,7 @@ input {
 </div>
 
 
+<!--
 <br>
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
@@ -121,6 +122,7 @@ input {
 			</div>
 		</div>
 </div>
+-->
 <!--
 <h2>Procedures</h2>
 {{ Form::text('procedure_description', null, ['tabindex'=>3,'id'=>'procedure_description','class'=>'form-control','placeholder'=>'','rows'=>'3']) }}

@@ -20,7 +20,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 @endif
 @if (!$encounter->discharge && !$billPosted)
 	<div class='alert alert-warning'>
-	Click Reload button to compile latest bill items.
+	Click Reset button to compile latest bill items.
 	</div>
 @endif
 
@@ -53,22 +53,18 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 		@endif
 @endif
 @if (!$billPosted)
-<a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reload Bill</a>
+<a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reset Bill</a>
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Interim Bill</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Detail Bill</a> 
 <p class='pull-right'>&nbsp;</p>
-<!--
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Simple Invoice</a> 
--->
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Summary Bill</a> 
 @else
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_receipt&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Receipt</a> 
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Invoice</a> 
 <p class='pull-right'>&nbsp;</p>
-<!--
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Simple Invoice</a> 
--->
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Summary Invoice</a> 
 @endif
 @if ($hasMc) 
 <p class='pull-right'>&nbsp;</p>
@@ -108,7 +104,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 	<tr> 
     <th>Code</th> 
     <th>Item</th> 
-    <th><div align='right'>Discount</div></th> 
+    <th><div align='center'>Discount/<br>Markup</div></th> 
     <th><div align='right'>Quantity</div></th> 
     <th><div align='right'>Unit Price</div></th> 
     <th><div align='right'>Subtotal</div></th> 
@@ -146,14 +142,16 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 							@if (!$billPosted)
 							<a href='{{ URL::to('bill_items/'. $bill->bill_id . '/edit') }}'>
 							@endif
-							{{ strtoupper($bill->product_name) }}
+							{{ strtoupper($bill->bill_name) }}
 							@if (!$billPosted)
 							</a>
 							@endif
 					</td>
-					<td align='right' width='50'>
+					<td align='center' width='50'>
 						<?php if ($bill->bill_discount>0) { ?>
 							{{ floatval($bill->bill_discount) }} %
+						<?php } elseif ($bill->bill_markup>0) { ?>
+							{{ floatval($bill->bill_markup) }} %
 						<?php } ?>
 							<?php if ($bill->bill_exempted==1) { ?>
 								Exempted

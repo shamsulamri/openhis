@@ -50,7 +50,7 @@ class BillItemController extends Controller
 	public function bedBills($encounter_id) {
 			$encounter = Encounter::find($encounter_id);
 			$sql = "
-				select bed_code, bed_stop, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, b.product_code, c.tax_code, tax_rate, uom_price as product_sale_price, block_room
+				select bed_code, bed_stop, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, b.product_code, c.tax_code, tax_rate, uom_price as product_sale_price, block_room, product_name 
 				from bed_charges as a
 				left join products as b on (a.bed_code = product_code)
 				left join tax_codes as c on (c.tax_code = b.product_output_tax)
@@ -88,6 +88,7 @@ class BillItemController extends Controller
 					$item->product_code = $bed->product_code;
 					$item->tax_code = $bed->tax_code;
 					$item->tax_rate = $bed->tax_rate;
+					$item->bill_name = $bed->product_name;
 					$item->bill_quantity = $bed_los*$bed_unit;
 					$item->bill_unit_price = $this->getPriceTier($encounter_id, $bed->product_code, $bed->product_sale_price);
 					$item->bill_amount_exclude_tax = $item->bill_unit_price*$item->bill_quantity;
@@ -108,6 +109,7 @@ class BillItemController extends Controller
 					$merge_item = new BillItem();
 					$merge_item->encounter_id = $item->encounter_id;
 					$merge_item->product_code = $item->product_code;
+					$merge_item->bill_name = $item->bill_name;
 					$merge_item->tax_code = $item->tax_code;
 					$merge_item->tax_rate = $item->tax_rate;
 					$merge_item->bill_unit_price = $item->bill_unit_price;
@@ -253,7 +255,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price
+				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -261,6 +263,7 @@ class BillItemController extends Controller
 				left join encounters as g on (g.encounter_id=a.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				left join users as j on (j.id = a.user_id)
 				where b.deleted_at is null
 				%s
 				and b.category_code<>'consultation'
@@ -291,15 +294,18 @@ class BillItemController extends Controller
 					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
+					$item->bill_name = $order->product_name;
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity;
 					$item->bill_unit_code = $order->unit_code;
 					$item->bill_discount = $order->order_discount;
+					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
 					$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
 					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
+					$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
@@ -321,7 +327,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, sum(order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, 1 as total_quantity
+				select a.product_code, sum(order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, 1 as total_quantity, order_markup, order_discount, name, department_name
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -329,6 +335,8 @@ class BillItemController extends Controller
 				left join encounters as g on (g.encounter_id=a.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				left join users as j on (j.id = a.user_id)
+				left join departments as k on (k.department_code = j.department_code)
 				where b.deleted_at is null
 				%s
 				and b.category_code='fee_procedure'
@@ -358,14 +366,21 @@ class BillItemController extends Controller
 					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
+					$item->bill_name = $order->name;
+					if (!empty($order->department_name)) {
+						$item->bill_name .= " (".$order->department_name.")";
+					}
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity;
 					//$item->bill_unit_code = "unit";
-					//$item->bill_discount = $order->order_discount;
+					$item->bill_discount = $order->order_discount;
+					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
 					$item->bill_unit_price = $order->order_unit_price;
 					$item->bill_amount = $order->order_unit_price;
+					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
+					$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
@@ -578,7 +593,7 @@ class BillItemController extends Controller
 			}
 
 			$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'product_non_claimable','category_name','b.category_code', 'unit_name')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'product_non_claimable','category_name','b.category_code', 'unit_name', 'bill_markup', 'bill_name')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.product_output_tax')
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
@@ -611,7 +626,7 @@ class BillItemController extends Controller
 				$this->bedBills($id);
 
 				$bills = DB::table('bill_items as a')
-					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'product_non_claimable','category_name','b.category_code', 'unit_name')
+					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'product_non_claimable','category_name','b.category_code', 'unit_name', 'bill_markup', 'bill_name')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
 					->leftjoin('tax_codes as c', 'c.tax_code', '=', 'b.product_output_tax')
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
@@ -722,7 +737,7 @@ class BillItemController extends Controller
 					$bill_grand_total = $bill_grand_total * (1-($bill_discount->discount_amount/100));
 			}
 
-			$total_payable = DojoUtility::roundUp10($bill_grand_total);
+			$total_payable = DojoUtility::roundUp($bill_grand_total);
 
 
 
@@ -827,11 +842,22 @@ class BillItemController extends Controller
 					$bill->bill_amount_exclude_tax = $bill->bill_amount;
 			}
 
+			if ($bill->bill_markup>0) {
+					$bill->bill_amount = $bill->bill_amount * (1+($bill->bill_markup/100));
+					$bill->bill_amount_exclude_tax = $bill->bill_amount;
+			}
+
 			if ($bill->product->tax_code) {
 					$bill->bill_amount = $bill->bill_amount * (1+($bill->product->tax->tax_rate/100));
 			}
 
 
+			if ($product->category_code == 'bed') {
+				$floatVal = floatval($bill->bill_quantity);
+				if ($floatVal && intval($floatVal) != $floatVal) {
+					$bill->bill_name .= " (x".$bill->bill_quantity.")";
+				}
+			}
 
 			$valid = $bill->validate($request->all(), $request->_method);
 

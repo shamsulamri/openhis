@@ -31,6 +31,7 @@ class Order extends Model
 				'unit_code',
 				'order_unit_price',
 				'order_discount',
+				'order_markup',
 				'order_is_discharge',
 				'order_include_stat',
 				'updated_by',

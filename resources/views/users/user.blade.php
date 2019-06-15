@@ -46,6 +46,14 @@
         </div>
     </div>
 	<hr>
+    <div class='form-group  @if ($errors->has('license_number')) has-error @endif'>
+        <label for='license_number' class='col-sm-3 control-label'>License Number<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+            {{ Form::text('license_number', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'255']) }}
+            @if ($errors->has('license_number')) <p class="help-block">{{ $errors->first('license_number') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('tax_number')) has-error @endif'>
         <label for='tax_number' class='col-sm-3 control-label'>Tax Number</label>
         <div class='col-sm-9'>

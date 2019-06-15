@@ -32,6 +32,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('bill_markup')) has-error @endif'>
+        {{ Form::label('bill_markup', 'Markup',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('bill_markup', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('bill_markup')) <p class="help-block">{{ $errors->first('bill_markup') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('order_is_discharge')) has-error @endif'>
         {{ Form::label('order_exempterd', 'Exempted',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

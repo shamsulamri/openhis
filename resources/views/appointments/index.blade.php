@@ -76,7 +76,7 @@
 					<a class='btn btn-danger btn-sm' href='{{ URL::to('appointments/delete/'. $appointment->appointment_id) }}'>Delete</a>
 					@endcan
 					<a class='btn btn-primary btn-sm' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $appointment->patient_id.'&appointment_id='.$appointment->appointment_id) }}'>
-						<i class="fa fa-stethoscope"></i>
+						<i class="fa fa-flag"></i>
 					</a>
 				@else
 					@if ($current_encounter->discharge) 

@@ -340,8 +340,9 @@ class DojoUtility
 						$newFloat = floatval($valueArray[0].".".substr($valueArray[1],0,1));
 						$newvalue = ($newFloat+0.1);
 				}
-				 
-				return number_format($newvalue,2);
+
+				return $newvalue;	
+				//return number_format($newvalue,2);
 		}
 
 		public static function round_five($num) {

@@ -405,7 +405,7 @@ class ConsultationProcedureController extends Controller
 						$item_markup = sprintf("<input id='markup_%s' name='markup_%s' class='form-control input-sm small-font' type='text' value='%s'>",
 							$procedure->order_id,
 							$procedure->order_id,
-							$procedure->order_discount
+							$procedure->order_markup
 						);
 				} else {
 						$item_price = sprintf("<label id='price_%s' name='price_%s' class='form-control input-sm small-font'>%s</label>",
@@ -422,7 +422,7 @@ class ConsultationProcedureController extends Controller
 						$item_markup = sprintf("<label id='markup_%s' name='markup_%s' class='form-control input-sm small-font'>%s</label>",
 							$procedure->order_id,
 							$procedure->order_id,
-							$procedure->order_discount
+							$procedure->order_markup
 						);
 				}
 
@@ -490,11 +490,9 @@ class ConsultationProcedureController extends Controller
 			if ($order) {
 					$order->order_unit_price = $request->price;
 					$order->order_discount = $request->discount;
+					$order->order_markup = $request->markup;
 					$order->save();
-					Log::info($order);
 			}
-
-			Log::info("Update procedure......");
 	}
 
 }

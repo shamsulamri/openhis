@@ -1,7 +1,7 @@
 @include('patients.id_only')
 @include('patients.notification')
 
-@can('module-patient')
+<br>
 <a class='btn btn-default' href='{{ URL::to('patients/'. $patient->patient_id . '/edit') }}'>
 						<span class='glyphicon glyphicon-user' aria-hidden='true'></span><br>Demography
 </a>
@@ -23,8 +23,8 @@
 	<br>
 	&nbsp;&nbsp;Prints&nbsp;&nbsp;
 </a>
-@endcan
 
+@can('module-discharge')
 		@if ($patient->hasActiveEncounter()) 
 		<a class='btn btn-default'  href='{{ URL::to('deposits/index/'. $patient->hasActiveEncounter()->encounter_id) }}'>
 				<span class='fa fa-money' aria-hidden='true'></span>
@@ -32,6 +32,7 @@
 				Deposit 
 		</a>
 		@endif
+@endcan
 @can('module-discharge')
 		<!--
 		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
@@ -66,7 +67,7 @@
 @can('module-patient')
 @if ($patient->patient_block==0)
 <a class='btn btn-primary pull-right @If ($patient->hasActiveEncounter()) disabled @endif' href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
-<span class='fa fa-stethoscope' aria-hidden='true'></span>
+<span class='fa fa-flag' aria-hidden='true'></span>
 <br>
 Encounter
 </a>

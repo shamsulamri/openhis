@@ -19,12 +19,12 @@ $(document).ready(function(){
 					id = id.split('_')[1];
 					var price = $('#price_'.concat(id)).val();
 					var discount = $('#discount_'.concat(id)).val();
-					console.log('----');
-					console.log(price, discount);
+					var markup = $('#markup_'.concat(id)).val();
 
-					var dataString = parse('price=%s&discount=%s&order_id=%s', 
+					var dataString = parse('price=%s&discount=%s&markup=%s&order_id=%s', 
 							price,
 							discount,
+							markup,
 							id);
 
 					$.ajax({

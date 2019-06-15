@@ -201,8 +201,11 @@ class OrderProductController extends Controller
 				}
 
 				$fields = explode(' ', $request->search);
+
+				$categoryCodes = Auth::user()->categoryCodes();
+
 				$order_products = Product::orderBy('product_name')
-						->whereIn('category_code',Auth::user()->categoryCodes())
+						->whereIn('category_code',$categoryCodes)
 						->where(function ($query) use ($fields, $request) {
 							foreach($fields as $field) {
 								$query->where('product_name','like','%'.$field.'%');
@@ -220,7 +223,6 @@ class OrderProductController extends Controller
 							}
 						});
 
-				Log::info($order_products->toSql());
 				$order_products = $order_products->paginate($this->paginateValue);
 
 			} else {
@@ -330,6 +332,8 @@ class OrderProductController extends Controller
 
 			if (!$product_authorization->get()->isEmpty()) {
 				$categories = ProductCategory::whereIn('category_code', $product_authorization->pluck('category_code'))
+								->where('category_code', '<>', 'drugs')
+								->where('category_code', '<>', 'fee_procedure')
 								->orderBy('category_name')
 								->lists('category_name', 'category_code')
 								->prepend('','');

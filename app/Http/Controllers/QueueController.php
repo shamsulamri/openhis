@@ -44,13 +44,20 @@ class QueueController extends Controller
 
 			$location = null;
 			$location_code = null;
+			$encounter_code = null;
+
 			if (!empty($request->cookie('queue_location'))) {
 					$location_code = $request->cookie('queue_location');
+			}
+
+			if (!empty($request->queue_id)) {
+				$queue = Queue::find($request->queue_id);
+				$location_code = $queue->location_code;
+			}
+
+			if (!empty($location_code)) {
 					$location = QueueLocation::find($location_code);
-					if (empty($location)) {
-						$location = null;
-						$location_code = null;
-					}
+					$encounter_code = $location->encounter_code;
 			}
 
 
@@ -89,7 +96,6 @@ class QueueController extends Controller
 
 			$queues = $queues->paginate($this->paginateValue);
 
-			$encounter_code = null;
 			$locations = Location::whereNotNull('encounter_code');
 
 			if (!empty($location)) {
@@ -239,7 +245,7 @@ class QueueController extends Controller
 					->whereNull('queues.deleted_at')
 					->where('queues.location_code','like','%'.$request->locations.'%')
 					->where('patient_name', 'like','%'.$request->search.'%')
-					->orderBy('queues.created_at');
+					->orderBy('queues.created_at', 'desc');
 
 			if ($request->encounter_code) {
 					$queues = $queues->where('b.encounter_code', $request->encounter_code);

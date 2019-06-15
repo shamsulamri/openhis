@@ -12,9 +12,11 @@ class Bill extends Model
 	protected $table = 'bills';
 	protected $fillable = [
 				'encounter_id',
+				'bill_name',
 				'bill_non_claimable',
 				'bill_total',
 				'bill_discount',
+				'bill_markup',
 				'bill_grand_total',
 				'bill_payment_total',
 				'bill_deposit_total',

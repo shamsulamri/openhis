@@ -267,9 +267,8 @@ class EncounterController extends Controller
 							$queue->location_code = $request->location_code;
 							$queue->encounter_id = $encounter->encounter_id;
 							$queue->save();
-							Log::info($queue);
 							Session::flash('message', 'Record successfully created.');
-							return redirect('/queues');
+							return redirect('/queues?queue_id='.$queue->queue_id);
 					}
 
 					if (!$queueFlag) {
