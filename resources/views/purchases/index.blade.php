@@ -98,7 +98,9 @@
 					{{$purchase->store?$purchase->store->store_name:'-' }}
 			</td>
 			<td>
+					@if ($purchase->user)
 					{{$purchase->user->name }}
+					@endif
 			</td>
 			<td>
 			{{ $purchase->purchase_posted==1? 'Posted':'Open' }}
