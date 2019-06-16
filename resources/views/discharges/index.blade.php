@@ -118,7 +118,7 @@
 					@endif
 			@endif
 			@if ($discharge->mc_id)
-<a class="btn btn-default pull-right btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
+<a class="btn btn-default pull-left btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
 			@endif
 			@endcannot
 			@can('system-administrator')

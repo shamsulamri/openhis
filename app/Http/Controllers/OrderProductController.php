@@ -205,6 +205,7 @@ class OrderProductController extends Controller
 				$categoryCodes = Auth::user()->categoryCodes();
 
 				$order_products = Product::orderBy('product_name')
+						->where('status_code', '=', 'active')
 						->whereIn('category_code',$categoryCodes)
 						->where(function ($query) use ($fields, $request) {
 							foreach($fields as $field) {

@@ -56,10 +56,10 @@
 		End Consultation
 	@endif
 	</a></li>
-	@if (empty($consultation->encounter->discharge->discharge_id))
-			@can('discharge_patient')
 			<li role="separator" class="divider"></li>
 			<li><a href="/medical_certificates/create">Medical Certificate</a></li>
+	@if (empty($consultation->encounter->discharge->discharge_id))
+			@can('discharge_patient')
 			<li><a href="/discharges/create" role="button">Discharge</a></li>
 			@endcan
 	@endif

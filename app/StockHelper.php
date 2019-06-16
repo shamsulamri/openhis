@@ -315,6 +315,9 @@ class StockHelper
 			$product = Product::find($product_code);
 			if ($product->product_stocked == 1) {
 				$product->product_on_hand = $this->getStockOnHand($product_code); 
+				if ($product->product_on_hand>0) {
+					$product->status_code = 'active';
+				}
 				$product->save();
 			}
 	}
