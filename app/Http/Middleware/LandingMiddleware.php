@@ -28,6 +28,10 @@ class LandingMiddleware
 				return redirect('/patients');
 		} 		
 
+		if ($request->user()->can('module-discharge')) {
+				return redirect('/discharges');
+		} 		
+
 		if ($request->user()->can('module-consultation')) {
 				if ($request->user()->can('module-ward')) {
 						return redirect('/admissions');
@@ -44,9 +48,6 @@ class LandingMiddleware
 				return redirect('/products');
 		} 		
 
-		if ($request->user()->can('module-discharge')) {
-				return redirect('/discharges');
-		} 		
 
 		if ($request->user()->can('module-ward')) {
 				return redirect('/admissions');

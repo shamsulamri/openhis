@@ -28,17 +28,14 @@
 						</div>
 					</div>
 			</div>
-			<!--
 			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
-						{{ Form::label('unit_code', 'Unit',['class'=>'col-sm-4 control-label']) }}
+					<div class='form-group  @if ($errors->has('product_custom_id')) has-error @endif'>
+						{{ Form::label('product_custom_id', 'Custom Id',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-							{{ Form::select('unit_code', $unit,null, ['class'=>'form-control','maxlength'=>'20']) }}
-							@if ($errors->has('unit_code')) <p class="help-block">{{ $errors->first('unit_code') }}</p> @endif
+            				{{ Form::text('product_custom_id', null, ['id'=>'product_custom_id','class'=>'form-control','placeholder'=>'Rerefence to external code eg. MMA']) }}
 						</div>
 					</div>
 			</div>
-			-->
 	</div>
 
 

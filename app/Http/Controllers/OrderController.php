@@ -562,6 +562,7 @@ class OrderController extends Controller
 			}
 
 
+			Log::info("----");
 			if (!empty($request->date_start) && empty($request->date_end)) {
 				$orders = $orders->where('orders.created_at', '>=', $date_start.' 00:00');
 			}
@@ -585,10 +586,12 @@ class OrderController extends Controller
 			if (!empty($request->category_code)) {
 					$orders = $orders->where('e.category_code','=',$request->category_code);
 			} else {
+					/*
 					$category_codes = Auth::user()->categoryCodes();
 					if (count($category_codes)>0) {
 							$orders = $orders->whereIn('e.category_code',$category_codes);
 					}
+					 */
 			}
 
 			if (!empty($request->user_id)) {

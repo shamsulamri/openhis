@@ -285,10 +285,14 @@ class OrderTaskController extends Controller
 			/*** Validation ***/
 			foreach($orders as $order) {
 				$batches = $helper->getBatches($order->product_code)?:null;
+				Log::info($batches);
 				if ($batches->count()>0) {
 						$unit_supply = 0;
 						foreach($batches as $batch) {
+								if ($batch->batch()) {
+								Log::info('--->'.$batch->batch()->batch_id);
 								$unit_supply += $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
+								}
 						}
 						Log::info("Unit supply:".$unit_supply);
 						if ($unit_supply == 0) {
@@ -323,6 +327,7 @@ class OrderTaskController extends Controller
 
 						if ($batches->count()>0) {
 								foreach($batches as $batch) {
+									if ($batch->batch()) {
 										$unit_supply = $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
 										if ($unit_supply>0) {
 												$total_supply = $total_supply + $unit_supply;
@@ -347,6 +352,7 @@ class OrderTaskController extends Controller
 												$inventory->inv_posted = 1;
 												$inventory->save();
 										}
+									}
 								}
 						} else {
 							if ($product->product_stocked==1) {
