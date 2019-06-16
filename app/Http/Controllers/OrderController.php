@@ -27,6 +27,7 @@ use App\OrderMultiple;
 use App\User;
 use App\ProductCategory;
 use App\AMQPHelper as Amqp;
+use App\Document;
 
 class OrderController extends Controller
 {
@@ -51,7 +52,6 @@ class OrderController extends Controller
 
 	public function show($id)
 	{
-			return "X";
 			$order = Order::findOrFail($id);
 			$product = Product::find($order->product_code);
 			$consultation = Consultation::findOrFail($order->consultation_id);
@@ -85,6 +85,8 @@ class OrderController extends Controller
 			}
 			//return ($diagnostic['contained']);
 
+			$document = Document::where('order_id', $id)->first();
+
 			return view('orders.show', [
 				'order'=>$order,
 				'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
@@ -95,6 +97,7 @@ class OrderController extends Controller
 				'current_id'=>$current_id,
 				'consultOption' => 'consultation',
 				'diagnostic' => $diagnostic,
+				'document'=>$document,
 			]);
 	}
 
@@ -117,6 +120,7 @@ class OrderController extends Controller
 					'order_report',
 					'category_name',
 					'product_edit_price',
+					'document_uuid',
 					];
 
 			$sql_raw= "sum(order_quantity_request) as quantity_total, product_name, a.product_code, cancel_id, a.order_id, a.user_id, post_id, d.created_at,order_is_discharge,order_completed,order_report,category_name,product_edit_price, product_duration_use";
@@ -130,6 +134,7 @@ class OrderController extends Controller
 					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
 					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
+					->leftjoin('documents as f', 'f.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=',$encounter->encounter_id)
 					->orderBy('b.category_code')
 					->orderBy('a.created_at', 'desc');

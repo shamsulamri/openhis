@@ -119,6 +119,9 @@ $category='';
 					-->
 					@endif
 				@endif
+				@if (!empty($order->document_uuid))
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $order->document_uuid) }}'>View</a>
+				@endif
 			</td>
 	</tr>
 @endforeach

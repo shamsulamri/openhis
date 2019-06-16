@@ -2,9 +2,14 @@
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-warning" href="/orders" role="button">Back</a>
+<!--
 <a class='btn btn-default pull-right'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=consent_form&id={{ $order->order_id }}'>
 <span class='glyphicon glyphicon-print' aria-hidden='true'></span>
 </a>
+-->
+						@if (!empty($document->document_file))
+							<a class='btn btn-primary pull-right' href='{{ URL::to('documents/file/'. $document->document_uuid) }}'>View Result</a>
+						@endif
         </div>
     </div>
 	<div class='form-group'>

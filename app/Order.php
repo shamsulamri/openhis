@@ -7,6 +7,7 @@ use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
 use App\StockHelper;
+use App\Document;
 use Log;
 
 class Order extends Model
@@ -125,6 +126,11 @@ class Order extends Model
 	public function orderCancel()
 	{
 			return $this->hasOne('App\OrderCancellation','order_id');
+	}
+	
+	public function document()
+	{
+			return $this->hasOne('App\Document', 'order_id');
 	}
 
 	public function orderInvestigation() 
