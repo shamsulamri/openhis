@@ -35,6 +35,7 @@
 			<tr> 
 			<th>Document</th>
 			<th>Description</th>
+			<th>Order Id</th>
 			<th>Status</th>
 			<th>Date</th>
 			<th></th>
@@ -54,6 +55,9 @@
 					</td>
 					<td>
 								{{$document->document_description}}
+					</td>
+					<td>
+								{{$document->order_id}}
 					</td>
 					<td>
 								{{$document->status->status_name}}

@@ -39,17 +39,17 @@
         </div>
     </div>
 	@endif
-@if ($order_task->orderDrug())
-    <div class='form-group  @if ($errors->has('order_discount')) has-error @endif'>
-        {{ Form::label('drug_dosage', 'Dosage',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-1'>
-            {{ Form::text('drug_dosage', $order_task->orderDrug->drug_dosage, ['class'=>'form-control','placeholder'=>'',]) }}
-        </div>
-        <div class='col-sm-2'>
-			{{ Form::select('dosage_code', $dosage,$order_task->orderDrug->dosage_code, ['id'=>'dosage_code','class'=>'form-control input-sm']) }}
-        </div>
-    </div>
-@endif
+		@if (!empty($order_task->orderDrug->order_id))
+			<div class='form-group  @if ($errors->has('order_discount')) has-error @endif'>
+				{{ Form::label('drug_dosage', 'Dosage',['class'=>'col-sm-3 control-label']) }}
+				<div class='col-sm-1'>
+					{{ Form::text('drug_dosage', $order_task->orderDrug->drug_dosage, ['class'=>'form-control','placeholder'=>'',]) }}
+				</div>
+				<div class='col-sm-2'>
+					{{ Form::select('dosage_code', $dosage,$order_task->orderDrug->dosage_code, ['id'=>'dosage_code','class'=>'form-control input-sm']) }}
+				</div>
+			</div>
+		@endif
 
 <!--
     <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>

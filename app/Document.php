@@ -11,6 +11,7 @@ class Document extends Model
 {
 	protected $table = 'documents';
 	protected $fillable = [
+				'order_id',
 				'patient_mrn',
 				'type_code',
 				'document_description',

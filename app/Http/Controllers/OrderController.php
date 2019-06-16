@@ -51,6 +51,7 @@ class OrderController extends Controller
 
 	public function show($id)
 	{
+			return "X";
 			$order = Order::findOrFail($id);
 			$product = Product::find($order->product_code);
 			$consultation = Consultation::findOrFail($order->consultation_id);

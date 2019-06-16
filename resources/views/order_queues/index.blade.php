@@ -119,12 +119,22 @@ Order Queues
 			</td>
 			<td align='right'>
 			@if ($is_future)
-					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code .'?future=true' }}' class='btn btn-primary btn-xs'>
+					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code .'?future=true' }}' class='btn btn-primary'>
 					@else
-					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}' class='btn btn-primary btn-xs'>
+					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}' class='btn btn-primary'>
 			@endif
 						Open	
-					</a> @can('system-administrator') <a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a> @endcan 
+					</a> 
+					@can('system-administrator') 
+						<a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a> 
+					@endcan 
+					@can('module-consultation')
+					@if ($status_code != 'incomplete')
+					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $order->encounter_id) }}'>
+						<i class="fa fa-stethoscope"></i>
+					</a>
+					@endif
+					@endcan
 			</td> 
 	</tr>
 @endforeach
