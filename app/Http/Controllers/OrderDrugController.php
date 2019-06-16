@@ -350,7 +350,8 @@ class OrderDrugController extends Controller
 
 				$sql = "select product_name_other as drug_generic_name, product_name as trade_name, product_code as drug_code
 						from products as a
-						where (product_name like '".$fields[0]."%'
+						where status_code = 'active'
+						and (product_name like '".$fields[0]."%'
 						or product_name_other like '".$fields[0]."%') ";
 
 				unset($fields[0]);
