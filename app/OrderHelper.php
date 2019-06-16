@@ -43,9 +43,12 @@ class OrderHelper
 
 			$value = "";
 			if ($drug) {
-					if (!empty($drug->drug_strength)) $value = $value . $drug->drug_strength." ".$drug->unit->unit_name;
-					if (!empty($drug->dosage_code)) $value = $value.", ".$drug->drug_dosage." ".$drug->dosage->dosage_name;
-					if (!empty($drug->route_code)) $value = $value.", ".$drug->route->route_name.", ".$drug->frequency_code;
+					if (!empty($drug->drug_strength)) $value = $value . $drug->drug_strength;
+					if (!empty($drug->unit)) $value = $value . " ".$drug->unit->unit_name;
+					if (!empty($drug->dosage_code)) $value = $value.", ".$drug->drug_dosage;
+					if (!empty($drug->dosage)) $value = $value." ".$drug->dosage->dosage_name;
+					if (!empty($drug->route_code)) $value = $value.", ".$drug->route->route_name;
+					if (!empty($drug->frequency_code)) $value = $value.", ".$drug->frequency_code;
 					if (!empty($drug->drug_duration)) $value = $value.", ".$drug->drug_duration;
 					if (!empty($drug->period_code)) $value = $value." ".$drug->period_code;
 					$value = trim($value, ",");
