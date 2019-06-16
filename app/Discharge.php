@@ -65,9 +65,13 @@ class Discharge extends Model
 
 	public function encounter() 
 	{
-			return $this->belongsTo('App\Encounter', 'encounter_id');
+			return $this->belongsto('app\encounter', 'encounter_id');
 	}
 
+	public function medical_certificate() 
+	{
+			return $this->hasOne('app\MedicalCertificate', 'encounter_id');
+	}
 
 	public function getTableColumns() {
 			return "X";

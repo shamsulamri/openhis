@@ -56,7 +56,7 @@ class DischargeController extends Controller
 			**/
 
 			$discharges = DB::table('discharges as a')
-					->select('patient_mrn', 'b.encounter_code','patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'name','ward_name')
+					->select('patient_mrn', 'b.encounter_code','patient_name', 'a.encounter_id', 'a.discharge_id', 'type_name','a.created_at', 'name','ward_name','mc_id')
 					->leftJoin('encounters as b', 'b.encounter_id','=','a.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('ref_discharge_types as d', 'd.type_code','=','a.type_code')
@@ -64,6 +64,7 @@ class DischargeController extends Controller
 					->leftJoin('users as f', 'f.id', '=', 'a.user_id')
 					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
 					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
+					->leftJoin('medical_certificates as j', 'j.encounter_id', '=', 'b.encounter_id')
 					->orderBy('discharge_id','desc');
 
 			$discharges = $discharges->paginate($this->paginateValue);

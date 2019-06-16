@@ -117,6 +117,7 @@
 							</span>
 					@endif
 			@endif
+<a class="btn btn-default pull-right btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
 			@endcannot
 			@can('system-administrator')
 			<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
