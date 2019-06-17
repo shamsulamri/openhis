@@ -39,7 +39,7 @@
 
 
     <div class='form-group  @if ($errors->has('payment_amount')) has-error @endif'>
-        <label for='payment_amount' class='col-sm-2 control-label'>Amount<span style='color:red;'> *</span></label>
+        <label for='payment_amount' class='col-sm-2 control-label'>Amount/Balance<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
             {{ Form::text('payment_amount', $balance, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('payment_amount')) <p class="help-block">{{ $errors->first('payment_amount') }}</p> @endif

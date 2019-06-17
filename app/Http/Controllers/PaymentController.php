@@ -234,16 +234,20 @@ class PaymentController extends Controller
 						$payment_credit->fill($request->input());
 						$payment_credit->save();
 					}
+
 					Session::flash('message', 'Record successfully updated.');
+					return redirect('/bill_items/'.$payment->encounter_id);
 					if ($payment->encounter_id>0) {
-							return redirect('/bill_items/'.$payment->encounter_id);
+							//return redirect('/bill_items/'.$payment->encounter_id);
 					} else {
 							return redirect('/payments/'.$payment->patient_id);
 					}
 			} else {
+					return redirect('/payments/'.$payment->payment_id.'/edit')
+							->withErrors($valid);
+
 					return view('payments.edit', [
 							'payment'=>$payment,
-				
 							])
 							->withErrors($valid);			
 			}

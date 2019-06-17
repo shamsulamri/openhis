@@ -118,7 +118,6 @@
 		Put view here
 	@endcan
 
-	@can('product_sale_edit')
 	<!-- Sale -->
 	<hr>
 	<div class="row">
@@ -175,7 +174,6 @@
 					</div>
 			</div>
 	</div>
-	@endcan
 
 	<div class="row">
 			<div class="col-xs-6">
