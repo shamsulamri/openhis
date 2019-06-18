@@ -17,6 +17,7 @@ class Deposit extends Model
 				'deposit_amount',
 				'payment_code',
 				'deposit_description',
+				'deposit_date',
 				'user_id'];
 	
     protected $guarded = ['deposit_id'];

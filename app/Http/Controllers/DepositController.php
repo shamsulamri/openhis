@@ -68,6 +68,8 @@ class DepositController extends Controller
 					$deposit = new Deposit($request->all());
 					$deposit->user_id = Auth::user()->id;
 					$deposit->deposit_id = $request->deposit_id;
+					$datetime = DojoUtility::now();
+					$deposit->deposit_date = DojoUtility::dateTimeWriteFormat($datetime);
 					$deposit->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/deposits/index/'.$deposit->patient_id);
