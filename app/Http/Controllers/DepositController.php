@@ -104,8 +104,9 @@ class DepositController extends Controller
 					return view('deposits.edit', [
 							'deposit'=>$deposit,
 							'payment' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
-							'patient'=>$deposit->encounter->patient,
+							'patient'=>$deposit->patient,
 							'encounter'=>$deposit->encounter,
+							'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 							])
 							->withErrors($valid);			
 			}
