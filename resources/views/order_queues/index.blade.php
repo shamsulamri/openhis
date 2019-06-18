@@ -128,15 +128,13 @@ Order Queues
 					@can('system-administrator') 
 						<a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a> 
 					@endcan 
-					<!--
 					@can('module-consultation')
-					@if ($status_code != 'incomplete')
-					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $order->encounter_id) }}'>
-						<i class="fa fa-stethoscope"></i>
-					</a>
-					@endif
+							@if ($status_code != 'incomplete')
+							<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $order->encounter_id) }}'>
+								<i class="fa fa-stethoscope"></i>
+							</a>
+							@endif
 					@endcan
-					-->
 			</td> 
 	</tr>
 @endforeach

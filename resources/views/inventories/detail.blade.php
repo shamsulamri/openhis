@@ -45,9 +45,7 @@
 			</td>
 			<td width='13%' align='center'>
 				@if ($movement->move_posted==0) 
-					<div class='@if ($inventory->inv_physical_quantity>$inventory->inv_book_quantity && $inventory->inv_book_quantity>0) has-error @endif'>
             		{{ Form::text('physical_'.$inventory->inv_id, $inventory->inv_physical_quantity ?:0, ['onchange'=>'quantityChanged()','class'=>'form-control']) }}
-					</div>
 				@else
 					{{ $inventory->inv_physical_quantity }}
 				@endif

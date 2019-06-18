@@ -151,7 +151,7 @@ class ConsultationController extends Controller
 			$this->orderStat($id);
 
 			if ($consultation->encounter->encounter_code=='outpatient' or $consultation->encounter->encounter_code=='emergency') {
-					if (Auth::user()->consultant) {
+					if (Auth::user()->authorization->module_consultation == 1) {
 						$consultation->consultation_status = 1;
 					} else {
 						$consultation->consultation_status = 2;
