@@ -94,14 +94,14 @@ Order Queues
 				<span>
 			</td>
 			<td>
-				{{ $order->consultation->encounter->encounter_description }}
-			</td>
-			<td>
 			@if ($is_future)
 					{{ (DojoUtility::dateLongFormat($order->investigation_date)) }}
 			@else
 					{{ DojoUtility::dateLongFormat($order->consultation->encounter->created_at) }}
 			@endif
+			</td>
+			<td>
+				{{ $order->consultation->encounter->encounter_description }}
 			</td>
 			<td>
 					{{ $order->discharge_id }}
