@@ -39,6 +39,7 @@
  <thead>
 	<tr> 
     <th>Date</th>
+    <th>Queue Number</th>
     <th>Name</th> 
     <th>Discharge</th> 
     <th>Physician</th> 
@@ -62,6 +63,9 @@
 					<!--
 					</a>
 					-->
+			</td>
+			<td>
+					{{ $discharge->encounter_description }}
 			</td>
 			<td>
 					{{ strtoupper($discharge->patient_name) }}

@@ -28,6 +28,7 @@
     <th>Name</th>
     <th>Identification</th>
     <th>Status</th>
+    <th>Queue Number</th>
     <th></th>
     <th></th>
 	@can('system-administrator')	
@@ -64,6 +65,8 @@
 							{{ $current_encounter }}
 						</span>
 					@endif
+			</td>
+			<td>
 			</td>
 			<td width='20'>
 				<div class="tooltip-demo">

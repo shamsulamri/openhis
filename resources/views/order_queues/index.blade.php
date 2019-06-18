@@ -64,6 +64,7 @@ Order Queues
 	<tr> 
     <th width='10'>Encounter</th>
     <th>Date</th>
+    <th>Queue Number</th>
     <th>Patient</th>
     <th>Location</th>
     <th>Orderer</th>
@@ -91,6 +92,9 @@ Order Queues
 				<span class='label label-{{ $label }}'>
 				{{ $order->consultation->encounter->encounterType->encounter_name }}
 				<span>
+			</td>
+			<td>
+				{{ $order->consultation->encounter->encounter_description }}
 			</td>
 			<td>
 			@if ($is_future)

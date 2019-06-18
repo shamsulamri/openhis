@@ -24,6 +24,7 @@
 	&nbsp;&nbsp;Prints&nbsp;&nbsp;
 </a>
 
+@can('module-discharge')
 		@if ($patient->hasActiveEncounter()) 
 		<a class='btn btn-default'  href='{{ URL::to('deposits/index/'. $patient->hasActiveEncounter()->encounter_id) }}'>
 				<span class='fa fa-money' aria-hidden='true'></span>
@@ -31,6 +32,7 @@
 				Deposit 
 		</a>
 		@endif
+@endcan
 @can('module-discharge')
 		<!--
 		<a class='btn btn-default'  href='{{ URL::to('payments/'. $patient->patient_id) }}'>
