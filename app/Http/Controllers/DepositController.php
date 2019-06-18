@@ -17,6 +17,8 @@ use App\DojoUtility;
 use App\User;
 use App\PatientType;
 use App\Sponsor;
+use App\Patient;
+use App\EncounterType;
 
 class DepositController extends Controller
 {
@@ -29,33 +31,31 @@ class DepositController extends Controller
 
 	public function index($id)
 	{
-			$deposits = DB::table('deposits as a')
-					->leftjoin('payment_methods as b', 'a.payment_code','=','b.payment_code')
-					->where('encounter_id','=', $id)
-					->orderBy('encounter_id')
+			$patient = Patient::find($id);
+			$deposits = Deposit::where('patient_id','=', $id)
+					->leftjoin('payment_methods as b', 'deposits.payment_code','=','b.payment_code')
+					->orderBy('deposit_id')
 					->paginate($this->paginateValue);
 
-			//if (count($deposits)==0) {
-//					return redirect('/deposits/create/'.$id);
-//			}
 
-			$encounter = Encounter::find($id);
 			return view('deposits.index', [
 					'deposits'=>$deposits,
-					'encounter'=>$encounter,
-					'patient'=>$encounter->patient,
+					'patient'=>$patient,
 			]);
 	}
 
 	public function create($id)
 	{
-			$encounter = Encounter::find($id);
+			$patient = Patient::find($id);
+			$encounter = $patient->activeEncounter();
 			$deposit = new Deposit();
+
 			return view('deposits.create', [
 					'deposit' => $deposit,
 					'payment' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
 					'encounter' => $encounter,
-					'patient'=>$encounter->patient,
+					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'patient'=>$patient,
 					]);
 	}
 
@@ -70,9 +70,9 @@ class DepositController extends Controller
 					$deposit->deposit_id = $request->deposit_id;
 					$deposit->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('/deposits/index/'.$deposit->encounter_id);
+					return redirect('/deposits/index/'.$deposit->patient_id);
 			} else {
-					return redirect('/deposits/create/'.$request->encounter_id)
+					return redirect('/deposits/create/'.$request->patient_id)
 							->withErrors($valid)
 							->withInput();
 			}
@@ -84,8 +84,8 @@ class DepositController extends Controller
 			return view('deposits.edit', [
 					'deposit'=>$deposit,
 					'payment' => PaymentMethod::all()->sortBy('payment_name')->lists('payment_name', 'payment_code')->prepend('',''),
-					'encounter'=>$deposit->encounter,
-					'patient'=>$deposit->encounter->patient,
+					'patient'=>$deposit->patient,
+					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					]);
 	}
 
@@ -94,13 +94,12 @@ class DepositController extends Controller
 			$deposit = Deposit::findOrFail($id);
 			$deposit->fill($request->input());
 
-
 			$valid = $deposit->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
 					$deposit->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/deposits/index/'.$deposit->encounter_id);
+					return redirect('/deposits/index/'.$deposit->patient_id);
 			} else {
 					return view('deposits.edit', [
 							'deposit'=>$deposit,

@@ -25,13 +25,11 @@
 </a>
 
 @can('module-discharge')
-		@if ($patient->hasActiveEncounter()) 
-		<a class='btn btn-default'  href='{{ URL::to('deposits/index/'. $patient->hasActiveEncounter()->encounter_id) }}'>
+		<a class='btn btn-default'  href='{{ URL::to('deposits/index/'. $patient->patient_id) }}'>
 				<span class='fa fa-money' aria-hidden='true'></span>
 				<br>
 				Deposit 
 		</a>
-		@endif
 @endcan
 @can('module-discharge')
 		<!--

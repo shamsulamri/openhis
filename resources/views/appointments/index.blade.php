@@ -38,7 +38,7 @@
 	<tbody>
 @foreach ($appointments as $appointment)
 	<?php
-		$current_encounter = $appointment->patient->hasActiveEncounter();
+		$current_encounter = $appointment->patient->activeEncounter();
 	?>
 	<tr>
 			<td>

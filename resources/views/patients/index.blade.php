@@ -61,20 +61,20 @@
 						@if (count($patient->getDischargeOrders())>0)
 							&nbsp;
 						@endif
-						<span class='label label-primary'>
-							{{ $current_encounter }}
-						</span>
+							{!! $current_encounter !!}
 					@endif
 			</td>
 			<td>
 			</td>
 			<td width='20'>
 				<div class="tooltip-demo">
+					<!--
 					@if ($patient->outstandingBill()<0)
 						<span class='label label-danger'>
 						<i class="fa fa-exclamation-triangle" data-toggle="tooltip" data-placement="left" title="Outstanding bill"></i>
 						</span>
 					@endif
+					-->
 				</div>
 			</td>
 			<td width='20'>

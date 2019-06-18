@@ -267,6 +267,7 @@ class Patient extends Model
 
 	public function outstandingBill()
 	{
+			return 0;
 			$amount = DB::table('bills as a')
 						->leftjoin('encounters as b', 'a.encounter_id','=', 'b.encounter_id')
 						->where('b.patient_id','=',$this->patient_id)
@@ -308,7 +309,7 @@ class Patient extends Model
 	}
 
 
-	public function hasActiveEncounter() 
+	public function activeEncounter() 
 	{
 			$encounter_active=True;
 			$encounter_completed=True;
@@ -375,6 +376,7 @@ class Patient extends Model
 
 	public function getCurrentEncounter()
 	{
+			$status = "";
 			$encounter = Encounter::where('patient_id', $this->patient_id)
 							->orderBy('encounter_id','desc')
 							->first();
@@ -421,21 +423,28 @@ class Patient extends Model
 									Log::info("X: ".$non_claimable_amount);
 
 									if (!$bill_complete) {
-											return "Billing process...";
+											$status =  "Billing process...";
 									}
 
 							} else {
-									if ($encounter->bill->count()==0) {
-											return "Billing process...";
+									if (empty($encounter->bill)) {
+											$status =  "Billing process...";
 									}
+							}
+							$status = "<span class='label label-primary'>".$status."</span>";
+							if (empty($encounter->bill)) {
+								$status.=' ('.$encounter->encounter_description.')';
 							}
 					} else {
 							if ($encounter->admission) {
-									return $encounter->admission->bed->bed_name." (".$encounter->admission->bed->ward->ward_name.")";
+									$status =  $encounter->admission->bed->bed_name." (".$encounter->admission->bed->ward->ward_name.")";
 							} else {
-									return $encounter->queue->location->location_name;
+									$status =  $encounter->queue->location->location_name;
 							}
+							$status = "<span class='label label-primary'>".$status."</span>";
 					}
+
+					return $status;
 			} else {
 				return null;
 			}

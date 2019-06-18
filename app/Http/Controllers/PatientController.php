@@ -126,7 +126,7 @@ class PatientController extends Controller
 			return view('patients.view', [
 					'patient'=>$patient,
 					'patientOption'=>'',
-					'encounter'=>$patient->hasActiveEncounter(),
+					'encounter'=>$patient->activeEncounter(),
 					]);
 	}
 

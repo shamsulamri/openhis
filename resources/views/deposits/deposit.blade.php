@@ -15,6 +15,14 @@
         </div>
     </div>
 
+	<div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
+        <label for='encounter_code' class='col-sm-3 control-label'>Encounter<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+			{{ Form::select('encounter_code', $encounter_type, null, ['id'=>'encounter','class'=>'form-control','onchange'=>'checkTriage()']) }}
+            @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('deposit_description')) has-error @endif'>
         {{ Form::label('deposit_description', 'Note',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -25,11 +33,8 @@
 
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
-			<!--
-            <a class="btn btn-default" href="/patients/{{ $encounter->patient_id }}" role="button">Cancel</a>
-			-->
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
         </div>
     </div>
     
-	{{ Form::hidden('encounter_id', $encounter->encounter_id) }}
+	{{ Form::hidden('patient_id', $patient->patient_id) }}

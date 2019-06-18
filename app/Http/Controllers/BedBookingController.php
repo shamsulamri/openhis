@@ -77,7 +77,7 @@ class BedBookingController extends Controller
 
 
 			$patient = Patient::find($patient_id);
-			$encounter = $patient->hasActiveEncounter();
+			$encounter = $patient->activeEncounter();
 			if (!empty($encounter->admission)) {
 					$bed_booking->user_id = $encounter->admission->user_id;
 					$bed_booking->ward_code = $encounter->admission->bed->ward_code;

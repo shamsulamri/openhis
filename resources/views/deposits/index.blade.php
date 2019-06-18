@@ -3,15 +3,16 @@
 @section('content')
 @include('patients.id')
 <h1>Deposit Transactions
-<a href='/deposits/create/{{ $encounter->encounter_id }}' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
+<a href='/deposits/create/{{ $patient->patient_id }}' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 @if ($deposits->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Method</th>
-    <th>Note</th>
     <th>Date</th> 
+    <th>Encounter</th>
+    <th>Note</th>
+    <th>Method</th>
     <th>Amount</th> 
 	<th></th>
 	</tr>
@@ -20,15 +21,18 @@
 @foreach ($deposits as $deposit)
 	<tr>
 			<td>
-					<a href='{{ URL::to('deposits/'. $deposit->deposit_id . '/edit') }}'>
-						{{$deposit->payment_name}}
-					</a>
+					{{ DojoUtility::dateReadFormat($deposit->created_at) }}
+			</td>
+			<td>
+					{{ $deposit->encounterType->encounter_name }}
 			</td>
 			<td>
 					{{$deposit->deposit_description}}
 			</td>
 			<td>
-					{{ DojoUtility::dateTimeReadFormat($deposit->created_at) }}
+					<a href='{{ URL::to('deposits/'. $deposit->deposit_id . '/edit') }}'>
+						{{$deposit->payment_name}}
+					</a>
 			</td>
 			<td>
 					{{ number_format($deposit->deposit_amount,2) }}
