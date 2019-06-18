@@ -24,7 +24,9 @@
 					{{ DojoUtility::dateReadFormat($deposit->created_at) }}
 			</td>
 			<td>
+					@if ($deposit->encounterType)
 					{{ $deposit->encounterType->encounter_name }}
+					@endif
 			</td>
 			<td>
 					{{$deposit->deposit_description}}
