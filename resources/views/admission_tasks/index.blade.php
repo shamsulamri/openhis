@@ -106,7 +106,9 @@ $header_count=0;
 			<tr>
 
 			<td width=10>
+			@if ($admission_task->category_code != 'radiography' && $admission_task->category_code != 'imaging' && $admission_task->category_code != 'lab')
 					{{ Form::checkbox('order:'.$admission_task->order_id, 1, $admission_task->order_completed, ['class'=>'i-checks']) }} 
+			@endif
 			</td>
 			<td width=10>
 				@if ($label)
@@ -117,6 +119,7 @@ $header_count=0;
 			</td>
 			<td>
 				{{strtoupper($admission_task->product_name)}}<br>
+				{{ $admission_task->product_code }}<br>
 				{{ $order_helper->drugDescription($admission_task->order_id, "") }}
 			</td>
 			<td>

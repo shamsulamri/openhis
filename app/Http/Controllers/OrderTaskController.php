@@ -63,6 +63,7 @@ class OrderTaskController extends Controller
 					->leftjoin('users as k','k.id','=', 'a.user_id')
 					->where('a.post_id','>',0)
 					->where('c.encounter_id','=', $encounter_id)
+					->where('e.product_drop_charge', '<>', '1')
 					->whereNull('cancel_id')
 					->where('investigation_date','<', Carbon::now())
 					->orderBy('a.post_id')
