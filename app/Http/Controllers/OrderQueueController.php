@@ -95,18 +95,20 @@ class OrderQueueController extends Controller
 			**/
 
 			$order_queues = Order::groupBy('orders.encounter_id')
+					->orderBy('c.encounter_id', 'desc')
 					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
 					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
 					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
 					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->leftjoin('bills as p', 'p.encounter_id', '=', 'c.encounter_id')
 					->whereIn('o.category_code', $queue_categories)
 					->whereIn('c.encounter_code', $queue_encounters)
-					->where('order_completed','=',0)
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id')
 					->whereNull('c.deleted_at');
+					//->where('order_completed','=',0)
 
 			if ($request->future) {
 					$order_queues = $order_queues->where('order_is_future','=', 1);
@@ -336,12 +338,14 @@ class OrderQueueController extends Controller
 			 */
 
 			$order_queues = Order::groupBy('orders.encounter_id')
+					->orderBy('c.encounter_id', 'desc')
 					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
 					->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
 					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
 					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->leftjoin('bills as p', 'p.encounter_id', '=', 'c.encounter_id')
 					->whereIn('o.category_code', $queue_categories)
 					->whereIn('c.encounter_code', $queue_encounters)
 					->whereNull('cancel_id')
@@ -351,7 +355,7 @@ class OrderQueueController extends Controller
 					$order_queues = $order_queues->where('c.encounter_code','=', $request->encounter_code);
 			}
 
-			if ($request->status_code =='incomplete' or empty($request->status_code)) {
+			if ($request->status_code =='incomplete') {
 					$order_queues = $order_queues->where('order_completed', '=', 0);
 			} 
 

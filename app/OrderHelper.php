@@ -160,7 +160,7 @@ class OrderHelper
 			if ($product->product_stocked==1) {
 					$encounter = Encounter::find(Session::get('encounter_id'));
 					$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
-					$location_code = (new self)->getTargetLocation($product);
+					//$location_code = (new self)->getTargetLocation($product);
 
 					if (!empty($location_code)) {
 							Log::info("------->".$location_code);
@@ -508,27 +508,27 @@ class OrderHelper
 
 	public static function addToInventory($order, $batch_number = null) 
 	{
+		Log::info("=================================");
 		$total_supply = $order->order_quantity_supply;
 		$inventory = new Inventory();
 		$inventory->order_id = $order->order_id;
 		$inventory->store_code = $order->store_code;
 		$inventory->product_code = $order->product_code;
 		$inventory->inv_batch_number = $batch_number;
-		$inventory->unit_code = $order->product->unit_code;
+		$inventory->unit_code = $order->product->uomDefaultPrice($order->encounter)->unit_code;
 
 		$uom = ProductUom::where('product_code', $order->product_code)
 				->where('unit_code', $inventory->unit_code)
 				->first();
 
-		$inventory->uom_rate =  $uom->uom_rate;
-		$inventory->inv_unit_cost =  $uom->uom_cost;
+		$inventory->uom_rate =  $uom->uom_rate?:1;
+		$inventory->inv_unit_cost =  $uom->uom_cost?:0;
 		$inventory->inv_quantity = -($total_supply*$uom->uom_rate);
 		$inventory->inv_physical_quantity = $total_supply;
 		$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
 		$inventory->move_code = 'sale';
 		$inventory->inv_posted = 1;
 		$inventory->save();
-		Log::info("=================================");
 				
 	}
 }

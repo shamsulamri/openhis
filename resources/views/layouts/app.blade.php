@@ -298,6 +298,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-users"></i><span class='nav-label'>Queues</span></a></li>
 						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-bed'></i><span class='nav-label'>Admissions</a></li>
 						<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
+						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
 						@endcan
 
 						<!-- Product List -->

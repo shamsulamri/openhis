@@ -138,6 +138,7 @@ class BillItemController extends Controller
 					if (!empty($encounter->sponsor_code)) {
 							$merge_item->bill_non_claimable = 0;
 					}
+
 					$merge_item->save();
 			}
 	}
@@ -268,6 +269,7 @@ class BillItemController extends Controller
 				%s
 				and b.category_code<>'consultation'
 				and b.category_code<>'fee_procedure'
+				and b.category_code<>'bed'
 				and h.patient_id = %d
 				and bill_id is null 
 				and order_multiple=0
@@ -287,6 +289,7 @@ class BillItemController extends Controller
 					}
 			}
 			
+			Log::info($sql);
 			$orders = DB::select($sql);
 			
 			foreach ($orders as $order) {

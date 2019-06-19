@@ -157,7 +157,7 @@ class ConsultationController extends Controller
 						$consultation->consultation_status = 2;
 					}
 			} else {
-					$consultation->consultation_status = 2;
+		    			$consultation->consultation_status = 2;
 			}
 			$consultation->save();
 

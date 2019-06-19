@@ -67,7 +67,8 @@ Order Queues
     <th>Queue Number</th>
     <th>Patient</th>
     <th>Location</th>
-    <th>Orderer</th>
+    <th>Status</th>
+    <th>Bill</th>
 	<th></th>
 	</tr>
   </thead>
@@ -91,7 +92,7 @@ Order Queues
 				?>
 				<span class='label label-{{ $label }}'>
 				{{ $order->consultation->encounter->encounterType->encounter_name }}
-				<span>
+				</span>
 			</td>
 			<td>
 			@if ($is_future)
@@ -118,10 +119,24 @@ Order Queues
 					@else
 							{{ $order->consultation->encounter->queue->location->location_name }}
 					@endif						
+					<br>
+					{{ $order->consultation->user->name }}
 			</td>
 			<td>
-					{{ $order->consultation->user->name }}<br>
-
+					@if ($order->order_completed == 0)
+				   		<span class='label label-warning'>Open</span>
+					@endif
+					@if ($order->order_completed == 1)
+				   		<span class='label label-success'>Done</span>
+					@endif
+					
+			</td>
+			<td>
+					@if ($order->id) 
+							<span class='label label-success'>Paid</span>
+					@else
+							<span class='label label-warning'>Open</span>
+					@endif
 			</td>
 			<td align='right'>
 			@if ($is_future)
@@ -148,8 +163,8 @@ Order Queues
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $order_queues->appends(['search'=>$search])->render() }}
+@if (isset($search) | isset($status_code)) 
+	{{ $order_queues->appends(['search'=>$search, 'status_code'=>$status_code])->render() }}
 	@else
 	{{ $order_queues->render() }}
 @endif
