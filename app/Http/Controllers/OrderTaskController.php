@@ -206,7 +206,8 @@ class OrderTaskController extends Controller
 
 			if ($valid->passes()) {
 					$order_task->save();
-					if ($order_task->orderDrug()) {
+					//if ($order_task->orderDrug()) {
+					if (!empty($request->dosage_code)) {
 							$orderDrug = OrderDrug::find($order_task->order_id);
 							$orderDrug->dosage_code = $request->dosage_code;
 							$orderDrug->drug_dosage = $request->drug_dosage;
