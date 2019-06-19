@@ -273,9 +273,11 @@ class OrderQueueController extends Controller
 
 	public function search(Request $request)
 	{
+			/*
 			if (empty($request->cookie('queue_location'))) {
 					return redirect('queue_locations');
 			}
+			 */
 
 			if (!empty(Auth::user()->authorization->location_code)) {
 				$location_code = Auth::user()->authorization->location_code;

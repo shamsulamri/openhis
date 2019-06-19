@@ -42,7 +42,7 @@ class BillHelper
 			
 			$deposit_total = DB::table('deposits as a')
 					->leftjoin('encounters as b', 'a.encounter_id','=','b.encounter_id')
-					->where('patient_id','=', $patient_id)
+					->where('a.patient_id','=', $patient_id)
 					->where('a.encounter_id','=', $encounter_id)
 					->sum('deposit_amount');
 			

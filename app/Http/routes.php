@@ -886,15 +886,15 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				//Route::get('/deposits/delete/{id}', 'DepositController@delete');
 				
 
+
+
+		});
 				Route::resource('preadmissions', 'BedBookingController',['except'=>['create']]);
 				Route::get('/preadmissions/create/{patient_id}/{admission_id?}', 'BedBookingController@create');
 				Route::get('/preadmissions/id/{id}', 'BedBookingController@searchById');
 				Route::post('/preadmission/search', 'BedBookingController@search');
 				Route::get('/preadmission/search', 'BedBookingController@search');
 				Route::get('/preadmissions/delete/{id}', 'BedBookingController@delete');
-
-
-		});
 
 				Route::resource('queues', 'QueueController');
 				Route::get('/queues/id/{id}', 'QueueController@searchById');

@@ -105,9 +105,11 @@ Order Queues
 			</td>
 			<td>
 					{{ $order->discharge_id }}
+					@if ($order->consultation->encounter->patient)
 					{{ $order->consultation->encounter->patient->patient_name }}
 					<br>
 					<small>{{ $order->consultation->encounter->patient->patient_mrn }}</small>
+					@endif
 			</td>
 			<td>
 					@if ($order->admission) 

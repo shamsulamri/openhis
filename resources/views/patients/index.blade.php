@@ -79,11 +79,9 @@
 			</td>
 			<td width='20'>
 				<div class="tooltip-demo">
-					@if (empty($current_encounter))
 					<a class='btn btn-primary btn-xs pull-right' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $patient->patient_id) }}'>
 						<i class="fa fa-flag"></i>
 					</a>
-					@endif
 				</div>
 			</td>
 			@can('system-administrator')
