@@ -42,9 +42,7 @@
 	?>
 	<tr>
 			<td>
-				@if (!isset($current_encounter))
 					{{ Form::checkbox($appointment->appointment_id, 1, null) }}
-				@endif
 			</td>
 			<td>
 					<?php

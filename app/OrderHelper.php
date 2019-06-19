@@ -211,7 +211,6 @@ class OrderHelper
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 
-
 			$order = Order::where('consultation_id', Session::get('consultation_id'))
 						->where('encounter_id', Session::get('encounter_id'))
 						->where('product_code', $product->product_code)
@@ -495,10 +494,10 @@ class OrderHelper
 										$quantity_request = $quantity_request-$supply;
 									}
 									$order->order_quantity_supply = $supply;
-									self::addToInventory($order, $batch->inv_batch_number);
+									//self::addToInventory($order, $batch->inv_batch_number);
 							}
 						} else {
-							self::addToInventory($order);
+							//self::addToInventory($order);
 						}
 
 				}
