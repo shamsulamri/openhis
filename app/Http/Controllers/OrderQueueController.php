@@ -345,7 +345,9 @@ class OrderQueueController extends Controller
 					->whereIn('o.category_code', $queue_categories)
 					->whereIn('c.encounter_code', $queue_encounters)
 					->whereNull('cancel_id')
-					->whereNotNull('n.post_id');
+					->whereNotNull('n.post_id')
+					->whereNull('c.deleted_at')
+					->orderBy('orders.order_id', 'desc');
 
 			if (!empty($request->encounter_code)) {
 					$order_queues = $order_queues->where('c.encounter_code','=', $request->encounter_code);
