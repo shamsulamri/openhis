@@ -89,6 +89,11 @@ $category='';
 				</div>
 			</td>
 			<td align='right'>
+				@can('module-discharge')
+					<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>
+							<span class='glyphicon glyphicon-minus'></span>
+					</a>
+				@endcan
 				@if ($order->user_id == Auth::user()->id && $order->post_id==0 && $order->order_completed==1)
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>
 							<span class='glyphicon glyphicon-minus'></span>

@@ -170,7 +170,13 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 							{{ $bill->tax_code }}
 					</td>
 					<td align='right' width='80'>
+							@if ($bill->bill_amount == 0)
+								<span class='label label-danger'>
+							@endif
 							{{ number_format($bill->bill_amount,2) }}
+							@if ($bill->bill_amount == 0)
+								<span>
+							@endif
 					</td>
 					@can('system-administrator')
 					<td align='right' width='80'>

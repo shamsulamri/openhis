@@ -146,6 +146,10 @@ class BillItemController extends Controller
 	{
 			$encounter = Encounter::find($encounter_id);
 			$product = Product::find($product_code);
+					if ($product->uomDefaultPrice($encounter)) {
+						$price = $product->uomDefaultPrice($encounter)->uom_price?:0;
+					}
+			return $price;
 
 			Log::info('--->'.$product_code);
 			$price = 1;
@@ -276,6 +280,7 @@ class BillItemController extends Controller
 				%s
 				and b.category_code<>'consultation'
 				and b.category_code<>'fee_procedure'
+				and b.category_code<>'fee_consultation'
 				and b.category_code<>'bed'
 				and h.patient_id = %d
 				and bill_id is null 
@@ -412,7 +417,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.order_id, a.product_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price
+				select a.order_id, a.product_code, order_quantity_supply as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, product_name
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -427,7 +432,6 @@ class BillItemController extends Controller
 				and order_multiple=0
 				and bill_id is null
 				%s
-				group by product_code,a.unit_code, order_discount
 			";
 
 			$sql = sprintf($base_sql, $patient_id, "");
@@ -445,9 +449,6 @@ class BillItemController extends Controller
 			$orders = DB::select($sql);
 
 			foreach ($orders as $order) {
-					Log::info('-------------wwwwww-------');
-					Log::info($order->product_code);
-					Log::info($order->order_unit_price);
 					$item = new BillItem();
 					$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
@@ -456,9 +457,10 @@ class BillItemController extends Controller
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity;
 					$item->bill_discount = $order->order_discount;
-					$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
+					$item->bill_name = $order->product_name;
+					$item->bill_unit_price = $order->order_unit_price;
 					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;
-					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
+					$item->bill_amount = $item->bill_amount; // * (1-($item->bill_discount/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
@@ -620,6 +622,12 @@ class BillItemController extends Controller
 			$bills = $bills->paginate($this->paginateValue);
 
 			if ($bills->count()==0) {
+				$encounter = Encounter::find($id);
+				DB::table('deposits')
+						->where('patient_id', $encounter->patient_id)
+						->where('encounter_code', $encounter->encounter_code)
+						->update(['encounter_id' => $id]);
+
 				if (!empty($encounter->sponsor_code)) {
 					$this->compileBill($id, 1);
 					$this->compileBill($id, 0);

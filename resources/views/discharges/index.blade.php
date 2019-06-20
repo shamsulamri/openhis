@@ -108,12 +108,12 @@
 			@cannot('system-administrator')
 			@if ($discharge->encounter_code=='inpatient')
 					@can('module-discharge')
-					<a class='btn btn-{{ $button_type }} btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
+					<a class='btn btn-{{ $button_type }}' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
 					@endcan
 			@else
 					@if ($dischargeHelper->drugCompleted($discharge->encounter_id))
 							@can('module-discharge')
-							<a class='btn btn-{{ $button_type }} btn-xs' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
+							<a class='btn btn-{{ $button_type }}' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
 							@endcan
 					@else
 							<span class="label label-warning">
@@ -122,7 +122,7 @@
 					@endif
 			@endif
 			@if ($discharge->mc_id)
-<a class="btn btn-default pull-left btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
+<a class="btn btn-default pull-left" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
 			@endif
 			@endcannot
 			@can('system-administrator')
