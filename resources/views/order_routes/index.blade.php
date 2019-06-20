@@ -41,11 +41,7 @@
 						{{ $order_route->location->location_name }}
 			</td>
 			<td>
-						@if ($order_route->location->store)
 						{{ $order_route->location->store->store_name }}
-						@else
-						-
-						@endif
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('order_routes/delete/'. $order_route->route_id) }}'>Delete</a>

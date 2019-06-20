@@ -75,7 +75,9 @@ Progress Notes
 					@if (count($note->orders)>0)
 							@foreach ($note->orders as $order)
 								@if ($order->orderCancel) <strike> @endif
+								@if ($order->product)
 								{{ $order->product->product_name }},
+								@endif
 								{{ $order_helper->getPrescription($order->order_id) }}
 								<br>
 								@if ($order->orderCancel) </strike> @endif

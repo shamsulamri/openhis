@@ -25,6 +25,7 @@ use App\OrderHelper;
 use Auth;
 use Gate;
 use App\StockHelper;
+use App\Encounter;
 
 class OrderProductController extends Controller
 {
@@ -174,12 +175,23 @@ class OrderProductController extends Controller
 
 												$response=0;
 												if ($product->product_stocked==1) {
+
+														if ($request->encounter_id) {
+																$encounter = Encounter::find($request->encounter_id);
+																if ($encounter->admission) {
+
+																}
+														}
+														
 														$stock_helper = new StockHelper();
 														//$store_code = OrderHelper::getStoreAffected($product);
 														$store_code = OrderHelper::getTargetStore($product);
 
 														$allocated = $stock_helper->getStockAllocated($product->product_code, $store_code);
 														$on_hand = $stock_helper->getStockOnHand($product->product_code, $store_code);
+
+
+
 
 														if ($on_hand-$allocated>0) {
 																$response = OrderHelper::orderItem($product, $request->cookie('ward'));

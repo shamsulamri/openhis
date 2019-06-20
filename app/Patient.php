@@ -439,7 +439,9 @@ class Patient extends Model
 							if ($encounter->admission) {
 									$status =  $encounter->admission->bed->bed_name." (".$encounter->admission->bed->ward->ward_name.")";
 							} else {
-									$status =  $encounter->queue->location->location_name;
+									if ($encounter->queue) {
+										$status =  $encounter->queue->location->location_name;
+									}
 							}
 							$status = "<span class='label label-primary'>".$status."</span>";
 					}

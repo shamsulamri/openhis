@@ -298,7 +298,7 @@ class OrderTaskController extends Controller
 						}
 						Log::info("Unit supply:".$unit_supply);
 						if ($unit_supply == 0) {
-									$valid['batch_'.$batch->product_code."_".$batch->batch()->batch_id] = "Sum cannot be zero";
+									//$valid['batch_'.$batch->product_code."_".$batch->batch()->batch_id] = "Sum cannot be zero";
 						}
 				} else {
 						if ($order->product->product_stocked == 1) {
@@ -328,6 +328,7 @@ class OrderTaskController extends Controller
 						$batches = $helper->getBatches($order->product_code)?:null;
 
 						if ($batches->count()>0) {
+								$total_supply = 0;
 								foreach($batches as $batch) {
 									if ($batch->batch()) {
 										$unit_supply = $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;

@@ -35,6 +35,7 @@
 	<input type='hidden' name='set_value' value="{{ $set_value }}">
 -->
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
+	<input_type='hidden' name="encounter_id" value="{{ $consultation->encounter_id }}">
 </form>
 <br>
 @if (!is_null($order_products))
@@ -101,9 +102,11 @@
 									<td width='10'>
 <?php
 	$button_status="btn-primary";
+	/*
 	if ($order_product->product_stocked==1) {
 			if ($total_on_hand==0 & $negetive_stock==0) $button_status = "btn-default disabled";
 	}
+	 */
 ?>
 										<a href='/orders/single/{{ $order_product->product_code }}?_search={{ $search }}&_page={{ $page }}&_set_value={{ $set_value }}&category_code={{ $category_code }}' class='btn {{ $button_status }}'>
 											<span class='glyphicon glyphicon-plus'></span>

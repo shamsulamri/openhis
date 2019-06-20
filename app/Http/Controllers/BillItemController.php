@@ -138,7 +138,6 @@ class BillItemController extends Controller
 					if (!empty($encounter->sponsor_code)) {
 							$merge_item->bill_non_claimable = 0;
 					}
-
 					$merge_item->save();
 			}
 	}
@@ -148,11 +147,16 @@ class BillItemController extends Controller
 			$encounter = Encounter::find($encounter_id);
 			$product = Product::find($product_code);
 
+			Log::info('--->'.$product_code);
+			$price = 1;
 			if (empty($product->charge_code)) {
-					return $product->uomDefaultPrice($encounter)->uom_price?:0;
+					if ($product->uomDefaultPrice($encounter)) {
+						$price = $product->uomDefaultPrice($encounter)->uom_price?:0;
+					}
 			}
 
 			$value=0;
+			/*
 			$tiers = ProductPriceTier::where('charge_code','=', $product->charge_code)->get();
 
 			if (empty($tiers)) {
@@ -160,7 +164,9 @@ class BillItemController extends Controller
 			}
 
 			if (empty($price)) {
-				$price = $product->uomDefaultPrice($encounter)->uom_price?:0;
+					if ($product->uomDefaultPrice($encounter)) {
+						$price = $product->uomDefaultPrice($encounter)->uom_price?:0;
+					}
 			}
 
 			if ($tiers->count()>0) {
@@ -178,6 +184,7 @@ class BillItemController extends Controller
 			} else {
 					$tier = $tiers[0];
 			}
+			 */
 
 			/*** Outpatient vs Inpatient ***/
 			if ($encounter->encounter_code=='outpatient' or $encounter->encounter_code=='emergency') {
@@ -289,7 +296,6 @@ class BillItemController extends Controller
 					}
 			}
 			
-			Log::info($sql);
 			$orders = DB::select($sql);
 			
 			foreach ($orders as $order) {
@@ -365,6 +371,8 @@ class BillItemController extends Controller
 			$orders = DB::select($sql);
 			
 			foreach ($orders as $order) {
+					Log::info('----->>>'.$order->product_code);
+					Log::info('----->>>'.$order->order_unit_price);
 					$item = new BillItem();
 					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
@@ -377,7 +385,7 @@ class BillItemController extends Controller
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity;
 					//$item->bill_unit_code = "unit";
-					$item->bill_discount = $order->order_discount;
+					$item->bill_discount = 0;
 					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
 					$item->bill_unit_price = $order->order_unit_price;
@@ -412,9 +420,9 @@ class BillItemController extends Controller
 				left join encounters as g on (g.encounter_id=a.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
-				where order_completed = 1 
+				where (b.category_code='fee_consultation' or b.category_code = 'consultation')
+				and order_completed = 1 
 				and b.deleted_at is null
-				and b.category_code='consultation'
 				and h.patient_id = %d
 				and order_multiple=0
 				and bill_id is null
@@ -437,6 +445,9 @@ class BillItemController extends Controller
 			$orders = DB::select($sql);
 
 			foreach ($orders as $order) {
+					Log::info('-------------wwwwww-------');
+					Log::info($order->product_code);
+					Log::info($order->order_unit_price);
 					$item = new BillItem();
 					$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
