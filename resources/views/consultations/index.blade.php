@@ -16,7 +16,6 @@
     <th>Date</th>
     <th>Name</th> 
     <th>Room/Bed</th> 
-	<th>Clinical Notes</th>
 	<th></th>
 	</tr>
   </thead>
@@ -47,13 +46,6 @@
 						{{ $consultation->encounter->queue->location->location_name }}
 						@endif
 					@endif
-			</td>
-			<td>
-					<a href='{{ URL::to('consultations/'. $consultation->consultation_id . '/edit') }}'>
-						<small>
-						{!! str_replace(chr(13), "<br>", $consultation->consultation_notes) !!}
-						</small>
-					</a>
 			</td>
 			<td align='right'>
 					@if (empty($consultation->bill))

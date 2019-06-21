@@ -243,6 +243,15 @@ class QueueController extends Controller
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
 					->whereNull('discharge_id')
 					->whereNull('queues.deleted_at')
+					->orderBy('queues.created_at');
+
+			$queues = Queue::select('queue_id', 'patient_mrn', 'patient_name', 'location_name', 'queues.location_code', 'queues.created_at', 'queues.encounter_id')
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'queues.encounter_id')
+					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftjoin('queue_locations as d', 'd.location_code','=', 'queues.location_code')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->whereNull('discharge_id')
+					->whereNull('queues.deleted_at')
 					->where('queues.location_code','like','%'.$request->locations.'%')
 					->where('patient_name', 'like','%'.$request->search.'%')
 					->orderBy('queues.created_at', 'desc');

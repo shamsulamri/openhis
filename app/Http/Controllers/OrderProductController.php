@@ -193,9 +193,9 @@ class OrderProductController extends Controller
 
 
 
-														if ($on_hand-$allocated>0) {
+														//if ($on_hand-$allocated>0) {
 																$response = OrderHelper::orderItem($product, $request->cookie('ward'));
-														}
+														//}
 												} else {
 														$response = OrderHelper::orderItem($product, $request->cookie('ward'));
 												}

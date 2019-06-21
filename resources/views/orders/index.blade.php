@@ -31,6 +31,7 @@ $category='';
 	</tr>
 	@endif
 	-->
+	<!--
 	@if ($category != $order->category_name)
 	<tr bgcolor='#efefef'>
 			<td colspan=2>
@@ -46,6 +47,7 @@ $category='';
 	</tr>
 		<?php $category=$order->category_name; ?>	
 	@endif
+	-->
 	<tr>
 			
 			<td width=10>
@@ -89,15 +91,17 @@ $category='';
 				</div>
 			</td>
 			<td align='right'>
-				@can('module-discharge')
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>
-							<span class='glyphicon glyphicon-minus'></span>
-					</a>
-				@endcan
 				@if ($order->user_id == Auth::user()->id && $order->post_id==0 && $order->order_completed==1)
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>
 							<span class='glyphicon glyphicon-minus'></span>
 					</a>
+				@endif
+				@if ($order->post_id>0)
+						@can('module-discharge')
+							<a class='btn btn-danger btn-xs' href='{{ URL::to('orders/delete/'. $order->order_id) }}'>
+									<span class='glyphicon glyphicon-minus'></span>
+							</a>
+						@endcan
 				@endif
 				@if ($order->order_completed==0) 
 					@if ($order->post_id>0 && $order->order_is_discharge==0)

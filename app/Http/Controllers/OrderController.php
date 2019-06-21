@@ -136,9 +136,9 @@ class OrderController extends Controller
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
 					->leftjoin('documents as f', 'f.order_id', '=', 'a.order_id')
 					->where('a.encounter_id','=',$encounter->encounter_id)
-					->orderBy('b.category_code')
 					->orderBy('a.created_at', 'desc');
 
+					//->orderBy('b.category_code')
 			if (Auth::user()->authorization->module_support != 1) {
 					$orders = $orders->where('a.user_id','=',Auth::user()->id);
 			}

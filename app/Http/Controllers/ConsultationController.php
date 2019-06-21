@@ -25,7 +25,7 @@ use App\Set;
 
 class ConsultationController extends Controller
 {
-	public $paginateValue=3;
+	public $paginateValue=10;
 
 	public function __construct()
 	{
@@ -36,7 +36,6 @@ class ConsultationController extends Controller
 	{
 			$consultations = Consultation::orderBy('consultations.created_at','desc')
 					->leftJoin('bills as c', 'c.encounter_id', '=', 'consultations.encounter_id')
-					->where('consultations.user_id', Auth::user()->id)
 					->whereNull('c.id')
 					->paginate($this->paginateValue);
 
@@ -51,7 +50,7 @@ class ConsultationController extends Controller
 			$consultation = Consultation::find($consultation_id);
 			$notes = Consultation::where('patient_id', $consultation->patient_id)
 					->orderBy('created_at','desc')
-					->paginate($this->paginateValue);
+					->paginate(3);
 
 			return view('consultations.progress', [
 					'notes'=>$notes,
