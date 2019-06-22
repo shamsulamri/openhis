@@ -247,15 +247,14 @@ class OrderProductController extends Controller
 
 				if (!empty($request->categories)) {
 						$order_products = Product::where('category_code',$request->categories)
-							->where('status_code', '=', 'active')
 							->orderBy('product_name')
 							->paginate($this->paginateValue);
 				} else {
 						$order_products = Product::whereIn('product_code', $orderSets)
-							->where('status_code', '=', 'active')
 							->orderBy('product_name')
 							->paginate($this->paginateValue);
 				}
+							//->where('status_code', '=', 'active')
 
 			}
 
