@@ -85,10 +85,10 @@
 			<?php
 				$bill_status = $bill_helper->billStatus($discharge->encounter_id);
 			?>
-			@if ($bill_status==1)
-				<span class='label label-default'>Paid</span>
-			@else 
+			@if ($bill_status==0)
 				<span class='label label-warning'>Open</span>
+			@else 
+				<span class='label label-default'>Paid</span>
 			@endif
 			</td>
 			<td align='right'>
