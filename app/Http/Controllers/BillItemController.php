@@ -457,7 +457,7 @@ class BillItemController extends Controller
 					$item->bill_quantity = $order->total_quantity;
 					$item->bill_discount = $order->order_discount;
 					$item->bill_name = $order->product_name;
-					$item->bill_unit_price = $order->order_unit_price;
+					$item->bill_unit_price = $order->order_unit_price?:'unit';
 					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount; // * (1-($item->bill_discount/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
