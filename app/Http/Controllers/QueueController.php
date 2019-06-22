@@ -166,7 +166,8 @@ class QueueController extends Controller
 	public function edit($id) 
 	{
 			$queue = Queue::findOrFail($id);
-			$encounter = Encounter::findOrFail($queue->encounter_id);
+			return $queue->encounter;
+			$encounter = Encounter::find($queue->encounter_id);
 			$locations = Location::where('encounter_code',$encounter->encounter_code)->orderBy('location_name')->get();
 			$location = Location::where('encounter_code',$encounter->encounter_code)
 					->orderBy('location_name')

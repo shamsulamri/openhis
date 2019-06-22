@@ -13,7 +13,8 @@ class EncounterType extends Model
 	protected $fillable = [
 				'encounter_code',
 				'profit_multiplier',
-				'encounter_name'
+				'encounter_name',
+				'encounter_bill_prefix',
 		];
 	
     protected $guarded = ['encounter_code'];

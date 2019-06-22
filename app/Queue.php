@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use App\Consultation;
 
 class Queue extends Model
 {

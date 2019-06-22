@@ -15,6 +15,8 @@ class BillTotal extends Model
 	protected $fillable = [
 				'encounter_id',
 				'bill_total',
+				'bill_deposit',
+				'bill_total_after_discount',
 				'bill_grand_total',
 				'bill_total_payable',
 				'deleted_at'];

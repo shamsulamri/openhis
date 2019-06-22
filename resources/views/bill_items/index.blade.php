@@ -11,7 +11,7 @@ Interim Bill
 {{ $bill_label }}
 </h1>
 <h3>
-Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
+Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ $encounter->encounter_id }})
 </h3>
 @if ($encounter->queue)
 <h3>
@@ -60,7 +60,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Interim Summary Bill</a> 
 @else
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=receipt_summary&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Receipt</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=receipt_official&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Receipt</a> 
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Invoice</a> 
 <p class='pull-right'>&nbsp;</p>
@@ -228,6 +228,30 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 	</tr>
 	<tr>
 			<td colspan=7 align='right'>
+					<strong>Total After Discount</strong>
+			</td>
+			<td align='right'>
+					<strong>{{ number_format($bill_total_after_discount,2) }}<strong>
+			</td>
+			@can('system-administrator')
+			<td align='right'>
+			</td>
+			@endcan
+	</tr>
+	<tr>
+			<td colspan=7 align='right'>
+					<strong>Deposit</strong>
+			</td>
+			<td align='right'>
+					<strong>{{ number_format($deposit_total,2) }}<strong>
+			</td>
+			@can('system-administrator')
+			<td align='right'>
+			</td>
+			@endcan
+	</tr>
+	<tr>
+			<td colspan=7 align='right'>
 					<strong>Grand Total</strong>
 			</td>
 			<td align='right'>
@@ -324,22 +348,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 	<br>
 @endif
 <table width='100%'>
-	<tr>
-			<td></td>
-			<td>
-				<div class='pull-right'>
-					<strong>Deposits</strong>
-				</div>
-			</td>
-			<td align='right' width='100'>
-					<strong>{{number_format($deposit_total,2)}}</strong>
-			</td>
-			@if (!$billPosted)
-			<td width='90'>
-			</td>
-			@endif
-	</tr>
-	@if ($payment_total+$deposit_total-$bill_grand_total<0)
+	@if ($payment_total-$total_payable<0)
 	<tr>
 			<td>
 			</td>
@@ -349,8 +358,8 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 				</div>
 			</td>
 			<td align='right' width='100'>
-			<?php $bill_outstanding = $bill_grand_total-$payment_total-$deposit_total; ?>
-					<strong>{{DojoUtility::roundUp($bill_outstanding)}}</strong>
+			<?php $bill_outstanding = $total_payable-$payment_total; ?>
+					<strong>{{number_format($bill_outstanding,2)}}</strong>
 			</td>
 			@if (!$billPosted)
 			<td width='90'>
@@ -367,7 +376,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }}
 				</div>
 			</td>
 			<td align='right' width='100'>
-					<strong>{{number_format($payment_total+$deposit_total-$bill_grand_total,2)}}</strong>
+					<strong>{{number_format($total_payable-$payment_total,2)}}</strong>
 			</td>
 			@if (!$billPosted)
 			<td width='90'>

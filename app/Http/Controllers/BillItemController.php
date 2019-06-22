@@ -448,6 +448,7 @@ class BillItemController extends Controller
 			$orders = DB::select($sql);
 
 			foreach ($orders as $order) {
+					Log::info('---'.$order->product_code);
 					$item = new BillItem();
 					$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
@@ -457,7 +458,7 @@ class BillItemController extends Controller
 					$item->bill_quantity = $order->total_quantity;
 					$item->bill_discount = $order->order_discount;
 					$item->bill_name = $order->product_name;
-					$item->bill_unit_price = $order->order_unit_price;
+					$item->bill_unit_price = $order->order_unit_price?:'unit';
 					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount; // * (1-($item->bill_discount/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
@@ -676,6 +677,8 @@ class BillItemController extends Controller
 
 			$bill_grand_total = $bills->sum('bill_amount');
 
+			$bill_total = $bill_grand_total;
+
 			if (empty($bill_grand_total)) {
 					$bill_grand_total=0;
 			} 
@@ -702,6 +705,7 @@ class BillItemController extends Controller
 			if (empty($deposit_total)) {
 					$deposit_total=0;
 			}
+
 
 			$bill_change=0;
 			$bill_outstanding=0;
@@ -733,8 +737,12 @@ class BillItemController extends Controller
 									->whereNull('cancel_id')
 									->count();
 
+			/** Discount **/
+			$bill_total_after_discount = $bill_total;
 			$bill_discount=BillDiscount::where('encounter_id', $id)->first();
-
+			if (!empty($bill_discount)) {
+					$bill_total_after_discount = $bill_total * (1-($bill_discount->discount_amount/100));
+			}
 
 			$bill_label = "";
 			if (!empty($encounter->sponsor_code)) {
@@ -753,10 +761,9 @@ class BillItemController extends Controller
 									->where('bill_non_claimable', '=', 1)
 									->sum('bill_amount');
 
-			$bill_total = $bill_grand_total;
-			if ($bill_discount) {
-					$bill_grand_total = $bill_grand_total * (1-($bill_discount->discount_amount/100));
-			}
+			//$bill_total = $bill_grand_total;
+
+			$bill_grand_total = $bill_total_after_discount - $deposit_total;
 
 			$total_payable = DojoUtility::roundUp($bill_grand_total);
 
@@ -769,6 +776,8 @@ class BillItemController extends Controller
 			$billFooter = new BillTotal();
 			$billFooter->encounter_id = $id;
 			$billFooter->bill_total = $bill_total;
+			$billFooter->bill_deposit = $deposit_total;
+			$billFooter->bill_total_after_discount = $bill_total_after_discount;
 			$billFooter->bill_grand_total = $bill_grand_total;
 			$billFooter->bill_total_payable = $total_payable;
 			$billFooter->save();
@@ -777,6 +786,7 @@ class BillItemController extends Controller
 					'bills'=>$bills,
 					'billPosted'=>$billPosted,
 					'bill_total'=>$bill_total,
+					'bill_total_after_discount'=>$bill_total_after_discount,
 					'bill_grand_total'=>$bill_grand_total,
 					'patient' => $encounter->patient,
 					'payments' => $payments,

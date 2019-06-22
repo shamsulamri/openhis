@@ -15,6 +15,7 @@ class Bill extends Model
 				'bill_name',
 				'bill_non_claimable',
 				'bill_total',
+				'bill_total_after_discount',
 				'bill_discount',
 				'bill_markup',
 				'bill_grand_total',
