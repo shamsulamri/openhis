@@ -39,6 +39,7 @@ use App\FormValue;
 use App\Newborn;
 use App\PatientDependant;
 use App\Refund;
+use App\PatientMrn;
 
 class PatientController extends Controller
 {
@@ -367,4 +368,34 @@ class PatientController extends Controller
 			]);
 	}
 
+	public function adjustMRN()
+	{
+			DB::table('patient_mrns')->delete();
+
+			$patients = Patient::whereNotNull('patient_mrn')->orderby('patient_id')->get();
+			foreach ($patients as $patient) {
+				Log::info($patient->patient_mrn);
+				$mrn = new PatientMrn();
+				$mrn->patient_id = $patient->patient_id;
+				$mrn->mrn_old = $patient->patient_mrn;
+				$mrn->save();
+			}
+
+			//DB::table('patients')->update(['patient_mrn'=>null]);
+
+
+			$mrns = PatientMrn::all();
+
+			foreach ($mrns as $mrn) {
+				$patient = Patient::find($mrn->patient_id);
+
+				$prefix = config('host.mrn_prefix');
+				$new_mrn = $prefix.str_pad($mrn->mrn_id, 8, '0', STR_PAD_LEFT);
+
+				$patient->patient_mrn = $new_mrn;
+				$patient->save();
+			}
+
+			return "xX";
+	}
 }

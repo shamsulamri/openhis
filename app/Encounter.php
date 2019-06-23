@@ -114,8 +114,8 @@ class Encounter extends Model
 
 			static::created(function($encounter)
 			{
-					//Log::info("ENCOUNTER CREATED!!!!!!!!!!");
-					//Log::info($encounter->patient);
+					/* Old */
+					/*
 					if (!$encounter->patient->patient_mrn) {
 							$patient = $encounter->patient;
 							//$prefix = config('host.mrn_prefix') . date('Ymd', strtotime(Carbon::now()));
@@ -123,6 +123,19 @@ class Encounter extends Model
 							$prefix = config('host.mrn_prefix');
 							$mrn = $prefix.str_pad($patient->patient_id, 8, '0', STR_PAD_LEFT);
 							$patient->patient_mrn = $mrn;
+							$patient->save();
+					}
+					 */
+
+					if (!$encounter->patient->patient_mrn) {
+							$patient = $encounter->patient;
+							$prefix = config('host.mrn_prefix');
+							$patient_mrn = new PatientMrn();
+							$patient_mrn->patient_id = $patient->patient_id;
+							$mrn = $patient_mrn->save();
+							
+							$new_mrn = $prefix.str_pad($patient_mrn->mrn_id, 8, '0', STR_PAD_LEFT);
+							$patient->patient_mrn = $new_mrn;
 							$patient->save();
 					}
 			});

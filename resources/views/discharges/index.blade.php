@@ -126,6 +126,7 @@
 							<a class='btn btn-{{ $button_type }}' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
 							@endcan
 					@else
+							<br>
 							<span class="label label-warning">
 							Preparing drug...
 							</span>

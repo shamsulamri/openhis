@@ -21,24 +21,31 @@ Progress Notes
 	@foreach ($notes as $note)
 	<tr>
 			<td class='col-xs-2'>
-					{{ date('d F Y, H:i', strtotime($note->created_at)) }} 
+					<h3>
+					{{ DojoUtility::dateTimeReadFormat($encounterHelper->getConsultationDate($note->consultation_id)) }}
+					</h3>
 			</td>
 			<td>
-					<strong>Seen by {{ $note->user->name }}</strong>
+					<h3>Seen by {{ $note->user->name }}</h3>
 					<br>
 					@if ($note->consultation_notes)
-					{!! str_replace(chr(13), "<br>", $note->consultation_notes) !!}
+            		{{ Form::textarea('consultation_notes', $note->consultation_notes, ['id'=>'consultation_notes', 'tabindex'=>1, 'class'=>'form-control','rows'=>'13', 'style'=>'font-size: 1.2em']) }}
 					<br>
 					@else
 						@if (count($note->annotations)==0)
 							-
+							<br>
+							<br>
 						@endif
 					@endif
+					<!-- Annotations -->
 					@if (count($note->annotations)>0)
-					<br>
 							@foreach ($note->annotations as $annotation)
 								<canvas tabindex=0 id="canvas_{{ $annotation->annotation_id }}" width="800" height="350"></canvas>
 							@endforeach
+						
+					<br>
+					<br>
 					@endif
 
 					@if (count($note->forms)>0)
@@ -54,22 +61,17 @@ Progress Notes
 					@endif
 
 					<!-- Diagnosis -->
-					<br>
-					<br>
+					@if (count($note->diagnoses)>0)
 					<strong>Diagnosis</strong>
 					<br>
-					@if (count($note->diagnoses)>0)
 							@foreach ($note->diagnoses as $diagnosis)
 									{{ $diagnosis->diagnosis_clinical }}
 									<br>
 							@endforeach
-					@else
-							-
-							<br>
+					<br>
 					@endif
 					
 					<!-- Orders -->
-					<br>
 					<strong>Orders</strong>
 					<br>
 					@if (count($note->orders)>0)

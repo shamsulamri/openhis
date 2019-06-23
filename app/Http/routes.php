@@ -47,6 +47,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+		Route::resource('patient_mrns', 'PatientMrnController');
+		Route::get('/patient_mrns/id/{id}', 'PatientMrnController@searchById');
+		Route::post('/patient_mrn/search', 'PatientMrnController@search');
+		Route::get('/patient_mrn/search', 'PatientMrnController@search');
+		Route::get('/patient_mrns/delete/{id}', 'PatientMrnController@delete');
+		
+		Route::get('/patient/adjust', 'PatientController@adjustMRN');
 
 		Route::resource('bill_totals', 'BillTotalController');
 		Route::get('/bill_totals/id/{id}', 'BillTotalController@searchById');

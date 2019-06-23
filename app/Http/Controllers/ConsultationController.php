@@ -22,6 +22,7 @@ use App\StockHelper;
 use App\OrderHelper;
 use App\OrderDrug;
 use App\Set;
+use App\EncounterHelper;
 
 class ConsultationController extends Controller
 {
@@ -49,7 +50,9 @@ class ConsultationController extends Controller
 	public function progress($consultation_id) {
 			$consultation = Consultation::find($consultation_id);
 			$notes = Consultation::where('patient_id', $consultation->patient_id)
-					->orderBy('created_at','desc')
+					->leftjoin('users as a', 'a.id', '=', 'consultations.user_id')
+					->where('author_id', 2)
+					->orderBy('consultations.created_at','desc')
 					->paginate(3);
 
 			return view('consultations.progress', [
@@ -58,6 +61,7 @@ class ConsultationController extends Controller
 					'patient'=>$consultation->encounter->patient,
 					'consultOption' => 'consultation',
 					'order_helper'=>new OrderHelper(),
+					'encounterHelper'=>new EncounterHelper(),
 			]);
 	}
 

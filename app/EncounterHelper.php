@@ -5,9 +5,16 @@ use DB;
 use Carbon\Carbon;
 use App\Encounter;
 use Log;
+use App\Consultation;
 
 class EncounterHelper 
 {
+		public static function getConsultationDate($id)
+		{
+				$consultation = Consultation::find($id);
+				return $consultation->created_at;
+		}
+
 		public static function encounterComplete($id)
 		{
 			$encounter_complete=False;
