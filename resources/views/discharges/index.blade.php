@@ -105,6 +105,16 @@
 				**/
 			}
 			?>
+			@if ($discharge->mc_id && $bill_status==0)
+<a class="btn btn-default pull-left" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
+			@endif
+			@can('module-consultation')
+			@if ($bill_status==0)
+			<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $discharge->encounter_id) }}'>
+				<i class="fa fa-stethoscope"></i>
+			</a>
+			@endif
+			@endcan
 			@cannot('system-administrator')
 			@if ($discharge->encounter_code=='inpatient')
 					@can('module-discharge')
@@ -121,19 +131,9 @@
 							</span>
 					@endif
 			@endif
-			@if ($discharge->mc_id)
-<a class="btn btn-default pull-left" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
-			@endif
 			@endcannot
 			@can('system-administrator')
 			<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
-			@endcan
-			@can('module-consultation')
-			@if ($bill_status==0)
-			<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $discharge->encounter_id) }}'>
-				<i class="fa fa-stethoscope"></i>
-			</a>
-			@endif
 			@endcan
 			</td>
 	</tr>
