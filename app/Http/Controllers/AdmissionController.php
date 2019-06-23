@@ -507,6 +507,7 @@ class AdmissionController extends Controller
 			return view('admissions.consultation', [
 					'admission'=>$admission,
 					'patient'=>$admission->encounter->patient,
+					'wardHelper'=>new WardHelper(),
 			]);
 	}
 	
