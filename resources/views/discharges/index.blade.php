@@ -105,7 +105,6 @@
 			<?php
 				$bill_status = $bill_helper->billStatus($discharge->encounter_id);
 			?>
-{{ $bill_status }}
 			@if ($bill_status==0)
 				<span class='label label-warning'>Open</span>
 			@else 
