@@ -51,9 +51,17 @@ class ConsultationController extends Controller
 			$consultation = Consultation::find($consultation_id);
 			$notes = Consultation::where('patient_id', $consultation->patient_id)
 					->leftjoin('users as a', 'a.id', '=', 'consultations.user_id')
-					->where('author_id', 2)
+					->where('author_id', '=', Auth::user()->author_id)
 					->orderBy('consultations.created_at','desc')
 					->paginate(3);
+
+			/*
+					$notes = $note->where(function ($query) use ($request) {
+								$query->where('product_name','like','%'.$search_param.'%')
+								->orWhere('product_name_other','like','%'.$search_param.'%')
+								->orWhere('products.product_code','like','%'.$search_param.'%');
+					});
+			 */
 
 			return view('consultations.progress', [
 					'notes'=>$notes,

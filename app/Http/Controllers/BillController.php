@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Bill;
@@ -168,11 +169,9 @@ class BillController extends Controller
 
 	public function enquiry(Request $request)
 	{
-			$date_start = DojoUtility::dateWriteFormat($request->date_start);
-			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
 			$subquery = "select encounter_id, sum(payment_amount) as total_paid from payments group by encounter_id";
-			$bills = Bill::select(DB::raw('bills.id,patient_name, patient_mrn, bills.encounter_id, d.discharge_date,sponsor_name, bill_grand_total, bill_payment_total, bill_deposit_total, 
+			$bills = Bill::select(DB::raw('bills.id,patient_name, patient_mrn, encounter_code, bills.encounter_id, d.created_at as discharge_date,sponsor_name, bill_grand_total, bill_payment_total, bill_deposit_total, bills.created_at as bill_date,
 					total_paid, format(bill_grand_total-IFNULL(bill_deposit_total,0)-IFNULL(total_paid,0),2) as bill_outstanding, name, bill_non_claimable'))
 					->leftJoin('encounters as b', 'b.encounter_id', '=', 'bills.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=',  'b.patient_id')
@@ -204,23 +203,50 @@ class BillController extends Controller
 					$bills = $bills->where('b.type_code','=', $request->type_code);
 			}
 
-			if (!empty($date_start) && empty($request->date_end)) {
-				$bills = $bills->where('bills.created_at', '>=', $date_start.' 00:00');
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = null;
+			$time_start = '00:00';
+			$time_end = '23:59';
+			if (!empty($request->shift_code)) {
+					switch ($request->shift_code) {
+							case 'shift_1':
+									$time_start = '7:00';
+									$time_end = '14:00';
+									$date_end = null;
+									break;
+							case 'shift_2':
+									$time_start = '14:00';
+									$time_end = '21:00';
+									$date_end = null;
+									break;
+							case 'shift_3':
+									$date_end = $request->date_start;
+									$date_end = DojoUtility::addDays($date_end, 1);
+									$date_end = DojoUtility::dateYMDFormat($date_end);
+									$time_start = '21:00';
+									$time_end = '9:00';
+									break;
+					}
+			}
+			
+			if (!empty($date_start) && empty($date_end)) {
+				$bills = $bills->whereBetween('bills.created_at', array($date_start.' '.$time_start, $date_start.' '.$time_end));
 			}
 
-			if (empty($date_start) && !empty($request->date_end)) {
-				$bills = $bills->where('bills.created_at', '<=', $date_end.' 23:59');
+			if (empty($date_start) && !empty($date_end)) {
+				//$bills = $bills->whereBetween('bills.created_at', array($date_start.' '.$time_start, $date_end.' '.$time_end));
+				//$bills = $bills->where('bills.created_at', '=', $date_end.' '.$time_end);
 			}
 
 			if (!empty($date_start) && !empty($date_end)) {
-				$bills = $bills->whereBetween('bills.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+				$bills = $bills->whereBetween('bills.created_at', array($date_start.' '.$time_start, $date_end.' '.$time_end));
 			} 
 
 			if ($request->export_report) {
 				DojoUtility::export_report($bills->get());
 			}
 
-			$bills = $bills->orderBy('bill_outstanding','desc');
+			$bills = $bills->orderBy('id');
 			$bills = $bills->paginate($this->paginateValue);
 
 			$users = User::orderby('name')
@@ -239,6 +265,7 @@ class BillController extends Controller
 					'type_code' => $request->type_code,
 					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					'sponsor_code'=>$request->sponsor_code,
+					'shift_code'=>$request->shift_code,
 			]);
 	}
 

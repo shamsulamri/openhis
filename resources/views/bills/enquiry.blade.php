@@ -43,12 +43,9 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'>To</label>
+						<label  class='col-sm-3 control-label'><div align='right'>Shift</div></label>
 						<div class='col-sm-9'>
-							<div class="input-group date">
-								<input data-mask="99/99/9999" name="date_end" id="date_end" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($date_end) }}">
-								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-							</div>
+							{{ Form::select('shift_code', array(''=>'','shift_1' => '0700 - 1400', 'shift_2' => '1400 - 2100', 'shift_3'=>'2100 - 0700'),$shift_code, ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -71,9 +68,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Encounter</th> 
+    <th>Bill</th> 
     <th>Patient</th> 
-    <th>Encounter Id</th> 
-    <th>Discharge Date</th> 
     <th>Sponsor</th> 
     <th>Posted By</th> 
     <th><div align='right'>Total</div></th>
@@ -87,6 +84,28 @@
 @foreach ($bills as $bill)
 	<tr>
 			<td>
+				<?php 
+				$label = 'warning'; 
+				switch ($bill->encounter->encounter_code) {
+						case "inpatient":
+								$label = 'success';
+								break;
+						case "outpatient":
+								$label = 'info';
+								break;
+						default:
+								$label = 'default';
+								break;
+				}
+				?>
+				<span class='label label-{{ $label }}'>
+				{{ $bill->encounter->encounterType->encounter_name }}
+				<span>
+			</td>
+			<td width=100>
+					{{ DojoUtility::dateLongFormat($bill->bill_date) }}
+			</td>
+			<td>
 					<a href='/bill_item/enquiry?search={{ $bill->encounter_id }}'>
 					{{$bill->patient_name}}
 					</a>
@@ -94,12 +113,6 @@
 					<small>
 					{{$bill->patient_mrn}}
 					</small>
-			</td>
-			<td>
-					{{ $bill->encounter_id }}
-			</td>
-			<td>
-					{{ DojoUtility::dateReadFormat($bill->discharge_date) }}
 			</td>
 			<td>
 					{{ $bill->sponsor_name?:"-" }}

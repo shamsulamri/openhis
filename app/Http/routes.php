@@ -911,7 +911,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/queue/enquiry', 'QueueController@enquiry');
 				Route::get('/queue/enquiry', 'QueueController@enquiry');
 
-
+				Route::get('/discharge/search', 'DischargeController@search');
 				Route::post('/discharge/search', 'DischargeController@search');
 
 		Route::group(['middleware' => 'order'], function () {

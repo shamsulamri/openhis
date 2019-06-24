@@ -62,6 +62,15 @@ class DojoUtility
 				}
 		}
 
+		public static function dateYMDFormat($value)
+		{
+				if (!empty($value)) {
+					return Carbon::parse($value)->format('Y/m/d');
+				} else {
+					return null;
+				}
+		}
+
 		public static function dateDMYOnly($value)
 		{
 				if (!empty($value)) {

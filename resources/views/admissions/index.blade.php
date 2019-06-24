@@ -232,7 +232,7 @@
 					<a class='btn btn-danger' href='{{ URL::to('admissions/delete/'. $admission->admission_id) }}'>Delete</a>
 			@endcan
 			@can('module-discharge')
-							<a class='btn btn-primary ' href='{{ URL::to('deposits/index/'. $admission->encounter_id) }}'>Deposit</a>
+							<a class='btn btn-primary ' href='{{ URL::to('deposits/index/'. $admission->patient_id) }}'>Deposit</a>
 							<a class='btn btn-primary ' href='{{ URL::to('bill_items/'. $admission->encounter_id) }}'>Bill</a>
 					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$admission->admission_id) }}'>
 						<i class="fa fa-stethoscope"></i>

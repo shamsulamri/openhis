@@ -43,5 +43,8 @@ class Bill extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
-	
+	public function encounter()
+	{
+			return $this->hasOne('App\Encounter', 'encounter_id', 'encounter_id');
+	}
 }

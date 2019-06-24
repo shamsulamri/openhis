@@ -180,7 +180,7 @@ class BillHelper
 							$status = 1;
 					} else {
 							if (!$bill_claimable && !$bill_non_claimable) {
-									$status = 4;
+									$status = 0;
 							}
 							if ($bill_claimable && !$bill_non_claimable) {
 									$status = 3;

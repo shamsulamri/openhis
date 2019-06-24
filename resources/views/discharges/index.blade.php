@@ -38,7 +38,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Date</th>
+    <th>Encounter</th>
+    <th>Discharge</th>
     <th>Queue Number</th>
     <th>Name</th> 
     <th>Discharge</th> 
@@ -51,7 +52,26 @@
 @foreach ($discharges as $discharge)
 	<tr>
 			<td>
-					{{ (DojoUtility::dateLongFormat($discharge->created_at)) }}
+				<?php 
+				$label = 'warning'; 
+				switch ($discharge->encounter->encounter_code) {
+						case "inpatient":
+								$label = 'success';
+								break;
+						case "outpatient":
+								$label = 'info';
+								break;
+						default:
+								$label = 'default';
+								break;
+				}
+				?>
+				<span class='label label-{{ $label }}'>
+				{{ $discharge->encounter->encounterType->encounter_name }}
+				<span>
+			</td>
+			<td>
+					{{ (DojoUtility::dateLongFormat($discharge->discharge_date)) }}
 					<br>
 					<small>
 					<?php $ago =DojoUtility::diffForHumans($discharge->created_at); ?> 
@@ -85,6 +105,7 @@
 			<?php
 				$bill_status = $bill_helper->billStatus($discharge->encounter_id);
 			?>
+{{ $bill_status }}
 			@if ($bill_status==0)
 				<span class='label label-warning'>Open</span>
 			@else 

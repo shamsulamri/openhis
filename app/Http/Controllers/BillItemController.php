@@ -281,6 +281,7 @@ class BillItemController extends Controller
 				and b.category_code<>'consultation'
 				and b.category_code<>'fee_procedure'
 				and b.category_code<>'fee_consultation'
+				and b.category_code<>'wv'
 				and h.patient_id = %d
 				and bill_id is null 
 				and order_multiple=0
@@ -424,7 +425,7 @@ class BillItemController extends Controller
 				left join encounters as g on (g.encounter_id=a.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
-				where (b.category_code='fee_consultation' or b.category_code = 'consultation')
+				where (b.category_code='fee_consultation' or b.category_code = 'consultation' or b.category_code = 'wv')
 				and order_completed = 1 
 				and b.deleted_at is null
 				and h.patient_id = %d
@@ -433,6 +434,24 @@ class BillItemController extends Controller
 				%s
 			";
 
+			$base_sql = "
+				select a.product_code, sum(order_unit_price*(IFNULL(order_discount,100)/100)) as total_price, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code,product_name
+				from orders as a
+				left join products as b on b.product_code = a.product_code 
+				left join tax_codes as c on c.tax_code = b.product_output_tax 
+				left join bill_items as f on (f.encounter_id=a.encounter_id and f.product_code = a.product_code)
+				left join encounters as g on (g.encounter_id=a.encounter_id)
+				left join patients as h on (h.patient_id = g.patient_id)
+				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				where (b.category_code='fee_consultation' or b.category_code = 'consultation' or b.category_code = 'wv')
+				and order_completed = 1 
+				and b.deleted_at is null
+				and h.patient_id = %d
+				and order_multiple=0
+				and bill_id is null
+				%s
+				group by a.product_code
+			";
 			$sql = sprintf($base_sql, $patient_id, "");
 
 			if (!empty($encounter->sponsor_code)) {
@@ -450,17 +469,14 @@ class BillItemController extends Controller
 			foreach ($orders as $order) {
 					Log::info('---'.$order->product_code);
 					$item = new BillItem();
-					$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity;
-					$item->bill_discount = $order->order_discount;
 					$item->bill_name = $order->product_name;
-					$item->bill_unit_price = $order->order_unit_price?:'unit';
-					$item->bill_amount = $order->total_quantity*$item->bill_unit_price;
-					$item->bill_amount = $item->bill_amount; // * (1-($item->bill_discount/100));
+					$item->bill_amount = $order->total_price?:0;
+					$item->bill_unit_price = $order->total_price/$order->total_quantity;
 					$item->bill_amount_exclude_tax = $item->bill_amount;
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
@@ -516,10 +532,10 @@ class BillItemController extends Controller
 	public function forms($encounter_id, $non_claimable = 2)
 	{
 			$base_sql = "
-				select count(*) as order_quantity_supply, c.product_code, d.tax_code, tax_rate, uom_price as product_sale_price, d.tax_code, d.tax_rate, product_non_claimable
+				select count(*) as order_quantity_supply, c.product_code, d.tax_code, tax_rate, uom_price as product_sale_price, d.tax_code, d.tax_rate, product_non_claimable, product_name, product_name
 				from form_values a
 				left join forms b on (b.form_code = a.form_code)
-				left join products c on (c.form_code = b.form_code)
+				left join products c on (c.product_code = b.form_code)
 				left join tax_codes d on (d.tax_code = c.product_output_tax)
 				left join encounters as g on (g.encounter_id=a.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
@@ -544,15 +560,23 @@ class BillItemController extends Controller
 			}
 
 			$orders = DB::select($sql);
+			$encounter = Encounter::find($encounter_id);
 
 			foreach ($orders as $order) {
 				$item = new BillItem();
+				$item->bill_name = $order->product_name;
 				$item->encounter_id = $encounter_id;
 				$item->product_code = $order->product_code;
 				$item->tax_code = $order->tax_code;
 				$item->tax_rate = $order->tax_rate;
 				$item->bill_quantity = $order->order_quantity_supply;
-				$item->bill_unit_price = $order->product_sale_price;
+				//$item->bill_unit_price = $order->product_sale_price;
+				if (!empty($order->product_code)) {
+					$product = Product::find($order->product_code);
+					$item->bill_unit_price = $product->uomDefaultPrice($encounter)->uom_price?:0;
+				} else {
+					$item->bill_unit_price = 0;
+				}
 				$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
 				$item->bill_amount_exclude_tax = $order->order_quantity_supply*$item->bill_unit_price;
 				$item->bill_non_claimable = $non_claimable;
@@ -633,14 +657,14 @@ class BillItemController extends Controller
 					$this->compileBill($id, 0);
 					$this->compileProcedure($id, 1);
 					$this->compileProcedure($id, 0);
-					$this->forms($id, 1);
-					$this->forms($id, 0);
+					//$this->forms($id, 1);
+					//$this->forms($id, 0);
 					$this->compileConsultation($id, 1);
 					$this->compileConsultation($id, 0);
 				} else {
 					$this->compileBill($id);
 					$this->compileProcedure($id);
-					$this->forms($id);
+					//$this->forms($id);
 					$this->compileConsultation($id);
 				}
 
