@@ -69,7 +69,7 @@
 					-->
 
 					@can('module-patient')
-							@if ($queue->encounter->consultation->count()==0)
+							@if ($queue->consultations()==0)
 							<a class='btn btn-danger' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
 							@endif
 					@endcan

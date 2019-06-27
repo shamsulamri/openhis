@@ -88,6 +88,7 @@ class QueueController extends Controller
 					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
 					->whereNull('discharge_id')
 					->whereNull('queues.deleted_at')
+					->whereNull('b.deleted_at')
 					->orderBy('queues.created_at');
 
 			if (!empty($location_code)) {
@@ -254,6 +255,7 @@ class QueueController extends Controller
 					->whereNull('queues.deleted_at')
 					->where('queues.location_code','like','%'.$request->locations.'%')
 					->where('patient_name', 'like','%'.$request->search.'%')
+					->whereNull('b.deleted_at')
 					->orderBy('queues.created_at', 'desc');
 
 			if ($request->encounter_code) {
