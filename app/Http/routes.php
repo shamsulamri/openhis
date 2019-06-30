@@ -979,6 +979,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/consultations/progress/{consultation_id}', 'ConsultationController@progress');
 				Route::resource('consultations', 'ConsultationController');
 				Route::get('/consultations/id/{id}', 'ConsultationController@searchById');
+				Route::get('/consultations/confirm/{id}', 'ConsultationController@confirm');
 				Route::post('/consultation/search', 'ConsultationController@search');
 				Route::get('/consultation/search', 'ConsultationController@search');
 				Route::get('/consultations/delete/{id}', 'ConsultationController@delete');

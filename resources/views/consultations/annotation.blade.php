@@ -2,6 +2,9 @@
 <!--- Annotation -->
 <div class="form-inline">
 		<div class="form-group">
+			<button class='btn btn-success' id='btnErase'>Pen</button>
+		</div>
+		<div class="form-group">
 				<button class='btn btn-default' onclick="loadAnnotation('hopi.png')"><span class='fa fa-file-o'></span></button>
 		</div>
 		@if ($consultation->encounter->patient->gender_code=='F')

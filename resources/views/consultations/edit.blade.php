@@ -262,6 +262,7 @@ input {
 		var canvas = document.getElementById('myCanvas');
 		var context = canvas.getContext('2d');
 		var drawing = false;
+		var erasing = false;
 		var mousePos = { x:0, y:0 };
 		var lastPos = mousePos;
 
@@ -388,8 +389,13 @@ input {
 			if (drawing) {
 					context.moveTo(lastPos.x, lastPos.y);
 					context.lineTo(mousePos.x, mousePos.y);
-					context.strokeStyle = '#0000FF';
-					context.lineWidth=0.3;
+					if (erasing) {
+						context.strokeStyle = '#FFFFFF';
+						context.lineWidth=5.8;
+					} else {
+						context.strokeStyle = '#0000FF';
+						context.lineWidth=0.3;
+					}
 					context.stroke();
 					lastPos = mousePos;
 			}
@@ -510,6 +516,8 @@ input {
 				imageObj.src = "/clinical_images/"+filename;
 				context.beginPath();
 				//document.getElementById('selected_image').value = filename;
+				erasing = false;
+				$('#btnErase').html("<span class='glyphicon glyphicon-pencil'></span>");
 		}
 
 		function clearAnnotation(annotationId) {
@@ -525,6 +533,7 @@ input {
 						}
 				};
 				request.send(null);
+
 		}
 
 		function lastAnnotation() {
@@ -547,6 +556,16 @@ input {
 <script>
 $(document).ready(function(){
 
+			$('#btnErase').click(function(){
+					if (erasing) {
+						$('#btnErase').html("<span class='glyphicon glyphicon-pencil'></span>");
+					} else {
+						$('#btnErase').html("<span class='fa fa-eraser'></span>");
+					}
+					erasing = !erasing;
+					context.beginPath();
+
+			});
 
 			$(document).on('focusout', 'input', function(e) {
 					var id = e.currentTarget.name;

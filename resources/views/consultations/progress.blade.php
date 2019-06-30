@@ -13,12 +13,17 @@ canvas {border:1px solid #e5e5e5}
 <h1>
 Progress Notes
 </h1>
+<input id="show_all" @if ($showAll=='true') checked="checked" @endif name="show_all" type="checkbox" value="1"> <label>Show all include empty notes</label>
+<br>
 {{ $notes->render() }}
 @if (count($notes)>0)
 <br>
 <table class="table">
 	<tbody>
-	@foreach ($notes as $note)
+	@foreach ($notes as $nota)
+<?php
+		$note = $encounterHelper::getConsultation($nota->consultation_id);
+?>
 	<tr>
 			<td class='col-xs-2'>
 					<h3>
@@ -119,10 +124,18 @@ Progress Notes
 </tbody>
 </table>
 @endif
-<!--
 <br>
-{{ $notes->render() }}
--->
+@if (isset($showAll)) 
+	{{ $notes->appends(['show_all'=>$showAll])->render() }}
+	@else
+	{{ $notes->render() }}
+@endif
+<br>
+@if ($notes->total()>0)
+	{{ $notes->total() }} records found.
+@else
+	No record found.
+@endif
 
 <script>
 		function loadCanvas(id, dataURL) {
@@ -140,10 +153,21 @@ Progress Notes
 
 		}
 
-	@foreach ($notes as $note)
+	@foreach ($notes as $nota)
+		<?php
+				$note = $encounterHelper::getConsultation($nota->consultation_id);
+		?>
 		@foreach ($note->annotations as $annotation)
 				loadCanvas({{ $annotation->annotation_id }}, '{{ $annotation->annotation_dataurl }}');
 		@endforeach
 	@endforeach
+</script>
+<script>
+$(document).ready(function(){
+
+			$('#show_all').click(function(){
+					window.location.href = "?show_all="+this.checked;
+			});
+});
 </script>
 @endsection

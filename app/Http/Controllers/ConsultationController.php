@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -27,6 +29,7 @@ use App\EncounterHelper;
 class ConsultationController extends Controller
 {
 	public $paginateValue=10;
+	public $paginateProgress = 3;
 
 	public function __construct()
 	{
@@ -35,10 +38,23 @@ class ConsultationController extends Controller
 
 	public function index()
 	{
+			/*
 			$consultations = Consultation::orderBy('consultations.created_at','desc')
+					->leftjoin('users as a', 'a.id', '=', 'consultations.user_id')
 					->leftJoin('bills as c', 'c.encounter_id', '=', 'consultations.encounter_id')
+					->where('consultation.user_id', '=', Auth::user()->id)
 					->whereNull('c.id')
 					->paginate($this->paginateValue);
+			 */
+
+			$consultations = Consultation::orderBy('consultations.created_at','desc')
+					->leftjoin('users as a', 'a.id', '=', 'consultations.user_id')
+					->leftjoin('patients as b','b.patient_id','=', 'consultations.patient_id')
+					->leftJoin('bills as c', 'c.encounter_id', '=', 'consultations.encounter_id')
+					->where('consultations.user_id', '=', Auth::user()->id);
+
+
+			$consultations = $consultations->paginate($this->paginateValue);
 
 			return view('consultations.index', [
 					'consultations'=>$consultations,
@@ -47,20 +63,83 @@ class ConsultationController extends Controller
 			]);
 	}
 
-	public function progress($consultation_id) {
+	public function progress(Request $request, $consultation_id) {
+
 			$consultation = Consultation::find($consultation_id);
-			$notes = Consultation::where('patient_id', $consultation->patient_id)
-					->leftjoin('users as a', 'a.id', '=', 'consultations.user_id')
-					->where('author_id', '=', Auth::user()->author_id)
-					->orderBy('consultations.created_at','desc')
-					->paginate(3);
+			$author_id = $consultation->user->author_id;
+			$patient_id = $consultation->patient_id;
+
+			$sql = "
+				select consultation_notes, annotations, a.consultation_id, orders, diagnoses
+				from consultations as a
+				left join (
+					select count(*) as annotations, a.consultation_id
+					from consultation_annotations as a
+					left join consultations as b on (a.consultation_id = b.consultation_id)
+					left join users as c on (c.id = b.user_id)
+					where author_id = %d
+					and patient_id = %d
+					group by a.consultation_id
+				) as b on (a.consultation_id = b.consultation_id)
+				left join (
+					select count(*) as orders, a.consultation_id
+					from orders as a
+					left join consultations as b on (a.consultation_id = b.consultation_id)
+					left join users as c on (c.id = b.user_id)
+					where author_id = %d
+					and patient_id = %d
+					group by a.consultation_id
+				) as c on (c.consultation_id = a.consultation_id)
+				left join (
+					select count(*) as diagnoses, a.consultation_id
+					from consultation_diagnoses as a
+					left join consultations as b on (a.consultation_id = b.consultation_id)
+					left join users as c on (c.id = b.user_id)
+					where author_id = %d
+					and patient_id = %d
+					group by a.consultation_id
+				) as d on (d.consultation_id = a.consultation_id)
+				left join users as c on (c.id = a.user_id)
+				where author_id = %d
+				and patient_id = %d
+				%s
+				order by consultation_id desc
+			";
+
+
+			if ($request->show_all=='false' or empty($request->show_all)) {
+					$sql = sprintf($sql, $author_id, $patient_id, $author_id, $patient_id, $author_id, $patient_id, $author_id, $patient_id, " and (consultation_notes is not null or annotations>0 or orders>0)");
+			} else {
+					$sql = sprintf($sql, $author_id, $patient_id, $author_id, $patient_id, $author_id, $patient_id, $author_id, $patient_id, "");
+			}
+
+
+			$notes = DB::select($sql);
+
+			/** Pagination **/
+			$page = Input::get('page', 1); 
+			$offSet = ($page * $this->paginateProgress) - $this->paginateProgress;
+			$itemsForCurrentPage = array_slice($notes, $offSet, $this->paginateProgress, true);
+
+			$notes = new LengthAwarePaginator($itemsForCurrentPage, count($notes), 
+					$this->paginateProgress,
+					$page, 
+					['path' => $request->url(), 
+					'query' => $request->query()]
+			);
 
 			/*
-					$notes = $note->where(function ($query) use ($request) {
-								$query->where('product_name','like','%'.$search_param.'%')
-								->orWhere('product_name_other','like','%'.$search_param.'%')
-								->orWhere('products.product_code','like','%'.$search_param.'%');
-					});
+			$notes = Consultation::select('*', 'consultations.consultation_id as consult_id')
+					->where('patient_id', $consultation->patient_id)
+					->leftjoin('users as a', 'a.id', '=', 'consultations.user_id')
+					->where('author_id', '=', Auth::user()->author_id)
+					->orderBy('consultations.created_at','desc');
+
+			if ($request->show_all=='false' or empty($request->show_all)) {
+					$notes = $notes->whereNotNull('consultation_notes');
+			}
+
+			$notes = $notes->paginate(5);
 			 */
 
 			return view('consultations.progress', [
@@ -70,6 +149,25 @@ class ConsultationController extends Controller
 					'consultOption' => 'consultation',
 					'order_helper'=>new OrderHelper(),
 					'encounterHelper'=>new EncounterHelper(),
+					'showAll'=>$request->show_all?:null,
+			]);
+	}
+
+	public function confirm($id)
+	{
+			$encounter = Encounter::find($id);
+
+			$consultation = Consultation::where('patient_id','=',$encounter->patient_id)
+					->where('encounter_id',$id)
+					->where('consultation_status',1)
+					->where('user_id', Auth::user()->id)
+					->orderBy('consultation_id', 'desc')
+					->first();
+			
+			return view('consultations.confirm', [
+					'encounter'=>$encounter,
+					'patient'=>$encounter->patient,
+					'consultation'=>$consultation,
 			]);
 	}
 
@@ -160,6 +258,7 @@ class ConsultationController extends Controller
 
 			$this->orderStat($id);
 
+			/*
 			if ($consultation->encounter->encounter_code=='outpatient' or $consultation->encounter->encounter_code=='emergency') {
 					if (Auth::user()->authorization->module_consultation == 1) {
 						$consultation->consultation_status = 1;
@@ -169,6 +268,8 @@ class ConsultationController extends Controller
 			} else {
 					$consultation->consultation_status = 2;
 			}
+			 */
+			$consultation->consultation_status = 2;
 			$consultation->save();
 
 			$post = new OrderPost();
@@ -505,12 +606,32 @@ class ConsultationController extends Controller
 	
 	public function search(Request $request)
 	{
-			$consultations = DB::table('consultations as a')
+			/*
+			$consultations = Consultation::leftjoin('users as a', 'a.id', '=', 'consultations.user_id')
 					->leftjoin('patients as b','b.patient_id','=', 'a.patient_id')
+					->leftJoin('bills as c', 'c.encounter_id', '=', 'consultations.encounter_id')
+					->where('consultations.user_id', '=', Auth::user()->id);
+			 */
+
+			$consultations = Consultation::orderBy('consultations.created_at','desc')
+					->leftjoin('users as a', 'a.id', '=', 'consultations.user_id')
+					->leftjoin('patients as b','b.patient_id','=', 'consultations.patient_id')
+					->leftJoin('bills as c', 'c.encounter_id', '=', 'consultations.encounter_id')
+					->where('consultations.user_id', '=', Auth::user()->id);
+
+			$consultations = $consultations->where(function ($query) use ($request) {
+								$search_param = trim($request->search, " ");
+								$query->where('patient_name','like','%'.$search_param.'%')
+								->orWhere('patient_mrn','like','%'.$search_param.'%');
+					});
+
+			/*
 					->where('patient_name','like','%'.$request->search.'%')
 					->orWhere('patient_mrn', 'like','%'.$request->search.'%')
 					->orderBy('consultation_status')
-					->paginate($this->paginateValue);
+			*/
+			$consultations = $consultations->paginate($this->paginateValue);
+
 
 			return view('consultations.index', [
 					'consultations'=>$consultations,

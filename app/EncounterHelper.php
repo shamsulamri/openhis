@@ -51,6 +51,12 @@ class EncounterHelper
 
 		}
 
+		public static function getConsultation($id)
+		{
+			$consultation = Consultation::find($id);
+			return $consultation;
+		}
+
 
 }
 

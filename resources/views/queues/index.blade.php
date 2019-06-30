@@ -74,7 +74,7 @@
 							@endif
 					@endcan
 					@can('module-consultation')
-					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $queue->encounter_id) }}'>
+					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/confirm/'. $queue->encounter_id) }}'>
 						<i class="fa fa-stethoscope"></i>
 					</a>
 					@endcan

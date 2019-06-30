@@ -50,6 +50,8 @@
 			<td align='right'>
 					@if (empty($consultation->bill))
 							<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Edit</a>
+					@else
+							<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Open</a>
 					@endif
 			</td>
 	</tr>
