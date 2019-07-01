@@ -13,7 +13,11 @@ canvas {border:1px solid #e5e5e5}
 <h1>
 Progress Notes
 </h1>
-<input id="show_all" @if ($showAll=='true') checked="checked" @endif name="show_all" type="checkbox" value="1"> <label>Show all include empty notes</label>
+<input id="show_all" @if ($showAll=='true') checked="checked" @endif name="show_all" type="checkbox" value="1"> <label>Include empty notes</label>
+@if (Auth::user()->author_id != 7)
+&nbsp;&nbsp;
+<input id="show_nurse" @if ($showNurse=='true') checked="checked" @endif name="show_nurse" type="checkbox" value="1"> <label>Include nurses notes</label>
+@endif
 <br>
 {{ $notes->render() }}
 @if (count($notes)>0)
@@ -166,7 +170,11 @@ Progress Notes
 $(document).ready(function(){
 
 			$('#show_all').click(function(){
-					window.location.href = "?show_all="+this.checked;
+					window.location.href = "?show_all="+this.checked+"&show_nurse="+$('#show_nurse').is(":checked");
+			});
+
+			$('#show_nurse').click(function(){
+					window.location.href = "?show_all="+$('#show_all').is(":checked")+"&show_nurse="+this.checked;
 			});
 });
 </script>

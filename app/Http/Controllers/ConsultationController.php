@@ -69,6 +69,12 @@ class ConsultationController extends Controller
 			$author_id = $consultation->user->author_id;
 			$patient_id = $consultation->patient_id;
 
+			$authorSql = sprintf(" author_id = %d", $author_id);
+
+			if ($request->show_nurse=='true') {
+				$authorSql = sprintf(' (author_id = %d or author_id = %d)', $author_id, 7);
+			}
+
 			$sql = "
 				select consultation_notes, annotations, a.consultation_id, orders, diagnoses
 				from consultations as a
@@ -77,7 +83,7 @@ class ConsultationController extends Controller
 					from consultation_annotations as a
 					left join consultations as b on (a.consultation_id = b.consultation_id)
 					left join users as c on (c.id = b.user_id)
-					where author_id = %d
+					where %s
 					and patient_id = %d
 					group by a.consultation_id
 				) as b on (a.consultation_id = b.consultation_id)
@@ -86,7 +92,7 @@ class ConsultationController extends Controller
 					from orders as a
 					left join consultations as b on (a.consultation_id = b.consultation_id)
 					left join users as c on (c.id = b.user_id)
-					where author_id = %d
+					where %s
 					and patient_id = %d
 					group by a.consultation_id
 				) as c on (c.consultation_id = a.consultation_id)
@@ -95,12 +101,12 @@ class ConsultationController extends Controller
 					from consultation_diagnoses as a
 					left join consultations as b on (a.consultation_id = b.consultation_id)
 					left join users as c on (c.id = b.user_id)
-					where author_id = %d
+					where %s
 					and patient_id = %d
 					group by a.consultation_id
 				) as d on (d.consultation_id = a.consultation_id)
 				left join users as c on (c.id = a.user_id)
-				where author_id = %d
+				where %s
 				and patient_id = %d
 				%s
 				order by consultation_id desc
@@ -108,9 +114,9 @@ class ConsultationController extends Controller
 
 
 			if ($request->show_all=='false' or empty($request->show_all)) {
-					$sql = sprintf($sql, $author_id, $patient_id, $author_id, $patient_id, $author_id, $patient_id, $author_id, $patient_id, " and (consultation_notes is not null or annotations>0 or orders>0)");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, " and (consultation_notes is not null or annotations>0 or orders>0)");
 			} else {
-					$sql = sprintf($sql, $author_id, $patient_id, $author_id, $patient_id, $author_id, $patient_id, $author_id, $patient_id, "");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, "");
 			}
 
 
@@ -150,6 +156,7 @@ class ConsultationController extends Controller
 					'order_helper'=>new OrderHelper(),
 					'encounterHelper'=>new EncounterHelper(),
 					'showAll'=>$request->show_all?:null,
+					'showNurse'=>$request->show_nurse?:null,
 			]);
 	}
 
