@@ -37,6 +37,7 @@
 	<tr> 
     <th>Time</th> 
     <th>Patient</th>
+    <th>Panel</th>
     <th>Location</th>
 	<th></th>
 	</tr>
@@ -59,6 +60,11 @@
 							</a>
 					<br>
 					<small>{{$queue->patient_mrn}}</small>
+			</td>
+			<td>
+					@if ($queue->encounter->sponsor)
+						{{ $queue->encounter->sponsor->sponsor_name }}
+					@endif
 			</td>
 			<td>
 					{{$queue->location_name}}

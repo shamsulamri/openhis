@@ -115,6 +115,7 @@
 	<tr> 
     <th>Date</th>
     <th>Patient</th>
+    <th>Panel</th>
     <th>Consultant</th>
 	@cannot('module-ward')
     <th>Ward</th>
@@ -168,6 +169,11 @@
 							</div>
 					@endif
 
+			<td>
+					@if ($admission->encounter->sponsor)
+						{{ $admission->encounter->sponsor->sponsor_name }}
+					@endif
+			</td>
 			</td>
 			<td>
 					{{$admission->name}}
