@@ -288,17 +288,19 @@ class OrderTaskController extends Controller
 			foreach($orders as $order) {
 				$batches = $helper->getBatches($order->product_code)?:null;
 				Log::info($batches);
+				$last_batch = "";
 				if ($batches->count()>0) {
 						$unit_supply = 0;
 						foreach($batches as $batch) {
 								if ($batch->batch()) {
 								Log::info('--->'.$batch->batch()->batch_id);
 								$unit_supply += $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
+								$last_batch = $batch->batch()->batch_id;
 								}
 						}
 						Log::info("Unit supply:".$unit_supply);
 						if ($unit_supply == 0) {
-									//$valid['batch_'.$batch->product_code."_".$batch->batch()->batch_id] = "Sum cannot be zero";
+									$valid['batch_'.$batch->product_code] = "Sum cannot be zero";
 						}
 				} else {
 						if ($order->product->product_stocked == 1) {

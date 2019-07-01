@@ -58,7 +58,7 @@
 								<?php $status = 'danger'; ?>
 						@endif
 	@endif
-	<tr class='{{ $status }}'>
+	<tr class='{{ $status }}' bgcolor='#efefef'>
 			<td width='48'>
 					@if (!isset($order->cancel_id) && $order->order_completed==0)
 						{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
@@ -200,13 +200,13 @@
 				
 			</tr>
 		@endforeach
-		@if ($errors->has('batch_'.$batch->product_code.'_'.$batch->batch_id) | $total_supply==0) 
+		@if ($errors->has('batch_'.$batch->product_code) | $total_supply==0) 
 		<tr>
 			<td colspan=4>
 			</td>
 			<td>
 					<div align='center' class='has-error'>
-            		<p class="help-block">{{ $errors->first('batch_'.$batch->product_code.'_'.$batch->batch_id)?:"Sum cannot be zero" }}</p>
+            		<p class="help-block">{{ $errors->first('batch_'.$batch->product_code)?:"Sum cannot be zero" }}</p>
 					</div>
 			</td>
 		</tr>
