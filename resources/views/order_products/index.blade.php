@@ -141,11 +141,7 @@
 	/*
 	frame.src = "/orders";
 	 */
-	@if (!empty($order_id))
-	frame.src = "/orders/{{ $order_id }}/edit?order_single=1";
-	@else
 	frame.src = "/orders";
-	@endif
 
 	function orderSet() {
 			document.getElementById('categories').selectedIndex=0;

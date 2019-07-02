@@ -42,6 +42,7 @@
     <th>Discharge</th>
     <th>Queue Number</th>
     <th>Name</th> 
+    <th>Panel</th> 
     <th>Discharge</th> 
     <th>Physician</th> 
     <th>Bill</th> 
@@ -91,6 +92,11 @@
 					{{ strtoupper($discharge->patient_name) }}
 					<br>
 					<small>{{$discharge->patient_mrn}}</small>
+			</td>
+			<td>
+					@if ($discharge->encounter->sponsor)
+						{{ $discharge->encounter->sponsor->sponsor_name }}
+					@endif
 			</td>
 			<td>
 					{{$discharge->type_name}}
