@@ -58,8 +58,6 @@ Progress Notes
 					@endif
 
 					@if (count($note->forms)>0)
-							<br>
-							<br>
 							<strong>Form</strong>
 							@foreach ($note->forms as $form)
 								<br>
@@ -67,6 +65,8 @@ Progress Notes
 								<strong>{{ $form->form->form_name }}</strong>
 								</a>
 							@endforeach
+							<br>
+							<br>
 					@endif
 
 					<!-- Diagnosis -->
@@ -81,9 +81,9 @@ Progress Notes
 					@endif
 					
 					<!-- Orders -->
+					@if (count($note->orders)>0)
 					<strong>Orders</strong>
 					<br>
-					@if (count($note->orders)>0)
 							@foreach ($note->orders as $order)
 								@if ($order->orderCancel) <strike> @endif
 								@if ($order->product)
@@ -93,6 +93,8 @@ Progress Notes
 								<br>
 								@if ($order->orderCancel) </strike> @endif
 							@endforeach
+					<br>
+					<br>
 					@else
 							-
 							<br>

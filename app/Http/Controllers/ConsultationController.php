@@ -71,7 +71,7 @@ class ConsultationController extends Controller
 
 			$authorSql = sprintf(" author_id = %d", $author_id);
 
-			if ($request->show_nurse=='true') {
+			if ($request->show_nurse=='true' or empty($request->show_nurse)) {
 				$authorSql = sprintf(' (author_id = %d or author_id = %d)', $author_id, 7);
 			}
 
@@ -156,7 +156,7 @@ class ConsultationController extends Controller
 					'order_helper'=>new OrderHelper(),
 					'encounterHelper'=>new EncounterHelper(),
 					'showAll'=>$request->show_all?:null,
-					'showNurse'=>$request->show_nurse?:null,
+					'showNurse'=>$request->show_nurse?:true,
 			]);
 	}
 

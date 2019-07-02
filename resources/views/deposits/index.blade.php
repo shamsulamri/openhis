@@ -21,7 +21,7 @@
 @foreach ($deposits as $deposit)
 	<tr>
 			<td>
-					{{ DojoUtility::dateReadFormat($deposit->created_at) }}
+					{{ DojoUtility::dateReadFormat($deposit->deposit_date) }}
 			</td>
 			<td>
 					@if ($deposit->encounterType)
