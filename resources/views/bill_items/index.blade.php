@@ -178,13 +178,11 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 								<span>
 							@endif
 					</td>
-					@can('system-administrator')
 					<td align='right' width='80'>
 						@if (!$billPosted)
 							<a class='btn btn-danger btn-xs' href='{{ URL::to('bill_items/delete/'. $bill->bill_id) }}'>Delete</a>
 						@endif
 					</td>
-					@endcan
 			</tr>
 		@endforeach
 	<tr>

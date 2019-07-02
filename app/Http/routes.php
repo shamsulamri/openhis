@@ -770,13 +770,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/payment/enquiry', 'PaymentController@enquiry');
 				Route::get('/payment/enquiry', 'PaymentController@enquiry');
 
+				Route::get('/bill_items/delete/{id}', 'BillItemController@delete');
 				Route::get('/bill_items/reload/{id}', 'BillItemController@reload');
 				Route::get('/bill_items/generate/{id}', 'BillItemController@generate');
 				Route::resource('bill_items', 'BillItemController',['except'=>['index','show']]);
 				Route::get('/bill_items/{id}/{non_claimable?}', 'BillItemController@index');
 				Route::get('/bill_items/id/{id}', 'BillItemController@searchById');
 				Route::get('/bill_items/{id}/json', 'BillItemController@json');
-				Route::get('/bill_items/delete/{id}', 'BillItemController@delete');
 				Route::get('/bill_items/close/{id}', 'BillItemController@close');
 				Route::post('/bill_item/enquiry', 'BillItemController@enquiry');
 				Route::get('/bill_item/enquiry', 'BillItemController@enquiry');

@@ -1,5 +1,4 @@
 
-
     <div class='form-group  @if ($errors->has('product_name')) has-error @endif'>
         {{ Form::label('product_name', 'Product',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
