@@ -909,8 +909,10 @@ class BillItemController extends Controller
 
 			if ($product->category_code == 'bed') {
 				$floatVal = floatval($bill->bill_quantity);
-				if ($floatVal && intval($floatVal) != $floatVal) {
-					$bill->bill_name .= " (x".$bill->bill_quantity.")";
+				if ($floatVal>1) {
+					$bill->bill_name = $product->product_name . " (x".$bill->bill_quantity.")";
+				} else {
+					$bill->bill_name = $product->product_name;
 				}
 			}
 
