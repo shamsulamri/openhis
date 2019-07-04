@@ -38,6 +38,7 @@ class Order extends Model
 				'updated_by',
 				'completed_at',
 				'created_at',
+				'post_id',
 		];
 	
     protected $guarded = ['order_id'];
@@ -89,6 +90,10 @@ class Order extends Model
 			}
 	}
 	 */
+
+	public function orderPost() {
+			return $this->hasOne('App\OrderPost', 'post_id');
+	}
 
 	public function orderDate() {
 			return $this->attributes['created_at'];

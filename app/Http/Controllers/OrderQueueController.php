@@ -106,7 +106,8 @@ class OrderQueueController extends Controller
 					->where('order_completed','=',0)
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id')
-					->whereNull('c.deleted_at');
+					->whereNull('c.deleted_at')
+					->orderBy('orders.post_id', 'desc');
 
 			if ($request->future) {
 					$order_queues = $order_queues->where('order_is_future','=', 1);

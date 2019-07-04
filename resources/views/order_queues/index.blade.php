@@ -97,7 +97,7 @@ Order Queues
 			@if ($is_future)
 					{{ (DojoUtility::dateLongFormat($order->investigation_date)) }}
 			@else
-					{{ DojoUtility::dateLongFormat($order->consultation->encounter->created_at) }}
+					{{ DojoUtility::dateLongFormat($order->consultation->created_at) }}
 			@endif
 			</td>
 			<td>
