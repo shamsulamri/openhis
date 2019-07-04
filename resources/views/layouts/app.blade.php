@@ -198,6 +198,7 @@ if ($_COOKIE['his-navbar']==1) {
 								<li><a title='Patient List' href="/patient_lists"><i class="fa fa-stethoscope"></i><span class='nav-label'>Patient List</span></a></li>
 								<li><a title='Consultation List' href="/consultations"><i class="fa fa-comments-o"></i><span class='nav-label'>Consultation List</span></a></li>
 								<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
+								<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-users"></i><span class='nav-label'>Queues</span></a></li>
 								<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-bed'></i><span class='nav-label'>Admissions</a></li>
 								@endcannot
 								<!-- Nurses and alike -->

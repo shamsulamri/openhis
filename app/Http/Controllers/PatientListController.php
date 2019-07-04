@@ -150,8 +150,8 @@ class PatientListController extends Controller
 					->leftJoin('consultations as f', function($q) 
 					{
 						$q->on('f.encounter_id','=','a.encounter_id')
-		   				  ->where('f.user_id','=',Auth::user()->id);
-	
+		   				  ->where('f.user_id','=',Auth::user()->id)
+		   				  ->where('consultation_status', '=', 1);
 					})
 					->leftJoin('ref_genders as k', 'k.gender_code', '=', 'c.gender_code')
 					->where('a.location_code',$location->location_code)
