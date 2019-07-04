@@ -15,7 +15,10 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Id</th> 
+    <th>Encounter Id</th> 
+    <th>Bill Id</th> 
+    <th>Patient</th> 
+    <th>MRN</th> 
     <th>Grand Total</th>
 	<th></th>
 	</tr>
@@ -24,7 +27,16 @@
 @foreach ($bills as $bill)
 	<tr>
 			<td>
+					{{$bill->encounter_id}}
+			</td>
+			<td>
 					{{$bill->id}}
+			</td>
+			<td>
+					{{$bill->encounter->patient->patient_name }}
+			</td>
+			<td>
+					{{$bill->encounter->patient->patient_mrn }}
 			</td>
 			<td>
 					<a href='{{ URL::to('bills/'. $bill->id . '/edit') }}'>

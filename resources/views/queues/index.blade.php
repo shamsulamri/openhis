@@ -74,7 +74,7 @@
 					<a class='btn btn-default btn-lg' href='{{ URL::to('loans/request/'. $queue->patient_mrn.'?type=folder'.'&location_code='.$queue->location_code) }}'><span class='glyphicon glyphicon-folder-close' aria-hidden='true'></a>
 					-->
 
-					@can('module-patient')
+					@can('system-administrator')
 							@if ($queue->consultations()==0)
 							<a class='btn btn-danger' href='{{ URL::to('queues/delete/'. $queue->queue_id) }}'>Delete</a>
 							@endif

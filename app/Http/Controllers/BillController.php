@@ -31,8 +31,7 @@ class BillController extends Controller
 
 	public function index()
 	{
-			$bills = DB::table('bills')
-					->orderBy('bill_grand_total')
+			$bills = Bill::orderBy('encounter_id', 'desc')
 					->paginate($this->paginateValue);
 			return view('bills.index', [
 					'bills'=>$bills
@@ -144,9 +143,8 @@ class BillController extends Controller
 	
 	public function search(Request $request)
 	{
-			$bills = DB::table('bills')
-					->where('bill_grand_total','like','%'.$request->search.'%')
-					->orWhere('id', 'like','%'.$request->search.'%')
+			$bills = Bill::where('id','like','%'.$request->search.'%')
+					->orWhere('encounter_id', 'like','%'.$request->search.'%')
 					->orderBy('bill_grand_total')
 					->paginate($this->paginateValue);
 
