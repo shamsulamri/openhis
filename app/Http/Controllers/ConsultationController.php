@@ -68,9 +68,11 @@ class ConsultationController extends Controller
 			$consultation = Consultation::find($consultation_id);
 			$author_id = $consultation->user->author_id;
 			$patient_id = $consultation->patient_id;
+			$userSql  = "";
 
 			if ($request->show_my_note =='true') {
-				$authorSql = sprintf(" author_id = %d", $author_id);
+				$authorSql = sprintf(" b.user_id = %d", Auth::user()->id);
+				$userSql = sprintf(" and a.user_id = %d", Auth::user()->id);
 			} else {
 				$authorSql = sprintf(' (author_id <> %d)', 6);
 			}
@@ -106,22 +108,20 @@ class ConsultationController extends Controller
 					group by a.consultation_id
 				) as d on (d.consultation_id = a.consultation_id)
 				left join users as c on (c.id = a.user_id)
-				where %s
-				and patient_id = %d
+				where patient_id = %d
+				%s
 				%s
 				order by consultation_id desc
 			";
 
 
 			if ($request->show_all=='false' or empty($request->show_all)) {
-					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, " and (consultation_notes is not null or annotations>0 or orders>0)");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0)");
 			} else {
-					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, "");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, "");
 			}
 
-
 			$notes = DB::select($sql);
-
 			/** Pagination **/
 			$page = Input::get('page', 1); 
 			$offSet = ($page * $this->paginateProgress) - $this->paginateProgress;
