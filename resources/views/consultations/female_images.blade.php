@@ -1,7 +1,7 @@
 
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Body&nbsp;
 						<span class="caret"></span>
 				</button>
@@ -17,7 +17,7 @@
 
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Chest
 						&nbsp;
 						<span class="caret"></span>
@@ -34,7 +34,7 @@
 
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Ear&nbsp;
 						<span class="caret"></span>
 				</button>
@@ -49,7 +49,7 @@
 
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Eye&nbsp;
 						<span class="caret"></span>
 				</button>
@@ -65,7 +65,7 @@
 
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Face&nbsp;
 						<span class="caret"></span>
 				</button>
@@ -78,12 +78,12 @@
 	</div>
 
 	<div class="form-group">
-		<button class='btn btn-primary' onclick="loadAnnotation('genitalia_f.png')">Genital</button>
+		<button class='btn btn-primary btn-sm' onclick="loadAnnotation('genitalia_f.png')">Genital</button>
 	</div>
 
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Limb&nbsp;
 						<span class="caret"></span>
 				</button>
@@ -100,7 +100,7 @@
 
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Mouth&nbsp;
 						<span class="caret"></span>
 				</button>
@@ -113,7 +113,7 @@
 
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Neck&nbsp;
 						<span class="caret"></span>
 				</button>
@@ -126,13 +126,13 @@
 	</div>
 
 	<div class="form-group">
-		<button class='btn btn-primary' onclick="loadAnnotation('rectal_f.png')">Rectal</button>
+		<button class='btn btn-primary btn-sm' onclick="loadAnnotation('rectal_f.png')">Rectal</button>
 	</div>
 
 @if ($patient->patientAgeInYears()<=2)
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Baby&nbsp;
 						<span class="caret"></span>
 				</button>
@@ -145,7 +145,7 @@
 
 	<div class="form-group">
 		<div class="dropdown">
-				<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 						Child&nbsp;
 						<span class="caret"></span>
 				</button>

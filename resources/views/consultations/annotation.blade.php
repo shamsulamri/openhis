@@ -5,14 +5,28 @@
 			<button class='btn btn-success' id='btnErase'>Pen</button>
 		</div>
 		<div class="form-group">
-				<button class='btn btn-default' onclick="loadAnnotation('hopi.png')"><span class='fa fa-file-o'></span></button>
+				<button class='btn btn-default btn-sm' onclick="loadAnnotation('hopi.png')"><span class='fa fa-file-o'></span></button>
 		</div>
-		@if ($consultation->encounter->patient->gender_code=='F')
+		<!--
+		<div class="form-group">
+				<button class='btn btn-default btn-sm' onclick="loadAnnotation('hopi2.png')"><span class='fa fa-file-o'></span></button>
+		</div>
+		<div class="form-group">
+				<button class='btn btn-default btn-sm' onclick="loadAnnotation('hopi3.png')"><span class='fa fa-file-o'></span></button>
+		</div>
+		<div class="form-group">
+				<button class='btn btn-default btn-sm' onclick="loadAnnotation('hopi4.png')"><span class='fa fa-file-o'></span></button>
+		</div>
+		<div class="form-group">
+				<button class='btn btn-default btn-sm' onclick="loadAnnotation('hopi5.png')"><span class='fa fa-file-o'></span></button>
+		</div>
+		-->
+		@if ($consultation->encounter->patient->gender_code=='P')
 				@include('consultations.female_images')
 		@else
 				@include('consultations.male_images')
 		@endif
-	<button class='btn btn-danger pull-right' onclick="clearAnnotation()">Clear</button>
+	<button class='btn btn-danger btn-sm pull-right' onclick="clearAnnotation()">X</button>
 </div>
 <br>
 <canvas tabindex=0 id="myCanvas" width="100%" height="465"></canvas>

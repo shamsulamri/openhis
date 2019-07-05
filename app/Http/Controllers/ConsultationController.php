@@ -69,10 +69,10 @@ class ConsultationController extends Controller
 			$author_id = $consultation->user->author_id;
 			$patient_id = $consultation->patient_id;
 
-			$authorSql = sprintf(" author_id = %d", $author_id);
-
-			if ($request->show_nurse=='true' or empty($request->show_nurse)) {
-				$authorSql = sprintf(' (author_id = %d or author_id = %d)', $author_id, 7);
+			if ($request->show_my_note =='true') {
+				$authorSql = sprintf(" author_id = %d", $author_id);
+			} else {
+				$authorSql = sprintf(' (author_id <> %d)', 6);
 			}
 
 			$sql = "
@@ -156,7 +156,7 @@ class ConsultationController extends Controller
 					'order_helper'=>new OrderHelper(),
 					'encounterHelper'=>new EncounterHelper(),
 					'showAll'=>$request->show_all?:null,
-					'showNurse'=>$request->show_nurse?:true,
+					'showNurse'=>$request->show_my_note ?:null,
 			]);
 	}
 

@@ -13,11 +13,10 @@ canvas {border:1px solid #e5e5e5}
 <h1>
 Progress Notes
 </h1>
+<div class='pull-right'>
 <input id="show_all" @if ($showAll=='true') checked="checked" @endif name="show_all" type="checkbox" value="1"> <label>Include empty notes</label>
-@if (Auth::user()->author_id != 7)
-&nbsp;&nbsp;
-<input id="show_nurse" @if ($showNurse=='true') checked="checked" @endif name="show_nurse" type="checkbox" value="1"> <label>Include nurses notes</label>
-@endif
+</div>
+<input id="show_my_note" @if ($showNurse=='true') checked="checked" @endif name="show_my_note" type="checkbox" value="1"> <label>Show my notes only</label>
 <br>
 {{ $notes->render() }}
 @if (count($notes)>0)
@@ -172,11 +171,11 @@ Progress Notes
 $(document).ready(function(){
 
 			$('#show_all').click(function(){
-					window.location.href = "?show_all="+this.checked+"&show_nurse="+$('#show_nurse').is(":checked");
+					window.location.href = "?show_all="+this.checked+"&show_my_note="+$('#show_my_note').is(":checked");
 			});
 
-			$('#show_nurse').click(function(){
-					window.location.href = "?show_all="+$('#show_all').is(":checked")+"&show_nurse="+this.checked;
+			$('#show_my_note').click(function(){
+					window.location.href = "?show_all="+$('#show_all').is(":checked")+"&show_my_note="+this.checked;
 			});
 });
 </script>
