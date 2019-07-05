@@ -47,6 +47,21 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+
+		Route::resource('consultation_histories', 'ConsultationHistoryController');
+		Route::post('/consultation_history', 'ConsultationHistoryController@save');
+		Route::get('/consultation_histories/id/{id}', 'ConsultationHistoryController@searchById');
+		Route::post('/consultation_history/search', 'ConsultationHistoryController@search');
+		Route::get('/consultation_history/search', 'ConsultationHistoryController@search');
+		Route::get('/consultation_histories/delete/{id}', 'ConsultationHistoryController@delete');
+		Route::post('/consultation_history', 'ConsultationHistoryController@post')->name('history.post');
+		
+		Route::resource('histories', 'HistoryController');
+		Route::get('/histories/id/{id}', 'HistoryController@searchById');
+		Route::post('/history/search', 'HistoryController@search');
+		Route::get('/history/search', 'HistoryController@search');
+		Route::get('/histories/delete/{id}', 'HistoryController@delete');
+
 		Route::resource('patient_mrns', 'PatientMrnController');
 		Route::get('/patient_mrns/id/{id}', 'PatientMrnController@searchById');
 		Route::post('/patient_mrn/search', 'PatientMrnController@search');

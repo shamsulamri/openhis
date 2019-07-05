@@ -37,6 +37,7 @@
 <div class="btn-group" role="group" aria-label="...">
     <a class="btn btn-success" href="/consultations/progress/{{ $consultation->consultation_id }}" role="button">Progress</a>
 	<a href="/consultations/{{ $consultation->consultation_id }}/edit" class="btn btn-primary">Clinical Notes</a>
+	<a href="/consultation_histories" class="btn btn-primary">Histories</a>
 	<a href="/consultation_diagnoses" class="btn btn-primary">Diagnoses</a>
 	<a href="/consultation_procedures" class="btn btn-primary">Procedures</a>
 	<a href="/orders/make" class="btn btn-primary">Orders</a>

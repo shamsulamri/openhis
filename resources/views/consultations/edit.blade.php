@@ -107,6 +107,9 @@ input {
 		</div>
 </div>
 
+<br>
+<button class='btn btn-primary'>Save</button>
+<div id='saveHTML' class='text text-success pull-right'></div>
 
 <!--
 <br>
@@ -163,19 +166,27 @@ input {
 			$('#consultation_notes').focusout(function(){
 					var note = $('#consultation_notes').val();
 					//note = note.replace("&", "and");
-					note = note.replace(new RegExp('&', 'g'), '%26');
+					//note = note.replace(new RegExp('&', 'g'), '%26');
+					note = encodeURIComponent(note);
 					var dataString = "consultation_note="+note+"&id={{ $consultation->consultation_id }}";
 
 					$.ajax({
 						type: "PUT",
 						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
 						url: "/consultations/{{ $consultation->consultation_id }}",
-						data: dataString
+						data: dataString,
+						success: function(data){
+							$('#saveHTML').html("Saved...");
+						}
+
 					});
 
 				    //setTimeout(function () { $('#diagnosis_clinical').focus(); }, 20);
 			});
 
+			$('#consultation_notes').keypress(function(e){
+							$('#saveHTML').html("");
+			});
 
 			/** Diagnosis **/
 			$('#diagnosis_clinical').keypress(function(e){
@@ -276,6 +287,7 @@ input {
 				disableBodyScroll(targetElement);
 				drawing = true;
 				lastPos = getMousePos(canvas, e);
+				$('#saveHTML').html("");
 		}
 
 		canvas.onmouseup = function(e) {
@@ -362,6 +374,7 @@ input {
 						url: "/consultation_annotations",
 						data: dataString,
 						success: function(data){
+							$('#saveHTML').html("Saved...");
 							console.log("Save");
 						}
 				});
