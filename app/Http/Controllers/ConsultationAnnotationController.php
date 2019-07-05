@@ -51,9 +51,16 @@ class ConsultationAnnotationController extends Controller
 						$annotation = new ConsultationAnnotation();
 					}
 
+					$index = 99;
+					if ($annotation->annotation_image == 'hopi.png') $index = 1;
+					if ($annotation->annotation_image == 'hopi2.png') $index = 2;
+					if ($annotation->annotation_image == 'hopi3.png') $index = 3;
+					if ($annotation->annotation_image == 'hopi4.png') $index = 4;
+					if ($annotation->annotation_image == 'hopi5.png') $index = 5;
+
 					$annotation->consultation_id = $request->consultation_id;
 					$annotation->annotation_image = $request->annotation_image;
-					$annotation->annotation_index = $annotation->annotation_image=='hopi.png'?1:99;
+					$annotation->annotation_index = $index; //$annotation->annotation_image=='hopi.png'?1:99;
 					$annotation->annotation_dataurl = $request->annotation_dataurl;
 					$annotation->save();
 					return "Annotation store!!!!";

@@ -25,6 +25,7 @@ use App\OrderHelper;
 use App\OrderDrug;
 use App\Set;
 use App\EncounterHelper;
+use Carbon\Carbon;
 
 class ConsultationController extends Controller
 {
@@ -157,6 +158,7 @@ class ConsultationController extends Controller
 					'encounterHelper'=>new EncounterHelper(),
 					'showAll'=>$request->show_all?:null,
 					'showNurse'=>$request->show_my_note ?:null,
+					'cutoff_date'=>Carbon::create(2019,7,4),
 			]);
 	}
 

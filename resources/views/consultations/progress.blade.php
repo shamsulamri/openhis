@@ -35,7 +35,6 @@ Progress Notes
 			</td>
 			<td>
 					<h3>Seen by {{ $note->user->name }}</h3>
-					<br>
 					@if ($note->consultation_notes)
             		{{ Form::textarea('consultation_notes', $note->consultation_notes, ['id'=>'consultation_notes', 'tabindex'=>1, 'class'=>'form-control','rows'=>'13', 'style'=>'font-size: 1.2em']) }}
 					<br>
@@ -49,7 +48,11 @@ Progress Notes
 					<!-- Annotations -->
 					@if (count($note->annotations)>0)
 							@foreach ($note->annotations as $annotation)
-								<canvas tabindex=0 id="canvas_{{ $annotation->annotation_id }}" width="800" height="350"></canvas>
+								@if ($note->created_at<$cutoff_date)
+								<canvas tabindex=0 id="canvas_{{ $annotation->annotation_id }}" width="800" height="460"></canvas>
+								@else
+								<canvas tabindex=0 id="canvas_{{ $annotation->annotation_id }}" width="800" height="700"></canvas>
+								@endif
 							@endforeach
 						
 					<br>
