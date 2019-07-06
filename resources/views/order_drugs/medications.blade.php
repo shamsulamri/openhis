@@ -56,7 +56,7 @@ label {
 </style>
 <h1>Medications</h1>
 <h3>Orders</h3>
-	<div id="medicationList"></div>
+<div id="medicationList"></div>
 <div class="widget style1 gray-bg">
 	<input type='text' class='form-control' placeholder="Enter medication name" id='search' name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 {{ csrf_field() }}
@@ -85,43 +85,7 @@ $(document).ready(function(){
 
 			$(document).on('change', 'checkbox', function(e) {
 					console.log("X");	
-			}
-
-			function updateDrug(id) {
-					console.log(id);
-					id = id.split('_')[1];
-					var strength = $('#strength_'.concat(id)).val();
-					var unit_code = $('#unit_'.concat(id)).find('option:selected').val();
-					var dosage = $('#dosage_'.concat(id)).val();
-					var dosage_code = $('#dosagecode_'.concat(id)).find('option:selected').val();
-					var route = $('#route_'.concat(id)).find('option:selected').val();
-					var frequency = $('#frequency_'.concat(id)).find('option:selected').val();
-					var duration = $('#duration_'.concat(id)).val();
-					var period = $('#period_'.concat(id)).find('option:selected').val();
-					var discharge = $('#discharge_'.concat(id)).val();
-					console.log(strength, unit_code, dosage,frequency, duration, period, discharge);
-
-					var dataString = parse('drug_strength=%s&unit_code=%s&drug_dosage=%s&dosage_code=%s&route_code=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s', 
-							strength,
-							unit_code,
-							dosage, 
-							dosage_code,
-							route,
-							frequency, 
-							duration, 
-							period, 
-							id);
-
-					$.ajax({
-						type: "POST",
-						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
-						url: "{{ route('medications.update') }}",
-						data: dataString,
-						success: function(){
-							console.log('drug updated...');
-						}
-					});
-			}
+			});
 
 			$('#search').keyup(function(e){
 				var value = $('#search').val();
@@ -192,6 +156,45 @@ $(document).ready(function(){
 					}
 			});
 });
+
+			function updateDrug(id) {
+					//console.log(id);
+					id = id.split('_')[1];
+					var strength = $('#strength_'.concat(id)).val();
+					var unit_code = $('#unit_'.concat(id)).find('option:selected').val();
+					var dosage = $('#dosage_'.concat(id)).val();
+					var dosage_code = $('#dosagecode_'.concat(id)).find('option:selected').val();
+					var route = $('#route_'.concat(id)).find('option:selected').val();
+					var frequency = $('#frequency_'.concat(id)).find('option:selected').val();
+					var duration = $('#duration_'.concat(id)).val();
+					var period = $('#period_'.concat(id)).find('option:selected').val();
+					var discharge = $('#discharge_'.concat(id)).is(':checked')?1:0;
+					//console.log(strength, unit_code, dosage,frequency, duration, period, discharge);
+					console.log(discharge);
+
+					var dataString = parse('drug_strength=%s&unit_code=%s&drug_dosage=%s&dosage_code=%s&route_code=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s&discharge=%s', 
+							strength,
+							unit_code,
+							dosage, 
+							dosage_code,
+							route,
+							frequency, 
+							duration, 
+							period, 
+							id,
+							discharge);
+
+					$.ajax({
+						type: "POST",
+						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+						url: "{{ route('medications.update') }}",
+						data: dataString,
+						success: function(){
+							console.log('drug updated...');
+						}
+					});
+			}
+
 
 			function showHistory() {
 					$.ajax({

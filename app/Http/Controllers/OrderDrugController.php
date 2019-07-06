@@ -137,7 +137,10 @@ class OrderDrugController extends Controller
 					}
 					$order->order_quantity_request = $total_unit;
 					$order->order_quantity_supply = $total_unit;
+					$order->order_is_discharge = $request->discharge?1:0;
 					$order->save();
+					Log::info('-->'.$request->discharge);
+					Log::info($order->order_is_discharge);
 
 					$drug->save();
 			}
@@ -257,9 +260,16 @@ class OrderDrugController extends Controller
 			foreach ($medications as $med) {
 					$last_id = $med->order_id;
 					$drug_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeDrug(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $med->order_id);
-					$discharge_order = sprintf("<input type='checkbox' name='discharge_%s' value='1'>", $med->order_id);
+
+					$checked = "";
+					if ($med->order->order_is_discharge ==1) { $checked = 'checked'; }
+
+
+					$discharge_order = sprintf("<input type='checkbox' id='discharge_%s' value='1' onchange=%s %s>", $med->order_id, chr(34)."javascript:updateDrug('discharge_".$med->order_id."')".chr(34), $checked);
 					$table_row .=sprintf(" 
 							<tr height=50>
+							        <td width='1' style='vertical-align:top'>%s</td>
+							        <td width=20></td>
 							        <td width=%s style='vertical-align:top'>%s<small>%s</small></td>
 							        <td width=80 style='vertical-align:top'><input id='strength_%s' name='strength_%s' class='form-control input-sm small-font' type='text' value='%s'></td>
 							        <td width=150 style='vertical-align:top'>%s</td>
@@ -275,10 +285,9 @@ class OrderDrugController extends Controller
 							        <td width=150 style='vertical-align:top'>%s</td>
 							        <td width=20></td>
 							        <td width='1' style='vertical-align:top'>%s</td>
-							        <td width=20></td>
-							        <td width='1' style='vertical-align:top'>%s</td>
 							</tr>
 							", 
+							$discharge_order,
 							'30%',
 							$med->order->product->drug?$med->order->product->drug->drug_generic_name:$med->order->product->product_name,
 							$med->order->product->drug?$med->order->product->drug->trade_name:'<br>'.$med->order->product->product_name_other,
@@ -292,7 +301,6 @@ class OrderDrugController extends Controller
 							$med->order_id,
 							$med->drug_duration,
 							$this->getPeriods($med->order->product_code, $med->order_id, $med->period_code),
-							$discharge_order,
 							$drug_remove
 					);
 			}
@@ -304,6 +312,8 @@ class OrderDrugController extends Controller
 					<table>
 						 <thead>
 							<tr>
+							<th><i class='fa fa-home'></i></th>
+							<th></th>
 							<th>Drug</th>
 							<th colspan=2>Strength</th>
 							<th></th>
@@ -314,7 +324,6 @@ class OrderDrugController extends Controller
 							<th>Freqeuncy</th> 
 							<th></th>
 							<th colspan=2>Duration</th>
-							<th></th>
 							<th></th>
 							</tr>
 						  </thead>

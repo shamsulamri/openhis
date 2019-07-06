@@ -39,7 +39,6 @@
     <th>Available</th>
     <th>Quantity</th>
     <th>Order By</th>
-    <th>Date</th>
 	<th></th>
 	</tr>
   </thead>
@@ -52,13 +51,18 @@
 	$available = $on_hand-$allocated;
 	$batches = $stock_helper->getBatches($order->product_code, $order->order_id)?:null;
 	$quantity_request = $order->order_quantity_request;
+	$dischargeColor = '#ebffd9';
 	?>
 	@if ($order->product_stocked)
 						@if ($on_hand-$allocated<$order->order_quantity_request)
 								<?php $status = 'danger'; ?>
 						@endif
 	@endif
-	<tr class='{{ $status }}' bgcolor='#efefef'>
+	@if ($order->order_is_discharge==1)
+	<tr class='{{ $status }}' bgcolor='{{ $dischargeColor }}'>
+	@else
+	<tr class='{{ $status }}'>
+	@endif
 			<td width='48'>
 					@if (!isset($order->cancel_id) && $order->order_completed==0)
 						{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
@@ -76,6 +80,10 @@
 						<h3>
 						{{ $order_helper->getPrescription($order->order_id) }}
 						</h3>
+					@endif
+
+					@if ($order->order_is_discharge==1)
+						<span class='label label-success'>Discharge Order</span>
 					@endif
 
 					@if ($status=='danger')
@@ -133,9 +141,8 @@
 					<br>
 					{{ $order->ward_name}}
 					-->
-			</td>
-			<td>
-					{{ (DojoUtility::dateReadFormat($order->order_date)) }}
+					<br>
+					{{ (DojoUtility::dateTimeReadFormat($order->consultation_date)) }}
 			</td>
 			<td align='right'>
 					@if (!isset($order->cancel_id))
@@ -146,7 +153,12 @@
 			</td>
 	</tr>
 	@if ($batches->count()>0 && $order->order_completed==0)
+
+	@if ($order->order_is_discharge==1)
+	<tr bgcolor='{{ $dischargeColor }}'>
+	@else
 	<tr>
+	@endif
 			<td colspan='9'>	
 		<table>
 		 <thead>

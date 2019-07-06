@@ -217,6 +217,7 @@ class MedicationRecordController extends Controller
 					->leftjoin('users as h', 'h.id', '=', 'a.user_id')
 					->where('a.post_id','>',0)
 					->where('a.encounter_id','=',$encounter_id)
+					->where('order_is_discharge','<>',1)
 					->whereNotNull('f.order_id')
 					->orderBy('b.category_code')
 					->orderBy('cancel_id', 'asc')

@@ -65,6 +65,7 @@ class DischargeController extends Controller
 					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
 					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
 					->leftJoin('medical_certificates as j', 'j.encounter_id', '=', 'b.encounter_id')
+					->whereNull('b.deleted_at')
 					->orderBy('discharge_id','desc');
 
 			$discharges = $discharges->paginate($this->paginateValue);
@@ -270,7 +271,8 @@ class DischargeController extends Controller
 	{
 
 			//$discharges = DB::table('discharges as a')
-			$discharges = Discharge::select('patient_mrn', 'patient_name', 'discharges.encounter_id', 'discharges.discharge_id', 'type_name','discharges.created_at', 'e.id','name','ward_name', 'b.encounter_code', 'mc_id', 'encounter_description', 'discharges.created_at as discharge_date')
+			//$discharges = Discharge::select('patient_mrn', 'patient_name', 'discharges.encounter_id', 'discharges.discharge_id', 'type_name','discharges.created_at', 'e.id','name','ward_name', 'b.encounter_code', 'mc_id', 'encounter_description', 'discharges.created_at as discharge_date')
+			$discharges = Discharge::select('patient_mrn', 'b.encounter_code','patient_name', 'discharges.encounter_id', 'discharges.discharge_id', 'type_name','discharges.created_at', 'name','ward_name','mc_id', 'encounter_description', 'discharges.created_at as discharge_date')
 					->leftJoin('encounters as b', 'b.encounter_id','=','discharges.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('ref_discharge_types as d', 'd.type_code','=','discharges.type_code')
@@ -280,6 +282,7 @@ class DischargeController extends Controller
 					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
 					->leftJoin('wards as h', 'h.ward_code', '=', 'g.ward_code')
 					->leftJoin('medical_certificates as j', 'j.encounter_id', '=', 'b.encounter_id')
+					->whereNull('b.deleted_at')
 					->orderBy('discharge_id','desc');
 			
 			if (!empty($request->search)) {

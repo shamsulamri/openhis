@@ -114,6 +114,7 @@ class OrderTaskController extends Controller
 					'investigation_date',
 					'product_stocked',
 					'e.category_code',
+					'b.created_at as consultation_date'
 					];
 
 			$order_tasks = DB::table('orders as a')
