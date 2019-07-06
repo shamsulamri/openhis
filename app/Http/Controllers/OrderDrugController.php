@@ -337,6 +337,7 @@ class OrderDrugController extends Controller
 
 	function find(Request $request)
 	{
+			Log::info("Find drug....");
 			if (!empty($request->search)) {
 
 				$fields = explode(' ', $request->search);
@@ -377,7 +378,9 @@ class OrderDrugController extends Controller
 				$drug_dosage = "";
 				$drug_route = "";
 
+				Log::info($sql);
 				foreach($data as $row) {
+						Log::info($row->drug_generic_name);
 					$drug_name = $row->drug_generic_name;
 					if (!empty($row->trade_name)) {
 							$drug_name = sprintf('%s (%s)',$row->trade_name, $row->drug_generic_name);
@@ -548,14 +551,17 @@ class OrderDrugController extends Controller
 
 	function getUnits($drug_code, $order_id, $unit_code)
 	{
-			$units = Unit::where('unit_drug',1)->orderBy('unit_name')->select('unit_name', 'unit_code')->get();
+			$units = Unit::where('unit_drug',1)
+					->orderBy('unit_index')
+					->orderBy('unit_shortname')
+					->select('unit_shortname', 'unit_code')->get();
 
 			$html = '';
 			$html .= sprintf("<option></option>");
 			foreach($units as $unit) {
 				$selected = "";
 				if ($unit->unit_code == $unit_code) $selected = "selected";
-				$html .= sprintf("<option value='%s' %s>%s</option>", $unit->unit_code, $selected, $unit->unit_name);
+				$html .= sprintf("<option value='%s' %s>%s</option>", $unit->unit_code, $selected, $unit->unit_shortname);
 			}
 
 			$html = sprintf("<select id='unit_%s' name='unit_%s' class='form-control input-sm small-font' >%s</select>", $order_id,  $order_id, $html);
@@ -582,7 +588,9 @@ class OrderDrugController extends Controller
 
 	function getDosages($drug_code, $order_id, $dosage_code)
 	{
-			$dosages = Dosage::orderBy('dosage_name')->select('dosage_name', 'dosage_code')->get();
+			$dosages = Dosage::orderBy('dosage_index')
+						->orderBy('dosage_name')
+						->select('dosage_name', 'dosage_code')->get();
 
 			$html = '';
 			$html .= sprintf("<option></option>");
@@ -605,14 +613,16 @@ class OrderDrugController extends Controller
 					->pluck('frequency_code')
 					->toArray();
 
-			$frequencies = Frequency::orderBy('frequency_name')
+			$frequencies = Frequency::orderBy('frequency_index')
 					->select('frequency_code', 'frequency_name')
 					->whereIn('frequency_code', $prescriptions)
+					->orderBy('frequency_name')
 					->get();
 
 			if (count($frequencies)==0) {
-					$frequencies = Frequency::orderBy('frequency_name')
+					$frequencies = Frequency::orderBy('frequency_index')
 							->select('frequency_code', 'frequency_name')
+							->orderBy('frequency_name')
 							->get();
 			}
 

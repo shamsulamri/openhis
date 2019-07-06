@@ -15,6 +15,7 @@ class UnitMeasure extends Model
 				'unit_name',
 				'unit_shortname',
 				'unit_is_decimal',
+				'unit_index',
 				'unit_drug'];
 	
     protected $guarded = ['unit_code'];

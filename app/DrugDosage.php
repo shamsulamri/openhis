@@ -12,6 +12,7 @@ class DrugDosage extends Model
 	protected $table = 'drug_dosages';
 	protected $fillable = [
 				'dosage_name',
+				'dosage_index',
 				'dosage_label'];
 	
     protected $guarded = ['dosage_code'];

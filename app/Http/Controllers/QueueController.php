@@ -366,8 +366,8 @@ class QueueController extends Controller
 			$location = Location::find($request->cookie('queue_location'));
 			
 			return view('queues.enquiry', [
-					'date_start'=>$date_start,
-					'date_end'=>$date_end,
+					'date_start'=>$request->date_start,
+					'date_end'=>$request->date_end,
 					'queues'=>$queues,
 					'locations' => Location::whereNotNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'location' => $location,

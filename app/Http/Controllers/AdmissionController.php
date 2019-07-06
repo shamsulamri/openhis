@@ -40,7 +40,7 @@ use App\PatientClassification;
 
 class AdmissionController extends Controller
 {
-	public $paginateValue=30;
+	public $paginateValue=10;
 
 	public $selectFields = ['h.bed_name', 'admissions.admission_id','c.patient_id','patient_name','admissions.encounter_id','admissions.user_id','e.discharge_id', 
 					'f.discharge_id as ward_discharge',
@@ -686,6 +686,8 @@ class AdmissionController extends Controller
 	public function enquiry(Request $request, $export=FALSE, $diet=FALSE)
 	{
 			$ward_code = $request->ward_code?:null;
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
 			$fields = [];
 
@@ -732,8 +734,8 @@ class AdmissionController extends Controller
 							->leftJoin('diet_classes as q', 'q.class_code', '=', 'admissions.class_code')
 							->leftJoin(DB::raw('('.$subquery.') alerts'), function($join) {
 									$join->on('b.patient_id','=', 'alerts.patient_id');
-							})
-							->whereNull('discharge_id');
+							});
+							//->whereNull('discharge_id');
 
 			if (!empty($request->search)) {
 					$admissions = $admissions->where(function ($query) use ($request) {
@@ -753,6 +755,18 @@ class AdmissionController extends Controller
 			if (!empty($request->diet_code)) {
 					$admissions = $admissions->where('admissions.diet_code','=', $request->diet_code);
 			}
+
+			if (!empty($date_start) && empty($request->date_end)) {
+				$admissions = $admissions->where('admissions.created_at', '>=', $date_start.' 00:00');
+			}
+
+			if (empty($date_start) && !empty($request->date_end)) {
+				$admissions = $admissions->where('admissions.created_at', '<=', $date_end.' 23:59');
+			}
+
+			if (!empty($date_start) && !empty($date_end)) {
+				$admissions = $admissions->whereBetween('admissions.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+			} 
 			if ($request->export_report) {
 				DojoUtility::export_report($admissions->get());
 			}
@@ -762,6 +776,8 @@ class AdmissionController extends Controller
 			$view = 'admissions.enquiry';
 			if ($diet) $view = 'admissions.diet_enquiry';
 			return view($view, [
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
 					'admissions'=>$admissions,
 					'wards' => Ward::all()->sortBy('ward_name')->lists('ward_name', 'ward_code')->prepend('',''),
 					'ward_code' => $ward_code,

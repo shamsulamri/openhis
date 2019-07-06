@@ -31,6 +31,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('unit_index')) has-error @endif'>
+        <label for='unit_index' class='col-sm-3 control-label'>Index<span style='color:red;'> *</span></label>
+        <div class='col-sm-9'>
+            {{ Form::text('unit_index', null, ['class'=>'form-control','placeholder'=>'Item position in list']) }}
+            @if ($errors->has('unit_index')) <p class="help-block">{{ $errors->first('unit_index') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/unit_measures" role="button">Cancel</a>

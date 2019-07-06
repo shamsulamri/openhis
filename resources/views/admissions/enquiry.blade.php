@@ -32,6 +32,30 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label for='date_start' class='col-sm-3 control-label'><div align='left'>From</div></label>
+						<div class='col-sm-9'>
+							<div class="input-group date">
+								<input data-mask="99/99/9999" name="date_start" id="date_start" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($date_start) }}">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label for='date_end' class='col-sm-3 control-label'>To</label>
+						<div class='col-sm-9'>
+							<div class="input-group date">
+								<input data-mask="99/99/9999" name="date_end" id="date_end" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($date_end) }}">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							</div>
+						</div>
+					</div>
+			</div>
+	</div>
 	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
 	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
 	<input type='hidden' id='export_report' name="export_report" value="0">
@@ -108,6 +132,23 @@
 @endif
 
 <script>
+		$('#date_start').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
+		});
+
+		$('#date_end').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
+		});
 		function search_now(value) {
 				document.getElementById('export_report').value = value;
 				document.getElementById('form').submit();

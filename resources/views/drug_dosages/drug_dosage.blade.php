@@ -15,6 +15,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('dosage_index')) has-error @endif'>
+        {{ Form::label('dosage_index', 'Index',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('dosage_index', null, ['class'=>'form-control','placeholder'=>'Item position in list','maxlength'=>'50']) }}
+            @if ($errors->has('dosage_index')) <p class="help-block">{{ $errors->first('dosage_index') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/drug_dosages" role="button">Cancel</a>

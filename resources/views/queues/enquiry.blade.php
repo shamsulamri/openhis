@@ -38,7 +38,7 @@
 	<div class="row">
 			<div class="col-xs-8">
 					<div class='form-group'>
-						<label for='date_end' class='col-sm-2 control-label'>Consultant</label>
+						<label for='date_end' class='col-sm-2 control-label'><div class='pull-left'>Consultant</div></label>
 						<div class='col-sm-10'>
 								{{ Form::select('user_id', $consultants,$user_id, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
@@ -94,8 +94,8 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $queues->appends(['search'=>$search])->render() }}
+@if (isset($search) or isset($date_start) or isset($date_end)) 
+	{{ $queues->appends(['search'=>$search, 'date_start'=>$date_start, 'date_end'=>$date_end])->render() }}
 	@else
 	{{ $queues->render() }}
 @endif
