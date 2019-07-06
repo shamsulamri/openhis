@@ -39,6 +39,7 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script>
+		keypressCount = 0;
 $(document).ready(function(){
 
 			$(document).on('focusout', 'textarea', function(e) {
@@ -48,13 +49,29 @@ $(document).ready(function(){
 
 			$(document).on('keypress', 'textarea', function(e) {
 					$('#saveHTML').html("");
+					historyCode = e.currentTarget.name;
+					keypressCount += 1;
+					console.log(keypressCount);
+					if (keypressCount>50) {
+							updateHistory(historyCode);
+							keypressCount=0;
+					}
+
+
+					if (e.key=='.') {
+							updateHistory(historyCode);
+							keypressCount=0;
+					}
+
+					if (e.charCode==13) {
+							updateHistory(historyCode);
+							keypressCount=0;
+					}
 			});
 
 			function updateHistory(historyCode) {
 					var historyNote = $('#'.concat(historyCode)).val();
-					console.log(historyNote);
 					historyNote = encodeURIComponent(historyNote);
-					console.log(historyNote);
 
 					var dataString = "history_code="+historyCode+"&history_note="+historyNote+"&patient_id={{ $consultation->patient_id }}";
 
@@ -65,6 +82,7 @@ $(document).ready(function(){
 						data: dataString,
 						success: function(data){
 							$('#saveHTML').html("Saved...");
+							console.log("History saved....");
 						}
 					});
 

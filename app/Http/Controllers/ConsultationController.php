@@ -52,7 +52,9 @@ class ConsultationController extends Controller
 					->leftjoin('users as a', 'a.id', '=', 'consultations.user_id')
 					->leftjoin('patients as b','b.patient_id','=', 'consultations.patient_id')
 					->leftJoin('bills as c', 'c.encounter_id', '=', 'consultations.encounter_id')
-					->where('consultations.user_id', '=', Auth::user()->id);
+					->leftJoin('encounters as d', 'd.encounter_id', '=', 'consultations.encounter_id')
+					->where('consultations.user_id', '=', Auth::user()->id)
+					->whereNull('d.deleted_at');
 
 
 			$consultations = $consultations->paginate($this->paginateValue);

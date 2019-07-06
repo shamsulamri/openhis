@@ -1,5 +1,5 @@
 
-@if ($patient->patientAgeInYears()<=2)
+@if ($patient->patientAgeInYears()<=2 or substr($patient->patient_name,0,3) == 'B/O')
 	<div class="form-group">
 		<div class="dropdown">
 				<button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

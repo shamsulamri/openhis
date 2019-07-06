@@ -83,6 +83,9 @@ $(document).ready(function(){
 					}
 			});
 
+			$(document).on('change', 'checkbox', function(e) {
+					console.log("X");	
+			}
 
 			function updateDrug(id) {
 					console.log(id);
@@ -95,7 +98,8 @@ $(document).ready(function(){
 					var frequency = $('#frequency_'.concat(id)).find('option:selected').val();
 					var duration = $('#duration_'.concat(id)).val();
 					var period = $('#period_'.concat(id)).find('option:selected').val();
-					console.log(strength, unit_code, dosage,frequency, duration, period);
+					var discharge = $('#discharge_'.concat(id)).val();
+					console.log(strength, unit_code, dosage,frequency, duration, period, discharge);
 
 					var dataString = parse('drug_strength=%s&unit_code=%s&drug_dosage=%s&dosage_code=%s&route_code=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s', 
 							strength,

@@ -162,30 +162,33 @@ input {
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 	<script>
+		keypressCount = 0;
 		$(document).ready(function(){
 			$('#consultation_notes').focusout(function(){
-					var note = $('#consultation_notes').val();
-					//note = note.replace("&", "and");
-					//note = note.replace(new RegExp('&', 'g'), '%26');
-					note = encodeURIComponent(note);
-					var dataString = "consultation_note="+note+"&id={{ $consultation->consultation_id }}";
-
-					$.ajax({
-						type: "PUT",
-						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
-						url: "/consultations/{{ $consultation->consultation_id }}",
-						data: dataString,
-						success: function(data){
-							$('#saveHTML').html("Saved...");
-						}
-
-					});
-
+					saveNote();
 				    //setTimeout(function () { $('#diagnosis_clinical').focus(); }, 20);
 			});
 
 			$('#consultation_notes').keypress(function(e){
-							$('#saveHTML').html("");
+					//console.log(e);
+					$('#saveHTML').html("");
+					keypressCount += 1;
+					console.log(keypressCount);
+					if (keypressCount>30) {
+							saveNote();
+							keypressCount=0;
+					}
+
+
+					if (e.key=='.') {
+							saveNote();
+							keypressCount=0;
+					}
+
+					if (e.charCode==13) {
+							saveNote();
+							keypressCount=0;
+					}
 			});
 
 			/** Diagnosis **/
@@ -241,6 +244,24 @@ input {
 			})
 		});
 
+		function saveNote() {
+				console.log("Save note...");
+					var note = $('#consultation_notes').val();
+					note = encodeURIComponent(note);
+					var dataString = "consultation_note="+note+"&id={{ $consultation->consultation_id }}";
+
+					$.ajax({
+						type: "PUT",
+						headers: {'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')},
+						url: "/consultations/{{ $consultation->consultation_id }}",
+						data: dataString,
+						success: function(data){
+							$('#saveHTML').html("Saved...");
+						}
+
+					});
+		}
+
 		function removeDiagnosis(diagnosis_id) {
 				var dataString = "diagnosis_id="+diagnosis_id;
 
@@ -280,7 +301,7 @@ input {
 		canvas.width = window.innerWidth-105;
 
 		canvas.onblur = function(e) {
-			savenote();
+			saveAnnotation();
 		}
 
 		canvas.onmousedown = function(e) {
@@ -295,7 +316,7 @@ input {
 				drawPos = coordinates.length;
 				coor = new Coordinate(-1, -1);
 				coordinates.push(coor);
-				savenote();
+				saveAnnotation();
 		}
 
 		canvas.addEventListener('mousemove', function(evt) {
@@ -360,7 +381,7 @@ input {
 				};
 		}
 
-		function savenote() {
+		function saveAnnotation() {
 				console.log("Save!!!!!!!!");
 				var dataUrl = encodeURIComponent(canvas.toDataURL());
 				dataString = "annotation_dataurl="+dataUrl;
@@ -536,7 +557,7 @@ input {
 		function clearAnnotation(annotationId) {
 				filename = document.getElementById('selected_image').value;
 				loadImage(filename);
-				savenote();
+				saveAnnotation();
 
 				var request = new XMLHttpRequest();
 				request.open('GET', '/consultation_annotations/clear/{{ $consultation->consultation_id }}/'+filename, true);

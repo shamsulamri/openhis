@@ -257,6 +257,7 @@ class OrderDrugController extends Controller
 			foreach ($medications as $med) {
 					$last_id = $med->order_id;
 					$drug_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeDrug(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $med->order_id);
+					$discharge_order = sprintf("<input type='checkbox' name='discharge_%s' value='1'>", $med->order_id);
 					$table_row .=sprintf(" 
 							<tr height=50>
 							        <td width=%s style='vertical-align:top'>%s<small>%s</small></td>
@@ -274,6 +275,8 @@ class OrderDrugController extends Controller
 							        <td width=150 style='vertical-align:top'>%s</td>
 							        <td width=20></td>
 							        <td width='1' style='vertical-align:top'>%s</td>
+							        <td width=20></td>
+							        <td width='1' style='vertical-align:top'>%s</td>
 							</tr>
 							", 
 							'30%',
@@ -289,6 +292,7 @@ class OrderDrugController extends Controller
 							$med->order_id,
 							$med->drug_duration,
 							$this->getPeriods($med->order->product_code, $med->order_id, $med->period_code),
+							$discharge_order,
 							$drug_remove
 					);
 			}
