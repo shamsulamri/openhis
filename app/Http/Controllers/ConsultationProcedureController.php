@@ -388,6 +388,8 @@ class ConsultationProcedureController extends Controller
 				$item_remove = '';
 				$item_price = '';
 				$item_discount = '';
+				$item_surgeon = number_format($procedure->product->feeSchedule->value,2);
+				$item_anaes = number_format($procedure->product->feeSchedule->value2,2);
 				if ($procedure->user_id == $consultation->user_id) {
 						$item_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeProcedure(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $procedure->order_id);
 				
@@ -431,6 +433,8 @@ class ConsultationProcedureController extends Controller
 							        <td width='100' style='vertical-align:top'>%s</td>
 							        <td>%s</td>
 							        <td width=100>%s</td>
+							        <td width=100>%s</td>
+							        <td width=100>%s</td>
 							        <td width=5></td>
 							        <td width=100>%s</td>
 							        <td width=5></td>
@@ -441,6 +445,8 @@ class ConsultationProcedureController extends Controller
 					", 
 					$procedure->product_code,
 					$procedure->product_name.'<br><small>'.$procedure->user->name.'</small>',
+					$item_surgeon,
+					$item_anaes,
 					$item_price,
 					$item_discount,
 					$item_markup,
@@ -457,6 +463,8 @@ class ConsultationProcedureController extends Controller
 							<tr height=35>
 									<th>Code</th>
 									<th>Procedure</th>
+									<th>Surgeon</th>
+									<th>Anaesthetist</th>
 									<th>Price (RM)</th>
 									<th></th>
 									<th>Discount (%s)</th>

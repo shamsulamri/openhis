@@ -1,4 +1,10 @@
 
+    <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
+        <label for='type_code' class='col-sm-3 control-label'>Estimated Cost</label>
+        <div class='col-sm-9'>
+        	{{ Form::label('estimated_cost', number_format($estimated_cost,2),['class'=>'col-sm-3 form-control']) }}
+        </div>
+    </div>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
         <label for='type_code' class='col-sm-3 control-label'>Outcome<span style='color:red;'> *</span></label>

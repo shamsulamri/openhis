@@ -256,19 +256,6 @@ class StockHelper
 	{
 			/*
 			$batches = Inventory::where('inventories.product_code', $product_code)
-							->selectRaw('batch_id, inventories.product_code, batch_expiry_date, sum(inv_quantity) as sum_quantity, inv_batch_number')
-							->leftjoin('inventory_batches as b', 'batch_number', '=', 'inv_batch_number')
-							->leftjoin('ref_unit_measures as c', 'c.unit_code', '=', 'inventories.unit_code')
-							->groupBy('batch_id')
-							->groupBy('inventories.product_code')
-							->groupBy('inv_batch_number')
-							->groupBy('batch_expiry_date')
-							->orderBy('batch_expiry_date')
-							->havingRaw('sum_quantity>?',[0])
-							->whereNotNull('inv_batch_number')
-							->get();
-			 */
-			$batches = Inventory::where('inventories.product_code', $product_code)
 							->select('batch_id', 'inventories.product_code', 'batch_expiry_date','inv_batch_number', DB::raw('sum(inv_quantity) as sum_quantity'))
 							->leftjoin('inventory_batches as b', 'batch_number', '=', 'inv_batch_number')
 							->leftjoin('ref_unit_measures as c', 'c.unit_code', '=', 'inventories.unit_code')
@@ -280,23 +267,25 @@ class StockHelper
 							->havingRaw('sum(inv_quantity)>?',[0])
 							->where('inv_posted', 1)
 							->whereNotNull('inv_batch_number');
-
-			/*
-			if (!empty($order_id)) {
-				$batches = Inventory::where('inventories.product_code', $product_code)
-							->selectRaw('batch_id, inventories.product_code, batch_expiry_date, sum(inv_quantity) as sum_quantity, inv_batch_number')
-							->leftjoin('inventory_batches as b', 'batch_number', '=', 'inv_batch_number')
-							->leftjoin('ref_unit_measures as c', 'c.unit_code', '=', 'inventories.unit_code')
-							->groupBy('batch_id')
-							->groupBy('inventories.product_code')
-							->groupBy('inv_batch_number')
-							->groupBy('batch_expiry_date')
-							->orderBy('batch_expiry_date')
-							->where('inventories.order_id', $order_id)
-							->where('inv_posted', 1)
-							->where('move_code', 'sale');
-			}
 			 */
+
+			$batches = Inventory::where('inventories.product_code', $product_code)
+							->select('batch_id', 'inventories.product_code', 'batch_expiry_date','inv_batch_number', DB::raw('sum(inv_quantity) as sum_quantity'))
+							->leftjoin('inventory_batches as b', function($join)
+							{
+								$join->on('b.batch_number', '=', 'inventories.inv_batch_number');
+								$join->on('b.product_code', '=', 'inventories.product_code');
+							})
+							->leftjoin('ref_unit_measures as c', 'c.unit_code', '=', 'inventories.unit_code')
+							->groupBy('inventories.product_code')
+							->groupBy('batch_expiry_date')
+							->groupBy('inv_batch_number')
+							->orderBy('batch_expiry_date')
+							->orderBy('inv_batch_number', 'desc')
+							->havingRaw('sum(inv_quantity)>?',[0])
+							->whereNotNull('batch_id')
+							->where('inv_posted', 1)
+							->whereNotNull('inv_batch_number');
 
 			if ($store_code) {
 				$batches = $batches->where('store_code', $store_code);

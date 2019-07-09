@@ -91,11 +91,6 @@
 								@if (!empty($encounter->admission->bed))
 										@if ($admission->encounter->patient_id<>$admission_bed->patient_id)
 											@if (empty($move))
-											<!--
-										<a class='btn btn-default btn-xs' href='{{ URL::to('bed_bookings/create/'.$admission->encounter->patient_id.'/'.$admission->admission_id.'?class_code='.$admission_bed->class_code.'&ward_code='.$admission_bed->ward_code.'&bed_code='.$admission_bed->bed_code) }}'>
-											&nbsp;&nbsp;Reserve&nbsp;&nbsp;
-										</a>
-											-->
 											@endif
 										@endif
 								@endif

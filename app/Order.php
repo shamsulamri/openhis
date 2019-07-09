@@ -25,6 +25,7 @@ class Order extends Model
 				'order_quantity_request',
 				'order_description',
 				'order_report',
+				'reported_by',
 				'order_diagnostic_report',
 				'order_completed',
 				'order_completed_by',

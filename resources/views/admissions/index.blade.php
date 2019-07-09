@@ -195,7 +195,9 @@
 					@if ($ward->ward_code != $admission->ward_code) 
 						{{$admission->anchor_bed}} 
 						<br>
-						Currently in {{ $admission->ward_name }}
+						<span class='label label-success'>
+						In {{ $admission->ward_name }}
+						</span>
 					@else
 							
 						{{$admission->bed_name}} 

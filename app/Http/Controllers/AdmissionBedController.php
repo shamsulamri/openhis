@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -25,7 +27,7 @@ use App\BedCharge;
 
 class AdmissionBedController extends Controller
 {
-	public $paginateValue=25;
+	public $paginateValue=40;
 
 	public function __construct()
 	{
@@ -285,13 +287,49 @@ class AdmissionBedController extends Controller
 					->orderBy('ward_name')
 					->paginate($this->paginateValue);
 
+			$sql = "
+				select a.bed_code, bed_name, patient_id, patient_name, block_room, status_code, b.admission_id,
+					room_name, a.ward_code, ward_name, class_name,a.class_code
+				from beds as a
+				left join (
+					select b.patient_id, patient_name, bed_code, block_room, a.admission_id
+					from admissions as a
+					left join encounters as b on (a.encounter_id = b.encounter_id)
+					left join discharges as c on (c.encounter_id = b.encounter_id)
+					left join patients as d on (d.patient_id = b.patient_id)
+					where discharge_id is null
+				) as b on (b.bed_code = a.bed_code)
+				left join ward_classes f on (f.class_code = a.class_code)
+				left join wards g on (g.ward_code = a.ward_code)
+				left join ward_rooms as h on (h.room_code = a.room_code)
+				where a.ward_code like '%".$request->ward_code."%'
+				and a.class_code like '%".$request->class_code."%'
+				order by room_name, bed_name, ward_name
+				";
+			
+			$data = DB::select($sql);
+
+			/** Pagination **/
+			$page = Input::get('page', 1); 
+			$offSet = ($page * $this->paginateValue) - $this->paginateValue;
+			$itemsForCurrentPage = array_slice($data, $offSet, $this->paginateValue, true);
+
+			$data = new LengthAwarePaginator($itemsForCurrentPage, count($data), 
+					$this->paginateValue, 
+					$page, 
+					['path' => $request->url(), 
+					'query' => $request->query()]
+			);
+					#->paginate($this->paginateValue);
+
+
 			if (!empty($request->book_id)) {
 					$book_id = $request->book_id;
 					$book = BedBooking::find($book_id);
 			}
 
 			return view('admission_beds.index', [
-					'admission_beds'=>$admission_beds,
+					'admission_beds'=>$data,
 					'wards2' => Ward::where('ward_code', '<>', 'mortuary')->where('ward_code', '<>', 'observation')->orderBy('ward_name')->get(),
 					'ward_code'=>$request->ward_code,
 					'ward_class'=>$request->ward_class,

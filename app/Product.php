@@ -86,6 +86,10 @@ class Product extends Model
 			return $this->belongsTo('App\ProductCategory','category_code');
 	}
 
+	public function feeSchedule()
+	{
+			return $this->hasOne('App\FeeSchedule', 'fee_code', 'product_code');
+	}
 	public function productUnitMeasures()
 	{
 			return $this->hasMany('App\ProductUom', 'product_code')->get();

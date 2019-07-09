@@ -23,6 +23,8 @@
  Lab Label</a>
 					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Drug Label</a>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=request_form&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+ Request Form</a>
 			</div>
 	</div>
 	<br>
@@ -115,7 +117,7 @@
 			@if ($status=='danger')
 				<div class='has-error'>	
 			@endif
-				@if ($batches->count()==0 && $order->product_stocked==1)
+				@if ($order->product_stocked==1)
 						@if ($order->order_completed==0) 
 							<div align='center' class='@if ($errors->has('quantity_'.$order->order_id) | $order->order_quantity_request==0) has-error @endif'>
 							{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}

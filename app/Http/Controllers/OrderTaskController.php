@@ -207,6 +207,9 @@ class OrderTaskController extends Controller
 			
 
 			if ($valid->passes()) {
+					if (!empty($request->order_report)) {
+						$order_task->reported_by = Auth::user()->id;
+					}
 					$order_task->save();
 					//if ($order_task->orderDrug()) {
 					if (!empty($request->dosage_code)) {
@@ -219,7 +222,8 @@ class OrderTaskController extends Controller
 					$productController->updateTotalOnHand($order_task->product_code);
 					Session::flash('message', 'Record successfully updated.');
 					if ($request->user()->can('module-support')) {
-						return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->location_code);
+						//return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->location_code);
+						return redirect('/order_tasks/'.$order_task->order_id.'/edit');
 					} else {
 						return redirect('/admission_tasks');
 					}
@@ -286,28 +290,33 @@ class OrderTaskController extends Controller
 							->get();
 
 			/*** Validation ***/
+			Log::info("Validate....");
 			foreach($orders as $order) {
-				$batches = $helper->getBatches($order->product_code)?:null;
-				Log::info($batches);
-				$last_batch = "";
-				if ($batches->count()>0) {
-						$unit_supply = 0;
-						foreach($batches as $batch) {
-								if ($batch->batch()) {
-								Log::info('--->'.$batch->batch()->batch_id);
-								$unit_supply += $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
-								$last_batch = $batch->batch()->batch_id;
+				$checked = $request[$order->order_id] ?:0;
+
+				if ($checked == 1) {
+						Log::info("Checked !!!".$order->product->product_name);
+						$batches = $helper->getBatches($order->product_code)?:null;
+						$last_batch = "";
+						if ($batches->count()>0) {
+								$unit_supply = 0;
+								foreach($batches as $batch) {
+										Log::info('--->'.$batch->batch());
+										if ($batch->batch()) {
+										$unit_supply += $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
+										$last_batch = $batch->batch()->batch_id;
+										Log::info('unit supply:'.$unit_supply);
+										}
 								}
-						}
-						Log::info("Unit supply:".$unit_supply);
-						if ($unit_supply == 0) {
-									$valid['batch_'.$batch->product_code] = "Sum cannot be zero";
-						}
-				} else {
-						if ($order->product->product_stocked == 1) {
-								$unit_supply = $request["quantity_".$order->order_id];
 								if ($unit_supply == 0) {
-										$valid["quantity_".$order->order_id] = "Cannot be zero";
+											$valid['batch_'.$batch->product_code] = "Sum cannot be zero";
+								}
+						} else {
+								if ($order->product->product_stocked == 1) {
+										$unit_supply = $request["quantity_".$order->order_id];
+										if ($unit_supply == 0) {
+												$valid["quantity_".$order->order_id] = "Cannot be zero";
+										}
 								}
 						}
 				}
@@ -373,6 +382,7 @@ class OrderTaskController extends Controller
 											->where('unit_code', $inventory->unit_code)
 											->first();
 
+									dd($order->product_code);
 									$inventory->uom_rate =  $uom->uom_rate;
 									$inventory->inv_unit_cost =  $uom->uom_cost;
 									$inventory->inv_quantity = -($total_supply*$uom->uom_rate);
@@ -408,6 +418,9 @@ class OrderTaskController extends Controller
 							$order->order_completed = 0;
 							$order->completed_at = null;
 							$order->order_quantity_supply = null;
+							$order->save();
+						} else {
+							$order->order_quantity_request = $request['quantity_'.$order->order_id];
 							$order->save();
 						}
 					}

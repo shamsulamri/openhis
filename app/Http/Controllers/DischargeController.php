@@ -110,6 +110,7 @@ class DischargeController extends Controller
 					->where('b.category_code','<>','consultation')
 					->get();
 
+
 			$mc = $consultation->medical_certificate;
 
 			$discharge_type = Type::where('is_mortuary',0)->orderBy('type_name')->lists('type_name', 'type_code')->prepend('','');
@@ -133,6 +134,9 @@ class DischargeController extends Controller
 					->whereNull('cancel_id')
 					->count();
 
+			$helper = new DischargeHelper();
+			$estimated_cost = $helper->estimatedCost($consultation->encounter_id);
+
 			return view('discharges.create', [
 					'discharge' => $discharge,
 					'type' => $discharge_type,
@@ -143,6 +147,7 @@ class DischargeController extends Controller
 					'discharge_orders' => $discharge_orders,
 					'minYear' => Carbon::now()->year,
 					'fees'=>$fees,
+					'estimated_cost'=>$estimated_cost,
 					]);
 	}
 

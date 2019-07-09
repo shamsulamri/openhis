@@ -10,7 +10,8 @@ use App\Form;
 use Log;
 use DB;
 use Session;
-
+use App\FormPosition;
+use App\Consultation;
 
 class FormController extends Controller
 {
@@ -137,6 +138,29 @@ class FormController extends Controller
 
 			return view('forms.index', [
 					'forms'=>$forms
+			]);
+	}
+
+	public function table($form_code, $encounter_id)
+	{
+			$id = Session::get('consultation_id');
+			$consultation = Consultation::where('consultation_id', $id)
+					->where('consultation_status', 1)
+					->first();
+			$encounter = $consultation->encounter;
+			$properties = FormPosition::where('form_code', '=', $form_code)
+					->where('property_code','<>','header')
+					->orderBy('property_position')
+					->get();
+			$form = Form::find($form_code);
+
+			return view('forms.table', [
+					'properties'=>$properties,
+					'form'=>$form,
+					'consultation'=>$consultation,
+					'patient'=>$encounter->patient,
+					'slot'=>60,
+
 			]);
 	}
 }

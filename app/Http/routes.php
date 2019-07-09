@@ -48,6 +48,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('fee_schedules', 'FeeScheduleController');
+		Route::get('/fee_schedules/id/{id}', 'FeeScheduleController@searchById');
+		Route::post('/fee_schedule/search', 'FeeScheduleController@search');
+		Route::get('/fee_schedule/search', 'FeeScheduleController@search');
+		Route::get('/fee_schedules/delete/{id}', 'FeeScheduleController@delete');
+		
+
 		Route::resource('consultation_histories', 'ConsultationHistoryController');
 		Route::post('/consultation_history', 'ConsultationHistoryController@save');
 		Route::get('/consultation_histories/id/{id}', 'ConsultationHistoryController@searchById');
@@ -496,6 +503,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/tax_type/search', 'TaxTypeController@search');
 		Route::get('/tax_types/delete/{id}', 'TaxTypeController@delete');
 		
+		Route::get('/form/table/{form_code}/{encounter_id}', 'FormController@table');
 		Route::get('/form/results/{encounter_id}', 'FormValueController@results');
 		Route::get('/form/entry/{id}', 'FormValueController@edit');
 		Route::get('/form/delete/{id}', 'FormValueController@delete');

@@ -30,4 +30,17 @@ class DischargeHelper
 
 	}
 
+	public function estimatedCost($id)
+	{
+			$sql = sprintf("
+						select sum(order_quantity_request*order_unit_price) as cost
+						from orders
+						where encounter_id = %d
+					", $id);
+
+			$results = DB::select($sql);
+			
+			return $results[0]->cost;
+	}
+
 }

@@ -24,13 +24,13 @@
             @if ($errors->has('order_custom_id')) <p class="help-block">{{ $errors->first('order_custom_id') }}</p> @endif
         </div>
     </div>
+	@endif
     <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
         {{ Form::label('order_report', 'Report',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::textarea('order_report', null, ['id'=>'order_report','onkeyup'=>'taskCompleted()','class'=>'form-control','placeholder'=>'','rows'=>'8']) }}
+            {{ Form::textarea('order_report', null, ['id'=>'order_report','onkeyup'=>'taskCompleted()','class'=>'form-control','placeholder'=>'','rows'=>'15']) }}
         </div>
     </div>
-	@endif
 	@if ($product->product_stocked)
     <div class='form-group  @if ($errors->has('stock_code')) has-error @endif'>
         {{ Form::label('stock_code', 'Store',['class'=>'col-sm-3 control-label']) }}
@@ -87,7 +87,12 @@
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
-            <a class="btn btn-default" href="/order_tasks/task/{{ $encounter_id }}/{{ $order_task->product->location_code }}" role="button">Cancel</a>
+            <a class="btn btn-default" href="/order_tasks/task/{{ $encounter_id }}/{{ $order_task->product->location_code }}" role="button">Back</a>
+			@if (!empty($order_task->order_report))
+			<a target="_blank" class='btn btn-success pull-right' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=image_report&id={{ $order_task->order_id }}">
+				Report
+			</a>
+			@endif
         </div>
     </div>
             {{ Form::hidden('consultation_id', null) }}

@@ -147,10 +147,10 @@
 					<a class='btn btn-{{ $button_type }}' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
 					@endcan
 			@else
-					@if ($dischargeHelper->drugCompleted($discharge->encounter_id))
 							@can('module-discharge')
 							<a class='btn btn-{{ $button_type }}' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
 							@endcan
+					@if ($dischargeHelper->drugCompleted($discharge->encounter_id))
 					@else
 							<br>
 							<span class="label label-warning">
