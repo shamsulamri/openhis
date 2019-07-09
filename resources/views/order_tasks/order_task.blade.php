@@ -90,7 +90,7 @@
             <a class="btn btn-default" href="/order_tasks/task/{{ $encounter_id }}/{{ $order_task->product->location_code }}" role="button">Back</a>
 			@if (!empty($order_task->order_report))
 			<a target="_blank" class='btn btn-success pull-right' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=image_report&id={{ $order_task->order_id }}">
-				Report
+				Print
 			</a>
 			@endif
         </div>
