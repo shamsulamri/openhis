@@ -388,8 +388,13 @@ class ConsultationProcedureController extends Controller
 				$item_remove = '';
 				$item_price = '';
 				$item_discount = '';
-				$item_surgeon = number_format($procedure->product->feeSchedule->value,2);
-				$item_anaes = number_format($procedure->product->feeSchedule->value2,2);
+
+				$item_surgeon = '';
+				$item_anaes = '';
+				if (!empty($procedure->product->feeSchedule)) {
+						$item_surgeon = number_format($procedure->product->feeSchedule->value,2);
+						$item_anaes = number_format($procedure->product->feeSchedule->value2,2);
+				}
 				if ($procedure->user_id == $consultation->user_id) {
 						$item_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeProcedure(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $procedure->order_id);
 				
