@@ -213,6 +213,7 @@ class ProductSearchController extends Controller
 			$bom = new BillMaterial();
 			$bom->product_code = $product_code;
 			$bom->bom_product_code = $bom_product_code;
+			$bom->bom_quantity = 1;
 			$bom->save();
 
 			Session::flash('message', 'Record successfully created.');

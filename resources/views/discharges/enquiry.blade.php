@@ -91,24 +91,30 @@
  <thead>
 	<tr> 
     <th>Encounter</th>
+    <th>Panel</th>
     <th>Encounter Date</th>
     <th>Discharge Date</th>
     <th>LOS/Waiting</th>
     <th>Name</th> 
-    <th>Outcome</th> 
     <th>Consultant</th> 
+    <th>Outcome</th> 
 	</tr>
   </thead>
 	<tbody>
 @foreach ($discharges as $discharge)
 	<tr>
 			<td>
-					{{ $discharge->encounter_name }}
+					{{ $discharge->encounter_name }} ({{ $discharge->encounter_id }})
+					<!--
 					<br>
 					<small>
 					{{ $discharge->ward_name }}
 					{{ $discharge->location_name }}
 					</small>
+					-->
+			</td>
+			<td>
+					{{ $discharge->sponsor_name }}
 			</td>
 			<td>
 					{{ DojoUtility::dateTimeReadFormat($discharge->encounter_date) }}
@@ -129,22 +135,26 @@
 					<small>{{$discharge->patient_mrn}}</small>
 			</td>
 			<td>
-					{{$discharge->type_name}}
-
+					{{$discharge->name}}
 			</td>
 			<td>
-					{{$discharge->name}}
+					{{$discharge->type_name}}
+
 			</td>
 	</tr>
 @endforeach
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $discharges->appends(['search'=>$search])->render() }}
-	@else
-	{{ $discharges->render() }}
-@endif
+
+{{ $discharges->appends(['search'=>$search, 
+		'encounter_code'=>$encounter_code,
+		'outcome_code'=>$outcome_code,
+		'date_start'=>DojoUtility::dateReadFormat($date_start),
+		'date_end'=>DojoUtility::dateReadFormat($date_end),
+		'flag_code'=>$flag_code,
+		'type_code'=>$type_code,
+])->render() }}
 <br>
 @if ($discharges->total()>0)
 	{{ $discharges->total() }} records found.

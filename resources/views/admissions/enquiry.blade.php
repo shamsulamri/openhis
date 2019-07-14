@@ -19,7 +19,7 @@
 					<div class='form-group'>
 						<label class='col-sm-3 control-label'>Ward</label>
 						<div class='col-sm-9'>
-							{{ Form::select('ward', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::select('ward_code', $wards, $ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
 					</div>
 			</div>
@@ -119,11 +119,13 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $admissions->appends(['search'=>$search])->render() }}
-	@else
-	{{ $admissions->render() }}
-@endif
+{{ $admissions->appends([
+		'search'=>$search, 
+		'ward_code'=>$ward_code,
+		'admission_code'=>$admission_code,
+		'date_start'=>DojoUtility::dateReadFormat($date_start),
+		'date_end'=>DojoUtility::dateReadFormat($date_end),
+])->render() }}
 <br>
 @if ($admissions->total()>0)
 	{{ $admissions->total() }} records found.

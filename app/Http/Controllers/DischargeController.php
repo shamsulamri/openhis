@@ -154,6 +154,13 @@ class DischargeController extends Controller
 	public function store(Request $request) 
 	{
 			$encounter = Encounter::find($request->encounter_id);
+			$discharge = Discharge::where('encounter_id', '=', $request->encounter_id);
+
+			if ($discharge->count()>0) {
+					Session::flash('message', 'Patient was discharged already.');
+					return redirect('/patient_lists');
+			}
+
 			if ($encounter->encounter_code == 'inpatient') {
 					if (empty($request->discharge_summary)) $valid['discharge_summary']='This field is required.';
 					if (empty($request->discharge_diagnosis)) $valid['discharge_diagnosis']='This field is required.';
@@ -190,10 +197,12 @@ class DischargeController extends Controller
 					$consultation->consultation_status = 1;
 					$consultation->save();
 
+
 					$post = new OrderPost();
 					$post->consultation_id = $consultation->consultation_id;
 					$post->save();
 
+					OrderHelper::orderBOM($consultation->consultation_id);
 					OrderHelper::dropCharge($consultation->consultation_id);
 					
 					Order::where('consultation_id','=',$consultation->consultation_id)
@@ -390,8 +399,18 @@ class DischargeController extends Controller
 				left join encounters as b on (a.encounter_id = b.encounter_id)
 				where b.encounter_code = 'outpatient'
 			";
+
+
+			$subquery = "
+				select a.encounter_id, c.created_at
+				from discharges as a
+				left join encounters as b on (a.encounter_id=b.encounter_id)
+				left join consultations as c on (c.consultation_id = a.consultation_id)
+				where encounter_code = 'outpatient'
+			";
+
 			$discharges = Discharge::orderBy('discharge_id','desc')
-					->select(DB::raw('b.created_at as encounter_date, concat(discharges.discharge_date," ", discharges.discharge_time) as discharge_date, patient_name, patient_mrn, encounter_name, ward_name,location_name, datediff(discharges.created_at, b.created_at) as LOS, timediff(outpatients.created_at, b.created_at) as waiting_time, type_name, name'))
+					->select(DB::raw('b.created_at as encounter_date, concat(discharges.discharge_date," ", discharges.discharge_time) as discharge_date, patient_name, patient_mrn, encounter_name, ward_name,location_name, datediff(discharges.created_at, b.created_at) as LOS, timediff(outpatients.created_at, b.created_at) as waiting_time, type_name, name, b.encounter_id, sponsor_name'))
 					->leftJoin('encounters as b', 'b.encounter_id','=','discharges.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('admissions as d', 'd.encounter_id', '=', 'b.encounter_id')
@@ -402,6 +421,7 @@ class DischargeController extends Controller
 					->leftJoin('wards as cc', 'cc.ward_code', '=', 'bb.ward_code')
 					->leftJoin('ref_discharge_types as dd', 'dd.type_code','=','discharges.type_code')
 					->leftJoin('queue_locations as ee', 'ee.location_code', '=', 'f.location_code')
+					->leftJoin('sponsors as ff', 'ff.sponsor_code', '=', 'b.sponsor_code')
 					->leftJoin(DB::raw('('.$subquery.') outpatients'), function($join) {
 							$join->on('discharges.encounter_id','=', 'outpatients.encounter_id');
 					})

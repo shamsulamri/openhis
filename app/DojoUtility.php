@@ -163,6 +163,11 @@ class DojoUtility
 				return date('d/m/Y', strtotime(Carbon::now())); 
 		}
 
+		public static function todayYMD()
+		{
+				return date('Y/m/d', strtotime(Carbon::now())); 
+		}
+
 		public static function tomorrow()
 		{
 				$dt = Carbon::now();

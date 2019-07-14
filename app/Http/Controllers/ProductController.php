@@ -71,6 +71,7 @@ class ProductController extends Controller
 			}
 
 			//$store_code = Store::find(Auth::user()->defaultStore($request))->store_code;
+
 			return view('products.index', [
 					'products'=>$products,
 					'loan'=>$loan,

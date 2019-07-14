@@ -34,6 +34,7 @@ use App\Appointment;
 use App\BedCharge;
 use App\BedHelper;
 use App\Entitlement;
+use App\Order;
 		
 class EncounterController extends Controller
 {
@@ -164,6 +165,16 @@ class EncounterController extends Controller
 
 			$bed_helper = new BedHelper();
 			$empty_rooms = $bed_helper->getEmptyRooms();
+
+			$encounter_code = null;
+			$location_code = null;
+			if (!empty($request->order_id)) {
+					$order = Order::find($request->order_id);
+					$encounter_code = "outpatient";
+					if ($order->product->category_code=='lab') {
+						$location_code = 'lab';
+					}
+			}
 			return view('encounters.create', [
 					'encounter' => $encounter,
 					'patient' => $patient,
@@ -188,6 +199,9 @@ class EncounterController extends Controller
 					'bed_booking'=>$bed_booking,
 					'appointment'=>$appointment,
 					'empty_rooms'=>$empty_rooms,
+					'encounter_code'=>$encounter_code,
+					'location_code'=>$location_code,
+					'order_id'=>$request->order_id?:0,
 				]);
 	}
 
@@ -248,6 +262,16 @@ class EncounterController extends Controller
 
 			if ($valid->passes()) {
 					$encounter->save();
+
+					/** Update to 3 if future order **/
+					/*
+					if (!empty($request->order_id)) {
+						$order = Order::find($request->order_id);
+						$order->order_is_future = 3;
+						$order->save();
+						Log::info('.....'.$order->order_is_future);
+					}
+					 */
 
 					/** Set patient mrn if empty **/
 					$patient = Patient::find($encounter->patient_id);

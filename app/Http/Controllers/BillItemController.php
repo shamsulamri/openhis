@@ -267,7 +267,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name
+				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name, bom_code
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -287,10 +287,10 @@ class BillItemController extends Controller
 				and order_multiple=0
 				group by product_code,a.unit_code, order_discount
 			";
-			//and b.category_code<>'bed'
 
 			$sql = sprintf($base_sql, "", $patient_id);
 
+				//and h.patient_id = %d
 			if (!empty($encounter->sponsor_code)) {
 					if ($non_claimable==1) {
 						$sql = sprintf($base_sql, "and product_non_claimable = 1", $patient_id);
@@ -321,6 +321,7 @@ class BillItemController extends Controller
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
+
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
@@ -333,6 +334,58 @@ class BillItemController extends Controller
 
 			//$this->multipleOrders($encounter_id);
 			//$this->outstandingCharges($encounter_id);
+	}
+
+	public function minusPackages($encounter_id) 
+	{
+			/** Substract amount items from package **/
+			$orders = Order::where('encounter_id', $encounter_id)
+						->get();
+
+
+			foreach ($orders as $order) {
+					if (!empty($order->bom_code)) {
+								$billItems = BillItem::where('product_code', $order->product_code)
+												->where('encounter_id', $encounter_id)
+												->get();
+								foreach ($billItems as $billItem) {
+										$billItem->bill_amount -= $order->order_quantity_supply*$billItem->bill_unit_price;
+										$billItem->bill_amount_exclude_tax = $billItem->bill_amount;
+										$billItem->bill_name = $billItem->bill_name.' *';
+										$billItem->save();
+								}
+
+							
+
+					}
+			}
+
+			/*
+			foreach ($orders as $order) {
+					if ($order->product->bom->count()>0) {
+							$boms = $order->product->bom;
+							foreach ($boms as $bom) {
+								$product = Product::where('product_code', $bom->bom_product_code)->first();
+
+								$billItems = BillItem::where('product_code', $bom->bom_product_code)
+												->where('encounter_id', $encounter_id)
+												->get();
+								Log::info('--'.$bom->bom_product_code);
+								foreach ($billItems as $billItem) {
+									$billItem->bill_quantity -= $bom->bom_quantity*$order->order_quantity_supply;
+									$billItem->bill_amount -= $bom->bill_quantity*$billItem->bill_unit_price;
+									$billItem->bill_amount_exclude_tax = $billItem->bill_amount;
+									$billItem->bill_name = $billItem->bill_name.' *';
+									if ($billItem->bill_quantity==0) {
+											$billItem->bill_quantity = 1;
+									}
+									$billItem->save();
+								}
+							}
+					}
+			}
+			 */
+
 	}
 
 	public function compileProcedure($encounter_id, $non_claimable=2) 
@@ -354,30 +407,29 @@ class BillItemController extends Controller
 				where b.deleted_at is null
 				%s
 				and b.category_code='fee_procedure'
-				and h.patient_id = %d
+				and g.encounter_id = %d
 				and bill_id is null 
 				and order_multiple=0
 				group by product_code,order_unit_price
 			";
 
-			$sql = sprintf($base_sql, "", $patient_id);
+			//and h.patient_id = %d
+			$sql = sprintf($base_sql, "", $encounter_id);
 
 
 			if (!empty($encounter->sponsor_code)) {
 					if ($non_claimable==1) {
-						$sql = sprintf($base_sql, "and product_non_claimable = 1", $patient_id);
+						$sql = sprintf($base_sql, "and product_non_claimable = 1", $encounter_id);
 					}
 
 					if ($non_claimable==0) {
-						$sql = sprintf($base_sql, "and product_non_claimable<>1", $patient_id);
+						$sql = sprintf($base_sql, "and product_non_claimable<>1", $encounter_id);
 					}
 			}
 			
 			$orders = DB::select($sql);
 			
 			foreach ($orders as $order) {
-					Log::info('----->>>'.$order->product_code);
-					Log::info('----->>>'.$order->order_unit_price);
 					$item = new BillItem();
 					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
@@ -670,6 +722,8 @@ class BillItemController extends Controller
 
 				/** Compile bed bills **/
 				$this->bedBills($id);
+
+				$this->minusPackages($id);
 
 				$bills = DB::table('bill_items as a')
 					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'product_non_claimable','category_name','b.category_code', 'unit_name', 'bill_markup', 'bill_name')

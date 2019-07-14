@@ -529,6 +529,33 @@ class OrderHelper
 		Log::info("=================================");
 				
 	}
+
+	public static function orderBOM($consultation_id)
+	{
+			$order_helper = new OrderHelper();
+			$orders = Order::where('consultation_id',	$consultation_id)
+						->where('post_id','=',0)
+						->get();
+
+			foreach ($orders as $order) {
+					if ($order->product->bom()) {
+							Log::info($order->product->bom);
+							foreach ($order->product->bom as $bom) {
+								$product = $bom->product;
+								Log::info($product->product_name);
+								$order_id = $order_helper->orderItem($product, null);
+								$bom_order = Order::find($order_id);
+								$bom_order->order_quantity_request = $bom->bom_quantity*$order->order_quantity_request;
+								$bom_order->order_quantity_supply = $bom_order->order_quantity_request;
+								$bom_order->save();
+								$record = Order::find($order_id);
+								$record->bom_code = $order->product_code;
+								$record->save();
+							}
+					}
+			}
+
+	}
 }
 
 ?>

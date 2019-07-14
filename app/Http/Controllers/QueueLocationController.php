@@ -26,9 +26,8 @@ class QueueLocationController extends Controller
 
 	public function index(Request $request)
 	{
-			$queue_locations = QueueLocation::orderBy('department_name')
+			$queue_locations = QueueLocation::orderBy('location_name')
 					->leftJoin('departments as b', 'b.department_code', '=', 'queue_locations.department_code')
-					->orderBy('location_name')
 					->paginate($this->paginateValue);
 
 			return view('queue_locations.index', [

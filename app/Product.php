@@ -81,6 +81,11 @@ class Product extends Model
 			return strtoupper($value);
 	}
 
+	public function bom()
+	{
+			return $this->hasMany('App\BillMaterial', 'product_code');
+	}
+
 	public function category()
 	{
 			return $this->belongsTo('App\ProductCategory','category_code');

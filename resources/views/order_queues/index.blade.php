@@ -27,6 +27,18 @@ Order Queues
 </h1>
 <h3>{{ $location->location_name }}</h3>
 <br>
+@if ($future_count>0)
+<div class="row">
+	<div class="col-md-4">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Future Orders</strong></h5>	
+				<h4><strong>{{ $future_count }}</strong></h4>	
+			</div>
+		</div>
+	</div>
+</div>
+@endif
 <form action='/order_queue/search' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
@@ -101,7 +113,15 @@ Order Queues
 			@endif
 			</td>
 			<td>
+			@if ($is_future)
+				@if (!empty($encounter_helper->getActiveEncounter($order->patient_id)))
+					{{ $encounter_helper->getActiveEncounter($order->patient_id)->encounter_description }}	
+				@else
+					-
+				@endif
+			@else
 				{{ $order->consultation->encounter->encounter_description }}
+			@endif
 			</td>
 			<td>
 					{{ $order->discharge_id }}
@@ -134,13 +154,20 @@ Order Queues
 					@can('system-administrator') 
 						<a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a> 
 					@endcan 
-					@can('module-consultation')
-							@if ($status_code != 'incomplete')
-							<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $order->encounter_id) }}'>
-								<i class="fa fa-stethoscope"></i>
-							</a>
-							@endif
-					@endcan
+			@can('module-consultation')
+					@if ($status_code != 'incomplete' & !$is_future)
+					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $order->encounter_id) }}'>
+						<i class="fa fa-stethoscope"></i>
+					</a>
+					@else
+						@if (!empty($encounter_helper->getActiveEncounter($order->patient_id)))
+					
+					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $encounter_helper->getActiveEncounter($order->patient_id)->encounter_id) }}'>
+						<i class="fa fa-stethoscope"></i>
+					</a>
+						@endif
+					@endif
+			@endcan
 			</td> 
 	</tr>
 @endforeach

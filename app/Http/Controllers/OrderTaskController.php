@@ -28,6 +28,7 @@ use App\DojoUtility;
 use App\Inventory;
 use App\ProductUom;
 use App\DrugDosage as Dosage;
+use App\EncounterHelper;
 
 class OrderTaskController extends Controller
 {
@@ -409,8 +410,7 @@ class OrderTaskController extends Controller
 						$order->store_code = $store_code;
 						$order->order_completed = 1;
 						$order->save();
-
-
+						
 					} else {
 						if ($order->order_completed == 1) {
 							Log::info("ewewewewewe");

@@ -1,3 +1,6 @@
+
+<h3>Seen by {{ Auth::user()->name }} at {{ DojoUtility::dateTimeReadFormat($consultation->created_at) }} </h3>
+<br>
 	<div class='form-group  @if ($errors->has('consultation_notes')) has-error @endif'>
         <div class='col-sm-12'>
             {{ Form::textarea('consultation_notes', null, ['id'=>'consultation_notes', 'tabindex'=>1, 'class'=>'form-control','rows'=>'30', 'style'=>'border:none;font-size: 1.2em']) }}

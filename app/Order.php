@@ -19,6 +19,7 @@ class Order extends Model
 				'user_id',
 				'admission_id',
 				'product_code',
+				'bom_code',
 				'ward_code',
 				'location_code',
 				'store_code',
@@ -36,6 +37,7 @@ class Order extends Model
 				'order_markup',
 				'order_is_discharge',
 				'order_include_stat',
+				'order_is_future',
 				'updated_by',
 				'completed_at',
 				'created_at',
@@ -117,6 +119,11 @@ class Order extends Model
 	public function product()
 	{
 			return $this->belongsTo('App\Product', 'product_code');
+	}
+
+	public function bom()
+	{
+			return $this->belongsTo('App\Product', 'bom_code', 'product_code');
 	}
 
 	public function drug()

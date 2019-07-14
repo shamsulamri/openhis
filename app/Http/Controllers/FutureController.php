@@ -14,6 +14,7 @@ use Gate;
 use App\DojoUtility;
 use Carbon\Carbon;
 use App\OrderInvestigation;
+use App\EncounterHelper;
 
 class FutureController extends Controller
 {
@@ -34,7 +35,8 @@ class FutureController extends Controller
 
 			$futures = $futures->paginate($this->paginateValue);
 			return view('futures.index', [
-					'futures'=>$futures
+					'futures'=>$futures,
+					'encounter_helper'=>new EncounterHelper(),
 			]);
 	}
 

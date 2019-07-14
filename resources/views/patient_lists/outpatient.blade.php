@@ -45,6 +45,7 @@
 						{{ $list->encounter_description }}
 					</td>
 					<td align='right'>
+
 							@if (empty($list->discharge_id))
 								@if ($list->consultation_status==1)
 									@if ($user_id == $list->user_id)

@@ -75,6 +75,9 @@
 										@if (!empty($order_product->category))
 										- {{ $order_product->category->category_name }}
 										@endif
+										@if ($order_product->uomDefaultPrice($consultation->encounter))
+										(RM{{ number_format($order_product->uomDefaultPrice($consultation->encounter)->uom_price,2) }})
+										@endif
 										</small>
 										@if ($tab=='drug')
 											<!--

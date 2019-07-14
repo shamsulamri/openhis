@@ -69,7 +69,7 @@
 	<div class='form-group  @if ($errors->has('encounter_code')) has-error @endif'>
         <label for='encounter_code' class='col-sm-4 control-label'>Encounter<span style='color:red;'> *</span></label>
         <div class='col-sm-8'>
-			{{ Form::select('encounter_code', $encounter_type, null, ['id'=>'encounter','class'=>'form-control','onchange'=>'checkTriage()']) }}
+			{{ Form::select('encounter_code', $encounter_type, $encounter_code, ['id'=>'encounter','class'=>'form-control','onchange'=>'checkTriage()']) }}
 				<small>Define the encounter nature of the patient</small>
             @if ($errors->has('encounter_code')) <p class="help-block">{{ $errors->first('encounter_code') }}</p> @endif
         </div>
@@ -170,6 +170,7 @@
 	-->
 </div>
 	{{ Form::hidden('patient_id', $patient->patient_id) }}
+	{{ Form::hidden('order_id', $order_id) }}
 	@if ($bed_booking)
 	{{ Form::hidden('book_id', $bed_booking->book_id) }}
 	@endif
@@ -505,4 +506,7 @@
 			document.getElementById('location_code').value = '{{ $encounter->location_code }}';
 	@endif
 
+	@if (!empty($location_code))
+			document.getElementById('location_code').value = '{{ $location_code }}';
+	@endif
 </script>

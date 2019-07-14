@@ -31,7 +31,9 @@
 					{{ (DojoUtility::dateLongFormat($future->orderInvestigation->investigation_date)) }}
 			</td>
 			<td>
+					<a href='{{ URL::to('order_investigations/'. $future->orderInvestigation->id.'/edit_date') }}'>
 					{{$future->consultation->encounter->patient->patient_name}}
+					</a>
 			</td>
 			<td>
 					{{$future->consultation->encounter->patient->patient_mrn}}
@@ -42,7 +44,13 @@
 					<small>{{$future->product->category->category_name}}<small>
 			</td>
 			<td align='right'>
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('order_investigations/'. $future->orderInvestigation->id.'/edit_date') }}'>Edit</a>
+			@if (empty($encounter_helper->getActiveEncounter($future->consultation->encounter->patient_id)))
+					<a class='btn btn-primary pull-right' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $future->consultation->encounter->patient->patient_id.'&order_id='.$future->order_id) }}'>
+						<i class="fa fa-flag"></i>
+					</a>
+			@else
+				In Queue	
+			@endif
 			</td>
 	</tr>
 @endforeach

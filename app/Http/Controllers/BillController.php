@@ -321,27 +321,44 @@ class BillController extends Controller
 	public function billUpdate(Request $request, $id)
 	{
 			$encounter = Encounter::findOrFail($id);
+			$sponsor = $encounter->sponsor_code;
 			$encounter->fill($request->input());
 			$valid = $encounter->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					$resetBill = false;
+					if ($encounter->type_code == 'public' && !empty($sponsor)) {
+							$resetBill = true;
+					}
+
+					if ($encounter->type_code == 'sponsored' && empty($sponsor)) {
+							$resetBill = true;
+					}
+
+					Log::info($resetBill?"True":"False");
+					Log::info($encounter->type_code);
+
 					if ($encounter->type_code=='public') {
 						$encounter->sponsor_code = null;
 						$encounter->sponsor_id=null;
 					}
 					$encounter->save();
 
-					DB::table('bill_items')
-						->where('encounter_id','=',$encounter->encounter_id)
-						->delete();
 
-					DB::table('bills')
-						->where('encounter_id','=',$encounter->encounter_id)
-						->delete();
 
-					DB::table('payments')
-						->where('encounter_id','=',$encounter->encounter_id)
-						->delete();
+					if ($resetBill) {
+							DB::table('bill_items')
+								->where('encounter_id','=',$encounter->encounter_id)
+								->delete();
+
+							DB::table('bills')
+								->where('encounter_id','=',$encounter->encounter_id)
+								->delete();
+
+							DB::table('payments')
+								->where('encounter_id','=',$encounter->encounter_id)
+								->delete();
+					}
 
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/bill_items/'.$encounter->encounter_id);

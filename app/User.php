@@ -113,9 +113,12 @@ class User extends Authenticatable
 	public function categoryList()
 	{
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', $this->author_id);
-			$categories = ProductCategory::whereIn('category_code', $product_authorization->pluck('category_code'))->lists('category_name','category_code');
+			$categories = ProductCategory::whereIn('category_code', $product_authorization->pluck('category_code'))
+					->orderBy('category_name')
+					->lists('category_name','category_code');
 			if (count($categories)==0) {
-					$categories = ProductCategory::orderBy('category_name')->lists('category_name', 'category_code');
+					$categories = ProductCategory::orderBy('category_name')
+							->lists('category_name', 'category_code');
 			}
 
 			$categories = $categories->prepend('','');

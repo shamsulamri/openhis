@@ -698,7 +698,6 @@ class AdmissionController extends Controller
 						'bed_name','ward_name',
 						'room_name',
 						'diet_name','texture_name', 'class_name', 'admissions.diet_description',
-						'alerts'
 					];
 			} else {
 					$fields = [	
@@ -706,8 +705,8 @@ class AdmissionController extends Controller
 						'c.patient_id', 'patient_name','patient_mrn','gender_name', 
 						'bed_name','ward_name',
 						'room_name',
-						'name', 'discharge_id',
-						'alerts', 'b.encounter_id',
+						'name',
+						'b.encounter_id',
 					];
 
 			}
@@ -718,23 +717,23 @@ class AdmissionController extends Controller
 				group by patient_id
 			";
 
-			$admissions = Admission::orderBy('b.patient_id')
+			$admissions = Admission::orderBy('admissions.created_at', 'desc')
 							->select($fields)
 							->leftJoin('encounters as b', 'b.encounter_id','=', 'admissions.encounter_id')
 							->leftJoin('patients as c', 'c.patient_id','=', 'b.patient_id')
 							->leftJoin('beds as h', 'h.bed_code', '=', 'admissions.bed_code')
 							->leftJoin('ref_genders as i','i.gender_code','=','c.gender_code')
-							->leftJoin('admissions as j','j.encounter_id','=','b.encounter_id')
 							->leftJoin('ward_rooms as k', 'k.room_code','=', 'h.room_code')
 							->leftJoin('wards as l','l.ward_code','=','h.ward_code')
-							->leftJoin('users as m','m.id','=','j.user_id')
-							->leftJoin('discharges as n', 'n.encounter_id', '=', 'b.encounter_id')
+							->leftJoin('users as m','m.id','=','admissions.user_id')
 							->leftJoin('diets as o', 'o.diet_code', '=', 'admissions.diet_code')
 							->leftJoin('diet_textures as p', 'p.texture_code', '=', 'admissions.texture_code')
-							->leftJoin('diet_classes as q', 'q.class_code', '=', 'admissions.class_code')
+							->leftJoin('diet_classes as q', 'q.class_code', '=', 'admissions.class_code');
+							/*
 							->leftJoin(DB::raw('('.$subquery.') alerts'), function($join) {
 									$join->on('b.patient_id','=', 'alerts.patient_id');
 							});
+							 */
 							//->whereNull('discharge_id');
 
 			if (!empty($request->search)) {
@@ -757,7 +756,8 @@ class AdmissionController extends Controller
 			}
 
 			if (!empty($date_start) && empty($request->date_end)) {
-				$admissions = $admissions->where('admissions.created_at', '>=', $date_start.' 00:00');
+				//$admissions = $admissions->where('admissions.created_at', '>=', $date_start.' 00:00');
+				$date_end = $date_start;
 			}
 
 			if (empty($date_start) && !empty($request->date_end)) {
@@ -766,6 +766,9 @@ class AdmissionController extends Controller
 
 			if (!empty($date_start) && !empty($date_end)) {
 				$admissions = $admissions->whereBetween('admissions.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+				if (empty($request->date_end)) {
+					$date_end = null;
+				}
 			} 
 			if ($request->export_report) {
 				DojoUtility::export_report($admissions->get());

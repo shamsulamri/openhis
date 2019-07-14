@@ -267,6 +267,7 @@ class ConsultationController extends Controller
 			$id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail($id);
 
+			OrderHelper::orderBOM($id);
 			$this->orderStat($id);
 
 			/*
@@ -280,7 +281,12 @@ class ConsultationController extends Controller
 					$consultation->consultation_status = 2;
 			}
 			 */
-			$consultation->consultation_status = 2;
+			if ($consultation->encounter->encounter_code=='inpatient') {
+				$consultation->consultation_status = 2;
+			} else {
+				$consultation->consultation_status = 1;
+			}
+
 			$consultation->save();
 
 			$post = new OrderPost();
@@ -307,6 +313,7 @@ class ConsultationController extends Controller
 			$order_helper = new OrderHelper();
 			$stats = Order::where('order_include_stat',1)
 						->where('consultation_id',	$consultation_id)
+						->where('post_id','=',0)
 						->get();
 
 			foreach ($stats as $stat) {

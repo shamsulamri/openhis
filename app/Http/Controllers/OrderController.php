@@ -107,10 +107,10 @@ class OrderController extends Controller
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 
 			$fields = ['product_name', 
-					'a.product_code', 
+					'orders.product_code', 
 					'cancel_id', 
-					'a.order_id', 
-					'a.user_id', 
+					'orders.order_id', 
+					'orders.user_id', 
 					'order_quantity_request',
 					'order_quantity_supply',
 					'post_id', 
@@ -121,26 +121,23 @@ class OrderController extends Controller
 					'category_name',
 					'product_edit_price',
 					'document_uuid',
+					'order_unit_price',
+					'bom_code',
 					];
 
-			$sql_raw= "sum(order_quantity_request) as quantity_total, product_name, a.product_code, cancel_id, a.order_id, a.user_id, post_id, d.created_at,order_is_discharge,order_completed,order_report,category_name,product_edit_price, product_duration_use";
-
-
-					//->selectRaw($sql_raw)
-					//->groupBy('a.product_code')
-			$orders = DB::table('orders as a')
-					->select($fields)
-					->join('products as b','a.product_code','=','b.product_code')
-					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
-					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
+			//$orders = DB::table('orders as a')
+			$orders = Order::select($fields)
+					->join('products as b','orders.product_code','=','b.product_code')
+					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'orders.order_id')
+					->leftjoin('consultations as d', 'd.consultation_id', '=', 'orders.consultation_id')
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
-					->leftjoin('documents as f', 'f.order_id', '=', 'a.order_id')
-					->where('a.encounter_id','=',$encounter->encounter_id)
-					->orderBy('a.created_at', 'desc');
+					->leftjoin('documents as f', 'f.order_id', '=', 'orders.order_id')
+					->where('orders.encounter_id','=',$encounter->encounter_id)
+					->orderBy('orders.created_at', 'desc');
 
 					//->orderBy('b.category_code')
 			if (Auth::user()->authorization->module_support != 1) {
-					$orders = $orders->where('a.user_id','=',Auth::user()->id);
+					$orders = $orders->where('orders.user_id','=',Auth::user()->id);
 			}
 
 			if ($encounter->admission) {
@@ -493,12 +490,14 @@ class OrderController extends Controller
 						->get();
 
 			$encounter = Encounter::find($encounter_id);
+			/*
 			if (!$encounter->admission) {
 					if ($orders->count()>0) {
 							Session::flash('message', 'Product already in the order list.');
 							return redirect('/order_product/search?search='.$request->_search.'&set_code='.$request->_set_value.'&page='.$request->_page);
 					}
 			}
+			 */
 
 			$product = Product::find($product_code);
 			$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));

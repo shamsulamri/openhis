@@ -272,6 +272,15 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 			</td>
 			@endcan
 	</tr>
+	<tr>
+			<td colspan=8>
+			<strong>
+			<br>
+			Note:<br><br>
+			* Contains packaged items
+			</td>
+			</strong>
+	</tr>
 </tbody>
 </table>
 </div>

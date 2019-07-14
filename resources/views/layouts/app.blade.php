@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
 
 <title>{{ env('APPLICATION_NAME') }}</title>
 <link href="/assets/inspinia/css/bootstrap.min.css" rel="stylesheet">
@@ -171,7 +174,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<!--
 						<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Inpatient Tasks<span></a></li>
 						-->
-						<li><a href="{{ url('/order_queues?future=true') }}"><i class='fa fa-exclamation-circle'></i><span class='nav-label'>Future Orders<span></a></li>
+						<li><a href="{{ url('/order_queues?future=true') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Future Orders</span></a></li>
 
 						<!-- Patient Module -->
 						@endcan

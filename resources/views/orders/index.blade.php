@@ -77,6 +77,16 @@ $category='';
 						{{ ucfirst(strtoupper($order->product_name)) }}
 					</a>
 			@endif
+			<small>
+			@if (empty($order->bom_code))
+			<br>
+			RM{{ number_format($order->order_unit_price*$order->order_quantity_request,2) }}
+			@endif
+			@if (!empty($order->bom_code))
+				<br>
+				{{ $order->bom->product_name }}
+			@endif
+			</small>
 			<!-- Ordered by -->
 
 			<!-- -->
@@ -85,7 +95,7 @@ $category='';
 			<span class='fa fa-file-o'></span>
 			@endif
 			</td>
-			<td width='10'>
+			<td>
 				<div align='right'>
 				{{ $order->order_completed?$order->order_quantity_supply:$order->order_quantity_request }}
 				</div>

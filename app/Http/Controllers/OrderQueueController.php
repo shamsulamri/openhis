@@ -19,6 +19,8 @@ use App\ProductCategory;
 use Gate;
 use App\OrderHelper;
 use App\Encounter;
+use App\EncounterHelper;
+use App\DojoUtility;
 
 class OrderQueueController extends Controller
 {
@@ -117,8 +119,25 @@ class OrderQueueController extends Controller
 
 			$order_queues = $order_queues->paginate($this->paginateValue);
 
+			$futures = Order::groupBy('orders.encounter_id')
+					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
+					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
+					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->whereIn('o.category_code', $queue_categories)
+					->whereIn('c.encounter_code', $queue_encounters)
+					->where('order_completed','=',0)
+					->whereNull('cancel_id')
+					->whereNotNull('n.post_id')
+					->whereNull('c.deleted_at')
+					->where('order_is_future','=', 1)
+					->where('investigation_date', '=', DojoUtility::todayYMD())
+					->orderBy('b.created_at', 'desc')
+					->get();
+
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
-			
 			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed', 'unreported'=>'Unreported');
 
 			$is_future = null;
@@ -141,6 +160,8 @@ class OrderQueueController extends Controller
 					'queue_categories'=>$queue_categories,
 					'location_code'=>$location_code,
 					'helper'=> new OrderHelper(),
+					'encounter_helper'=> new EncounterHelper(),
+					'future_count'=>count($futures),
 					]);
 	}
 
@@ -375,6 +396,24 @@ class OrderQueueController extends Controller
 
 			$order_queues = $order_queues->paginate($this->paginateValue);
 
+			$futures = Order::groupBy('orders.encounter_id')
+					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
+					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
+					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->whereIn('o.category_code', $queue_categories)
+					->whereIn('c.encounter_code', $queue_encounters)
+					->where('order_completed','=',0)
+					->whereNull('cancel_id')
+					->whereNotNull('n.post_id')
+					->whereNull('c.deleted_at')
+					->where('order_is_future','=', 1)
+					->where('investigation_date', '=', DojoUtility::todayYMD())
+					->orderBy('b.created_at', 'desc')
+					->get();
+
 			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed', 'unreported'=>'Unreported');
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
 			//return $locations;
@@ -396,6 +435,8 @@ class OrderQueueController extends Controller
 					'status_code'=>$request->status_code,
 					'is_future'=>$is_future,
 					'location_code'=>$request->location_code,
+					'future_count'=>count($futures),
+					'encounter_helper'=>new EncounterHelper(),
 					]);
 	}
 
