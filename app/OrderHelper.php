@@ -226,6 +226,7 @@ class OrderHelper
 				/** New order **/
 				$order = new Order();
 				$order->order_quantity_request = 1;
+				$order->order_quantity_supply = 1;
 			} else {
 				/** Update existing order **/
 				$order->order_quantity_request += 1;
