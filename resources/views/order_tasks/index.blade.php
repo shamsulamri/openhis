@@ -118,7 +118,7 @@
 				<div class='has-error'>	
 			@endif
 				@if ($order->product_stocked==1)
-						@if ($order->order_completed==0) 
+						@if ($order->order_completed==0 && $batches->count()==0) 
 							<div align='center' class='@if ($errors->has('quantity_'.$order->order_id) | $order->order_quantity_request==0) has-error @endif'>
 							{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
             				@if ($errors->has('quantity_'.$order->order_id)) <p class="help-block">{{ $errors->first('quantity_'.$order->order_id) }}</p> @endif

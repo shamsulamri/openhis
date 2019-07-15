@@ -337,7 +337,9 @@ class OrderTaskController extends Controller
 
 					if ($checked == 1) {
 
-						$total_supply = $order->order_quantity_supply;
+						//$total_supply = $order->order_quantity_supply;
+						$total_supply = $request['quantity_'.$order->order_id];
+
 						$batches = $helper->getBatches($order->product_code)?:null;
 
 						if ($batches->count()>0) {
@@ -371,8 +373,8 @@ class OrderTaskController extends Controller
 									}
 								}
 						} else {
+							$total_supply = $request["quantity_".$order->order_id];
 							if ($product->product_stocked==1) {
-									$total_supply = $request["quantity_".$order->order_id];
 									$inventory = new Inventory();
 									$inventory->order_id = $order->order_id;
 									$inventory->store_code = $store_code;
@@ -383,9 +385,8 @@ class OrderTaskController extends Controller
 											->where('unit_code', $inventory->unit_code)
 											->first();
 
-									dd($order->product_code);
 									$inventory->uom_rate =  $uom->uom_rate;
-									$inventory->inv_unit_cost =  $uom->uom_cost;
+									$inventory->inv_unit_cost =  $uom->uom_cost?:0;
 									$inventory->inv_quantity = -($total_supply*$uom->uom_rate);
 									$inventory->inv_physical_quantity = $total_supply;
 									$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
