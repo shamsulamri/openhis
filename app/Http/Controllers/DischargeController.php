@@ -463,7 +463,6 @@ class DischargeController extends Controller
 			} 
 
 			if ($request->export_report) {
-				return gettype($discharges->get());
 				DojoUtility::export_report($discharges->get());
 			}
 
