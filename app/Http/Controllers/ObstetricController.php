@@ -40,6 +40,7 @@ class ObstetricController extends Controller
 			$patient->patient_parity = $request->patient_parity;
 			$patient->patient_parity_plus = $request->patient_parity_plus;
 			$patient->patient_lnmp = $request->patient_lnmp;
+			$patient->patient_edd = $request->patient_edd;
 			$patient->save();
 
 			Session::flash('message', 'Record successfully updated.');

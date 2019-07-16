@@ -69,6 +69,7 @@ class Patient extends Model
 				'patient_parity',
 				'patient_parity_plus',
 				'patient_lnmp',
+				'patient_edd',
 				'patient_block',
 				'patient_age'];
 	
@@ -178,6 +179,17 @@ class Patient extends Model
 		}
 	}
 
+	public function setPatientEddAttribute($value)
+	{
+		if (DojoUtility::validateDate($value)==true) {
+			$this->attributes['patient_edd'] = DojoUtility::dateWriteFormat($value);
+		}
+	}
+
+	public function getPatientEddAttribute($value)
+	{
+		return DojoUtility::dateReadFormat($value);
+	}
 
 	public function getPatientLnmpAttribute($value)
 	{

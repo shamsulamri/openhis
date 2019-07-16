@@ -82,6 +82,12 @@ class MedicationRecordController extends Controller
 			$mar->medication_fail = $request->medication_fail ?: 0;
 			$mar->save();
 
+			$order = Order::find($mar->order_id);
+			if ($order->orderDrug->frequency_code == 'STAT') {
+				$order->order_completed = 1;
+				$order->save();
+			}
+
 			return redirect('/medication_record/mar/'.$mar->order->encounter_id);
 	}
 
@@ -218,6 +224,7 @@ class MedicationRecordController extends Controller
 					->where('a.post_id','>',0)
 					->where('a.encounter_id','=',$encounter_id)
 					->where('order_is_discharge','<>',1)
+					->where('b.product_local_store','=',0)
 					->whereNotNull('f.order_id')
 					->orderBy('b.category_code')
 					->orderBy('cancel_id', 'asc')

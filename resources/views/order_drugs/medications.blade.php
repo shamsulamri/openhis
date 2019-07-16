@@ -54,7 +54,11 @@ label {
   font-weight: normal;
 }
 </style>
-<h1>Medications</h1>
+<h1>Medications
+</h1>
+<a href="order_drugs/post/{{ $consultation->consultation_id }}" class='btn btn-success'>Post Drugs</a>
+<br>
+<br>
 <h3>Orders</h3>
 <div id="medicationList"></div>
 <div class="widget style1 gray-bg">

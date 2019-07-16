@@ -1,4 +1,3 @@
-medication_fail('common.errors')
 			<div class='form-group  @if ($errors->has('medication_datetime')) has-error @endif'>
     		    <label for='order' class='col-sm-2 control-label'>Drug</label>
 				<div class='col-sm-10'>

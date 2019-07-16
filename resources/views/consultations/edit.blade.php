@@ -110,7 +110,6 @@ input {
 <br>
 <button class='btn btn-primary'>Save</button>
 <div id='saveHTML' class='text text-success pull-right'></div>
-
 <!--
 <br>
 <div class="tabs-container">

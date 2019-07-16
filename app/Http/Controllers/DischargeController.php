@@ -95,9 +95,9 @@ class DischargeController extends Controller
 			$discharge->type_code = 'home';
 
 			//if ($consultation->encounter->encounter_code != 'inpatient') {
-					$orders = Order::where('consultation_id',$consultation->consultation_id)
-							->where('post_id',0)
-							->update(['order_is_discharge'=>1]);
+			$orders = Order::where('consultation_id',$consultation->consultation_id)
+					->where('post_id',0)
+					->update(['order_is_discharge'=>1]);
 			//}
 
 			$discharge_orders = DB::table('orders as a')

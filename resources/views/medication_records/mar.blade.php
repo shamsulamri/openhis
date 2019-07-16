@@ -71,14 +71,12 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 					$date_slot = $drug->order_id.'-'.$f.'-'.DojoUtility::dateYMDOnly($date_value);
 					$date_ymd = DojoUtility::dateYMDOnly($date_value);
 				?>
-				<td width='10' align='center'>
+				<td width='120' align='center'>
 			@if ($mars->contains('medication_slot',$date_slot)) 
 				@if (empty($drug->cancel_id))
-				<a href='/medication_record/datetime/{{ $mars[$date_slot]->medication_id }}'>
+				<a href='/medication_record/datetime/{{ $mars[$date_slot]->medication_id }}' data-toggle='tooltip' data-placement='top' title='Recorded by {{ $mars[$date_slot]->name }}'>
 				@endif
 						{{ DojoUtility::timeReadFormat($mars[$date_slot]->medication_datetime) }}
-						<br>by 
-						{{ $mars[$date_slot]->name }}
 				@if (empty($drug->cancel_id))
 				</a>
 				@endif
@@ -95,7 +93,8 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 				@endif
 				@if ($verifications->contains('medication_slot',$date_slot)) 
 					<br><br>
-					Verified by {{ $verifications[$date_slot]->name }}
+					
+					<span class='label label-success' data-toggle='tooltip' data-placement='top' title='Verified by {{ $verifications[$date_slot]->name }}'>Verified</span>
 				@endif
 			@else
 					@if ($date_value==$entry_start)

@@ -30,6 +30,7 @@ use App\EncounterHelper;
 use App\Store;
 use App\Drug;
 use App\DojoUtility;
+use App\OrderPost;
 
 class OrderDrugController extends Controller
 {
@@ -106,45 +107,48 @@ class OrderDrugController extends Controller
 	public function updateDrug(Request $request)
 	{
 			$order_id = $request->order_id;
-			Log::info($order_id);
-			$drug = OrderDrug::where('order_id', $order_id)->first();
-			if ($drug) {
-					Log::info('Update drug............');
-					$drug->drug_strength = $request->drug_strength;
-					$drug->unit_code = $request->unit_code;
-					$drug->drug_dosage = $request->drug_dosage;
-					$drug->dosage_code = $request->dosage_code;
-					$drug->route_code = $request->route_code;
-					$drug->frequency_code = $request->frequency_code;
-					$drug->drug_duration = $request->drug_duration;
-					$drug->period_code = $request->period_code;
+			$order = Order::find($order_id);
+			if (!empty($order)) {
+			if ($order->order_completed == 0) {
+					$drug = OrderDrug::where('order_id', $order_id)->first();
+					if ($drug) {
+							Log::info('Update drug............');
+							$drug->drug_strength = $request->drug_strength;
+							$drug->unit_code = $request->unit_code;
+							$drug->drug_dosage = $request->drug_dosage;
+							$drug->dosage_code = $request->dosage_code;
+							$drug->route_code = $request->route_code;
+							$drug->frequency_code = $request->frequency_code;
+							$drug->drug_duration = $request->drug_duration;
+							$drug->period_code = $request->period_code;
 
-					Log::info($drug);
-					$dosage = $drug->drug_dosage;
-					$frequency = $drug->frequency?$drug->frequency->frequency_value:1;
-					$period = $drug->period?$drug->period->period_mins:1;
+							Log::info($drug);
+							$dosage = $drug->drug_dosage;
+							$frequency = $drug->frequency?$drug->frequency->frequency_value:1;
+							$period = $drug->period?$drug->period->period_mins:1;
 
-					$total_unit = $dosage*$frequency;
+							$total_unit = $dosage*$frequency;
 
-					if ($drug->drug_duration>0) {
-						$total_unit = $total_unit * (($drug->drug_duration*$period)/1440);
+							if ($drug->drug_duration>0) {
+								$total_unit = $total_unit * (($drug->drug_duration*$period)/1440);
+							}
+							
+
+							$order = Order::find($order_id);
+							if ($order->product->product_unit_charge==0) {
+									$total_unit = 1;
+							}
+							$order->order_quantity_request = $total_unit;
+							$order->order_quantity_supply = $total_unit;
+							$order->order_is_discharge = $request->discharge?1:0;
+							$order->save();
+							Log::info('-->'.$request->discharge);
+							Log::info($order->order_is_discharge);
+
+							$drug->save();
 					}
-					
-
-					$order = Order::find($order_id);
-					if ($order->product->product_unit_charge==0) {
-							$total_unit = 1;
-					}
-					$order->order_quantity_request = $total_unit;
-					$order->order_quantity_supply = $total_unit;
-					$order->order_is_discharge = $request->discharge?1:0;
-					$order->save();
-					Log::info('-->'.$request->discharge);
-					Log::info($order->order_is_discharge);
-
-					$drug->save();
 			}
-
+			}
 			//return $this->medicationTable();
 	}
 
@@ -272,6 +276,10 @@ class OrderDrugController extends Controller
 					}
 					$drug_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeDrug(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $med->order_id);
 
+					if ($med->order->order_completed == 1) {
+							$drug_remove = sprintf("<a disabled tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeDrug(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $med->order_id);
+					}
+
 					$checked = "";
 					if ($med->order->order_is_discharge ==1) { $checked = 'checked'; }
 
@@ -300,6 +308,15 @@ class OrderDrugController extends Controller
 							$table_header = "";
 					}
 
+					$drug_name =$med->order->product->drug?$med->order->product->drug->drug_generic_name:$med->order->product->product_name;
+					if ($med->order->order_completed==1) {
+						$drug_name = ' <span class="fa fa-check-circle"></span> '.$drug_name;
+					} else {
+							if ($med->order->post_id>0) {
+								$drug_name = '<span class="fa fa-inbox"></span> '.$drug_name;
+							}
+					}
+
 					$table_row .=sprintf(" 
 							%s
 							<tr height='50'>
@@ -325,7 +342,7 @@ class OrderDrugController extends Controller
 							$table_header,
 							$discharge_order,
 							'30%',
-							$med->order->product->drug?$med->order->product->drug->drug_generic_name:$med->order->product->product_name,
+							$drug_name,
 							$med->order->product->drug?$med->order->product->drug->trade_name:'<br>'.$med->order->product->product_name_other,
 							$med->order_id,	$med->order_id, $med->drug_strength, 
 							$this->getUnits($med->order->product_code, $med->order_id, $med->unit_code),
@@ -603,6 +620,8 @@ class OrderDrugController extends Controller
 
 	function getUnits($drug_code, $order_id, $unit_code)
 	{
+			$order = Order::find($order_id);
+
 			$units = Unit::where('unit_drug',1)
 					->orderBy('unit_index')
 					->orderBy('unit_shortname')
@@ -957,5 +976,25 @@ class OrderDrugController extends Controller
 			return view('order_drugs.index', [
 					'order_drugs'=>$order_drugs
 			]);
+	}
+
+	public function post($consultation_id)
+	{
+			$post = new OrderPost();
+			$post->consultation_id = $consultation_id;
+			$post->save();
+
+			$ids = Order::select('order_id')
+					->where('consultation_id','=',$consultation_id)
+					->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
+					->where('post_id','=',0)
+					->where('category_code', '=', 'drugs')
+					->pluck('order_id');
+					//->update(['post_id'=>$post->post_id]);
+					
+			DB::table('orders')->whereIn('order_id', $ids)->update(['post_id'=>$post->post_id]);
+
+			Session::flash('message', 'Drugs posted.');
+			return redirect('/medications');
 	}
 }

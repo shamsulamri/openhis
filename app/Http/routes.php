@@ -48,6 +48,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+
 		Route::resource('fee_schedules', 'FeeScheduleController');
 		Route::get('/fee_schedules/id/{id}', 'FeeScheduleController@searchById');
 		Route::post('/fee_schedule/search', 'FeeScheduleController@search');
@@ -973,6 +974,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/order_drug/search', 'OrderDrugController@search');
 				Route::get('/order_drug/search', 'OrderDrugController@search');
 				Route::get('/order_drugs/delete/{id}', 'OrderDrugController@delete');
+				Route::get('/order_drugs/post/{id}', 'OrderDrugController@post');
 
 				Route::resource('order_cancellations', 'OrderCancellationController', ['except'=>['create']]);
 				Route::get('/order_cancellations/create/{id}', 'OrderCancellationController@create');

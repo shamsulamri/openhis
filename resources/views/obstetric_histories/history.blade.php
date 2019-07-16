@@ -33,15 +33,19 @@
         <div class='col-sm-4'>
 			<div class="input-group date">
 				{{ Form::text('patient_lnmp', null, ['class'=>'form-control','data-mask'=>'99/99/9999', 'id'=>'patient_lnmp']) }}
-				<!--
-				<input data-mask="99/99/9999" name="patient_birthdate" id="patient_birthdate" type="text" class="form-control" value="{{ $patient->patient_birthdate }}">
-				-->
 				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 			</div>
-			<!--
-			<input id="patient_lnmp" name="patient_lnmp" type="text">
-			-->
             @if ($errors->has('patient_lnmp')) <p class="help-block">{{ $errors->first('patient_lnmp') }}</p> @endif
+        </div>
+    </div>
+	<div class='form-group  @if ($errors->has('patient_edd')) has-error @endif'>
+        <label for='patient_edd' class='col-sm-2 control-label'>Revised EDD</label>
+        <div class='col-sm-4'>
+			<div class="input-group date">
+				{{ Form::text('patient_edd', null, ['class'=>'form-control','data-mask'=>'99/99/9999', 'id'=>'patient_edd']) }}
+				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			</div>
+            @if ($errors->has('patient_edd')) <p class="help-block">{{ $errors->first('patient_edd') }}</p> @endif
         </div>
     </div>
 	<br>
@@ -75,5 +79,13 @@
 				autoclose: true
 		});
 
+		$('#patient_edd').datepicker({
+				format: "dd/mm/yyyy",
+				todayBtn: "linked",
+				keyboardNavigation: false,
+				forceParse: false,
+				calendarWeeks: true,
+				autoclose: true
+		});
 	</script>
 @endsection
