@@ -2,6 +2,7 @@
 @extends('layouts.app')
 
 @section('content')
+<?php $encounter_id = 0; ?>
 <style>
 canvas {border:1px solid #e5e5e5}
 </style>
@@ -13,9 +14,11 @@ canvas {border:1px solid #e5e5e5}
 <h1>
 Progress Notes
 </h1>
+<!--
 <div class='pull-right'>
 <input id="show_all" @if ($showAll=='true') checked="checked" @endif name="show_all" type="checkbox" value="1"> <label>Include empty notes</label>
 </div>
+-->
 <input id="show_my_note" @if ($showNurse=='true') checked="checked" @endif name="show_my_note" type="checkbox" value="1"> <label>Show my notes only</label>
 <br>
 {{ $notes->render() }}
@@ -27,22 +30,71 @@ Progress Notes
 <?php
 		$note = $encounterHelper::getConsultation($nota->consultation_id);
 ?>
+@if ($encounter_id != $note->encounter_id)
+	<tr>
+			<td colspan=3 bgcolor='#EFEFEF'>
+				<strong>
+				{{ $note->encounter->encounterType->encounter_name }} encounter on {{ DojoUtility::dateReadFormat($note->encounter->created_at) }}
+				</strong>
+				<div class='pull-right'>
+					{{ DojoUtility::diffForHumans($note->encounter->created_at) }}
+				</div>
+			</td>
+	</tr>
+@endif
 	<tr>
 			<td class='col-xs-2'>
-					<h3>
+			@if ($note->encounter->encounter_code == 'inpatient')
+						<span class='badge badge-default'>
+{{ DojoUtility::diffInDaysBetweenDates($note->created_at, $note->encounter->created_at)+1 }}
+						</span>
+			@endif
 					{{ DojoUtility::dateTimeReadFormat($encounterHelper->getConsultationDate($note->consultation_id)) }}
-					</h3>
 			</td>
 			<td>
-					<h3>Seen by {{ $note->user->name }}</h3>
+<a href="javascript:showHide({{ $nota->consultation_id }})">
+					Seen by {{ strtoupper($note->user->name) }}
+			<div class='pull-right'>
+					@if (count($note->forms)>0)
+						<span class='badge badge-default'>
+						&nbsp;?&nbsp;
+						</span>
+					@endif
+					@if ($nota->diagnoses>0)
+						<span class='badge badge-success'>
+						Dx
+						</span>
+					@endif
+					@if ($nota->orders>0)
+						<span class='badge badge-warning'>
+						Ix
+						</span>
+					@endif
+					@if ($nota->medications>0)
+						<span class='badge badge-info'>
+						Rx
+						</span>
+					@endif
+					@if ($nota->annotations>0)
+						<span class='badge badge-danger'>
+						&nbsp;X&nbsp;
+						</span>
+					@endif
+					@if (empty($note->encounter->discharge))
+						<span class='badge badge-default'>
+						{{ DojoUtility::diffForHumans($note->created_at) }}
+						</span>
+					@endif
+			</div>
+						
+</a>
+	<div id='consultation_{{ $nota->consultation_id }}'>	
+					<br>
 					@if ($note->consultation_notes)
             		{{ Form::textarea('consultation_notes', $note->consultation_notes, ['id'=>'consultation_notes', 'tabindex'=>1, 'class'=>'form-control','rows'=>'13', 'style'=>'font-size: 1.2em']) }}
 					<br>
 					@else
 						@if (count($note->annotations)==0)
-							-
-							<br>
-							<br>
 						@endif
 					@endif
 					<!-- Annotations -->
@@ -68,17 +120,16 @@ Progress Notes
 								</a>
 							@endforeach
 							<br>
-							<br>
 					@endif
 
 					<!-- Diagnosis -->
 					@if (count($note->diagnoses)>0)
 					<strong>Diagnosis</strong>
-					<br>
 							@foreach ($note->diagnoses as $diagnosis)
-									{{ $diagnosis->diagnosis_clinical }}
 									<br>
+									{{ $diagnosis->diagnosis_clinical }}
 							@endforeach
+					<br>
 					<br>
 					@endif
 					
@@ -96,10 +147,6 @@ Progress Notes
 								@if ($order->orderCancel) </strike> @endif
 							@endforeach
 					<br>
-					<br>
-					@else
-							-
-							<br>
 					@endif
 
 					<!-- Medical Certificate -->
@@ -126,13 +173,14 @@ Progress Notes
 								<span class='label label-warning'>No medical certificate.</span>
 						@endif
 					@endif
+					</div>
 			</td>
 	</tr>
+	<?php $encounter_id = $note->encounter_id; ?>
 @endforeach
 </tbody>
 </table>
 @endif
-<br>
 @if (isset($showAll)) 
 	{{ $notes->appends(['show_all'=>$showAll])->render() }}
 	@else
@@ -180,6 +228,20 @@ $(document).ready(function(){
 			$('#show_my_note').click(function(){
 					window.location.href = "?show_all="+$('#show_all').is(":checked")+"&show_my_note="+this.checked;
 			});
+
+	@foreach ($notes as $nota)
+		document.getElementById('consultation_{{ $nota->consultation_id }}').style.display = 'none';
+	@endforeach
 });
+
+function showHide(id) {
+  var x = document.getElementById("consultation_".concat(id));
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
 </script>
 @endsection

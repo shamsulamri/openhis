@@ -234,6 +234,15 @@ class DojoUtility
 				return $mins;
 		}
 
+		public static function diffInDaysBetweenDates($dateStart, $dateEnd)
+		{
+				$end = Carbon::parse($dateEnd);
+				$start = Carbon::parse($dateStart);
+				$days = $end->diffInDays($start);
+
+				return $days;
+		}
+
 		public static function removeTrailingZeros($value) 
 		{
 				return str_replace(".00","",$value);

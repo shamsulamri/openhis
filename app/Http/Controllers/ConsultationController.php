@@ -30,7 +30,7 @@ use Carbon\Carbon;
 class ConsultationController extends Controller
 {
 	public $paginateValue=10;
-	public $paginateProgress = 3;
+	public $paginateProgress = 20;
 
 	public function __construct()
 	{
@@ -81,7 +81,7 @@ class ConsultationController extends Controller
 			}
 
 			$sql = "
-				select consultation_notes, annotations, a.consultation_id, orders, diagnoses
+				select consultation_notes, annotations, a.consultation_id, orders, diagnoses, medications
 				from consultations as a
 				left join (
 					select count(*) as annotations, a.consultation_id
@@ -97,8 +97,10 @@ class ConsultationController extends Controller
 					from orders as a
 					left join consultations as b on (a.consultation_id = b.consultation_id)
 					left join users as c on (c.id = b.user_id)
+					left join products as d on (d.product_code = a.product_code)
 					where %s
 					and patient_id = %d
+					and category_code <> 'drugs'
 					group by a.consultation_id
 				) as c on (c.consultation_id = a.consultation_id)
 				left join (
@@ -110,6 +112,17 @@ class ConsultationController extends Controller
 					and patient_id = %d
 					group by a.consultation_id
 				) as d on (d.consultation_id = a.consultation_id)
+				left join (
+					select count(*) as medications, a.consultation_id
+					from orders as a
+					left join consultations as b on (a.consultation_id = b.consultation_id)
+					left join users as c on (c.id = b.user_id)
+					left join products as d on (d.product_code = a.product_code)
+					where %s
+					and patient_id = %d
+					and category_code = 'drugs'
+					group by a.consultation_id
+				) as e on (e.consultation_id = a.consultation_id)
 				left join users as c on (c.id = a.user_id)
 				where patient_id = %d
 				%s
@@ -119,9 +132,9 @@ class ConsultationController extends Controller
 
 
 			if ($request->show_all=='false' or empty($request->show_all)) {
-					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0)");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0 or medications>0)");
 			} else {
-					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, "");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, "");
 			}
 
 			$notes = DB::select($sql);

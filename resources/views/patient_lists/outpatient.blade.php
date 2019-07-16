@@ -6,6 +6,7 @@
 		<tr>
 			<th>Date</th>
 			<th>Patient</th>
+			<th>Panel</th>
 			<th>Description / Queue Number</th>
 		</tr>
  		</thead>
@@ -40,6 +41,9 @@
 					@endif
 						<br>
 						<small>{{ $list->patient_mrn }}</small>
+					</td>
+					<td>
+							{{ $list->sponsor_name }}
 					</td>
 					<td>
 						{{ $list->encounter_description }}

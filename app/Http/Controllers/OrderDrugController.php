@@ -247,7 +247,7 @@ class OrderDrugController extends Controller
 			$consultation = Consultation::findOrFail($consultation_id);
 			$encounter_id = $consultation->encounter_id;
 
-			$medications = OrderDrug::orderBy('b.created_at')
+			$medications = OrderDrug::orderBy('b.created_at','desc')
 						->select('order_drugs.unit_code as unit_code', 'order_drugs.*')
 						->leftJoin('orders as b', 'b.order_id', '=', 'order_drugs.order_id')
 						->leftJoin('drug_dosages as c', 'c.dosage_code', '=', 'order_drugs.dosage_code')
@@ -257,8 +257,19 @@ class OrderDrugController extends Controller
 
 			$table_row = "";
 			$last_id = 0;
+			$colors = array("#EEEEE", "#f5d8d5","#EFEFEF", "#d5f5f2", "#e9e0ff","#e9ffe0","#d9e4ff","#fff7d9", "#ffa3b3", "#e0286c" );
+			$keyColors = [];
+			$last_user_id = 0;
 			foreach ($medications as $med) {
+					$user_id = $med->order->user_id;
 					$last_id = $med->order_id;
+					if (array_key_exists($user_id, $keyColors)) {
+
+					} else {
+						$keyColors[$user_id] = $colors[count($keyColors)];
+							Log::info(count($keyColors));
+							Log::info($user_id.' = '.$keyColors[$user_id]);
+					}
 					$drug_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeDrug(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $med->order_id);
 
 					$checked = "";
@@ -266,8 +277,32 @@ class OrderDrugController extends Controller
 
 
 					$discharge_order = sprintf("<input type='checkbox' id='discharge_%s' value='1' onchange=%s %s>", $med->order_id, chr(34)."javascript:updateDrug('discharge_".$med->order_id."')".chr(34), $checked);
+
+					$table_header = sprintf("
+							<tr bgcolor='%s'>
+								<td width='20' colspan=1></td>
+								<td height='40' style='vertical-align:middle' colspan=15>
+										<strong>
+										%s
+										<div class='pull-right'>
+											%s		
+										</div>
+										</strong>
+								</td>
+								<td width='20' colspan=1></td>
+							</tr>
+							<tr>
+								<td height='10' colspan=17></td>
+							</tr>
+					",$keyColors[$user_id], $med->order->user->name, DojoUtility::dateTimeReadFormat($med->order->consultation->created_at));
+
+					if ($last_user_id == $med->order->user_id) {
+							$table_header = "";
+					}
+
 					$table_row .=sprintf(" 
-							<tr height=50>
+							%s
+							<tr height='50'>
 							        <td width='1' style='vertical-align:top'>%s</td>
 							        <td width=20></td>
 							        <td width=%s style='vertical-align:top'>%s<small>%s</small></td>
@@ -287,6 +322,7 @@ class OrderDrugController extends Controller
 							        <td width='1' style='vertical-align:top'>%s</td>
 							</tr>
 							", 
+							$table_header,
 							$discharge_order,
 							'30%',
 							$med->order->product->drug?$med->order->product->drug->drug_generic_name:$med->order->product->product_name,
@@ -303,6 +339,8 @@ class OrderDrugController extends Controller
 							$this->getPeriods($med->order->product_code, $med->order_id, $med->period_code),
 							$drug_remove
 					);
+
+					$last_user_id = $med->order->user_id;
 			}
 
 			if (empty($table_row)) {
@@ -324,6 +362,7 @@ class OrderDrugController extends Controller
 							<th>Freqeuncy</th> 
 							<th></th>
 							<th colspan=2>Duration</th>
+							<th></th>
 							<th></th>
 							</tr>
 						  </thead>

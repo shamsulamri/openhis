@@ -4,6 +4,7 @@
 		<tr>
 			<th>Date</th>
 			<th>Patient</th>
+			<th>Panel</th>
 			<th>Location</th>
 		</tr>
  		</thead>
@@ -35,6 +36,9 @@
 					@endif
 					<br>
 					<small>{{ DojoUtility::formatMRN($patient->patient_mrn) }}</small>
+			</td>
+			<td>
+					{{ $patient->sponsor_name }}
 			</td>
 			<td>
 					{{ $patient->bed_name }} ({{ $patient->ward_name }})

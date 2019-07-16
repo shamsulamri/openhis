@@ -317,7 +317,7 @@ class BillItemController extends Controller
 					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
 					$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
-					$item->bill_amount = $order->total_quantity?:1*$item->bill_unit_price;
+					$item->bill_amount = ($order->total_quantity?:1)*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;

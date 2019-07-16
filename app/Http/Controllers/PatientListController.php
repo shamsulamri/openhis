@@ -64,7 +64,7 @@ class PatientListController extends Controller
 					return redirect('/queue_locations');
 			}
 
-			$selectFields = ['patient_mrn', 'patient_name', 'a.created_at', 'a.encounter_id', 'b.patient_id', 'bed_name', 'ward_name', 'room_name','patient_birthdate', 'gender_name'];
+			$selectFields = ['patient_mrn', 'patient_name', 'a.created_at', 'a.encounter_id', 'b.patient_id', 'bed_name', 'ward_name', 'room_name','patient_birthdate', 'gender_name', 'sponsor_name'];
 
 			//$team_member = TeamMember::where('username','=',Auth::user()->username)->first();
 
@@ -77,6 +77,7 @@ class PatientListController extends Controller
 							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
 							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
 							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
+							->leftJoin('sponsors as l', 'l.sponsor_code', '=', 'b.sponsor_code')
 							->where('a.user_id', Auth::user()->id)
 							->where('b.encounter_code', 'inpatient')
 							->whereNull('discharge_id')
@@ -91,6 +92,7 @@ class PatientListController extends Controller
 							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
 							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
 							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
+							->leftJoin('sponsors as l', 'l.sponsor_code', '=', 'b.sponsor_code')
 							->where('a.user_id', Auth::user()->id)
 							->where('b.encounter_code', 'daycare')
 							->whereNull('discharge_id')
@@ -106,6 +108,7 @@ class PatientListController extends Controller
 							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
 							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
 							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
+							->leftJoin('sponsors as l', 'l.sponsor_code', '=', 'b.sponsor_code')
 							->where('b.encounter_code', 'emergency')
 							->whereNull('discharge_id')
 							->get();
@@ -119,6 +122,7 @@ class PatientListController extends Controller
 							->leftJoin('wards as i', 'i.ward_code', '=', 'e.ward_code')
 							->leftJoin('ward_rooms as j', 'j.room_code', '=', 'e.room_code')
 							->leftJoin('ref_genders as k', 'k.gender_code', '=', 'd.gender_code')
+							->leftJoin('sponsors as l', 'l.sponsor_code', '=', 'b.sponsor_code')
 							->where('b.encounter_code', 'mortuary')
 							->whereNull('discharge_id')
 							->get();
@@ -142,7 +146,7 @@ class PatientListController extends Controller
 			 */
 
 			$outpatients = DB::table('queues as a')
-					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id', 'patient_birthdate', 'gender_name','location_name', 'encounter_description')
+					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id', 'patient_birthdate', 'gender_name','location_name', 'encounter_description','sponsor_name')
 					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
 					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
 					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
@@ -154,6 +158,7 @@ class PatientListController extends Controller
 		   				  ->where('consultation_status', '=', 1);
 					})
 					->leftJoin('ref_genders as k', 'k.gender_code', '=', 'c.gender_code')
+					->leftJoin('sponsors as l', 'l.sponsor_code', '=', 'b.sponsor_code')
 					->where('a.location_code',$location->location_code)
 					->whereNull('discharge_id')
 					->whereNull('a.deleted_at')
