@@ -119,7 +119,7 @@ class DepositController extends Controller
 		$deposit = Deposit::findOrFail($id);
 		return view('deposits.destroy', [
 			'deposit'=>$deposit,
-			'patient'=>$deposit->encounter->patient,
+			'patient'=>$deposit->patient,
 			'encounter'=>$deposit->encounter,
 			]);
 

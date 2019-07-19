@@ -9,10 +9,10 @@ Delete Deposit
 <br>
 <h3>
 Are you sure you want to delete the selected record ?
-{{ $deposit->encounter_id }}
+{{ $deposit->deposit_id }}
 {{ Form::open(['url'=>'deposits/'.$deposit->deposit_id, 'class'=>'pull-right']) }}
 	{{ method_field('DELETE') }}
-	<a class="btn btn-default" href="/deposits/index/{{ $encounter->encounter_id }}" role="button">Cancel</a>
+	<a class="btn btn-default" href="/deposits/index/{{ $deposit->patient_id }}" role="button">Cancel</a>
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 
