@@ -75,7 +75,7 @@ class APIController extends Controller
 	public function appointment($mrn) 
 	{
 			$result = DB::table('appointments as a')
-						->select('appointment_datetime as datetime', 'service_name as service')
+						->select('appointment_datetime as datetime', 'service_name as service', 'b.patient_new_ic as ic_number')
 						->leftJoin('patients as b', 'a.patient_id', '=', 'b.patient_id')
 						->leftJoin('appointment_services as c', 'c.service_id', '=', 'a.service_id')
 						->where('patient_mrn', '=', $mrn)
@@ -89,7 +89,7 @@ class APIController extends Controller
 	public function discharge($mrn) 
 	{
 			$result = DB::table('discharges as a')
-						->select('discharge_date as date', 'encounter_name as encounter')
+						->select('discharge_date as date', 'encounter_name as encounter', 'c.patient_new_ic as ic_number')
 						->leftJoin('encounters as b', 'b.encounter_id', '=', 'a.encounter_id')
 						->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 						->leftJoin('ref_encounter_types as d', 'd.encounter_code', '=', 'b.encounter_code')
@@ -102,11 +102,12 @@ class APIController extends Controller
 	public function medication($mrn) 
 	{
 			$result = DB::table('order_drugs as a')
-						->select('product_name as drug', 'b.created_at as date', 'order_description as instruction')
+						->select('product_name as drug', 'b.created_at as date', 'order_description as instruction', 'd.patient_new_ic as ic_number', 'name as prescribed_by')
 						->leftJoin('orders as b', 'b.order_id', '=', 'a.order_id')
 						->leftJoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
 						->leftJoin('patients as d', 'd.patient_id', '=', 'c.patient_id')
 						->leftJoin('products as e', 'e.product_code', '=', 'b.product_code')
+						->leftJoin('users as f', 'f.id', '=', 'b.user_id')
 						->where('patient_mrn', '=', $mrn)
 						->get();
 
