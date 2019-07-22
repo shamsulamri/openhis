@@ -277,7 +277,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 			<strong>
 			<br>
 			Note:<br><br>
-			* Contains packaged items
+			* Contain packaged items
 			</td>
 			</strong>
 	</tr>

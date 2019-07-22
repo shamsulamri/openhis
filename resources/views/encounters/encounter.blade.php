@@ -338,6 +338,8 @@
 								return;
 						}
 					}
+					hide(document.querySelectorAll('.target'));
+					document.getElementById('location_code').disabled = false;
 
 			}
 

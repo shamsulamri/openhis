@@ -175,6 +175,7 @@ class EncounterController extends Controller
 						$location_code = 'lab';
 					}
 			}
+
 			return view('encounters.create', [
 					'encounter' => $encounter,
 					'patient' => $patient,
@@ -284,7 +285,10 @@ class EncounterController extends Controller
 
 					$queueFlag = False;
 					if ($encounter->encounter_code == 'outpatient') $queueFlag=True;
-					if ($encounter->encounter_code == 'emergency' && $encounter->triage_code=='green') $queueFlag=True;
+					//if ($encounter->encounter_code == 'emergency' && $encounter->triage_code=='green') $queueFlag=True;
+					if ($encounter->encounter_code == 'emergency' && !empty($request->location_code)) {
+							$queueFlag=True;
+					}
 					
 					if ($queueFlag) {
 							$queue = new Queue();

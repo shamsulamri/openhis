@@ -39,6 +39,16 @@ Progress Notes
 				<div class='pull-right'>
 					{{ DojoUtility::diffForHumans($note->encounter->created_at) }}
 				</div>
+				@if (!empty($note->encounter->discharge))
+						@if (!empty($note->encounter->discharge->discharge_diagnosis))
+						<br>
+						{{ $note->encounter->discharge->discharge_diagnosis }}
+						@endif
+						@if (!empty($note->encounter->discharge->discharge_summary))
+						<br>
+						{{ $note->encounter->discharge->discharge_summary }}
+						@endif
+				@endif
 			</td>
 	</tr>
 @endif

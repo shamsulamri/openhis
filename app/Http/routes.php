@@ -26,9 +26,7 @@
 Route::group(['middleware' => ['web','input_sanitizer_middleware']], function () {
 		Route::auth();
 
-		Route::get('/test', function() {
-				return view('test');
-		});
+		Route::get('/test/{id}', 'TestController@consultation');
 
 		Route::get('/home', function() {
 				//return view('welcome');

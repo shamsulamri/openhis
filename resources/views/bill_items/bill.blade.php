@@ -47,6 +47,13 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('bill_description')) has-error @endif'>
+        {{ Form::label('bill_description', 'Description',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::textarea('bill_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'3']) }}
+            @if ($errors->has('bill_description')) <p class="help-block">{{ $errors->first('bill_description') }}</p> @endif
+        </div>
+    </div>
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/bill_items/{{ $bill->encounter_id }}" role="button">Cancel</a>

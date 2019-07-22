@@ -163,6 +163,12 @@ input {
 	<script>
 		keypressCount = 0;
 		$(document).ready(function(){
+
+			$('#triage_code').change(function(){
+					//alert(this.value);	
+					saveNote();
+			});
+
 			$('#consultation_notes').focusout(function(){
 					saveNote();
 				    //setTimeout(function () { $('#diagnosis_clinical').focus(); }, 20);
@@ -246,8 +252,9 @@ input {
 		function saveNote() {
 				console.log("Save note...");
 					var note = $('#consultation_notes').val();
+					var triage = $('#triage_code').val();
 					note = encodeURIComponent(note);
-					var dataString = "consultation_note="+note+"&id={{ $consultation->consultation_id }}";
+					var dataString = "consultation_note="+note+"&id={{ $consultation->consultation_id }}&triage="+triage;
 
 					$.ajax({
 						type: "PUT",

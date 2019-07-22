@@ -329,6 +329,14 @@ class Patient extends Model
 							->orderBy('encounter_id','desc')
 							->first();
 
+			if (empty($encounter->bill)) {
+					return $encounter;
+			} else {
+					return null;
+			}
+	}
+
+	/*
 			if (!empty($encounter)) {
 					switch ($encounter->encounter_code) {
 						case 'inpatient':
@@ -367,6 +375,7 @@ class Patient extends Model
 					return null;
 			}
 	}
+	 */
 
 	public function getCurrentEncounterModel() 
 	{

@@ -26,6 +26,7 @@ use Auth;
 use Gate;
 use App\StockHelper;
 use App\Encounter;
+use App\Order;
 
 class OrderProductController extends Controller
 {
@@ -43,10 +44,25 @@ class OrderProductController extends Controller
 					return redirect('/order_product/drug');
 			}
 			 */
-			$order_products = DB::table('products')
-					->orderBy('product_name')
-					->paginate($this->paginateValue);
+
 		 	$order_products = NULL; 	
+			$favorites = DB::table('orders')
+							->select('product_code', DB::raw('count(*) as total'))
+							->where('user_id', Auth::user()->id)
+							->groupBy('product_code')
+							->orderBy('total', 'desc')
+							->limit(20)
+							->pluck('product_code');
+
+			Log::info($favorites);
+			$order_products = Product::whereIn('products.product_code', $favorites)
+					->join(DB::raw('(select count(*) as total, product_code from orders where user_id='.Auth::user()->id.' group by product_code having total>1 limit 20) totalOrders'), function($join)
+					{
+							$join->on('products.product_code', '=', '.totalOrders.product_code');
+					})
+					->orderBy('total', 'desc')
+									->paginate($this->paginateValue);
+
 			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
 
 			$sets = Set::orderBy('set_name')
@@ -67,6 +83,7 @@ class OrderProductController extends Controller
 					'categories' => $this->getCategories(),
 					'category_code'=> NULL,
 					'negetive_stock'=>env('ALLOW_NEGETIVE_STOCK')?:0,
+					'page' => NULL,
 			]);
 	}
 

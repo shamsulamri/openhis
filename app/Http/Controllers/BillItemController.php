@@ -283,21 +283,22 @@ class BillItemController extends Controller
 				and b.category_code<>'fee_consultation'
 				and b.category_code<>'wv'
 				and h.patient_id = %d
+				and a.encounter_id <= %d
 				and bill_id is null 
 				and order_multiple=0
 				group by product_code,a.unit_code, order_discount
 			";
 
-			$sql = sprintf($base_sql, "", $patient_id);
+			$sql = sprintf($base_sql, "", $patient_id, $encounter_id);
 
 				//and h.patient_id = %d
 			if (!empty($encounter->sponsor_code)) {
 					if ($non_claimable==1) {
-						$sql = sprintf($base_sql, "and product_non_claimable = 1", $patient_id);
+						$sql = sprintf($base_sql, "and product_non_claimable = 1", $patient_id, $encounter_id);
 					}
 
 					if ($non_claimable==0) {
-						$sql = sprintf($base_sql, "and product_non_claimable<>1", $patient_id);
+						$sql = sprintf($base_sql, "and product_non_claimable<>1", $patient_id, $encounter_id);
 					}
 			}
 			

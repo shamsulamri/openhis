@@ -54,9 +54,19 @@ class EncounterHelper
 		public static function getConsultation($id)
 		{
 			$consultation = Consultation::find($id);
+			Log::info('------> '.$id);
+			Log::info($consultation->encounter);
 			return $consultation;
 		}
 
+		public static function getLastConsultation($patient_id)
+		{
+				$consultation = Consultation::where('patient_id', $patient_id)
+						->orderBy('consultation_id', 'desc')
+						->first();
+			
+				return $consultation;
+		}
 
 }
 

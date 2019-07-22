@@ -36,6 +36,10 @@
 					@endif
 					<br>
 					<small>{{ DojoUtility::formatMRN($patient->patient_mrn) }}</small>
+						@if ($consultation = $encounterHelper->getLastConsultation($patient->patient_id))
+								<br>
+								Last Seen by {{ $consultation->user->name }} {{ DojoUtility::diffForHumans($consultation->created_at) }}
+						@endif
 			</td>
 			<td>
 					{{ $patient->sponsor_name }}

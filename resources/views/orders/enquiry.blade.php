@@ -105,9 +105,12 @@
 	<th>Order Date</th>
 	<th>Product</th>
 	<th>Units</th>
-	<th>User</th>
+	<th>Price</th>
+	<th>Ordered By</th>
+	<!--
 	<th>Age</th>
 	<th>Turnaround</th>
+	-->
 	<th>Status</th>
 	</tr>
   </thead>
@@ -140,14 +143,19 @@
 					{{ $order->order_quantity_supply }}
 			</td>
 			<td>
+					{{ number_format($order->order_unit_price,2) }}
+			</td>
+			<td>
 					{{ $order->name }}
 			</td>
+			<!--
 			<td>
 					{{ $order->age }}
 			</td>
 			<td>
 					{{ $order->turnaround }}
 			</td>
+			-->
 			<td>
 					@if ($order->cancel_id) 
 							<span class="label label-warning">Cancel</span>

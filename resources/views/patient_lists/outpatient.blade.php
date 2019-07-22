@@ -5,9 +5,12 @@
 		<thead>
 		<tr>
 			<th>Date</th>
+			@if ($location->encounter_code =='emergency')
+			<th>Triage</th>
+			@endif
 			<th>Patient</th>
 			<th>Panel</th>
-			<th>Description / Queue Number</th>
+			<th>Queue Number</th>
 		</tr>
  		</thead>
 		<tbody>
@@ -22,7 +25,7 @@
 				@endif
 			@endif
 			<tr class='{{ $status }}'>
-					<td width='20%'>
+					<td width='12%'>
 							{{ date('d F, H:i', strtotime($list->created_at)) }}
 							<br>
 							<small>
@@ -30,6 +33,23 @@
 							{{ $ago }}
 							</small>	
 					</td>
+					@if ($location->encounter_code =='emergency')
+						@if ($encounter = $encounterHelper->getActiveEncounter($list->patient_id))
+							<td>
+								<table>
+									<tr>
+									@if ($encounter->triage)	
+											<td bgcolor='{{ $encounter->triage->triage_color }}' width='40' height='40' align='center'>
+											</td>
+									@endif
+									</tr>
+								</table>
+							</td>
+						@else
+							<td>
+							</td>
+						@endif
+					@endif
 					<td>
 						{{$list->patient_name}}
 					@if ($list->patient_birthdate)
@@ -41,6 +61,10 @@
 					@endif
 						<br>
 						<small>{{ $list->patient_mrn }}</small>
+						@if ($consultation = $encounterHelper->getLastConsultation($list->patient_id))
+								<br>
+								Last Seen by {{ $consultation->user->name }} {{ DojoUtility::diffForHumans($consultation->created_at) }}
+						@endif
 					</td>
 					<td>
 							{{ $list->sponsor_name }}

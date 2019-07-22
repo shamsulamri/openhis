@@ -26,6 +26,7 @@ use App\OrderDrug;
 use App\Set;
 use App\EncounterHelper;
 use Carbon\Carbon;
+use App\Triage;
 
 class ConsultationController extends Controller
 {
@@ -239,6 +240,7 @@ class ConsultationController extends Controller
 						'consultOption'=>'consultation',
 						'investigations'=>$investigations,
 						'orders'=>$consultation->orders->pluck('product_code')->toArray(),
+						'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
 					]);
 			} else {
 					Log::info("Edit consultation");
@@ -251,6 +253,7 @@ class ConsultationController extends Controller
 						'patient'=>$encounter->patient,
 						'investigations'=>$investigations,
 						'orders'=>$consultation->orders->pluck('product_code')->toArray(),
+						'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
 					]);
 			};
 	}
@@ -585,6 +588,7 @@ class ConsultationController extends Controller
 					'orders'=>$consultation->orders->pluck('product_code')->toArray(),
 					'investigations'=>$investigations,
 					'encounter'=>$consultation->encounter,
+					'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
 					]);
 	}
 
@@ -594,7 +598,13 @@ class ConsultationController extends Controller
 					$consultation = Consultation::find($request->id);
 					$consultation->consultation_notes = $request->consultation_note;
 					$consultation->save();
-					return "Ok";
+
+					if (!empty($request->triage)) {
+						$encounter = $consultation->encounter;
+						$encounter->triage_code = $request->triage;
+						$encounter->save();
+					}
+					Log::info("XXXXX");
 			}
 	}
 

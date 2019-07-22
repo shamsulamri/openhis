@@ -36,6 +36,7 @@
  <thead>
 	<tr> 
     <th>Time</th> 
+    <th>Triage</th> 
     <th>Patient</th>
     <th>Panel</th>
     <th>Location</th>
@@ -45,13 +46,23 @@
 	<tbody>
 @foreach ($queues as $queue)
 	<tr>
-			<td>
+			<td width='15%'>
 					{{ date('d F Y, H:i', strtotime($queue->created_at)) }}
 					<br>
 					<small>
 					<?php $ago =$dojo->diffForHumans($queue->created_at); ?> 
 					{{ $ago }}
 					</small>	
+			</td>
+			<td width='35'>
+					@if ($queue->encounter->triage)
+						<table>
+							<tr>
+								<td bgcolor='{{ $queue->encounter->triage->triage_color }}' width='35' height='35' align='center'>
+								</td>
+							</tr>
+						</table>
+					@endif
 			</td>
 			<td>
 					<a href='{{ URL::to('queues/'. $queue->queue_id . '/edit') }}'>
