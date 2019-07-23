@@ -2,7 +2,7 @@
     <div class='form-group  @if ($errors->has('unit_name')) has-error @endif'>
         <label for='unit_name' class='col-sm-3 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
-            {{ Form::text('unit_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'10']) }}
+            {{ Form::text('unit_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('unit_name')) <p class="help-block">{{ $errors->first('unit_name') }}</p> @endif
         </div>
     </div>
@@ -32,7 +32,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('unit_index')) has-error @endif'>
-        <label for='unit_index' class='col-sm-3 control-label'>Index<span style='color:red;'> *</span></label>
+        <label for='unit_index' class='col-sm-3 control-label'>Index</label>
         <div class='col-sm-9'>
             {{ Form::text('unit_index', null, ['class'=>'form-control','placeholder'=>'Item position in list']) }}
             @if ($errors->has('unit_index')) <p class="help-block">{{ $errors->first('unit_index') }}</p> @endif

@@ -18,7 +18,7 @@ use Session;
 class FormPropertyController extends Controller
 {
 	public $paginateValue=10;
-	public $property_types = array('header'=>'Header','number'=>'Number','list'=>'List', 'date'=>'Date', 'text'=>'Text', 'textarea'=>'Textarea');
+	public $property_types = array('header'=>'Header','number'=>'Number','list'=>'List','boolean'=>'Boolean', 'date'=>'Date', 'text'=>'Text', 'textarea'=>'Textarea');
 
 	public function __construct()
 	{

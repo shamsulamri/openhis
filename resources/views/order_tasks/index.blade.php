@@ -10,7 +10,7 @@
 <br>
 <form action='/order_task/status' method='post'>
 	<div class="row">
-			<div class="col-xs-6">
+			<div class="col-xs-4">
 					<button class="btn btn-primary" type="submit" value="Submit">Update Status</button>
 					@can('module-order')
 					<!--
@@ -18,13 +18,21 @@
 					-->
 					@endcan
 			</div>
-			<div align="right" class="col-xs-6">
+			<div align="right" class="col-xs-8">
+@if (Auth::user()->author_id == 5)
 					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=order_labels&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Lab Label</a>
-					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
- Drug Label</a>
+@endif
+@if (Auth::user()->author_id == 15)
 					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=request_form&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Request Form</a>
+@endif
+@if (Auth::user()->author_id == 13)
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+ Drug Label</a>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_prescription&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+ Prescription</a>
+@endif
 			</div>
 	</div>
 	<br>

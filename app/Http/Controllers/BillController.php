@@ -19,6 +19,7 @@ use App\PatientType;
 use App\Sponsor;
 use App\BillAging;
 use App\BillHelper;
+use App\EncounterType;
 
 class BillController extends Controller
 {
@@ -197,6 +198,10 @@ class BillController extends Controller
 					$bills = $bills->where('b.sponsor_code','=', $request->sponsor_code);
 			}
 
+			if (!empty($request->encounter_code)) {
+					$bills = $bills->where('b.encounter_code','=', $request->encounter_code);
+			}
+
 			if (!empty($request->type_code)) {
 					$bills = $bills->where('b.type_code','=', $request->type_code);
 			}
@@ -264,6 +269,8 @@ class BillController extends Controller
 					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					'sponsor_code'=>$request->sponsor_code,
 					'shift_code'=>$request->shift_code,
+					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'encounter_code'=>$request->encounter_code,
 			]);
 	}
 

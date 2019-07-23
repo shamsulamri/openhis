@@ -846,20 +846,30 @@ class BillItemController extends Controller
 
 			$total_payable = DojoUtility::roundUp($bill_grand_total);
 
-
-
-			$billFooter = BillTotal::where('encounter_id', $id);
-			if ($billFooter) {
-					$billFooter->delete();
+			if (empty($encounter->bill)) {
+					$billFooter = BillTotal::where('encounter_id', $id);
+					if ($billFooter) {
+							$billFooter->delete();
+					}
+					$billFooter = new BillTotal();
+					$billFooter->encounter_id = $id;
+					$billFooter->bill_total = $bill_total;
+					$billFooter->bill_deposit = $deposit_total;
+					$billFooter->bill_total_after_discount = $bill_total_after_discount;
+					$billFooter->bill_grand_total = $bill_grand_total;
+					$billFooter->bill_total_payable = $total_payable;
+					$billFooter->save();
+			} else {
+					$billFooter = BillTotal::where('encounter_id', $id)->first();
+					$total_payable = $billFooter->bill_total_payable;
 			}
-			$billFooter = new BillTotal();
-			$billFooter->encounter_id = $id;
-			$billFooter->bill_total = $bill_total;
-			$billFooter->bill_deposit = $deposit_total;
-			$billFooter->bill_total_after_discount = $bill_total_after_discount;
-			$billFooter->bill_grand_total = $bill_grand_total;
-			$billFooter->bill_total_payable = $total_payable;
-			$billFooter->save();
+
+			if (!empty($encounter->bill)) {
+					$bill_total = $encounter->bill->bill_total;
+					$bill_total_after_discount = $encounter->bill->bill_total_after_discount?:$bill_total;
+					$bill_grand_total = $encounter->bill->bill_grand_total;
+					$total_payable = DojoUtility::roundUp($encounter->bill->bill_grand_total);
+			}
 
 			return view('bill_items.index', [
 					'bills'=>$bills,

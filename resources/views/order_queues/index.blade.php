@@ -43,6 +43,14 @@ Order Queues
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Find</div></label>
+						<div class='col-sm-9'>
+							<input type='text' class='form-control' placeholder="Patient name or MRN" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
 						<label class='col-sm-3 control-label'><div align='left'>Status</div></label>
 						<div class='col-sm-9'>
 								{{ Form::select('status_code', $status,$status_code, ['class'=>'form-control','maxlength'=>'10']) }}
@@ -57,10 +65,8 @@ Order Queues
 						</div>
 					</div>
 			</div>
-			<div class="col-xs-4">
-				<button class="btn btn-primary" type="submit" value="Submit">Search</button>
-			</div>
 	</div>
+				<button class="btn btn-primary" type="submit" value="Submit">Search</button>
 	<!--
 	{{ Form::select('locations', $locations, $location, ['class'=>'form-control','maxlength'=>'10']) }}
 	-->

@@ -71,6 +71,9 @@ class FormValueController extends Controller
 			foreach ($properties as $property) {
 				$property_code = $property->property_code;
 				$json .= '"'.$property->property_code.'":"'.$request[$property_code].'",';
+				if (!empty($request[$property_code.'_remark'])) {
+					$json .= '"'.$property->property_code.'_remark":"'.$request[$property_code.'_remark'].'",';
+				}
 			}
 			$json = substr($json,0,-1);
 			$json = "{".$json."}";
@@ -82,6 +85,7 @@ class FormValueController extends Controller
 			if ($consultation_id) {
 				$form_value->consultation_id = $consultation_id;
 			}
+
 			$form_value->save();
 
 			Session::flash('message', 'Record successfully created.');

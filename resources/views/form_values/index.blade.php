@@ -39,8 +39,9 @@
 	</tr>
 	</thead>
 	<tbody>
-	@foreach($properties as $property)
+@foreach($properties as $property)
 	<tr>
+	@if ($property->property->property_type != 'header')
 		<td class='info'>{{ $property->property->property_name }}</td>
 				<td class='warning'>
 					<div align='center'>
@@ -89,8 +90,15 @@
 			@endif
 		</td>
 		@endforeach
+	@else
+		<td bgcolor='#EFEFEF' colspan=3>
+			<strong>
+			{{ $property->property->property_name }}
+			</strong>
+		</td>
+	@endif
 	</tr>
-	@endforeach
+@endforeach
 	<tr>
 		<th></th>
 		<th></th>

@@ -364,6 +364,7 @@ class OrderQueueController extends Controller
 					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
 					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->leftjoin('patients as p', 'p.patient_id', '=', 'c.patient_id')
 					->whereIn('o.category_code', $queue_categories)
 					->whereIn('c.encounter_code', $queue_encounters)
 					->whereNull('cancel_id')
@@ -392,6 +393,14 @@ class OrderQueueController extends Controller
 									->where('investigation_date','>=', Carbon::today());
 			} else {
 					//$order_queues = $order_queues->where('investigation_date','<=', Carbon::today());
+			}
+
+			if (!empty($request->search)) {
+
+					$order_queues = $order_queues->where(function ($query) use ($request) {
+							$query->where('patient_mrn','like','%'.$request->search.'%')
+								->orWhere('patient_name', 'like','%'.$request->search.'%');
+					});
 			}
 
 			$order_queues = $order_queues->paginate($this->paginateValue);

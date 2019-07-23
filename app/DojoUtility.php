@@ -353,8 +353,8 @@ class DojoUtility
 				$valueArray = explode(".", $valueInString);
 				$substringValue = substr($valueArray[1], 1);
 				 
-				if ($substringValue >= 1 && $substringValue <= 5) {
-						$tempValue = str_replace(substr($valueArray[1], 1), 5, substr($valueArray[1], 1));
+				if ($substringValue >= 1 && $substringValue <= 4) {
+						$tempValue = str_replace(substr($valueArray[1], 1), 0, substr($valueArray[1], 1));
 						$tempValue = substr($valueArray[1],0,1).$tempValue;
 						$newvalue = floatval($valueArray[0].".".$tempValue);
 				} elseif($substringValue == 0) {
@@ -381,6 +381,27 @@ class DojoUtility
 		{
 				$helper = new StockHelper();
 				return $helper->getstockOnHand($product_code, $store_code, $batch_number);
+		}
+
+		public static function stringToKV($string)
+		{
+				//$string = "business_type,cafe|business_type_plural,cafes|sample_tag,couch|business_name,couch cafe";
+
+				$finalArray = array();
+
+				$asArr = explode( ';', $string );
+
+				$finalArray['']='';
+				foreach( $asArr as $val ){
+				  $tmp = explode( '=>', $val );
+				  if (count($tmp)>1) {
+						  $finalArray[ $tmp[0] ] = $tmp[1];
+				  } else {
+						  $finalArray[ $val ] = $val;
+				  }
+				}
+
+				return $finalArray;
 		}
 }
 

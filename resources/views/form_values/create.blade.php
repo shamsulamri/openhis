@@ -16,8 +16,12 @@
 @foreach ($properties as $property)
 	<?php
 			$value = null;
+			$remark = null;
 			if (!empty($json[$property->property_code])) {
 				$value = $json[$property->property_code];
+			}
+			if (!empty($json[$property->property_code.'_remark'])) {
+				$remark = $json[$property->property_code.'_remark'];
 			}
 	?>
     <div class='form-group'>
@@ -32,7 +36,11 @@
 				@else
         <label for='{{ $property->property->property_code }}' class='col-sm-3 control-label'>{{ $property->property->property_name }}</label>
 				@endif
-        <div class='col-sm-3'>
+		@if ($property->property->property_type == "boolean")
+        <div class='col-sm-2'>
+		@else
+        <div class='col-sm-5'>
+		@endif
 				@if ($property->property->property_type == "text")
 					{{ Form::text($property->property->property_code, $value, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 				@endif
@@ -44,15 +52,32 @@
 				@endif
 				@if ($property->property->property_type == "list")
 					<?php 
-						$list = explode(";",$property->property->property_list);
-						$list = array_combine($list, $list);
+						//$list = explode(";",$property->property->property_list);
+						//$list = array_combine($list, $list);
+						$list = DojoUtility::stringToKV($property->property->property_list);
 					?>
 						{{ Form::select($property->property->property_code, $list, $value) }}
+				@endif
+				@if ($property->property->property_type == "boolean")
+					<?php 
+						$list = DojoUtility::stringToKV('yes=>Yes;no=>No');
+						if (!empty($property->property->property_list)) {
+							$list = DojoUtility::stringToKV($property->property->property_list);
+						}
+					?>
+							<div class="pull-left">
+								{{ Form::select($property->property->property_code, $list, $value) }}
+							</div>
 				@endif
 				@if ($property->property->property_type == "date")
 						<input data-mask="99/99/9999" name="{{ $property->property->property_code }}" id="{{ $property->property->property_code }}" type="text" class="form-control" value="{{ $value }}">
 				@endif
         </div>
+		@if ($property->property->property_type == "boolean")
+        <div class='col-sm-3'>
+				{{ Form::text($property->property->property_code.'_remark', $remark, ['class'=>'form-control','placeholder'=>'Remarks','maxlength'=>'100']) }}
+        </div>
+		@endif
         <div class='col-sm-2'>
 			@if ($property->property->unitMeasure)
 				<label class='control-label'>{{ $property->property->unitMeasure->unit_shortname }}</label>

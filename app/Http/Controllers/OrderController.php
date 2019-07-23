@@ -635,6 +635,7 @@ class OrderController extends Controller
 			if ($request->export_report) {
 				DojoUtility::export_report($orders->get());
 			}
+
 			$orders = $orders->paginate($this->paginateValue);
 
 			$categories = ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');

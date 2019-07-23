@@ -16,7 +16,7 @@ use App\FormProperty as Property;
 
 class FormPositionController extends Controller
 {
-	public $paginateValue=10;
+	public $paginateValue=50;
 
 	public function __construct()
 	{
