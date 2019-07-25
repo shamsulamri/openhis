@@ -32,6 +32,8 @@
  Drug Label</a>
 					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_prescription&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Prescription</a>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_discharge&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+ Discharge</a>
 @endif
 			</div>
 	</div>

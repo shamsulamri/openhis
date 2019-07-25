@@ -258,7 +258,9 @@ class OrderProductController extends Controller
 			} else {
 
 				$orderSets = DB::table('order_sets')
-							->select('product_code')
+							->select('order_sets.product_code')
+							->leftjoin('products as b', 'b.product_code', '=', 'order_sets.product_code')
+							->where('status_code', '=', 'active')
 							->where('set_code','=',$request->set_code)
 							->pluck('product_code');
 

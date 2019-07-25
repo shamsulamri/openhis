@@ -51,7 +51,9 @@
 						@endif
 					@endif
 					<td>
+					<a href='{{ URL::to('queues/'. $list->queue_id . '/edit?refer=1') }}'>
 						{{$list->patient_name}}
+					</a>
 					@if ($list->patient_birthdate)
 					<br>
 					<small>
@@ -64,6 +66,10 @@
 						@if ($consultation = $encounterHelper->getLastConsultation($list->patient_id))
 								<br>
 								Last Seen by {{ $consultation->user->name }} {{ DojoUtility::diffForHumans($consultation->created_at) }}
+						@endif
+						@if (!empty($list->queue_description))	
+						<br>
+						{{ $list->queue_description }}
 						@endif
 					</td>
 					<td>

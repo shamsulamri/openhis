@@ -15,6 +15,7 @@ class Queue extends Model
 	protected $dates = ['deleted_at'];
 	protected $table = 'queues';
 	protected $fillable = [
+				'queue_description',
 				'encounter_id',
 				'location_code'];
 	

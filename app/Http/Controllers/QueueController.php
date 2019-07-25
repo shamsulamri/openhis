@@ -164,13 +164,13 @@ class QueueController extends Controller
 			}
 	}
 
-	public function edit($id) 
+	public function edit(Request $request, $id) 
 	{
 			$queue = Queue::findOrFail($id);
 			$encounter = Encounter::find($queue->encounter_id);
 			$locations = Location::where('encounter_code',$encounter->encounter_code)->orderBy('location_name')->get();
-			$location = Location::where('encounter_code',$encounter->encounter_code)
-					->orderBy('location_name')
+			//$location = Location::where('encounter_code',$encounter->encounter_code)
+			$location = Location::orderBy('location_name')
 					->lists('location_name', 'location_code');
 
 			return view('queues.edit', [
@@ -179,6 +179,7 @@ class QueueController extends Controller
 					'location'=>$location,
 					'locations' => $locations,
 					'encounter' => $encounter,
+					'refer'=>$request->refer?:null,
 					]);
 	}
 
@@ -197,7 +198,11 @@ class QueueController extends Controller
 			if ($valid->passes()) {
 					$queue->save();
 					Session::flash('message', 'Record successfully updated.');
-					return redirect('/queues');
+					if (empty($request->refer)) {
+							return redirect('/queues');
+					} else {
+							return redirect('/patient_lists');
+					}
 			} else {
 					return view('queues.edit', [
 							'queue'=>$queue,
