@@ -358,13 +358,19 @@ class OrderTaskController extends Controller
 
 												$uom = null;
 												if (empty($order->unit_code)) {
-												$uom = ProductUom::where('product_code', $order->product_code)
+													$uom = ProductUom::where('product_code', $order->product_code)
 															->where('uom_default_price', 1)
 															->first();
 
 												} else {
-												$uom = ProductUom::where('product_code', $order->product_code)
+													$uom = ProductUom::where('product_code', $order->product_code)
 															->where('unit_code', $inventory->unit_code)
+															->first();
+												}
+
+												if (empty($uom)) {
+													$uom = ProductUom::where('product_code', $order->product_code)
+															->where('uom_default_price', 1)
 															->first();
 												}
 
