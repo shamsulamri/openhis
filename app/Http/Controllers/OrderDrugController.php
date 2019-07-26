@@ -863,13 +863,15 @@ class OrderDrugController extends Controller
 
 	public function update(Request $request, $id) 
 	{
+
 			$stock_helper = new StockHelper();
 			$order_drug = OrderDrug::findOrFail($id);
 			$order_drug->fill($request->input());
 
 			$order = Order::find($order_drug->order_id);
+
 			$product= Product::find($order->product_code);
-			$order->fill($request->input());
+			//$order->fill($request->input());
 			$order->order_is_discharge = $request->order_is_discharge ?: 0;
 			$order->order_quantity_request = $request->order_quantity_request;
 			$order->order_quantity_supply = $request->order_quantity_request;
