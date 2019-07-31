@@ -111,10 +111,12 @@ class OrderTaskController extends Controller
 					'a.created_at',
 					'k.name',
 					'order_completed',
-					'name',
+					'k.name',
+					'n.name as updated_user',
 					'investigation_date',
 					'product_stocked',
 					'e.category_code',
+					'completed_at',
 					'b.created_at as consultation_date'
 					];
 
@@ -132,6 +134,7 @@ class OrderTaskController extends Controller
 					->leftjoin('order_posts as j', 'j.post_id', '=', 'a.post_id')
 					->leftjoin('users as k','k.id','=', 'a.user_id')
 					->leftjoin('wards as m','m.ward_code','=', 'a.ward_code')
+					->leftjoin('users as n','n.id','=', 'a.completed_by')
 					->where('c.encounter_id','=', $encounter_id)
 					->whereIn('e.category_code', $queue_categories)
 					->where('e.product_local_store','=',0)
@@ -333,7 +336,6 @@ class OrderTaskController extends Controller
 			foreach($orders as $order) {
 					$product = $order->product;
 					$checked = $request[$order->order_id] ?:0;
-					Log::info($order->product->product_name.'-'.$order->order_completed);
 
 					if ($checked == 1) {
 
@@ -420,7 +422,7 @@ class OrderTaskController extends Controller
 						$order = Order::find($order->order_id);
 						$order->order_quantity_supply = $total_supply;
 						$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
-						$order->updated_by = Auth::user()->id;
+						$order->completed_by = Auth::user()->id;
 						$order->location_code = $location_code;
 						$order->store_code = $store_code;
 						$order->order_completed = 1;
@@ -428,7 +430,6 @@ class OrderTaskController extends Controller
 						
 					} else {
 						if ($order->order_completed == 1) {
-							Log::info("ewewewewewe");
 							Inventory::where('order_id', $order->order_id)->delete();
 							$order->order_completed = 0;
 							$order->completed_at = null;

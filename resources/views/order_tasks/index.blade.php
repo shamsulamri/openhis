@@ -51,6 +51,7 @@
     <th>Available</th>
     <th>Quantity</th>
     <th>Order By</th>
+    <th>Completed By</th>
 	<th></th>
 	</tr>
   </thead>
@@ -155,6 +156,11 @@
 					-->
 					<br>
 					{{ (DojoUtility::dateTimeReadFormat($order->consultation_date)) }}
+			</td>
+			<td>
+					{{ $order->updated_user }}
+					<br>
+					{{ (DojoUtility::dateTimeReadFormat($order->completed_at)) }}
 			</td>
 			<td align='right'>
 					@if (!isset($order->cancel_id))
