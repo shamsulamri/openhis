@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Validator;
 use Carbon\Carbon;
 use App\DojoUtility;
+use App\ProductUom;
 use Log;
 class BillMaterial extends Model
 {
@@ -13,6 +14,7 @@ class BillMaterial extends Model
 	protected $fillable = [
 				'product_code',
 				'bom_product_code',
+				'unit_code',
 				'bom_quantity'];
 	
 
@@ -43,6 +45,15 @@ class BillMaterial extends Model
 	public function product()
 	{
 			return $this->belongsTo('App\Product', 'bom_product_code','product_code');
+	}
+
+	public function unitPrice()
+	{
+			$unit_price = ProductUom::where('product_code','=',  $this->attributes['bom_product_code'])
+							->where('unit_code', '=', $this->attributes['unit_code'])
+							->first();
+
+			return $unit_price;
 	}
 	
 }

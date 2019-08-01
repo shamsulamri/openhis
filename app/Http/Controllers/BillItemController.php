@@ -146,9 +146,11 @@ class BillItemController extends Controller
 	{
 			$encounter = Encounter::find($encounter_id);
 			$product = Product::find($product_code);
-					if ($product->uomDefaultPrice($encounter)) {
-						$price = $product->uomDefaultPrice($encounter)->uom_price?:0;
-					}
+
+			if ($product->uomDefaultPrice($encounter)) {
+				$price = $product->uomDefaultPrice($encounter)->uom_price?:0;
+			}
+
 			return $price;
 
 			Log::info('--->'.$product_code);
@@ -286,6 +288,7 @@ class BillItemController extends Controller
 				and a.encounter_id <= %d
 				and bill_id is null 
 				and order_multiple=0
+				and bom_code is null
 				group by product_code,a.unit_code, order_discount
 			";
 
@@ -318,6 +321,18 @@ class BillItemController extends Controller
 					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
 					$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
+
+					/*
+					if (!empty($order->bom_code)) {
+							$uom = ProductUom::where('product_code','=',  $order->product_code)
+											->where('unit_code', '=', $order->unit_code)
+											->first();
+
+							$item->bill_unit_price = $uom->uom_price;
+							Log::info('--->'.$item->bill_unit_price);
+					}
+					 */
+
 					$item->bill_amount = ($order->total_quantity?:1)*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
@@ -341,24 +356,21 @@ class BillItemController extends Controller
 	{
 			/** Substract amount items from package **/
 			$orders = Order::where('encounter_id', $encounter_id)
+						->whereNotNull('bom_code')
 						->get();
 
 
 			foreach ($orders as $order) {
-					if (!empty($order->bom_code)) {
-								$billItems = BillItem::where('product_code', $order->product_code)
-												->where('encounter_id', $encounter_id)
-												->get();
-								foreach ($billItems as $billItem) {
-										$billItem->bill_amount -= $order->order_quantity_supply*$billItem->bill_unit_price;
-										$billItem->bill_amount_exclude_tax = $billItem->bill_amount;
-										$billItem->bill_name = $billItem->bill_name.' *';
-										$billItem->save();
-								}
-
-							
-
-					}
+						$billItem = BillItem::where('product_code', $order->product_code)
+										->where('bill_unit_code', $order->unit_code)
+										->where('encounter_id', $encounter_id)
+										->first();
+						//foreach ($billItems as $billItem) {
+								$billItem->bill_amount -= $order->order_quantity_supply*$order->order_unit_price;
+								$billItem->bill_amount_exclude_tax = $billItem->bill_amount;
+								$billItem->bill_name = $billItem->bill_name.' *';
+								$billItem->save();
+						//}
 			}
 
 			/*
@@ -724,7 +736,7 @@ class BillItemController extends Controller
 				/** Compile bed bills **/
 				$this->bedBills($id);
 
-				$this->minusPackages($id);
+				//$this->minusPackages($id);
 
 				$bills = DB::table('bill_items as a')
 					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'product_non_claimable','category_name','b.category_code', 'unit_name', 'bill_markup', 'bill_name')

@@ -548,7 +548,10 @@ class OrderHelper
 								$bom_order = Order::find($order_id);
 								$bom_order->order_quantity_request = $bom->bom_quantity*$order->order_quantity_request;
 								$bom_order->order_quantity_supply = $bom_order->order_quantity_request;
+								$bom_order->order_unit_price = $bom->unitPrice()->uom_price;
+								$bom_order->unit_code = $bom->unit_code;
 								$bom_order->save();
+
 								$record = Order::find($order_id);
 								$record->bom_code = $order->product_code;
 								$record->save();

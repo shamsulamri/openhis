@@ -59,10 +59,12 @@
 			$x_day_offset = DojoUtility::diffInMinutesBetweenDates($start_of_day, $day_label_offset)/$graph->x_value_scale;
 			for ($i=1;$i<6;$i++) {
 				$day_label = DojoUtility::addDays($start_of_day2, $i);
+				$day_x = 0-$x_day_offset+((1440*$i)/$graph->x_value_scale);
 ?>
-			line(ctx, {{ 0-$x_day_offset+((1440*$i)/$graph->x_value_scale) }}, 
+			@if ($day_x<29)
+			line(ctx, {{ $day_x }},
 						{{ $graph->y_tick_min }}, 
-						{{ 0-$x_day_offset+((1440*$i)/$graph->x_value_scale) }}, 
+						{{ $day_x }},
 						{{ ($graph->y_tick_count*$graph->y_tick_multiplier)+$graph->y_tick_min }},
 						2,
 						'#BEBEBE',
@@ -74,6 +76,7 @@
 					{{ ($graph->y_tick_count*$graph->y_tick_multiplier)+$graph->y_tick_min }},
 					'#666666'
 			);
+			@endif
 
 <?php
 			}
@@ -126,7 +129,6 @@
 	$y2 = $value['temperature']?:$graph->y_tick_min;
 ?>
 @endforeach
-
 <!-- Days -->
 <?php
 			$start_of_day = DojoUtility::startOfDay($encounter->created_at);
@@ -134,11 +136,12 @@
 			$x_day_offset = DojoUtility::diffInMinutesBetweenDates($start_of_day, $day_label_offset)/$graph->x_value_scale;
 			for ($i=1;$i<6;$i++) {
 				$day_label = DojoUtility::addDays($start_of_day2, $i);
-
+				$day_x = 0-$x_day_offset+((1440*$i)/$graph->x_value_scale);
 ?>
-			line(ctx, {{ 0-$x_day_offset+((1440*$i)/$graph->x_value_scale) }}, 
+			@if ($day_x<29)
+			line(ctx, {{ $day_x }}, 
 				{{ $graph->y_tick_min }}, 
-				{{ 0-$x_day_offset+((1440*$i)/$graph->x_value_scale) }}, 
+				{{ $day_x }},
 				{{ ($graph->y_tick_count*$graph->y_tick_multiplier)+$graph->y_tick_min }},
 				2, 
 				'#BEBEBE',
@@ -150,6 +153,7 @@
 					{{ ($graph->y_tick_count*$graph->y_tick_multiplier)+$graph->y_tick_min }},
 					'#666666'
 			);
+			@endif
 
 <?php
 			}

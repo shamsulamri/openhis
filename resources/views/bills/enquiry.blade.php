@@ -24,7 +24,7 @@
 					<div class='form-group'>
 						<label class='col-sm-3 control-label'>Type</label>
 						<div class='col-sm-9'>
-							{{ Form::select('type_code', $patient_types,$type_code, ['class'=>'form-control']) }}
+							{{ Form::select('type_code', $patient_types,$type_code, ['id'=>'type_code', 'class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -67,6 +67,7 @@
 								<input data-mask="99/99/9999" name="date_end" id="date_end" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($date_end) }}">
 								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 							</div>
+							<small>Applicable for report only</small>
 						</div>
 					</div>
 			</div>
@@ -227,10 +228,12 @@
 				to = $("#date_end").val().split("/");
 				dateEnd = "";
 				dateEnd = dateEnd.concat(to[2],"/", to[1],"/", to[0]);
+
 				var url = "{{ Config::get('host.report_server') }}/ReportServlet?report=bill_report";
 				url = url.concat("&dateStart=", dateStart);
 				url = url.concat("&dateEnd=", dateEnd);
 				url = url.concat("&encounterType=", $("#encounter_code").val());
+				url = url.concat("&typeCode=", $("#type_code").val());
 
 				var win = window.open(url, '_blank');
 		}

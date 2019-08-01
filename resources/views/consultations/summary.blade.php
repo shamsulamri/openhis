@@ -12,6 +12,16 @@
 </h1>
 <br>
 
+<!--
+@if ($fees==0)
+	<div class='alert alert-warning' role='alert'>
+	<p>
+	<strong>Alert !</strong> You have not entered you consultation fee.
+	</p>
+	</div>
+@endif
+-->
+
 @if ($orders->count()==0) 
 <h3>You have no orders.</h3>
 <br>

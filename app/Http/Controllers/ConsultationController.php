@@ -289,17 +289,26 @@ class ConsultationController extends Controller
 					->orderBy('category_code')
 					->get();
 
+			$fees = Order::where('category_is_consultation',1)
+					->leftJoin('products as b', 'b.product_code', '=','orders.product_code')
+					->leftJoin('order_cancellations as c', 'c.order_id', '=', 'orders.order_id')
+					->leftJoin('product_categories as d', 'd.category_code', '=', 'b.category_code')
+					->where('consultation_id','=', $id)
+					->where('orders.user_id','=', Auth::user()->id)
+					->whereNull('cancel_id')
+					->count();
+
 			return view('consultations.summary', [
 				'orders'=>$orders,
 				'consultation'=>$consultation,
 				'patient' => $consultation->encounter->patient,
 				'order_helper'=>new OrderHelper(),
+				'fees'=>$fees,
 			]);
 	}
 
 	public function close()
 	{
-			return "X";
 			$id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail($id);
 

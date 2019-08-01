@@ -35,7 +35,7 @@ class BillMaterialController extends Controller
 	{
 			$product = Product::find($product_code);
 			$bill_materials = DB::table('bill_materials as a')
-					->select('id','a.product_code', 'b.product_name', 'bom_quantity','unit_shortname')
+					->select('id','a.product_code', 'b.product_name', 'bom_quantity','unit_shortname', 'a.unit_code')
 					->leftJoin('products as b', 'b.product_code', '=', 'a.bom_product_code')
 					->leftJoin('ref_unit_measures as c', 'c.unit_code', '=', 'b.unit_code')
 					->where('a.product_code','=', $product_code)
@@ -78,9 +78,19 @@ class BillMaterialController extends Controller
 			$bill_material = BillMaterial::findOrFail($id);
 			$unit = isset($bill_material->product->unitMeasure->unit_shortname) ? $bill_material->product->unitMeasure->unit_shortname : '-';
 
+			$product_uoms =  $bill_material->product->productUnitMeasures();
+			$uom_list = [];
+			$uom_list['unit'] = 'Each';
+			foreach ($product_uoms as $uom) {
+					if ($uom->unit_code != 'unit') {
+						$uom_list[$uom->unit_code] = $uom->unitMeasure->unit_name;
+					}
+			}
+
 			return view('bill_materials.edit', [
 					'bill_material'=>$bill_material,
 					'unit'=> $unit,
+					'uom_list'=>$uom_list,
 					]);
 	}
 
