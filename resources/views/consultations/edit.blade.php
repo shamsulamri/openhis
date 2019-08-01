@@ -164,6 +164,10 @@ input {
 		keypressCount = 0;
 		$(document).ready(function(){
 
+			$('a').click(function() {
+					console.log("Link pressed");
+			});
+
 			$('#triage_code').change(function(){
 					//alert(this.value);	
 					saveNote();

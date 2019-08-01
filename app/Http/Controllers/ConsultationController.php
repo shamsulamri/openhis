@@ -278,8 +278,28 @@ class ConsultationController extends Controller
 			}
 	}
 
+	public function summary()
+	{
+			$id = Session::get('consultation_id');
+			$consultation = Consultation::findOrFail($id);
+
+			$orders = Order::where('consultation_id',$consultation->consultation_id)
+					->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
+					->where('consultation_id',$id)
+					->orderBy('category_code')
+					->get();
+
+			return view('consultations.summary', [
+				'orders'=>$orders,
+				'consultation'=>$consultation,
+				'patient' => $consultation->encounter->patient,
+				'order_helper'=>new OrderHelper(),
+			]);
+	}
+
 	public function close()
 	{
+			return "X";
 			$id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail($id);
 

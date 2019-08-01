@@ -58,8 +58,6 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Interim Detail Bill</a> 
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Interim Summary Bill</a> 
-<p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_panel&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Panel Bill</a> 
 @else
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=receipt_official&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Receipt</a> 
@@ -67,6 +65,10 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=invoice&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Invoice</a> 
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=invoice_summary&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Summary Invoice</a> 
+@endif
+@if (!empty($encounter->sponsor_code))
+<p class='pull-right'>&nbsp;</p>
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_panel&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Panel Bill</a> 
 @endif
 @if ($hasMc) 
 <p class='pull-right'>&nbsp;</p>

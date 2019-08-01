@@ -1,5 +1,5 @@
 <script>
-function text(ctx,value, x,y) {
+function text(ctx,value, x,y, fillColor='#000000') {
 		ctx.beginPath();
 		x = x*x_tick_scale;
 		x = x + margin_left;
@@ -9,6 +9,7 @@ function text(ctx,value, x,y) {
 		y = y*y_tick_scale;
 		y = y + margin_top;
 
+		ctx.fillStyle= fillColor;
 		ctx.textAlign="center";
 		ctx.fillText(value, x+(x_tick_scale/2), y-(y_tick_scale/2.5));
 
@@ -30,7 +31,7 @@ function label(ctx,value, x,y) {
 
 }
 
-function text_rotate(ctx,value, x,y) {
+function text_rotate(ctx,value, x,y, height) {
 		ctx.beginPath();
 		x = x*x_tick_scale;
 		x = x + margin_left;
@@ -43,13 +44,33 @@ function text_rotate(ctx,value, x,y) {
 		ctx.save();
 		ctx.translate(0,0);
 		ctx.rotate(Math.PI/2);
-		ctx.fillText(value,{{ $graph->height/2 }}, -x-(x_tick_scale/2.5));
+		ctx.fillText(value, height/2, -x-(x_tick_scale/2.5));
 		ctx.textAlign="center";
 		ctx.restore();
 
 }
 
-function line(ctx,x,y, x2, y2, width) {
+function text_rotate2(ctx,value, x,y, fillColor = '#000000') {
+		ctx.beginPath();
+		x = x*x_tick_scale;
+		x = x + margin_left;
+		y = y-y_tick_min;
+		y = y/y_tick_multiplier;
+		y = y_tick_count-y;
+		y = y*y_tick_scale;
+		y = y + margin_top;
+
+		ctx.save();
+		ctx.fillStyle= fillColor;
+		ctx.translate(0,0);
+		ctx.rotate(Math.PI/2);
+		ctx.fillText(value, y, -x-(x_tick_scale/2.5));
+		ctx.textAlign="center";
+		ctx.restore();
+
+}
+
+function line(ctx,x,y, x2, y2, width, strokeColor='#000000', lineDash=[]) {
 		ctx.beginPath();
 		x = x*x_tick_scale;
 		x = x + margin_left;
@@ -70,7 +91,8 @@ function line(ctx,x,y, x2, y2, width) {
 
 		ctx.moveTo(x,y);
 		ctx.lineTo(x2, y2);
-		ctx.strokeStyle="#000000";
+		ctx.setLineDash(lineDash);
+		ctx.strokeStyle= strokeColor;
 		ctx.lineWidth=width;
 		ctx.stroke(); 
 }

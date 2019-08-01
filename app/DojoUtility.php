@@ -27,6 +27,34 @@ class DojoUtility
 				}
 		}
 
+		public static function startOfDay($value)
+		{
+				if (!empty($value)) {
+					$date = Carbon::parse($value)->startOfDay();
+					return $date;
+				} else {
+					return null;
+				}
+		}
+
+		public static function dayReadFormat($value)
+		{
+				if (!empty($value)) {
+					return Carbon::parse($value)->format('d');
+				} else {
+					return null;
+				}
+		}
+
+		public static function dayTimeReadFormat($value)
+		{
+				if (!empty($value)) {
+					return Carbon::parse($value)->format('d/m, H:i');
+				} else {
+					return null;
+				}
+		}
+
 		public static function dateDayMonthFormat($value)
 		{
 				if (!empty($value)) {
@@ -148,6 +176,11 @@ class DojoUtility
 				return (int)date('Y', strtotime(Carbon::now())); 
 		}
 
+		public static function thisDay()
+		{
+				return (int)date('d', strtotime(Carbon::now())); 
+		}
+
 		public static function thisMonth()
 		{
 				return (int)date('m', strtotime(Carbon::now())); 
@@ -178,6 +211,12 @@ class DojoUtility
 		{
 				$value = Carbon::createFromFormat('d/m/Y', $value);
 				return $value->addDays($days);
+		}
+
+		public static function addMinutes($value, $minutes)
+		{
+				$value = Carbon::createFromFormat('d/m/Y', $value);
+				return $value->addMinutes($minutes);
 		}
 
 		public static function dateObject($value)

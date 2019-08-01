@@ -18,9 +18,15 @@ y_tick_scale = (canvas_height-(margin_top*2))/y_tick_count;
 
 var c = document.getElementById("{{ $graph->id }}");
 var ctx = c.getContext("2d");
-
+var x_tick_label = '';
 
 for (x=0;x<x_tick_count+1;x++) {
+		x_tick_label = x*{{ $graph->x_value_scale }}; // In minutes
+		@if (!empty($graph->x_value_format))
+				@if ($graph->x_value_format == 'hour')
+						x_tick_label = x*{{ $graph->x_value_scale/60 }}; // In hours
+				@endif
+		@endif
 		ctx.beginPath();
 		ctx.strokeStyle="#BEBEBE";
 		ctx.moveTo(x*x_tick_scale+margin_left,0+margin_top,0);
@@ -28,7 +34,7 @@ for (x=0;x<x_tick_count+1;x++) {
 		ctx.stroke();
 		
 		@if (!$graph->x_tick_hide)
-				ctx.fillText(x, x*x_tick_scale+margin_left-5,canvas_height-margin_top+15);
+				ctx.fillText(x_tick_label, x*x_tick_scale+margin_left-5,canvas_height-margin_top+15);
 		@endif
 }
 ctx.fillText("{{ $graph->x_axis_title }}", {{ ($graph->width-$graph->margin_left)/2 }}, canvas_height-margin_top+35);
