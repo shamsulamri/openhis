@@ -278,6 +278,7 @@ class BillItemController extends Controller
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				left join users as j on (j.id = a.user_id)
+				left join order_cancellations as k on (k.order_id = a.order_id)
 				where b.deleted_at is null
 				%s
 				and b.category_code<>'consultation'
@@ -289,6 +290,7 @@ class BillItemController extends Controller
 				and bill_id is null 
 				and order_multiple=0
 				and bom_code is null
+				and cancel_id is null
 				group by product_code,a.unit_code, order_discount
 			";
 
