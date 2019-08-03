@@ -100,7 +100,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Encounter</th>
+    <th>EID</th>
     <th>Patient</th>
 	<th>Order Date</th>
 	<th>Product</th>

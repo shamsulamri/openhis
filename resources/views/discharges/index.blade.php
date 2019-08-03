@@ -132,7 +132,12 @@
 			}
 			?>
 			@if ($discharge->mc_id)
-<a class="btn btn-default pull-left" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
+					@if (!empty($discharge->mc_date_start) && empty($discharge->mc_time_start))
+		<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
+					@endif
+					@if (!empty($discharge->mc_time_start))
+		<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=time_slip&id={{ $discharge->encounter_id }}" role="button" target="_blank">Time Slip</a>
+					@endif
 			@endif
 			@can('module-consultation')
 			@if ($bill_status==0)
