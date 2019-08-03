@@ -168,6 +168,15 @@
 					@if ($order->order_completed==0 && !isset($order->cancel_id))
 					<a class='btn btn-warning btn-xs' href='{{ URL::to('/task_cancellations/create/'. $order->order_id) }}'>Cancel</a>
 					@endif
+
+					@if ($order->order_completed==1)
+							@if (empty($order->dispensed_by))
+								{{ Form::checkbox('dispense_'.$order->order_id, 1, null,['class'=>'i-checks']) }}
+							@else
+								<span class="fa fa-check-square-o" aria-hidden="true"></span>
+							@endif
+					@endif
+
 			</td>
 	</tr>
 	@if ($batches->count()>0 && $order->order_completed==0)
@@ -251,6 +260,7 @@
 </tbody>
 </table>
 	{{ Form::hidden('ids', $ids) }}
+	{{ Form::hidden('dispense_ids', $dispense_ids) }}
 	{{ Form::hidden('encounter_id', $encounter_id) }}
 	<button class="btn btn-primary" type="submit" value="Submit">Update Status</button>
 </form>

@@ -550,7 +550,7 @@ class OrderController extends Controller
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
-			$orders = Order::select('b.encounter_id', 'e.product_code', 'product_name', 'orders.order_id', 'order_completed', 'patient_name', 'patient_mrn', 'k.created_at as consultation_date', 'f.name', 'cancel_id', 'cancel_reason', 'post_id', DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),DB::raw('TIMEDIFF(IFNULL(completed_at, now()),orders.created_at) as age'), 'order_quantity_supply', 'order_unit_price', 'type_name','inv_unit_cost', 'completed_at', 'j.name as completed_name')
+			$orders = Order::select('b.encounter_id', 'e.product_code', 'product_name', 'orders.order_id', 'order_completed', 'patient_name', 'patient_mrn', 'k.created_at as consultation_date', 'f.name', 'cancel_id', 'cancel_reason', 'post_id', DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),DB::raw('TIMEDIFF(IFNULL(completed_at, now()),orders.created_at) as age'), 'order_quantity_supply', 'order_unit_price', 'type_name','inv_unit_cost', 'completed_at', 'j.name as completed_name', 'l.name as dispensed_name', 'dispensed_at')
 					->leftJoin('encounters as b', 'b.encounter_id', '=', 'orders.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftJoin('products as e', 'e.product_code', '=', 'orders.product_code')
@@ -560,6 +560,7 @@ class OrderController extends Controller
 					->leftJoin('inventories as i', 'i.order_id', '=', 'orders.order_id')
 					->leftJoin('users as j', 'j.id', '=', 'orders.completed_by')
 					->leftJoin('consultations as k','k.consultation_id', '=', 'orders.consultation_id')
+					->leftJoin('users as l', 'l.id', '=', 'orders.dispensed_by')
 					->orderBy('b.encounter_id');
 
 			if (!empty($request->search)) {

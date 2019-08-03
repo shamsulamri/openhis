@@ -41,6 +41,8 @@ class Order extends Model
 				'updated_by',
 				'completed_at',
 				'completed_by',
+				'dispensed_at',
+				'dispensed_by',
 				'created_at',
 				'post_id',
 		];

@@ -108,9 +108,8 @@
 	<th>Cost</th>
 	<th>Price</th>
 	<th>Ordered By</th>
-	<th>Consultation Date</th>
 	<th>Completed By</th>
-	<th>Completed Date</th>
+	<th>Dispensed By</th>
 	<!--
 	<th>Age</th>
 	<th>Turnaround</th>
@@ -154,15 +153,21 @@
 			</td>
 			<td>
 					{{ $order->name }}
-			</td>
-			<td>
+					<small>
 					{{ DojoUtility::dateTimeReadFormat($order->consultation_date) }}
+					</small>
 			</td>
 			<td>
-					{{ $order->completed_name }}
-			</td>
-			<td>
+					{{ $order->completed_name?:'N/A' }}<br>
+					<small>
 					{{ DojoUtility::dateTimeReadFormat($order->completed_at) }}
+					</small>
+			</td>
+			<td>
+					{{ $order->dispensed_name }}<br>
+					<small>
+					{{ DojoUtility::dateTimeReadFormat($order->dispensed_at) }}
+					</small>
 			</td>
 			<!--
 			<td>

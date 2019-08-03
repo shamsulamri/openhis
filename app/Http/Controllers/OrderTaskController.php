@@ -117,6 +117,7 @@ class OrderTaskController extends Controller
 					'product_stocked',
 					'e.category_code',
 					'completed_at',
+					'dispensed_by',
 					'b.created_at as consultation_date'
 					];
 
@@ -159,9 +160,13 @@ class OrderTaskController extends Controller
 			
 				
 			$ids='';
+			$dispense_ids = '';
 			foreach ($order_tasks as $task) {
 					if ($task->order_completed==0) {
 							$ids .= (string)$task->order_id.",";
+					}
+					if ($task->order_completed==1 && empty($task->dispensed_by)) {
+							$dispense_ids .= (string)$task->order_id.",";
 					}
 			}
 
@@ -176,6 +181,7 @@ class OrderTaskController extends Controller
 					'encounter'=>$encounter,
 					'encounter_id' => $encounter_id,
 					'ids'=>$ids,
+					'dispense_ids'=>$dispense_ids,
 					'location'=>$location,
 					'product'=> new Product(),
 					'stock_helper'=> new StockHelper(),
@@ -282,10 +288,6 @@ class OrderTaskController extends Controller
 			$store_code = $location->store_code;
 
 			$helper = new StockHelper();
-			/*
-			$orders = Order::where('encounter_id', $request->encounter_id)
-							->get();
-			*/
 
 			$order_ids = explode(',', $request->ids);
 
@@ -299,7 +301,6 @@ class OrderTaskController extends Controller
 				$checked = $request[$order->order_id] ?:0;
 
 				if ($checked == 1) {
-						Log::info("Checked !!!".$order->product->product_name);
 						$batches = $helper->getBatches($order->product_code)?:null;
 						$last_batch = "";
 						if ($batches->count()>0) {
@@ -324,6 +325,7 @@ class OrderTaskController extends Controller
 								}
 						}
 				}
+
 			}
 
 			if ($valid) {
@@ -429,6 +431,7 @@ class OrderTaskController extends Controller
 						$order->save();
 						
 					} else {
+						/*
 						if ($order->order_completed == 1) {
 							Inventory::where('order_id', $order->order_id)->delete();
 							$order->order_completed = 0;
@@ -439,12 +442,30 @@ class OrderTaskController extends Controller
 							$order->order_quantity_request = $request['quantity_'.$order->order_id];
 							$order->save();
 						}
+						 */
 					}
 
 					if ($product->product_stocked == 1) {
 							$helper->updateStockOnHand($order->product_code);
 					}
 			}
+
+			$dispense_ids = explode(',', $request->dispense_ids);
+
+			$orders = Order::where('encounter_id', $request->encounter_id)
+							->whereIn('order_id', $dispense_ids)
+							->get();
+
+			foreach($orders as $order) {
+					$dispensed = $request['dispense_'.$order->order_id] ?:0;
+
+					if ($dispensed == 1) {
+							$order->dispensed_by = Auth::user()->id;
+							$order->dispensed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
+							$order->save();
+					}
+			}
+
 
 			Session::flash('message', 'Record successfully updated.');
 			return redirect('order_queues');
