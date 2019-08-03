@@ -102,11 +102,15 @@
 	<tr> 
     <th>EID</th>
     <th>Patient</th>
-	<th>Order Date</th>
+    <th>Type</th>
 	<th>Product</th>
 	<th>Units</th>
+	<th>Cost</th>
 	<th>Price</th>
 	<th>Ordered By</th>
+	<th>Consultation Date</th>
+	<th>Completed By</th>
+	<th>Completed Date</th>
 	<!--
 	<th>Age</th>
 	<th>Turnaround</th>
@@ -126,7 +130,7 @@
 					<small>{{$order->patient_mrn}}</small>
 			</td>
 			<td>
-					{{ DojoUtility::dateTimeReadFormat($order->order_date) }}
+					{{ $order->type_name }}
 			</td>
 			<td>
 					{{$order->product_name}}
@@ -143,10 +147,22 @@
 					{{ $order->order_quantity_supply }}
 			</td>
 			<td>
+					{{ number_format($order->inv_unit_cost,2) }}
+			</td>
+			<td>
 					{{ number_format($order->order_unit_price,2) }}
 			</td>
 			<td>
 					{{ $order->name }}
+			</td>
+			<td>
+					{{ DojoUtility::dateTimeReadFormat($order->consultation_date) }}
+			</td>
+			<td>
+					{{ $order->completed_name }}
+			</td>
+			<td>
+					{{ DojoUtility::dateTimeReadFormat($order->completed_at) }}
 			</td>
 			<!--
 			<td>
