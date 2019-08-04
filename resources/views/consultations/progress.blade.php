@@ -20,6 +20,8 @@ Progress Notes
 </div>
 -->
 <input id="show_my_note" @if ($showNurse=='true') checked="checked" @endif name="show_my_note" type="checkbox" value="1"> <label>Show my notes only</label>
+&nbsp;
+<input id="show_physician" @if ($showPhysician=='true') checked="checked" @endif name="show_physician" type="checkbox" value="1"> <label>Show physician notes only</label>
 <br>
 {{ $notes->render() }}
 @if (count($notes)>0)
@@ -237,6 +239,10 @@ $(document).ready(function(){
 
 			$('#show_my_note').click(function(){
 					window.location.href = "?show_all="+$('#show_all').is(":checked")+"&show_my_note="+this.checked;
+			});
+
+			$('#show_physician').click(function(){
+					window.location.href = "?show_all="+$('#show_all').is(":checked")+"&show_physician="+this.checked;
 			});
 
 	@foreach ($notes as $nota)

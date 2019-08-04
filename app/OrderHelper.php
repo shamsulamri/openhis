@@ -315,7 +315,6 @@ class OrderHelper
 					$order_investigation->save();
 			}
 
-			Log::info($order->product_code);
 			return $order->order_id;
 
 	}	
@@ -471,7 +470,6 @@ class OrderHelper
 			}
 
 			if ($drop_now) {
-				Log::info("--------------------------------");
 				if (!$order->orderCancel) {
 						$order->order_completed=1;
 						$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
@@ -527,7 +525,6 @@ class OrderHelper
 		$inventory->move_code = 'sale';
 		$inventory->inv_posted = 1;
 		$inventory->save();
-		Log::info("=================================");
 				
 	}
 
@@ -540,10 +537,8 @@ class OrderHelper
 
 			foreach ($orders as $order) {
 					if ($order->product->bom()) {
-							Log::info($order->product->bom);
 							foreach ($order->product->bom as $bom) {
 								$product = $bom->product;
-								Log::info($product->product_name);
 								$order_id = $order_helper->orderItem($product, null);
 								$bom_order = Order::find($order_id);
 								$bom_order->order_quantity_request = $bom->bom_quantity*$order->order_quantity_request;

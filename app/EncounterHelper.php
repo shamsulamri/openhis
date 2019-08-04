@@ -54,8 +54,6 @@ class EncounterHelper
 		public static function getConsultation($id)
 		{
 			$consultation = Consultation::find($id);
-			Log::info('------> '.$id);
-			Log::info($consultation->encounter);
 			return $consultation;
 		}
 

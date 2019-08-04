@@ -123,6 +123,9 @@ class PurchaseController extends Controller
 			if ($reason == 'purchase') {
 					$purchase = Purchase::find($request->purchase_id);
 					$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
+					if (!empty($request->search)) {
+						$purchases = $purchases->where('purchase_number', 'like', '%'.$request->search.'%');
+					}
 					$id = $request->purchase_id;
 			}
 

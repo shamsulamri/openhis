@@ -81,6 +81,12 @@ class ConsultationController extends Controller
 				$authorSql = sprintf(' (author_id <> %d)', 6);
 			}
 
+			if ($request->show_physician =='true') {
+				$authorSql = sprintf(' (author_id = %d)', 2);
+				$userSql = sprintf('and author_id = %d', 2);
+			}
+
+
 			$sql = "
 				select consultation_notes, annotations, a.consultation_id, orders, diagnoses, medications
 				from consultations as a
@@ -138,6 +144,10 @@ class ConsultationController extends Controller
 					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, "");
 			}
 
+			if ($request->show_physician =='true') {
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0 or medications>0)");
+			}
+
 			$notes = DB::select($sql);
 			/** Pagination **/
 			$page = Input::get('page', 1); 
@@ -165,6 +175,16 @@ class ConsultationController extends Controller
 			$notes = $notes->paginate(5);
 			 */
 
+			if (!empty($request->show_physician)) {
+					$request->show_all = null;
+					$request->show_my_note = null;
+			}
+
+			if (!empty($request->show_my_note)) {
+					$request->show_all = null;
+					$request->show_physician = null;
+			}
+
 			return view('consultations.progress', [
 					'notes'=>$notes,
 					'consultation'=>$consultation,
@@ -173,6 +193,7 @@ class ConsultationController extends Controller
 					'order_helper'=>new OrderHelper(),
 					'encounterHelper'=>new EncounterHelper(),
 					'showAll'=>$request->show_all?:null,
+					'showPhysician'=>$request->show_physician?:null,
 					'showNurse'=>$request->show_my_note ?:null,
 					'cutoff_date'=>Carbon::create(2019,7,5),
 			]);
