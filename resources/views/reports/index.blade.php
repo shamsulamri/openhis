@@ -53,6 +53,7 @@
 		<a href="{{ url('/bill_aging/enquiry') }}">Aging Report</a><br>
 	</div>
 	<div class="col-xs-6">
+		<a href="{{ url('/bill/report') }}">Bill Report</a><br>
 		<a href="{{ url('/bill/sponsor_outstanding') }}">Sponsor Outstanding Bill Report</a><br>
 	</div>
 </div>

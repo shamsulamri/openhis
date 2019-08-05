@@ -438,4 +438,20 @@ class BillController extends Controller
 					'keys'=>$keys
 			]);
 	}
+
+	public function report(Request $request) {
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			return view('bills.bill_report', [
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
+					'patient_types' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
+					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'type_code' => $request->type_code,
+					'encounter_code'=>$request->encounter_code,
+					'sponsors' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
+					'sponsor_code' => $request->sponsor_code,
+			]);
+	}
 }

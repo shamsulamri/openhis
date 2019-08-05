@@ -71,6 +71,8 @@ class Patient extends Model
 				'patient_lnmp',
 				'patient_edd',
 				'patient_block',
+				'sponsor_code',
+				'sponsor_id',
 				'patient_age'];
 	
 	protected $defaults = [

@@ -40,6 +40,7 @@ use App\Newborn;
 use App\PatientDependant;
 use App\Refund;
 use App\PatientMrn;
+use App\Sponsor;
 
 class PatientController extends Controller
 {
@@ -90,6 +91,7 @@ class PatientController extends Controller
 					'city' => City::all()->sortBy('city_name')->lists('city_name', 'city_code')->prepend('',''),
 					'flag' => PatientFlag::all()->sortBy('flag_name')->lists('flag_name', 'flag_code')->prepend('',''),
 					'postcodes'=>Postcode::all(),
+					'sponsors' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 			]);
 	}
 
@@ -157,6 +159,7 @@ class PatientController extends Controller
 					'patientOption' => 'demography',
 					'postcodes'=>Postcode::all(),
 					'city' => City::all()->sortBy('city_name')->lists('city_name', 'city_code')->prepend('',''),
+					'sponsors' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					]);
 	}
 

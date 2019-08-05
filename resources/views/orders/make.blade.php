@@ -19,6 +19,7 @@ iframe { border: 1px #e5e5e5 solid; }
 		<br>
 		<br>
 @endcannot
+
 <div class="row">
 	<div class="col-xs-6">
 		<iframe name='frameIndex' id='frameIndex' width='100%' height='850px' src='/order_products'></iframe>

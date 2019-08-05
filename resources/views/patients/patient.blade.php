@@ -22,6 +22,7 @@
 				<li class=""><a data-toggle="tab" href="#tab-3">Contact Information</a></li>
 				<li class=""><a data-toggle="tab" href="#tab-4">Work Information</a></li>
 				<li class=""><a data-toggle="tab" href="#tab-5">Photo</a></li>
+				<li class=""><a data-toggle="tab" href="#tab-7">Panel</a></li>
 				@can('system-administrator')
 				<li class=""><a data-toggle="tab" href="#tab-6">Account</a></li>
 				@endcan
@@ -552,6 +553,28 @@
 														<span class='glyphicon glyphicon-picture' aria-hidden='true'></span>
 													Upload<input type='file' name='file' style='display: none;' id='file' onchange='readURL(this);'>
 												</label>
+										</div>
+									</div>
+							</div>
+					</div>
+				</div>	
+			</div>
+			<div id="tab-7" class="tab-pane">
+				<div class="panel-body">
+					<div class="row">
+							<div class="col-xs-12">
+									<div class='form-group'>
+										<label class='col-sm-2 control-label'>Sponsor</label>
+										<div class='col-sm-10'>
+											{{ Form::select('sponsor_code', $sponsors,null, ['id'=>'sponsor_code','class'=>'form-control']) }}
+										</div>
+									</div>
+							</div>
+							<div class="col-xs-12">
+									<div class='form-group'>
+										<label class='col-sm-2 control-label'>Idenfication</label>
+										<div class='col-sm-10'>
+											{{ Form::text('sponsor_id', null, ['class'=>'form-control','placeholder'=>'Membership Number','maxlength'=>'50','style'=>'text-transform: uppercase']) }}
 										</div>
 									</div>
 							</div>

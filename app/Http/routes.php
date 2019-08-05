@@ -811,6 +811,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/bills/delete/{id}', 'BillController@delete');
 				Route::post('/bill/enquiry', 'BillController@enquiry');
 				Route::get('/bill/enquiry', 'BillController@enquiry');
+				Route::get('/bill/report', 'BillController@report');
 				Route::get('/bill/aging', 'BillController@aging');
 				Route::get('/bill/bill_edit/{id}', 'BillController@billEdit');
 				Route::post('/bill/bill_update/{id}', 'BillController@billUpdate');
