@@ -17,6 +17,7 @@ class Consultation extends Model
 				'user_id',
 				'consultation_status',
 				'consultation_notes',
+				'consultation_plan',
 				];
 	
     protected $guarded = ['consultation_id'];

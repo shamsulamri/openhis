@@ -87,14 +87,14 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 						<br>
 						<br>
 						<a href='/medication_record/verify/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
-							&nbsp;Verify&nbsp;
+							&nbsp;Witness&nbsp;
 						</a>
 						@endif
 				@endif
 				@if ($verifications->contains('medication_slot',$date_slot)) 
 					<br><br>
 					
-					<span class='label label-success' data-toggle='tooltip' data-placement='top' title='Verified by {{ $verifications[$date_slot]->name }}'>Verified</span>
+					<span class='label label-success' data-toggle='tooltip' data-placement='top' title='Witnessed by {{ $verifications[$date_slot]->name }}'>Witnessed</span>
 				@endif
 			@else
 					@if ($date_value==$entry_start)

@@ -67,7 +67,7 @@
 					<div class='form-group  @if ($errors->has('drug_strength')) has-error @endif'>
 						{{ Form::label('drug_strength', 'Strength',['class'=>'col-md-4 control-label']) }}
 						<div class='col-md-8'>
-							{{ Form::text('drug_strength', null, ['id'=>'dosage','class'=>'form-control input-sm','placeholder'=>'']) }}
+							{{ Form::text('drug_strength', null, ['id'=>'drug_strength','class'=>'form-control input-sm','placeholder'=>'']) }}
 						</div>
 					</div>
 			</div>
@@ -156,6 +156,14 @@
 			<div class="col-xs-6">
 			</div>
 	</div>
+
+    <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
+        {{ Form::label('Description', 'Instruction',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::textarea('order_description', $order->order_description, ['class'=>'form-control','placeholder'=>'','rows'=>'3']) }}
+            @if ($errors->has('order_description')) <p class="help-block">{{ $errors->first('order_description') }}</p> @endif
+        </div>
+    </div>
 
 	<div class="row">
 			<div class="col-xs-6">
@@ -300,6 +308,10 @@
 				document.getElementById('total').value=total;
 			}
 			@endif
+			console.log(frequency);
+			console.log(duration);
+			console.log(dosage);
+			console.log('-----');
 	}
 
 	function isNumber(n) {

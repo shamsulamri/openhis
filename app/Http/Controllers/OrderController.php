@@ -28,6 +28,7 @@ use App\User;
 use App\ProductCategory;
 use App\AMQPHelper as Amqp;
 use App\Document;
+use App\Set;
 
 class OrderController extends Controller
 {
@@ -441,6 +442,7 @@ class OrderController extends Controller
 
 	public function addOrder(Request $request)
 	{
+			Log::info("Salah, mane, firmino");
 			$product_code = $request->product_code;
 			Log::info($product_code);
 			$encounter_id = Session::get('encounter_id');
@@ -509,6 +511,127 @@ class OrderController extends Controller
 			}
 	}
 
+	public function plan(Request $request)
+	{
+			$encounter= Encounter::find(Session::get('encounter_id'));
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+
+			$plans = [];
+			if ($request->plan=='laboratory') { $plans = ['lab']; }
+			if ($request->plan=='imaging') { $plans = ['radiography']; }
+			if ($request->plan=='procedure') { $plans = ['fee_procedure']; }
+
+			$favorites = DB::table('orders')
+							->select('orders.product_code', DB::raw('count(*) as total'))
+							->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
+							->whereIn('category_code', $plans)
+							->groupBy('orders.product_code')
+							->orderBy('total', 'desc')
+							->limit(30)
+							->pluck('orders.product_code');
+							//->where('user_id', Auth::user()->id)
+
+			$products = Product::whereIn('product_code', $favorites)
+							->orderBy('category_code')
+							->orderBy('product_name')
+							->get();
+
+			$half = 1;
+			$chunks = [];
+			if ($products->count()>=14) {
+				$half = ceil($products->count()/2);
+				$chunks = $products->chunk($half);
+			} else {
+				$chunks[0] = $products;
+			}
+
+			return view('orders.plan', [
+					'consultation'=>$consultation,
+					'patient'=>$encounter->patient,
+					'encounter'=>$encounter,
+					'tab'=>'order',
+					'products'=> $chunks,
+					'consultOption' => 'consultation',
+					'orders'=>$consultation->orders->pluck('product_code')->toArray(),
+					'plan'=>$request->plan,
+					'half'=>$half,
+			]);
+	}
+
+	public function procedure()
+	{
+			$encounter= Encounter::find(Session::get('encounter_id'));
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+
+			return view('orders.procedure', [
+					'consultation'=>$consultation,
+					'patient'=>$encounter->patient,
+					'encounter'=>$encounter,
+					'plan'=>null,
+			]);
+	}
+
+	public function medication()
+	{
+			$consultation_id = Session::get('consultation_id');
+			$consultation = Consultation::findOrFail($consultation_id);
+			$encounter_id = $consultation->encounter_id;
+
+			$medications = OrderDrug::orderBy('b.created_at')
+						->leftJoin('orders as b', 'b.order_id', '=', 'order_drugs.order_id')
+						->where('encounter_id', $encounter_id)
+						->get();
+
+			return view('orders.medication', [
+					'medications'=>$medications,
+					'patient'=>$consultation->encounter->patient,
+					'consultation'=>$consultation,
+					'plan'=>null,
+			]);
+	}
+
+	public function discussion()
+	{
+			$encounter= Encounter::find(Session::get('encounter_id'));
+			$consultation = Consultation::findOrFail(Session::get('consultation_id'));
+
+			return view('orders.discussion', [
+					'consultation'=>$consultation,
+					'patient'=>$encounter->patient,
+					'encounter'=>$encounter,
+					'plan'=>null,
+			]);
+	}
+
+	public function postPlan(Request $request)
+	{
+			Log::info("Post plan....");
+			Log::info($request->consultation_plan);
+			
+			$consultation = Consultation::find($request->consultation_id);
+			$consultation->consultation_plan = $request->consultation_plan;
+			$consultation->save();
+			/*
+			$history_note = ConsultationHistory::where('patient_id', $request->patient_id)	
+					->where('history_code', $request->history_code)
+					->first();
+
+			if (empty($history_note)) {
+					$history_note = new ConsultationHistory();
+					$history_note->patient_id = $request->patient_id;
+					$history_note->history_code = $request->history_code;
+			}
+
+			$history_note->history_note = $request->history_note;
+			$history_note->save();
+
+			Log::info($history_note);
+			return $request->history_code." saved...";
+			 */
+			return "Saved...";
+
+	}
+
 	public function make()
 	{
 			$encounter= Encounter::find(Session::get('encounter_id'));
@@ -542,6 +665,7 @@ class OrderController extends Controller
 					'encounter'=>$encounter,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
+					'plan'=>null,
 			]);
 	}
 

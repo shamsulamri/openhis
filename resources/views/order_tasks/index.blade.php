@@ -95,6 +95,12 @@
 						</h3>
 					@endif
 
+					@if (!empty($order->order_description))
+						<h5>
+							{{ $order->order_description }}
+						</h5>
+					@endif
+
 					@if ($order->order_is_discharge==1)
 						<span class='label label-success'>Discharge Order</span>
 					@endif

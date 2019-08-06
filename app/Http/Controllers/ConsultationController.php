@@ -650,9 +650,11 @@ class ConsultationController extends Controller
 					$consultation->save();
 
 					if (!empty($request->triage)) {
-						$encounter = $consultation->encounter;
-						$encounter->triage_code = $request->triage;
-						$encounter->save();
+						if ($request->triage != 'undefined') {
+								$encounter = $consultation->encounter;
+								$encounter->triage_code = $request->triage;
+								$encounter->save();
+						}
 					}
 					Log::info("XXXXX");
 			}

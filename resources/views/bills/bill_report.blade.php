@@ -42,7 +42,7 @@
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-3 control-label'>Encounter</label>
+						<label class='col-sm-3 control-label'><div align='left'>Encounter</div></label>
 						<div class='col-sm-9'>
 							{{ Form::select('encounter_code', $encounter_type,$encounter_code, ['id'=>'encounter_code','class'=>'form-control']) }}
 						</div>
@@ -62,7 +62,7 @@
 	<div class="row">
 			<div class="col-xs-12">
 					<div class='form-group'>
-						<label class='col-sm-1 control-label'>Sponsor</label>
+						<label class='col-sm-1 control-label'><div align='left'>Sponsor</div></label>
 						<div class='col-sm-7'>
 							{{ Form::select('sponsor_code', $sponsors,$sponsor_code, ['id'=>'sponsor_code','class'=>'form-control']) }}
 						</div>

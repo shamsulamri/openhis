@@ -118,7 +118,8 @@ class OrderTaskController extends Controller
 					'e.category_code',
 					'completed_at',
 					'dispensed_by',
-					'b.created_at as consultation_date'
+					'b.created_at as consultation_date',
+					'order_description'
 					];
 
 			$order_tasks = DB::table('orders as a')

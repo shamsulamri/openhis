@@ -62,6 +62,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/consultation_histories/delete/{id}', 'ConsultationHistoryController@delete');
 		Route::post('/consultation_history', 'ConsultationHistoryController@post')->name('history.post');
 		
+
 		Route::resource('histories', 'HistoryController');
 		Route::get('/histories/id/{id}', 'HistoryController@searchById');
 		Route::post('/history/search', 'HistoryController@search');
@@ -941,6 +942,11 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/orders/single/{product_code}', 'OrderController@single');
 				Route::get('/orders/task', 'OrderController@task');
 				Route::get('/orders/make', 'OrderController@make');
+				Route::get('/orders/plan', 'OrderController@plan');
+				Route::get('/orders/medication', 'OrderController@medication');
+				Route::get('/orders/discussion', 'OrderController@discussion');
+				Route::post('/orders/discussion', 'OrderController@postPlan')->name('order.post_plan');
+				Route::get('/orders/procedure', 'OrderController@procedure');
 				Route::post('/orders/multiple', 'OrderController@multiple');
 				Route::resource('orders', 'OrderController', ['except'=>[ 'create', 'show']]);
 				Route::get('/orders/{id}/show', 'OrderController@show');

@@ -300,6 +300,19 @@ class OrderHelper
 							$order_drug->period_code = $renew_drug->period_code;
 
 							$order->order_quantity_request = $renew_drug->order->order_quantity_request;
+							if ($product->product_unit_charge==1) {
+									$dosage = $order_drug->drug_dosage;
+									$frequency = $order_drug->frequency?$order_drug->frequency->frequency_value:1;
+									$period = $order_drug->period?$order_drug->period->period_mins:1;
+
+									$total_unit = $dosage*$frequency;
+
+									if ($order_drug->drug_duration>0) {
+										$total_unit = $total_unit * (($order_drug->drug_duration*$period)/1440);
+									}
+									$order->order_quantity_request = $total_unit;
+									$order->order_quantity_supply = $total_unit;
+							}
 					}
 
 					$order->save();

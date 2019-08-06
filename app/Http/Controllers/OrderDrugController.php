@@ -72,7 +72,6 @@ class OrderDrugController extends Controller
 
 	public function addDrug(Request $request)
 	{
-
 			$product = Product::find($request->drug_code);
 			if ($product) {
 					OrderHelper::orderItem($product, $request->cookie('ward'));
@@ -106,13 +105,14 @@ class OrderDrugController extends Controller
 
 	public function updateDrug(Request $request)
 	{
+			Log::info($request->instruction);
+			
 			$order_id = $request->order_id;
 			$order = Order::find($order_id);
 			if (!empty($order)) {
 			if ($order->order_completed == 0) {
 					$drug = OrderDrug::where('order_id', $order_id)->first();
 					if ($drug) {
-							Log::info('Update drug............');
 							$drug->drug_strength = $request->drug_strength;
 							$drug->unit_code = $request->unit_code;
 							$drug->drug_dosage = $request->drug_dosage;
@@ -122,7 +122,6 @@ class OrderDrugController extends Controller
 							$drug->drug_duration = $request->drug_duration;
 							$drug->period_code = $request->period_code;
 
-							Log::info($drug);
 							$dosage = $drug->drug_dosage;
 							$frequency = $drug->frequency?$drug->frequency->frequency_value:1;
 							$period = $drug->period?$drug->period->period_mins:1;
@@ -141,9 +140,11 @@ class OrderDrugController extends Controller
 							$order->order_quantity_request = $total_unit;
 							$order->order_quantity_supply = $total_unit;
 							$order->order_is_discharge = $request->discharge?1:0;
+							$order->order_description = $request->instruction;
 							$order->save();
-							Log::info('-->'.$request->discharge);
-							Log::info($order->order_is_discharge);
+
+							Log::info($request->instruction);
+							Log::info($order->order_description);
 
 							$drug->save();
 					}
@@ -277,7 +278,7 @@ class OrderDrugController extends Controller
 					$drug_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeDrug(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $med->order_id);
 
 					if ($med->order->order_completed == 1) {
-							$drug_remove = sprintf("<a disabled tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeDrug(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $med->order_id);
+							$drug_remove = "";
 					}
 
 					$checked = "";
@@ -285,6 +286,9 @@ class OrderDrugController extends Controller
 
 
 					$discharge_order = sprintf("<input type='checkbox' id='discharge_%s' value='1' onchange=%s %s>", $med->order_id, chr(34)."javascript:updateDrug('discharge_".$med->order_id."')".chr(34), $checked);
+					if ($med->order->order_completed == 1) {
+						$discharge_order = "<span class='fa fa-check-square-o' aria-hidden='true'></span>";
+					}
 
 					$table_header = sprintf("
 							<tr bgcolor='%s'>
@@ -319,10 +323,10 @@ class OrderDrugController extends Controller
 
 					$table_row .=sprintf(" 
 							%s
-							<tr height='50'>
-							        <td width='1' style='vertical-align:top'>%s</td>
+							<tr>
+							        <td width='1' style='vertical-align:middle'>%s</td>
 							        <td width=20></td>
-							        <td width=%s style='vertical-align:top'>%s<small>%s</small></td>
+							        <td width=%s style='vertical-align:middle'>%s</td>
 							        <td width=80 style='vertical-align:top'><input id='strength_%s' name='strength_%s' class='form-control input-sm small-font' type='text' value='%s'></td>
 							        <td width=150 style='vertical-align:top'>%s</td>
 							        <td width=20></td>
@@ -338,12 +342,27 @@ class OrderDrugController extends Controller
 							        <td width=20></td>
 							        <td width='1' style='vertical-align:top'>%s</td>
 							</tr>
+							<tr height=45>
+									<td colspan=2>
+									</td>
+									<td colspan=1 style='vertical-align:top'>
+										<div valign='top'>
+										<small>%s</small>
+										</div>
+									</td>
+									<td colspan=12 style='vertical-align:middle'>
+										<input id='instruction_%s' name='instruction_%s' type='text' value='%s' class='form-control' placeholder='Special Instruction'>
+									</td>
+							</tr>
+							<tr height=12>
+									<td>
+									</td>
+							</tr>
 							", 
 							$table_header,
 							$discharge_order,
 							'30%',
 							$drug_name,
-							$med->order->product->drug?$med->order->product->drug->trade_name:'<br>'.$med->order->product->product_name_other,
 							$med->order_id,	$med->order_id, $med->drug_strength, 
 							$this->getUnits($med->order->product_code, $med->order_id, $med->unit_code),
 							$med->order_id,	$med->order_id,	$med->drug_dosage,
@@ -354,7 +373,11 @@ class OrderDrugController extends Controller
 							$med->order_id,
 							$med->drug_duration,
 							$this->getPeriods($med->order->product_code, $med->order_id, $med->period_code),
-							$drug_remove
+							$drug_remove,
+							$med->order->product->drug?$med->order->product->drug->trade_name:$med->order->product->product_name_other,
+							$med->order_id,
+							$med->order_id,
+							$med->order->order_description
 					);
 
 					$last_user_id = $med->order->user_id;
@@ -406,7 +429,6 @@ class OrderDrugController extends Controller
 
 	function find(Request $request)
 	{
-			Log::info("Find drug....");
 			if (!empty($request->search)) {
 
 				$fields = explode(' ', $request->search);
@@ -447,9 +469,7 @@ class OrderDrugController extends Controller
 				$drug_dosage = "";
 				$drug_route = "";
 
-				Log::info($sql);
 				foreach($data as $row) {
-						Log::info($row->drug_generic_name);
 					$drug_name = $row->drug_generic_name;
 					if (!empty($row->trade_name)) {
 							$drug_name = sprintf('%s (%s)',$row->trade_name, $row->drug_generic_name);
@@ -723,7 +743,6 @@ class OrderDrugController extends Controller
 	{
 			if (!empty($request->search)) {
 				$fields = explode(' ', $request->search);
-				Log::info($fields);
 				$data = Product::select('product_name', 'product_code');
 
 				foreach($fields as $field) {
@@ -869,6 +888,7 @@ class OrderDrugController extends Controller
 			$order_drug->fill($request->input());
 
 			$order = Order::find($order_drug->order_id);
+			$order->order_description = $request->order_description;
 
 			$product= Product::find($order->product_code);
 			//$order->fill($request->input());

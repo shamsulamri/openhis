@@ -54,12 +54,19 @@ label {
   font-weight: normal;
 }
 </style>
-<h1>Medications
-</h1>
+<h1>Plan</h1>
+<ul class="nav nav-tabs">
+  <li @if ($plan=='laboratory') class="active" @endif><a href="plan?plan=laboratory">Laboratory</a></li>
+  <li @if ($plan=='imaging') class="active" @endif><a href="plan?plan=imaging">Imaging</a></li>
+  <li><a href="procedure">Procedures</a></li>
+  <li class="active"><a href="medication">Medications</a></li>
+  <li><a href="discussion">Discussion</a></li>
+  <li><a href="make">Orders</a></li>
+</ul>
+<br>
 <a href="order_drugs/post/{{ $consultation->consultation_id }}" class='btn btn-success'>Post Drugs</a>
 <br>
 <br>
-<h3>Orders</h3>
 <div id="medicationList"></div>
 <div class="widget style1 gray-bg">
 	<input type='text' class='form-control' placeholder="Enter medication name" id='search' name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
@@ -176,9 +183,8 @@ $(document).ready(function(){
 					var instruction = $('#instruction_'.concat(id)).val();
 					//console.log(strength, unit_code, dosage,frequency, duration, period, discharge);
 					instruction = encodeURIComponent(instruction);
-					console.log(instruction);
 
-					var dataString = parse('drug_strength=%s&unit_code=%s&drug_dosage=%s&dosage_code=%s&route_code=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s&discharge=%s%instruction=%s', 
+					var dataString = parse('drug_strength=%s&unit_code=%s&drug_dosage=%s&dosage_code=%s&route_code=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s&discharge=%s&instruction=%s', 
 							strength,
 							unit_code,
 							dosage, 
@@ -191,6 +197,7 @@ $(document).ready(function(){
 							discharge,
 							instruction
 					);
+					console.log(dataString);
 
 					$.ajax({
 						type: "POST",

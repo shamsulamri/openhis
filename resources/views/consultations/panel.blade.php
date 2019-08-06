@@ -39,9 +39,35 @@
 	<a href="/consultations/{{ $consultation->consultation_id }}/edit" class="btn btn-primary">Clinical Notes</a>
 	<a href="/consultation_histories" class="btn btn-primary">Histories</a>
 	<a href="/consultation_diagnoses" class="btn btn-primary">Diagnoses</a>
+	<!--
 	<a href="/consultation_procedures" class="btn btn-primary">Procedures</a>
 	<a href="/orders/make" class="btn btn-primary">Orders</a>
 	<a href="/medications" class="btn btn-primary">Medications</a>
+	-->
+
+	<div class="btn-group">
+<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Plan
+      <span class="caret"></span>
+    </button>
+		<ul class="dropdown-menu">
+		<li><a href="/orders/plan?plan=laboratory">Laboratory</a></li>
+		<li><a href="/orders/plan?plan=imaging">Imaging</a></li>
+		<li><a href="/orders/procedure">Procedure</a></li>
+		<li><a href="/orders/medication">Medications</a></li>
+		<li><a href="/orders/discussion">Discussion</a></li>
+		<li role="separator" class="divider"></li>
+		<li><a href="/orders/make">Orders</a></li>
+		</ul>
+	</div>
+
+
+</div>
+
+<div class="btn-group" role="group" aria-label="...">
+	<a href="/orders/procedure" class="btn btn-danger">Procedures</a>
+	<a href="/orders/medication" class="btn btn-danger">Medications</a>
+	<a href="/orders/make" class="btn btn-danger">Orders</a>
 </div>
 
 <div class="dropdown pull-right">
