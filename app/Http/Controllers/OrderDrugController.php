@@ -258,6 +258,7 @@ class OrderDrugController extends Controller
 						->leftJoin('drug_dosages as c', 'c.dosage_code', '=', 'order_drugs.dosage_code')
 						->leftJoin('drug_routes as d', 'd.route_code', '=', 'order_drugs.route_code')
 						->where('encounter_id', $encounter_id)
+						->where('consultation_id', $consultation_id)
 						->get();
 
 			$table_row = "";
