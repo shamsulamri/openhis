@@ -78,8 +78,6 @@
 				<a href="{{ url('/purchase_orders') }}">Purchase Orders</a><br>
 				<a href="{{ url('/suppliers') }}">Suppliers</a><br>
 				<a href="{{ url('/stores') }}">Stores</a><br>
-				<a href="{{ url('/drugs') }}">Drugs</a><br>
-				<a href="{{ url('/drug_prescriptions') }}">Drug Prescriptions</a><br>
 				<a href="{{ url('/order_routes') }}">Order Routes</a><br>
 				<a href="{{ url('/loans') }}">Loans</a><br>
 				<a href="{{ url('/product_authorizations') }}">Product Authorizations</a><br>
@@ -100,16 +98,23 @@
 				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
 				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
 				<a href="{{ url('/loan_types') }}">Loan Types</a><br>
-				<a href="{{ url('/forms') }}">Forms</a><br>
-				<a href="{{ url('/form_systems') }}">Form systems</a><br>
-			</small>
-			</div>
-			<div class="col-xs-3">
-			<small>
 				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
 				<a href="{{ url('/tax_types') }}">Tax Types</a><br>
 				<a href="{{ url('/general_ledgers') }}">General Ledger Codes</a><br>
 				<a href="{{ url('/product_charges') }}">Tiers</a><br>
+			</small>
+			</div>
+	</div>
+	</h4>
+<h3>Pharmacy</h3>
+	<h4>
+	<div class="row">
+			<div class="col-xs-6">
+				<a href="{{ url('/drugs') }}">Drugs</a><br>
+				<a href="{{ url('/drug_prescriptions') }}">Drug Prescriptions</a><br>
+			</div>
+			<div class="col-xs-6">
+			<small>
 				<a href="{{ url('/drug_categories') }}">Drug Categories</a><br>
 				<a href="{{ url('/drug_systems') }}">Drug Systems</a><br>
 				<a href="{{ url('/drug_dosages') }}">Drug Dosages</a><br>
@@ -123,6 +128,21 @@
 			</div>
 	</div>
 	</h4>
+<br>
+<h3>Form</h3>
+	<h4>
+	<div class="row">
+			<div class="col-xs-6">
+				<a href="{{ url('/forms') }}">Forms</a><br>
+			</div>
+			<div class="col-xs-6">
+			<small>
+				<a href="{{ url('/form_systems') }}">Form systems</a><br>
+			</small>
+			</div>
+	</div>
+	</h4>
+<br>
 <h3>Billing Management</h3>
 	<h4>
 	<div class="row">
