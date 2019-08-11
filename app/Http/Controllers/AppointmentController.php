@@ -204,8 +204,7 @@ class AppointmentController extends Controller
 					$date_start = DojoUtility::dateTimeWriteFormat(DojoUtility::today().' 00:00');
 			}
 
-			$appointments = Appointment::orderBy('appointment_id')
-					->leftJoin('patients as b', 'appointments.patient_id', '=', 'b.patient_id');
+			$appointments = Appointment::leftJoin('patients as b', 'appointments.patient_id', '=', 'b.patient_id');
 
 			if (!empty($request->cookie('appointment_service'))) {
 					$service_id = $request->cookie('appointment_service');
@@ -236,7 +235,7 @@ class AppointmentController extends Controller
 				$appointments = $appointments->where('appointment_datetime', '>=', Carbon::today());
 			}
 
-			$appointments = $appointments->orderBy('appointment_id')
+			$appointments = $appointments->orderBy('appointment_datetime')
 					->paginate($this->paginateValue);
 
 			return view('appointments.index', [
