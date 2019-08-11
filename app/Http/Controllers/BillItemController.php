@@ -502,7 +502,7 @@ class BillItemController extends Controller
 			";
 
 			$base_sql = "
-				select a.product_code, sum(order_unit_price*(IFNULL(order_discount,100)/100)) as total_price, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code,product_name
+				select a.product_code, sum(order_unit_price*(IFNULL((100-order_discount),100)/100)) as total_price, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code,product_name
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
