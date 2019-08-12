@@ -14,6 +14,7 @@ use App\Product;
 use App\QueueLocation as Location;
 use App\Consultation;
 use App\Encounter;
+use App\EncounterType;
 use Auth;
 use App\OrderInvestigation;
 use App\OrderDrug;
@@ -674,7 +675,31 @@ class OrderController extends Controller
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
-			$orders = Order::select('b.encounter_id', 'e.product_code', 'product_name', 'orders.order_id', 'order_completed', 'patient_name', 'patient_mrn', 'k.created_at as consultation_date', 'f.name', 'cancel_id', 'cancel_reason', 'post_id', DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),DB::raw('TIMEDIFF(IFNULL(completed_at, now()),orders.created_at) as age'), 'order_quantity_supply', 'order_unit_price', 'type_name','inv_unit_cost', 'completed_at', 'j.name as completed_name', 'l.name as dispensed_name', 'dispensed_at')
+			$orders = Order::select(
+					'b.encounter_id', 
+					'encounter_name',
+					'patient_name', 
+					'patient_mrn', 
+					'type_name',
+					'product_name', 
+					'e.product_code', 
+					'inv_unit_cost', 
+					'order_unit_price', 
+					'f.name', 
+					'k.created_at as consultation_date', 
+					'j.name as completed_name', 
+					'completed_at', 
+					'l.name as dispensed_name', 
+					'dispensed_at',
+					'order_completed', 
+					'orders.order_id', 
+					'cancel_id', 
+					'cancel_reason', 
+					'post_id', 
+					DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),
+					DB::raw('TIMEDIFF(IFNULL(completed_at, now()),orders.created_at) as age'), 
+					'order_quantity_supply'
+					)
 					->leftJoin('encounters as b', 'b.encounter_id', '=', 'orders.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 					->leftJoin('products as e', 'e.product_code', '=', 'orders.product_code')
@@ -685,6 +710,7 @@ class OrderController extends Controller
 					->leftJoin('users as j', 'j.id', '=', 'orders.completed_by')
 					->leftJoin('consultations as k','k.consultation_id', '=', 'orders.consultation_id')
 					->leftJoin('users as l', 'l.id', '=', 'orders.dispensed_by')
+					->leftJoin('ref_encounter_types as m', 'm.encounter_code', '=', 'b.encounter_code')
 					->orderBy('b.encounter_id');
 
 			if (!empty($request->search)) {
@@ -695,8 +721,10 @@ class OrderController extends Controller
 					});
 			}
 
+			if (!empty($request->encounter_code)) {
+					$orders = $orders->where('b.encounter_code','=',$request->encounter_code);
+			}
 
-			Log::info("----");
 			if (!empty($request->date_start) && empty($request->date_end)) {
 				$orders = $orders->where('orders.created_at', '>=', $date_start.' 00:00');
 			}
@@ -790,6 +818,8 @@ class OrderController extends Controller
 					'product_code' => $request->product_code?:null,
 					'age' => $request->age,
 					'encounter_id' => $request->encounter_id,
+					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'encounter_code'=>$request->encounter_code?:null,
 					]);
 	}
 

@@ -97,6 +97,20 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Encounter</label>
+						<div class='col-sm-9'>
+							{{ Form::select('encounter_code', $encounter_type,$encounter_code, ['id'=>'encounter_code','class'=>'form-control']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+			</div>
+			<div class="col-xs-4">
+			</div>
+	</div>
 	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
 	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
 	<input type='hidden' id='export_report' name="export_report">
@@ -132,6 +146,8 @@
 	<tr>
 			<td>
 					{{ $order->encounter_id }}
+					<br>
+					{{ $order->encounter_name }}
 			</td>
 			<td>
 					{{$order->patient_name}}
@@ -214,12 +230,14 @@
 		'search'=>$search,
 		'ward_code'=>$ward_code, 
 		'user_id'=>$user_id,
-		'date_start'=>$date_start, 
-		'date_end'=>$date_end, 
+		'date_start'=>DojoUtility::dateReadFormat($date_start),
+		'date_end'=>DojoUtility::dateReadFormat($date_end),
 		'category_code'=>$category_code,
 		'age'=>$age,
 		'encounter_id'=>$encounter_id,
 		'status_code'=>$status_code,
+		'product_code'=>$product_code,
+		'encounter_code'=>$encounter_code,
 ])->render() }}
 <br>
 @if ($orders->total()>0)
