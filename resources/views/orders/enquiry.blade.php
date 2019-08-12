@@ -14,7 +14,7 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-2 control-label'>Ward</label>
+						<label class='col-sm-2 control-label'><div align='left'>Ward</div></label>
 						<div class='col-sm-10'>
             				{{ Form::select('ward_code', $ward,$ward_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
@@ -22,7 +22,7 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-2 control-label'>Physician</label>
+						<label class='col-sm-2 control-label'><div align='left'>Physician</div></label>
 						<div class='col-sm-10'>
 								{{ Form::select('user_id', $consultants,$user_id, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
@@ -43,7 +43,7 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-2 control-label'>To</label>
+						<label class='col-sm-2 control-label'><div align='left'>To</div></label>
 						<div class='col-sm-10'>
 							<div class="input-group date">
 								<input data-mask="99/99/9999" name="date_end" id="date_end" type="text" class="form-control" value="{{ DojoUtility::dateReadFormat($date_end) }}">
@@ -54,7 +54,7 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label for='date_end' class='col-sm-2 control-label'>Category</label>
+						<label for='date_end' class='col-sm-2 control-label'><div align='left'>Category</div></label>
 						<div class='col-sm-10'>
 								{{ Form::select('category_code', $categories,$category_code, ['class'=>'form-control','maxlength'=>'10']) }}
 						</div>
@@ -70,6 +70,7 @@
 						</div>
 					</div>
 			</div>
+<!--
 			<div class="col-xs-4">
 					<div class='form-group'>
 						<label class='col-sm-2 control-label'>Age</label>
@@ -78,9 +79,18 @@
 						</div>
 					</div>
 			</div>
+-->
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label class='col-sm-2 control-label'>Id</label>
+						<label class='col-sm-2 control-label'>Product</label>
+						<div class='col-sm-10'>
+							{{ Form::text('product_code', $product_code, ['class'=>'form-control','maxlength'=>'20']) }}
+						</div>
+					</div>
+			</div>
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-2 control-label'><div align='left'>Id</div></label>
 						<div class='col-sm-10'>
 							{{ Form::text('encounter_id', $encounter_id, ['placeholder'=>'Encounter Id','class'=>'form-control','maxlength'=>'2']) }}
 						</div>

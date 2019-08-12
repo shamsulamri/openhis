@@ -713,6 +713,10 @@ class OrderController extends Controller
 					$orders = $orders->where('orders.ward_code','=',$request->ward_code);
 			}
 
+			if (!empty($request->product_code)) {
+					$orders = $orders->where('e.product_code','=',$request->product_code);
+			}
+
 			if (!empty($request->encounter_id)) {
 					$orders = $orders->where('orders.encounter_id','=',$request->encounter_id);
 			}
@@ -783,6 +787,7 @@ class OrderController extends Controller
 					'category_code' => $request->category_code,
 					'status'=> $status,
 					'status_code' => $request->status_code,
+					'product_code' => $request->product_code?:null,
 					'age' => $request->age,
 					'encounter_id' => $request->encounter_id,
 					]);
