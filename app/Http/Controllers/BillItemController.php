@@ -419,12 +419,14 @@ class BillItemController extends Controller
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				left join users as j on (j.id = a.user_id)
 				left join departments as k on (k.department_code = j.department_code)
+				left join order_cancellations as l on (l.order_id = a.order_id)
 				where b.deleted_at is null
 				%s
 				and b.category_code='fee_procedure'
 				and g.encounter_id = %d
 				and bill_id is null 
 				and order_multiple=0
+				and cancel_id is null
 				group by product_code,order_unit_price
 			";
 
