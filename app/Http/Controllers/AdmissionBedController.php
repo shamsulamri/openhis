@@ -77,14 +77,15 @@ class AdmissionBedController extends Controller
 					->leftJoin('ward_classes as f', 'f.class_code', '=', 'a.class_code')
 					->leftJoin('wards as g', 'g.ward_code', '=', 'a.ward_code')
 					->leftJoin('ward_rooms as h', 'h.room_code', '=', 'a.room_code')
-					->whereNull('discharge_id')
 					->where('a.ward_code','like','%'.$ward_code.'%')
 					->where('a.class_code','like','%'.$ward_class.'%')
 					->where('g.encounter_code',$encounter->encounter_code)
 					->orderBy('room_name')
 					->orderBy('bed_name')
-					->orderBy('ward_name')
-					->paginate($this->paginateValue);
+					->orderBy('ward_name');
+					//->whereNull('discharge_id')
+
+			$admission_beds = $admission_beds->paginate($this->paginateValue);
 
 			/*
 					$wards2 = Ward::where('encounter_code','=', $encounter->encounter_code)
