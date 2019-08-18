@@ -171,7 +171,9 @@ if ($_COOKIE['his-navbar']==1) {
 								<h4>&nbsp;Support</h4>
 						</div>
 						<li><a href="{{ url('/order_queues') }}"><i class='fa fa-question-circle-o'></i><span class='nav-label'>Order Queues</span></a></li>
+					@if (Auth::user()->consultant==1)
 						<li><a href="{{ url('/order_queues/report') }}"><i class='fa fa-pencil'></i><span class='nav-label'>Report Queues</span></a></li>
+					@endif
 						<!--
 						<li><a href="{{ url('/admission_tasks') }}"><i class='fa fa-question-circle'></i><span class='nav-label'>Inpatient Tasks<span></a></li>
 						-->
