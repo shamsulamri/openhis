@@ -433,13 +433,13 @@ class OrderQueueController extends Controller
 			return view('order_queues.index', [
 					'order_queues'=>$order_queues,
 					'search'=>$request->search,
+					'encounter_code'=>$request->encounter_code,
 					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
 					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'location'=>$location,
 					'encounter_code'=>null,
 					'is_discharge'=>$request->discharge,
 					'count'=>$request->count,
-					'encounter_code'=>$request->encounter_code,
 					'status'=>$status,
 					'status_code'=>$request->status_code,
 					'is_future'=>$is_future,
@@ -481,5 +481,81 @@ class OrderQueueController extends Controller
 			return redirect('/order_queues')
 				->withCookie(cookie('queue_encounters',$queue_encounters, 2628000))
 				->withCookie(cookie('queue_categories',$queue_categories, 2628000));
+	}
+
+	public function report(Request $request) {
+			$location_code = Auth::user()->defaultLocation($request);
+			$location = QueueLocation::find($location_code);
+			$queue_encounters = explode(';',Auth::user()->authorization->queue_encounters);
+			$queue_categories = explode(';',Auth::user()->authorization->queue_categories);
+
+			$orders = Order::select('orders.order_id')
+					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
+					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'b.consultation_id')
+					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->leftjoin('patients as p', 'p.patient_id', '=', 'c.patient_id')
+					->whereIn('c.encounter_code', $queue_encounters)
+					->where('order_completed','=',1)
+					->whereNull('cancel_id')
+					->whereNotNull('n.post_id')
+					->distinct('orders.order_id')
+					->orderBy('c.created_at', 'desc');
+
+			if (Auth::user()->author_id==15) {
+					$orders = $orders->where('category_code', '=', 'radiography');
+			} else {
+					$orders = $orders->where('category_code', '=', 'lab');
+			}
+
+			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
+			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed');
+
+			$count = $request->count ?: 0;
+
+			if (!empty($request->encounter_code)) {
+					$orders = $orders->where('c.encounter_code','=', $request->encounter_code);
+			}
+
+			if ($request->status_code =='incomplete') {
+					$orders = $orders->whereNull('order_report');
+			} 
+			if ($request->status_code =='completed') {
+					$orders = $orders->whereNotNull('order_report');
+			} 
+
+			if (!empty($request->search)) {
+					$orders = $orders->where(function ($query) use ($request) {
+							$query->where('patient_mrn','like','%'.$request->search.'%')
+								->orWhere('patient_name', 'like','%'.$request->search.'%');
+					});
+			}
+
+			$orders = $orders->paginate($this->paginateValue);
+
+			$helper = new OrderHelper();
+			//$helper->removeDuplicate();
+
+			return view('order_queues.report', [
+					'orders'=>$orders,
+					'search'=>$request->search,
+					'locations' => QueueLocation::whereNull('encounter_code')->orderBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'location'=>$location,
+					'encounter_code'=>null,
+					'count'=>$count,
+					'status'=>$status,
+					'status_code'=>null,
+					'queue_encounters'=>$queue_encounters,
+					'queue_categories'=>$queue_categories,
+					'location_code'=>$location_code,
+					'helper'=> new OrderHelper(),
+					'encounter_helper'=> new EncounterHelper(),
+					'status_code'=>$request->status_code,
+					'search'=>$request->search,
+					'encounter_code'=>$request->encounter_code,
+					]);
 	}
 }

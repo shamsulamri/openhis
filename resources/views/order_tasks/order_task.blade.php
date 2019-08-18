@@ -12,9 +12,9 @@
     </div>
 	@if ($order_task->orderInvestigation)
     <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
-        <label for='user' class='col-sm-3 control-label'>Investigation Date</label>
+        <label for='user' class='col-sm-3 control-label'>Consultation Date</label>
         <div class='col-sm-9'>
-            {{ Form::label('execute', $order_task->orderInvestigation->investigation_date, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('execute', DojoUtility::dateTimeReadFormat($order_task->consultation->created_at), ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
     <div class='form-group  @if ($errors->has('order_custom_id')) has-error @endif'>
@@ -28,7 +28,7 @@
     <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
         {{ Form::label('order_report', 'Report',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::textarea('order_report', null, ['id'=>'order_report','onkeyup'=>'taskCompleted()','class'=>'form-control','placeholder'=>'','rows'=>'15']) }}
+            {{ Form::textarea('order_report', null, ['id'=>'order_report','onkeyup'=>'taskCompleted()','class'=>'form-control','placeholder'=>'','rows'=>'25']) }}
         </div>
     </div>
 	@if ($product->product_stocked)
@@ -87,14 +87,25 @@
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
-            <a class="btn btn-default" href="/order_tasks/task/{{ $encounter_id }}/{{ $order_task->product->location_code }}" role="button">Back</a>
+			@if ($report)
+					<a class="btn btn-default" href="/order_queues/report" role="button">Back</a>
+					@else
+					<a class="btn btn-default" href="/order_tasks/task/{{ $encounter_id }}/{{ $order_task->product->location_code }}" role="button">Back</a>
+			@endif
 			@if (!empty($order_task->order_report))
 			<a target="_blank" class='btn btn-success pull-right' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=order_report&id={{ $order_task->order_id }}">
+				Print
+			</a>
+			@else
+			<a class='btn btn-success pull-right disabled' href="#">
 				Print
 			</a>
 			@endif
         </div>
     </div>
+			@if ($report)
+            {{ Form::hidden('report', 1) }}
+			@endif
             {{ Form::hidden('consultation_id', null) }}
 
 

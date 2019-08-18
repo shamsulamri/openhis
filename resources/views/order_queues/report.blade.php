@@ -8,7 +8,7 @@ audio {
 }
 </style>
 @if (!$count>0) 
-		@if ($order_queues->count()>$count)
+		@if ($orders->count()>$count)
 				<audio controls autoplay>
 						<source src="Positive.ogg" type="audio/mpeg">
 						Your browser does not support the audio element.
@@ -16,30 +16,11 @@ audio {
 		@endif
 @endif
 <h1>
-@if ($is_future)
-Future Orders
-@else
-Order Queues
-@endif
-<!--
-<a class='pull-right' href='{{ URL::to('order_queues/setup') }}'><i class="fa fa-cog"></i></a>
--->
+Report Queues
 </h1>
 <h3>{{ $location->location_name }}</h3>
 <br>
-@if ($future_count>0)
-<div class="row">
-	<div class="col-md-4">
-		<div class='panel panel-default'>
-			<div class='panel-body' align='middle'>
-				<h5><strong>Future Orders</strong></h5>	
-				<h4><strong>{{ $future_count }}</strong></h4>	
-			</div>
-		</div>
-	</div>
-</div>
-@endif
-<form action='/order_queue/report' method='post' class='form-horizontal'>
+<form action='/order_queues/report' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
@@ -71,26 +52,29 @@ Order Queues
 	{{ Form::select('locations', $locations, $location, ['class'=>'form-control','maxlength'=>'10']) }}
 	-->
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-	<input type='hidden' name="future" value="{{ $is_future }}">
 	<input type='hidden' name="location_code" value="{{ $location_code }}">
 </form>
 
 <br>
-@if ($order_queues->total()>0)
+@if ($orders->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
     <th width='10'>Encounter</th>
     <th>Date</th>
-    <th>Queue Number</th>
+    <th>EID</th>
     <th>Patient</th>
-    <th>Location</th>
-    <th>Orderer</th>
+    <th>Product</th>
+    <th>Ordered By</th>
+    <th>Status</th>
 	<th></th>
 	</tr>
   </thead>
 	<tbody>
-@foreach ($order_queues as $order)
+@foreach ($orders as $order)
+	<?php
+		$order = $helper->getOrder($order->order_id);
+	?>
 	<tr>
 			<td>
 				<?php 
@@ -112,25 +96,12 @@ Order Queues
 				<span>
 			</td>
 			<td>
-			@if ($is_future)
-					{{ (DojoUtility::dateLongFormat($order->investigation_date)) }}
-			@else
-					{{ DojoUtility::dateLongFormat($order->consultation->created_at) }}
-			@endif
+					{{ DojoUtility::dateTimeReadFormat($order->consultation->created_at) }}
 			</td>
 			<td>
-			@if ($is_future)
-				@if (!empty($encounter_helper->getActiveEncounter($order->patient_id)))
-					{{ $encounter_helper->getActiveEncounter($order->patient_id)->encounter_description }}	
-				@else
-					-
-				@endif
-			@else
-				{{ $order->consultation->encounter->encounter_description }}
-			@endif
+					{{ $order->encounter_id }}
 			</td>
 			<td>
-					{{ $order->discharge_id }}
 					@if ($order->consultation->encounter->patient)
 					{{ $order->consultation->encounter->patient->patient_name }}
 					<br>
@@ -138,42 +109,23 @@ Order Queues
 					@endif
 			</td>
 			<td>
-					@if ($order->admission) 
-							{{ $order->admission->bed->bed_name }}
-							({{ $order->admission->bed->ward->ward_name }})
-					@else
-							{{ $order->consultation->encounter->queue->location->location_name }}
-					@endif						
+					{{ $order->product->product_name }}
 			</td>
 			<td>
-					{{ $order->consultation->user->name }}<br>
+					{{ $order->consultation->user->name }}
+
+			</td>
+			<td>
+					{{ $order->order_report?'Completed':'-' }}
 
 			</td>
 			<td align='right'>
-			@if ($is_future)
-					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code .'?future=true' }}' class='btn btn-primary'>
-					@else
-					<a href='{{ URL::to('order_tasks/task/'. $order->encounter_id) .'/'. $order->location_code }}' class='btn btn-primary'>
-			@endif
+					<a href='{{ URL::to('order_tasks/'. $order->order_id) .'/edit?queue=report' }}' class='btn btn-primary'>
 						Open	
 					</a> 
 					@can('system-administrator') 
 						<a class='btn btn-danger btn-xs' href='{{ URL::to('order_queues/delete/'. $order->order_id) }}'>Delete</a> 
 					@endcan 
-			@can('module-consultation')
-					@if ($status_code != 'incomplete' & !$is_future)
-					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $order->encounter_id) }}'>
-						<i class="fa fa-stethoscope"></i>
-					</a>
-					@else
-						@if (!empty($encounter_helper->getActiveEncounter($order->patient_id)))
-					
-					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $encounter_helper->getActiveEncounter($order->patient_id)->encounter_id) }}'>
-						<i class="fa fa-stethoscope"></i>
-					</a>
-						@endif
-					@endif
-			@endcan
 			</td> 
 	</tr>
 @endforeach
@@ -182,28 +134,16 @@ Order Queues
 </tbody>
 </table>
 @if (isset($search) | isset($status_code)) 
-	{{ $order_queues->appends(['search'=>$search, 'status_code'=>$status_code])->render() }}
+	{{ $orders->appends(['search'=>$search, 'status_code'=>$status_code])->render() }}
 	@else
-	{{ $order_queues->render() }}
+	{{ $orders->render() }}
 @endif
 <br>
-@if ($order_queues->total()>0)
-	{{ $order_queues->total() }} records found.
+@if ($orders->total()>0)
+	{{ $orders->total() }} records found.
 @else
 	No record found.
 @endif
 
-@if (!$is_future && Auth::user()->consultant != 1)
-		@if (empty($encounter_code))
-		<script>
-		setTimeout(
-				function() 
-				{
-						window.location.href = "/order_queues?count={{ $order_queues->count() }}";
-				}
-		,30000);
-		</script>
-		@endif
-@endif
 	
 @endsection

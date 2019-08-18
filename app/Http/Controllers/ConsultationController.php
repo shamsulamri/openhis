@@ -355,9 +355,13 @@ class ConsultationController extends Controller
 
 			$consultation->save();
 
-			$post = new OrderPost();
-			$post->consultation_id = $id;
-			$post->save();
+			$post = OrderPost::where('consultation_id', $id)->first();
+
+			if (empty($post)) {
+					$post = new OrderPost();
+					$post->consultation_id = $id;
+					$post->save();
+			}
 
 			OrderHelper::dropCharge($id);
 

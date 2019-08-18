@@ -758,6 +758,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 		});
 
+				Route::get('/order_queues/report', 'OrderQueueController@report');
+				Route::post('/order_queues/report', 'OrderQueueController@report');
 				Route::get('/order_queues/setup', 'OrderQueueController@setting');
 				Route::post('/order_queues/setup', 'OrderQueueController@setup');
 				Route::resource('order_queues', 'OrderQueueController');

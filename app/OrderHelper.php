@@ -568,6 +568,58 @@ class OrderHelper
 			}
 
 	}
+
+	public function removeDuplicatePost() {
+
+			$sql = "select count(*) as x, consultation_id from order_posts
+					group by consultation_id
+					having x>1
+			";
+
+			$results = DB::select($sql);
+
+			if (!empty($results)) {
+					foreach($results as $row) {
+						Log::info($row->consultation_id);
+						$posts = OrderPost::where('consultation_id', $row->consultation_id)
+									->get();
+						$flag = false;
+						foreach($posts as $post) {
+							if ($flag) {
+								Log::info('---->'.$post->post_id);
+								OrderPost::find($post->post_id)->delete();
+							}
+							$flag = true;
+						}
+					}
+			}
+	}
+
+	public function removeDuplicateIx() {
+
+			$sql = "select count(*) as x, order_id from order_investigations
+					group by order_id
+					having x>1
+			";
+
+			$results = DB::select($sql);
+
+			if (!empty($results)) {
+					foreach($results as $row) {
+						Log::info($row->order_id);
+						$orders = OrderInvestigation::where('order_id', $row->order_id)
+									->get();
+						$flag = false;
+						foreach($orders as $order) {
+							if ($flag) {
+								Log::info('---->'.$order->id);
+								OrderInvestigation::find($order->id)->delete();
+							}
+							$flag = true;
+						}
+					}
+			}
+	}
 }
 
 ?>

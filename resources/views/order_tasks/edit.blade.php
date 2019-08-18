@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id_only')
 <h1>
-Task Outcome
+Order
 </h1>
 
 <br>

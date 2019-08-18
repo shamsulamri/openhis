@@ -191,7 +191,7 @@ class OrderTaskController extends Controller
 					'consultation_id'=>$consultation->consultation_id,
 			]);
 	}
-	public function edit($id) 
+	public function edit(Request $request, $id) 
 	{
 			$order_task = OrderTask::findOrFail($id);
 
@@ -203,6 +203,7 @@ class OrderTaskController extends Controller
 					'encounter_id' => $order_task->consultation->encounter_id,
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
+					'report'=>$request->queue?true:false,
 					]);
 	}
 
@@ -234,7 +235,11 @@ class OrderTaskController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					if ($request->user()->can('module-support')) {
 						//return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->location_code);
-						return redirect('/order_tasks/'.$order_task->order_id.'/edit');
+						if ($request->report==1) {
+								return redirect('/order_tasks/'.$order_task->order_id.'/edit?queue=report');
+						} else {
+								return redirect('/order_tasks/'.$order_task->order_id.'/edit');
+						}
 					} else {
 						return redirect('/admission_tasks');
 					}
