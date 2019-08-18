@@ -39,7 +39,7 @@ Order Queues
 	</div>
 </div>
 @endif
-<form action='/order_queue/report' method='post' class='form-horizontal'>
+<form action='/order_queue/search' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>

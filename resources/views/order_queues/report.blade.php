@@ -109,7 +109,8 @@ Report Queues
 					@endif
 			</td>
 			<td>
-					{{ $order->product->product_name }}
+					{{ $order->product->product_name }}<br>
+					<small>{{ $order->product_code }}</small>
 			</td>
 			<td>
 					{{ $order->consultation->user->name }}

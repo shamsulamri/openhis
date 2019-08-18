@@ -498,17 +498,12 @@ class OrderQueueController extends Controller
 					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
 					->leftjoin('patients as p', 'p.patient_id', '=', 'c.patient_id')
 					->whereIn('c.encounter_code', $queue_encounters)
+					->whereIn('o.category_code', $queue_categories)
 					->where('order_completed','=',1)
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id')
 					->distinct('orders.order_id')
 					->orderBy('c.created_at', 'desc');
-
-			if (Auth::user()->author_id==15) {
-					$orders = $orders->where('category_code', '=', 'radiography');
-			} else {
-					$orders = $orders->where('category_code', '=', 'lab');
-			}
 
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
 			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed');
