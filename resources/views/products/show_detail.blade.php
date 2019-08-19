@@ -32,14 +32,6 @@
 						</div>
 					</div>
 			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
-						{{ Form::label('unit_code', 'Unit',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-            				{{ Form::label('unit_code', $product->unit->unit_name, ['class'=>'form-control']) }}
-						</div>
-					</div>
-			</div>
 	</div>
 
 	<div class="row">

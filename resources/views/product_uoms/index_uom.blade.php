@@ -36,7 +36,11 @@
 					{{$product_uom->uom_rate}}
 			</td>
 			<td>
+				@can('product_purchase_edit')
 					{{number_format($product_uom->uom_cost,2)}}
+				@else
+					-
+				@endcan
 			</td>
 			<td>
 					{{number_format($product_uom->uom_price,2)}}

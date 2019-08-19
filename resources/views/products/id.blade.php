@@ -14,14 +14,12 @@
 </div>
 @endif
 <br>
-	@can('product_information_edit')
 		<a class='btn btn-default' href='{{ URL::to('products/'. $product->product_code.'/edit') }}'>
 			<span class='fa fa-glass' aria-hidden='true'></span><br>Edit<br>Product
 		</a>
 		<a class='btn btn-default' href='{{ URL::to('product/uom/'. $product->product_code) }}'>
 			<span class='fa fa-balance-scale' aria-hidden='true'></span><br>Store<br>Keeping Unit
 		</a>
-	@endcan
 @if ($product->product_stocked==1)
 		<a class='btn btn-default' href='{{ URL::to('inventory_batches/product/'. $product->product_code) }}'>
 			<span class='fa fa-tags' aria-hidden='true'></span><br>Stock<br>Batches

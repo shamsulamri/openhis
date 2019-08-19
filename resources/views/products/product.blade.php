@@ -1,6 +1,5 @@
 
 	<!-- Information -->
-	@can('product_information_edit')
     <div class='form-group  @if ($errors->has('product_name')) has-error @endif'>
         <label for='product_name' class='col-sm-2 control-label'>Name<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
@@ -114,9 +113,6 @@
 					</div>
 			</div>
 	</div>
-	@else
-		Put view here
-	@endcan
 
 	<!-- Sale -->
 	<hr>

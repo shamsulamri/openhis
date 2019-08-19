@@ -58,11 +58,7 @@ $allocated=0;
 					{{$product->product_code}}
 			</td>
 			<td>
-					@can('product_information_edit')
 					<a tabindex='10' href='{{ URL::to('products/'. $product->product_code . '/edit') }}'>
-					@else
-					<a tabindex='10' href='{{ URL::to('products/'. $product->product_code.'?detail=true') }}'>
-					@endcan
 						{{ $product->product_name }} 
 					</a>
 			</td>
