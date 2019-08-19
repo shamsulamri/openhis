@@ -208,6 +208,9 @@ class OrderHelper
 
 	public static function orderItem($product, $ward_code, $renew_drug=null)
 	{
+			if ($product->status_code != 'active') {
+				return;
+			}
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 
 			$order = Order::where('consultation_id', Session::get('consultation_id'))

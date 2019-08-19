@@ -186,7 +186,7 @@ class OrderProductController extends Controller
 				$order_bulk = False;
 				foreach($searches as $search) {
 						if (!empty($search)) {
-								$product = Product::find($search);
+								$product = Product::where('product_code',$search)->where('status_code', 'active')->first();
 								if ($product) {
 										if ($product->product_drop_charge == 1) {
 
@@ -242,7 +242,8 @@ class OrderProductController extends Controller
 										$query->where('category_code','=', $request->categories);
 								}
 							}
-						})
+						});
+				/*
 						->orWhere(function ($query) use ($fields, $request) {
 							foreach($fields as $field) {
 								$query->where('product_name_other','like','%'.$field.'%');
@@ -251,6 +252,7 @@ class OrderProductController extends Controller
 								}
 							}
 						});
+				*/
 
 				$order_products = $order_products->where('status_code', '=', 'active');
 
