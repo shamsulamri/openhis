@@ -159,10 +159,12 @@
 							@endcan
 					@if ($dischargeHelper->drugCompleted($discharge->encounter_id))
 					@else
+						@if ($bill_status==0)
 							<br>
 							<span class="label label-warning">
 							Preparing drug...
 							</span>
+						@endif
 					@endif
 			@endif
 			@endcannot
