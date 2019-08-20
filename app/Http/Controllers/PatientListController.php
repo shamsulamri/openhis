@@ -179,6 +179,7 @@ class PatientListController extends Controller
 					->where('category_code', '<>', 'consumable')
 					->where('category_code', '<>', 'wv')
 					->where('product_drop_charge', 0)
+					->where('post_id','>',0)
 					->orderBy('e.cancel_id','desc')
 					->orderBy('orders.created_at')
 					->paginate($this->paginateValue);
