@@ -168,7 +168,23 @@ class PatientListController extends Controller
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 
+
+			$orders = Order::where('orders.user_id', Auth::user()->id)
+					->leftJoin('discharges as b', 'b.encounter_id', '=', 'orders.encounter_id')
+					->leftJoin('consultations as c', 'c.consultation_id', '=', 'orders.consultation_id')
+					->leftJoin('products as d', 'd.product_code', '=', 'orders.product_code')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=' , 'orders.order_id')
+					->whereNull('discharge_id')
+					->where('category_code', '<>', 'fee_consultation')
+					->where('category_code', '<>', 'consumable')
+					->where('category_code', '<>', 'wv')
+					->where('product_drop_charge', 0)
+					->orderBy('e.cancel_id','desc')
+					->orderBy('orders.created_at')
+					->paginate($this->paginateValue);
+
 			return view('patient_lists.index', [
+					'orders'=>$orders,
 					'outpatient_lists'=>$outpatients,
 					'user_id' => Auth::user()->id,
 					'location' => $location,

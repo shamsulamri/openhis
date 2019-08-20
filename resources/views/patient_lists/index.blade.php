@@ -123,4 +123,79 @@
 			@endif
 		</div>
 </div>
+
+<h2>Order Events</h2>
+<table class="table table-hover">
+ <thead>
+	<tr> 
+    <th>Date</th>
+    <th>Patient</th> 
+    <th>Product</th> 
+    <th>Status</th> 
+	<th></th>
+	</tr>
+  </thead>
+	<tbody>
+@foreach ($orders as $order)
+	<tr>
+			<td>
+					{{ DojoUtility::dateTimeReadFormat($order->consultation->created_at) }}<br>
+					<small>
+					{{ DojoUtility::diffForHumans($order->consultation->created_at) }}
+					</small>
+			</td>
+			<td>
+					{{$order->consultation->encounter->patient->patient_name }}<br>
+					<small>
+					{{$order->consultation->encounter->patient->patient_mrn }}
+					</small>
+					
+			</td>
+			<td>
+					{{$order->product->product_name }}
+					@if ($order->cancel_id)
+						<br>
+						<span class='label label-danger'>
+						Reason: {{ $order->orderCancel->cancel_reason }}
+						</span>
+					@endif
+			</td>
+			<td>
+				<?php 
+				$label = 'warning'; 
+				switch ($order->order_completed) {
+						case 0:
+								$label = 'info';
+								$status = "In progress...";
+								break;
+						case 1:
+								$label = 'success';
+								$status = "&nbsp;&nbsp;Completed&nbsp;&nbsp;";
+								break;
+						default:
+								$label = 'default';
+								break;
+				}
+
+				if ($order->cancel_id) {
+							$label = 'danger';
+							$status = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cancel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+				}
+				?>
+				<span class='label label-{{ $label }}'>
+					{{ $status }}
+				</span>
+					@if ($order->completed_at)
+					<br>
+					<small>
+					{{ DojoUtility::diffForHumans($order->completed_at ) }}
+					</small>
+					@endif
+			</td>
+	</tr>
+@endforeach
+</tbody>
+</table>
+{{ $orders->render() }}
+
 @endsection

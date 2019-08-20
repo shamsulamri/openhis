@@ -138,7 +138,7 @@ class OrderQueueController extends Controller
 					->get();
 
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
-			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed', 'unreported'=>'Unreported');
+			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed');
 
 			$is_future = null;
 			if (!empty($request->future)) $is_future=true;

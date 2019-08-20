@@ -69,7 +69,7 @@
 				?>
 				<span class='label label-{{ $label }}'>
 				{{ $discharge->encounter->encounterType->encounter_name }}
-				<span>
+				</span>
 			</td>
 			<td>
 					{{ (DojoUtility::dateLongFormat($discharge->discharge_date)) }}
