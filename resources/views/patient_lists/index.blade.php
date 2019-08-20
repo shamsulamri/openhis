@@ -124,6 +124,7 @@
 		</div>
 </div>
 
+@if ($orders->count()>0) 
 <h2>Order Events</h2>
 <table class="table table-hover">
  <thead>
@@ -197,5 +198,5 @@
 </tbody>
 </table>
 {{ $orders->render() }}
-
+@endif
 @endsection
