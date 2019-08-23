@@ -1,7 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-@include('patients.id')
+@if ($consultation)
+@include('consultations.panel')
+@else
+@include('patients.id_only')
+@endif
 <h1>
 Stop Order
 </h1>

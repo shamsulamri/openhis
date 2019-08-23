@@ -22,7 +22,7 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 ?>
 	<tr>
 		<td width='30%'>
-			@if ($drug->cancel_id) <strike> @endif
+			@if ($drug->stop_id) <strike> @endif
 			<h4>
 
 			{{ $drug->product_name }}
@@ -35,10 +35,18 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 			{{ $drug->name }}
 			</small>
 			</h4>
-			@if ($drug->cancel_id) </strike> @endif
-			@if (!$drug->cancel_id)
-			<a class='btn btn-warning btn-xs' href='{{ URL::to('/order_cancellations/create/'. $drug->order_id.'?drug=1') }}'>Cancel</a>
+			@if ($drug->stop_id) </strike> @endif
+			Total unit served: {{ $order_helper->marUnitCount($drug->order_id) }}
+			<br>
+			<br>
+			@if (!$drug->stop_id)
+			<a class='btn btn-warning btn-xs' href='{{ URL::to('/order_stop/create/'. $drug->order_id.'?drug=1') }}'>Stop</a>
 			@endif
+
+			@if ($drug->stop_id)
+				Stop by {{ $drug->stop_by }}<br>on {{ DojoUtility::dateTimeReadFormat($drug->stop_date) }}
+			@endif
+
 		</td>
 		<td>
 		<!-- Adminstrations -->
@@ -73,16 +81,16 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 				?>
 				<td width='120' align='center'>
 			@if ($mars->contains('medication_slot',$date_slot)) 
-				@if (empty($drug->cancel_id))
+				@if (empty($drug->stop_id))
 				<a href='/medication_record/datetime/{{ $mars[$date_slot]->medication_id }}' data-toggle='tooltip' data-placement='top' title='Recorded by {{ $mars[$date_slot]->name }}'>
 				@endif
 						{{ DojoUtility::timeReadFormat($mars[$date_slot]->medication_datetime) }}
-				@if (empty($drug->cancel_id))
+				@if (empty($drug->stop_id))
 				</a>
 				@endif
 
 				<!-- Verification -->
-				@if (!$verifications->contains('medication_slot',$date_slot) && empty($drug->cancel_id)) 
+				@if (!$verifications->contains('medication_slot',$date_slot) && empty($drug->stop_id)) 
 						@if ($mars[$date_slot]->username != Auth::user()->username)
 						<br>
 						<br>
@@ -98,7 +106,7 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 				@endif
 			@else
 					@if ($date_value==$entry_start)
-						@if (!$drug->cancel_id)
+						@if (!$drug->stop_id)
 							<a href='/medication_record/record/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
 								&nbsp;Record&nbsp;
 							</a>

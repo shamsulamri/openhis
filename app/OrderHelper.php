@@ -17,6 +17,7 @@ use App\QueueLocation;
 use App\StockHelper;
 use App\Http\Controllers\ProductController;
 use Config;
+use App\MedicationRecord;
 
 class OrderHelper 
 {
@@ -622,6 +623,28 @@ class OrderHelper
 						}
 					}
 			}
+	}
+
+	public function marUnitCount($order_id) 
+	{
+			$order = Order::find($order_id);
+			$mar = MedicationRecord::where('order_id', $order_id)
+						->where('medication_fail', 0)
+						->get();
+						
+			$total = 0;
+			if ($order->product->product_unit_charge==1) {
+					$orderDrug = OrderDrug::where('order_id', $order_id)->first();
+					$total = $mar->count()*$orderDrug->drug_dosage;
+			} else {
+					$total = $mar->count();
+			}
+
+			$order->order_quantity_supply = $total;
+			$order->save();
+
+			return $total;
+
 	}
 }
 

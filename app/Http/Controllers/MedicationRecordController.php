@@ -197,7 +197,7 @@ class MedicationRecordController extends Controller
 
 			$fields = ['product_name', 
 					'a.product_code', 
-					'cancel_id', 
+					'stop_id', 
 					'a.order_id', 
 					'a.user_id', 
 					'order_quantity_request',
@@ -209,27 +209,31 @@ class MedicationRecordController extends Controller
 					'category_name',
 					'product_edit_price',
 					'frequency_mar',
-					'name',
+					'h.name',
+					'i.name as stop_by',
+					'c.created_at as stop_date',
 					];
 
 			$drugs = DB::table('orders as a')
 					->select($fields)
 					->join('products as b','a.product_code','=','b.product_code')
-					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'a.order_id')
+					->leftjoin('order_stops as c', 'c.order_id', '=', 'a.order_id')
 					->leftjoin('consultations as d', 'd.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('product_categories as e', 'e.category_code', '=', 'b.category_code')
 					->leftjoin('order_drugs as f', 'f.order_id', '=', 'a.order_id')
 					->leftjoin('drug_frequencies as g', 'g.frequency_code', '=', 'f.frequency_code')
 					->leftjoin('users as h', 'h.id', '=', 'a.user_id')
+					->leftjoin('users as i', 'i.id', '=', 'c.user_id')
 					->where('a.post_id','>',0)
 					->where('a.encounter_id','=',$encounter_id)
 					->where('order_is_discharge','<>',1)
 					->where('b.product_local_store','=',0)
 					->whereNotNull('f.order_id')
 					->orderBy('b.category_code')
-					->orderBy('cancel_id', 'asc')
-					->orderBy('a.created_at', 'desc')
+					->orderBy('stop_id', 'asc')
+					->orderBy('product_name')
 					->get();
+					//->orderBy('a.created_at', 'desc')
 
 			$mars = MedicationRecord::select('medication_id','encounter_id', 'medication_slot', 'medication_datetime', 'username', 'name')
 					->leftJoin('orders as b', 'b.order_id', '=', 'medication_records.order_id')

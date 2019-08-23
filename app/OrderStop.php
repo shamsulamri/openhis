@@ -12,6 +12,7 @@ class OrderStop extends Model
 	protected $table = 'order_stops';
 	protected $fillable = [
 				'order_id',
+				'stop_description',
 				'user_id'];
 	
     protected $guarded = ['stop_id'];

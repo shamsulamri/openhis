@@ -303,7 +303,8 @@ class DischargeController extends Controller
 
 					$discharges = $discharges->where(function ($query) use ($request) {
 							$query->where('patient_mrn','like','%'.$request->search.'%')
-								->orWhere('patient_name', 'like','%'.$request->search.'%');
+								->orWhere('patient_name', 'like','%'.$request->search.'%')
+								->orWhere('b.encounter_id', '=',$request->search);
 					});
 					//dd($discharges->toSql());
 			}

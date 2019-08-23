@@ -14,6 +14,7 @@ use Auth;
 use App\Order;
 use App\DojoUtility;
 use App\Encounter;
+use App\Consultation;
 
 class OrderStopController extends Controller
 {
@@ -36,16 +37,26 @@ class OrderStopController extends Controller
 
 	public function create($id)
 	{
+			$consultation_id = Session::get('consultation_id');
+			
+			$consultation = null;
+			if (!empty($consulation)) {
+				$consultation = Consultation::where('consultation_id', $consultation_id);
+			}
+
 			$order_stop = new OrderStop();
 			$order_stop->order_id = $id;
 			$order_stop->user_id = Auth::user()->id;
 
 			$order = Order::find($id);
 			$encounter = Encounter::find($order->encounter_id);
+
 			return view('order_stops.create', [
 					'order_stop' => $order_stop,
 					'encounter' => $encounter, 
 					'patient' => $encounter->patient, 
+					'consultation'=> $consultation,
+					'order'=>$order,
 					]);
 	}
 
@@ -56,9 +67,8 @@ class OrderStopController extends Controller
 
 			if ($valid->passes()) {
 					$order = Order::find($request->order_id);
-					$units = DojoUtility::diffInMinutes($order->created_at);
-
-					$order->order_total = round($units/60);
+					//$units = DojoUtility::diffInMinutes($order->created_at);
+					//$order->order_total = round($units/60);
 					$order->order_completed = 1;
 					$order->save();
 
@@ -66,7 +76,8 @@ class OrderStopController extends Controller
 					$order_stop->stop_id = $request->stop_id;
 					$order_stop->save();
 					Session::flash('message', 'Record successfully created.');
-					return redirect('admission_tasks');
+					return redirect('medication_record/mar/'.$order->encounter_id.'?admission=1');
+					//return redirect('admission_tasks');
 					//return redirect('/order_stops/id/'.$order_stop->stop_id);
 			} else {
 					return redirect('/order_stops/create')
