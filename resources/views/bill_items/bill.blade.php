@@ -10,8 +10,7 @@
     <div class='form-group  @if ($errors->has('bill_unit_price')) has-error @endif'>
         {{ Form::label('bill_unit_price', 'Unit Price',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::text('bill_unit_price', $bill->bill_unit_price, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('bill_unit_price')) <p class="help-block">{{ $errors->first('bill_unit_price') }}</p> @endif
+            {{ Form::label('price', $bill->bill_unit_price, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
 

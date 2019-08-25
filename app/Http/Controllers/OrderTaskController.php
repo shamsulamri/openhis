@@ -346,9 +346,11 @@ class OrderTaskController extends Controller
 					$checked = $request[$order->order_id] ?:0;
 
 					if ($checked == 1) {
-
 						//$total_supply = $order->order_quantity_supply;
 						$total_supply = $request['quantity_'.$order->order_id];
+						if (empty($total_supply)) {
+								$total_supply = 1;
+						}
 
 						$batches = $helper->getBatches($order->product_code)?:null;
 
@@ -398,6 +400,9 @@ class OrderTaskController extends Controller
 								}
 						} else {
 							$total_supply = $request["quantity_".$order->order_id];
+							if (empty($total_supply)) {
+									$total_supply = 1;
+							}
 							if ($product->product_stocked==1) {
 									$inventory = new Inventory();
 									$inventory->order_id = $order->order_id;

@@ -36,7 +36,7 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 			</small>
 			</h4>
 			@if ($drug->stop_id) </strike> @endif
-			Total unit served: {{ $order_helper->marUnitCount($drug->order_id) }}
+			Total unit served: {{ $drug->order_quantity_supply }}
 			<br>
 			<br>
 			@if (!$drug->stop_id)

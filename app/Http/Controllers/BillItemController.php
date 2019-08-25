@@ -28,6 +28,8 @@ use App\Bed;
 use App\MedicalCertificate;
 use App\ProductUom;
 use App\BillTotal;
+use App\Consultation;
+use Auth;
 
 class BillItemController extends Controller
 {
@@ -44,6 +46,7 @@ class BillItemController extends Controller
 								->where('encounter_id','=',$id);
 								
 			$bill_existing->delete();
+			$this->updateOrderPrices($id);
 			return redirect('/bill_items/'.$id);
 	}
 
@@ -139,6 +142,49 @@ class BillItemController extends Controller
 							$merge_item->bill_non_claimable = 0;
 					}
 					$merge_item->save();
+
+					$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
+
+					Order::where('product_code', $merge_item->product_code)
+							->where('encounter_id', $encounter_id)
+							->delete();
+					$order = new Order();
+					$order->product_code = $merge_item->product_code;
+					$order->encounter_id = $merge_item->encounter_id;
+					$order->order_quantity_supply = $merge_item->bill_quantity;
+					$order->order_unit_price = $merge_item->bill_unit_price;
+					$order->consultation_id = $consultation->consultation_id;
+					$order->user_id = Auth::user()->id;
+					$order->save();
+
+
+
+
+			}
+	}
+
+	public function updateBedOrder($encounter_id) 
+	{
+			$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
+
+			$bed_orders = BillItem::where('encounter_id', $encounter_id)
+						->leftJoin('products as b', 'b.product_code', '=', 'bill_items.product_code')
+						->where('category_code', 'bed')
+						->get();
+
+			foreach($bed_orders as $bed_order) {
+					Log::info($bed_order);
+					Order::where('product_code', $bed_order->product_code)
+							->where('encounter_id', $encounter_id)
+							->delete();
+					$order = new Order();
+					$order->product_code = $bed_order->product_code;
+					$order->encounter_id = $bed_order->encounter_id;
+					$order->order_quantity_supply = $bed_order->bill_quantity;
+					$order->order_unit_price = $bed_order->bill_unit_price;
+					$order->consultation_id = $consultation->consultation_id;
+					$order->user_id = Auth::user()->id;
+					$order->save();
 			}
 	}
 
@@ -263,8 +309,24 @@ class BillItemController extends Controller
 
 	}
 
+
+	public function updateOrderPrices($encounter_id)
+	{
+			$orders = Order::where('encounter_id', $encounter_id)->get();
+
+			Log::info('--------------------------');
+			foreach ($orders as $order) {
+					Log::info($order->product_code);
+					$order->order_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
+					//if ($order->order_quantity_supply==0) $order->order_quantity_supply=1;
+					$order->save();
+			}
+
+	}
+
 	public function compileBill($encounter_id, $non_claimable=2) 
 	{
+			$this->updateOrderPrices($encounter_id);
 			$encounter = Encounter::find($encounter_id);
 			$patient_id = $encounter->patient_id;
 
@@ -291,6 +353,7 @@ class BillItemController extends Controller
 				and order_multiple=0
 				and bom_code is null
 				and cancel_id is null
+				and order_quantity_supply>0
 				group by product_code,a.unit_code, order_discount
 			";
 
@@ -322,7 +385,8 @@ class BillItemController extends Controller
 					$item->bill_discount = $order->order_discount;
 					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
-					$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
+					$item->bill_unit_price = $order->order_unit_price;
+					//$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
 
 					/*
 					if (!empty($order->bom_code)) {
@@ -685,6 +749,7 @@ class BillItemController extends Controller
 
 	public function index($id, $non_claimable=null)
 	{
+			$this->updateBedOrder($id);
 			$bill_label = "";
 			$encounter = Encounter::find($id);
 
@@ -962,18 +1027,7 @@ class BillItemController extends Controller
 
 			$product = Product::find($bill->product_code);
 
-			switch ($product->category_code) {
-					case "drugs":
-						if ($product->product_unit_charge==1) {
-							$bill->bill_amount = $bill->bill_quantity*$bill->bill_unit_price;
-						} else {
-							$bill->bill_amount = $bill->bill_unit_price;
-						}
-						break;
-					default:
-						$bill->bill_amount = $bill->bill_quantity*$bill->bill_unit_price;
-			}
-
+			$bill->bill_amount = $bill->bill_quantity*$bill->bill_unit_price;
 			$bill->bill_amount_exclude_tax = $bill->bill_amount;
 			if ($bill->bill_discount>0) {
 					$bill->bill_amount = $bill->bill_amount * (1-($bill->bill_discount/100));

@@ -443,9 +443,7 @@ class OrderController extends Controller
 
 	public function addOrder(Request $request)
 	{
-			Log::info("Salah, mane, firmino");
 			$product_code = $request->product_code;
-			Log::info($product_code);
 			$encounter_id = Session::get('encounter_id');
 			$orders = Order::where('product_code','=', $product_code)
 						->leftJoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')

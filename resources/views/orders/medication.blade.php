@@ -64,7 +64,7 @@ label {
   <li><a href="make">Orders</a></li>
 </ul>
 <br>
-<a href="order_drugs/post/{{ $consultation->consultation_id }}" class='btn btn-success'>Post Drugs</a>
+<a href="/order_drugs/post/{{ $consultation->consultation_id }}" class='btn btn-success'>Post Drugs</a>
 <br>
 <br>
 <div id="medicationList"></div>

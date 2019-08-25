@@ -66,6 +66,8 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=invoice_summary&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Print Summary Invoice</a> 
 @endif
+<p class='pull-right'>&nbsp;</p>
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_order&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Order Details</a> 
 @if (!empty($encounter->sponsor_code))
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_panel&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Panel Bill</a> 
@@ -96,7 +98,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 			</h4>
 			Membership Number: {{ $encounter->sponsor_id}}
 			@else
-			<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>Public</a>
+			<a href='/bill/bill_edit/{{ $encounter->encounter_id }}'>Cash</a>
 		@endif
 		</div>
 @endif
