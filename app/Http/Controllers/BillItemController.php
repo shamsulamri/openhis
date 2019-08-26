@@ -167,13 +167,17 @@ class BillItemController extends Controller
 	{
 			$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
 
+			$delete_beds = Order::where('encounter_id', $encounter_id)
+						->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
+						->where('category_code', 'bed')
+						->delete();
+
 			$bed_orders = BillItem::where('encounter_id', $encounter_id)
 						->leftJoin('products as b', 'b.product_code', '=', 'bill_items.product_code')
 						->where('category_code', 'bed')
 						->get();
 
 			foreach($bed_orders as $bed_order) {
-					Log::info($bed_order);
 					Order::where('product_code', $bed_order->product_code)
 							->where('encounter_id', $encounter_id)
 							->delete();
@@ -199,7 +203,6 @@ class BillItemController extends Controller
 
 			return $price;
 
-			Log::info('--->'.$product_code);
 			$price = 1;
 			if (empty($product->charge_code)) {
 					if ($product->uomDefaultPrice($encounter)) {
@@ -304,7 +307,6 @@ class BillItemController extends Controller
 
 			}
 
-			Log::info("Price tier:".$value);
 			return $value;
 
 	}
@@ -312,11 +314,15 @@ class BillItemController extends Controller
 
 	public function updateOrderPrices($encounter_id)
 	{
-			$orders = Order::where('encounter_id', $encounter_id)->get();
+			$orders = Order::where('encounter_id', $encounter_id)
+						->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
+						->where('b.category_code', '<>', 'consultation')
+						->where('b.category_code', '<>', 'fee_procedure')
+						->where('b.category_code', '<>', 'fee_consultation')
+						->where('b.category_code', '<>', 'wv')
+						->get();
 
-			Log::info('--------------------------');
 			foreach ($orders as $order) {
-					Log::info($order->product_code);
 					$order->order_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
 					//if ($order->order_quantity_supply==0) $order->order_quantity_supply=1;
 					$order->save();
@@ -603,6 +609,7 @@ class BillItemController extends Controller
 
 			foreach ($orders as $order) {
 					Log::info('---'.$order->product_code);
+					Log::info('---'.$order->total_price);
 					$item = new BillItem();
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
