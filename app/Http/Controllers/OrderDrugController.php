@@ -126,6 +126,14 @@ class OrderDrugController extends Controller
 							$frequency = $drug->frequency?$drug->frequency->frequency_value:1;
 							$period = $drug->period?$drug->period->period_mins:1;
 
+							if ($drug->unit_code == $drug->dosage_code) {
+								if (!empty($drug->drug_strength)) {
+									$dosage = $drug->drug_dosage/$drug->drug_strength;
+								} else {
+									$dosage = 1;
+								}
+							}
+
 							$total_unit = $dosage*$frequency;
 
 							if ($drug->drug_duration>0) {
@@ -144,7 +152,7 @@ class OrderDrugController extends Controller
 							$order->save();
 
 							Log::info($request->instruction);
-							Log::info($order->order_description);
+							Log::info($total_unit);
 
 							$drug->save();
 					}

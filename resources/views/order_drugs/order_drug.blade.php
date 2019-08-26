@@ -94,7 +94,7 @@
 					<div class='form-group  @if ($errors->has('dosage_code')) has-error @endif'>
 						{{ Form::label('unit', '&nbsp;',['class'=>'col-md-4 control-label']) }}
 						<div class='col-md-8'>
-							{{ Form::select('dosage_code', $dosage,null, ['id'=>'dosage_code','class'=>'form-control input-sm','maxlength'=>'20']) }}
+							{{ Form::select('dosage_code', $dosage,null, ['id'=>'dosage_code','class'=>'form-control input-sm','maxlength'=>'20','onchange'=>'countTotalUnit()']) }}
 						</div>
 					</div>
 			</div>
@@ -298,11 +298,26 @@
 			}
 
 			@if ($product->product_unit_charge)
+			unit_code = document.getElementById('unit_code').value;
+			dosage_code = document.getElementById('dosage_code').value;
+			strength = document.getElementById('drug_strength').value;
 			dosage = document.getElementById('dosage').value;
+
+			if (unit_code == dosage_code) {
+			console.log("unit_code:"+unit_code);
+			console.log("dosage_code:"+dosage_code);
+				if (strength) {
+					dosage = dosage/strength;
+				} else {
+					dosage = 1;
+				}
+			}
+			console.log("Dosage:"+dosage);
+
 			frequency = getFrequencyValue(document.getElementById('frequency').value) 
 			period = getPeriodValue(document.getElementById('period').value) 
 			duration = document.getElementById('duration').value;
-			total = frequency*dosage;
+			total = Math.round(frequency*dosage);
 			if (duration>0) total = total*duration*period;
 			if (isNumber(total)==true) {
 				document.getElementById('total').value=total;
