@@ -304,14 +304,22 @@
 			dosage = document.getElementById('dosage').value;
 
 			if (unit_code == dosage_code) {
-			console.log("unit_code:"+unit_code);
-			console.log("dosage_code:"+dosage_code);
-				if (strength) {
-					dosage = dosage/strength;
-				} else {
+					if (strength) {
+							dosage = dosage/strength;
+					} else {
+							dosage = 1;
+					}
+			}
+
+			if (unit_code) {
+					console.log("unit_code:"+unit_code);
+					console.log("dosage_code:"+dosage_code);
+				if (unit_code != dosage_code) {
+					console.log("!!!!!");
 					dosage = 1;
 				}
 			}
+
 			console.log("Dosage:"+dosage);
 
 			frequency = getFrequencyValue(document.getElementById('frequency').value) 

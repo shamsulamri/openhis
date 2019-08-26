@@ -139,9 +139,9 @@ class OrderDrugController extends Controller
 							if ($drug->drug_duration>0) {
 								$total_unit = $total_unit * (($drug->drug_duration*$period)/1440);
 							}
-							
 
 							$order = Order::find($order_id);
+
 							if ($order->product->product_unit_charge==0) {
 									$total_unit = 1;
 							}

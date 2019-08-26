@@ -242,8 +242,7 @@ class OrderProductController extends Controller
 										$query->where('category_code','=', $request->categories);
 								}
 							}
-						});
-				/*
+						})
 						->orWhere(function ($query) use ($fields, $request) {
 							foreach($fields as $field) {
 								$query->where('product_name_other','like','%'.$field.'%');
@@ -252,7 +251,6 @@ class OrderProductController extends Controller
 								}
 							}
 						});
-				*/
 
 				$order_products = $order_products->where('status_code', '=', 'active');
 
