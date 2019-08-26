@@ -46,7 +46,7 @@ class BillItemController extends Controller
 								->where('encounter_id','=',$id);
 								
 			$bill_existing->delete();
-			$this->updateOrderPrices($id);
+			//$this->updateOrderPrices($id);
 			return redirect('/bill_items/'.$id);
 	}
 
@@ -322,6 +322,7 @@ class BillItemController extends Controller
 						->where('b.category_code', '<>', 'fee_procedure')
 						->where('b.category_code', '<>', 'fee_consultation')
 						->where('b.category_code', '<>', 'wv')
+						->where('b.category_code', '<>', 'bed')
 						->get();
 
 			foreach ($orders as $order) {
@@ -334,7 +335,7 @@ class BillItemController extends Controller
 
 	public function compileBill($encounter_id, $non_claimable=2) 
 	{
-			$this->updateOrderPrices($encounter_id);
+			//$this->updateOrderPrices($encounter_id);
 			$encounter = Encounter::find($encounter_id);
 			$patient_id = $encounter->patient_id;
 
@@ -355,6 +356,7 @@ class BillItemController extends Controller
 				and b.category_code<>'fee_procedure'
 				and b.category_code<>'fee_consultation'
 				and b.category_code<>'wv'
+				and b.category_code<>'bed'
 				and h.patient_id = %d
 				and a.encounter_id <= %d
 				and bill_id is null 
