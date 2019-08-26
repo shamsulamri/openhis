@@ -143,6 +143,7 @@ class BillItemController extends Controller
 					}
 					$merge_item->save();
 
+					/*
 					$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
 
 					Order::where('product_code', $merge_item->product_code)
@@ -156,6 +157,7 @@ class BillItemController extends Controller
 					$order->consultation_id = $consultation->consultation_id;
 					$order->user_id = Auth::user()->id;
 					$order->save();
+					*/
 
 
 
@@ -756,7 +758,7 @@ class BillItemController extends Controller
 
 	public function index($id, $non_claimable=null)
 	{
-			$this->updateBedOrder($id);
+			//$this->updateBedOrder($id);
 			$bill_label = "";
 			$encounter = Encounter::find($id);
 
