@@ -62,7 +62,10 @@ $category='';
 					</a>
 			@elseif ($order->order_completed==0) 
 					@if ($order->post_id>0)
+						<!--
 						<a href='{{ URL::to('orders/'. $order->order_id . '/show') }}'>
+						-->
+						<a href='{{ URL::to('orders/'. $order->order_id . '/edit') }}'>
 					@elseif ($order->post_id==0)
 						<a href='{{ URL::to('orders/'. $order->order_id . '/edit') }}'>
 					@endif			
