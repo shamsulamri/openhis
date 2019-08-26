@@ -107,6 +107,7 @@ class BillItemController extends Controller
 					}
 
 					$item->save();
+					Log::info($item);
 
 					/*** Merge ***/
 					$merge_item = new BillItem();
@@ -335,7 +336,6 @@ class BillItemController extends Controller
 
 	public function compileBill($encounter_id, $non_claimable=2) 
 	{
-			//$this->updateOrderPrices($encounter_id);
 			$encounter = Encounter::find($encounter_id);
 			$patient_id = $encounter->patient_id;
 
@@ -356,7 +356,6 @@ class BillItemController extends Controller
 				and b.category_code<>'fee_procedure'
 				and b.category_code<>'fee_consultation'
 				and b.category_code<>'wv'
-				and b.category_code<>'bed'
 				and h.patient_id = %d
 				and a.encounter_id <= %d
 				and bill_id is null 
