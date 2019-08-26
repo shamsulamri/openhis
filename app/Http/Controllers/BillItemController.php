@@ -46,7 +46,7 @@ class BillItemController extends Controller
 								->where('encounter_id','=',$id);
 								
 			$bill_existing->delete();
-			//$this->updateOrderPrices($id);
+			$this->updateOrderPrices($id);
 			return redirect('/bill_items/'.$id);
 	}
 
@@ -761,6 +761,7 @@ class BillItemController extends Controller
 	public function index($id, $non_claimable=null)
 	{
 			//$this->updateBedOrder($id);
+			$this->updateOrderPrices($id);
 			$bill_label = "";
 			$encounter = Encounter::find($id);
 
