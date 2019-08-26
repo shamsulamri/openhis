@@ -127,7 +127,7 @@ class OrderDrugController extends Controller
 							$period = $drug->period?$drug->period->period_mins:1;
 
 							if ($drug->unit_code == $drug->dosage_code) {
-								if (!empty($drug->drug_strength)) {
+								if (!empty($drug->drug_strength) && !empty($drug->drug_dosage)) {
 									$dosage = $drug->drug_dosage/$drug->drug_strength;
 								} else {
 									$dosage = 1;
