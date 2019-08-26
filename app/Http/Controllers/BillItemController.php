@@ -30,6 +30,7 @@ use App\ProductUom;
 use App\BillTotal;
 use App\Consultation;
 use Auth;
+use App\BedCharge;
 
 class BillItemController extends Controller
 {
@@ -144,21 +145,21 @@ class BillItemController extends Controller
 					}
 					$merge_item->save();
 
-					/*
 					$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
 
-					Order::where('product_code', $merge_item->product_code)
+					Order::where('order_custom_id', $merge_item->product_code)
 							->where('encounter_id', $encounter_id)
 							->delete();
+
 					$order = new Order();
 					$order->product_code = $merge_item->product_code;
+					$order->order_custom_id = $merge_item->product_code;
 					$order->encounter_id = $merge_item->encounter_id;
 					$order->order_quantity_supply = $merge_item->bill_quantity;
 					$order->order_unit_price = $merge_item->bill_unit_price;
 					$order->consultation_id = $consultation->consultation_id;
 					$order->user_id = Auth::user()->id;
 					$order->save();
-					*/
 
 
 
@@ -168,12 +169,16 @@ class BillItemController extends Controller
 
 	public function updateBedOrder($encounter_id) 
 	{
+			$bed_charges = BedCharge::where('encounter_id', $encounter_id)->distinct()->get(['bed_code']);
+			foreach ($bed_charges as $bed) {
+					Log::info($bed->product_code);
+					Order::where('order_custom_id', $bed->bed_code)
+							->where('encounter_id', $encounter_id)
+							->delete();
+			}
+			
+			/*
 			$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
-
-			$delete_beds = Order::where('encounter_id', $encounter_id)
-						->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
-						->where('category_code', 'bed')
-						->delete();
 
 			$bed_orders = BillItem::where('encounter_id', $encounter_id)
 						->leftJoin('products as b', 'b.product_code', '=', 'bill_items.product_code')
@@ -181,11 +186,12 @@ class BillItemController extends Controller
 						->get();
 
 			foreach($bed_orders as $bed_order) {
-					Order::where('product_code', $bed_order->product_code)
+					Order::where('order_custom_id', $bed_order->product_code)
 							->where('encounter_id', $encounter_id)
 							->delete();
 					$order = new Order();
 					$order->product_code = $bed_order->product_code;
+					$order->order_custom_id = $bed_order->product_code;
 					$order->encounter_id = $bed_order->encounter_id;
 					$order->order_quantity_supply = $bed_order->bill_quantity;
 					$order->order_unit_price = $bed_order->bill_unit_price;
@@ -193,6 +199,7 @@ class BillItemController extends Controller
 					$order->user_id = Auth::user()->id;
 					$order->save();
 			}
+			 */
 	}
 
 	public function getPriceTier($encounter_id, $product_code, $price=null)
@@ -319,11 +326,7 @@ class BillItemController extends Controller
 	{
 			$orders = Order::where('encounter_id', $encounter_id)
 						->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
-						->where('b.category_code', '<>', 'consultation')
-						->where('b.category_code', '<>', 'fee_procedure')
-						->where('b.category_code', '<>', 'fee_consultation')
-						->where('b.category_code', '<>', 'wv')
-						->where('b.category_code', '<>', 'bed')
+						->where('product_edit_price','=',0)
 						->get();
 
 			foreach ($orders as $order) {
@@ -759,7 +762,7 @@ class BillItemController extends Controller
 
 	public function index($id, $non_claimable=null)
 	{
-			//$this->updateBedOrder($id);
+			$this->updateBedOrder($id);
 			$this->updateOrderPrices($id);
 			$bill_label = "";
 			$encounter = Encounter::find($id);

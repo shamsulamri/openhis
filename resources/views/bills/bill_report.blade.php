@@ -9,7 +9,7 @@
 					<div class='form-group'>
 						<label class='col-sm-1 control-label'><div align='left'>Report</div></label>
 						<div class='col-sm-7'>
-							{{ Form::select('report_code', ['bill_report'=>'Bill Summary','panel_report'=>'Panel Summary'],null, ['id'=>'report_code','class'=>'form-control']) }}
+							{{ Form::select('report_code', $reports ,null, ['id'=>'report_code','class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -87,6 +87,10 @@
 <br>
 <h5>Panel Summary</h5>
 - From, To, Sponsor
+<br>
+<br>
+<h5>Consultant Summary</h5>
+- From, To
 <script>
 		$('#date_start').datepicker({
 				format: "dd/mm/yyyy",

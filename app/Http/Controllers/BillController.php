@@ -443,6 +443,11 @@ class BillController extends Controller
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
+			$reports = ['bill_report'=>'Bill Summary',
+						'panel_report'=>'Panel Summary',
+						'consultant_summary'=>'Consultant Summary',
+						];
+
 			return view('bills.bill_report', [
 					'date_start'=>$date_start,
 					'date_end'=>$date_end,
@@ -452,6 +457,7 @@ class BillController extends Controller
 					'encounter_code'=>$request->encounter_code,
 					'sponsors' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					'sponsor_code' => $request->sponsor_code,
+					'reports'=>$reports,
 			]);
 	}
 }
