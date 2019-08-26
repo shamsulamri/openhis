@@ -252,6 +252,7 @@ class OrderProductController extends Controller
 							}
 						});
 
+
 				$order_products = $order_products->where('status_code', '=', 'active');
 
 				$order_products = $order_products->paginate($this->paginateValue);
