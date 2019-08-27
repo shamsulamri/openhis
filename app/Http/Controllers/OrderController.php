@@ -476,6 +476,26 @@ class OrderController extends Controller
 			return $order_id;
 	}
 
+	public function updateOrder(Request $request)
+	{
+			Log::info("Update order");
+			$product_code = $request->product_code;
+			$encounter_id = Session::get('encounter_id');
+			$consultation_id = Session::get('consultation_id');
+			$order = Order::where('product_code','=', $product_code)
+						->where('encounter_id','=', $encounter_id)
+						->where('consultation_id','=', $consultation_id)
+						->where('order_completed','=','0')
+						->first();
+
+			$order->order_unit_price = $request->amount;
+			$order->save();
+			Log::info($encounter_id);
+			Log::info($consultation_id);
+			Log::info($order);
+			Log::info($order->order_unit_price);
+	}
+
 	public function single(Request $request, $product_code)
 	{
 			//$helper = new StockHelper();
@@ -519,8 +539,16 @@ class OrderController extends Controller
 			if ($request->plan=='laboratory') { $plans = ['lab']; }
 			if ($request->plan=='imaging') { $plans = ['radiography']; }
 			if ($request->plan=='procedure') { $plans = ['fee_procedure']; }
+			if ($request->plan=='fee_consultant') { $plans = ['fee_consultant']; }
 
-			$favorites = DB::table('orders')
+			$view = 'orders.plan';
+			if ($request->plan=='fee_consultant') {
+					$view = 'orders.consultant_fee';
+					$favorites = Product::select('product_code')
+							->whereIn('category_code', $plans)
+							->pluck('product_code');
+			} else {
+				$favorites = DB::table('orders')
 							->select('orders.product_code', DB::raw('count(*) as total'))
 							->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
 							->whereIn('category_code', $plans)
@@ -528,6 +556,7 @@ class OrderController extends Controller
 							->orderBy('total', 'desc')
 							->limit(30)
 							->pluck('orders.product_code');
+			}
 							//->where('user_id', Auth::user()->id)
 
 			$products = Product::whereIn('product_code', $favorites)
@@ -544,7 +573,7 @@ class OrderController extends Controller
 				$chunks[0] = $products;
 			}
 
-			return view('orders.plan', [
+			return view($view, [
 					'consultation'=>$consultation,
 					'patient'=>$encounter->patient,
 					'encounter'=>$encounter,
@@ -554,6 +583,7 @@ class OrderController extends Controller
 					'orders'=>$consultation->orders->pluck('product_code')->toArray(),
 					'plan'=>$request->plan,
 					'half'=>$half,
+					'order_helper'=>new OrderHelper(),
 			]);
 	}
 

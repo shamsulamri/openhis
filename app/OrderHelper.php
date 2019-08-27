@@ -38,6 +38,19 @@ class OrderHelper
 			return $order;
 	}
 
+	public static function getOrderByConsultation($product_code) {
+			$product_code = $product_code;
+			$encounter_id = Session::get('encounter_id');
+			$consultation_id = Session::get('consultation_id');
+			$order = Order::where('product_code','=', $product_code)
+						->where('encounter_id','=', $encounter_id)
+						->where('consultation_id','=', $consultation_id)
+						->where('order_completed','=','0')
+						->first();
+
+			return $order;
+	}
+
 	public function getPrescription($order_id)
 	{
 			$drug = OrderDrug::where('order_id', $order_id)->first();

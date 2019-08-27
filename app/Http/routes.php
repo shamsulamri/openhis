@@ -104,6 +104,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/medications/renew', 'OrderDrugController@renewDrug')->name('medications.renew');
 		Route::get('/medications', 'OrderDrugController@medications');
 		//Route::get('/medications/add/{id}', 'OrderDrugController@addDrug');
+		
+		Route::post('/orders/update', 'OrderController@updateOrder')->name('orders.update_order');
 		Route::post('/orders/add', 'OrderController@addOrder')->name('orders.add');
 		Route::post('/orders/remove', 'OrderController@removeOrder')->name('orders.remove');
 		
