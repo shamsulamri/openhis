@@ -365,7 +365,7 @@ class ConsultationController extends Controller
 
 			OrderHelper::dropCharge($id);
 
-			Order::where('consultation_id','=',$id)
+			Order::where('user_id','=',Auth::user()->id)
 					->where('post_id','=',0)
 					->update(['post_id'=>$post->post_id]);
 

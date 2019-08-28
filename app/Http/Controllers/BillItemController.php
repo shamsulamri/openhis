@@ -31,6 +31,7 @@ use App\BillTotal;
 use App\Consultation;
 use Auth;
 use App\BedCharge;
+use App\Payment;
 
 class BillItemController extends Controller
 {
@@ -324,6 +325,7 @@ class BillItemController extends Controller
 
 	public function updateOrderPrices($encounter_id)
 	{
+			$this->convertBill($encounter_id);
 			$orders = Order::where('encounter_id', $encounter_id)
 						->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
 						->where('product_edit_price','=',0)
@@ -335,6 +337,42 @@ class BillItemController extends Controller
 					$order->save();
 			}
 
+	}
+
+
+	public function convertBill($encounter_id) {
+			Log::info("Check for converts....");
+			$encounter = Encounter::find($encounter_id);
+			$last_encounter = Encounter::where('patient_id', $encounter->patient_id)
+					->where('encounter_id', '<>', $encounter_id)
+					->orderBy('encounter_id','desc')
+					->first();
+
+			if ($last_encounter) {
+					$payment = Payment::where('encounter_id', $last_encounter->encounter_id)
+							->where('payment_code', 'convert')
+							->first();
+
+					if ($payment) {
+							if ($payment->payment_code == 'convert') {
+									Log::info("Convert to inpatient....".$last_encounter->encounter_id);
+
+									Order::where('origin_id','=',$last_encounter->encounter_id)
+											->delete();
+
+									$orders = Order::where('encounter_id', $last_encounter->encounter_id)->get();
+
+									foreach($orders as $order) {
+											$convert_order = $order->replicate();
+											$convert_order->encounter_id = $encounter_id;
+											$convert_order->origin_id = $last_encounter->encounter_id;
+											$convert_order->save();
+										Log::info($order->encounter_id);
+									}
+
+							}
+					}
+			}
 	}
 
 	public function compileBill($encounter_id, $non_claimable=2) 
