@@ -311,7 +311,8 @@ class ConsultationProcedureController extends Controller
 
 				$sql = "select product_name, product_code 
 						from products as a
-						where (product_name like '%".$fields[0]."%'";
+						where status_code='active'
+						and (product_name like '%".$fields[0]."%'";
 
 				unset($fields[0]);
 

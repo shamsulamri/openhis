@@ -234,6 +234,7 @@ class OrderProductController extends Controller
 				$categoryCodes = Auth::user()->categoryCodes();
 
 				$order_products = Product::orderBy('product_name')
+						->where('status_code', '=', 'active')
 						->where(function ($query) use ($fields, $request) {
 							foreach($fields as $field) {
 								$query->where('product_name','like','%'.$field.'%');
@@ -254,9 +255,6 @@ class OrderProductController extends Controller
 				if (!empty($categoryCode)) {
 					$order_products = $order_product->whereIn('category_code',$categoryCodes);
 				}
-
-						//->whereIn('category_code',$categoryCodes)
-				$order_products = $order_products->where('status_code', '=', 'active');
 
 				$order_products = $order_products->paginate($this->paginateValue);
 

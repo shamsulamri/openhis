@@ -26,6 +26,12 @@ Progress Notes
 {{ $notes->render() }}
 @if (count($notes)>0)
 <br>
+<h3>
+{{ $target_encounter->encounterType->encounter_name }} encounter on {{ DojoUtility::dateReadFormat($target_encounter->created_at) }}
+<div class='pull-right'>
+	{{ DojoUtility::diffForHumans($target_encounter->created_at) }}
+</div>
+</h3>
 <table class="table">
 	<tbody>
 	@foreach ($notes as $nota)
@@ -33,32 +39,30 @@ Progress Notes
 		$note = $encounterHelper::getConsultation($nota->consultation_id);
 ?>
 @if ($encounter_id != $note->encounter_id)
+	@if (!empty($note->encounter->discharge))
 	<tr>
 			<td colspan=3 bgcolor='#EFEFEF'>
-				<strong>
-				{{ $note->encounter->encounterType->encounter_name }} encounter on {{ DojoUtility::dateReadFormat($note->encounter->created_at) }}
-				</strong>
-				<div class='pull-right'>
-					{{ DojoUtility::diffForHumans($note->encounter->created_at) }}
-				</div>
-				@if (!empty($note->encounter->discharge))
 						@if (!empty($note->encounter->discharge->discharge_diagnosis))
-						<br>
+						<strong>Discharge Diagnosis</strong><br>
 						{{ $note->encounter->discharge->discharge_diagnosis }}
 						@endif
 						@if (!empty($note->encounter->discharge->discharge_summary))
-						<br>
-						{{ $note->encounter->discharge->discharge_summary }}
+								@if (!empty($note->encounter->discharge->discharge_diagnosis))
+								<br>
+								<br>
+								@endif
+								<strong>Summary</strong><br>
+								{{ $note->encounter->discharge->discharge_summary }}
 						@endif
-				@endif
 			</td>
 	</tr>
+	@endif
 @endif
 	<tr>
 			<td class='col-xs-2'>
 			@if ($note->encounter->encounter_code == 'inpatient')
 						<span class='badge badge-default'>
-{{ DojoUtility::diffInDaysBetweenDates($note->created_at, $note->encounter->created_at)+1 }}
+							Day {{ DojoUtility::diffInDaysBetweenDates($note->created_at, $note->encounter->created_at)+1 }}
 						</span>
 			@endif
 					{{ DojoUtility::dateTimeReadFormat($encounterHelper->getConsultationDate($note->consultation_id)) }}
@@ -103,7 +107,7 @@ Progress Notes
 	<div id='consultation_{{ $nota->consultation_id }}'>	
 					<br>
 					@if ($note->consultation_notes)
-            		{{ Form::textarea('consultation_notes', $note->consultation_notes, ['id'=>'consultation_notes', 'tabindex'=>1, 'class'=>'form-control','rows'=>'13', 'style'=>'font-size: 1.2em']) }}
+            		{{ Form::textarea('consultation_notes', $note->consultation_notes, ['id'=>'consultation_notes', 'tabindex'=>1, 'class'=>'form-control','rows'=>'13']) }}
 					<br>
 					@else
 						@if (count($note->annotations)==0)

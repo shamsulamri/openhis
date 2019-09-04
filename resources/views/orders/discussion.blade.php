@@ -14,6 +14,7 @@
   <li @if ($plan=='imaging') class="active" @endif><a href="plan?plan=imaging">Imaging</a></li>
   <li><a href="plan?plan=procedure">Procedures</a></li>
   <li><a href="medication">Medications</a></li>
+  <li @if ($plan=='fee_consultant') class="active" @endif><a href="plan?plan=fee_consultant">Fees</a></li>
   <li class="active"><a href="disuccsion">Discussion</a></li>
   <li><a href="make">Orders</a></li>
 </ul>

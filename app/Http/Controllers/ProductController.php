@@ -35,6 +35,7 @@ use App\DojoUtility;
 use App\ProductCharge;
 use App\ProductUom;
 use App\StockHelper;
+use App\Bed;
 
 class ProductController extends Controller
 {
@@ -198,6 +199,12 @@ class ProductController extends Controller
 
 			if ($valid->passes()) {
 					$product->save();
+
+					if (!empty($product->bed)) {
+						$bed = Bed::where('bed_code', '=', $product->product_code)->first();
+						$bed->bed_name = $product->product_name;
+						$bed->save();
+					}
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/products/'.$id.'/edit');
 			} else {

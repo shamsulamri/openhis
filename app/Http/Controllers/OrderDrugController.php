@@ -105,7 +105,8 @@ class OrderDrugController extends Controller
 
 	public function updateDrug(Request $request)
 	{
-			Log::info($request->instruction);
+			Log::info("XX");
+			Log::info($request->dosage_code);
 			
 			$order_id = $request->order_id;
 			$order = Order::find($order_id);
@@ -149,6 +150,7 @@ class OrderDrugController extends Controller
 							$order->order_quantity_supply = $total_unit;
 							$order->order_is_discharge = $request->discharge?1:0;
 							$order->order_description = $request->instruction;
+							$order->unit_code = $request->dosage_code;
 							$order->save();
 
 							Log::info($request->instruction);
@@ -473,6 +475,7 @@ class OrderDrugController extends Controller
 
 				$data = DB::select($sql);
 
+				Log::info($sql);
 				$html = '';
 				$table_row = '';
 				$drug_dosage = "";

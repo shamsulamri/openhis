@@ -553,10 +553,16 @@ class OrderController extends Controller
 							->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
 							->whereIn('category_code', $plans)
 							->groupBy('orders.product_code')
-							->orderBy('total', 'desc')
-							->limit(30)
+							->orderBy('total', 'desc');
+
+				if (Auth::user()->consultant==1) {
+						$favorites = $favorites->where('user_id', Auth::user()->id);
+				}
+
+						$favorites = $favorites->limit(30)
 							->pluck('orders.product_code');
 			}
+
 							//->where('user_id', Auth::user()->id)
 
 			$products = Product::whereIn('product_code', $favorites)

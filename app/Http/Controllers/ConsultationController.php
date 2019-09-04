@@ -67,9 +67,117 @@ class ConsultationController extends Controller
 			]);
 	}
 
-	public function progress(Request $request, $consultation_id) {
+	public function progress2(Request $request, $consultation_id, $target_encounter=null, $target_consultation=null) {
 
 			$consultation = Consultation::find($consultation_id);
+			$encounters = Encounter::where('patient_id', $consultation->patient_id)
+							->orderBy('created_at', 'desc')
+							->paginate($this->paginateValue);
+
+			if (empty($target_encounter)) {
+				$target_encounter = $consultation->encounter_id;
+				$target_consultation = $consultation_id;
+			}
+
+			$consultations = Consultation::selectRaw("concat(DATE_FORMAT(consultations.created_at, '%d/%m %H:%i'), ' S/B ', name) as seen_by, consultation_id")
+								->where('patient_id', $consultation->patient_id)
+								->where('encounter_id', $target_encounter)
+								->where('author_id', 2)
+								->leftJoin('users as b', 'b.id', '=', 'consultations.user_id')
+								->orderBy('consultations.created_at', 'desc')
+								->lists('seen_by','consultation_id');
+
+			if (empty($target_consultation)) {
+				$note = Consultation::where('patient_id', $consultation->patient_id)
+								->where('encounter_id', $target_encounter)
+								->where('author_id', 2)
+								->leftJoin('users as b', 'b.id', '=', 'consultations.user_id')
+								->orderBy('consultations.created_at', 'desc')
+								->first();
+
+			} else {
+				$note = Consultation::find($target_consultation);
+			}
+
+			return view('consultations.progress2', [
+					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
+					'encounters'=>$encounters,
+					'consultations'=>$consultations,
+					'target_consultation'=>$target_consultation,
+					'target_encounter'=>$target_encounter,
+					'note'=>$note,
+					'encounterHelper'=>new EncounterHelper(),
+			]);
+
+	}
+
+	public function progress3(Request $request, $consultation_id, $target_encounter=null, $target_consultation=null) {
+
+			$consultation = Consultation::find($consultation_id);
+			$encounters = Encounter::selectRaw("concat(created_at, '- ', encounter_id) as encounter_description, encounter_id")
+							->where('patient_id', $consultation->patient_id)
+							->orderBy('created_at', 'desc')
+							->lists('encounter_description', 'encounter_id')
+							->toArray();
+
+			reset($encounters);
+			$first_key = key($encounters);
+
+
+			$keys = array_keys($encounters);
+			foreach($keys as $key) {
+					$encounter = Encounter::find($key);
+					$description = DojoUtility::dateReadFormat($encounter->created_at).' ('.DojoUtility::diffForHumans($encounter->created_at).')';
+					$description = $description.' visit to '.$encounter->encounterType->encounter_name;
+					$encounters[$key] = $description;
+					Log::info($description);
+			}
+
+			$encounters[$first_key] = 'Current encounter';
+
+			if (empty($target_encounter)) {
+				$target_encounter = $consultation->encounter_id;
+				$target_consultation = $consultation_id;
+			}
+
+			$consultations = Consultation::selectRaw("concat(DATE_FORMAT(consultations.created_at, '%d/%m %H:%i'), ' S/B ', name) as seen_by, consultation_id")
+								->where('patient_id', $consultation->patient_id)
+								->where('encounter_id', $target_encounter)
+								->where('author_id', 2)
+								->leftJoin('users as b', 'b.id', '=', 'consultations.user_id')
+								->orderBy('consultations.created_at', 'desc')
+								->lists('seen_by','consultation_id');
+
+			if (empty($target_consultation)) {
+				$note = Consultation::where('patient_id', $consultation->patient_id)
+								->where('encounter_id', $target_encounter)
+								->where('author_id', 2)
+								->leftJoin('users as b', 'b.id', '=', 'consultations.user_id')
+								->orderBy('consultations.created_at', 'desc')
+								->first();
+
+			} else {
+				$note = Consultation::find($target_consultation);
+			}
+
+			return view('consultations.progress3', [
+					'consultation'=>$consultation,
+					'patient'=>$consultation->encounter->patient,
+					'encounters'=>$encounters,
+					'consultations'=>$consultations,
+					'target_consultation'=>$target_consultation,
+					'target_encounter'=>$target_encounter,
+					'note'=>$note,
+					'encounterHelper'=>new EncounterHelper(),
+			]);
+
+	}
+
+	public function progress(Request $request, $consultation_id, $encounter_id) {
+
+			$consultation = Consultation::find($consultation_id);
+			$target_encounter = Encounter::find($encounter_id);
 			$author_id = $consultation->user->author_id;
 			$patient_id = $consultation->patient_id;
 			$userSql  = "";
@@ -132,6 +240,7 @@ class ConsultationController extends Controller
 				) as e on (e.consultation_id = a.consultation_id)
 				left join users as c on (c.id = a.user_id)
 				where patient_id = %d
+				and encounter_id = %d
 				%s
 				%s
 				order by consultation_id desc
@@ -139,13 +248,13 @@ class ConsultationController extends Controller
 
 
 			if ($request->show_all=='false' or empty($request->show_all)) {
-					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0 or medications>0)");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $encounter_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0 or medications>0)");
 			} else {
-					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, "");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $encounter_id, $userSql, "");
 			}
 
 			if ($request->show_physician =='true') {
-					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0 or medications>0)");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $encounter_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0 or medications>0)");
 			}
 
 			$notes = DB::select($sql);
@@ -196,6 +305,7 @@ class ConsultationController extends Controller
 					'showPhysician'=>$request->show_physician?:null,
 					'showNurse'=>$request->show_my_note ?:null,
 					'cutoff_date'=>Carbon::create(2019,7,5),
+					'target_encounter'=>$target_encounter,
 			]);
 	}
 

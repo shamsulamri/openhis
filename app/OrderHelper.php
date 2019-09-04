@@ -299,8 +299,8 @@ class OrderHelper
 							} 
 
 							if ($order->product->product_unit_charge==1) {
-									$order->order_quantity_request = 0;
-									$order->order_quantity_supply = 0;
+									//$order->order_quantity_request = 0;
+									//$order->order_quantity_supply = 0;
 							} else {
 									$order->order_quantity_request = 1;
 									$order->order_quantity_supply = 1;

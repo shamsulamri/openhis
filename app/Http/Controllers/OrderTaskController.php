@@ -119,7 +119,12 @@ class OrderTaskController extends Controller
 					'completed_at',
 					'dispensed_by',
 					'b.created_at as consultation_date',
-					'order_description'
+					'order_description',
+					'product_local_store',
+					'a.user_id',
+					'a.consultation_id',
+					'o.name as dispensed_user',
+					'dispensed_at'
 					];
 
 			$order_tasks = DB::table('orders as a')
@@ -137,23 +142,55 @@ class OrderTaskController extends Controller
 					->leftjoin('users as k','k.id','=', 'a.user_id')
 					->leftjoin('wards as m','m.ward_code','=', 'a.ward_code')
 					->leftjoin('users as n','n.id','=', 'a.completed_by')
+					->leftjoin('users as o','o.id','=', 'a.dispensed_by')
 					->where('c.encounter_id','=', $encounter_id)
 					->whereIn('e.category_code', $queue_categories)
-					->where('e.product_local_store','=',0)
 					->where('a.post_id','>',0) 
 					->whereNull('cancel_id') 
+					->orderBy('order_is_discharge', 'desc')
+					->orderBy('a.consultation_id');
+
+					/*
 					->orderBy('order_completed')
 					->orderBy('cancel_id')
 					->orderBy('a.post_id')
 					->orderBy('a.created_at')
 					->orderBy('order_is_discharge','desc')
 					->orderBy('a.created_at', 'desc');
+					*/
+
+					//->where('e.product_local_store','=',0)
 
 			if ($request->future) {
 				$order_tasks = $order_tasks->where('order_is_future','=', 1);
 			} else {
 				$order_tasks = $order_tasks->where('order_is_future','=', 0);
 			}
+
+			$count_ward = 0;
+			$count_floor = 0;
+			$count_discharge = 0;
+			$count_completed = 0;
+
+			$count_orders = clone $order_tasks;
+			$count_ward = $count_orders->where('product_local_store',0)
+								->where('order_is_discharge', 0)
+								->where('order_completed', 0)
+								->count();
+
+			$count_orders = clone $order_tasks;
+			$count_floor = $count_orders->where('product_local_store',1)
+								->count();
+
+			$count_orders = clone $order_tasks;
+			$count_discharge = $count_orders->where('order_is_discharge', 1)
+								->where('order_completed', 0)
+								->count();
+
+			$count_orders = clone $order_tasks;
+			$count_completed = $count_orders->where('order_completed', 1)
+								->where('product_local_store',0)
+								->count();
 
 			$order_tasks = $order_tasks->paginate($this->paginateValue);
 			
@@ -176,7 +213,14 @@ class OrderTaskController extends Controller
 				$store = Store::find($order_tasks[0]->store_code);
 			}
 			
-			return view('order_tasks.index', [
+			//return view('order_tasks.index', [
+			$view = 'order_tasks.index';
+
+			if (Auth::user()->author_id==18) {
+					$view = 'order_tasks.pharmacy';
+			}
+			
+			return view($view, [
 					'order_tasks'=>$order_tasks,
 					'patient'=>$encounter->patient,
 					'encounter'=>$encounter,
@@ -189,6 +233,13 @@ class OrderTaskController extends Controller
 					'order_helper'=> new OrderHelper(),
 					'store'=>$store,
 					'consultation_id'=>$consultation->consultation_id,
+					'count_ward'=>$count_ward,
+					'count_floor'=>$count_floor,
+					'count_discharge'=>$count_discharge,
+					'count_completed'=>$count_completed,
+					'show_line'=>False,
+					'new_line'=>False,
+					'user_id'=>0,
 			]);
 	}
 	public function edit(Request $request, $id) 
@@ -439,6 +490,9 @@ class OrderTaskController extends Controller
 						$order->location_code = $location_code;
 						$order->store_code = $store_code;
 						$order->order_completed = 1;
+						if ($order->order_is_future==1) {
+							$order->order_is_future = 2;
+						}
 						$order->save();
 						
 					} else {

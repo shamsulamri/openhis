@@ -47,7 +47,7 @@ iframe { border: 1px #e5e5e5 solid; }
 						{{ Form::hidden($product->product_code.'_price', $product->uomDefaultPrice()->uom_price, ['id'=>$product->product_code.'_price']) }}
 				</div>
 				<div class='col-md-1'>
-            			<a class="btn btn-success" href="javascript:updateAmount('{{ $product->product_code }}');" role="button"><i class="glyphicon glyphicon-time"></i></a>
+            			<a title='After office hours' class="btn btn-success" href="javascript:updateAmount('{{ $product->product_code }}');" role="button"><i class="glyphicon glyphicon-time"></i></a>
 				</div>
 			</div>
 	@endforeach

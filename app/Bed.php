@@ -98,6 +98,7 @@ class Bed extends Model
 			return $beds->count();
 	}
 
+	/*
 	public static function boot()
 	{
 			parent::boot();
@@ -108,4 +109,5 @@ class Bed extends Model
 			});
 
 	}
+	 */
 }

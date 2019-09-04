@@ -135,6 +135,11 @@ class Product extends Model
 			return $this->hasMany('App\ProductUom', 'product_code');
 	}
 
+	public function bed()
+	{
+			return $this->hasOne('App\Bed', 'bed_code', 'product_code');
+	}
+
 	public function getOrderFormName()
 	{
 			if ($this->attributes['order_form']) {

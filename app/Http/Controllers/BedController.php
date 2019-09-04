@@ -95,29 +95,37 @@ class BedController extends Controller
 			$valid = $bed->validate($request->all(), $request->_method);
 
 			if ($valid->passes()) {
-					$bed = new Bed($request->all());
-					$bed->bed_code = $request->bed_code;
-					$bed->status_code = '01';
-					$bed->save();
+					$is_product = Product::where('product_code', '=', $request->bed_code)->first();
+					if (empty($is_product)) {
+							$bed = new Bed($request->all());
+							$bed->bed_code = $request->bed_code;
+							$bed->status_code = '01';
+							$bed->save();
 
-					$class = WardClass::find($bed->class_code);
+							$class = WardClass::find($bed->class_code);
 
-					$product = new Product();
-					$product->product_code = $bed->bed_code;
-					$product->product_name = $bed->bed_name;
-					$product->category_code = "bed";
-					$product->order_form="1";
-					$product->save();
+							$product = new Product();
+							$product->product_code = $bed->bed_code;
+							$product->product_name = $bed->bed_name;
+							$product->category_code = "bed";
+							$product->order_form="1";
+							$product->save();
 
-					$product_uom = new ProductUom();
-					$product_uom->product_code = $product->product_code;
-					$product_uom->unit_code = 'unit';
-					$product_uom->uom_rate = 1;
-					$product_uom->uom_price = $bed->wardClass->class_price;
-					$product_uom->save();
+							$product_uom = new ProductUom();
+							$product_uom->product_code = $product->product_code;
+							$product_uom->unit_code = 'unit';
+							$product_uom->uom_rate = 1;
+							$product_uom->uom_price = $bed->wardClass->class_price;
+							$product_uom->save();
 
-					Session::flash('message', 'Record successfully created. Please update the product price information.');
-					return redirect('/beds/id/'.$bed->bed_code);
+							Session::flash('message', 'Record successfully created. Please update the product price information.');
+							return redirect('/beds/id/'.$bed->bed_code);
+					} else {
+							Session::flash('message', 'Product code already exist.');
+							return redirect('/beds/create')
+									->withErrors($valid)
+									->withInput();
+					}
 			} else {
 					return redirect('/beds/create')
 							->withErrors($valid)
