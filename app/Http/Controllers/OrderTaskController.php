@@ -216,7 +216,7 @@ class OrderTaskController extends Controller
 			//return view('order_tasks.index', [
 			$view = 'order_tasks.index';
 
-			if (Auth::user()->author_id==18 or Auth::user()->author_id=13) {
+			if (Auth::user()->author_id==18 or Auth::user()->author_id==13) {
 					$view = 'order_tasks.pharmacy';
 			}
 			
