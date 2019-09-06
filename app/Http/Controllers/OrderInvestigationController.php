@@ -181,6 +181,7 @@ class OrderInvestigationController extends Controller
 				}
 			}
 
+			$order->order_quantity_supply = $order->order_quantity_request;
 			$order->save();
 			
 			$valid = $order_investigation->validate($request->all(), $request->_method);	
