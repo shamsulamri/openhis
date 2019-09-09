@@ -524,7 +524,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, sum(order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, 1 as total_quantity, order_markup, order_discount, name, department_name
+				select a.product_code, sum(order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, 1 as total_quantity, order_markup, order_discount, name, department_name, product_name
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -566,9 +566,9 @@ class BillItemController extends Controller
 					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
-					$item->bill_name = $order->name;
-					if (!empty($order->department_name)) {
-						$item->bill_name .= " (".$order->department_name.")";
+					$item->bill_name = $order->product_name;
+					if (!empty($order->name)) {
+						$item->bill_name .= " (".$order->name.")";
 					}
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
