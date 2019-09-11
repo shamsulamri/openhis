@@ -317,7 +317,9 @@ class OrderHelper
 							$order_drug->period_code = $renew_drug->period_code;
 
 							$order->order_quantity_request = $renew_drug->order->order_quantity_request;
-							if ($product->product_unit_charge==1) {
+
+							$dosage = DrugDosage::find($order_drug->dosage_code)->first();
+							if ($dosage->dosage_unit_count==1) {
 									$dosage = $order_drug->drug_dosage;
 									$frequency = $order_drug->frequency?$order_drug->frequency->frequency_value:1;
 									$period = $order_drug->period?$order_drug->period->period_mins:1;
@@ -646,8 +648,9 @@ class OrderHelper
 						->get();
 						
 			$total = 0;
-			if ($order->product->product_unit_charge==1) {
-					$orderDrug = OrderDrug::where('order_id', $order_id)->first();
+			$orderDrug = OrderDrug::where('order_id', $order_id)->first();
+			$dosage = DrugDosage::find($orderDrug->dosage_code);
+			if ($dosage->dosage_count_unit==1) {
 					$total = $mar->count()*$orderDrug->drug_dosage;
 			} else {
 					$total = $mar->count();

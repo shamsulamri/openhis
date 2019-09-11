@@ -290,6 +290,9 @@
 	}
 
 	function countTotalUnit() {
+
+			var dosage_count_units = [{!! $dosage_count_units !!}];
+
 			if (document.getElementById('frequency').value == 'STAT') {
 				document.getElementById('order_include_stat').checked = false;
 				document.getElementById('order_include_stat').disabled = true;
@@ -297,44 +300,27 @@
 				document.getElementById('order_include_stat').disabled = false;
 			}
 
-			@if ($product->product_unit_charge)
 			unit_code = document.getElementById('unit_code').value;
 			dosage_code = document.getElementById('dosage_code').value;
 			strength = document.getElementById('drug_strength').value;
 			dosage = document.getElementById('dosage').value;
 
-			if (unit_code == dosage_code) {
-					if (strength) {
-							dosage = dosage/strength;
-					} else {
-							dosage = 1;
+			if (dosage_count_units.includes(dosage_code)) {
+
+					frequency = getFrequencyValue(document.getElementById('frequency').value) 
+					period = getPeriodValue(document.getElementById('period').value) 
+					duration = document.getElementById('duration').value;
+					total = Math.round(frequency*dosage);
+
+					console.log("Dosage:"+dosage);
+					console.log("Frequency:"+frequency);
+					console.log("Duration:"+duration);
+
+					if (duration>0) total = total*duration*period;
+					if (isNumber(total)==true) {
+						document.getElementById('total').value=total;
 					}
 			}
-
-			if (unit_code) {
-					console.log("unit_code:"+unit_code);
-					console.log("dosage_code:"+dosage_code);
-				if (unit_code != dosage_code) {
-					console.log("!!!!!");
-					dosage = 1;
-				}
-			}
-
-			console.log("Dosage:"+dosage);
-
-			frequency = getFrequencyValue(document.getElementById('frequency').value) 
-			period = getPeriodValue(document.getElementById('period').value) 
-			duration = document.getElementById('duration').value;
-			total = Math.round(frequency*dosage);
-			if (duration>0) total = total*duration*period;
-			if (isNumber(total)==true) {
-				document.getElementById('total').value=total;
-			}
-			@endif
-			console.log(frequency);
-			console.log(duration);
-			console.log(dosage);
-			console.log('-----');
 	}
 
 	function isNumber(n) {

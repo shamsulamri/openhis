@@ -15,6 +15,14 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('dosage_count_unit')) has-error @endif'>
+        {{ Form::label('dosage_count_unit', 'Count Unit',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::checkbox('dosage_count_unit', '1',null, ['class'=>'checkbox']) }} Count number of unit to dispense from prescription. Apply to drugs.
+            @if ($errors->has('dosage_count_unit')) <p class="help-block">{{ $errors->first('dosage_count_unit') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('dosage_index')) has-error @endif'>
         {{ Form::label('dosage_index', 'Index',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

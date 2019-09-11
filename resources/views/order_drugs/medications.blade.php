@@ -178,7 +178,7 @@ $(document).ready(function(){
 					instruction = encodeURIComponent(instruction);
 					console.log(instruction);
 
-					var dataString = parse('drug_strength=%s&unit_code=%s&drug_dosage=%s&dosage_code=%s&route_code=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s&discharge=%s%instruction=%s', 
+					var dataString = parse('drug_strength=%s&unit_code=%s&drug_dosage=%s&dosage_code=%s&route_code=%s&frequency_code=%s&drug_duration=%s&period_code=%s&order_id=%s&discharge=%s&instruction=%s', 
 							strength,
 							unit_code,
 							dosage, 

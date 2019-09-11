@@ -550,9 +550,13 @@ class OrderController extends Controller
 			if ($request->plan=='fee_consultant') {
 					$view = 'orders.consultant_fee';
 					$favorites = Product::select('product_code')
-							->whereIn('category_code', $plans)
+							->where('product_code', 'like', '%A')
+							->where('category_code', $plans)
+							->orderBy('product_name')
 							->pluck('product_code');
-					$favorites = ['CONSULTANT001A', 'CONSULTANT002A'];
+
+					//$favorites = ['CONSULTANT001A', 'CONSULTANT002A'];
+
 					$ordered_items = Order::select('product_code')
 										->where('consultation_id', $consultation->consultation_id)
 										->pluck('product_code')

@@ -49,7 +49,7 @@ iframe { border: 1px #e5e5e5 solid; }
 	</tr>
 	<tr>
 			<td width='25%'>
-					<strong>{{ $product->product_name }}</strong>
+					<h4>{{ ucwords(strtolower($product->product_name)) }}</h4>
 			</td>
 			<td width='10%' align='center'>
 					{{ Form::radio($product_root,'A', (in_array($product_root.'A', $ordered_items))?true:false, ['id'=>$product_root.'A'])  }} 

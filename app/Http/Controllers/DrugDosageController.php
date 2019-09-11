@@ -72,6 +72,7 @@ class DrugDosageController extends Controller
 			$drug_dosage = DrugDosage::findOrFail($id);
 			$drug_dosage->fill($request->input());
 
+			$drug_dosage->dosage_count_unit = $request->dosage_count_unit ?: 0;
 
 			$valid = $drug_dosage->validate($request->all(), $request->_method);	
 

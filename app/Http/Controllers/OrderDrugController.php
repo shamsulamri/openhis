@@ -31,6 +31,7 @@ use App\Store;
 use App\Drug;
 use App\DojoUtility;
 use App\OrderPost;
+use App\DrugDosage;
 
 class OrderDrugController extends Controller
 {
@@ -105,9 +106,8 @@ class OrderDrugController extends Controller
 
 	public function updateDrug(Request $request)
 	{
-			Log::info("XX");
-			Log::info($request->dosage_code);
-			
+			Log::info("*************************");
+			Log::info($request);
 			$order_id = $request->order_id;
 			$order = Order::find($order_id);
 			if (!empty($order)) {
@@ -127,14 +127,6 @@ class OrderDrugController extends Controller
 							$frequency = $drug->frequency?$drug->frequency->frequency_value:1;
 							$period = $drug->period?$drug->period->period_mins:1;
 
-							if ($drug->unit_code == $drug->dosage_code) {
-								if (!empty($drug->drug_strength) && !empty($drug->drug_dosage)) {
-									$dosage = $drug->drug_dosage/$drug->drug_strength;
-								} else {
-									$dosage = 1;
-								}
-							}
-
 							$total_unit = $dosage*$frequency;
 
 							if ($drug->drug_duration>0) {
@@ -143,18 +135,20 @@ class OrderDrugController extends Controller
 
 							$order = Order::find($order_id);
 
-							if ($order->product->product_unit_charge==0) {
+							Log::info($drug->dosage_code);
+							$dosage = DrugDosage::find($drug->dosage_code);
+							Log::info($dosage);
+							if ($dosage->dosage_count_unit==0) {
+							//if ($order->product->product_unit_charge==0) {
 									$total_unit = 1;
 							}
+							Log::info($total_unit);
 							$order->order_quantity_request = $total_unit;
 							$order->order_quantity_supply = $total_unit;
 							$order->order_is_discharge = $request->discharge?1:0;
 							$order->order_description = $request->instruction;
 							$order->unit_code = $request->dosage_code;
 							$order->save();
-
-							Log::info($request->instruction);
-							Log::info($total_unit);
 
 							$drug->save();
 					}
@@ -798,6 +792,10 @@ class OrderDrugController extends Controller
 					$order->order_quantity_request = $drug_prescription->drug_total_unit;
 					$order->order_description = $drug_prescription->drug_description;
 			}
+
+			$dosage_count_units = DrugDosage::where('dosage_count_unit',1)
+					->pluck('dosage_code')
+					->toArray();
 			return view('order_drugs.create', [
 					'order_drug' => $order_drug,
 					'unit' => Unit::where('unit_drug',1)->orderBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
@@ -812,6 +810,7 @@ class OrderDrugController extends Controller
 					'tab'=>'order',
 					'consultOption' => 'consultation',
 					'order'=> $order, 
+					'dosage_count_units'=>$dosage_count_units,
 					]);
 	}
 
@@ -871,10 +870,20 @@ class OrderDrugController extends Controller
 			$stock_helper = new StockHelper();
 			$available = $stock_helper->getStockAvailable($product_code, $order_drug->order->store_code);
 
+			$dosage_count_units = DrugDosage::where('dosage_count_unit',1)
+					->pluck('dosage_code')
+					->toArray();
+
+			$dosage_count_units = implode("', '",$dosage_count_units);
+			if (!empty($dosage_count_units)) {
+				$dosage_count_units = "'".$dosage_count_units."'";	
+			}
+
+			//return $dosage_count_units;
 			return view('order_drugs.edit', [
 					'order_drug'=>$order_drug,
 					'unit' => Unit::where('unit_drug',1)->orderBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
-					'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
+					'dosage' => Dosage::all()->sortBy('dosage_index')->lists('dosage_name', 'dosage_code')->prepend('',''),
 					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
 					'frequencyValues' => Frequency::all(),
 					'period' => Period::whereIn('period_code', array('day','week', 'month'))->orderBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
@@ -889,6 +898,7 @@ class OrderDrugController extends Controller
 					'indications'=>$indications,
 					'available'=>$available,
 					'order_single'=>$request->order_single,
+					'dosage_count_units'=>$dosage_count_units,
 					]);
 	}
 
