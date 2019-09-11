@@ -418,10 +418,12 @@ class OrderController extends Controller
 	{
 			$product_code = $request->product_code;
 			$encounter_id = Session::get('encounter_id');
+			$consultation_id = Session::get('consultation_id');
 			$orders = Order::select('orders.order_id')
 						->where('product_code','=', $product_code)
 						->leftJoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
 						->where('encounter_id','=', $encounter_id)
+						->where('consultation_id','=', $consultation_id)
 						->where('order_completed','=','0')
 						->whereNull('cancel_id')
 						->get();
@@ -444,6 +446,7 @@ class OrderController extends Controller
 	public function addOrder(Request $request)
 	{
 			$product_code = $request->product_code;
+			Log::info("Add order.......".$product_code);
 			$encounter_id = Session::get('encounter_id');
 			$orders = Order::where('product_code','=', $product_code)
 						->leftJoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
@@ -542,11 +545,28 @@ class OrderController extends Controller
 			if ($request->plan=='fee_consultant') { $plans = ['fee_consultant']; }
 
 			$view = 'orders.plan';
+			$ordered_items = array();
+			$amounts = [];
 			if ($request->plan=='fee_consultant') {
 					$view = 'orders.consultant_fee';
 					$favorites = Product::select('product_code')
 							->whereIn('category_code', $plans)
 							->pluck('product_code');
+					$favorites = ['CONSULTANT001A', 'CONSULTANT002A'];
+					$ordered_items = Order::select('product_code')
+										->where('consultation_id', $consultation->consultation_id)
+										->pluck('product_code')
+										->toArray();
+					$ordered_amounts = Order::select('product_code', 'order_unit_price')
+										->where('consultation_id', $consultation->consultation_id)
+										->get();
+
+					foreach($ordered_amounts as $ordered_amount) {
+							$product_code = $ordered_amount->product_code;
+							$amounts[substr($product_code, 0, strlen($product_code)-1)] = $ordered_amount->order_unit_price;
+					}
+
+
 			} else {
 				$favorites = DB::table('orders')
 							->select('orders.product_code', DB::raw('count(*) as total'))
@@ -590,6 +610,8 @@ class OrderController extends Controller
 					'plan'=>$request->plan,
 					'half'=>$half,
 					'order_helper'=>new OrderHelper(),
+					'ordered_items'=>$ordered_items,
+					'amounts'=>$amounts,
 			]);
 	}
 
