@@ -7,6 +7,7 @@ iframe { border: 1px #e5e5e5 solid; }
 @if (!empty($consultation))
 @can('module-consultation')
 		@include('consultations.panel')		
+<h1 class="text-danger"><i class="fa fa-warning"></i>&nbsp;DO NOT USE THIS. STILL UNDER DEVELOPMENT</h1>
 		<h1>Plan</h1>
 @endcan
 @endif
