@@ -943,6 +943,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/discharge/search', 'DischargeController@search');
 
 		Route::group(['middleware' => 'order'], function () {
+				Route::get('/order/index', 'OrderController@index');
 				Route::get('/orders/single/{product_code}', 'OrderController@single');
 				Route::get('/orders/task', 'OrderController@task');
 				Route::get('/orders/make', 'OrderController@make');
@@ -956,7 +957,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/orders/{id}/show', 'OrderController@show');
 				Route::get('/orders/create/{product_code}', 'OrderController@create');
 				Route::get('/orders/id/{id}', 'OrderController@searchById');
-				Route::post('/order/search', 'OrderController@search');
+				Route::post('/order/index', 'OrderController@index');
 				Route::get('/order/search', 'OrderController@search');
 				Route::get('/orders/delete/{id}', 'OrderController@delete');
 				Route::post('/orders/diagnostic_report/{id}', 'OrderController@updateDiagnosticReport');

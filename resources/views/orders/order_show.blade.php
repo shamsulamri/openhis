@@ -32,6 +32,14 @@
             {{ Form::label('order_by', $order->user->name, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
+
+    <div class='form-group'>
+        {{ Form::label('consultation_date', 'Consultation Date',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::label('order_by', DojoUtility::dateTimeReadFormat($order->consultation->created_at), ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
+
 	@if ($order->order_report)
     <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
         {{ Form::label('Report', 'Report',['class'=>'col-sm-3 control-label']) }}

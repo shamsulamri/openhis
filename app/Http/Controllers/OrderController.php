@@ -125,6 +125,7 @@ class OrderController extends Controller
 					'document_uuid',
 					'order_unit_price',
 					'bom_code',
+					'd.created_at as consultation_date'
 					];
 
 			//$orders = DB::table('orders as a')
@@ -139,7 +140,9 @@ class OrderController extends Controller
 
 					//->orderBy('b.category_code')
 			if (Auth::user()->authorization->module_support != 1) {
-					$orders = $orders->where('orders.user_id','=',Auth::user()->id);
+					if (Auth::user()->authorization->module_discharge != 1) {
+							$orders = $orders->where('orders.user_id','=',Auth::user()->id);
+					}
 			}
 
 			if ($encounter->admission) {
@@ -157,6 +160,15 @@ class OrderController extends Controller
 					//$orders = $orders->where('a.location_code','=', $request->cookie('queue_location'));
 			}
 
+			if (!empty($request->search)) {
+				$orders = $orders->where(function ($query) use ($request) {
+						$search_param = trim($request->search, " ");
+						$query->where('b.product_name','like','%'.$search_param.'%')
+								->orWhere('b.product_name_other','like','%'.$search_param.'%')
+								->orWhere('b.product_code','like','%'.$search_param.'%');
+					});
+			}
+
 			$orders = $orders->paginate($this->paginateValue);
 
 			return view('orders.index', [
@@ -166,6 +178,7 @@ class OrderController extends Controller
 					'tab'=>'order',
 					'consultOption' => 'consultation',
 					'dojo'=> new DojoUtility(),
+					'search'=>$request->search,
 			]);
 	}
 

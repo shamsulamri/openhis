@@ -230,6 +230,8 @@ class Product extends Model
 					}
 			}
 
+			Log::info('-----');
+			Log::info($uom);
 			return $uom?:null;
 	}
 
