@@ -169,9 +169,6 @@
 			@endif
 			@endcannot
 			@can('system-administrator')
-			<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $discharge->encounter_id) }}'>
-				<i class="fa fa-stethoscope"></i>
-			</a>
 			<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
 			@endcan
 			</td>

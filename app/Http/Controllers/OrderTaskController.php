@@ -228,7 +228,6 @@ class OrderTaskController extends Controller
 					'ids'=>$ids,
 					'dispense_ids'=>$dispense_ids,
 					'location'=>$location,
-					'product'=> new Product(),
 					'stock_helper'=> new StockHelper(),
 					'order_helper'=> new OrderHelper(),
 					'store'=>$store,
@@ -438,6 +437,7 @@ class OrderTaskController extends Controller
 												}
 
 												$inventory->uom_rate =  $uom->uom_rate;
+												$inventory->unit_code = $uom->unit_code;
 												$inventory->inv_unit_cost =  $uom->uom_cost?:0;
 												$inventory->inv_quantity = -($unit_supply*$uom->uom_rate);
 												$inventory->inv_physical_quantity = $unit_supply;

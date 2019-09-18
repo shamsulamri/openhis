@@ -147,7 +147,7 @@ class OrderDrugController extends Controller
 							$order->order_quantity_supply = $total_unit;
 							$order->order_is_discharge = $request->discharge?1:0;
 							$order->order_description = $request->instruction;
-							$order->unit_code = $request->dosage_code;
+							//$order->unit_code = $request->dosage_code;
 							$order->save();
 
 							$drug->save();

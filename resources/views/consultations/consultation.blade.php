@@ -1,8 +1,3 @@
-
-
-
-
-
 <div class="row">
 	<div class="col-xs-7">
 			<div class='form-group'>
@@ -21,11 +16,6 @@
 									'class'=>'form-control','maxlength'=>'20']) }}
 
 				</div>
-				@endif
-				@if (Auth::user()->author_id == 15)
-					<a target="_blank" class='btn btn-success pull-right' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=image_report&id={{ $consultation->consultation_id }}&encounter_id={{ $consultation->encounter_id }}">
-				Print
-				</a>
 				@endif
 			</div>
 	</div>

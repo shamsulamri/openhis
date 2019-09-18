@@ -662,6 +662,15 @@ class OrderHelper
 			return $total;
 
 	}
+
+	public function getDefaultPrice($product_code) 
+	{
+			$uom = ProductUom::where('product_code', $product_code)
+					->where('uom_default_price', 1)
+					->first();
+
+			return $uom;
+	}
 }
 
 ?>

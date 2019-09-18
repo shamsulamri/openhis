@@ -288,6 +288,7 @@ class InventoryMovementController extends Controller
 	{
 			$inventory_movements = InventoryMovement::where('move_code','like','%'.$request->search.'%')
 					->orWhere('move_number', 'like','%'.$request->search.'%')
+					->orWhere('move_id', 'like','%'.$request->search.'%')
 					->orderBy('move_id')
 					->paginate($this->paginateValue);
 

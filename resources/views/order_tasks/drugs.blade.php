@@ -8,7 +8,7 @@
 			</tr>
 			@endif
 			<tr>
-				<td bgcolor='#EFEFEF' colspan='10'>
+				<td bgcolor='#EFEFEF' colspan='12'>
 					<h3>&nbsp;{{ $order->name }}, 
 						<small>
 							{{ (DojoUtility::dateTimeReadFormat($order->consultation_date)) }}
@@ -41,11 +41,11 @@
 	@endif
 	@if ($show_line)
 	<tr class='border_bottom'>
-			<td colspan='10' height='10'>
+			<td colspan='11' height='10'>
 			</td>
 	</tr>
 	<tr>
-			<td colspan='10' height='10'>
+			<td colspan='11' height='10'>
 			</td>
 	</tr>
 	@endif
@@ -58,7 +58,7 @@
 			<td valign='top' colspan='1'>
 					{{$order->product_code}}
 			</td>
-			<td valign='top' colspan='4'>
+			<td valign='top' colspan='5'>
 				@if ($order->order_completed==0)
 					<a href='{{ URL::to('order_tasks/'. $order->order_id . '/edit') }}'>
 					{{$order->product_name}}
@@ -100,7 +100,7 @@
 					@endif
 			</td>
 			@endif
-			<td colspan='1' align='right' valign='top' width='100'>
+			<td colspan='2' align='right' valign='top' width='100'>
 					@if (!isset($order->cancel_id))
 					@endif
 					@if ($order->order_completed==0 && !isset($order->cancel_id))
@@ -119,7 +119,7 @@
 	<tr>
 			<td></td>
 			<td></td>
-			<td colspan='4'>
+			<td colspan='5'>
 					@if ($order->category_code=='drugs' | $order->category_code=='drug_generics')
 						<strong>
 						{{ $order_helper->getPrescription($order->order_id) }}
@@ -140,6 +140,7 @@
 			<td colspan='1' valign='bottom'><strong>Batch Number</strong></td>
 			<td colspan='1' valign='bottom' align='center'><strong>Expiry Date</strong></td>
 			<td colspan='1' valign='bottom' align='center'><strong>Available</strong></td>
+			<td colspan='1' valign='bottom' width='10%' align='center'><strong>Unit</strong></td>
 			<td colspan='1' valign='bottom' width='10%' align='right'><strong>Quantity</strong></td>
 	</tr>
 	@if ($batches->count()>0 && $order->order_completed==0)
@@ -159,7 +160,7 @@
 			$total_supply += $supply;
 			?>
 			<tr>
-				<td colspan='6'></td>
+				<td colspan='7'></td>
 				<td colspan='1'>
 					{{ $batch->inv_batch_number }}
 				</td>
@@ -171,6 +172,11 @@
 					{{ $batch->sum_quantity }}
 				</td>
 				@endif
+				<td colspan='1' align='center'>
+					@if ($uom = $order_helper->getDefaultPrice($order->product_code))
+					{{ $uom->unitMeasure->unit_name }}
+					@endif
+				</td>	
 				<td colspan='1'>
 					@if ($order->order_completed == 0) 
             		{{ Form::text('batch_'.$batch->product_code.'_'.$batch->batch_id, $supply?:0, ['class'=>'form-control']) }}
@@ -178,7 +184,6 @@
             		{{ Form::label('batch_'.$batch->product_code.'_'.$batch->batch_id, abs($supply?:0), ['class'=>'form-control']) }}
 					@endif
 				</td>
-				
 			</tr>
 		@endforeach
 		@if ($errors->has('batch_'.$batch->product_code) | $total_supply==0) 
@@ -205,6 +210,11 @@
 							-
 					@endif
 				</td>
+				<td colspan='1' align='center'>
+					@if ($uom = $order_helper->getDefaultPrice($order->product_code))
+					{{ $uom->unitMeasure->unit_name }}
+					@endif
+				</td>	
 				<td colspan='1' align='center'>
 					{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
 				</td>

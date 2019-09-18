@@ -268,7 +268,7 @@
 						triage.disabled=true;
 			}
 
-			if (encounterCode == 'outpatient') {
+			if (encounterCode == 'outpatient' || encounterCode == 'walkin') {
 					hide(document.querySelectorAll('.target'));
 					document.getElementById('location_code').disabled = false;
 			} 
