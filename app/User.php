@@ -185,8 +185,9 @@ class User extends Authenticatable
 					if ($this->authorization->module_ward == 1) {
 							$ward_code = $request->cookie('ward');
 							$ward = Ward::where('ward_code', $ward_code)->first();
-							$store_code = $ward->store_code;
-
+							if ($ward) {
+									$store_code = $ward->store_code;
+							}
 					} else {
 							$store_code = $this->authorization->store_code;
 					}
