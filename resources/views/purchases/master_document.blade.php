@@ -13,16 +13,16 @@
 	@endif
 @else
 	@if ($reason == 'request')
-<a class='btn btn-default btn-sm' href='/inventory_movements/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
-<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
-<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
-<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Request</a>
-		
+		<a class='btn btn-default btn-sm' href='/inventory_movements/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
+		<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
+		<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Purchase</a>
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&type=indent&move_id={{ $movement->move_id }}'>Indent</a>
 	@else
 		<a class='btn btn-default btn-sm' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
 		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=stock&move_id={{ $movement->move_id }}'>Documents</a>
 		<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a> 
-<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Request</a>
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Purchase</a>
 	@endif
 @endif
 <br><br>
@@ -72,11 +72,15 @@
 @endif
 </tbody>
 </table>
+{{ $purchases->appends(['search'=>$search, 'reason'=>$reason, 'move_id'=>$move_id])->render() }}
+
+<!--
 @if (isset($search)) 
 	{{ $purchases->appends(['search'=>$search])->render() }}
 	@else
 	{{ $purchases->render() }}
 @endif
+-->
 <br>
 @if ($purchases->total()>0)
 	{{ $purchases->total() }} records found.

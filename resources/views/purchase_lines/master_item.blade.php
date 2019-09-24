@@ -40,11 +40,7 @@
     <th>Item</th> 
     <th>Document</th> 
 	<th><div align='right'>
-					@if ($reason == 'purchase')
-						Balance
-					@else
-						Quantity
-					@endif
+		Quantity
 	</div></th>
 	</tr>
   </thead>
@@ -76,13 +72,17 @@
 							{{ number_format($purchase_line->line_quantity) }} 
 						@else
 							{{ number_format($purchase_line->line_quantity) }} 
+							@if ($purchase_line->line_quantity-$helper->balanceQuantity($purchase_line->line_id)>0)
+							({{ $purchase_line->line_quantity-$helper->balanceQuantity($purchase_line->line_id) }})
+							@endif
 						@endif
 					@else
-					{{ number_format($purchase_line->line_quantity) }} 
+							{{ number_format($purchase_line->line_quantity) }} 
 					@endif
-						@if ($purchase_line->unit_code != null)
+					@if ($purchase_line->unit_code != null)
 							{{ $purchase_line->uom->unit_name }}
-						@endif
+					@endif
+
 			</td>
 	</tr>
 @endforeach
@@ -110,7 +110,7 @@
 	var frameLine = parent.document.getElementById('frameLine');
 
 	@if($reload=='true')
-			@if($reason=='stock')
+			@if($reason=='stock' || $reason=='request')
 					frameLine.src='/inventories/detail/{{ $movement->move_id }}';
 			@else
 					frameLine.src='/purchase_lines/detail/{{ $purchase->purchase_id }}';

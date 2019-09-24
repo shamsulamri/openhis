@@ -16,7 +16,7 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label for='date_end' class='col-sm-3 control-label'>Type</label>
+						<label for='date_end' class='col-sm-3 control-label'>Document</label>
 						<div class='col-sm-9'>
 							{{ Form::select('document_code', $documents,$document_code?:'', ['class'=>'form-control','maxlength'=>'20']) }}
 						</div>
@@ -38,11 +38,25 @@
 			<div class='panel-body' align='middle'>
 				<h5><strong>Open</strong></h5>	
 				<h2>
-				<a href='/purchase/search?status_code=open'>{{ $purchase_helper->openPurchases() }}</a>
+				<a href='/purchase/search?status_code=open'>{{ $purchase_helper->openPurchases($store_code) }}</a>
 				</h2>
 			</div>
 		</div>
 	</div>
+@can('indent_request')
+	<div class="col-md-4">
+		<div class='panel panel-default'>
+			<div class='panel-body' align='middle'>
+				<h5><strong>Indent Request</strong></h5>	
+				<h4>
+					<h2>
+					<a href='/purchase/search?status_code=indent_request'>{{ $purchase_helper->backOrder('indent_request')->count() }}</a>
+					</h2>
+				</h4>	
+			</div>
+		</div>
+	</div>
+@endcan
 @can('purchase_request')
 	<div class="col-md-4">
 		<div class='panel panel-default'>
@@ -50,7 +64,7 @@
 				<h5><strong>Purchase Request</strong></h5>	
 				<h4>
 					<h2>
-					<a href='/purchase/search?status_code=purchase_request'>{{ $purchase_helper->openPurchaseRequest() }}</a>
+					<a href='/purchase/search?status_code=purchase_request'>{{ $purchase_helper->backOrder('purchase_request')->count() }}</a>
 					</h2>
 				</h4>	
 			</div>
@@ -120,11 +134,7 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $purchases->appends(['search'=>$search])->render() }}
-	@else
-	{{ $purchases->render() }}
-@endif
+{{ $purchases->appends(['search'=>$search, 'document_code'=>$document_code, 'status_code'=>$status_code])->render() }}
 <br>
 @if ($purchases->total()>0)
 	{{ $purchases->total() }} records found.

@@ -92,6 +92,12 @@
             @if ($errors->has('purchase_request')) <p class="help-block">{{ $errors->first('purchase_request') }}</p> @endif
         </div>
     </div>
+    <div class='form-group  @if ($errors->has('indent_request')) has-error @endif'>
+        <div class='col-sm-offset-5'>
+            {{ Form::checkbox('indent_request', '1') }} <label>Manage Indent Request</label>
+            @if ($errors->has('indent_request')) <p class="help-block">{{ $errors->first('indent_request') }}</p> @endif
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('module_ward')) has-error @endif'>
         <label for='module_ward' class='col-sm-4 control-label'>Ward Module</label>
         <div class='col-sm-8'>

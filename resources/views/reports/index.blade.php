@@ -68,6 +68,7 @@
 		<a href="{{ url('/products/on_hand?store_code='.$store_code) }}">Stock On Hand Enquiry</a><br>
 		<a href="{{ url('/inventory/enquiry?store_code='.$store_code) }}">Stock Movement Enquiry</a><br>
 		<a href="{{ url('/purchase_line/enquiry') }}">Purchase Enquiry</a><br>
+		<a href="{{ url('/purchase_line/backorder') }}">Back Order Enquiry</a><br>
 		<a href="{{ url('/products/reorder?store_code='.$store_code) }}">Product Reorder Enquiry</a><br>
 		<a href="{{ url('/loan/enquiry') }}">Loan - Request Enquiry</a><br>
 		<a href="{{ url('/loan/workload') }}">Loan - Workload Enquiry</a><br>

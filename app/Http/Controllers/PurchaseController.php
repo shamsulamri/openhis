@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -20,6 +22,8 @@ use App\Store;
 use App\InventoryMovement;
 use App\RnPurchaseRequest;
 use App\PurchaseHelper;
+use App\Ward;
+use App\StockHelper;
 
 class PurchaseController extends Controller
 {
@@ -37,6 +41,13 @@ class PurchaseController extends Controller
 							$query->where('author_id', '=', Auth::user()->author_id)
 								  ->orWhere('status_code', '=', 'approved');
 					});
+
+			//$store_code = StockHelper::getDefaultStore($request);
+			$store_code = Auth::User()->defaultStore($request);
+			if (!empty($store_code)) {
+					$purchases = $purchases->where('store_code', $store_code);
+			}
+
 			$purchases = $purchases->orderBy('purchase_id', 'desc');
 
 			$purchases = $purchases->paginate($this->paginateValue);
@@ -47,6 +58,9 @@ class PurchaseController extends Controller
 					'document_code' => null,
 					'author_id'=>Auth::user()->author_id,
 					'purchase_helper' => new PurchaseHelper(),
+					'search'=>null,
+					'status_code'=>null,
+					'store_code'=>$store_code,
 			]);
 	}
 
@@ -75,14 +89,24 @@ class PurchaseController extends Controller
 
 			if ($reason == 'purchase') {
 					$purchase = Purchase::find($request->purchase_id);
-					//$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
+					$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
 					$id = $request->purchase_id;
 			}
 
+
 			if ($reason == 'request') {
-				$purchases = Purchase::where('document_code', '=', 'purchase_request');
 				$id = $request->move_id;
 				$movement = InventoryMovement::find($request->move_id);		
+
+				if ($request->type=='indent') {
+						$helper = new PurchaseHelper();
+						$purchases = $helper->backOrder('indent_request');
+						$purchases = $purchases->where('store_code', $movement->target_store);
+				} else {
+						$purchases = Purchase::where('document_code', '=', 'purchase_request')
+								->where('status_code', '=', 'approved')
+								->orderBy('purchase_id', 'desc');
+				}
 			}
 
 			$purchases = $purchases->paginate($this->paginateValue);
@@ -99,8 +123,11 @@ class PurchaseController extends Controller
 					'movement'=>$movement,
 					'reason'=>$reason,
 					'reload'=>$request->reload,
+					'search'=>null,
+					'move_id'=>$request->move_id?:null,
 			]);
 	}
+
 
 	public function masterSearch(Request $request) 
 	{
@@ -124,9 +151,20 @@ class PurchaseController extends Controller
 					$purchase = Purchase::find($request->purchase_id);
 					$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
 					if (!empty($request->search)) {
-						$purchases = $purchases->where('purchase_number', 'like', '%'.$request->search.'%');
+						$purchases = $purchases->where('purchase_number', 'like', '%'.trim($request->search).'%');
 					}
 					$id = $request->purchase_id;
+			}
+
+			if ($reason == 'request') {
+					$purchases = Purchase::where('document_code', '=', 'indent_request');
+									//->where('status_code', '=', 'approved');
+
+					if (!empty($request->search)) {
+							$purchases = $purchases->where('purchase_number', 'like', '%'.trim($request->search).'%');
+					}
+					$id = $request->id;
+					$movement = InventoryMovement::find($id);		
 			}
 
 			$purchases = $purchases->paginate($this->paginateValue);
@@ -144,14 +182,15 @@ class PurchaseController extends Controller
 					'reason'=>$reason,
 					'search'=>$request->search,
 					'reload'=>null,
+					'move_id'=>$request->move_id?:null,
 			]);
 	}
 
 	public function create(Request $request)
 	{
 			$purchase = new Purchase();
+			$purchase->store_code = Auth::User()->defaultStore($request);
 			$purchase->purchase_date = DojoUtility::today();
-			//$purchase->store_code = Auth::user()->defaultStore($request);
 
 			return view('purchases.create', [
 					'purchase' => $purchase,
@@ -260,34 +299,54 @@ class PurchaseController extends Controller
 	
 	public function search(Request $request)
 	{
-			$purchases = Purchase::orderBy('purchase_posted');
+			$purchases = Purchase::orderBy('purchase_posted')
+							->orderBy('purchase_id', 'desc');
+
+			$store_code = Auth::User()->defaultStore($request);
 
 			if (!empty($request->status_code)) {
+					if ($request->status_code == 'indent_request') {
+							$helper = new PurchaseHelper();
+							$purchases = $helper->backOrder('indent_request');
+							if (Auth::user()->authorization->indent_request == 0) {
+									if ($store_code) {
+											$purchases = $purchases->where('store_code', $store_code);
+									}
+							}
+					}
 					if ($request->status_code == 'open') {
 							$purchases = Purchase::where('purchase_posted', 0)
 									->where('author_id', '=', Auth::user()->author_id);
+							if ($store_code) {
+									$purchases = $purchases->where('store_code', $store_code);
+							}
 					}
+
 					if ($request->status_code == 'purchase_request') {
 							$purchases = Purchase::whereNull('status_code')
 											->where('purchase_posted', 1)
 											->where('document_code', '=', 'purchase_request');
+							if (Auth::user()->authorization->purchase_request == 0) {
+									if ($store_code) {
+											$purchases = $purchases->where('store_code', $store_code);
+									}
+							}
 					}
+
 			} else {
+					$purchases = $purchases->where('author_id', '=', Auth::user()->author_id);
+
 					if (!empty($request->document_code)) {
 							$purchases = $purchases->where('document_code', '=', $request->document_code);
 					}
 
-					if ($request->document_code != 'purchase_request') {
-							$purchases = $purchases->where('author_id', '=', Auth::user()->author_id);
-					}
-
-					if ($request->document_code == 'purchase_request' && Auth::user()->authorization->purchase_request == 0) {
-							$purchases = $purchases->where('author_id', '=', Auth::user()->author_id);
+					if ($store_code) {
+							$purchases = $purchases->where('store_code', $store_code);
 					}
 			}
 
 			if (!empty($request->search)) {
-					$purchases = $purchases->where('purchase_number','like','%'.$request->search.'%');
+					$purchases = $purchases->where('purchase_number','like','%'.trim($request->search).'%');
 			}
 
 			$purchases = $purchases->paginate($this->paginateValue);
@@ -299,6 +358,8 @@ class PurchaseController extends Controller
 					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
 					'purchase_helper' => new PurchaseHelper(),
 					'author_id'=>Auth::user()->author_id,
+					'status_code'=>$request->status_code,
+					'store_code'=>$store_code,
 					]);
 	}
 

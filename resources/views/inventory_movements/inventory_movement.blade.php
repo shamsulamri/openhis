@@ -108,4 +108,6 @@
 			clearList(tag);
 			tag.disabled = true;
 		}
+
+		movementChanged();
 </script>

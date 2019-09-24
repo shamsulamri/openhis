@@ -48,6 +48,9 @@
 			</td>
 			<td width='20%'>
 					{{$inventory_movement->store? $inventory_movement->store->store_name: '-'}}
+					@if ($inventory_movement->target_store)
+						<br>> {{ $inventory_movement->targetStore->store_name }}
+					@endif
 			</td>
 			<td>
 					{{$inventory_movement->move_description }}

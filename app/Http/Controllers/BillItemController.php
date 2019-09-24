@@ -358,6 +358,8 @@ class BillItemController extends Controller
 									Log::info("Convert to inpatient....".$last_encounter->encounter_id);
 
 									Order::where('origin_id','=',$last_encounter->encounter_id)
+											->leftjoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
+											->whereNull('cancel_id')
 											->delete();
 
 									$orders = Order::where('encounter_id', $last_encounter->encounter_id)->get();
@@ -542,7 +544,7 @@ class BillItemController extends Controller
 				and bill_id is null 
 				and order_multiple=0
 				and cancel_id is null
-				group by product_code,order_unit_price
+				group by a.user_id, product_code,order_unit_price
 			";
 
 			//and h.patient_id = %d

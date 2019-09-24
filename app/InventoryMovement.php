@@ -53,6 +53,11 @@ class InventoryMovement extends Model
 		return $this->belongsTo('App\Store', 'store_code');
 	}
 
+	public function targetStore()
+	{
+		return $this->belongsTo('App\Store', 'target_store');
+	}
+
 	public function store_transfer()
 	{
 		return $this->belongsTo('App\Store', 'store_code_transfer', 'store_code');

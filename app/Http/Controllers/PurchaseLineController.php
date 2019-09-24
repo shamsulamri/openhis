@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -25,10 +27,12 @@ use App\Supplier;
 use App\PurchaseRequestStatus;
 use App\InventoryBatch;
 use App\StockLimit;
+use App\PurchaseHelper;
+use App\PurchaseDocument;
 
 class PurchaseLineController extends Controller
 {
-	public $paginateValue=20;
+	public $paginateValue=10;
 	public $order_status = array(''=>'','open'=>'Open','close'=>'Close');
 
 	public function __construct()
@@ -85,6 +89,8 @@ class PurchaseLineController extends Controller
 
 	public function convertItem($reason, $to, $line_id)
 	{
+			$helper = new PurchaseHelper();
+
 			$item = PurchaseLine::find($line_id);
 
 			if ($item) {
@@ -95,11 +101,13 @@ class PurchaseLineController extends Controller
 											->first();
 
 						if (!$purchase_line) {
+								Log::info("XXXXXXXXXXXXXX");
+								$balanceQuantity = $helper->balanceQuantity($item->line_id);
 								$purchase_line = new PurchaseLine();
 								$purchase_line->purchase_id = $to;
 								$purchase_line->product_code = $item->product_code;
 								$purchase_line->line_unit_price = $item->line_unit_price;
-								$purchase_line->line_quantity = $item->balanceQuantity();
+								$purchase_line->line_quantity = $item->line_quantity - $balanceQuantity;
 								$purchase_line->line_subtotal = $item->line_subtotal;
 								$purchase_line->unit_code = $item->unit_code;
 								$purchase_line->uom_rate = $item->uom_rate;
@@ -108,9 +116,13 @@ class PurchaseLineController extends Controller
 								$purchase_line->line_subtotal_tax = $item->line_subtotal_tax;
 								$purchase_line->reference_id = $item->line_id;
 								$purchase_line->line_posted = 0;
-								$purchase_line->save();
+								Log::info($purchase_line->line_quantity);
+								if ($purchase_line->line_quantity>0) {
+									$purchase_line->save();
+								}
 
 						} else {
+								Log::info("QQQQQQQQQQQQQQQQQQQQQ");
 								$purchase_line->purchase_id = $to;
 								$purchase_line->product_code = $item->product_code;
 								$purchase_line->line_unit_price = $item->line_unit_price;
@@ -120,25 +132,46 @@ class PurchaseLineController extends Controller
 								$purchase_line->uom_rate = $item->uom_rate;
 								$purchase_line->tax_code = $item->tax_code;
 								$purchase_line->tax_rate = $item->tax_rate;
-								$purchase_line->line_subtotal_tax = $purchase_line->line_subtotal*(1+($purchase_line->tax->tax_rate/100));
+								$purchase_line->line_subtotal_tax = $purchase_line->line_subtotal;
+								if (!empty($purchase->tax)) {
+									$purchase_line->line_subtotal_tax = $purchase_line->line_subtotal*(1+($purchase_line->tax->tax_rate/100));
+								}
 								$purchase_line->reference_id = $item->line_id;
 								$purchase_line->line_posted = 0;
 								$purchase_line->save();
 						}
-					//}
 				} else {
+						//*******************
+						// Stock movement
+						//*******************
+
 							$movement = InventoryMovement::find($to);
 
 							$helper = new StockHelper();
 
+							/*
+							$balance_quantity = Inventory::where('line_id', $line_id)
+													->where('product_code', $item->product_code)
+													->sum('inv_physical_quantity');
+
+							if (empty($balance_quantity)) {
+									$balance_quantity = $item->line_quantity;
+							} else {
+									$balance_quantity = $item->line_quantity-$balance_quantity;
+							}
+						    */
+
+							$outstandingQuantity = $helper->outstandingQuantity($line_id, $item->product_code);
+
 							$inventory = new Inventory();
 							$inventory->move_id = $to;
+							$inventory->line_id = $line_id;
 							$inventory->move_code = $movement->move_code;
 							$inventory->store_code = $movement->store_code;
 							$inventory->product_code = $item->product_code;
 							$inventory->inv_book_quantity = $helper->getStockOnHand($item->product_code);
 							$inventory->inv_subtotal = $item->line_subtotal;
-							$inventory->inv_physical_quantity = $item->line_quantity;
+							$inventory->inv_physical_quantity = $outstandingQuantity; //$item->line_quantity;
 							$inventory->unit_code = $item->unit_code;
 							$inventory->uom_rate = $item->uom_rate;
 							$inventory->inv_quantity = $item->line_quantity*$item->uom_rate;
@@ -174,7 +207,7 @@ class PurchaseLineController extends Controller
 
 			$purchase_lines = $purchase_lines->paginate($this->paginateValue);
 
-			if ($reason=='stock') {
+			if ($reason=='stock' || $reason=='request') {
 					$movement = InventoryMovement::find($id);
 			}
 
@@ -186,6 +219,7 @@ class PurchaseLineController extends Controller
 					'reason'=>$reason,
 					'document_id'=>$document_id,
 					'reload'=>$request->reload,
+					'helper'=>new PurchaseHelper(),
 			]);
 	}
 
@@ -404,6 +438,7 @@ class PurchaseLineController extends Controller
 					'document_id'=>$request->document_id,
 					'reload'=>null,
 					'search'=>$request->search,
+					'helper'=>new PurchaseHelper(),
 			]);
 	}
 
@@ -486,8 +521,10 @@ class PurchaseLineController extends Controller
 				from stock_limits as a
 				left join (
 					select product_code, sum(inv_quantity) as stock_quantity
-					from inventories
-					where store_code = '". $purchase->store_code ."'
+					from inventories as a
+					left join inventory_movements as b on (a.move_id = b.move_id)
+					where a.store_code = '". $purchase->store_code ."'
+					and move_posted = 1
 					group by product_code
 				) as b on (b.product_code = a.product_code)
 				where a.store_code = '". $purchase->store_code ."'
@@ -623,15 +660,21 @@ class PurchaseLineController extends Controller
 								->whereIn('category_code', Auth::user()->categoryCodes());
 
 			if (!empty($request->document_number)) {
-				$purchase_lines = $purchase_lines->where('purchase_number','like', '%'.$request->document_number.'%');
+				$purchase_lines = $purchase_lines->where('purchase_number','like', '%'.trim($request->document_number).'%');
 			}
 
 			if (!empty($request->product_name)) {
-				$purchase_lines = $purchase_lines->where('product_name','like', '%'.$request->product_name.'%');
+					$search = $request->product_name;
+					$purchase_lines = $purchase_lines->where(function ($query) use($search) {
+							$query->where('product_name','like','%'.$search.'%')
+									->orWhere('c.product_code', 'like','%'.$search.'%')
+									->orWhere('product_name_other','like','%'.$search.'%');
+					});
+				//$purchase_lines = $purchase_lines->where('product_name','like', '%'.trim($request->product_name).'%');
 			}
 
 			if (!empty($request->supplier_code)) {
-				$purchase_lines = $purchase_lines->where('b.supplier_code','=', $request->supplier_code);
+				$purchase_lines = $purchase_lines->where('b.supplier_code','=', trim($request->supplier_code));
 			}
 
 			/*** Status ***/
@@ -682,6 +725,121 @@ class PurchaseLineController extends Controller
 				'status_code'=>$request->status_code,
 				'supplier_code'=>$request->supplier_code,
 				'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
+				'helper'=>new StockHelper(),
 			]);
 	}
+
+	public function backOrder(Request $request)
+	{
+
+			$sql = "
+				select a.line_id, purchase_number, product_name,line_quantity, c.created_at as purchase_date, supplier_name, unit_name, a.line_unit_price, document_code, store_name,
+				IF(document_code='purchase_order',
+				(line_quantity-IFNULL(partial_delivery,0)),
+				(line_quantity-IFNULL(physical_quantity,0))
+				) as outstanding_quantity
+				from purchase_lines as a
+				left join (
+					select line_id, sum(inv_physical_quantity) as physical_quantity
+					from inventories
+					where line_id is not null
+					and inv_posted = 1
+					group by line_id
+				) as b on (b.line_id = a.line_id)
+				left join purchases as c on (c.purchase_id = a.purchase_id)
+				left join products as d on (d.product_code = a.product_code)
+				left join suppliers as e on (e.supplier_code = c.supplier_code)
+				left join ref_unit_measures as f on (f.unit_code = a.unit_code)
+				left join (
+						select reference_id, sum(line_quantity) as partial_delivery
+						from purchase_lines as a
+						left join purchases as b on (b.purchase_id = a.purchase_id)
+						where reference_id is not null
+						and purchase_posted = 1
+						group by reference_id
+				) as g on (g.reference_id = a.line_id)
+				left join stores as h on (h.store_code = c.store_code)
+				where a.line_id is not null
+				and (document_code = 'purchase_order' or document_code = 'indent_request')
+				and c.purchase_posted = 1
+			";
+
+			if (!empty($request->document_number)) {
+				$sql = $sql." and purchase_number like '%".trim($request->document_number)."%' ";
+			}
+
+			if (!empty($request->product_name)) {
+				$sql = $sql." and product_name like '%".$request->product_name."%' ";
+			}
+			/*** Supplier ****/
+			if (!empty($request->supplier_code)) {
+				$sql = $sql." and c.supplier_code='".$request->supplier_code."' ";
+			}
+
+			/*** Date Range ****/
+			$date_start = DojoUtility::dateWriteFormat($request->date_start);
+			$date_end = DojoUtility::dateWriteFormat($request->date_end);
+
+			if (!empty($request->date_start) && empty($request->date_end)) {
+				$sql = $sql."and c.created_at >= '".$date_start." 00:00' ";
+			}
+
+			if (empty($request->date_start) && !empty($request->date_end)) {
+				$sql = $sql."and c.created_at <= '".$date_start." 23:59' ";
+			}
+
+			if (!empty($request->date_start) && !empty($request->date_end)) {
+				$sql = $sql."and c.created_at between '".$date_start." 00:00' and '".$date_end." 23:59' ";
+			} 
+
+			if (!empty($request->store_code)) {
+				$sql = $sql."and c.store_code='".$request->store_code."'";
+			}
+
+			if (!empty($request->document_code)) {
+				$sql = $sql."and c.document_code='".$request->document_code."'";
+			}
+			//$store_code = empty($request->store_code)?Auth::User()->defaultStore($request):$request->store_code;
+
+			$sql = $sql."having outstanding_quantity>0 order by c.purchase_id desc, line_id";
+
+			/*** Execute ***/
+			$data = DB::select($sql);
+
+			if ($request->export_report) {
+				$data = collect($data)->map(function($x){ return (array) $x; })->toArray(); 
+				DojoUtility::export_report($data);
+			}
+			
+			/** Pagination **/
+			$page = Input::get('page', 1); 
+			$offSet = ($page * $this->paginateValue) - $this->paginateValue;
+			$itemsForCurrentPage = array_slice($data, $offSet, $this->paginateValue, true);
+
+			$data = new LengthAwarePaginator($itemsForCurrentPage, count($data), 
+					$this->paginateValue, 
+					$page, 
+					['path' => $request->url(), 
+					'query' => $request->query()]
+			);
+
+
+			return view('purchase_lines.backorder', [
+					'purchase_lines'=>$data,
+				'store'=>Auth::user()->storeList()->prepend('',''),
+				'store_code'=>$request->store_code,
+				'product_name'=>$request->product_name,
+				'date_start'=> $date_start,
+				'date_end'=> $date_end,
+				'document_number'=>$request->document_number,
+				'order_status'=> $this->order_status,
+				'status_code'=>$request->status_code,
+				'supplier_code'=>$request->supplier_code,
+				'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
+				'helper'=>new StockHelper(),
+				'documents' => PurchaseDocument::whereIn('document_code', ['purchase_order', 'indent_request'])->orderBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
+				'document_code'=>$request->document_code,
+			]);
+	}
+
 }

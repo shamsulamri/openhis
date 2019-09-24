@@ -165,6 +165,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::resource('purchase_lines', 'PurchaseLineController');
 		Route::get('/purchase_line/enquiry', 'PurchaseLineController@enquiry');
 		Route::post('/purchase_line/enquiry', 'PurchaseLineController@enquiry');
+		Route::get('/purchase_line/backorder', 'PurchaseLineController@backOrder');
+		Route::post('/purchase_line/backorder', 'PurchaseLineController@backOrder');
 		Route::get('/purchase_lines/add/{purchase_id}/{product_code}/{type?}', 'PurchaseLineController@add');
 		Route::get('/purchase_lines/add_reorder/{purchase_id}', 'PurchaseLineController@addReorder');
 		Route::get('/purchase_lines/show/{id}', 'PurchaseLineController@show');

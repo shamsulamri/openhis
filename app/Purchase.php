@@ -32,7 +32,7 @@ class Purchase extends Model
 
 			$rules = [
 				'document_code'=>'required',
-				'supplier_code'=>'required_unless:document_code,==,purchase_request',
+				'supplier_code'=>'required_unless:document_code,==,indent_request',
 				'purchase_date'=>'size:10|date_format:d/m/Y',
 				'store_code'=>'required_if:document_code,==,goods_receive|required_if:document_code,==,purchase_invoice',
 			];

@@ -145,7 +145,7 @@ class User extends Authenticatable
 			return $location_code;
 	}
 
-	public function defaultStore($request = null)
+	public function defaultStore2($request = null)
 	{
 			$default_store=null;
 			$store = null;
@@ -176,5 +176,32 @@ class User extends Authenticatable
 				 */
 			}
 			return $default_store;
+	}
+
+	public function defaultStore($request = null) {
+			$store_code = null;
+
+			if ($request) {
+					if ($this->authorization->module_ward == 1) {
+							$ward_code = $request->cookie('ward');
+							$ward = Ward::where('ward_code', $ward_code)->first();
+							$store_code = $ward->store_code;
+
+					} else {
+							$store_code = $this->authorization->store_code;
+					}
+
+					/** Overiding Store **/
+					/** Example: ed, procedure room **/
+					if (!empty($request->cookie('store'))) {
+							$store_code = $request->cookie('store');
+					}
+			} else {
+					if ($this->authorization->store_code) {
+						$store_code = $this->authorization->store_code;
+					}
+			}
+
+			return $store_code;
 	}
 }

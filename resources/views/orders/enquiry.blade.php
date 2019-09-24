@@ -92,7 +92,7 @@
 					<div class='form-group'>
 						<label class='col-sm-2 control-label'><div align='left'>Id</div></label>
 						<div class='col-sm-10'>
-							{{ Form::text('encounter_id', $encounter_id, ['placeholder'=>'Encounter Id','class'=>'form-control','maxlength'=>'2']) }}
+							{{ Form::text('encounter_id', $encounter_id, ['placeholder'=>'Encounter Id','class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
@@ -179,6 +179,7 @@
 			</td>
 			<td>
 					{{ $order->name }}
+					<br>
 					<small>
 					{{ DojoUtility::dateTimeReadFormat($order->consultation_date) }}
 					</small>

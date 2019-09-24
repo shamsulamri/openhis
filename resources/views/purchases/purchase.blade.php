@@ -10,7 +10,7 @@
     <div class='form-group  @if ($errors->has('supplier_code')) has-error @endif'>
         <label for='supplier_code' class='col-sm-2 control-label'>Supplier<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-            {{ Form::select('supplier_code', $supplier,null, ['class'=>'form-control','maxlength'=>'20']) }}
+            {{ Form::select('supplier_code', $supplier,null, ['id'=>'supplier_code', 'class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('supplier_code')) <p class="help-block">{{ $errors->first('supplier_code') }}</p> @endif
 			Not required for purchase request
         </div>
@@ -19,7 +19,7 @@
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
         <label for='store_code' class='col-sm-2 control-label'>Store</label>
         <div class='col-sm-10'>
-            {{ Form::select('store_code', $store,null, ['id'=>'store_code','class'=>'form-control','maxlength'=>'20']) }}
+            {{ Form::select('store_code', $store,$store_code, ['id'=>'store_code','class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
         </div>
     </div>
@@ -60,6 +60,8 @@
 		function documentChanged() {
 				document_code = document.getElementById('document_code').value;
 				store = document.getElementById('store_code');
+				supplier = document.getElementById('supplier_code');
+				supplier.disabled = false;
 				switch (document_code) {
 						case 'goods_receive':
 								store.disabled = false;
@@ -73,11 +75,25 @@
 								store.disabled = false;
 								store.value = '{{ $store_code }}';
 								break;
+						case 'indent_request':
+								clearSelected('supplier_code');
+								store.disabled = false;
+								supplier.disabled = true;
+								store.value = '{{ $store_code }}';
+								break;
 						default:
-							store.disabled = true;
+							//store.disabled = true;
 				}
 		}
 
-		document.getElementById('store_code').disabled = true;
+		function clearSelected(id){
+				var elements = document.getElementById(id).options;
+
+				for(var i = 0; i < elements.length; i++){
+						elements[i].selected = false;
+				}
+		}
+
+		//document.getElementById('store_code').disabled = true;
 		documentChanged();
 	</script>

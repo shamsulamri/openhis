@@ -108,5 +108,9 @@ class AuthServiceProvider extends ServiceProvider
 		$gate->define('purchase_request', function ($user) {
 				return $user->authorization->purchase_request;
 		});
+
+		$gate->define('indent_request', function ($user) {
+				return $user->authorization->indent_request;
+		});
     }
 }

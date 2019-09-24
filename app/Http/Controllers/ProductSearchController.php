@@ -89,8 +89,10 @@ class ProductSearchController extends Controller
 						from stock_limits as a
 						left join (
 							select product_code, sum(inv_quantity) as stock_quantity
-							from inventories
-							where store_code = '". $purchase->store_code ."'
+							from inventories a
+							left join inventory_movements as b on (a.move_id = b.move_id)
+							where a.store_code = '". $purchase->store_code ."'
+							and move_posted = 1
 							group by product_code
 						) as b on (b.product_code = a.product_code)
 						left join products as c on (c.product_code = a.product_code)

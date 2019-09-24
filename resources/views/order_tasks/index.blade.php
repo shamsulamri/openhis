@@ -102,10 +102,12 @@
 					@endif
 
 					@if ($order->order_is_discharge==1)
+						<br>
 						<span class='label label-success'>Discharge Order</span>
 					@endif
 
 					@if ($status=='danger')
+						<br>
 						<span class='label label-danger'>Insufficient supply.</span>
 					@endif
 			</td>

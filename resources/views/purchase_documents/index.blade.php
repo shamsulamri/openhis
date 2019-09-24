@@ -19,8 +19,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>document_code</th>
-    <th>document_code</th> 
+    <th>Code</th>
+    <th>Name</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -33,7 +33,7 @@
 					</a>
 			</td>
 			<td>
-					{{$purchase_document->document_code}}
+					{{$purchase_document->document_name}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('purchase_documents/delete/'. $purchase_document->document_code) }}'>Delete</a>

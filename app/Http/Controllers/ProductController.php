@@ -71,7 +71,7 @@ class ProductController extends Controller
 				$store_code = Store::find(Auth::user()->defaultStore($request))->store_code;
 			}
 
-			//$store_code = Store::find(Auth::user()->defaultStore($request))->store_code;
+			$store_code = Auth::user()->defaultStore($request);
 
 			return view('products.index', [
 					'products'=>$products,
@@ -154,7 +154,7 @@ class ProductController extends Controller
 			}
 	}
 
-	public function edit($id) 
+	public function edit(Request $request, $id) 
 	{
 			$product = Product::findOrFail($id);
 
@@ -162,9 +162,13 @@ class ProductController extends Controller
 			$helper->updateStockOnHand($id);
 
 			$store_code = 'main';
+			/*
 			if (Auth::user()->authorization->store_code) {
 				$store_code = Auth::user()->authorization->store_code;
 			}
+			 */
+
+			$store_code = Auth::User()->defaultStore($request);
 
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 			return view('products.edit', [
@@ -239,6 +243,7 @@ class ProductController extends Controller
 			$products = $this->search_query($request, TRUE);
 
 			//$store = Store::find(Auth::user()->defaultStore($request));
+			$store_code = Auth::user()->defaultStore($request);
 
 			return view('products.index', [
 					'products'=>$products,
@@ -246,7 +251,7 @@ class ProductController extends Controller
 					'loan'=>$loan,
 					'stores'=>$this->stores,
 					'categories'=>Auth::user()->categoryList(),
-					'store_code'=>$request->store_code,
+					'store_code'=>$store_code,
 					'helper'=>new StockHelper(),
 					'category_code'=>$request->category_code,
 					]);
@@ -404,7 +409,6 @@ class ProductController extends Controller
 				$sql = $sql." and b.category_code = '".$request->category_code."'";
 			}
 
-			return $sql;
 			$data = DB::select($sql);
 
 			if ($request->export_report) {

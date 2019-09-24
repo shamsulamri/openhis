@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Purchase Enquiry 
+<h1>Back Order Enquiry 
 <a href='/purchase_lines/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
-<form id='form' action='/purchase_line/enquiry' method='post' class='form-horizontal'>
+<form id='form' action='/purchase_line/backorder' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
 					<div class='form-group'>
@@ -56,9 +56,20 @@
 			</div>
 			<div class="col-xs-4">
 					<div class='form-group'>
-						<label for='date_end' class='col-sm-3 control-label'>Status</label>
+						<label class='col-sm-3 control-label'>Store</label>
 						<div class='col-sm-9'>
-							{{ Form::select('status_code', $order_status, $status_code, ['class'=>'form-control','maxlength'=>'10']) }}
+							{{ Form::select('store_code', $store, $store_code, ['class'=>'form-control','maxlength'=>'10']) }}
+						</div>
+					</div>
+			</div>
+	</div>
+
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label for='date_end' class='col-sm-3 control-label'>Document</label>
+						<div class='col-sm-9'>
+							{{ Form::select('document_code', $documents,$document_code?:'', ['class'=>'form-control','maxlength'=>'20']) }}
 						</div>
 					</div>
 			</div>
@@ -76,63 +87,59 @@
 	<tr> 
     <th>Document</th> 
     <th>Date</th> 
-    <th>Supplier</th> 
+    <th>Supplier/Store</th> 
     <th>Product</th>
     <th>Original<br>Quantity</th>
     <th>Outstanding<br>Quantity</th>
     <th>Unit</th>
     <th>Price</th>
-	<th></th>
 	</tr>
   </thead>
 	<tbody>
 @foreach ($purchase_lines as $purchase_line)
 	<tr>
 			<td>
-					{{$purchase_line->purchase->purchase_number}}
+					{{$purchase_line->purchase_number}}
 			</td>
 			<td>
-					{{ DojoUtility::dateReadFormat($purchase_line->purchase->created_at) }}
+					{{ DojoUtility::dateReadFormat($purchase_line->purchase_date) }}
 			</td>
 			<td>
-					@if ($purchase_line->purchase->supplier)
-					{{$purchase_line->purchase->supplier->supplier_name}}
+					@if ($purchase_line->document_code=='purchase_request')
+					{{$purchase_line->supplier_name}}
 					@else
-					-
+					{{$purchase_line->store_name}}
 					@endif
 			</td>
 			<td>
-					{{$purchase_line->product->product_name}}
-					<br>
-					{{$purchase_line->product_code}}
+					{{$purchase_line->product_name}}
 			</td>
 			<td>
 					{{$purchase_line->line_quantity }}
 			</td>
 			<td>
-					@if ($purchase_line->document_code=='purchase_request' || $purchase_line->document_code == 'purchase_order')
-					{{ $helper->outstandingQuantity($purchase_line->line_id, $purchase_line->product_code) }}
-					@endif
+					{{$purchase_line->outstanding_quantity }}
 			</td>
 			<td>
-					{{ $purchase_line->unit_name }}
+					{{$purchase_line->unit_name }}
 			</td>
 			<td>
 					{{ number_format($purchase_line->line_unit_price,2) }}
-			</td>
-			<td align='right'>
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('purchase_lines/delete/'. $purchase_line->line_id) }}'>Delete</a>
 			</td>
 	</tr>
 @endforeach
 @endif
 </tbody>
 </table>
-@if (isset($product_name)) 
-	{{ $purchase_lines->appends(['product_name'=>$product_name])->render() }}
-	@else
-	{{ $purchase_lines->render() }}
-@endif
+
+{{ $purchase_lines->appends(['product_name'=>$product_name,
+					'document_number'=>$document_number,
+					'supplier_code'=>$supplier_code,
+					'date_start'=>$date_start,
+					'date_end'=>$date_end,
+					'store_code'=>$store_code,
+					'document_code'=>$document_code
+ ])->render() }}
 <br>
 @if ($purchase_lines->total()>0)
 	{{ $purchase_lines->total() }} records found.

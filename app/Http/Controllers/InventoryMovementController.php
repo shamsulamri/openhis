@@ -36,7 +36,8 @@ class InventoryMovementController extends Controller
 					->paginate($this->paginateValue);
 
 			return view('inventory_movements.index', [
-					'inventory_movements'=>$inventory_movements
+					'inventory_movements'=>$inventory_movements,
+					'store_code'=>$store_code
 			]);
 	}
 
@@ -279,6 +280,7 @@ class InventoryMovementController extends Controller
 	}
 	public function destroy($id)
 	{	
+			Inventory::where('move_id', $id)->delete();
 			InventoryMovement::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/inventory_movements');

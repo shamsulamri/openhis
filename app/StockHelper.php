@@ -311,6 +311,23 @@ class StockHelper
 			}
 	}
 
+	public function outstandingQuantity($line_id, $product_code)
+	{
+			$item = PurchaseLine::find($line_id);
+
+			$outstanding_quantity = Inventory::where('line_id', $line_id)
+					->where('product_code', $product_code)
+					->sum('inv_physical_quantity');
+
+			if (empty($outstanding_quantity)) {
+					$outstanding_quantity = $item->line_quantity;
+			} else {
+					$outstanding_quantity = $item->line_quantity-$outstanding_quantity;
+			}
+
+			return $outstanding_quantity;
+	}
+
 }
 
 

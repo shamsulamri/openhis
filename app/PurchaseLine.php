@@ -84,12 +84,15 @@ class PurchaseLine extends Model
 
 	public function balanceQuantity() 
 	{
+			Log::info("RRRRRRRRRRRRRRRRRRRRRRRR");
+			Log::info($this->reference_id);
 			$balance = null;
 			$total = $this->line_quantity;
 			if (!empty($this->reference_id)) {
 					$balance = PurchaseLine::where('reference_id', $this->line_id)
 							->sum('line_quantity');
 					$total = $total - $balance;
+					Log::info($total);
 			} 
 
 			return $total;
