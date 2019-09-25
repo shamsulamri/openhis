@@ -188,6 +188,17 @@ class Product extends Model
 			return $uom?:null;
 	}
 
+	public function uomByUnit($unit_code)
+	{
+			$product_code = $this->attributes['product_code'];
+			$uom = ProductUom::where('product_code', '=', $product_code)
+					->where('unit_code', '=', $unit_code)
+					->first();
+
+			Log::info('---> '.$product_code);
+			return $uom?:null;
+	}
+
 	public function hasBatches()
 	{
 			$helper = new StockHelper();

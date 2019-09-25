@@ -331,6 +331,8 @@ class ConsultationProcedureController extends Controller
 
 				$data = DB::select($sql);
 
+				Log:info($sql);
+
 				$html = '';
 				$table_row = '';
 
@@ -392,10 +394,19 @@ class ConsultationProcedureController extends Controller
 
 				$item_surgeon = '';
 				$item_anaes = '';
+				/*
 				if (!empty($procedure->product->feeSchedule)) {
 						$item_surgeon = number_format($procedure->product->feeSchedule->value?:0,2);
 						$item_anaes = number_format($procedure->product->feeSchedule->value2?:0,2);
 				}
+				 */
+				if ($surgeon= $procedure->product->uomByUnit('surgeon')) {
+						$item_surgeon = number_format($surgeon->uom_price?:0,2);
+				}
+				if ($anaes= $procedure->product->uomByUnit('anaesthetist')) {
+						$item_anaes = number_format($anaes->uom_price?:0,2);
+				}
+
 				if ($procedure->user_id == $consultation->user_id) {
 						$item_remove = sprintf("<a tabindex='-1' class='pull-right btn btn-danger btn-sm' href='javascript:removeProcedure(%s)'><span class='glyphicon glyphicon-trash'></span></a>", $procedure->order_id);
 				

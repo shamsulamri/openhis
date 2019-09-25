@@ -30,7 +30,7 @@ class UnitMeasure extends Model
 
 			
         	if ($method=='') {
-        	    $rules['unit_code'] = 'required|max:10.0|unique:ref_unit_measures';
+        	    $rules['unit_code'] = 'required|max:20|unique:ref_unit_measures';
         	}
         
 			
