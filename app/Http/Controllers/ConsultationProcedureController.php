@@ -400,7 +400,7 @@ class ConsultationProcedureController extends Controller
 						$item_anaes = number_format($procedure->product->feeSchedule->value2?:0,2);
 				}
 				 */
-				if ($surgeon= $procedure->product->uomByUnit('surgeon')) {
+				if ($surgeon= $procedure->product->uomByUnit('unit')) {
 						$item_surgeon = number_format($surgeon->uom_price?:0,2);
 				}
 				if ($anaes= $procedure->product->uomByUnit('anaesthetist')) {
