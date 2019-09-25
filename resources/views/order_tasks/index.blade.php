@@ -148,7 +148,7 @@
 						@endif
 				@else
 						{{ $order->order_quantity_supply }} 
-						@if ($order->product_stocked && $order->order_completed==0)
+						@if ($order->order_completed==0)
 								{{ Form::hidden('quantity_'.$order->order_id, $order->order_quantity_supply) }}
 						@endif
 				@endif 
