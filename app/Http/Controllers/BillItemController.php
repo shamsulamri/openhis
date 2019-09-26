@@ -109,7 +109,6 @@ class BillItemController extends Controller
 					}
 
 					$item->save();
-					Log::info($item);
 
 					/*** Merge ***/
 					$merge_item = new BillItem();
@@ -438,8 +437,8 @@ class BillItemController extends Controller
 					$item->bill_discount = $order->order_discount;
 					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
-					$item->bill_unit_price = $order->order_unit_price;
-					//$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
+					//$item->bill_unit_price = $order->order_unit_price;
+					$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
 
 					/*
 					if (!empty($order->bom_code)) {
