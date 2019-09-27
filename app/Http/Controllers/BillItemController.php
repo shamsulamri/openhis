@@ -32,6 +32,7 @@ use App\Consultation;
 use Auth;
 use App\BedCharge;
 use App\Payment;
+use App\OrderHelper;
 
 class BillItemController extends Controller
 {
@@ -65,6 +66,8 @@ class BillItemController extends Controller
 			";
 
 			$sql = sprintf($sql, $encounter_id);
+
+			Log::info($sql);
 			$beds = DB::select($sql);
 
 			foreach ($beds as $bed) {
@@ -399,7 +402,7 @@ class BillItemController extends Controller
 				and b.category_code<>'fee_consultation'
 				and b.category_code<>'wv'
 				and h.patient_id = %d
-				and a.encounter_id <= %d
+				and a.encounter_id = %d
 				and bill_id is null 
 				and order_multiple=0
 				and bom_code is null
@@ -461,6 +464,13 @@ class BillItemController extends Controller
 					}
 					try {
 							$item->save();
+
+							/*
+							Order::where('encounter_id', $encounter_id)
+									->where('product_code', $item->product_code)
+									->update(['order_unit_price'=>$item->bill_unit_price]);
+							*/
+
 					} catch (\Exception $e) {
 							\Log::info($e->getMessage());
 					}
@@ -525,7 +535,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, sum(order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, 1 as total_quantity, order_markup, order_discount, name, department_name, product_name
+				select a.product_code, sum(order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, sum(order_quantity_supply) as total_quantity, order_markup, order_discount, name, department_name, product_name
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -578,8 +588,8 @@ class BillItemController extends Controller
 					$item->bill_discount = 0;
 					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
-					$item->bill_unit_price = $order->order_unit_price;
-					$item->bill_amount = $order->order_unit_price;
+					$item->bill_unit_price = $order->order_unit_price?:0;
+					$item->bill_amount = $order->order_unit_price*$order->total_quantity;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
@@ -631,7 +641,6 @@ class BillItemController extends Controller
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				where (b.category_code='fee_consultation' or b.category_code = 'consultation' or b.category_code = 'wv')
-				and order_completed = 1 
 				and b.deleted_at is null
 				and h.patient_id = %d
 				and order_multiple=0
@@ -1009,6 +1018,9 @@ class BillItemController extends Controller
 					$total_payable = DojoUtility::roundUp($encounter->bill->bill_grand_total);
 			}
 
+			//$helper = new OrderHelper();
+			//$helper->syncOrderBillPrice($id);
+
 			return view('bill_items.index', [
 					'bills'=>$bills,
 					'billPosted'=>$billPosted,
@@ -1193,18 +1205,17 @@ class BillItemController extends Controller
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
-			$charges = Order::select(DB::raw('orders.encounter_id, patient_name, patient_mrn, product_name, d.product_code, (order_quantity_supply*order_unit_price) as total,
-					orders.created_at as order_date'))
-					->leftJoin('encounters as b', 'b.encounter_id', '=', 'orders.encounter_id')
+			$charges = BillItem::select(DB::raw('bill_items.encounter_id, patient_name, patient_mrn, product_name, d.product_code,bill_unit_price, bill_amount, bill_quantity,
+					b.created_at as order_date'))
+					->leftJoin('encounters as b', 'b.encounter_id', '=', 'bill_items.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id', '=',  'b.patient_id')
-					->leftJoin('products as d', 'd.product_code', '=', 'orders.product_code')
-					->where('order_completed',1)
+					->leftJoin('products as d', 'd.product_code', '=', 'bill_items.product_code')
 					->orderBy('b.encounter_id', 'desc')
-					->orderBy('orders.order_id');
+					->orderBy('bill_items.bill_id');
 
 			if (!empty($request->search)) {
 					if (is_numeric($request->search)) {
-							$charges = $charges->where('orders.encounter_id','=', $request->search);
+							$charges = $charges->where('b.encounter_id','=', $request->search);
 					} else {
 							$charges = $charges->where(function ($query) use ($request) {
 									$query->where('patient_mrn','like','%'.$request->search.'%')
@@ -1218,15 +1229,15 @@ class BillItemController extends Controller
 			}
 
 			if (!empty($date_start) && empty($request->date_end)) {
-				$charges = $charges->where('orders.created_at', '>=', $date_start.' 00:00');
+				$charges = $charges->where('b.created_at', '>=', $date_start.' 00:00');
 			}
 
 			if (empty($date_start) && !empty($request->date_end)) {
-				$charges = $charges->where('orders.created_at', '<=', $date_end.' 23:59');
+				$charges = $charges->where('b.created_at', '<=', $date_end.' 23:59');
 			}
 
 			if (!empty($date_start) && !empty($date_end)) {
-				$charges = $charges->whereBetween('orders.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
+				$charges = $charges->whereBetween('b.created_at', array($date_start.' 00:00', $date_end.' 23:59'));
 			} 
 
 			if ($request->export_report) {

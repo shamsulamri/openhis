@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Charge Enquiry</h1>
+<h1>Bill Item Enquiry</h1>
 <form id='form' action='/bill_item/enquiry' method='post' class='form-horizontal'>
 	<div class="row">
 			<div class="col-xs-4">
@@ -65,8 +65,10 @@
 	<tr> 
     <th>Patient</th>
     <th>Encounter</th>
-    <th>Order Date</th>
+    <th>Encounter Date</th>
     <th>Product</th>
+    <th><div align='right'>Unit Pirce</div></th>
+    <th>Quantity</th>
     <th><div align='right'>Total</div></th> 
 	</tr>
   </thead>
@@ -94,7 +96,13 @@
 					</small>
 			</td>
 			<td align='right'>
-					{{number_format($charge->total,2)}}
+					{{$charge->bill_unit_price}}
+			</td>
+			<td align='right'>
+					{{$charge->bill_quantity}}
+			</td>
+			<td align='right'>
+					{{number_format($charge->bill_amount,2)}}
 			</td>
 	</tr>
 @endforeach
