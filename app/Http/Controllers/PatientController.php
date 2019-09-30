@@ -41,6 +41,9 @@ use App\PatientDependant;
 use App\Refund;
 use App\PatientMrn;
 use App\Sponsor;
+use App\ConsultationHistory;
+use App\Deposit;
+use App\Payment;
 
 class PatientController extends Controller
 {
@@ -327,6 +330,7 @@ class PatientController extends Controller
 	public function merge(Request $request, $id)
 	{
 			$patient = Patient::find($id);
+
 			$duplicate_patient = null;
 			if (!empty($request->duplicate_id)) {
 				$duplicate_patient = Patient::where('patient_mrn',$request->duplicate_id)->first();
@@ -348,14 +352,17 @@ class PatientController extends Controller
 
 	public function mergeRecord($origin_id, $duplicate_id)
 	{
-		Encounter::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
 		Appointment::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
 		BedBooking::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
 		Consultation::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
-		MedicalAlert::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		ConsultationHistory::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		Deposit::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		Encounter::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
 		FormValue::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		MedicalAlert::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
 		Newborn::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
 		PatientDependant::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
+		Payment::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
 		Refund::where('patient_id', $duplicate_id)->update(['patient_id'=>$origin_id]);
 
 		$this->destroy($duplicate_id);
