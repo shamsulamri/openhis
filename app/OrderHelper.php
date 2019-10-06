@@ -222,6 +222,7 @@ class OrderHelper
 
 	public static function orderItem($product, $ward_code, $renew_drug=null)
 	{
+			Log::info($product->product_code);
 			if ($product->status_code != 'active') {
 				return;
 			}
@@ -568,7 +569,7 @@ class OrderHelper
 	public static function orderBOM($consultation_id)
 	{
 			$order_helper = new OrderHelper();
-			$orders = Order::where('consultation_id',	$consultation_id)
+			$orders = Order::where('consultation_id', $consultation_id)
 						->where('post_id','=',0)
 						->get();
 
@@ -580,7 +581,12 @@ class OrderHelper
 								$bom_order = Order::find($order_id);
 								$bom_order->order_quantity_request = $bom->bom_quantity*$order->order_quantity_request;
 								$bom_order->order_quantity_supply = $bom_order->order_quantity_request;
-								$bom_order->order_unit_price = $bom->unitPrice()->uom_price;
+								$bomUnitPrice = $bom->unitPrice($bom->bom_product_code, $bom->unit_code);
+								if (!empty($bomUnitPrice)) {
+									$bom_order->order_unit_price = $bomUnitPrice;
+								} else {
+									$bom_order->order_unit_price = 0;
+								}
 								$bom_order->unit_code = $bom->unit_code;
 								$bom_order->save();
 

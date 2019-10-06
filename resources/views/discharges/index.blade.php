@@ -131,6 +131,9 @@
 				**/
 			}
 			?>
+			@if (!empty($discharge->newborn_id))
+				<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $discharge->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
+			@endif
 			@if (!empty($discharge->mc_id))
 					@if (!empty($discharge->mc_start) && empty($discharge->mc_time_start))
 		<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>

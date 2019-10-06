@@ -33,6 +33,7 @@ use Auth;
 use App\BedCharge;
 use App\Payment;
 use App\OrderHelper;
+use App\User;
 
 class BillItemController extends Controller
 {

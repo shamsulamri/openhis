@@ -8,6 +8,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Code</th>
     <th>Product</th>
     <th>Quantity</th> 
     <th>Unit Price</th> 
@@ -18,15 +19,18 @@
 @foreach ($bill_materials as $bill_material)
 	<tr>
 			<td>
+					{{ $bill_material->product_code }}
+			</td>
+			<td>
 					<a href='{{ URL::to('bill_materials/'. $bill_material->id . '/edit') }}'>
-						{{$bill_material->product_name}}
+						{{$bill_material->product->product_name}}
 					</a>
 			</td>
 			<td>
-					{{ floatval($bill_material->bom_quantity) }} {{ $bill_material->unit_shortname }}
+					{{ floatval($bill_material->bom_quantity) }} {{ $bill_material->unit->unit_shortname }}
 			</td>
 			<td>
-					{{ $bill_material->unit_code }}
+					{{ number_format($bill_material->unitPrice($bill_material->product_code, $bill_material->unit_code),2) }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('bill_materials/delete/'. $bill_material->id) }}'>

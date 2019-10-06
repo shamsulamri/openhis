@@ -34,6 +34,7 @@ class BillMaterialController extends Controller
 	public function index($product_code)
 	{
 			$product = Product::find($product_code);
+			/*
 			$bill_materials = DB::table('bill_materials as a')
 					->select('id','a.product_code', 'b.product_name', 'bom_quantity','unit_shortname', 'a.unit_code')
 					->leftJoin('products as b', 'b.product_code', '=', 'a.bom_product_code')
@@ -41,6 +42,18 @@ class BillMaterialController extends Controller
 					->where('a.product_code','=', $product_code)
 					->orderBy('a.product_code')
 					->paginate($this->paginateValue);
+
+			$bill_materials = BillMaterial::orderBy('product_name')		
+					->select('bill_materials.product_code', 'bill_materials.unit_code', 'product_name', 'id', 'bom_quantity')
+					->leftJoin('products as b', 'b.product_code', '=', 'bill_materials.bom_product_code')
+					->leftJoin('ref_unit_measures as c', 'c.unit_code', '=', 'b.unit_code')
+					->where('bill_materials.product_code','=', $product_code)
+					->paginate($this->paginateValue);
+			 */
+
+			$bill_materials = BillMaterial::where('product_code','=', $product_code)
+					->paginate($this->paginateValue);
+
 			return view('bill_materials.index', [
 					'bill_materials'=>$bill_materials,
 					'product' => $product,
@@ -80,7 +93,7 @@ class BillMaterialController extends Controller
 
 			$product_uoms =  $bill_material->product->productUnitMeasures();
 			$uom_list = [];
-			$uom_list['unit'] = 'Each';
+			$uom_list['unit'] = 'Each (Unit)';
 			foreach ($product_uoms as $uom) {
 					if ($uom->unit_code != 'unit') {
 						$uom_list[$uom->unit_code] = $uom->unitMeasure->unit_name;

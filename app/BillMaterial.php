@@ -47,13 +47,23 @@ class BillMaterial extends Model
 			return $this->belongsTo('App\Product', 'bom_product_code','product_code');
 	}
 
-	public function unitPrice()
+	public function unit() 
 	{
-			$unit_price = ProductUom::where('product_code','=',  $this->attributes['bom_product_code'])
-							->where('unit_code', '=', $this->attributes['unit_code'])
+			return $this->belongsTo('App\UnitMeasure', 'unit_code');
+	}
+
+	public function unitPrice($product_code, $unit_code)
+	{
+			$unit_price = ProductUom::where('product_code','=',  $product_code)
+							->where('unit_code', '=', $unit_code)
 							->first();
 
-			return $unit_price;
+			if (!empty($unit_price)) {
+					return $unit_price->uom_price?:0;
+			} else {
+					return 0;
+			}
+
 	}
 	
 }

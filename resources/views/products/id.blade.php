@@ -3,7 +3,6 @@
 	<div class='col-sm-12'>
 		<h2>{{ $product->product_name }}</h2>
 		<h6>{{ $product->product_code }}</strong></h6>
-{{ Auth::User()->defaultStore() }}
 	</div>
 </div>
 @endif
