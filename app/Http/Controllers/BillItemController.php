@@ -845,11 +845,13 @@ class BillItemController extends Controller
 			$bills = $bills->where('bill_non_claimable','=', $non_claimable);
 			$bills = $bills->paginate($this->paginateValue);
 
-			DB::table('deposits')
-					->where('patient_id', $encounter->patient_id)
-					->where('encounter_code', $encounter->encounter_code)
-					->whereNull('encounter_id')
-					->update(['encounter_id' => $id]);
+			if (empty($encounter->bill)) {
+					DB::table('deposits')
+							->where('patient_id', $encounter->patient_id)
+							->where('encounter_code', $encounter->encounter_code)
+							->whereNull('encounter_id')
+							->update(['encounter_id' => $id]);
+			}
 
 			if ($bills->count()==0 && empty($encounter->bill)) {
 				$encounter = Encounter::find($id);

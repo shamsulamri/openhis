@@ -43,7 +43,9 @@
 				<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=deposit_receipt&id={{ $deposit->deposit_id }}'>
 				Print Receipt
 				</a>
+				@if (empty($deposit->encounter_id))
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('deposits/delete/'. $deposit->deposit_id) }}'>Delete</a>
+				@endif
 			</td>
 	</tr>
 @endforeach
