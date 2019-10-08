@@ -84,8 +84,10 @@
 	</div>
 	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
 	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
+	<!--
 	<p class='pull-right'>&nbsp;</p>
 	<a href='#' onclick='javascript:bill_report();' class='btn btn-primary pull-right'>Bill Report</a>
+	-->
 	<input type='hidden' id='export_report' name="export_report">
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 </form>

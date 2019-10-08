@@ -497,7 +497,7 @@ class ProductController extends Controller
 	{
 			$sql = "
 				select a.product_code, product_name, store_name, sum(inv_quantity) as on_hand, sum(inv_subtotal) as total_cost,
-					 sum(inv_subtotal)/sum(inv_quantity) as average_cost, IFNULL(allocated, 0) as allocated ,sum(inv_quantity)-IFNULL(allocated,0) as available, unit_shortname, inv_batch_number
+					 sum(inv_subtotal)/sum(inv_quantity) as average_cost, IFNULL(allocated, 0) as allocated ,sum(inv_quantity)-IFNULL(allocated,0) as available, unit_shortname, inv_batch_number, batch_expiry_date
 				from inventories a
 				left join products as b on (a.product_code = b.product_code)
 				left join stores as c on (c.store_code = a.store_code)
@@ -510,6 +510,7 @@ class ProductController extends Controller
 						group by store_code, product_code
 				) as d on (d.store_code = a.store_code and d.product_code = a.product_code)
 				left join ref_unit_measures as e on (e.unit_code = b.unit_code)
+				left join inventory_batches as f on (f.batch_number = a.inv_batch_number)
 				where inv_posted = 1
 			";
 
@@ -530,9 +531,17 @@ class ProductController extends Controller
 				$sql = $sql." and inv_batch_number = '".$request->batch_number."'";
 			}
 
+			if (!empty($request->expire_days)) {
+				$expiry_date = DojoUtility::today();
+				$expiry_date = DojoUtility::addDays($expiry_date, $request->expire_days);
+				Log::info($expiry_date);
+				$sql = $sql." and batch_expiry_date < '".$expiry_date."'";
+			}
+
 			$sql = $sql." group by a.store_code, product_code, inv_batch_number";
 
 			$data = DB::select($sql);
+			Log::info($sql);
 
 			if ($request->export_report) {
 				$data = collect($data)->map(function($x){ return (array) $x; })->toArray(); 
@@ -563,6 +572,7 @@ class ProductController extends Controller
 					'stock_helper'=> new StockHelper(),
 					'category_code'=>$request->category_code,
 					'batch_number'=>$request->batch_number,
+					'expire_days'=>$request->expire_days,
 					]);
 	}
 

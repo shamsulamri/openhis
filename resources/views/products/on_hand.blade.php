@@ -29,6 +29,16 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'><div align='left'>Expire</div></label>
+						<div class='col-sm-9'>
+							<input type='text' class='form-control' placeholder="Expire in days" name='expire_days' value='{{ isset($expire_days) ? $expire_days : '' }}' autocomplete='off' autofocus>
+						</div>
+					</div>
+			</div>
+	</div>
 	<a href='#' onclick='javascript:search_now(0);' class='btn btn-primary'>Search</a>
 	<a href='#' onclick='javascript:search_now(1);' class='btn btn-primary pull-right'><span class='fa fa-print'></span></a>
 	<input type='hidden' id='export_report' name="export_report">
@@ -43,6 +53,7 @@
 	<tr> 
     <th>Name</th> 
     <th>Batch</th> 
+    <th>Expiry Date</th> 
     <th>Store</th> 
     <th width='100'><div align='right'>On Hand</div></th> 
     <th width='50'><div align='right'>Allocated</div></th> 
@@ -72,6 +83,9 @@ $allocated=0;
 				{{ $product->inv_batch_number?:'-' }}
 			</td>
 			<td>
+				{{ $product->batch_expiry_date?DojoUtility::dateReadFormat($product->batch_expiry_date):'-' }}
+			</td>
+			<td>
 				{{ $product->store_name }}
 			</td>
 			<td align='right'>
@@ -94,7 +108,7 @@ $allocated=0;
 @endif
 </tbody>
 </table>
-{{ $products->appends(['search'=>$search,'batch_number'=>$batch_number, 'store_code'=>$store_code])->render() }}
+{{ $products->appends(['search'=>$search,'batch_number'=>$batch_number, 'store_code'=>$store_code, 'expire_days'=>$expire_days])->render() }}
 <br>
 @if ($products->total()>0)
 	{{ $products->total() }} records found.
