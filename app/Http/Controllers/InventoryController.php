@@ -283,12 +283,18 @@ class InventoryController extends Controller
 	public function enquiry(Request $request)
 	{
 			$inventories = Inventory::orderBy('inv_id', 'desc')
-							->select('inv_datetime', 'b.product_code', 'b.product_name', 'c.move_name', 'inventories.move_description', 'inv_batch_number', 'inv_quantity', 'store_name')
+							->select('inv_datetime', 'b.product_code', 'b.product_name', 'c.move_name', 'inventories.move_description', 'inv_batch_number', 'inv_quantity', 'store_name', 'inv_subtotal', 'inv_unit_cost', 'encounter_id', 'c.move_code')
 							->leftJoin('products as b', 'b.product_code', '=', 'inventories.product_code')
 							->leftJoin('stock_movements as c', 'c.move_code', '=', 'inventories.move_code')
 							->leftJoin('stores as d', 'd.store_code', '=', 'inventories.store_code')
 							->leftJoin('inventory_movements as e', 'e.move_id', '=', 'inventories.move_id')
+							->leftjoin('orders as f', 'f.order_id', '=', 'inventories.order_id')
 							->where('inv_posted', 1);
+
+			/*** Batch ***/
+			if (!empty($request->batch_number)) {
+				$inventories = $inventories->where('inv_batch_number', '=', $request->batch_number);
+			}
 
 			/*** Store ***/
 			if (!empty($request->store_code)) {
@@ -321,6 +327,7 @@ class InventoryController extends Controller
 				'store'=>Auth::user()->storeList()->prepend('',''),
 				'store_code'=>$request->store_code,
 				'search'=>$request->search,
+				'batch_number'=>$request->batch_number,
 			]);
 	}
 

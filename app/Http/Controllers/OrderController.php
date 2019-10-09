@@ -748,6 +748,7 @@ class OrderController extends Controller
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
+			/**
 			$orders = Order::select(
 					'b.encounter_id', 
 					'encounter_name',
@@ -762,6 +763,47 @@ class OrderController extends Controller
 					'k.created_at as consultation_date', 
 					'j.name as completed_name', 
 					'completed_at', 
+					'l.name as dispensed_name', 
+					'dispensed_at',
+					'order_completed', 
+					'orders.order_id', 
+					'cancel_id', 
+					'cancel_reason', 
+					'post_id', 
+					DB::raw('TIMEDIFF(completed_at, orders.created_at) as turnaround'),
+					DB::raw('TIMEDIFF(IFNULL(completed_at, now()),orders.created_at) as age'), 
+					'order_quantity_supply'
+					)
+					->leftJoin('encounters as b', 'b.encounter_id', '=', 'orders.encounter_id')
+					->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
+					->leftJoin('products as e', 'e.product_code', '=', 'orders.product_code')
+					->leftJoin('users as f', 'f.id', '=', 'orders.user_id')
+					->leftJoin('order_cancellations as g', 'g.order_id', '=', 'orders.order_id')
+					->leftJoin('ref_patient_types as h', 'h.type_code', '=', 'b.type_code')
+					->leftJoin('inventories as i', 'i.order_id', '=', 'orders.order_id')
+					->leftJoin('users as j', 'j.id', '=', 'orders.completed_by')
+					->leftJoin('consultations as k','k.consultation_id', '=', 'orders.consultation_id')
+					->leftJoin('users as l', 'l.id', '=', 'orders.dispensed_by')
+					->leftJoin('ref_encounter_types as m', 'm.encounter_code', '=', 'b.encounter_code')
+					->orderBy('b.encounter_id');
+			**/
+
+			$orders = Order::select(
+					'b.encounter_id', 
+					'encounter_name',
+					'patient_name', 
+					'patient_mrn', 
+					'type_name',
+					'product_name', 
+					'e.product_code', 
+					'inv_unit_cost', 
+					'order_unit_price', 
+					'f.name', 
+					DB::raw('DATE_FORMAT(k.created_at, "%d/%m/%Y") as consultation_date'), 
+					DB::raw('DATE_FORMAT(k.created_at, "%H:%i") as consultation_time'), 
+					'j.name as completed_name', 
+					DB::raw('DATE_FORMAT(completed_at, "%d/%m/%Y") as completed_date'), 
+					DB::raw('DATE_FORMAT(completed_at, "%H:%i") as completed_time'), 
 					'l.name as dispensed_name', 
 					'dispensed_at',
 					'order_completed', 

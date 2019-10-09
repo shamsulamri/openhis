@@ -34,7 +34,7 @@
 					<div class='form-group'>
 						<label class='col-sm-3 control-label'><div align='left'>Expire</div></label>
 						<div class='col-sm-9'>
-							<input type='text' class='form-control' placeholder="Expire in days" name='expire_days' value='{{ isset($expire_days) ? $expire_days : '' }}' autocomplete='off' autofocus>
+							<input type='text' class='form-control' placeholder="Value in days" name='expire_days' value='{{ isset($expire_days) ? $expire_days : '' }}' autocomplete='off' autofocus>
 						</div>
 					</div>
 			</div>
@@ -80,7 +80,13 @@ $allocated=0;
 					{{$product->product_code}}
 			</td>
 			<td>
-				{{ $product->inv_batch_number?:'-' }}
+				@if ($product->inv_batch_number)
+				<a href='{{ URL::to('inventory/enquiry?batch_number='.$product->inv_batch_number) }}'>
+				{{ $product->inv_batch_number }}
+				</a>
+				@else
+				-
+				@endif
 			</td>
 			<td>
 				{{ $product->batch_expiry_date?DojoUtility::dateReadFormat($product->batch_expiry_date):'-' }}

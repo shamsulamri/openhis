@@ -181,13 +181,15 @@
 					{{ $order->name }}
 					<br>
 					<small>
-					{{ DojoUtility::dateTimeReadFormat($order->consultation_date) }}
+					{{ $order->consultation_date }}
+					{{ $order->consultation_time }}
 					</small>
 			</td>
 			<td>
 					{{ $order->completed_name?:'N/A' }}<br>
 					<small>
-					{{ DojoUtility::dateTimeReadFormat($order->completed_at) }}
+					{{ $order->completed_date }}
+					{{ $order->completed_time }}
 					</small>
 			</td>
 			<td>
