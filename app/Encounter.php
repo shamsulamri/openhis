@@ -62,6 +62,11 @@ class Encounter extends Model
 			return $this->hasOne('App\Admission', 'encounter_id');
 	}
 
+	public function newborn() 
+	{
+			return $this->hasMany('App\Newborn', 'encounter_id');
+	}
+
 	public function triage()
 	{
 			return $this->belongsTo('App\Triage', 'triage_code');

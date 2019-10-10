@@ -251,6 +251,12 @@ class OrderHelper
 				$order->order_quantity_supply = $order->order_quantity_request;
 			}
 
+			if ($product->category_code == 'imaging2') {
+				$order = new Order();
+				$order->order_quantity_request = 1;
+				$order->order_quantity_supply = 1;
+			}
+
 			$order->consultation_id = Session::get('consultation_id');
 			$order->encounter_id = Session::get('encounter_id');
 			$order->user_id = Auth::user()->id;

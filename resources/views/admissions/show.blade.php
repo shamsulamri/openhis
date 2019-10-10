@@ -37,6 +37,14 @@
 						<span class='fa fa-calendar' aria-hidden='true'></span>
 						<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0?admission_id='.$admission->admission_id) }}'>Appointment</a>
 
+						@if (!empty($encounter->newborn)) 
+						<br>
+						<br>
+						<span class='fa fa-file-o' aria-hidden='true'></span>
+						<a href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $admission->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
+						@endif
+
+
 						<br>
 						<br>
 						<span class='fa fa-file-o' aria-hidden='true'></span>

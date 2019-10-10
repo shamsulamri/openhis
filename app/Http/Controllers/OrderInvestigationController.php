@@ -20,6 +20,8 @@ use App\OrderHelper;
 use App\Product;
 use App\EncounterHelper;
 use Auth;
+use App\OrderImaging;
+use App\Encounter;
 
 class OrderInvestigationController extends Controller
 {
@@ -38,6 +40,68 @@ class OrderInvestigationController extends Controller
 			return view('order_investigations.index', [
 					'order_investigations'=>$order_investigations
 			]);
+	}
+
+	public function imaging()
+	{
+			$consultation = Consultation::find(Session::get('consultation_id'));
+			$encounter = $consultation->encounter;
+			$params = DB::table('order_imaging')
+						->get();
+
+			/*
+			$procedures = Product::where('category_code', 'radiography')
+								->orderBy('product_name')
+								->lists('product_name', 'product_code');
+			 */
+			$procedures = OrderImaging::orderBy('product_name')
+							->leftjoin('products as b', 'b.product_code', '=', 'order_imaging.product_code')
+							->lists('product_name', 'b.product_code');
+			
+			$orders = Order::where('consultation_id', $consultation->consultation_id)
+						->leftJoin('products as a', 'a.product_code', '=', 'orders.product_code')
+						->where('category_code', 'imaging')
+						->get();
+
+			$sides = [''];
+			$regions = [''];
+			$views = [''];
+
+			return view('order_investigations.imaging', [
+					'consultation'=>$consultation,
+					'sides'=>$sides,
+					'regions'=>$regions,
+					'views'=>$views,
+					'procedures'=>$procedures,
+					'params'=>$params,
+					'orders'=>$orders,
+			]);
+	}
+
+	public function deleteImaging($id)
+	{	
+			Order::find($id)->delete();
+			Session::flash('message', 'Record deleted.');
+			return redirect('/imaging');
+	}
+
+	public function addImaging(Request $request)
+	{
+
+			$product = Product::find($request->product_code);
+			if ($product) {
+					$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));
+					$order = Order::find($order_id);
+					$description = "";
+					if ($request->side) $description .= $request->side." > ";
+					if ($request->region) $description .= $request->region." > ";
+					if ($request->views) $description .= $request->views;
+					$order->order_description = $description;
+					$order->save();
+			}
+
+			Session::flash('message', 'Record successfully created.');
+			return redirect('/imaging');
 	}
 
 	public function create($product_code)

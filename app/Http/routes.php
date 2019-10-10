@@ -46,6 +46,16 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::get('/imaging', 'OrderImagingController@imaging');
+		Route::post('/imaging', 'OrderImagingController@addImaging');
+		Route::get('/imaging/delete/{id}', 'OrderImagingController@deleteImaging');
+
+		Route::resource('order_imaging', 'OrderImagingController');
+		Route::get('/order_imaging/id/{id}', 'OrderImagingController@searchById');
+		Route::post('/order_imaging/search', 'OrderImagingController@search');
+		Route::get('/order_imaging/search', 'OrderImagingController@search');
+		Route::get('/order_imaging/delete/{id}', 'OrderImagingController@delete');
+		
 
 		Route::resource('fee_schedules', 'FeeScheduleController');
 		Route::get('/fee_schedules/id/{id}', 'FeeScheduleController@searchById');

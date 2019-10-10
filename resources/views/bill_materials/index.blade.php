@@ -27,7 +27,10 @@
 					</a>
 			</td>
 			<td>
-					{{ floatval($bill_material->bom_quantity) }} {{ $bill_material->unit->unit_shortname }}
+					{{ floatval($bill_material->bom_quantity) }} 
+					@if ($bill_material->unit)
+							{{ $bill_material->unit->unit_shortname }}
+					@endif
 			</td>
 			<td>
 					{{ number_format($bill_material->unitPrice($bill_material->product_code, $bill_material->unit_code),2) }}

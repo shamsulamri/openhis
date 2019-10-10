@@ -38,8 +38,8 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('investigation_duration')) has-error @endif'>
-						{{ Form::label('investigation_duration', 'Duration',['class'=>'col-md-4 control-label']) }}
-						<div class='col-md-8'>
+						{{ Form::label('investigation_duration', 'Duration',['class'=>'col-md-3 control-label']) }}
+						<div class='col-md-9'>
 							{{ Form::text('investigation_duration', null, ['class'=>'form-control input-sm','placeholder'=>'',]) }}
 							@if ($errors->has('investigation_duration')) <p class="help-block">{{ $errors->first('investigation_duration') }}</p> @endif
 						</div>
@@ -47,8 +47,8 @@
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('period_code')) has-error @endif'>
-						{{ Form::label('period', 'Period',['class'=>'col-md-4 control-label']) }}
-						<div class='col-md-8'>
+						{{ Form::label('period', 'Period',['class'=>'col-md-3 control-label']) }}
+						<div class='col-md-9'>
 							{{ Form::select('period_code', $period,null, ['class'=>'form-control input-sm','maxlength'=>'10']) }}
 							@if ($errors->has('period_code')) <p class="help-block">{{ $errors->first('period_code') }}</p> @endif
 						</div>
