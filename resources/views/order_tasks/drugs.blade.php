@@ -53,6 +53,8 @@
 			<td width='10' valign='top' colspan='1'>
 					@if (!isset($order->cancel_id) && $order->order_completed==0)
 						{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
+					@else
+						<a href='/order_task/reopen/{{ $order->order_id }}' class='btn btn-danger btn-xs'>Reopen</a>
 					@endif
 			</td>
 			<td valign='top' colspan='1'>
@@ -179,9 +181,9 @@
 				</td>	
 				<td colspan='1'>
 					@if ($order->order_completed == 0) 
-            		{{ Form::text('batch_'.$batch->product_code.'_'.$batch->batch_id, $supply?:0, ['class'=>'form-control']) }}
+            		{{ Form::text('batch_'.$order->order_id.'_'.$batch->product_code.'_'.$batch->batch_id, $supply?:0, ['class'=>'form-control']) }}
 					@else
-            		{{ Form::label('batch_'.$batch->product_code.'_'.$batch->batch_id, abs($supply?:0), ['class'=>'form-control']) }}
+            		{{ Form::label('batch_'.$order->order_id.'_'.$batch->product_code.'_'.$batch->batch_id, abs($supply?:0), ['class'=>'form-control']) }}
 					@endif
 				</td>
 			</tr>

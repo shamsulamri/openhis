@@ -293,9 +293,6 @@ class StockHelper
 
 			$batches = $batches->get();
 
-			foreach ($batches as $batch) {
-				Log::info($batch->sum_quantity);
-			}
 			return $batches;
 	}
 

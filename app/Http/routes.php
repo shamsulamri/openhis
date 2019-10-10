@@ -649,6 +649,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/bed/generate', 'BedController@generate');
 
 		Route::post('/order_task/status', 'OrderTaskController@status');
+		Route::get('/order_task/reopen/{id}', 'OrderTaskController@reopen');
 		Route::get('/order_tasks/task/{consultation_id}/{location_code?}', 'OrderTaskController@task');
 		Route::resource('order_tasks', 'OrderTaskController');
 		Route::get('/order_tasks/id/{id}', 'OrderTaskController@searchById');

@@ -147,6 +147,7 @@ class OrderTaskController extends Controller
 					->whereIn('e.category_code', $queue_categories)
 					->where('a.post_id','>',0) 
 					->whereNull('cancel_id') 
+					->whereNull('origin_id') 
 					->orderBy('order_is_discharge', 'desc')
 					->orderBy('a.consultation_id');
 
@@ -332,6 +333,16 @@ class OrderTaskController extends Controller
 					]);
 	}
 
+	public function reopen($id)
+	{
+			Inventory::where('order_id', $id)->delete();
+			$order = Order::find($id);
+			$order->order_completed = 0;
+			$order->save();
+			Session::flash('message', 'Order reopened.');
+			return redirect('/order_tasks/task/'.$order->encounter_id.'/'.$order->location_code);
+	}
+
 	public function status(Request $request)
 	{
 			$valid = null;
@@ -354,6 +365,7 @@ class OrderTaskController extends Controller
 			/*** Validation ***/
 			Log::info("Validate....");
 			foreach($orders as $order) {
+				Log::info("Checkin === ".$order->order_id);
 				$checked = $request[$order->order_id] ?:0;
 
 				if ($checked == 1) {
@@ -363,8 +375,10 @@ class OrderTaskController extends Controller
 								$unit_supply = 0;
 								foreach($batches as $batch) {
 										Log::info('--->'.$batch->batch());
-										if ($batch->batch()) {
-										$unit_supply += $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
+										if (!empty($batch->batch())) {
+										Log::info('================='.'batch_'.$order->order_id.'_'.$batch->product_code."_".$batch->batch()->batch_id);
+										Log::info('================='.$request['batch_'.$order->order_id.'_'.$batch->product_code."_".$batch->batch()->batch_id]);
+										$unit_supply += $request['batch_'.$order->order_id.'_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
 										$last_batch = $batch->batch()->batch_id;
 										Log::info('unit supply:'.$unit_supply);
 										}
@@ -408,7 +422,7 @@ class OrderTaskController extends Controller
 								$total_supply = 0;
 								foreach($batches as $batch) {
 									if ($batch->batch()) {
-										$unit_supply = $request['batch_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
+										$unit_supply = $request['batch_'.$order->order_id.'_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
 										if ($unit_supply>0) {
 												$total_supply = $total_supply + $unit_supply;
 
