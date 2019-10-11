@@ -202,7 +202,7 @@
 	@else 
 			@if ($order->order_completed == 0)
 			<tr>
-				<td colspan='6'></td>
+				<td colspan='7'></td>
 				<td colspan='1'>N/A</td>
 				<td colspan='1' align='center'>N/A</td>
 				<td colspan='1' align='center'>
