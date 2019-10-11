@@ -120,7 +120,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_local_store')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_local_store', '1') }} <label>Local Store</label><br>Stock taken from local store when consumed.
+							{{ Form::checkbox('product_local_store', '1') }} <label>Floor Store</label><br>Stock taken from local store when consumed.
 							@if ($errors->has('product_local_store')) <p class="help-block">{{ $errors->first('product_local_store') }}</p> @endif
 						</div>
 					</div>

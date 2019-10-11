@@ -143,6 +143,7 @@ class OrderImagingController extends Controller
 			 */
 			$procedures = OrderImaging::orderBy('product_name')
 							->leftjoin('products as b', 'b.product_code', '=', 'order_imaging.product_code')
+							->where('status_code', 'active')
 							->lists('product_name', 'b.product_code');
 			
 			$orders = Order::where('consultation_id', $consultation->consultation_id)
@@ -186,6 +187,7 @@ class OrderImagingController extends Controller
 			$product = Product::find($request->product_code);
 			if ($product) {
 					$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));
+					return $order_id;
 					$order = Order::find($order_id);
 					$description = "";
 					if ($request->side) $description .= $request->side." > ";

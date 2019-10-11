@@ -35,6 +35,9 @@ use App\BedCharge;
 use App\BedHelper;
 use App\Entitlement;
 use App\Order;
+use App\OrderInvestigation;
+use App\OrderDrug;
+use App\Payment;
 		
 class EncounterController extends Controller
 {
@@ -348,6 +351,8 @@ class EncounterController extends Controller
 							$bed_charge->block_room = $request->block_room;
 							$bed_charge->save();
 
+							$this->convertPatientOrders($encounter->encounter_id);
+
 							Session::flash('message', 'Record successfully created.');
 							return redirect('/admissions');
 					}
@@ -358,6 +363,62 @@ class EncounterController extends Controller
 							->withInput();
 			}
 
+	}
+
+	public function convertPatientOrders($encounter_id) {
+			Log::info("Check for converts....");
+			$encounter = Encounter::find($encounter_id);
+			$last_encounter = Encounter::where('patient_id', $encounter->patient_id)
+					->where('encounter_id', '<>', $encounter_id)
+					->orderBy('encounter_id','desc')
+					->first();
+
+			if ($last_encounter) {
+					$payment = Payment::where('encounter_id', $last_encounter->encounter_id)
+							->where('payment_code', 'convert')
+							->first();
+
+					if ($payment) {
+							if ($payment->payment_code == 'convert') {
+
+									$ids = Order::select('orders.order_id')
+												->where('encounter_id', $last_encounter->encounter_id)
+												->leftjoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
+												->whereNull('cancel_id')
+												->get();
+
+									foreach($ids as $id) {
+
+											$order = Order::where('order_id', $id->order_id)->first();
+											if (!empty($order)) {
+													$convert_order = $order->replicate();
+													$convert_order->encounter_id = $encounter_id;
+													$convert_order->origin_id = $last_encounter->encounter_id;
+													$convert_order->order_is_discharge = 0;
+													$convert_order->save();
+											}
+
+											$drug_order = OrderDrug::where('order_id', $order->order_id)->first();
+											if (!empty($drug_order)) {
+													$drug_order = $drug_order->replicate();
+													$drug_order->order_id = $convert_order->order_id;
+													$drug_order->save();
+											}
+
+											$ix_order = OrderInvestigation::where('order_id', $order->order_id)->first();
+											if (!empty($ix_order)) {
+													$ix_order = $ix_order->replicate();
+													$ix_order->order_id = $convert_order->order_id;
+													$ix_order->save();
+											}
+
+											$order->order_completed = 1;
+											$order->save();
+									}
+
+							}
+					}
+			}
 	}
 
 	public function store2(Request $request) 

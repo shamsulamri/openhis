@@ -96,6 +96,9 @@ class OrderQueueController extends Controller
 					->groupBy('a.encounter_id');
 			**/
 
+
+			/** 2019/10/11 **/
+			/**
 			$order_queues = Order::groupBy('orders.encounter_id')
 					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
 					->leftjoin('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
@@ -110,6 +113,22 @@ class OrderQueueController extends Controller
 					->whereNotNull('n.post_id')
 					->whereNull('c.deleted_at')
 					->orderBy('b.created_at', 'desc');
+			**/
+
+			$order_queues = Order::groupBy('orders.encounter_id')
+					->leftjoin('encounters as c', 'c.encounter_id', '=', 'orders.encounter_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'orders.consultation_id')
+					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->leftjoin('ref_encounter_types as p', 'p.encounter_code', '=', 'c.encounter_code')
+					->whereIn('o.category_code', $queue_categories)
+					->whereIn('c.encounter_code', $queue_encounters)
+					->where('order_completed','=',0)
+					->whereNull('cancel_id')
+					->whereNotNull('n.post_id')
+					->whereNull('c.deleted_at')
+					->orderBy('orders.created_at', 'desc');
 
 			if ($request->future) {
 					$order_queues = $order_queues->where('order_is_future','=', 1);
@@ -357,6 +376,7 @@ class OrderQueueController extends Controller
 					->groupBy('a.encounter_id');
 			 */
 
+			/*
 			$order_queues = Order::groupBy('orders.encounter_id')
 					->leftjoin('consultations as b', 'b.consultation_id', '=', 'orders.consultation_id')
 					->join('encounters as c', 'c.encounter_id', '=', 'b.encounter_id')
@@ -371,6 +391,21 @@ class OrderQueueController extends Controller
 					->whereNotNull('n.post_id')
 					->whereNull('c.deleted_at')
 					->orderBy('orders.order_id', 'desc');
+			 */
+
+			$order_queues = Order::groupBy('orders.encounter_id')
+					->leftjoin('encounters as c', 'c.encounter_id', '=', 'orders.encounter_id')
+					->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
+					->leftjoin('order_investigations as m', 'm.order_id', '=', 'orders.order_id')
+					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'orders.consultation_id')
+					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
+					->leftjoin('ref_encounter_types as p', 'p.encounter_code', '=', 'c.encounter_code')
+					->whereIn('o.category_code', $queue_categories)
+					->whereIn('c.encounter_code', $queue_encounters)
+					->whereNull('cancel_id')
+					->whereNotNull('n.post_id')
+					->whereNull('c.deleted_at')
+					->orderBy('orders.created_at', 'desc');
 
 			if (!empty($request->encounter_code)) {
 					$order_queues = $order_queues->where('c.encounter_code','=', $request->encounter_code);

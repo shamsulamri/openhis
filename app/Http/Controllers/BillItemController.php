@@ -151,19 +151,21 @@ class BillItemController extends Controller
 
 					$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
 
-					Order::where('order_custom_id', $merge_item->product_code)
-							->where('encounter_id', $encounter_id)
-							->delete();
+					if (!empty($consultation)) {
+							Order::where('order_custom_id', $merge_item->product_code)
+									->where('encounter_id', $encounter_id)
+									->delete();
 
-					$order = new Order();
-					$order->product_code = $merge_item->product_code;
-					$order->order_custom_id = $merge_item->product_code;
-					$order->encounter_id = $merge_item->encounter_id;
-					$order->order_quantity_supply = $merge_item->bill_quantity;
-					$order->order_unit_price = $merge_item->bill_unit_price;
-					$order->consultation_id = $consultation->consultation_id;
-					$order->user_id = Auth::user()->id;
-					$order->save();
+							$order = new Order();
+							$order->product_code = $merge_item->product_code;
+							$order->order_custom_id = $merge_item->product_code;
+							$order->encounter_id = $merge_item->encounter_id;
+							$order->order_quantity_supply = $merge_item->bill_quantity;
+							$order->order_unit_price = $merge_item->bill_unit_price;
+							$order->consultation_id = $consultation->consultation_id;
+							$order->user_id = Auth::user()->id;
+							$order->save();
+					}
 
 
 
@@ -328,7 +330,7 @@ class BillItemController extends Controller
 
 	public function updateOrderPrices($encounter_id)
 	{
-			$this->convertBill($encounter_id);
+			//$this->convertBill($encounter_id);
 			$orders = Order::where('encounter_id', $encounter_id)
 						->leftJoin('products as b', 'b.product_code', '=', 'orders.product_code')
 						->where('product_edit_price','=',0)
@@ -343,6 +345,7 @@ class BillItemController extends Controller
 	}
 
 
+	/*
 	public function convertBill($encounter_id) {
 			Log::info("Check for converts....");
 			$encounter = Encounter::find($encounter_id);
@@ -379,6 +382,7 @@ class BillItemController extends Controller
 					}
 			}
 	}
+	 */
 
 	public function compileBill($encounter_id, $non_claimable=2) 
 	{

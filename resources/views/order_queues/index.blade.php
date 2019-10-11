@@ -108,7 +108,7 @@ Order Queues
 				}
 				?>
 				<span class='label label-{{ $label }}'>
-				{{ $order->consultation->encounter->encounterType->encounter_name }}
+				{{ $order->encounter_name }}
 				<span>
 			</td>
 			<td>

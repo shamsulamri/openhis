@@ -143,13 +143,18 @@ class OrderTaskController extends Controller
 					->leftjoin('wards as m','m.ward_code','=', 'a.ward_code')
 					->leftjoin('users as n','n.id','=', 'a.completed_by')
 					->leftjoin('users as o','o.id','=', 'a.dispensed_by')
-					->where('c.encounter_id','=', $encounter_id)
+					->where('a.encounter_id','=', $encounter_id)
 					->whereIn('e.category_code', $queue_categories)
 					->where('a.post_id','>',0) 
 					->whereNull('cancel_id') 
-					->whereNull('origin_id') 
 					->orderBy('order_is_discharge', 'desc')
 					->orderBy('a.consultation_id');
+
+			$now = date('Y-m-d');
+			if ($now<'2019-10-11') {
+					$order_tasks = $order_tasks->whereNull('origin_id');
+			}
+
 
 					/*
 					->orderBy('order_completed')

@@ -46,6 +46,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::get('/convert/{id}', 'EncounterController@convertPatientOrders');
+
 		Route::get('/imaging', 'OrderImagingController@imaging');
 		Route::post('/imaging', 'OrderImagingController@addImaging');
 		Route::get('/imaging/delete/{id}', 'OrderImagingController@deleteImaging');
