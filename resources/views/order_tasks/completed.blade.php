@@ -2,7 +2,7 @@
 <table width='100%'>
 <tbody>
 @foreach ($order_tasks as $order)
-	@if ($order->order_completed==1)
+	@if ($order->order_completed==1 && empty($order->stop_id))
 			@if ($order->product_local_store==0)
 			@include('order_tasks.drugs')
 				<?php

@@ -504,6 +504,7 @@ class OrderHelper
 				}
 				**/
 					
+			/*
 			if ($order->order_is_discharge==1) {
 					$route = OrderRoute::where('encounter_code', $order->consultation->encounter->encounter_code)
 							->where('category_code', $order->product->category_code)
@@ -512,6 +513,7 @@ class OrderHelper
 							$drop_now = false;
 					}
 			}
+			 */
 
 			if ($drop_now) {
 				if (!$order->orderCancel) {
@@ -660,6 +662,12 @@ class OrderHelper
 	public function marUnitCount($order_id) 
 	{
 			$order = Order::find($order_id);
+
+			/*** Do not update quantity if discharge **/
+			if (!empty($order->encounter->discharge)) {
+				   	return $order->order_quantity_supply;
+			}
+
 			$mar = MedicationRecord::where('order_id', $order_id)
 						->where('medication_fail', 0)
 						->get();
@@ -667,14 +675,23 @@ class OrderHelper
 			$total = 0;
 			$orderDrug = OrderDrug::where('order_id', $order_id)->first();
 			$dosage = DrugDosage::find($orderDrug->dosage_code);
-			if ($dosage->dosage_count_unit==1) {
-					$total = $mar->count()*$orderDrug->drug_dosage;
+			if (!empty($dosage)) {
+					if ($dosage->dosage_count_unit==1) {
+							$total = $mar->count()*$orderDrug->drug_dosage;
+					} else {
+							$total = $mar->count();
+					}
 			} else {
 					$total = $mar->count();
 			}
 
-			$order->order_quantity_supply = $total;
-			$order->save();
+			if ($total==0) {
+					$order->order_quantity_supply = 1;
+			} else {
+					$order->order_quantity_supply = $total;
+			} 
+					$order->save();
+
 
 			return $total;
 

@@ -12,6 +12,11 @@
 						<br><br>
 						<span class='fa fa-calendar' aria-hidden='true'></span>
 						<a href="{{ URL::to('appointment_services/'. $patient->patient_id . '/0') }}">Appointment</a>
+						<br><br>
+						<span class='fa fa-medkit' aria-hidden='true'></span>
+						<a href="{{ URL::to('medication_record/mar/'. $admission->encounter_id.'?admission=1') }}">
+							Medication Administration Record
+						</a>
 				@else
 						@if (!is_null($admission->arrival)) 
 							@if ($admission->bed->ward->ward_code != 'mortuary')

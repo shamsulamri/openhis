@@ -124,7 +124,11 @@ class OrderTaskController extends Controller
 					'a.user_id',
 					'a.consultation_id',
 					'o.name as dispensed_user',
-					'dispensed_at'
+					'dispensed_at',
+					'stop_id',
+					'stop_description',
+					'p.created_at as stop_at',
+					'q.name as stop_by'
 					];
 
 			$order_tasks = DB::table('orders as a')
@@ -143,6 +147,8 @@ class OrderTaskController extends Controller
 					->leftjoin('wards as m','m.ward_code','=', 'a.ward_code')
 					->leftjoin('users as n','n.id','=', 'a.completed_by')
 					->leftjoin('users as o','o.id','=', 'a.dispensed_by')
+					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
+					->leftjoin('users as q', 'q.id', '=', 'p.user_id')
 					->where('a.encounter_id','=', $encounter_id)
 					->whereIn('e.category_code', $queue_categories)
 					->where('a.post_id','>',0) 
@@ -195,7 +201,13 @@ class OrderTaskController extends Controller
 
 			$count_orders = clone $order_tasks;
 			$count_completed = $count_orders->where('order_completed', 1)
+								->whereNull('stop_id')
 								->where('product_local_store',0)
+								->count();
+
+			$count_orders = clone $order_tasks;
+			$count_stop = $count_orders->where('order_completed', 1)
+								->whereNotNull('stop_id')
 								->count();
 
 			$order_tasks = $order_tasks->paginate($this->paginateValue);
@@ -239,6 +251,7 @@ class OrderTaskController extends Controller
 					'store'=>$store,
 					'consultation_id'=>$consultation->consultation_id,
 					'count_ward'=>$count_ward,
+					'count_stop'=>$count_stop,
 					'count_floor'=>$count_floor,
 					'count_discharge'=>$count_discharge,
 					'count_completed'=>$count_completed,
@@ -260,6 +273,7 @@ class OrderTaskController extends Controller
 					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 					'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
 					'report'=>$request->queue?true:false,
+					'mar'=>$request->mar?true:false,
 					]);
 	}
 
@@ -290,14 +304,17 @@ class OrderTaskController extends Controller
 					$productController->updateTotalOnHand($order_task->product_code);
 					Session::flash('message', 'Record successfully updated.');
 					if ($request->user()->can('module-support')) {
-						//return redirect('/order_tasks/task/'.$order_task->consultation->encounter->encounter_id.'/'.$order_task->product->location_code);
 						if ($request->report==1) {
 								return redirect('/order_tasks/'.$order_task->order_id.'/edit?queue=report');
 						} else {
 								return redirect('/order_tasks/'.$order_task->order_id.'/edit');
 						}
 					} else {
-						return redirect('/admission_tasks');
+						if ($request->mar) {
+								return redirect('/medication_record/mar/'.$order_task->encounter_id.'?admission=1');
+						} else {
+								return redirect('/admission_tasks');
+						} 
 					}
 			} else {
 					return view('order_tasks.edit', [

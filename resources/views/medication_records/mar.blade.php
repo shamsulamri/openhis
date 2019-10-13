@@ -2,7 +2,7 @@
 @extends('layouts.app')
 
 @section('content')
-@if ($consultation)
+@if ($consultation && $view==false)
 @include('consultations.panel')
 @else
 @include('patients.id_only')
@@ -19,13 +19,21 @@ Medication Administration Records
 @foreach ($drugs as $drug)
 <?php
 $frequency_count = count(explode(';',$drug->frequency_mar));
+if (empty($encounter->discharge)) {
+		$drug->order_quantity_supply = $order_helper->marUnitCount($drug->order_id);
+}
 ?>
 	<tr>
 		<td width='30%'>
 			@if ($drug->stop_id) <strike> @endif
 			<h4>
-
-			{{ $drug->product_name }}
+			@if (!empty($encounter->discharge) && !$view) 
+					<a href='/order_tasks/{{ $drug->order_id }}/edit?mar=true'>
+					{{ $drug->product_name }}
+					</a>
+			@else
+					{{ $drug->product_name }}
+			@endif
 			<small>
 			<br>
 			{{ $order_helper->getPrescription($drug->order_id) }}
@@ -39,7 +47,7 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 			Total unit served: {{ $drug->order_quantity_supply }}
 			<br>
 			<br>
-			@if (!$drug->stop_id)
+			@if (!$drug->stop_id && !$view)
 			<a class='btn btn-warning btn-xs' href='{{ URL::to('/order_stop/create/'. $drug->order_id.'?drug=1') }}'>Stop</a>
 			@endif
 
@@ -82,6 +90,13 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 				<td width='120' align='center'>
 			@if ($mars->contains('medication_slot',$date_slot)) 
 				@if (empty($drug->stop_id))
+
+				@if ($mars[$date_slot]->medication_fail)
+						<span class='label label-danger'>
+							Fail
+						</span>
+						<br>
+				@endif
 				<a href='/medication_record/datetime/{{ $mars[$date_slot]->medication_id }}' data-toggle='tooltip' data-placement='top' title='Recorded by {{ $mars[$date_slot]->name }}'>
 				@endif
 						{{ DojoUtility::timeReadFormat($mars[$date_slot]->medication_datetime) }}
@@ -106,7 +121,7 @@ $frequency_count = count(explode(';',$drug->frequency_mar));
 				@endif
 			@else
 					@if ($date_value==$entry_start)
-						@if (!$drug->stop_id)
+						@if (!$drug->stop_id && !$view)
 							<a href='/medication_record/record/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
 								&nbsp;Record&nbsp;
 							</a>

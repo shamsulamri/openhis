@@ -48,9 +48,11 @@
 <div class="widget style1 gray-bg">
 <table>
 		<tr>
+				<!--
 				<td width='20'>
 					<input type='checkbox' id='post_checkbox' value='1'>
 				</td>
+				-->
 				<td>
 					I have confirmed that all the information above are correct.
 <a class='btn btn-primary' id='post_button' href='/consultations/close'>Confirm</a>
@@ -60,6 +62,7 @@
 </h4>
 </div>
 <script>
+/*
 $(document).ready(function() {
 
 	function disablePostButton() {
@@ -79,5 +82,6 @@ $(document).ready(function() {
 	
 	disablePostButton();
 });
+ */
 </script>
 @endsection

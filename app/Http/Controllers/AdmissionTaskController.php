@@ -74,7 +74,12 @@ class AdmissionTaskController extends Controller
 					->leftjoin('drug_frequencies as t', 't.frequency_code', '=', 'q.frequency_code')
 					->leftJoin('consultations as u', 'u.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('users as v', 'v.id', '=', 'u.user_id')
-					->where('a.product_code','<>','consultation_fee')
+					->leftJoin('queues as w', 'w.encounter_id', '=', 'a.encounter_id')
+					->leftJoin('queue_locations as x', 'x.location_code', '=', 'w.location_code')
+					->where('d.category_code','<>','consultation_fee')
+					->where('d.category_code','<>','bed')
+					->where('product_drop_charge', 0)
+					->where('d.status_code', 'active')
 					->whereNull('k.id')
 					->whereNull('cancel_id');
 
@@ -83,49 +88,15 @@ class AdmissionTaskController extends Controller
 			}
 
 			if ($ward_code) {
-					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code);
+					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $ward_code)
+											->where('d.category_code','<>','drugs');
 			}
-					//->where('b.encounter_code','<>', 'outpatient')
+
 			$admission_tasks= $admission_tasks->orderBy("bed_name")
 					->orderBy('urgency_index')
 					->orderBy("product_name")
 					->orderBy('order_created');
 
-			/*
-			$admission_tasks = DB::table('orders as a')
-					->selectRaw($sql_select)
-					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
-					->leftjoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
-					->leftjoin('products as d', 'd.product_code', '=', 'a.product_code')
-					->leftjoin('admissions as e', 'e.encounter_id', '=', 'b.encounter_id')
-					->leftjoin('beds as f', 'f.bed_code', '=', 'e.bed_code')
-					->leftjoin('wards as g', 'g.ward_code', '=', 'f.ward_code')
-					->leftjoin('order_cancellations as h', 'h.order_id', '=', 'a.order_id')
-					->leftjoin('users as i', 'i.id', '=', 'a.updated_by')
-					->leftjoin('discharges as j', 'j.encounter_id','=','b.encounter_id')
-					->leftjoin('consultations as k', 'k.consultation_id', '=', 'a.consultation_id')
-					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'k.consultation_id')
-					->leftjoin('ward_discharges as o', 'o.encounter_id', '=', 'b.encounter_id')
-					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
-					->leftjoin('order_drugs as q', 'q.order_id', '=', 'a.order_id')
-					->leftjoin('order_investigations as r', 'r.order_id', '=', 'a.order_id')
-					->leftjoin('ref_urgencies as s', 's.urgency_code', '=', 'r.urgency_code')
-					->leftjoin('drug_frequencies as t', 't.frequency_code', '=', 'q.frequency_code')
-					->where('b.encounter_code','<>', 'outpatient')
-					->where('a.product_code','<>','consultation_fee')
-					->where('d.product_drop_charge','=',0)
-					->whereNull('cancel_id')
-					->whereNull('o.discharge_id')
-					->whereNotNull('n.post_id')
-					->orderBy('patient_name')
-					->orderBy('urgency_index')
-					->orderBy('order_created');
-
-					->where(function ($query) use ($request) {
-						$query->where('order_completed','=',0);
-							//->orWhere('category_code','=', 'drugs');
-					})
-			 */
 			$order_ids = $admission_tasks->implode('order_id',',');
 			
 			$admission_tasks = $admission_tasks->paginate($this->paginateValue);
@@ -239,7 +210,7 @@ class AdmissionTaskController extends Controller
 			$encounter_code = $request->encounter_code;
 
 			$sql_select = "
- a.order_id, a.order_completed,order_multiple, a.updated_at, a.created_at,patient_name, patient_mrn, bed_name,a.product_code,product_name,c.patient_id, i.name, ward_name, a.encounter_id,updated_by,cancel_id,category_code,stop_id, product_duration_use,q.id as order_drug_id, a.created_at as order_created,urgency_name,q.frequency_code, case when t.frequency_code = 'STAT' then frequency_index else coalesce(urgency_index,9) end as urgency_index, v.name as order_by, category_code, v.location_code
+ a.order_id, a.order_completed,order_multiple, a.updated_at, a.created_at,patient_name, patient_mrn, bed_name,a.product_code,product_name,c.patient_id, i.name, ward_name, a.encounter_id,updated_by,cancel_id,category_code,stop_id, product_duration_use,q.id as order_drug_id, a.created_at as order_created,urgency_name,q.frequency_code, case when t.frequency_code = 'STAT' then frequency_index else coalesce(urgency_index,9) end as urgency_index, v.name as order_by, category_code, w.location_code
 ";
 			$admission_tasks = DB::table('orders as a')
 					->selectRaw($sql_select)
@@ -260,7 +231,12 @@ class AdmissionTaskController extends Controller
 					->leftjoin('drug_frequencies as t', 't.frequency_code', '=', 'q.frequency_code')
 					->leftJoin('consultations as u', 'u.consultation_id', '=', 'a.consultation_id')
 					->leftjoin('users as v', 'v.id', '=', 'u.user_id')
-					->where('a.product_code','<>','consultation_fee')
+					->leftJoin('queues as w', 'w.encounter_id', '=', 'a.encounter_id')
+					->leftJoin('queue_locations as x', 'x.location_code', '=', 'w.location_code')
+					->where('d.category_code','<>','consultation_fee')
+					->where('d.category_code','<>','bed')
+					->where('product_drop_charge', 0)
+					->where('d.status_code', 'active')
 					->whereNull('k.id')
 					->whereNull('cancel_id');
 
@@ -275,11 +251,12 @@ class AdmissionTaskController extends Controller
 			}
 
 			if ($request->location_code) {
-					$admission_tasks = $admission_tasks->where('v.location_code', '=', $request->location_code);
+					$admission_tasks = $admission_tasks->where('w.location_code', '=', $request->location_code);
 			}
 
 			if ($request->ward_code) {
-					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $request->ward_code);
+					$admission_tasks = $admission_tasks->where('f.ward_code', '=', $request->ward_code)
+											->where('d.category_code','<>','drugs');
 			}
 
 
@@ -304,11 +281,20 @@ class AdmissionTaskController extends Controller
 					
 			$order_ids = $admission_tasks->implode('order_id',',');
 
-			$admission_tasks= $admission_tasks->orderBy("bed_name")
+			$location = QueueLocation::find($request->location_code);
+
+			if (!empty($location)) {
+					$admission_tasks= $admission_tasks->orderBy("a.encounter_id")
+											->orderBy('urgency_index')
+											->orderBy("product_name");
+			} else {
+					$admission_tasks= $admission_tasks->orderBy("bed_name")
 											->orderBy('urgency_index')
 											->orderBy("product_name")
-											->orderBy('order_created')
-											->paginate($this->paginateValue);
+											->orderBy('order_created');
+			}
+
+			$admission_tasks= $admission_tasks->paginate($this->paginateValue);
 
 			return view('admission_tasks.index', [
 					'admission_tasks'=>$admission_tasks,

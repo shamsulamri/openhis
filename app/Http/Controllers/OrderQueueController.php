@@ -400,6 +400,7 @@ class OrderQueueController extends Controller
 					->leftjoin('order_posts as n', 'n.consultation_id', '=', 'orders.consultation_id')
 					->leftjoin('products as o', 'o.product_code', '=', 'orders.product_code')
 					->leftjoin('ref_encounter_types as p', 'p.encounter_code', '=', 'c.encounter_code')
+					->leftjoin('patients as q', 'q.patient_id', '=', 'c.patient_id')
 					->whereIn('o.category_code', $queue_categories)
 					->whereIn('c.encounter_code', $queue_encounters)
 					->whereNull('cancel_id')

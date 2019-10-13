@@ -82,6 +82,10 @@ class WardDischargeController extends Controller
 
 	public function store(Request $request) 
 	{
+			$ward_discharge = WardDischarge::where('encounter_id', $request->encounter_id)->first();
+			if ($ward_discharge) {
+					return redirect('/admissions');
+			}
 			$admission = Admission::find($request->admission_id);
 			$ward_discharge = new WardDischarge();
 			$ward_discharge->encounter_id = $request->encounter_id;

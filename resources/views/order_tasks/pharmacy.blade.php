@@ -20,6 +20,9 @@
 					@endcan
 			</div>
 			<div align="right" class="col-xs-8">
+@if ($encounter->encounter_code == 'inpatient')
+					<a class="btn btn-primary" href="/medication_record/mar/{{ $encounter_id }}?view=1">View MAR</a>
+@endif
 @if (Auth::user()->author_id == 5)
 					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=order_labels&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Lab Label</a>
@@ -75,6 +78,14 @@
 						@endif
 					</a>
 				</li>
+				<li>
+					<a data-toggle="tab" href="#tab-5">
+						Stop 
+						@if (($count_stop)>0)
+							 <label class="label label-warning">{{ $count_stop }}</label>
+						@endif
+					</a>
+				</li>
 		</ul>
 		<div class="tab-content">
 			<div id="tab-1" class="tab-pane active">
@@ -95,6 +106,11 @@
 			<div id="tab-4" class="tab-pane">
 				<div class="panel-body">
 						@include('order_tasks.completed')
+				</div>
+			</div>
+			<div id="tab-5" class="tab-pane">
+				<div class="panel-body">
+						@include('order_tasks.stop')
 				</div>
 			</div>
 		</div>

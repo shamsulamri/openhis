@@ -250,26 +250,28 @@ class OrderController extends Controller
 			$product = Product::find($order->product_code);
 			$current_id = Consultation::orderBy('created_at','desc')->limit(1)->get()[0]->consultation_id;
 
-		 	if ($product->order_form == '2') {
-					return redirect('/order_drugs/'.$order->orderDrug->id.'/edit?order_single='.$request->order_single);
-			} elseif ($product->order_form == '3') {
-					return redirect('/order_investigations/'.$order->orderInvestigation->id.'/edit?order_single='.$request->order_single);
-			} else {
-					$stock_helper = new StockHelper();
-					$available = $stock_helper->getStockAvailable($order->product_code, $order->store_code);
-
-					return view('orders.edit', [
-							'order'=>$order,
-							'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
-							'consultation' => $consultation,
-							'patient'=>$consultation->encounter->patient,
-							'tab'=>'order',
-							'product'=>$product,
-							'current_id'=>$current_id,
-							'available'=>$available,
-							'order_single'=>$request->order_single,
-					]);
+			if (Auth::user()->author_id==2) {
+					if ($product->order_form == '2') {
+							return redirect('/order_drugs/'.$order->orderDrug->id.'/edit?order_single='.$request->order_single);
+					} elseif ($product->order_form == '3') {
+							return redirect('/order_investigations/'.$order->orderInvestigation->id.'/edit?order_single='.$request->order_single);
+					} 
 			}
+
+			$stock_helper = new StockHelper();
+			$available = $stock_helper->getStockAvailable($order->product_code, $order->store_code);
+
+			return view('orders.edit', [
+					'order'=>$order,
+					'location' => Location::all()->sortBy('location_name')->lists('location_name', 'location_code')->prepend('',''),
+					'consultation' => $consultation,
+					'patient'=>$consultation->encounter->patient,
+					'tab'=>'order',
+					'product'=>$product,
+					'current_id'=>$current_id,
+					'available'=>$available,
+					'order_single'=>$request->order_single,
+			]);
 	}
 
 	public function validateOrder($request, $order) 

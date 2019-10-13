@@ -54,7 +54,9 @@
 					@if (!isset($order->cancel_id) && $order->order_completed==0)
 						{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
 					@else
-						<a href='/order_task/reopen/{{ $order->order_id }}' class='btn btn-danger btn-xs'>Reopen</a>
+						@if ($order->order_completed==1 && empty($order->stop_id) && $order->product_local_store==0)
+							<a href='/order_task/reopen/{{ $order->order_id }}' class='btn btn-danger btn-xs'>Reopen</a>
+						@endif
 					@endif
 			</td>
 			<td valign='top' colspan='1'>
@@ -75,6 +77,17 @@
 						{{ $order_helper->getPrescription($order->order_id) }}
 						</strong>
 					@endif
+				@endif
+				@if (!empty($order->order_description) && $order->order_completed==1)
+						<h5>
+							{{ $order->order_description }}
+						</h5>
+				@endif
+				@if (!empty($order->stop_description))
+						<h5>
+						{{ $order->stop_description }} 
+						</h5>
+						Stop by {{ $order->stop_by }}<br>on {{ DojoUtility::dateTimeReadFormat($order->stop_at) }}
 				@endif
 			</td>
 			@if ($order->order_completed==0)

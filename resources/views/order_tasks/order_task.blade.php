@@ -10,6 +10,17 @@
             {{ Form::label('user', $order_task->user->name, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
+
+	@if ($order_task->orderDrug)
+   <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
+		<label for='order_quantity_supply' class='col-sm-3 control-label'>Quantity<span style='color:red;'> *</span></label>
+		<div class='col-sm-9'>
+			{{ Form::text('order_quantity_supply', null, ['class'=>'form-control','placeholder'=>'',]) }}
+			@if ($errors->has('order_quantity_supply')) <p class="help-block">{{ $errors->first('order_quantity_supply') }}</p> @endif
+		</div>
+	</div>
+	@endif
+
 	@if ($order_task->orderInvestigation)
     <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
         <label for='user' class='col-sm-3 control-label'>Consultation Date</label>
@@ -24,13 +35,13 @@
             @if ($errors->has('order_custom_id')) <p class="help-block">{{ $errors->first('order_custom_id') }}</p> @endif
         </div>
     </div>
-	@endif
     <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
         {{ Form::label('order_report', 'Report',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::textarea('order_report', null, ['id'=>'order_report','onkeyup'=>'taskCompleted()','class'=>'form-control','placeholder'=>'','rows'=>'25']) }}
         </div>
     </div>
+	@endif
 	@if ($product->product_stocked)
     <div class='form-group  @if ($errors->has('stock_code')) has-error @endif'>
         {{ Form::label('stock_code', 'Store',['class'=>'col-sm-3 control-label']) }}
@@ -39,6 +50,8 @@
         </div>
     </div>
 	@endif
+
+	@if (Auth::user()->authorization->module_support==1)
 		@if (!empty($order_task->orderDrug->order_id))
 			<div class='form-group  @if ($errors->has('order_discount')) has-error @endif'>
 				{{ Form::label('drug_dosage', 'Dosage',['class'=>'col-sm-3 control-label']) }}
@@ -50,6 +63,7 @@
 				</div>
 			</div>
 		@endif
+	@endif
 
 <!--
     <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
@@ -107,6 +121,7 @@
             {{ Form::hidden('report', 1) }}
 			@endif
             {{ Form::hidden('consultation_id', null) }}
+            {{ Form::hidden('mar', $mar) }}
 
 
 <!--

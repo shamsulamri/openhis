@@ -72,6 +72,10 @@ class WardArrivalController extends Controller
 
 	public function store(Request $request) 
 	{
+			$ward_arrival = WardArrival::where('encounter_id', $request->encounter_id)->first();
+			if ($ward_arrival) {
+					return redirect('/admissions');
+			}
 			$ward_arrival = new WardArrival();
 			$valid = $ward_arrival->validate($request->all(), $request->_method);
 

@@ -187,7 +187,6 @@ class OrderImagingController extends Controller
 			$product = Product::find($request->product_code);
 			if ($product) {
 					$order_id = OrderHelper::orderItem($product, $request->cookie('ward'));
-					return $order_id;
 					$order = Order::find($order_id);
 					$description = "";
 					if ($request->side) $description .= $request->side." > ";

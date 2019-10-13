@@ -242,7 +242,7 @@ class MedicationRecordController extends Controller
 					->get();
 					//->orderBy('a.created_at', 'desc')
 
-			$mars = MedicationRecord::select('medication_id','encounter_id', 'medication_slot', 'medication_datetime', 'username', 'name')
+			$mars = MedicationRecord::select('medication_id','encounter_id', 'medication_slot', 'medication_datetime', 'username', 'name', 'medication_fail')
 					->leftJoin('orders as b', 'b.order_id', '=', 'medication_records.order_id')
 					->leftjoin('users as c', 'c.id', '=', 'medication_records.user_id')
 					->where('b.encounter_id', '=', $encounter_id)
@@ -286,6 +286,7 @@ class MedicationRecordController extends Controller
 					'entry_start'=>Carbon::now(),
 					'entry_end'=>Carbon::now()->addDays(1),
 					'order_helper'=>new OrderHelper(),
+					'view'=>$request->view==1?true:false,
 					]);
 	}
 
