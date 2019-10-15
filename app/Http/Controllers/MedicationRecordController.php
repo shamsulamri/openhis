@@ -272,6 +272,11 @@ class MedicationRecordController extends Controller
 				$start_date = DojoUtility::addDays(DojoUtility::dateReadFormat($start_date), $los-2);
 			}
 
+			if ($request->view == 1) {
+					// Pharmacy view MAR
+					$consultation = null;
+			}
+
 			return view('medication_records.mar', [
 					'consultation'=>$consultation,
 					'patient'=>$encounter->patient,

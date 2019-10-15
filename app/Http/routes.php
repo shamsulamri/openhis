@@ -796,11 +796,11 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/deposit/search', 'DepositController@search');
 				Route::get('/deposit/search', 'DepositController@search');
 				Route::get('/deposits/delete/{id}', 'DepositController@delete');
-				Route::post('/deposit/enquiry', 'DepositController@enquiry');
-				Route::get('/deposit/enquiry', 'DepositController@enquiry');
 
 		Route::group(['middleware' => 'discharge'], function () {
 
+				Route::post('/deposit/enquiry', 'DepositController@enquiry');
+				Route::get('/deposit/enquiry', 'DepositController@enquiry');
 
 				Route::resource('payments', 'PaymentController',['except'=>['index','show','create']]);
 				Route::get('/payments/{id?}', 'PaymentController@index');
@@ -820,8 +820,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/bill_items/id/{id}', 'BillItemController@searchById');
 				Route::get('/bill_items/{id}/json', 'BillItemController@json');
 				Route::get('/bill_items/close/{id}', 'BillItemController@close');
-				Route::post('/bill_item/enquiry', 'BillItemController@enquiry');
-				Route::get('/bill_item/enquiry', 'BillItemController@enquiry');
 
 				Route::resource('bills', 'BillController');
 				Route::get('/bills/id/{id}', 'BillController@searchById');
@@ -838,6 +836,9 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/bill/sponsor_outstanding', 'BillController@sponsorOutstanding');
 				Route::get('/bill/sponsor_outstanding', 'BillController@sponsorOutstanding');
 		});
+
+				Route::post('/bill_item/enquiry', 'BillItemController@enquiry');
+				Route::get('/bill_item/enquiry', 'BillItemController@enquiry');
 
 		Route::group(['middleware' => 'patient_list_middleware'], function () {
 				Route::post('/discharge/discharge_count', 'DischargeController@dischargeCount');

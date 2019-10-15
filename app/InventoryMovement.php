@@ -34,6 +34,7 @@ class InventoryMovement extends Model
 			$rules = [
 				'move_code'=>'required',
 				'store_code'=>'required',
+				'tag_code'=>'required_if:move_code,==,stock_issue',
 				'target_store'=>'required_if:tag_code,==,transfer',
 			];
 
@@ -41,7 +42,7 @@ class InventoryMovement extends Model
 			//'store_code'=>'required_if:move_code,==,transfer',
 			
 			$messages = [
-				'required' => 'This field is required'
+				'required' => 'This field is required',
 			];
 			
 			return validator::make($input, $rules ,$messages);

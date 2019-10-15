@@ -686,11 +686,12 @@ class OrderHelper
 			}
 
 			if ($total==0) {
-					$order->order_quantity_supply = 1;
+					$order->order_quantity_supply = 0;
 			} else {
 					$order->order_quantity_supply = $total;
 			} 
-					$order->save();
+
+			$order->save();
 
 
 			return $total;

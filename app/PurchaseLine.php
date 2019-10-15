@@ -84,8 +84,6 @@ class PurchaseLine extends Model
 
 	public function balanceQuantity() 
 	{
-			Log::info("RRRRRRRRRRRRRRRRRRRRRRRR");
-			Log::info($this->reference_id);
 			$balance = null;
 			$total = $this->line_quantity;
 			if (!empty($this->reference_id)) {

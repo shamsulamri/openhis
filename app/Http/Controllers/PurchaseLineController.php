@@ -101,7 +101,6 @@ class PurchaseLineController extends Controller
 											->first();
 
 						if (!$purchase_line) {
-								Log::info("XXXXXXXXXXXXXX");
 								$balanceQuantity = $helper->balanceQuantity($item->line_id);
 								$purchase_line = new PurchaseLine();
 								$purchase_line->purchase_id = $to;
@@ -122,7 +121,6 @@ class PurchaseLineController extends Controller
 								}
 
 						} else {
-								Log::info("QQQQQQQQQQQQQQQQQQQQQ");
 								$purchase_line->purchase_id = $to;
 								$purchase_line->product_code = $item->product_code;
 								$purchase_line->line_unit_price = $item->line_unit_price;
@@ -175,7 +173,9 @@ class PurchaseLineController extends Controller
 							$inventory->unit_code = $item->unit_code;
 							$inventory->uom_rate = $item->uom_rate;
 							$inventory->inv_quantity = $item->line_quantity*$item->uom_rate;
-							$inventory->save();
+							if ($outstandingQuantity>0) {
+									$inventory->save();
+							}
 				}
 			}
 	}

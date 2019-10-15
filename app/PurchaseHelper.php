@@ -35,6 +35,7 @@ class PurchaseHelper
 
 	public function backOrder($document_code)
 	{
+			/** Get backorder documents **/
 			$sql = sprintf("
 			select distinct(purchase_id) from (
 				select a.purchase_id, (line_quantity-IFNULL(physical_quantity,0)) as outstanding_quantity

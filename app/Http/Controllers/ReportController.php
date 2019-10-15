@@ -15,10 +15,11 @@ class ReportController extends Controller
 {
 		public function index(Request $request)
 		{
-				//return $request->cookie('store');
+				$store_code = Auth::user()->defaultStore($request);
+				//'store_code'=>$request->cookie('store')?:null,
+				
 				return view('reports.index', [
-						//'store_code'=>Auth::user()->defaultStore(),
-						'store_code'=>$request->cookie('store')?:null,
+						'store_code'=>$store_code,
 						'ward_code'=>$request->cookie('ward')?:null,
 				]);
 		}

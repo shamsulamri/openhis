@@ -49,8 +49,10 @@
 		<a href="{{ url('/bill_item/enquiry') }}">Bill Item Enquiry</a><br>
 		<a href="{{ url('/payment/enquiry') }}">Payment Enquiry</a><br>
 		<a href="{{ url('/deposit/enquiry') }}">Deposit Enquiry</a><br>
+		<!--
 		<a href="{{ url('/refund/enquiry') }}">Refund Enquiry</a><br>
 		<a href="{{ url('/bill_aging/enquiry') }}">Aging Report</a><br>
+		-->
 	</div>
 	<div class="col-xs-6">
 		<a href="{{ url('/bill/report') }}">Bill Report</a><br>

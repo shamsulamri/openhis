@@ -10,6 +10,10 @@
 <h1>
 Medication Administration Records
 </h1>
+@if ($view)
+<a href='/order_tasks/task/{{ $encounter->encounter_id }}/pharmacy' class='btn btn-primary'>Order Task</a>
+<br>
+@endif
 <br>
 <table class='table table-condensed'>
 	<tbody>
@@ -35,6 +39,8 @@ if (empty($encounter->discharge)) {
 					{{ $drug->product_name }}
 			@endif
 			<small>
+			<br>
+			{{ $drug->product_code }}
 			<br>
 			{{ $order_helper->getPrescription($drug->order_id) }}
 			<br>
@@ -93,19 +99,21 @@ if (empty($encounter->discharge)) {
 
 				@if ($mars[$date_slot]->medication_fail)
 						<span class='label label-danger'>
-							Fail
+							Miss
 						</span>
 						<br>
 				@endif
+				@if (!$view)
 				<a href='/medication_record/datetime/{{ $mars[$date_slot]->medication_id }}' data-toggle='tooltip' data-placement='top' title='Recorded by {{ $mars[$date_slot]->name }}'>
 				@endif
+				@endif
 						{{ DojoUtility::timeReadFormat($mars[$date_slot]->medication_datetime) }}
-				@if (empty($drug->stop_id))
+				@if (empty($drug->stop_id) && !$view)
 				</a>
 				@endif
 
 				<!-- Verification -->
-				@if (!$verifications->contains('medication_slot',$date_slot) && empty($drug->stop_id)) 
+				@if (!$verifications->contains('medication_slot',$date_slot) && empty($drug->stop_id) && !$view) 
 						@if ($mars[$date_slot]->username != Auth::user()->username)
 						<br>
 						<br>

@@ -181,6 +181,7 @@ class User extends Authenticatable
 	public function defaultStore($request = null) {
 			$store_code = null;
 
+			Log::info('---------------------');
 			if ($request) {
 					if ($this->authorization->module_ward == 1) {
 							$ward_code = $request->cookie('ward');
@@ -205,4 +206,5 @@ class User extends Authenticatable
 
 			return $store_code;
 	}
+
 }

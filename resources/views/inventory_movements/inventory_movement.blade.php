@@ -18,7 +18,7 @@
     <div class='form-group  @if ($errors->has('tag_code')) has-error @endif'>
         <label for='tag_code' class='col-sm-2 control-label'>Tag</label>
         <div class='col-sm-10'>
-            {{ Form::select('tag_code', $tag,null, ['id'=>'tag_code','class'=>'form-control','onchange'=>'tagChanged()']) }}
+            {{ Form::select('tag_code', $tag,$inventory_movement->tag_code, ['id'=>'tag_code','class'=>'form-control','onchange'=>'tagChanged()']) }}
             @if ($errors->has('tag_code')) <p class="help-block">{{ $errors->first('tag_code') }}</p> @endif
         </div>
     </div>
@@ -109,5 +109,5 @@
 			tag.disabled = true;
 		}
 
-		movementChanged();
+		//movementChanged();
 </script>

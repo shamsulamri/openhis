@@ -73,7 +73,9 @@
 				{{ $inventory->product_code }}
 			</td>
 			<td>
+				<a href='{{ URL::to('inventory/enquiry?search='. $inventory->product_code.'&store_code='.$store_code) }}'>
 				{{ $inventory->product->product_name }}
+				</a>
 			</td>
 			<td>
 				{{ $inventory->store_name }}

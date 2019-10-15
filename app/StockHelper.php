@@ -140,6 +140,7 @@ class StockHelper
 
 	public function getStockAverageCost($product_code, $store_code = null, $batch_number = null)
 	{
+			$average_cost=0;
 			$value = Inventory::where('product_code',$product_code)
 						->where('inv_posted', 1);
 
@@ -153,13 +154,18 @@ class StockHelper
 
 			if ($value->count()>0) {
 					if ($value->sum('inv_quantity')>0) {
-							$value = $value->sum('inv_subtotal')/$value->sum('inv_quantity');
-							$value = number_format($value,2);
+							if ($value->sum('inv_subtotal')>0) {
+									$value = $value->sum('inv_subtotal')/$value->sum('inv_quantity');
+									$average_cost = number_format($value,2);
+							}
+					} else {
+							$average_cost = 0;
 					}
-					return $value;
 			} else {
-					return 0;
+					$average_cost = 0;
 			}
+
+			return $average_cost;
 	}
 
 	public function getStockTotalCost($product_code, $store_code = null, $batch_number = null)
@@ -190,6 +196,7 @@ class StockHelper
 					->whereNull('cancel_id');
 
 			if (!empty($encounter_id)) {
+					Log::info("X");
 					$allocated = $allocated->where('orders.encounter_id','<>', $encounter_id);
 			}
 
@@ -226,6 +233,7 @@ class StockHelper
 	{
 			$on_hand = $this->getStockOnHand($product_code, $store_code, $batch_number);
 			$allocated = $this->getStockAllocated($product_code, $store_code, $batch_number);
+			Log::info($on_hand.'---'.$allocated);
 
 			return $on_hand - $allocated;
 	}
@@ -244,9 +252,9 @@ class StockHelper
 
 			$uom_list = [];
 			foreach ($product_uoms as $uom) {
-					if ($uom->unit_code != 'unit') {
+					//if ($uom->unit_code != 'unit') {
 						$uom_list[$uom->unit_code] = $uom->unitMeasure->unit_name.' ('.$uom->uom_rate.')';
-					}
+					//}
 			}
 
 			return $uom_list;

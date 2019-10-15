@@ -103,6 +103,7 @@ class ProductSearchController extends Controller
 				";
 
 					$data = DB::select($sql);
+				Log::info($sql);
 
 					/** Pagination **/
 					$page = Input::get('page', 1); 

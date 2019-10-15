@@ -497,7 +497,7 @@ class ProductController extends Controller
 	{
 			$sql = "
 				select a.product_code, product_name, store_name, sum(inv_quantity) as on_hand, sum(inv_subtotal) as total_cost,
-					 sum(inv_subtotal)/sum(inv_quantity) as average_cost, IFNULL(allocated, 0) as allocated ,sum(inv_quantity)-IFNULL(allocated,0) as available, unit_shortname, inv_batch_number, batch_expiry_date
+					 sum(inv_subtotal)/sum(inv_quantity) as average_cost, IFNULL(allocated, 0) as allocated ,sum(inv_quantity)-IFNULL(allocated,0) as available, unit_shortname, inv_batch_number, batch_expiry_date, a.store_code
 				from inventories a
 				left join products as b on (a.product_code = b.product_code)
 				left join stores as c on (c.store_code = a.store_code)
@@ -505,16 +505,18 @@ class ProductController extends Controller
 						select sum(order_quantity_request) as allocated, store_code, product_code
 						from orders as a
 						left join order_cancellations as b on (a.order_id = b.order_id)
+						left join discharges as c on (c.encounter_id = a.encounter_id)
 						where order_completed=0
 						and cancel_id is null
+						and discharge_id is null
 						group by store_code, product_code
 				) as d on (d.store_code = a.store_code and d.product_code = a.product_code)
-				left join ref_unit_measures as e on (e.unit_code = b.unit_code)
+				left join ref_unit_measures as e on (e.unit_code = a.unit_code)
 				left join inventory_batches as f on (f.batch_number = a.inv_batch_number)
 				where inv_posted = 1
 			";
 
-			$sql = $sql."and (product_name like '%".$request->search."%' or a.product_code like '%".$request->search."%')";
+			$sql = $sql."and (product_name like '%".trim($request->search)."%' or a.product_code like '%".trim($request->search)."%')";
 
 			if (!empty($request->store_code)) {
 				$sql = $sql." and a.store_code = '".$request->store_code."'";

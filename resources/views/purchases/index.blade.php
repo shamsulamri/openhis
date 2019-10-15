@@ -128,6 +128,11 @@
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('purchases/delete/'. $purchase->purchase_id) }}'>Delete</a>
 					@endif
 			@endcan
+			<!--
+			@if ($status_code == 'indent_request')
+					<a class='btn btn-warning btn-xs' href='{{ URL::to('inventory_movements/create?id='. $purchase->purchase_id) }}'>Issue</a>
+			@endif
+			-->
 			</td>
 	</tr>
 @endforeach

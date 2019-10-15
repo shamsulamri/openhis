@@ -23,7 +23,7 @@ use App\DojoUtility;
 
 class InventoryController extends Controller
 {
-	public $paginateValue=10;
+	public $paginateValue=100;
 
 	public function __construct()
 	{

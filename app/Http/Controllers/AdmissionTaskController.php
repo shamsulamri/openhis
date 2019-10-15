@@ -79,6 +79,7 @@ class AdmissionTaskController extends Controller
 					->where('d.category_code','<>','consultation_fee')
 					->where('d.category_code','<>','bed')
 					->where('product_drop_charge', 0)
+					->where('order_completed', 0)
 					->where('d.status_code', 'active')
 					->whereNull('k.id')
 					->whereNull('cancel_id');
@@ -236,6 +237,7 @@ class AdmissionTaskController extends Controller
 					->where('d.category_code','<>','consultation_fee')
 					->where('d.category_code','<>','bed')
 					->where('product_drop_charge', 0)
+					->where('order_completed', 0)
 					->where('d.status_code', 'active')
 					->whereNull('k.id')
 					->whereNull('cancel_id');

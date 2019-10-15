@@ -55,6 +55,7 @@
     <th>Batch</th> 
     <th>Expiry Date</th> 
     <th>Store</th> 
+    <th>Unit</th> 
     <th width='100'><div align='right'>On Hand</div></th> 
     <th width='50'><div align='right'>Allocated</div></th> 
     <th width='50'><div align='right'>Available</div></th> 
@@ -72,9 +73,6 @@ $allocated=0;
 			<td>
 					<a href='{{ URL::to('products/on_hand?search='. $product->product_code) }}'>
 						{{ $product->product_name }} 
-						@if ($product->unit_shortname) 
-						({{ $product->unit_shortname }}) 
-						@endif
 					</a>
 					<br>
 					{{$product->product_code}}
@@ -94,8 +92,15 @@ $allocated=0;
 			<td>
 				{{ $product->store_name }}
 			</td>
+			<td>
+				<div align='center'>
+				{{ $product->unit_shortname }}
+				</div>
+			</td>
 			<td align='right'>
-				{{ $product->on_hand }}
+				<a href='{{ URL::to('inventory/enquiry?search='.$product->product_code.'&store_code='.$product->store_code) }}'>
+				{{ $product->on_hand }} 
+				</a>
 			</td>
 			<td align='right'>
 				{{ $product->allocated }}

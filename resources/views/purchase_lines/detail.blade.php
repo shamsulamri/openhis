@@ -64,10 +64,12 @@ $count=($page-1)*10;
     <th></th>
     <th>Item</th>
     <th><div align='right'>Quantity</div></th> 
+@if ($purchase->document_code != 'indent_request')
     <th><div align='right'>Unit Price</div></th> 
     <th><div align='right'>Sub Total</div></th> 
     <th><div align='right'>Tax</div></th> 
     <th><div align='right'>Subtotal Include Tax</div></th> 
+@endif
 	</tr>
   </thead>
 	<tbody>
@@ -115,6 +117,7 @@ $count=($page-1)*10;
 							{{ $purchase_line->uom->unit_name }}
 						@endif
 			</td>
+@if ($purchase->document_code != 'indent_request')
 			<td @if ($purchase->purchase_posted==0) width='50' @endif align='right'>
 					{{ number_format($purchase_line->line_unit_price,2) }}
 			</td>
@@ -135,6 +138,7 @@ $count=($page-1)*10;
 				</div>
 				@endif
 			</td>
+@endif
 			<!--
 			<td align='right' width='20'>
 					@if ($purchase->purchase_received==0)
@@ -148,11 +152,14 @@ $count=($page-1)*10;
 @endforeach
 @endif
 
-@if ($total_include_tax>0)
-	<tr>
-		<td colspan='7' align='right'><strong>Total</strong></td>
-		<td width='20' align='right'>{{ number_format($total_include_tax,2) }}</td>
-	</tr>
+
+@if ($purchase->document_code != 'indent_request')
+		@if ($total_include_tax>0)
+			<tr>
+				<td colspan='7' align='right'><strong>Total</strong></td>
+				<td width='20' align='right'>{{ number_format($total_include_tax,2) }}</td>
+			</tr>
+		@endif
 @endif
 </tbody>
 </table>

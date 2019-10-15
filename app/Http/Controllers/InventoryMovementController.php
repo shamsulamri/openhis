@@ -17,6 +17,7 @@ use App\Inventory;
 use App\StockHelper;
 use App\StockMovement;
 use App\StockTag;
+use App\Purchase;
 
 class InventoryMovementController extends Controller
 {
@@ -174,9 +175,19 @@ class InventoryMovementController extends Controller
 
 	public function create(Request $request)
 	{
+			$purchase = null;
+			if (!empty($request->id)) {
+					$purchase = Purchase::find($request->id);
+			}
 
 			$inventory_movement = new InventoryMovement();
 			$inventory_movement->store_code =  Auth::user()->defaultStore($request);
+
+			if ($purchase) {
+					$inventory_movement->move_code = 'stock_issue';
+					$inventory_movement->tag_code = 'transfer';
+					$inventory_movement->target_store = $purchase->store_code;
+			}
 
 			$tags = StockTag::select(DB::raw("tag_name, tag_code, move_code"))->get();
 

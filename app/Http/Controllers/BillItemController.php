@@ -55,6 +55,7 @@ class BillItemController extends Controller
 	}
 
 	public function bedBills($encounter_id) {
+			Log::info("------ Bed -----------");
 			$encounter = Encounter::find($encounter_id);
 			$sql = "
 				select bed_code, bed_stop, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, b.product_code, c.tax_code, tax_rate, uom_price as product_sale_price, block_room, product_name 
@@ -113,6 +114,7 @@ class BillItemController extends Controller
 					}
 
 					$item->save();
+					Log::info($item);
 
 					/*** Merge ***/
 					$merge_item = new BillItem();
@@ -152,6 +154,7 @@ class BillItemController extends Controller
 					$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
 
 					if (!empty($consultation)) {
+
 							Order::where('order_custom_id', $merge_item->product_code)
 									->where('encounter_id', $encounter_id)
 									->delete();
@@ -894,6 +897,7 @@ class BillItemController extends Controller
 
 				$bills = $bills->paginate($this->paginateValue);
 				$bill_label = "(Claimable)";
+
 			}
 
 			$pending = DB::table('bill_items as a')
@@ -1251,7 +1255,7 @@ class BillItemController extends Controller
 				DojoUtility::export_report($charges->get());
 			}
 
-			$charges = $charges->paginate($this->paginateValue);
+			$charges = $charges->paginate(20);
 
 			$categories = ProductCategory::all()->sortBy('category_name')->lists('category_name', 'category_code')->prepend('','');
 

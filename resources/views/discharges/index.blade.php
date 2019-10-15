@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+.dropdown-menu.pull-left {
+    left:0;
+  }
+</style>
 <h1>Discharge List</h1>
 <br>
 <form action='/discharge/search' method='post' class='form-horizontal'>
@@ -45,7 +50,7 @@
     <th>Panel</th> 
     <th>Discharge</th> 
     <th>Physician</th> 
-    <th>Bill</th> 
+    <th>Bill Status</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -66,6 +71,7 @@
 								$label = 'default';
 								break;
 				}
+				$bill_status = $bill_helper->billStatus($discharge->encounter_id);
 				?>
 				<span class='label label-{{ $label }}'>
 				{{ $discharge->encounter->encounterType->encounter_name }}
@@ -92,6 +98,29 @@
 					{{ strtoupper($discharge->patient_name) }}
 					<br>
 					<small>{{$discharge->patient_mrn}}</small>
+			@if (!empty($discharge->newborn_id))
+				<br>
+				<span class='label label-danger'>Surat Akuan Bersalin</span>
+			@endif
+			@if (!empty($discharge->mc_id))
+				<br>
+					@if (!empty($discharge->mc_start) && empty($discharge->mc_time_start))
+						<span class='label label-danger'>Medical Certificate</span>
+					@endif
+					@if (!empty($discharge->mc_time_start))
+						<span class='label label-danger'>Time Slip</span>
+					@endif
+			@endif
+			@if ($discharge->encounter_code!='inpatient')
+					@if (!$dischargeHelper->drugCompleted($discharge->encounter_id))
+						@if ($bill_status==0)
+							<br>
+							<span class="label label-danger">
+							Preparing drug...
+							</span>
+						@endif
+					@endif
+			@endif
 			</td>
 			<td>
 					@if ($discharge->encounter->sponsor)
@@ -107,15 +136,23 @@
 					<br>
 					<small>{{$discharge->ward_name}}</small>
 			</td>
-			<td>
-			<?php
-				$bill_status = $bill_helper->billStatus($discharge->encounter_id);
-			?>
+			<td> 
 			@if ($bill_status==0)
 				<span class='label label-warning'>Open</span>
 			@else 
 				<span class='label label-default'>Paid</span>
 			@endif
+			</td>
+			<td>
+			@can('module-consultation')
+				@if ($bill_status==0)
+						@cannot('system-administrator')
+						<a class='btn btn-primary' href='{{ URL::to('consultations/create?encounter_id='. $discharge->encounter_id) }}'>
+								<i class="fa fa-stethoscope"></i>
+						</a>
+						@endcannot
+				@endif
+			@endcan
 			</td>
 			<td align='right'>
 			<?php
@@ -131,49 +168,57 @@
 				**/
 			}
 			?>
+
+			<!--
+			@can('module-ward')
+					@if (!empty($discharge->newborn_id))
+						<a class="btn btn-default btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $discharge->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
+					@endif
+					@if (!empty($discharge->mc_id))
+							@if (!empty($discharge->mc_start) && empty($discharge->mc_time_start))
+				<a class="btn btn-default btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
+							@endif
+							@if (!empty($discharge->mc_time_start))
+				<a class="btn btn-default btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=time_slip&id={{ $discharge->encounter_id }}" role="button" target="_blank">Time Slip</a>
+							@endif
+					@endif
+			@endcan
+			-->
+
+
+	@can('module-ward')
+		<div class="dropdown">
+		  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				Print
+				<span class="caret"></span>
+		  </button>
+		  <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 			@if (!empty($discharge->newborn_id))
-				<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $discharge->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
+			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $discharge->encounter_id }}" target="_blank">Surat Akuan Bersalin</a></li>
 			@endif
 			@if (!empty($discharge->mc_id))
 					@if (!empty($discharge->mc_start) && empty($discharge->mc_time_start))
-		<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
+			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" target="_blank">Medical Certificate</a></li>
 					@endif
 					@if (!empty($discharge->mc_time_start))
-		<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=time_slip&id={{ $discharge->encounter_id }}" role="button" target="_blank">Time Slip</a>
+			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=time_slip&id={{ $discharge->encounter_id }}" target="_blank">Time Slip</a></li>
 					@endif
 			@endif
-			@can('module-consultation')
-			@if ($bill_status==0)
-					@cannot('system-administrator')
-					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('consultations/create?encounter_id='. $discharge->encounter_id) }}'>
-						<i class="fa fa-stethoscope"></i>
-					</a>
-					@endcan
-			@endif
+			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=referral_letter&id={{ $discharge->encounter_id }}" target="_blank">Referral Letter</a></li>
+			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=reply_letter&id={{ $discharge->encounter_id }}" target="_blank">Reply Letter</a></li>
+			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=discharge_summary&id={{ $discharge->encounter_id }}" target="_blank">Discharge Summary</a></li>
+		  </ul>
+		</div>
+	@endcan
+
+	@cannot('system-administrator')
+			@can('module-discharge')
+				<a class='btn btn-{{ $button_type }}' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
 			@endcan
-			@cannot('system-administrator')
-			@if ($discharge->encounter_code=='inpatient')
-					@can('module-discharge')
-					<a class='btn btn-{{ $button_type }}' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
-					@endcan
-			@else
-							@can('module-discharge')
-							<a class='btn btn-{{ $button_type }}' href='{{ URL::to('bill_items/'. $discharge->encounter_id) }}'>{{ $bill_label }}</a>
-							@endcan
-					@if ($dischargeHelper->drugCompleted($discharge->encounter_id))
-					@else
-						@if ($bill_status==0)
-							<br>
-							<span class="label label-warning">
-							Preparing drug...
-							</span>
-						@endif
-					@endif
-			@endif
-			@endcannot
-			@can('system-administrator')
-			<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
-			@endcan
+	@endcannot
+	@can('system-administrator')
+	<a class='btn btn-danger btn-xs' href='{{ URL::to('discharges/delete/'. $discharge->discharge_id) }}'>Delete</a>
+	@endcan
 			</td>
 	</tr>
 @endforeach

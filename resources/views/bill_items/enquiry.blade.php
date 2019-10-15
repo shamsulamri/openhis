@@ -109,11 +109,12 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $charges->appends(['search'=>$search])->render() }}
-	@else
-	{{ $charges->render() }}
-@endif
+{{ $charges->appends([
+		'search'=>$search,
+		'date_start'=>DojoUtility::dateReadFormat($date_start),
+		'date_end'=>DojoUtility::dateReadFormat($date_end),
+		'category_code'=>$category_code,
+])->render() }}
 <br>
 @if ($charges->total()>0)
 	{{ $charges->total() }} records found.

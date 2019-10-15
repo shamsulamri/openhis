@@ -203,7 +203,7 @@
 		@endforeach
 		@if ($errors->has('batch_'.$batch->product_code) | $total_supply==0) 
 		<tr>
-			<td colspan=9>
+			<td colspan=11>
 			</td>
 			<td>
 					<div align='center' class='has-error'>

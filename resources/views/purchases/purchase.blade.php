@@ -2,7 +2,7 @@
     <div class='form-group  @if ($errors->has('document_code')) has-error @endif'>
         <label for='document_code' class='col-sm-2 control-label'>Document<span style='color:red;'> *</span></label>
         <div class='col-sm-10'>
-			{{ Form::select('document_code', $documents, null, ['id'=>'document_code','onchange'=>'documentChanged()']) }}
+			{{ Form::select('document_code', $documents, null, ['id'=>'document_code','class'=>'form-control', 'onchange'=>'documentChanged()']) }}
             @if ($errors->has('document_code')) <p class="help-block">{{ $errors->first('document_code') }}</p> @endif
         </div>
     </div>
