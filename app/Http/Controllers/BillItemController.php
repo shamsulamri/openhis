@@ -153,25 +153,20 @@ class BillItemController extends Controller
 
 					$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
 
-					if (!empty($consultation)) {
 
-							Order::where('order_custom_id', $merge_item->product_code)
-									->where('encounter_id', $encounter_id)
-									->delete();
+					Order::where('order_custom_id', $merge_item->product_code)
+							->where('encounter_id', $encounter_id)
+							->delete();
 
-							$order = new Order();
-							$order->product_code = $merge_item->product_code;
-							$order->order_custom_id = $merge_item->product_code;
-							$order->encounter_id = $merge_item->encounter_id;
-							$order->order_quantity_supply = $merge_item->bill_quantity;
-							$order->order_unit_price = $merge_item->bill_unit_price;
-							$order->consultation_id = $consultation->consultation_id;
-							$order->user_id = Auth::user()->id;
-							$order->save();
-					}
-
-
-
+					$order = new Order();
+					$order->product_code = $merge_item->product_code;
+					$order->order_custom_id = $merge_item->product_code;
+					$order->encounter_id = $merge_item->encounter_id;
+					$order->order_quantity_supply = $merge_item->bill_quantity;
+					$order->order_unit_price = $merge_item->bill_unit_price*$merge_item->bill_quantity;
+					$order->consultation_id = $consultation?$consultation->consultation_id:0;
+					$order->user_id = Auth::user()->id;
+					$order->save();
 
 			}
 	}
