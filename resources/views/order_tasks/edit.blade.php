@@ -5,7 +5,7 @@
 
 		@if ($mar)
 <h1>
-MAR
+Medication Administration Record
 </h1>
 		@else
 <h1>

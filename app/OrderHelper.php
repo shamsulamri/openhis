@@ -363,6 +363,7 @@ class OrderHelper
 
 	}	
 
+	/*
 	public static function createDrugServings($order_drug) 
 	{
 		$unit_of_dose = Config::get('host.unit_of_dose');
@@ -392,6 +393,7 @@ class OrderHelper
 				}
 		}
 	}
+	 */
 
 	public static function createInvestigationOrders($order_investigation) 
 	{
@@ -659,6 +661,17 @@ class OrderHelper
 			}
 	}
 
+	public function marServingCount($order_id) 
+	{
+
+			$mar = MedicationRecord::where('order_id', $order_id)
+						->where('medication_fail', 0)
+						->get();
+						
+			return $mar->count();
+
+	}
+
 	public function marUnitCount($order_id) 
 	{
 			$order = Order::find($order_id);
@@ -679,7 +692,7 @@ class OrderHelper
 					if ($dosage->dosage_count_unit==1) {
 							$total = $mar->count()*$orderDrug->drug_dosage;
 					} else {
-							$total = $mar->count();
+							$total = 1;
 					}
 			} else {
 					$total = $mar->count();
@@ -692,7 +705,6 @@ class OrderHelper
 			} 
 
 			$order->save();
-
 
 			return $total;
 

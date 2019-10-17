@@ -22,7 +22,7 @@
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
-			<a class="btn btn-default" href="/medication_record/mar" role="button">Back</a>
+			<a class="btn btn-default" href="/medication_record/mar/{{ $order_task->encounter_id }}" role="button">Back</a>
         </div>
     </div>
             {{ Form::hidden('consultation_id', null) }}

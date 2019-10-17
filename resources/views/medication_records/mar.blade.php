@@ -23,6 +23,7 @@ Medication Administration Records
 @foreach ($drugs as $drug)
 <?php
 $frequency_count = count(explode(';',$drug->frequency_mar));
+$servings = $order_helper->marServingCount($drug->order_id);
 if (empty($encounter->discharge)) {
 		$drug->order_quantity_supply = $order_helper->marUnitCount($drug->order_id);
 }
@@ -50,7 +51,9 @@ if (empty($encounter->discharge)) {
 			</small>
 			</h4>
 			@if ($drug->stop_id) </strike> @endif
-			Total unit served: {{ $drug->order_quantity_supply }}
+
+			Total Serving: {{ $servings }}<br>
+			Total Unit: {{ $drug->order_quantity_supply }}
 			<br>
 			<br>
 			@if (!$drug->stop_id && !$view)
