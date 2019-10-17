@@ -18,7 +18,7 @@
     <div class='form-group  @if ($errors->has('frequency_mar')) has-error @endif'>
         {{ Form::label('frequency_mar', 'MAR Label',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::text('frequency_mar', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
+            {{ Form::text('frequency_mar', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'200']) }}
             @if ($errors->has('frequency_mar')) <p class="help-block">{{ $errors->first('frequency_mar') }}</p> @endif
         </div>
     </div>

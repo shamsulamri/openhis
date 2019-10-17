@@ -21,6 +21,7 @@
 	<tr> 
     <th>Name</th>
     <th>Code</th> 
+    <th>Label</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -34,6 +35,9 @@
 			</td>
 			<td>
 					{{$drug_frequency->frequency_code}}
+			</td>
+			<td>
+					{{$drug_frequency->frequency_label}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('drug_frequencies/delete/'. $drug_frequency->frequency_code) }}'>Delete</a>
