@@ -154,6 +154,7 @@ class BillItemController extends Controller
 					$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
 
 
+					/*** Add to orders table so that it appears in order detail ***/
 					Order::where('order_custom_id', $merge_item->product_code)
 							->where('encounter_id', $encounter_id)
 							->delete();
@@ -211,6 +212,9 @@ class BillItemController extends Controller
 			$encounter = Encounter::find($encounter_id);
 			$product = Product::find($product_code);
 
+			if ($product->product_edit_price==1) {
+				return $price;
+			}
 			if ($product->uomDefaultPrice($encounter)) {
 				$price = $product->uomDefaultPrice($encounter)->uom_price?:0;
 			}
