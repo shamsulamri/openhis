@@ -90,7 +90,7 @@ if (empty($encounter->discharge)) {
 					{{ explode(";",$drug->frequency_mar)[$f] }}
 				</td>
 				<?php $time = $time+(24/$frequency_count); ?>
-				@for ($i=0; $i<5; $i++)
+				@for ($i=0; $i<7; $i++)
 				<?php
 					$date_value = DojoUtility::addDays(DojoUtility::dateReadFormat($start_date), $i);
 					$date_slot = $drug->order_id.'-'.$f.'-'.DojoUtility::dateYMDOnly($date_value);

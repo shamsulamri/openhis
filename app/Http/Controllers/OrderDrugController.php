@@ -968,7 +968,7 @@ class OrderDrugController extends Controller
 			if ($valid->passes()) {
 					$order->save();
 					$order_drug->save();
-					OrderHelper::createDrugServings($order_drug);
+					//OrderHelper::createDrugServings($order_drug);
 
 					$order = Order::find($order_drug->order_id);
 					$order->post_id=0;
