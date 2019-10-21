@@ -24,6 +24,7 @@ Medication Administration Records
 <?php
 $frequency_count = count(explode(';',$drug->frequency_mar));
 $servings = $order_helper->marServingCount($drug->order_id);
+$cols = 7;
 if (empty($encounter->discharge)) {
 		$drug->order_quantity_supply = $order_helper->marUnitCount($drug->order_id);
 }
@@ -72,7 +73,7 @@ if (empty($encounter->discharge)) {
 			<tr>
 				<td width='100'>
 				</td>
-				@for ($i=0; $i<5; $i++)
+				@for ($i=0; $i<$cols; $i++)
 <?php
 	$date_value = DojoUtility::addDays(DojoUtility::dateReadFormat($start_date), $i);
 	$date_label = DojoUtility::dateDayMonthFormat($date_value);	
@@ -90,7 +91,7 @@ if (empty($encounter->discharge)) {
 					{{ explode(";",$drug->frequency_mar)[$f] }}
 				</td>
 				<?php $time = $time+(24/$frequency_count); ?>
-				@for ($i=0; $i<7; $i++)
+				@for ($i=0; $i<$cols; $i++)
 				<?php
 					$date_value = DojoUtility::addDays(DojoUtility::dateReadFormat($start_date), $i);
 					$date_slot = $drug->order_id.'-'.$f.'-'.DojoUtility::dateYMDOnly($date_value);
@@ -99,20 +100,21 @@ if (empty($encounter->discharge)) {
 				<td width='120' align='center'>
 			@if ($mars->contains('medication_slot',$date_slot)) 
 				@if (empty($drug->stop_id))
+						@if ($mars[$date_slot]->medication_fail)
+								<span class='label label-danger'>
+									Miss
+								</span>
+								<br>
+						@endif
+						@if (!$view)
+						<a href='/medication_record/datetime/{{ $mars[$date_slot]->medication_id }}' data-toggle='tooltip' data-placement='top' title='Recorded by {{ $mars[$date_slot]->name }}'>
+						@endif
+				@endif
 
-				@if ($mars[$date_slot]->medication_fail)
-						<span class='label label-danger'>
-							Miss
-						</span>
-						<br>
-				@endif
-				@if (!$view)
-				<a href='/medication_record/datetime/{{ $mars[$date_slot]->medication_id }}' data-toggle='tooltip' data-placement='top' title='Recorded by {{ $mars[$date_slot]->name }}'>
-				@endif
-				@endif
 						{{ DojoUtility::timeReadFormat($mars[$date_slot]->medication_datetime) }}
+
 				@if (empty($drug->stop_id) && !$view)
-				</a>
+						</a>
 				@endif
 
 				<!-- Verification -->

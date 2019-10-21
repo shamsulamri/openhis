@@ -440,6 +440,7 @@ class ConsultationController extends Controller
 
 	public function close()
 	{
+
 			$id = Session::get('consultation_id');
 			$consultation = Consultation::findOrFail($id);
 
@@ -460,7 +461,7 @@ class ConsultationController extends Controller
 			if ($consultation->encounter->encounter_code=='inpatient') {
 				$consultation->consultation_status = 2;
 			} else {
-				$consultation->consultation_status = 1;
+				$consultation->consultation_status = 1; 
 			}
 
 			$consultation->save();

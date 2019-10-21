@@ -153,21 +153,22 @@ class BillItemController extends Controller
 
 					$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
 
+					if($consultation) {
+							/*** Add to orders table so that it appears in order detail ***/
+							Order::where('order_custom_id', $merge_item->product_code)
+									->where('encounter_id', $encounter_id)
+									->delete();
 
-					/*** Add to orders table so that it appears in order detail ***/
-					Order::where('order_custom_id', $merge_item->product_code)
-							->where('encounter_id', $encounter_id)
-							->delete();
-
-					$order = new Order();
-					$order->product_code = $merge_item->product_code;
-					$order->order_custom_id = $merge_item->product_code;
-					$order->encounter_id = $merge_item->encounter_id;
-					$order->order_quantity_supply = $merge_item->bill_quantity;
-					$order->order_unit_price = $merge_item->bill_unit_price*$merge_item->bill_quantity;
-					$order->consultation_id = $consultation?$consultation->consultation_id:0;
-					$order->user_id = Auth::user()->id;
-					$order->save();
+							$order = new Order();
+							$order->product_code = $merge_item->product_code;
+							$order->order_custom_id = $merge_item->product_code;
+							$order->encounter_id = $merge_item->encounter_id;
+							$order->order_quantity_supply = $merge_item->bill_quantity;
+							$order->order_unit_price = $merge_item->bill_unit_price*$merge_item->bill_quantity;
+							$order->consultation_id = $consultation?$consultation->consultation_id:0;
+							$order->user_id = Auth::user()->id;
+							$order->save();
+					}
 
 			}
 	}
@@ -212,8 +213,8 @@ class BillItemController extends Controller
 			$encounter = Encounter::find($encounter_id);
 			$product = Product::find($product_code);
 
-			if ($product->product_edit_price==1) {
-				return $price;
+			if ($product->product_edit_price==1 && $price>0) {
+				return $price?:0;
 			}
 			if ($product->uomDefaultPrice($encounter)) {
 				$price = $product->uomDefaultPrice($encounter)->uom_price?:0;
@@ -392,7 +393,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name, bom_code
+				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name, bom_code, order_is_discharge
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -416,7 +417,7 @@ class BillItemController extends Controller
 				and cancel_id is null
 				and order_quantity_supply>0
 				and order_is_future<>1
-				group by product_code,a.unit_code, order_discount
+				group by product_code,order_is_discharge, a.unit_code, order_discount
 			";
 
 			$sql = sprintf($base_sql, "", $patient_id, $encounter_id);
@@ -440,6 +441,9 @@ class BillItemController extends Controller
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
 					$item->bill_name = $order->product_name;
+					if ($order->order_is_discharge == 1) {
+						$item->bill_name = $order->product_name . " (Take Home)";
+					}
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity?:1;

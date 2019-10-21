@@ -195,7 +195,7 @@ class DischargeController extends Controller
 						->delete();
 
 					$consultation = Consultation::findOrFail($discharge->consultation_id);
-					$consultation->consultation_status = 1;
+					$consultation->consultation_status = 2;
 					$consultation->save();
 
 
