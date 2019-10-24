@@ -23,8 +23,9 @@ iframe { border: 1px #e5e5e5 solid; }
 		{{ Form::close() }}
 		@endif
 
-@can('purchase_request')
-		@if ($purchase->purchase_posted==1 && $purchase->document_code == 'purchase_request' && $purchase->status_code == null)
+@if (Gate::check('purchase_request') || Gate::check('indent_request'))
+		@if ($purchase->purchase_posted==1 && ($purchase->document_code == 'purchase_request' || $purchase->document_code == 'indent_request')
+			&& $purchase->status_code == null)
 				{{ Form::open(['url'=>'purchase_lines/close/'.$purchase_id, 'class'=>'form-inline pull-right']) }}
 					{{ method_field('POST') }}
             		{{ Form::select('status_code', $purchase_request_status,null, ['id'=>'status_code', 'class'=>'form-control']) }}
@@ -37,7 +38,7 @@ iframe { border: 1px #e5e5e5 solid; }
 			@endif
 			</h3>
 		@endif
-@endcan
+@endif
 					</div>
 			</div>
 	</div>

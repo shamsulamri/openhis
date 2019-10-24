@@ -50,7 +50,7 @@
 				<h5><strong>Indent Request</strong></h5>	
 				<h4>
 					<h2>
-					<a href='/purchase/search?status_code=indent_request'>{{ $purchase_helper->backOrder('indent_request')->count() }}</a>
+					<a href='/purchase/search?status_code=indent_request'>{{ $purchase_helper->openRequest('indent_request')->count() }}</a>
 					</h2>
 				</h4>	
 			</div>

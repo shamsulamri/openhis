@@ -33,6 +33,15 @@ class PurchaseHelper
 			return $purchase_count;	
 	}
 
+	public function openRequest($document_code)
+	{
+			$purchases = Purchase::where('document_code', $document_code)
+					->orderBy('purchase_id', 'desc')
+					->whereNull('status_code');
+
+			return $purchases;
+	}
+
 	public function backOrder($document_code)
 	{
 			/** Get backorder documents **/

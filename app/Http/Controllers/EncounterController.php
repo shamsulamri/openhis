@@ -238,7 +238,16 @@ class EncounterController extends Controller
 	public function store(Request $request)
 	{
 			$valid=null;
-			
+			$active_encounter = EncounterHelper::getActiveEncounter($request->patient_id);
+			if (!empty($active_encounter)) {
+					Session::flash('message', 'Encounter already exist.');
+					if ($active_encounter->encounter_code == 'inpatient') {	
+							return redirect('/admissions');
+					} else {
+							return redirect('/queues');
+					}
+			}
+
 			if ($request->encounter_code == 'inpatient') {
 					if (empty($request->user_id)) $valid['user_id']='This field is required.';
 					if (empty($request->bed_code)) $valid['bed_code']='This field is required.';

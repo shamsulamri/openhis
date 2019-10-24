@@ -25,6 +25,8 @@
 						</div>
 					</div>
 			</div>
+
+			@if ($purchase_line->purchase->document_code != 'indent_request')
 			<div class="col-xs-2">
 					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
 						{{ Form::label('unit_code', 'UOM',['class'=>'col-sm-3 control-label']) }}
@@ -42,6 +44,16 @@
 						</div>
 					</div>
 			</div>
+			@else
+			<div class="col-xs-2">
+					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
+						{{ Form::label('unit_code', 'UOM',['class'=>'col-sm-3 control-label']) }}
+						<div class='col-sm-9'>
+							{{ Form::label('line_unit', $purchase_line->uom->unit_name, ['class'=>'form-control']) }}
+						</div>
+					</div>
+			</div>
+			@endif
 	</div>
 
 	<div class="row">

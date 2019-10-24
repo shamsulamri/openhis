@@ -2,7 +2,7 @@
 
 @section('content')
 @include('patients.id')
-<h1>Deposit Transactions
+<h1>Deposits 
 <a href='/deposits/create/{{ $patient->patient_id }}' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 @if ($deposits->total()>0)

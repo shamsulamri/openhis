@@ -45,7 +45,7 @@
 					<div class='form-group'>
 						<label  class='col-sm-3 control-label'><div align='right'>Shift</div></label>
 						<div class='col-sm-9'>
-							{{ Form::select('shift_code', array(''=>'','shift_1' => '0700 - 1400', 'shift_2' => '1400 - 2100', 'shift_3'=>'2100 - 0700'),$shift_code, ['class'=>'form-control']) }}
+							{{ Form::select('shift_code', array(''=>'','shift_1' => '0700 - 1400', 'shift_2' => '1400 - 2100', 'shift_3'=>'2100 - 0700'),$shift_code, ['class'=>'form-control', 'id'=>'shift_code']) }}
 						</div>
 					</div>
 			</div>
@@ -59,6 +59,7 @@
 			</div>
 	</div>
 	<div class="row">
+			<!--
 			<div class="col-xs-4">
 					<div class='form-group'>
 						<label  class='col-sm-3 control-label'><div align='left'>To</div></label>
@@ -71,6 +72,7 @@
 						</div>
 					</div>
 			</div>
+			-->
 			<div class="col-xs-4">
 					<div class='form-group'>
 						<label class='col-sm-3 control-label'>Encounter</label>
@@ -131,7 +133,7 @@
 				<span>
 			</td>
 			<td width=100>
-					{{ DojoUtility::dateLongFormat($bill->bill_date) }}
+					{{ DojoUtility::militaryFormat($bill->bill_date) }}
 			</td>
 			<td>
 					<a href='/bill_item/enquiry?search={{ $bill->encounter_id }}'>
@@ -227,15 +229,18 @@
 				dateStart = "";
 				dateStart = dateStart.concat(from[2],"/", from[1],"/", from[0]);
 
-				to = $("#date_end").val().split("/");
-				dateEnd = "";
-				dateEnd = dateEnd.concat(to[2],"/", to[1],"/", to[0]);
+				console.log("Generate report....");
+				//to = $("#date_end").val().split("/");
+				//dateEnd = "";
+				//dateEnd = dateEnd.concat(to[2],"/", to[1],"/", to[0]);
 
-				var url = "{{ Config::get('host.report_server') }}/ReportServlet?report=bill_report";
+				console.log(from);
+				var url = "{{ Config::get('host.report_server') }}/ReportServlet?report=shift_report";
 				url = url.concat("&dateStart=", dateStart);
-				url = url.concat("&dateEnd=", dateEnd);
+				//url = url.concat("&dateEnd=", dateEnd);
 				url = url.concat("&encounterType=", $("#encounter_code").val());
 				url = url.concat("&typeCode=", $("#type_code").val());
+				url = url.concat("&shiftCode=", $("#shift_code").val());
 
 				var win = window.open(url, '_blank');
 		}

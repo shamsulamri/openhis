@@ -307,7 +307,8 @@ class PurchaseController extends Controller
 			if (!empty($request->status_code)) {
 					if ($request->status_code == 'indent_request') {
 							$helper = new PurchaseHelper();
-							$purchases = $helper->backOrder('indent_request');
+							//$purchases = $helper->backOrder('indent_request');
+							$purchases = $helper->openRequest('indent_request');
 							if (Auth::user()->authorization->indent_request == 0) {
 									if ($store_code) {
 											$purchases = $purchases->where('store_code', $store_code);

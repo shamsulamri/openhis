@@ -35,9 +35,16 @@ class BillItem extends Model
     
 
 	public function validate($input, $method) {
-			$rules = [
-				'bill_quantity'=>'required',
-			];
+			$rules = [];
+			switch ($method) {
+					case "PUT":
+							
+							break;
+					default:
+							$rules = [
+								'bill_quantity'=>'required',
+							];
+			}
 
 			
 			

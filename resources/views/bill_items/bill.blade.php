@@ -2,7 +2,7 @@
     <div class='form-group  @if ($errors->has('product_name')) has-error @endif'>
         {{ Form::label('product_name', 'Product',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::label('product_name', $product->product_name, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('product_name', $bill->bill_name, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('product_name')) <p class="help-block">{{ $errors->first('product_name') }}</p> @endif
         </div>
     </div>
@@ -18,7 +18,7 @@
     <div class='form-group  @if ($errors->has('bill_quantity')) has-error @endif'>
         {{ Form::label('bill_quantity', 'Quantity',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::text('bill_quantity', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('bill_quantity', $bill->bill_quantity, ['class'=>'form-control','placeholder'=>'',]) }}
             @if ($errors->has('bill_quantity')) <p class="help-block">{{ $errors->first('bill_quantity') }}</p> @endif
         </div>
     </div>

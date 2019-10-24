@@ -417,7 +417,7 @@ class BillItemController extends Controller
 				and cancel_id is null
 				and order_quantity_supply>0
 				and order_is_future<>1
-				group by product_code,order_is_discharge, a.unit_code, order_discount
+				group by product_code, order_is_discharge, a.unit_code, order_discount
 			";
 
 			$sql = sprintf($base_sql, "", $patient_id, $encounter_id);

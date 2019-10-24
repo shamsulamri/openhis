@@ -55,6 +55,15 @@ class DojoUtility
 				}
 		}
 
+		public static function militaryFormat($value)
+		{
+				if (!empty($value)) {
+					return Carbon::parse($value)->format('d/m/Y H:i');
+				} else {
+					return null;
+				}
+		}
+
 		public static function dateDayMonthFormat($value)
 		{
 				if (!empty($value)) {

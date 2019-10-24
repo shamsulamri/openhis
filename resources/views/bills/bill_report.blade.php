@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Bill Report</h1>
+<h1>PDF Report</h1>
 <br>
 <form id='form' action='/bill/report' method='post' class='form-horizontal'>
 	<div class="row">
@@ -69,6 +69,16 @@
 					</div>
 			</div>
 	</div>
+	<div class="row">
+			<div class="col-xs-4">
+					<div class='form-group'>
+						<label  class='col-sm-3 control-label'><div align='left'>Shift</div></label>
+						<div class='col-sm-9'>
+							{{ Form::select('shift_code', array(''=>'','shift_1' => '0700 - 1400', 'shift_2' => '1400 - 2100', 'shift_3'=>'2100 - 0700'),null, ['class'=>'form-control', 'id'=>'shift_code']) }}
+						</div>
+					</div>
+			</div>
+	</div>
 
 	<br>
 	<a href='#' onclick='javascript:bill_report();' class='btn btn-primary'>View Report</a>
@@ -79,18 +89,22 @@
 </tbody>
 </table>
 
-<h4>Report Required Parameters</h4>
+<h3>Required Parameters</h3>
 <br>
-<h5>Bill Summary</h5>
+<h5>Bill Report</h5>
 - From, To, Encounter, Type
 <br>
 <br>
-<h5>Panel Summary</h5>
+<h5>Panel Report</h5>
 - From, To, Sponsor
 <br>
 <br>
-<h5>Consultant Summary</h5>
+<h5>Consultant Report</h5>
 - From, To
+<br>
+<br>
+<h5>Shift Report</h5>
+- From, Encounter, Type, Shift
 <script>
 		$('#date_start').datepicker({
 				format: "dd/mm/yyyy",
@@ -115,9 +129,11 @@
 				dateStart = "";
 				dateStart = dateStart.concat(from[2],"/", from[1],"/", from[0]);
 
-				to = $("#date_end").val().split("/");
 				dateEnd = "";
-				dateEnd = dateEnd.concat(to[2],"/", to[1],"/", to[0]);
+				if ($("#date_end").val()) {
+						to = $("#date_end").val().split("/");
+						dateEnd = dateEnd.concat(to[2],"/", to[1],"/", to[0]);
+				}
 
 				report = $("#report_code").val();
 				url = "{{ Config::get('host.report_server') }}/ReportServlet?report="+report;
@@ -126,6 +142,7 @@
 				url = url.concat("&encounterType=", $("#encounter_code").val());
 				url = url.concat("&typeCode=", $("#type_code").val());
 				url = url.concat("&sponsorCode=", $("#sponsor_code").val());
+				url = url.concat("&shiftCode=", $("#shift_code").val());
 
 				var win = window.open(url, '_blank');
 		}

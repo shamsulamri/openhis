@@ -227,7 +227,7 @@ class BillController extends Controller
 									$date_end = DojoUtility::addDays($date_end, 1);
 									$date_end = DojoUtility::dateYMDFormat($date_end);
 									$time_start = '21:00';
-									$time_end = '9:00';
+									$time_end = '7:00';
 									break;
 					}
 			}
@@ -443,9 +443,10 @@ class BillController extends Controller
 			$date_start = DojoUtility::dateWriteFormat($request->date_start);
 			$date_end = DojoUtility::dateWriteFormat($request->date_end);
 
-			$reports = ['bill_report'=>'Bill Summary',
-						'panel_report'=>'Panel Summary',
-						'consultant_summary'=>'Consultant Summary',
+			$reports = ['bill_report'=>'Bill Report',
+						'panel_report'=>'Panel Report',
+						'consultant_summary'=>'Consultant Report',
+						'shift_report'=>'Shift Report',
 						];
 
 			return view('bills.bill_report', [
