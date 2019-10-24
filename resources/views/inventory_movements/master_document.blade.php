@@ -5,17 +5,20 @@
 @if ($movement->tag_code == 'transfer_in' && $movement->move_code == 'stock_receive')
 <a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
 @else
+<!--
 <a class='btn btn-default btn-sm' href='/inventory_movements/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
-<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
-<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
 <a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Purchase</a>
 <a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&type=indent&move_id={{ $movement->move_id }}'>Indent</a>
+-->
+<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
+<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Request</a>
 @endif
 <br>
 <br>
 <form action='/inventory_movement/search_document' method='post'>
 	<div class='input-group'>
-		<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+		<input type='text' class='form-control' placeholder="Find previous documents" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 		<span class='input-group-btn'>
 			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
 		</span>
@@ -60,11 +63,7 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $documents->appends(['search'=>$search])->render() }}
-	@else
-	{{ $documents->render() }}
-@endif
+{{ $documents->appends(['search'=>$search, 'reason'=>$reason, 'move_id'=>$movement->move_id])->render() }}
 <br>
 @if ($documents->total()>0)
 	{{ $documents->total() }} records found.

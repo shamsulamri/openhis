@@ -140,6 +140,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/inventory_movements/show/{id}', 'InventoryMovementController@show');
 		Route::post('/inventory_movement/search', 'InventoryMovementController@search');
 		Route::post('/inventory_movement/search_document', 'InventoryMovementController@searchDocument');
+		Route::get('/inventory_movement/search_document', 'InventoryMovementController@searchDocument');
 		Route::post('/inventory_movement/post_item', 'InventoryMovementController@postItem');
 		Route::get('/inventory_movement/search', 'InventoryMovementController@search');
 		Route::post('/inventory_movement/search_item', 'InventoryMovementController@searchItem');
@@ -197,6 +198,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		
 		Route::get('/purchases/master_document', 'PurchaseController@masterDocument');
 		Route::post('/purchase/master_search', 'PurchaseController@masterSearch');
+		Route::get('/purchase/master_search', 'PurchaseController@masterSearch');
 		Route::resource('purchases', 'PurchaseController');
 		Route::get('/purchases/id/{id}', 'PurchaseController@searchById');
 		Route::post('/purchase/search', 'PurchaseController@search');

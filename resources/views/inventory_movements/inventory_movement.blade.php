@@ -109,5 +109,5 @@
 			tag.disabled = true;
 		}
 
-		//movementChanged();
+		movementChanged();
 </script>

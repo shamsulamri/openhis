@@ -415,7 +415,6 @@ class BillItemController extends Controller
 				and order_multiple=0
 				and bom_code is null
 				and cancel_id is null
-				and order_quantity_supply>0
 				and order_is_future<>1
 				group by product_code, order_is_discharge, a.unit_code, order_discount
 			";
@@ -446,7 +445,7 @@ class BillItemController extends Controller
 					}
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
-					$item->bill_quantity = $order->total_quantity?:1;
+					$item->bill_quantity = $order->total_quantity?:0;
 					$item->bill_unit_code = $order->unit_code;
 					$item->bill_discount = $order->order_discount;
 					$item->bill_markup = $order->order_markup;
@@ -465,7 +464,7 @@ class BillItemController extends Controller
 					}
 					 */
 
-					$item->bill_amount = ($order->total_quantity?:1)*$item->bill_unit_price;
+					$item->bill_amount = ($order->total_quantity?:0)*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;

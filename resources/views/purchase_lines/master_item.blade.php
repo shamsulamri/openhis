@@ -2,20 +2,29 @@
 
 @section('content')
 @if ($reason == 'purchase')
+		<!--
 		<a class='btn btn-default btn-sm' href='/purchase_lines/master_item/{{ $purchase->purchase_id }}?reason=purchase'>Items</a>
+		-->
 		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Documents</a>
 		<a class='btn btn-default btn-sm' href='/product_searches?reason=purchase&purchase_id={{ $purchase->purchase_id }}'>Products</a>
 		<a class='btn btn-default btn-sm' href='/product_searches?reason=purchase&type=reorder&purchase_id={{ $purchase->purchase_id }}'>Reorder</a>
 @else
+		<!--
 		<a class='btn btn-default btn-sm' href='/purchase_lines/master_item/{{ $movement->move_id }}?reason=stock'>Items</a>
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Purchase</a>
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&type=indent&move_id={{ $movement->move_id }}'>Indent</a>
+		-->
 		<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
 		<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Request</a>
 @endif
 <br>
 <br>
+<h4>Document: {{ $document->purchase_number }}</h4>
+<!--
 <form action='/purchase_line/search' method='post'>
 	<div class='input-group'>
-		<input type='text' class='form-control' placeholder="Find" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
+		<input type='text' class='form-control' placeholder="Find in purchase items" name='search' value='{{ isset($search) ? $search : '' }}' autocomplete='off' autofocus>
 		<span class='input-group-btn'>
 			<button type="submit" class="btn btn-md btn-primary"> <span class='glyphicon glyphicon-search'></span></button> 
 		</span>
@@ -26,6 +35,7 @@
 			{{ Form::hidden('reason', $reason) }}
 </form>
 <br>
+-->
 
 @if ($purchase_lines->total()>0)
 <form action='/purchase_lines/multiple' method='post'>
@@ -38,7 +48,9 @@
 			</a>
 	</th>
     <th>Item</th> 
+	<!--
     <th>Document</th> 
+	-->
 	<th><div align='right'>
 		Quantity
 	</div></th>
@@ -63,9 +75,11 @@
 					<br>
 					{{$purchase_line->product_code}}
 			</td>
+			<!--
 			<td width='10'>
 					{{ $purchase_line->purchase_number }}
 			</td>
+			-->
 			<td width='80' align='right'>
 					@if ($reason == 'purchase')
 						@if ($purchase_line->purchase->document_code == 'purchase_request')
@@ -113,7 +127,7 @@
 			@if($reason=='stock' || $reason=='request')
 					frameLine.src='/inventories/detail/{{ $movement->move_id }}';
 			@else
-					frameLine.src='/purchase_lines/detail/{{ $purchase->purchase_id }}';
+					frameLine.src='/purchase_lines/detail/{{ $id }}';
 			@endif		
 	@endif
 

@@ -50,6 +50,7 @@ class InventoryMovementController extends Controller
 					->orderBy('move_id', 'desc')
 					->where('move_posted', 1)
 					->where('move_id', '<>', $id)
+					->where('store_code', Auth::user()->defaultStore($request))
 					->paginate($this->paginateValue);
 
 
@@ -58,6 +59,7 @@ class InventoryMovementController extends Controller
 				'documents'=>$documents,
 				'reload'=>$request->reload,
 				'reason'=>'stock',
+				'search'=>null,
 			]);
 
 	}
@@ -87,6 +89,7 @@ class InventoryMovementController extends Controller
 				'document_id'=>$document_id,
 				'reason'=>'stock',
 				'movement_from'=>$movement_from,
+				'search'=>null,
 			]);
 
 	}
@@ -315,6 +318,7 @@ class InventoryMovementController extends Controller
 	{
 			$documents = InventoryMovement::where('move_posted',1)
 					->where('move_number', 'like','%'.$request->search.'%')
+					->where('store_code', Auth::user()->defaultStore($request?:null))
 					->orderBy('move_id', 'desc')
 					->paginate($this->paginateValue);
 

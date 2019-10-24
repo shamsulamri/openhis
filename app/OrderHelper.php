@@ -692,14 +692,18 @@ class OrderHelper
 					if ($dosage->dosage_count_unit==1) {
 							$total = $mar->count()*$orderDrug->drug_dosage;
 					} else {
-							$total = 1;
+							if ($this->marServingCount($order_id)==0) {
+								$total = 0;
+							} else {
+								$total = 1;
+							}
 					}
 			} else {
 					$total = $mar->count();
 			}
 
 			if ($total==0) {
-					$order->order_quantity_supply = 1;
+					$order->order_quantity_supply = 0;
 			} else {
 					$order->order_quantity_supply = $total;
 			} 

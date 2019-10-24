@@ -185,6 +185,7 @@ class PurchaseLineController extends Controller
 			$reason = $request->reason?:null;
 			$purchase = null;
 			$movement = null;
+			$document = null;
 
 			$purchase_lines = PurchaseLine::orderBy('purchase_lines.purchase_id', 'desc')
 					->leftjoin('purchases as b', 'b.purchase_id', '=', 'purchase_lines.purchase_id')
@@ -195,8 +196,8 @@ class PurchaseLineController extends Controller
 					});
 					//->where('author_id', '=', Auth::user()->author_id);
 
+			$purchase = Purchase::find($id);
 			if ($reason=='purchase') {
-					$purchase = Purchase::find($id);
 					$purchase_lines = $purchase_lines->where('b.purchase_id', '<>', $id);
 					//$purchase_lines = $purchase_lines->where('b.supplier_code', '=', $purchase->supplier_code);
 			}
@@ -211,6 +212,8 @@ class PurchaseLineController extends Controller
 					$movement = InventoryMovement::find($id);
 			}
 
+			$document = Purchase::find($document_id);
+
 			return view('purchase_lines.master_item', [
 					'id' => $id,
 					'purchase_lines'=>$purchase_lines,
@@ -220,6 +223,7 @@ class PurchaseLineController extends Controller
 					'document_id'=>$document_id,
 					'reload'=>$request->reload,
 					'helper'=>new PurchaseHelper(),
+					'document'=>$document,
 			]);
 	}
 

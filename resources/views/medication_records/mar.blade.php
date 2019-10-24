@@ -133,7 +133,7 @@ if (empty($encounter->discharge)) {
 					<span class='label label-success' data-toggle='tooltip' data-placement='top' title='Witnessed by {{ $verifications[$date_slot]->name }}'>Witnessed</span>
 				@endif
 			@else
-					@if ($date_value==$entry_start)
+					@if (DojoUtility::militaryFormat($date_value)==DojoUtility::militaryFormat($entry_start))
 						@if (!$drug->stop_id && !$view)
 							<a href='/medication_record/record/{{ $drug->order_id }}/{{ $f }}/{{ $date_ymd }}' class='btn btn-default btn-xs'>
 								&nbsp;Record&nbsp;
@@ -145,7 +145,6 @@ if (empty($encounter->discharge)) {
 						-
 					@endif
 			@endif
-
 				</td>
 				@endfor
 			</tr>

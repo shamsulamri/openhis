@@ -12,7 +12,6 @@
         <div class='col-sm-10'>
             {{ Form::select('supplier_code', $supplier,null, ['id'=>'supplier_code', 'class'=>'form-control','maxlength'=>'20']) }}
             @if ($errors->has('supplier_code')) <p class="help-block">{{ $errors->first('supplier_code') }}</p> @endif
-			Not required for purchase request
         </div>
     </div>
 
@@ -27,7 +26,7 @@
     <div class='form-group  @if ($errors->has('purchase_description')) has-error @endif'>
         {{ Form::label('purchase_description', 'Description',['class'=>'col-sm-2 control-label']) }}
         <div class='col-sm-10'>
-            {{ Form::text('purchase_description', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'65535']) }}
+            {{ Form::textarea('purchase_description', null, ['class'=>'form-control','placeholder'=>'','rows'=>'2']) }}
             @if ($errors->has('purchase_description')) <p class="help-block">{{ $errors->first('purchase_description') }}</p> @endif
         </div>
     </div>
@@ -76,9 +75,8 @@
 								store.value = '{{ $store_code }}';
 								break;
 						case 'indent_request':
-								clearSelected('supplier_code');
+								//clearSelected('supplier_code');
 								store.disabled = false;
-								supplier.disabled = true;
 								store.value = '{{ $store_code }}';
 								break;
 						default:

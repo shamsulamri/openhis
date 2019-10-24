@@ -69,6 +69,7 @@ class PurchaseController extends Controller
 			$purchase = null;
 			$movement = null;
 			$reason = $request->reason?:null;
+			$find = "Find previous document";
 
 			$purchases = Purchase::orderBy('purchase_id', 'desc')
 					->where('purchase_id', '<>', $id)
@@ -94,19 +95,44 @@ class PurchaseController extends Controller
 			}
 
 
+			/*
 			if ($reason == 'request') {
 				$id = $request->move_id;
 				$movement = InventoryMovement::find($request->move_id);		
 
 				if ($request->type=='indent') {
+						$find = 'Find indent request';
 						$helper = new PurchaseHelper();
 						$purchases = $helper->backOrder('indent_request');
 						$purchases = $purchases->where('store_code', $movement->target_store);
+						if (Auth::user()->author_id==18) {
+								$purchases = $purchases->where('supplier_code', 'pmc_pharmacy');
+						} else {
+								$purchases = $purchases->where('supplier_code', 'pmc_purchase');
+						}
 				} else {
+						$find = 'Find purchase request';
 						$purchases = Purchase::where('document_code', '=', 'purchase_request')
 								->where('status_code', '=', 'approved')
 								->orderBy('purchase_id', 'desc');
 				}
+			}
+			 */
+			if ($reason == 'request') {
+					$id = $request->move_id;
+					$movement = InventoryMovement::find($request->move_id);		
+
+					$purchases = Purchase::where('document_code', 'like', '%_request')
+							->whereNull('status_code')
+							->orderBy('purchase_id', 'desc');
+
+					if (Auth::user()->author_id==18) {
+							$purchases = $purchases->where('supplier_code', 'pmc_pharmacy');
+					} else {
+							$purchases = $purchases->where('supplier_code', 'pmc_purchase');
+					}
+
+					$find = 'Find purchase or indent request';
 			}
 
 			$purchases = $purchases->paginate($this->paginateValue);
@@ -115,6 +141,7 @@ class PurchaseController extends Controller
 				$movement = InventoryMovement::find($request->move_id);		
 				$id = $request->move_id;
 			}
+
 
 			return view('purchases.master_document', [
 					'purchases'=>$purchases,
@@ -125,12 +152,15 @@ class PurchaseController extends Controller
 					'reload'=>$request->reload,
 					'search'=>null,
 					'move_id'=>$request->move_id?:null,
+					'find'=>$find,
+					'type'=>$request->type,
 			]);
 	}
 
 
 	public function masterSearch(Request $request) 
 	{
+			$find = 'Find';
 			$id = null;
 			$purchase = null;
 			$movement = null;
@@ -149,22 +179,38 @@ class PurchaseController extends Controller
 
 			if ($reason == 'purchase') {
 					$purchase = Purchase::find($request->purchase_id);
-					$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
+					//$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
 					if (!empty($request->search)) {
 						$purchases = $purchases->where('purchase_number', 'like', '%'.trim($request->search).'%');
 					}
+					$purchases = $purchases->where('author_id', Auth::user()->author_id);
 					$id = $request->purchase_id;
 			}
 
 			if ($reason == 'request') {
-					$purchases = Purchase::where('document_code', '=', 'indent_request');
-									//->where('status_code', '=', 'approved');
+					/*
+					if ($request->type=='indent') {
+							$purchases = Purchase::where('document_code', '=', 'indent_request');
+					} else {
+							$purchases = Purchase::where('document_code', '=', 'purchase_request');
+					}
+					 */
+					$purchases = Purchase::where('document_code', 'like', '%_request')
+							->whereNull('status_code')
+							->orderBy('purchase_id', 'desc');
+
+					if (Auth::user()->author_id==18) {
+							$purchases = $purchases->where('supplier_code', 'pmc_pharmacy');
+					} else {
+							$purchases = $purchases->where('supplier_code', 'pmc_purchase');
+					}
 
 					if (!empty($request->search)) {
 							$purchases = $purchases->where('purchase_number', 'like', '%'.trim($request->search).'%');
 					}
 					$id = $request->id;
 					$movement = InventoryMovement::find($id);		
+					$find = 'Find purchase or indent request';
 			}
 
 			$purchases = $purchases->paginate($this->paginateValue);
@@ -177,12 +223,14 @@ class PurchaseController extends Controller
 			return view('purchases.master_document', [
 					'purchases'=>$purchases,
 					'purchase'=>$purchase,
-					'id'=>$request->id,
+					'id'=>$id,
 					'movement'=>$movement,
 					'reason'=>$reason,
 					'search'=>$request->search,
 					'reload'=>null,
 					'move_id'=>$request->move_id?:null,
+					'find'=>$find,
+					'type'=>$request->type,
 			]);
 	}
 
@@ -192,9 +240,16 @@ class PurchaseController extends Controller
 			$purchase->store_code = Auth::User()->defaultStore($request);
 			$purchase->purchase_date = DojoUtility::today();
 
+			$suppliers = Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('','');
+
+			if (Auth::user()->author_id == 7) {
+				$suppliers = [''=>'', 'pmc_pharmacy'=>'Pharmacy Department', 'pmc_purchase'=>'Purchase Department'];
+				$purchase->document_code = 'indent_request';
+			}
+
 			return view('purchases.create', [
 					'purchase' => $purchase,
-					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
+					'supplier' => $suppliers,
 					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
 					'store'=>Auth::user()->storeList()->prepend('',''),
 					'store_code' => Auth::user()->defaultStore($request),
@@ -253,9 +308,16 @@ class PurchaseController extends Controller
 	public function edit(Request $request, $id) 
 	{
 			$purchase = Purchase::findOrFail($id);
+
+			$suppliers = Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('','');
+
+			if (Auth::user()->author_id == 7) {
+				$suppliers = [''=>'', 'pmc_pharmacy'=>'Pharmacy Department', 'pmc_purchase'=>'Purchase Department'];
+			}
+
 			return view('purchases.edit', [
 					'purchase'=>$purchase,
-					'supplier' => Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('',''),
+					'supplier' => $suppliers,
 					'documents' => PurchaseDocument::all()->sortBy('document_name')->lists('document_name', 'document_code')->prepend('',''),
 					'store'=>Auth::user()->storeList()->prepend('',''),
 					'store_code' => Auth::user()->defaultStore($request),
@@ -344,6 +406,20 @@ class PurchaseController extends Controller
 					if ($store_code) {
 							$purchases = $purchases->where('store_code', $store_code);
 					}
+
+					if (Auth::user()->authorization->indent_request==1 || Auth::user()->authorization->purchase_request==1) {
+							if ($request->document_code=='indent_request' || $request->document_code=='purchase_request') {
+									$purchases = Purchase::orderBy('purchase_posted')
+													->where('document_code', $request->document_code)
+													->orderBy('purchase_id', 'desc');
+
+									if (Auth::user()->author_id == 18) {
+											$purchases = $purchases->where('supplier_code', 'pmc_pharmacy');
+									} else {
+											$purchases = $purchases->where('supplier_code', 'pmc_purchase');
+									}
+							}
+					}
 			}
 
 			if (!empty($request->search)) {
@@ -364,13 +440,17 @@ class PurchaseController extends Controller
 					]);
 	}
 
-	public function searchById($id)
+	public function searchById(Request $request, $id)
 	{
 			$purchases = Purchase::find($id)
 					->orderBy('purchase_posted')
 					->where('author_id', '=', Auth::user()->author_id)
 					->orderBy('purchase_id', 'asc');
 
+			$store_code = Auth::User()->defaultStore($request);
+			if (!empty($store_code)) {
+					$purchases = $purchases->where('store_code', $store_code);
+			}
 
 			$purchases = $purchases->paginate($this->paginateValue);
 
@@ -380,6 +460,9 @@ class PurchaseController extends Controller
 					'document_code' => null,
 					'author_id'=>Auth::user()->author_id,
 					'purchase_helper' => new PurchaseHelper(),
+					'store_code'=>$store_code,
+					'status_code'=>null,
+					'search'=>null,
 			]);
 	}
 

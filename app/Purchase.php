@@ -13,6 +13,7 @@ class Purchase extends Model
 	protected $fillable = [
 				'purchase_number',
 				'document_code',
+				'purchase_to',
 				'author_id',
 				'username',
 				'supplier_code',
@@ -32,10 +33,12 @@ class Purchase extends Model
 
 			$rules = [
 				'document_code'=>'required',
-				'supplier_code'=>'required_unless:document_code,==,indent_request',
 				'purchase_date'=>'size:10|date_format:d/m/Y',
-				'store_code'=>'required_if:document_code,==,goods_receive|required_if:document_code,==,purchase_invoice',
+				'supplier_code'=>'required',
 			];
+
+			//'supplier_code'=>'required_unless:document_code,==,indent_request',
+			//'store_code'=>'required_if:document_code,==,goods_receive|required_if:document_code,==,purchase_invoice',
 			
 			$messages = [
 				'required' => 'This field is required',
