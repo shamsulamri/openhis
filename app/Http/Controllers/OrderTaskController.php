@@ -520,8 +520,15 @@ class OrderTaskController extends Controller
 						 */
 
 						$order = Order::find($order->order_id);
-						$order->order_quantity_supply = $total_supply;
 						$order->order_quantity_request = $total_supply;
+						$order->order_quantity_supply = $total_supply;
+
+						//$encounter_code = $order->consultation->encounter->encounter_code;
+						//if ($encounter_code == 'inpatient' || $encounter_code = 'daycare') {
+						//} else {
+						//	$order->order_quantity_supply = $total_supply;
+						//}
+
 						$order->completed_at = DojoUtility::dateTimeWriteFormat(DojoUtility::now());
 						$order->completed_by = Auth::user()->id;
 						$order->location_code = $location_code;

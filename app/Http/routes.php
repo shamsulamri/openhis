@@ -1613,6 +1613,11 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/user/search', 'UserController@search');
 				Route::get('/users/delete/{id}', 'UserController@delete');
 
+				Route::resource('order_maintenances', 'OrderMaintenanceController');
+				Route::get('/order_maintenances/id/{race_code}', 'OrderMaintenanceController@searchById');
+				Route::post('/order_maintenance/search', 'OrderMaintenanceController@search');
+				Route::get('/order_maintenance/search', 'OrderMaintenanceController@search');
+				Route::get('/order_maintenances/delete/{id}', 'OrderMaintenanceController@delete');
 
 		});
 

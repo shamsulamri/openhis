@@ -6,7 +6,7 @@ New Gender
 </h1>
 
 <br>
-{{ Form::model($gender, ['url'=>'genders', 'class'=>'form-horizontal']) }} 
+{{ Form::model($gender, ['url'=>'genders', 'class'=>'form-horizontal','onsubmit'=>'submitButton.disabled = true; return true;']) }} 
     
     <div class='form-group @if ($errors->has('gender_code')) has-error @endif'>
         <label for='gender_code' class='col-sm-3 control-label'>Code<span style='color:red;'> *</span></label>

@@ -74,6 +74,7 @@
 	<div class="row">
 			<div class="col-xs-6">
 				<a href="{{ url('/products') }}">Products</a><br>
+				<a href="{{ url('/order_maintenances') }}">Orders</a><br>
 				<a href="{{ url('/purchases') }}">Purchases</a><br>
 				<a href="{{ url('/purchase_orders') }}">Purchase Orders</a><br>
 				<a href="{{ url('/suppliers') }}">Suppliers</a><br>

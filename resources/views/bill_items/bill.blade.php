@@ -10,7 +10,7 @@
     <div class='form-group  @if ($errors->has('bill_unit_price')) has-error @endif'>
         {{ Form::label('bill_unit_price', 'Unit Price',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-			@if ($bill->product->product_edit_price==1)
+			@if ($bill->product->category_code = 'bed')
             {{ Form::text('bill_unit_price', null, ['class'=>'form-control','placeholder'=>'',]) }}
 			@else
             {{ Form::label('bill_unit_price', empty($bill->bill_unit_price)?'-':$bill->bill_unit_price, ['class'=>'form-control','placeholder'=>'',]) }}
@@ -22,7 +22,7 @@
     <div class='form-group  @if ($errors->has('bill_quantity')) has-error @endif'>
         {{ Form::label('bill_quantity', 'Quantity',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-			@if ($bill->product->product_edit_price==1)
+			@if ($bill->product->category_code = 'bed')
             {{ Form::text('bill_quantity', null, ['class'=>'form-control','placeholder'=>'',]) }}
 			@else 
             {{ Form::label('bill_quantity', empty($bill->bill_quantity)?'-':$bill->bill_quantity, ['class'=>'form-control','placeholder'=>'',]) }}
