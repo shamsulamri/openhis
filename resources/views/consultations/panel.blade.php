@@ -52,7 +52,7 @@
     </button>
 		<ul class="dropdown-menu">
 		<li><a href="/orders/plan?plan=laboratory">Laboratory</a></li>
-		<li><a href="/orders/plan?plan=imaging">Imaging</a></li>
+		<li><a href="/imaging">Imaging</a></li>
 		<li><a href="/orders/procedure">Procedure</a></li>
 		<li><a href="/orders/medication">Medications</a></li>
 		<li><a href="/orders/plan?plan=fee_consultant">Fee</a></li>

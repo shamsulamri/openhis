@@ -16,13 +16,13 @@ select {
 @endif
 
 <ul class="nav nav-tabs">
-  <li @if ($plan=='laboratory') class="active" @endif><a href="plan?plan=laboratory">Laboratory</a></li>
-  <li @if ($plan=='imaging') class="active" @endif><a href="plan?plan=imaging">Imaging</a></li>
-  <li><a href="procedure">Procedures</a></li>
-  <li><a href="medication">Medications</a></li>
-  <li @if ($plan=='fee_consultant') class="active" @endif><a href="plan?plan=fee_consultant">Fees</a></li>
-  <li><a href="discussion">Discussion</a></li>
-  <li><a href="make">Orders</a></li>
+  <li @if ($plan=='laboratory') class="active" @endif><a href="/orders/plan?plan=laboratory">Laboratory</a></li>
+  <li @if ($plan=='imaging') class="active" @endif><a href="/imaging">Imaging</a></li>
+  <li><a href="/orders/procedure">Procedures</a></li>
+  <li><a href="/orders/medication">Medications</a></li>
+  <li @if ($plan=='fee_consultant') class="active" @endif><a href="/orders/plan?plan=fee_consultant">Fees</a></li>
+  <li><a href="/orders/discussion">Discussion</a></li>
+  <li><a href="/orders/make">Orders</a></li>
 </ul>
 <br>
 
@@ -76,7 +76,7 @@ select {
 	</td>
   </tr>
 </table>
-    {{ Form::submit('Add', ['class'=>'btn btn-primary pull-right']) }}
+    {{ Form::submit('Add', ['class'=>'btn btn-primary']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<input type='hidden' name="views" id="views" value="">
 </form>

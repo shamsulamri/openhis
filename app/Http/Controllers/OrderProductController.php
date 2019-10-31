@@ -237,12 +237,14 @@ class OrderProductController extends Controller
 						->where('status_code', '=', 'active')
 						->where(function ($query) use ($fields, $request) {
 							foreach($fields as $field) {
-								$query->where('product_name','like','%'.$field.'%');
+								$query->where('product_name','like','%'.$field.'%')
+									->orWhere('product_name_other','like','%'.$field.'%');
 								if (!empty($request->categories)) {
 										$query->where('category_code','=', $request->categories);
 								}
 							}
-						})
+						});
+				/*
 						->orWhere(function ($query) use ($fields, $request) {
 							foreach($fields as $field) {
 								$query->where('product_name_other','like','%'.$field.'%');
@@ -251,9 +253,12 @@ class OrderProductController extends Controller
 								}
 							}
 						});
+				 */
 
-				if (!empty($categoryCode)) {
-					$order_products = $order_product->whereIn('category_code',$categoryCodes);
+				if (empty($request->categories)) {
+						$order_products = $order_products->whereIn('category_code',$categoryCodes);
+				} else {
+						$order_products = $order_products->where('category_code',$request->categories);
 				}
 
 				$order_products = $order_products->paginate($this->paginateValue);
@@ -294,7 +299,6 @@ class OrderProductController extends Controller
 						->lists('set_name', 'set_code')
 						->prepend('','');
 
-			//->prepend('Drug History','drug_history')
 			return view('order_products.index', [
 					'order_products'=>$order_products,
 					'search'=>$request->search,

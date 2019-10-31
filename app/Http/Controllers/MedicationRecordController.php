@@ -234,8 +234,6 @@ class MedicationRecordController extends Controller
 					->where('a.post_id','>',0)
 					->where('a.encounter_id','=',$encounter_id)
 					->where('order_is_discharge','<>',1)
-					->where('product_local_store','==',0)
-					->where('product_drop_charge','==',0)
 					->whereNotNull('f.order_id')
 					->orderBy('b.category_code')
 					->orderBy('b.category_code')

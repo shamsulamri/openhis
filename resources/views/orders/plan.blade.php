@@ -13,7 +13,10 @@ iframe { border: 1px #e5e5e5 solid; }
 
 <ul class="nav nav-tabs">
   <li @if ($plan=='laboratory') class="active" @endif><a href="plan?plan=laboratory">Laboratory</a></li>
+<!--
   <li @if ($plan=='imaging') class="active" @endif><a href="plan?plan=imaging">Imaging</a></li>
+-->
+  <li><a href="/imaging">Imaging</a></li>
   <li><a href="procedure">Procedures</a></li>
   <li><a href="medication">Medications</a></li>
   <li @if ($plan=='fee_consultant') class="active" @endif><a href="plan?plan=fee_consultant">Fees</a></li>
