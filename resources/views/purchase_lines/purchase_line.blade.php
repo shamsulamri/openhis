@@ -49,7 +49,7 @@
 					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
 						{{ Form::label('unit_code', 'UOM',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
-							{{ Form::label('line_unit', $purchase_line->uom->unit_name, ['class'=>'form-control']) }}
+							{{ Form::label('line_unit', $purchase_line->uom?$purchase_line->uom->unit_name:'-', ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
