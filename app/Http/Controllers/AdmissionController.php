@@ -155,11 +155,14 @@ class AdmissionController extends Controller
 			$wardHelper = null;
 			if ($ward) $wardHelper = new WardHelper($ward->ward_code);
 
+			$wards = Ward::all()
+					->sortBy('ward_name')
+					->lists('ward_name', 'ward_code');
 
 			return view('admissions.index', [
 					'admissions'=>$admissions,
 					'user'=>Auth::user(),
-					'wards' => $this->wards,
+					'wards' => $wards,
 					'ward' => $ward, 
 					'setWard' => $setWard, 
 					'dojo' => new DojoUtility(),
@@ -581,11 +584,14 @@ class AdmissionController extends Controller
 			$ward = Ward::find($ward_code);
 			if ($ward) $wardHelper = new WardHelper($ward->ward_code);
 
+			$wards = Ward::all()
+					->sortBy('ward_name')
+					->lists('ward_name', 'ward_code');
 
 			return view('admissions.index', [
 					'admissions'=>$admissions,
 					'user'=>Auth::user(),
-					'wards' => $this->wards,
+					'wards' => $wards,
 					'ward' => $ward, 
 					'dojo' => new DojoUtility(),
 					'admission_code'=>null,
