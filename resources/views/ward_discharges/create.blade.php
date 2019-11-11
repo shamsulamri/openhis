@@ -7,8 +7,7 @@ Ward Discharge
 </h1>
 
 <br>
-{{ Form::model($ward_discharge, ['url'=>'ward_discharges', 'class'=>'form-horizontal']) }} 
-    
+{{ Form::model($ward_discharge, ['url'=>'ward_discharges', 'class'=>'form-horizontal','onsubmit'=>'submitButton.disabled = true; return true;']) }} 
 	@include('ward_discharges.ward_discharge')
 {{ Form::close() }}
 

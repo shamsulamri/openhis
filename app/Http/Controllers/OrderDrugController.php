@@ -96,9 +96,10 @@ class OrderDrugController extends Controller
 
 	public function removeDrug(Request $request)
 	{
+			Log::info("**********Remove Drug***************");
 			$order_id = $request->order_id;
 			$order = Order::find($order_id);
-			OrderMultiple::where('order_id', $order_id)->delete();
+			//OrderMultiple::where('order_id', $order_id)->delete();
 			Order::find($order_id)->delete();
 					
 			return $this->medicationTable();
@@ -107,7 +108,7 @@ class OrderDrugController extends Controller
 	public function updateDrug(Request $request)
 	{
 			Log::info("*************************");
-			Log::info($request);
+			//Log::info($request);
 			$order_id = $request->order_id;
 			$order = Order::find($order_id);
 			if (!empty($order)) {
@@ -135,14 +136,14 @@ class OrderDrugController extends Controller
 
 							$order = Order::find($order_id);
 
-							Log::info($drug->dosage_code);
 							$dosage = DrugDosage::find($drug->dosage_code);
-							Log::info($dosage);
-							if ($dosage->dosage_count_unit==0) {
-							//if ($order->product->product_unit_charge==0) {
-									$total_unit = 1;
+
+							if ($drug->dosage_code) {
+									if ($dosage->dosage_count_unit==0) {
+											$total_unit = 1;
+									}
 							}
-							Log::info($total_unit);
+
 							$order->order_quantity_request = $total_unit;
 							$order->order_quantity_supply = $total_unit;
 							$order->order_is_discharge = $request->discharge?1:0;

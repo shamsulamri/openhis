@@ -545,6 +545,9 @@ class EncounterController extends Controller
 	public function delete($id)
 	{
 		$encounter = Encounter::findOrFail($id);
+		if ($encounter->consultation->count()>0) {
+				return "Cannot delete this record has consultation.";
+		}
 		return view('encounters.destroy', [
 			'encounter'=>$encounter
 			]);

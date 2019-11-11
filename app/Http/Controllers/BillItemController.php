@@ -393,7 +393,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name, bom_code, order_is_discharge
+				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name, bom_code, order_is_discharge, b.category_code
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -440,7 +440,7 @@ class BillItemController extends Controller
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
 					$item->bill_name = $order->product_name;
-					if ($order->order_is_discharge == 1) {
+					if ($order->order_is_discharge == 1 && $order->category_code == 'drugs') {
 						$item->bill_name = $order->product_name . " (Take Home)";
 					}
 					$item->tax_code = $order->tax_code;

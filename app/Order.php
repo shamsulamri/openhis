@@ -109,6 +109,11 @@ class Order extends Model
 			return $this->hasOne('App\OrderDrug','order_id');
 	}
 
+	public function drugLabel() {
+			return $this->hasOne('App\OrderDrugLabel','order_id');
+	}
+
+
 	public function consultation()
 	{
 			return $this->belongsTo('App\Consultation','consultation_id');
@@ -175,8 +180,10 @@ class Order extends Model
 
 			static::deleted(function($order)
 			{
+				Log::info("Deleted !!!!!");
 				$order->orderInvestigation()->delete();
 				$order->orderDrug()->delete();
+				$order->drugLabel()->delete();
 			});
 
 			static::created(function($order)

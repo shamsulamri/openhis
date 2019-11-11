@@ -44,5 +44,9 @@ class OrderImaging extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function product()
+	{
+			return $this->belongsTo('App\Product', 'product_code');
+	}
 	
 }

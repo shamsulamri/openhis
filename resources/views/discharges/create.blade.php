@@ -14,7 +14,7 @@
 		@endif
 @endif
 
-{{ Form::model($discharge, ['url'=>'discharges', 'class'=>'form-horizontal']) }} 
+{{ Form::model($discharge, ['url'=>'discharges', 'class'=>'form-horizontal','onsubmit'=>'submitButton.disabled = true; return true;']) }} 
 	@include('discharges.discharge')
 {{ Form::close() }}
 

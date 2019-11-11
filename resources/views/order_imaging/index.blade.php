@@ -15,23 +15,23 @@
 </form>
 <br>
 
-@if ($order_imaging->total()>0)
+@if ($order_imagings->total()>0)
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>side</th>
-    <th>product_code</th> 
+    <th>Product</th>
+    <th>Code</th> 
 	@can('system-administrator')
 	<th></th>
 	@endcan
 	</tr>
   </thead>
 	<tbody>
-@foreach ($order_imaging as $order_imaging)
+@foreach ($order_imagings as $order_imaging)
 	<tr>
 			<td>
 					<a href='{{ URL::to('order_imaging/'. $order_imaging->product_code . '/edit') }}'>
-						{{$order_imaging->side}}
+						{{$order_imaging->product->product_name}}
 					</a>
 			</td>
 			<td>
@@ -48,13 +48,13 @@
 </tbody>
 </table>
 @if (isset($search)) 
-	{{ $order_imaging->appends(['search'=>$search])->render() }}
+	{{ $order_imagings->appends(['search'=>$search])->render() }}
 	@else
-	{{ $order_imaging->render() }}
+	{{ $order_imagings->render() }}
 @endif
 <br>
-@if ($order_imaging->total()>0)
-	{{ $order_imaging->total() }} records found.
+@if ($order_imagings->total()>0)
+	{{ $order_imagings->total() }} records found.
 @else
 	No record found.
 @endif

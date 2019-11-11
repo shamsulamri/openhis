@@ -31,7 +31,7 @@
 					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
 						{{ Form::label('unit_code', 'UOM',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
-							{{ Form::select('uom', $uom_list, $purchase_line->unit_code, ['id'=>'uom_list', 'onchange'=>'uomChanged()']) }}
+							{{ Form::select('unit_code', $uom_list, $purchase_line->unit_code, ['id'=>'uom_list', 'onchange'=>'uomChanged()']) }}
 						</div>
 					</div>
 			</div>
@@ -49,7 +49,7 @@
 					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
 						{{ Form::label('unit_code', 'UOM',['class'=>'col-sm-3 control-label']) }}
 						<div class='col-sm-9'>
-							{{ Form::label('line_unit', $purchase_line->uom?$purchase_line->uom->unit_name:'-', ['class'=>'form-control']) }}
+							{{ Form::select('unit_code', $uom_list, $purchase_line->unit_code, ['id'=>'uom_list', 'onchange'=>'uomChanged()']) }}
 						</div>
 					</div>
 			</div>
@@ -116,7 +116,6 @@
     </div>
 
 	{{ Form::hidden('purchase_id',null) }}
-	{{ Form::hidden('unit_code','unit', ['id'=>'unit_code']) }}
 	{{ Form::hidden('uom_rate','1', ['id'=>'uom_rate']) }}
 	<script>
 		$('#expiry_date').datepicker({

@@ -185,9 +185,11 @@ class DischargeController extends Controller
 							$bed_charge = BedCharge::where('encounter_id', $discharge->encounter_id)
 									->whereNull('bed_stop')
 									->first();
-							$bed_charge->bed_stop = date('d/m/Y');
-							$bed_charge->block_room = $encounter->admission->block_room;
-							$bed_charge->save();
+							if (!empty($bed_charge)) {
+									$bed_charge->bed_stop = date('d/m/Y');
+									$bed_charge->block_room = $encounter->admission->block_room;
+									$bed_charge->save();
+							}
 					}
 
 					DB::table('bill_items')

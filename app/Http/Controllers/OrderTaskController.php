@@ -27,8 +27,15 @@ use App\OrderHelper;
 use App\DojoUtility;
 use App\Inventory;
 use App\ProductUom;
-use App\DrugDosage as Dosage;
 use App\EncounterHelper;
+
+use App\DrugDosage as Dosage;
+use App\UnitMeasure as Unit;
+use App\DrugRoute as Route;
+use App\DrugFrequency as Frequency;
+use App\DrugPrescription;
+use App\Period;
+use App\OrderDrugLabel;
 
 class OrderTaskController extends Controller
 {
@@ -263,6 +270,7 @@ class OrderTaskController extends Controller
 	public function edit(Request $request, $id) 
 	{
 			$order_task = OrderTask::findOrFail($id);
+			$frequencies = Frequency::all()->sortBy('frequency_name')->lists('frequency_name', 'frequency_code')->prepend('','');
 
 			return view('order_tasks.edit', [
 					'order_task'=>$order_task,
@@ -274,6 +282,12 @@ class OrderTaskController extends Controller
 					'dosage' => Dosage::all()->sortBy('dosage_name')->lists('dosage_name', 'dosage_code')->prepend('',''),
 					'report'=>$request->queue?true:false,
 					'mar'=>$request->mar?true:false,
+					'unit' => Unit::where('unit_drug',1)->orderBy('unit_name')->lists('unit_name', 'unit_code')->prepend('',''),
+					'dosage' => Dosage::all()->sortBy('dosage_index')->lists('dosage_name', 'dosage_code')->prepend('',''),
+					'route' => Route::all()->sortBy('route_name')->lists('route_name', 'route_code')->prepend('',''),
+					'frequency' => $frequencies,
+					'period' => Period::whereIn('period_code', array('day','week', 'month'))->orderBy('period_name')->lists('period_name', 'period_code')->prepend('',''),
+					'order_helper'=> new OrderHelper(),
 					]);
 	}
 
@@ -293,12 +307,19 @@ class OrderTaskController extends Controller
 						$order_task->reported_by = Auth::user()->id;
 					}
 					$order_task->save();
-					//if ($order_task->orderDrug()) {
 					if (!empty($request->dosage_code)) {
-							$orderDrug = OrderDrug::find($order_task->order_id);
-							$orderDrug->dosage_code = $request->dosage_code;
-							$orderDrug->drug_dosage = $request->drug_dosage;
-							$orderDrug->save();
+							$drug_label = OrderDrugLabel::where('order_id', $id)->first();
+							$drug_label->dosage_code = $request->dosage_code;
+							$drug_label->drug_dosage = $request->drug_dosage;
+							$drug_label->drug_strength = $request->drug_strength;
+							$drug_label->unit_code = $request->unit_code;
+							$drug_label->drug_dosage = $request->drug_dosage;
+							$drug_label->dosage_code = $request->dosage_code;
+							$drug_label->route_code = $request->route_code;
+							$drug_label->frequency_code = $request->frequency_code;
+							$drug_label->drug_duration = $request->drug_duration;
+							$drug_label->period_code = $request->period_code;
+							$drug_label->save();
 					}
 					$productController = new ProductController();
 					$productController->updateTotalOnHand($order_task->product_code);
@@ -307,7 +328,8 @@ class OrderTaskController extends Controller
 						if ($request->report==1) {
 								return redirect('/order_tasks/'.$order_task->order_id.'/edit?queue=report');
 						} else {
-								return redirect('/order_tasks/'.$order_task->order_id.'/edit');
+								//return redirect('/order_tasks/'.$order_task->order_id.'/edit');
+								return redirect('/order_tasks/task/'.$order_task->encounter_id);
 						}
 					} else {
 						if ($request->mar) {

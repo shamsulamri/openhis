@@ -126,6 +126,7 @@ class DepositController extends Controller
 	}
 	public function destroy($id)
 	{	
+			return "X";
 			$deposit = Deposit::findOrFail($id);
 			Deposit::find($id)->delete();
 			Session::flash('message', 'Record deleted.');

@@ -61,7 +61,9 @@ class WardDischargeController extends Controller
 					->get();
 			**/
 			
-			$appointments = Appointment::whereDate('appointment_datetime','>',$encounter->created_at)->get();
+			$appointments = Appointment::whereDate('appointment_datetime','>',$encounter->created_at)
+								->where('patient_id', $admission->patient_id)
+								->get();
 
 			$service_id = $admission->user_id;
 

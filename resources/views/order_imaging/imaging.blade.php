@@ -35,7 +35,13 @@ select {
 
 	<div class="row">
 			<div class="col-xs-12">
-			{{ Form::select('product_code', $procedures,$product_code, ['id'=>'product_code','class'=>'form-control','size'=>'19', 'onchange'=>'productChanged()']) }}
+			{{ Form::text('search', null, ['id'=>'search', 'class'=>'form-control', 'onkeypress'=>'find()', 'autocomplete'=>'off']) }}
+			<br>
+			</div>
+	</div>
+	<div class="row">
+			<div class="col-xs-12">
+			{{ Form::select('product_code', $procedures,$product_code, ['id'=>'product_code','class'=>'form-control','size'=>'17', 'onchange'=>'productChanged()']) }}
 			</div>
 	</div>
 	</td>
@@ -76,7 +82,7 @@ select {
 	</td>
   </tr>
 </table>
-    {{ Form::submit('Add', ['class'=>'btn btn-primary']) }}
+    {{ Form::submit('Add', ['id'=>'add', 'class'=>'btn btn-primary']) }}
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
 	<input type='hidden' name="views" id="views" value="">
 </form>
@@ -110,7 +116,13 @@ select {
 </table>
 @endif
 <script>
+	var addButton = document.getElementById('add');
 
+	procedures = [
+			@foreach($params as $param)
+			"{{ $param->product_code }}:{{ $param->product->product_name }}",
+			@endforeach	
+	];
 
 	function productChanged() {
 			params = [
@@ -143,6 +155,8 @@ select {
 		if (sideSelect.options.length==0) addList(sideSelect,['']);
 		if (regionSelect.options.length==0) addList(regionSelect,['']);
 		if (viewSelect.options.length==0) addList(viewSelect,['']);
+		
+		addButton.disabled = false;
 	}
 
 	function clearList(selectedList) {
@@ -169,6 +183,63 @@ select {
 			$("#views").val(values);
 	}
 
+	function populateList() {
+			procedures = [
+					@foreach($params as $param)
+					"{{ $param->product_code }}:{{ $param->product->product_name }}",
+					@endforeach	
+			];
+	}
+
+	function find() {
+
+			var productList = document.getElementById('product_code');
+			var sideSelect = document.getElementById('side');
+			var regionSelect = document.getElementById('region');
+			var viewSelect = document.getElementById('view');
+
+			clearList(sideSelect);
+			clearList(regionSelect);
+			clearList(viewSelect);
+			clearList(productList);
+			addButton.disabled = true;
+
+			searchWord = document.getElementById('search').value;
+
+			console.log(searchWord);
+
+			searchList = [];
+
+			for (var i=0;i<procedures.length;i++) {
+					values = procedures[i].split(":")
+					//if (values[1].indexOf(searchWord) > -1) {
+					if (values[1].toLowerCase().search(searchWord.toLowerCase()) > -1) {
+							searchList.push(values);
+							var optn = document.createElement("OPTION");
+							optn.text = unEntity(values[1]);
+							optn.value = values[0];
+							productList.options.add(optn);
+					}
+			}
+			
+	}
+
 	productChanged();
+	addButton.disabled = true;
+
+	function unEntity(str){
+			return str.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+	}
+
+	$(document).ready(function() {
+			$(window).keydown(function(event){
+					if(event.keyCode == 13) {
+							find();
+							document.getElementById('search').select();
+							event.preventDefault();
+							return false;
+					}
+			});
+	});
 </script>
 @endsection

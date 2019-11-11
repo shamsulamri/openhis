@@ -28,7 +28,6 @@
             {{ Form::label('execute', DojoUtility::dateTimeReadFormat($order_task->consultation->created_at), ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
-	@if (Auth::user()->author_id == 5)
     <div class='form-group  @if ($errors->has('order_custom_id')) has-error @endif'>
         {{ Form::label('order_custom_id', 'Custom Id',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -36,7 +35,6 @@
             @if ($errors->has('order_custom_id')) <p class="help-block">{{ $errors->first('order_custom_id') }}</p> @endif
         </div>
     </div>
-	@endif
     <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
         {{ Form::label('order_report', 'Report',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
@@ -55,100 +53,16 @@
 	@endif
 
 	@if (Auth::user()->authorization->module_support==1)
-		@if (!empty($order_task->drugLabel->order_id))
-			<!--
+		@if (!empty($order_task->orderDrug->order_id))
 			<div class='form-group  @if ($errors->has('order_discount')) has-error @endif'>
 				{{ Form::label('drug_dosage', 'Dosage',['class'=>'col-sm-3 control-label']) }}
 				<div class='col-sm-1'>
-					{{ Form::text('drug_dosage', $order_task->drugLabel->drug_dosage, ['class'=>'form-control','placeholder'=>'',]) }}
+					{{ Form::text('drug_dosage', $order_task->orderDrug->drug_dosage, ['class'=>'form-control','placeholder'=>'',]) }}
 				</div>
 				<div class='col-sm-2'>
-					{{ Form::select('dosage_code', $dosage,$order_task->drugLabel->dosage_code, ['id'=>'dosage_code','class'=>'form-control input-sm']) }}
+					{{ Form::select('dosage_code', $dosage,$order_task->orderDrug->dosage_code, ['id'=>'dosage_code','class'=>'form-control input-sm']) }}
 				</div>
 			</div>
-			-->
-    <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
-        <label for='user' class='col-sm-3 control-label'>Original Prescription</label>
-        <div class='col-sm-9'>
-            {{ Form::label('user', $order_helper->getPrescription($order_task->order_id), ['class'=>'form-control','placeholder'=>'',]) }}
-        </div>
-    </div>
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('drug_strength')) has-error @endif'>
-						{{ Form::label('drug_strength', 'Strength',['class'=>'col-md-6 control-label']) }}
-						<div class='col-md-6'>
-							{{ Form::text('drug_strength', $order_task->drugLabel->drug_strength, ['id'=>'drug_strength','class'=>'form-control input-sm','placeholder'=>'']) }}
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('unit_code')) has-error @endif'>
-						<div class='col-md-6'>
-							{{ Form::select('unit_code', $unit, $order_task->drugLabel->unit_code, ['id'=>'unit_code','class'=>'form-control input-sm','maxlength'=>'20']) }}
-						</div>
-					</div>
-			</div>
-	</div>
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('drug_dosage')) has-error @endif'>
-						{{ Form::label('drug_dosage', 'Dosage',['class'=>'col-md-6 control-label']) }}
-						<div class='col-md-6'>
-							{{ Form::text('drug_dosage', $order_task->drugLabel->drug_dosage, ['id'=>'dosage','class'=>'form-control input-sm','placeholder'=>'','onchange'=>'countTotalUnit()',]) }}
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('dosage_code')) has-error @endif'>
-						<div class='col-md-6'>
-							{{ Form::select('dosage_code', $dosage,$order_task->drugLabel->dosage_code, ['id'=>'dosage_code','class'=>'form-control input-sm','maxlength'=>'20','onchange'=>'countTotalUnit()']) }}
-						</div>
-					</div>
-			</div>
-	</div>
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('route_code')) has-error @endif'>
-						{{ Form::label('route_code', 'Route',['class'=>'col-sm-6 control-label']) }}
-						<div class='col-sm-6'>
-							{{ Form::select('route_code', $route,$order_task->drugLabel->route_code, ['id'=>'route','class'=>'form-control input-sm','maxlength'=>'20']) }}
-							@if ($errors->has('route_code')) <p class="help-block">{{ $errors->first('route_code') }}</p> @endif
-						</div>
-					</div>
-			</div>
-	</div>
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('frequency_code')) has-error @endif'>
-						{{ Form::label('frequency_code', 'Frequency',['class'=>'col-sm-6 control-label']) }}
-						<div class='col-sm-6'>
-							{{ Form::select('frequency_code', $frequency,$order_task->drugLabel->frequency_code, ['id'=>'frequency','class'=>'form-control input-sm','maxlength'=>'20']) }}
-							@if ($errors->has('frequency_code')) <p class="help-block">{{ $errors->first('frequency_code') }}</p> @endif
-						</div>
-					</div>
-			</div>
-	</div>
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('drug_duration')) has-error @endif'>
-						{{ Form::label('drug_duration', 'Duration',['class'=>'col-md-6 control-label']) }}
-						<div class='col-md-6'>
-							{{ Form::text('drug_duration', $order_task->drugLabel->drug_duration, ['id'=>'duration','class'=>'form-control input-sm','placeholder'=>'','onchange'=>'countTotalUnit()',]) }}
-							@if ($errors->has('drug_duration')) <p class="help-block">{{ $errors->first('drug_duration') }}</p> @endif
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group  @if ($errors->has('period_code')) has-error @endif'>
-						<div class='col-md-6'>
-							{{ Form::select('period_code', $period,$order_task->drugLabel->period_code, ['id'=>'period', 'class'=>'form-control input-sm','maxlength'=>'10','onchange'=>'countTotalUnit()']) }}
-							@if ($errors->has('period_code')) <p class="help-block">{{ $errors->first('period_code') }}</p> @endif
-						</div>
-					</div>
-			</div>
-	</div>
-
 		@endif
 	@endif
 

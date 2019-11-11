@@ -181,12 +181,18 @@ class OrderProductController extends Controller
 					}
 			}
 
+			$categoryCodes = Auth::user()->categoryCodes();
+
 			if (!empty($request->search)) {
 				$searches = explode(";",$request->search);
 				$order_bulk = False;
 				foreach($searches as $search) {
 						if (!empty($search)) {
-								$product = Product::where('product_code',$search)->where('status_code', 'active')->first();
+								$product = Product::where('product_code',$search)
+												->where('status_code', 'active')
+												->whereIn('category_code',$categoryCodes)
+												->first();
+
 								if ($product) {
 										if ($product->product_drop_charge == 1) {
 
@@ -231,17 +237,14 @@ class OrderProductController extends Controller
 
 				$fields = explode(' ', $request->search);
 
-				$categoryCodes = Auth::user()->categoryCodes();
 
 				$order_products = Product::orderBy('product_name')
 						->where('status_code', '=', 'active')
 						->where(function ($query) use ($fields, $request) {
 							foreach($fields as $field) {
 								$query->where('product_name','like','%'.$field.'%')
-									->orWhere('product_name_other','like','%'.$field.'%');
-								if (!empty($request->categories)) {
-										$query->where('category_code','=', $request->categories);
-								}
+									->orWhere('product_name_other','like','%'.$field.'%')
+									->orWhere('product_code','like','%'.$field.'%');
 							}
 						});
 				/*
@@ -258,7 +261,7 @@ class OrderProductController extends Controller
 				if (empty($request->categories)) {
 						$order_products = $order_products->whereIn('category_code',$categoryCodes);
 				} else {
-						$order_products = $order_products->where('category_code',$request->categories);
+						$order_products = $order_products->where('category_code','=', $request->categories);
 				}
 
 				$order_products = $order_products->paginate($this->paginateValue);
@@ -274,14 +277,15 @@ class OrderProductController extends Controller
 
 				if (!empty($request->categories)) {
 						$order_products = Product::where('category_code',$request->categories)
+							->where('status_code', '=', 'active')
 							->orderBy('product_name')
 							->paginate($this->paginateValue);
 				} else {
 						$order_products = Product::whereIn('product_code', $orderSets)
+							->where('status_code', '=', 'active')
 							->orderBy('product_name')
 							->paginate($this->paginateValue);
 				}
-							//->where('status_code', '=', 'active')
 
 			}
 

@@ -26,11 +26,11 @@ class OrderImagingController extends Controller
 
 	public function index()
 	{
-			$order_imaging = OrderImaging::orderBy('side')
+			$order_imagings = OrderImaging::orderBy('side')
 					->paginate($this->paginateValue);
 
 			return view('order_imaging.index', [
-					'order_imaging'=>$order_imaging
+					'order_imagings'=>$order_imagings
 			]);
 	}
 
@@ -136,6 +136,7 @@ class OrderImagingController extends Controller
 			$params = DB::table('order_imaging')
 						->get();
 
+			$params = OrderImaging::all();
 			/*
 			$procedures = Product::where('category_code', 'radiography')
 								->orderBy('product_name')
