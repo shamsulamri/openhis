@@ -213,7 +213,7 @@ select {
 			for (var i=0;i<procedures.length;i++) {
 					values = procedures[i].split(":")
 					//if (values[1].indexOf(searchWord) > -1) {
-					if (values[1].toLowerCase().search(searchWord.toLowerCase()) > -1) {
+					if (values[1].toLowerCase().search(searchWord.toLowerCase()) > -1 || values[0].toLowerCase().search(searchWord.toLowerCase()) > -1 ) {
 							searchList.push(values);
 							var optn = document.createElement("OPTION");
 							optn.text = unEntity(values[1]);

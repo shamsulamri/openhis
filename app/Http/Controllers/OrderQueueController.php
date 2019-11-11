@@ -536,6 +536,7 @@ class OrderQueueController extends Controller
 					->whereIn('c.encounter_code', $queue_encounters)
 					->whereIn('o.category_code', $queue_categories)
 					->where('order_completed','=',1)
+					->where('category_code','=','imaging2')
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id')
 					->distinct('orders.order_id')

@@ -153,6 +153,7 @@
 	@endif
 
 <!--
+@if ($order_task->product->uomDefaultPrice($encounter))
     <div class='form-group  @if ($errors->has('order_quantity_supply')) has-error @endif'>
         {{ Form::label('order_quantity_supply', 'Quantity Supply',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-1'>
@@ -163,6 +164,7 @@
         	{{ Form::label('order_quantity_supply', $order_task->product->uomDefaultPrice($encounter)->unit_code,['class'=>'control-label']) }}
         </div>
     </div>
+@endif
 -->
 
 
