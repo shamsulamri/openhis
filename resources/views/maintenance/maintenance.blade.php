@@ -85,6 +85,7 @@
 				<a href="{{ url('/store_authorizations') }}">Store Authorizations</a><br>
 				<a href="{{ url('/product_price_tiers') }}">Price Tiers</a><br>
 				<a href="{{ url('/inventory_batches') }}">Stock Batches</a><br>
+				<a href="{{ url('/order_imaging') }}">Order Imaging</a><br>
 			</div>
 			<div class="col-xs-3">
 			<small>

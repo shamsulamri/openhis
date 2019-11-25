@@ -19,8 +19,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Product</th>
     <th>Code</th> 
+    <th>Product</th>
+    <th>Options</th>
 	@can('system-administrator')
 	<th></th>
 	@endcan
@@ -30,12 +31,17 @@
 @foreach ($order_imagings as $order_imaging)
 	<tr>
 			<td>
+					{{$order_imaging->product_code}}
+			</td>
+			<td>
 					<a href='{{ URL::to('order_imaging/'. $order_imaging->product_code . '/edit') }}'>
 						{{$order_imaging->product->product_name}}
 					</a>
 			</td>
 			<td>
-					{{$order_imaging->product_code}}
+					Side: {{$order_imaging->side}}<br>
+					Region: {{$order_imaging->region}}<br>
+					View: {{$order_imaging->view}}<br>
 			</td>
 			@can('system-administrator')
 			<td align='right'>

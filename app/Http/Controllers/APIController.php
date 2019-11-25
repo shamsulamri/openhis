@@ -89,7 +89,7 @@ class APIController extends Controller
 	public function discharge($mrn) 
 	{
 			$result = DB::table('discharges as a')
-						->select('discharge_date as date', 'encounter_name as encounter', 'c.patient_new_ic as ic_number','name as physician')
+						->select('discharge_id', 'discharge_date as date', 'encounter_name as encounter', 'c.patient_new_ic as ic_number','name as physician')
 						->leftJoin('encounters as b', 'b.encounter_id', '=', 'a.encounter_id')
 						->leftJoin('patients as c', 'c.patient_id', '=', 'b.patient_id')
 						->leftJoin('ref_encounter_types as d', 'd.encounter_code', '=', 'b.encounter_code')
