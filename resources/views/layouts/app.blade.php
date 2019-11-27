@@ -346,8 +346,10 @@ if ($_COOKIE['his-navbar']==1) {
                                 <li><a href="{{ url('/stores') }}">Set Store</a></li>
                                 <li><a href="{{ url('/wards') }}">Set Ward</a></li>
                                 <li><a href="{{ url('/appointment_services') }}">Set Appointment Book</a></li>
+		@if (env('APPLICATION_LOGO')) 
 								<li role='separator' class='divider'></li>
                                 <li><a href="{{ url('/manual.pdf') }}">Manual</a></li>
+		@endif
                             </ul>
                         </li>
             </ul>

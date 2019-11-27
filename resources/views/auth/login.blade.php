@@ -4,7 +4,11 @@
 	<br>
 	<br>
 	<div align='center'>
-		<img width='280' height='300' src='logo_400.png'>
+		@if (env('APPLICATION_LOGO')) 
+		<img width='280' height='300' src='{{ env('APPLICATION_LOGO') }}'>
+		@else
+		<h1>{{ env('APPLICATION_NAME') }}</h1>
+		@endif
 	</div>
 
     <div class="middle-box text-center loginscreen animated fadeInDown">
