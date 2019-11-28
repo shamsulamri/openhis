@@ -97,7 +97,9 @@ class Product extends Model
 	}
 	public function productUnitMeasures()
 	{
-			return $this->hasMany('App\ProductUom', 'product_code')->get();
+			$uoms = ProductUom::where('product_code', $this->attributes['product_code'])->get();
+			return $uoms;
+			//return $this->hasMany('App\ProductUom', 'product_code', 'product_code')->get();
 	}
 
 	public function orderForm()

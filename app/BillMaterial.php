@@ -54,6 +54,8 @@ class BillMaterial extends Model
 
 	public function unitPrice($product_code, $unit_code)
 	{
+			if (empty($unit_code)) $unit_code = 'unit';
+
 			$unit_price = ProductUom::where('product_code','=',  $product_code)
 							->where('unit_code', '=', $unit_code)
 							->first();

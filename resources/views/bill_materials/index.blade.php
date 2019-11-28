@@ -19,7 +19,7 @@
 @foreach ($bill_materials as $bill_material)
 	<tr>
 			<td>
-					{{ $bill_material->product_code }}
+					{{ $bill_material->bom_product_code }}
 			</td>
 			<td>
 					<a href='{{ URL::to('bill_materials/'. $bill_material->id . '/edit') }}'>
@@ -33,7 +33,7 @@
 					@endif
 			</td>
 			<td>
-					{{ number_format($bill_material->unitPrice($bill_material->product_code, $bill_material->unit_code),2) }}
+					{{ number_format($bill_material->unitPrice($bill_material->bom_product_code, $bill_material->unit_code),2) }}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('bill_materials/delete/'. $bill_material->id) }}'>
