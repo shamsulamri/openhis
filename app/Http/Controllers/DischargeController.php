@@ -80,6 +80,7 @@ class DischargeController extends Controller
 					'encounters' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'encounter_code'=>null,
 					'bill_helper'=>new BillHelper(),
+					'search'=>null,
 			]);
 	}
 
@@ -314,7 +315,7 @@ class DischargeController extends Controller
 			}
 
 			if (!empty($request->type_code)) {
-					$discharges = $discharges->where('a.type_code','=', $request->type_code);
+					$discharges = $discharges->where('discharges.type_code','=', $request->type_code);
 			}
 
 			if (!empty($request->encounter_code)) {

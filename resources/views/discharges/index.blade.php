@@ -225,11 +225,7 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $discharges->appends(['search'=>$search])->render() }}
-	@else
-	{{ $discharges->render() }}
-@endif
+	{{ $discharges->appends(['search'=>$search, 'encounter_code'=>$encounter_code, 'type_code'=>$type_code])->render() }}
 <br>
 @if ($discharges->total()>0)
 	{{ $discharges->total() }} records found.

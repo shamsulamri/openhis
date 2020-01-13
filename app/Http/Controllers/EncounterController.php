@@ -261,6 +261,7 @@ class EncounterController extends Controller
 
 			if ($request->encounter_code == 'daycare') {
 					if (empty($request->user_id)) $valid['user_id']='This field is required.';
+					if (empty($request->bed_code)) $valid['bed_code']='This field is required.';
 
 					if (!empty($valid)) {
 							return redirect('/encounters/create?patient_id='.$request->patient_id)

@@ -113,58 +113,35 @@ class BillItemController extends Controller
 						$item->bill_amount = $item->bill_amount*(($bed->tax_rate/100)+1);
 					}
 
-					$item->save();
-					Log::info($item);
-
-					/*** Merge ***/
-					$merge_item = new BillItem();
-					$merge_item->encounter_id = $item->encounter_id;
-					$merge_item->product_code = $item->product_code;
-					$merge_item->bill_name = $item->bill_name;
-					$merge_item->tax_code = $item->tax_code;
-					$merge_item->tax_rate = $item->tax_rate;
-					$merge_item->bill_unit_price = $item->bill_unit_price;
-					$merge_item->bill_non_claimable = 2;
-					if (!empty($encounter->sponsor_code)) {
-						$item->bill_non_claimable = 0;
-					}
-
-					$bill_items = BillItem::where('product_code',$item->product_code)
+					$merge_item = BillItem::where('product_code',$item->product_code)
 							->where('encounter_id', '=', $encounter_id)
-							->get();
+							->first();
 
-					/*** Sum-up selected fields ***/
-					foreach($bill_items as $bill_item) {
-						$merge_item->bill_quantity += $bill_item->bill_quantity;
+					if (empty($merge_item)) {
+						$item->save();
+						Log::info($item);
+					} else {
+						$merge_item->bill_quantity += $item->bill_quantity;
 						$merge_item->bill_amount_exclude_tax += $item->bill_amount_exclude_tax;
 						$merge_item->bill_amount += $item->bill_amount;
+						$merge_item->save();
+						$item = $merge_item;
 					}
-
-					/*** Remove duplicate beds ***/
-					BillItem::where('product_code', $merge_item->product_code)
-							->where('encounter_id', $encounter_id)
-							->delete();
-
-					/*** Save merge beds ***/
-					if (!empty($encounter->sponsor_code)) {
-							$merge_item->bill_non_claimable = 0;
-					}
-					$merge_item->save();
 
 					$consultation = Consultation::where('encounter_id', $encounter_id)->orderBy('created_at', 'desc')->first();
 
 					if($consultation) {
 							/*** Add to orders table so that it appears in order detail ***/
-							Order::where('order_custom_id', $merge_item->product_code)
+							Order::where('order_custom_id', $item->product_code)
 									->where('encounter_id', $encounter_id)
 									->delete();
 
 							$order = new Order();
-							$order->product_code = $merge_item->product_code;
-							$order->order_custom_id = $merge_item->product_code;
-							$order->encounter_id = $merge_item->encounter_id;
-							$order->order_quantity_supply = $merge_item->bill_quantity;
-							$order->order_unit_price = $merge_item->bill_unit_price*$merge_item->bill_quantity;
+							$order->product_code = $item->product_code;
+							$order->order_custom_id = $item->product_code;
+							$order->encounter_id = $item->encounter_id;
+							$order->order_quantity_supply = $item->bill_quantity;
+							$order->order_unit_price = $item->bill_unit_price*$item->bill_quantity;
 							$order->consultation_id = $consultation?$consultation->consultation_id:0;
 							$order->user_id = Auth::user()->id;
 							$order->save();
@@ -393,7 +370,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name, bom_code, order_is_discharge, b.category_code
+				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, sum(order_quantity_request) as total_request, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name, bom_code, order_is_discharge, b.category_code
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -446,6 +423,11 @@ class BillItemController extends Controller
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity?:0;
+					if ($item->product->category_code =='drugs') {
+						if (empty($encounter->discharge)) {
+								$item->bill_quantity = $order->total_request;
+						}
+					}
 					$item->bill_unit_code = $order->unit_code;
 					$item->bill_discount = $order->order_discount;
 					$item->bill_markup = $order->order_markup;
@@ -464,7 +446,7 @@ class BillItemController extends Controller
 					}
 					 */
 
-					$item->bill_amount = ($order->total_quantity?:0)*$item->bill_unit_price;
+					$item->bill_amount = $item->bill_quantity*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
 					$item->bill_amount_exclude_tax = $item->bill_amount;
@@ -473,6 +455,9 @@ class BillItemController extends Controller
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
 					try {
+							if ($order->product_code == 'LAB-BC0028') {
+									Log::info($item);
+							}
 							$item->save();
 
 							/*
