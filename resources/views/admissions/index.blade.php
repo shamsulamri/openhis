@@ -255,11 +255,7 @@
 @endif
 </tbody>
 </table>
-@if (isset($search)) 
-	{{ $admissions->appends(['search'=>$search])->render() }}
-	@else
-	{{ $admissions->render() }}
-@endif
+{{ $admissions->appends(['search'=>$search, 'ward_code'=>$ward_code])->render() }}
 <br>
 @if ($admissions->total()>0)
 	{{ $admissions->total() }} records found.

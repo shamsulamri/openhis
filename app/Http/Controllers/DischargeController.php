@@ -287,14 +287,12 @@ class DischargeController extends Controller
 	
 	public function search(Request $request)
 	{
-
 			//$discharges = DB::table('discharges as a')
 			//$discharges = Discharge::select('patient_mrn', 'patient_name', 'discharges.encounter_id', 'discharges.discharge_id', 'type_name','discharges.created_at', 'e.id','name','ward_name', 'b.encounter_code', 'mc_id', 'encounter_description', 'discharges.created_at as discharge_date')
 			$discharges = Discharge::select('patient_mrn', 'b.encounter_code','patient_name', 'discharges.encounter_id', 'discharges.discharge_id', 'type_name','discharges.created_at', 'name','ward_name','mc_id', 'encounter_description', 'discharges.created_at as discharge_date', 'mc_start', 'mc_time_start', 'newborn_id')
 					->leftJoin('encounters as b', 'b.encounter_id','=','discharges.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('ref_discharge_types as d', 'd.type_code','=','discharges.type_code')
-					->leftJoin('bills as e', 'e.encounter_id', '=', 'discharges.encounter_id')
 					->leftJoin('admissions as i', 'i.encounter_id', '=', 'b.encounter_id')
 					->leftJoin('users as f', 'f.id', '=', 'discharges.user_id')
 					->leftJoin('beds as g', 'g.bed_code', '=', 'i.bed_code')
@@ -304,6 +302,7 @@ class DischargeController extends Controller
 					->whereNull('b.deleted_at')
 					->orderBy('discharge_id','desc');
 			
+					//->leftJoin('bills as e', 'e.encounter_id', '=', 'discharges.encounter_id')
 			if (!empty($request->search)) {
 
 					$discharges = $discharges->where(function ($query) use ($request) {
@@ -412,11 +411,11 @@ class DischargeController extends Controller
 				from discharges as a
 				left join encounters as b on (a.encounter_id=b.encounter_id)
 				left join consultations as c on (c.consultation_id = a.consultation_id)
-				where encounter_code = 'outpatient'
+				where (encounter_code = 'outpatient' or encounter_code = 'emergency')
 			";
 
 			$discharges = Discharge::orderBy('discharge_id','desc')
-					->select(DB::raw('b.created_at as encounter_date, concat(discharges.discharge_date," ", discharges.discharge_time) as discharge_date, patient_name, patient_mrn, encounter_name, ward_name,location_name, datediff(discharges.created_at, b.created_at) as LOS, timediff(outpatients.created_at, b.created_at) as waiting_time, type_name, name, b.encounter_id, sponsor_name'))
+					->select(DB::raw('b.created_at as encounter_date, concat(discharges.discharge_date," ", discharges.discharge_time) as discharge_date, patient_name, patient_mrn, encounter_name, ward_name,location_name, datediff(discharges.created_at, b.created_at) as LOS, timediff(discharges.created_at, b.created_at) as waiting_time, type_name, name, b.encounter_id, sponsor_name'))
 					->leftJoin('encounters as b', 'b.encounter_id','=','discharges.encounter_id')
 					->leftJoin('patients as c', 'c.patient_id','=','b.patient_id')
 					->leftJoin('admissions as d', 'd.encounter_id', '=', 'b.encounter_id')

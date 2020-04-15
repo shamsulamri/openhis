@@ -38,6 +38,7 @@ class BillHelper
 			$payment_total = DB::table('payments as a')
 					->where('patient_id','=', $patient_id)
 					->where('encounter_id','=', $encounter_id)
+					->where('payment_non_claimable', '=', $non_claimable)
 					->sum('payment_amount');
 			
 			$deposit_total = DB::table('deposits as a')
@@ -46,7 +47,6 @@ class BillHelper
 					->where('a.encounter_id','=', $encounter_id)
 					->sum('deposit_amount');
 			
-			log::info($deposit_total);
 			return DojoUtility::roundUp($bill_grand_total)-$deposit_total-$payment_total;
 	}
 

@@ -93,6 +93,7 @@ class QueueLocationController extends Controller
 			$queue_location->fill($request->input());
 
 			$queue_location->location_is_pool = $request->location_is_pool ?: 0;
+			$queue_location->location_active = $request->location_active ?: 0;
 
 			$valid = $queue_location->validate($request->all(), $request->_method);	
 

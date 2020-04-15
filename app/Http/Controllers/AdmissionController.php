@@ -170,6 +170,7 @@ class AdmissionController extends Controller
 					'wardHelper'=> $wardHelper,
 					'bedHelper'=> new BedHelper(),
 					'ward_code'=>$ward_code,
+					'search'=>null,
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 			]);
 	}
@@ -234,11 +235,15 @@ class AdmissionController extends Controller
 
 			$wardHelper = new WardHelper();
 
+			$patient = $admission->encounter->patient;
+			$newborns = $admission->encounter->newborn()->get();
+
 			return view('admissions.show', [
 					'admission'=>$admission,
 					'patient'=>$admission->encounter->patient,
 					'wardHelper'=>$wardHelper,
 					'encounter'=>$admission->encounter,
+					'newborns'=>$newborns,
 			]);
 	}
 	/**

@@ -54,7 +54,6 @@ class OrderMaintenance extends Model
 				'encounter_id'=>'required',
 				'consultation_id'=>'required',
 				'user_id'=>'required',
-				'admission_id'=>'required',
 				'product_code'=>'required',
 				'order_quantity_request'=>'required',
 				'unit_code'=>'required',

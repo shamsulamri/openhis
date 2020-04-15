@@ -242,6 +242,7 @@ class PurchaseController extends Controller
 
 			$suppliers = Supplier::all()->sortBy('supplier_name')->lists('supplier_name', 'supplier_code')->prepend('','');
 
+			//if (Auth::user()->author_id == 7 or Auth::user()->author_id == 13 or Auth::user()->author_id == 18) {
 			if (Auth::user()->author_id == 7) {
 				$suppliers = [''=>'', 'pmc_pharmacy'=>'Pharmacy Department', 'pmc_purchase'=>'Purchase Department'];
 				$purchase->document_code = 'indent_request';

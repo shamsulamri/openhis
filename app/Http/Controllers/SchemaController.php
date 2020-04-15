@@ -89,7 +89,6 @@ class SchemaController extends Controller
 
 	public function post(Request $request) 
 	{
-			return "X";
 		$table = $request->table_name;
 		$fields = DB::select(DB::raw('DESCRIBE '.$table));
 		$skip = false;

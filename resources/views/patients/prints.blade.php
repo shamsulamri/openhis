@@ -13,12 +13,33 @@ Prints
 		Patient Label
 		</a>
 
+@if ($patient->activeEncounter()) 
 		<br><br>
 		<span class='fa fa-file-o' aria-hidden='true'></span>
-		<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_label&id={{ $patient->patient_id }}">
-		Wrist Label
+		<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_label&id={{ $patient->activeEncounter()->encounter_id }}">
+		Patient Wrist Label
 		</a>
 
+		@if ($patient->patientAgeInDays()<730)
+		<br><br>
+		<span class='fa fa-file-o' aria-hidden='true'></span>
+		<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_newborn_patient&id={{ $patient->activeEncounter()->encounter_id }}">
+		Patient Wrist Label (Newborn)
+		</a>
+
+		@endif
+@endif
+
+
+@if ($newborns) 
+	@foreach($newborns as $newborn)
+		<br><br>
+		<span class='fa fa-file-o' aria-hidden='true'></span>
+		<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_newborn&id={{ $newborn->patient_id }}">
+		Newborn Wrist Label
+		</a>
+	@endforeach
+@endif
 		<br><br>
 		<span class='fa fa-file-o' aria-hidden='true'></span>
 		<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_detail&id={{ $patient->patient_id }}">

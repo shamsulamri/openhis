@@ -71,7 +71,7 @@
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('newborn_weight')) has-error @endif'>
-						<label class='col-sm-6 control-label'>Weight<span style='color:red;'> *</span></label>
+						<label class='col-sm-6 control-label'>Weight</label>
 						<div class='col-sm-6'>
 							{{ Form::text('newborn_weight', null, ['class'=>'form-control','placeholder'=>'kg',]) }} 
 							@if ($errors->has('newborn_weight')) <p class="help-block">{{ $errors->first('newborn_weight') }}</p> @endif
@@ -84,7 +84,7 @@
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('newborn_length')) has-error @endif'>
-						<label class='col-sm-6 control-label'>Length<span style='color:red;'> *</span></label>
+						<label class='col-sm-6 control-label'>Length</label>
 						<div class='col-sm-6'>
 							{{ Form::text('newborn_length', null, ['class'=>'form-control','placeholder'=>'cm',]) }}
 							@if ($errors->has('newborn_length')) <p class="help-block">{{ $errors->first('newborn_length') }}</p> @endif
@@ -93,7 +93,7 @@
 			</div>
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('newborn_head_circumferance')) has-error @endif'>
-						<label class='col-sm-6 control-label'>Head Circumference<span style='color:red;'> *</span></label>
+						<label class='col-sm-6 control-label'>Head Circumference</label>
 						<div class='col-sm-6'>
 							{{ Form::text('newborn_head_circumferance', null, ['class'=>'form-control','placeholder'=>'cm',]) }}
 							@if ($errors->has('newborn_head_circumferance')) <p class="help-block">{{ $errors->first('newborn_head_circumferance') }}</p> @endif

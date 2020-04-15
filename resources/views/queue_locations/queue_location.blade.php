@@ -39,6 +39,13 @@
         </div>
     </div>
 
+	<div class='form-group  @if ($errors->has('user_id')) has-error @endif'>
+		<label for='user_id' class='col-sm-3 control-label'>Status</label>
+		<div class='col-sm-9'>
+			{{ Form::checkbox('location_active', '1') }} <label>Active</label>
+			@if ($errors->has('location_active')) <p class="help-block">{{ $errors->first('location_active') }}</p> @endif
+		</div>
+	</div>
 	<!--
     <div class='form-group  @if ($errors->has('location_level')) has-error @endif'>
         <label for='location_level' class='col-sm-3 control-label'>Level</label>

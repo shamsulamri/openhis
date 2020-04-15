@@ -87,6 +87,7 @@ class OrderDrug extends Model
 					$drug_label->save();
 			});
 
+			/**
 			static::created(function($orderDrug)
 			{
 					Log::info("Created!!!!");
@@ -103,7 +104,6 @@ class OrderDrug extends Model
 					$drug_label->save();
 					Log::info($drug_label);
 			});
-
-
+			**/
 	}
 }

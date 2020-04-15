@@ -6,6 +6,9 @@
 <h1>Admission Options</h1>
 <br>
 <h4>
+
+
+		</a>
 				@if (!empty($admission->encounter->discharge))
 						<span class='fa fa-sign-out' aria-hidden='true'></span>
 						<a href='{{ URL::to('ward_discharges/create/'. $admission->admission_id) }}'>Ward Discharge</a>
@@ -42,12 +45,6 @@
 						<span class='fa fa-calendar' aria-hidden='true'></span>
 						<a href='{{ URL::to('appointment_services/'. $patient->patient_id . '/0?admission_id='.$admission->admission_id) }}'>Appointment</a>
 
-						@if (!empty($encounter->newborn)) 
-						<br>
-						<br>
-						<span class='fa fa-file-o' aria-hidden='true'></span>
-						<a href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $admission->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
-						@endif
 
 
 						<br>
@@ -59,10 +56,25 @@
 
 						<br><br>
 						<span class='fa fa-file-o' aria-hidden='true'></span>
-						<a target="_blank" href="{{ Config::get('host.report_server')  }}/ReportServlet?report=wrist_label&id={{ $patient->patient_id }}">
-								Wrist Label
-						</a>
+						<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_label&id={{ $admission->encounter_id }}">
+						Patient Wrist Label
 
+						@if ($newborns) 
+							@foreach($newborns as $newborn)
+								<br><br>
+								<span class='fa fa-file-o' aria-hidden='true'></span>
+								<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_newborn&id={{ $newborn->patient_id }}">
+								Newborn Wrist Label
+								</a>
+							@endforeach
+						@endif
+
+						@if (count($encounter->newborn)>0) 
+						<br>
+						<br>
+						<span class='fa fa-file-o' aria-hidden='true'></span>
+						<a href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $admission->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
+						@endif
 						<br><br>
 						<span class='fa fa-file-o' aria-hidden='true'></span>
 						<a target="_blank" href="/pdf/{{ $patient->patient_id }}/darah">

@@ -370,11 +370,15 @@ class PatientController extends Controller
 
 	public function prints($id)
 	{
-
+			$newborns = null;
 			$patient = Patient::find($id);
+			if ($patient->activeEncounter()) {
+					$newborns = $patient->activeEncounter()->newborn()->get();
+			}
 
 			return view('patients.prints', [
 					'patient'=>$patient,
+					'newborns'=>$newborns,
 			]);
 	}
 

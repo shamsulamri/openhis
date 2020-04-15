@@ -553,6 +553,34 @@ class OrderHelper
 
 	public static function addToInventory($order, $batch_number = null) 
 	{
+		$uom = ProductUom::where('product_code', $order->product_code)
+					->where('uom_default_price', 1)
+					->first();
+
+		Log::info($uom);
+
+		if ($uom) {
+				$inventory = new Inventory();
+				$inventory->order_id = $order->order_id;
+				$inventory->store_code = $order->store_code;
+				$inventory->product_code = $order->product_code;
+				$inventory->unit_code = $order->unit_code;
+				$inventory->uom_rate =  $uom->uom_rate;
+				$inventory->unit_code = $uom->unit_code;
+				$inventory->inv_unit_cost =  $uom->uom_cost?:0;
+				$inventory->inv_quantity = -($order->order_quantity_supply*$uom->uom_rate);
+				$inventory->inv_physical_quantity = $order->order_quantity_supply;
+				$inventory->inv_subtotal =  -($uom->uom_cost*$inventory->inv_physical_quantity);
+				$inventory->move_code = 'sale';
+				$inventory->inv_batch_number = $batch_number;
+				$inventory->inv_posted = 1;
+				$inventory->save();
+				Log::info($inventory);
+		}
+	}
+
+	public static function addToInventory2($order, $batch_number = null) 
+	{
 		$total_supply = $order->order_quantity_supply;
 		$inventory = new Inventory();
 		$inventory->order_id = $order->order_id;

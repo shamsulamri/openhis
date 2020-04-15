@@ -26,7 +26,6 @@ class WardHelper
 
 	public function totalAdmission()
 	{
-
 			$sql = "select count(*) as total_admission from admissions a
 					left join beds b on (a.bed_code = b.bed_code)
 					left join discharges c on (c.encounter_id = a.encounter_id)

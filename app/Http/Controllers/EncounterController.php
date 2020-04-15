@@ -95,6 +95,7 @@ class EncounterController extends Controller
 
 			$locations = Location::selectRaw('location_name, location_code, encounter_code')
 					->whereNotNull('encounter_code')
+					->where('location_active', 1)
 					->orderBy('location_name')
 					->get();
 
@@ -297,7 +298,7 @@ class EncounterController extends Controller
 					}
 
 					$queueFlag = False;
-					if ($encounter->encounter_code == 'outpatient') $queueFlag=True;
+					if ($encounter->encounter_code == 'outpatient' || $encounter->encounter_code == 'drive') $queueFlag=True;
 					//if ($encounter->encounter_code == 'emergency' && $encounter->triage_code=='green') $queueFlag=True;
 					if ($encounter->encounter_code == 'emergency' && !empty($request->location_code)) {
 							$queueFlag=True;
@@ -390,6 +391,8 @@ class EncounterController extends Controller
 
 					if ($payment) {
 							if ($payment->payment_code == 'convert') {
+
+									Order::where('origin_id', $last_encounter->encounter_id)->delete();
 
 									$ids = Order::select('orders.order_id')
 												->where('encounter_id', $last_encounter->encounter_id)

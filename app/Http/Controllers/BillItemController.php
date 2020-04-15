@@ -48,14 +48,14 @@ class BillItemController extends Controller
 	{
 			$bill_existing = DB::table('bill_items')
 								->where('encounter_id','=',$id);
-								
 			$bill_existing->delete();
+			$payments = Payment::where('encounter_id', '=', $id)->delete();
+
 			$this->updateOrderPrices($id);
 			return redirect('/bill_items/'.$id);
 	}
 
 	public function bedBills($encounter_id) {
-			Log::info("------ Bed -----------");
 			$encounter = Encounter::find($encounter_id);
 			$sql = "
 				select bed_code, bed_stop, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, b.product_code, c.tax_code, tax_rate, uom_price as product_sale_price, block_room, product_name 
@@ -69,7 +69,6 @@ class BillItemController extends Controller
 
 			$sql = sprintf($sql, $encounter_id);
 
-			Log::info($sql);
 			$beds = DB::select($sql);
 
 			foreach ($beds as $bed) {
@@ -119,7 +118,6 @@ class BillItemController extends Controller
 
 					if (empty($merge_item)) {
 						$item->save();
-						Log::info($item);
 					} else {
 						$merge_item->bill_quantity += $item->bill_quantity;
 						$merge_item->bill_amount_exclude_tax += $item->bill_amount_exclude_tax;
@@ -154,7 +152,6 @@ class BillItemController extends Controller
 	{
 			$bed_charges = BedCharge::where('encounter_id', $encounter_id)->distinct()->get(['bed_code']);
 			foreach ($bed_charges as $bed) {
-					Log::info($bed->product_code);
 					Order::where('order_custom_id', $bed->bed_code)
 							->where('encounter_id', $encounter_id)
 							->delete();
@@ -409,6 +406,7 @@ class BillItemController extends Controller
 					}
 			}
 			
+			Log::info($sql);
 			$orders = DB::select($sql);
 			
 			foreach ($orders as $order) {
@@ -432,20 +430,7 @@ class BillItemController extends Controller
 					$item->bill_discount = $order->order_discount;
 					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
-					//$item->bill_unit_price = $order->order_unit_price;
 					$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
-
-					/*
-					if (!empty($order->bom_code)) {
-							$uom = ProductUom::where('product_code','=',  $order->product_code)
-											->where('unit_code', '=', $order->unit_code)
-											->first();
-
-							$item->bill_unit_price = $uom->uom_price;
-							Log::info('--->'.$item->bill_unit_price);
-					}
-					 */
-
 					$item->bill_amount = $item->bill_quantity*$item->bill_unit_price;
 					$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
 					$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
@@ -455,17 +440,7 @@ class BillItemController extends Controller
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
 					try {
-							if ($order->product_code == 'LAB-BC0028') {
-									Log::info($item);
-							}
 							$item->save();
-
-							/*
-							Order::where('encounter_id', $encounter_id)
-									->where('product_code', $item->product_code)
-									->update(['order_unit_price'=>$item->bill_unit_price]);
-							*/
-
 					} catch (\Exception $e) {
 							\Log::info($e->getMessage());
 					}
@@ -473,6 +448,88 @@ class BillItemController extends Controller
 
 			//$this->multipleOrders($encounter_id);
 			//$this->outstandingCharges($encounter_id);
+			$this->addFutureOrder($encounter_id, $non_claimable);
+	}
+
+	public function addFutureOrder($encounter_id, $non_claimable) {
+			$encounter = Encounter::find($encounter_id);
+			$patient_id = $encounter->patient_id;
+
+			$last_encounter = Encounter::where('patient_id', $patient_id)
+									->where('encounter_id', '<', $encounter_id)
+									->orderBy('encounter_id', 'desc')
+									->limit(1)
+									->first();
+
+			if (!empty($last_encounter)) {
+					Log::info('Last encounter: '.$last_encounter->encounter_id);
+					$future_orders = Order::where('encounter_id', $last_encounter->encounter_id)
+							->where('order_is_future',2)
+							->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code');
+
+					if (!empty($encounter->sponsor_code)) {
+							if ($non_claimable==1) {
+									$future_orders = $future_orders->where('product_non_claimable',1);
+							}
+
+							if ($non_claimable==0) {
+									$future_orders = $future_orders->where('product_non_claimable','<>', 1);
+							}
+					}
+
+					$future_orders = $future_orders->get();
+
+					foreach ($future_orders as $future_order) {
+							$this->addItemToBill($encounter_id, $future_order, $non_claimable);
+					}
+			}
+
+	}
+
+	public function addItemToBill($encounter_id, $order, $non_claimable) {
+			$item = BillItem::where('encounter_id', $encounter_id)
+						->where('product_code', $order->product_code)
+						->first();
+
+			if (empty($item)) {
+					/** New Item **/
+					$item = new BillItem();
+					$item->encounter_id = $encounter_id;
+					$item->product_code = $order->product_code;
+					$item->bill_name = $order->product->product_name;
+					if ($order->order_is_discharge == 1 && $order->category_code == 'drugs') {
+							$item->bill_name = $order->product_name . " (Take Home)";
+					}
+					$item->tax_code = $order->tax_code;
+					$item->tax_rate = $order->tax_rate;
+					$item->bill_quantity = $order->order_quantity_supply?:0;
+
+			} else {
+					/** Update item **/
+					$item->bill_quantity = $item->bill_quantity+$order->total_quantity;
+			}
+
+
+			if ($item->product->category_code =='drugs') {
+					if (empty($encounter->discharge)) {
+							$item->bill_quantity = $order->total_request;
+					}
+			}
+			$item->bill_unit_code = $order->unit_code;
+			$item->bill_discount = $order->order_discount;
+			$item->bill_markup = $order->order_markup;
+			$item->bill_non_claimable = $non_claimable;
+			$item->bill_unit_price = $this->getPriceTier($encounter_id, $order->product_code, $order->order_unit_price);
+			$item->bill_amount = $item->bill_quantity*$item->bill_unit_price;
+			$item->bill_amount = $item->bill_amount * (1-($item->bill_discount/100));
+			$item->bill_amount = $item->bill_amount * (1+($item->bill_markup/100));
+			$item->bill_amount_exclude_tax = $item->bill_amount;
+
+			if ($order->tax_rate) {
+					$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
+			}
+			$item->save();
+
 	}
 
 	public function minusPackages($encounter_id) 
@@ -635,11 +692,13 @@ class BillItemController extends Controller
 				left join encounters as g on (g.encounter_id=a.encounter_id)
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				left join order_cancellations as k on (k.order_id = a.order_id)
 				where (b.category_code='fee_consultation' or b.category_code = 'consultation' or b.category_code = 'wv')
 				and b.deleted_at is null
 				and h.patient_id = %d
 				and order_multiple=0
 				and bill_id is null
+				and cancel_id is null
 				%s
 				group by a.product_code
 			";
@@ -668,6 +727,8 @@ class BillItemController extends Controller
 					$item->bill_quantity = $order->total_quantity;
 					$item->bill_name = $order->product_name;
 					$item->bill_amount = $order->total_price?:0;
+					Log::info("------");
+					Log::info($order->product_code);
 					$item->bill_unit_price = $order->total_price/$order->total_quantity;
 					$item->bill_amount_exclude_tax = $item->bill_amount;
 					if ($order->tax_rate) {
@@ -826,6 +887,7 @@ class BillItemController extends Controller
 				$non_claimable = 2; // Cash
 			}
 
+			Log::info("--->".$non_claimable);
 			$bills = DB::table('bill_items as a')
 					->select('bill_id','a.encounter_id','a.product_code','product_name','a.tax_code','a.tax_rate','bill_discount','bill_quantity','bill_unit_price','bill_amount','bill_amount_exclude_tax','bill_exempted', 'product_non_claimable','category_name','b.category_code', 'unit_name', 'bill_markup', 'bill_name')
 					->leftjoin('products as b','b.product_code', '=', 'a.product_code')
@@ -991,13 +1053,21 @@ class BillItemController extends Controller
 
 			$total_payable = DojoUtility::roundUp($bill_grand_total);
 
-			if (empty($encounter->bill)) {
-					$billFooter = BillTotal::where('encounter_id', $id);
+			// Bill Footer 
+			$posted_bill = Bill::where('encounter_id', '=', $id)
+					->where('bill_non_claimable', '=', $non_claimable)
+					->first();
+
+			if (empty($postedBill)) {
+					$billFooter = BillTotal::where('encounter_id', $id)
+							->where('bill_non_claimable', $non_claimable)
+							->first();
 					if ($billFooter) {
 							$billFooter->delete();
 					}
 					$billFooter = new BillTotal();
 					$billFooter->encounter_id = $id;
+					$billFooter->bill_non_claimable = $non_claimable;
 					$billFooter->bill_total = $bill_total;
 					$billFooter->bill_deposit = $deposit_total;
 					$billFooter->bill_total_after_discount = $bill_total_after_discount;
@@ -1005,15 +1075,14 @@ class BillItemController extends Controller
 					$billFooter->bill_total_payable = $total_payable;
 					$billFooter->save();
 			} else {
-					$billFooter = BillTotal::where('encounter_id', $id)->first();
 					$total_payable = $billFooter->bill_total_payable;
 			}
 
-			if (!empty($encounter->bill)) {
-					$bill_total = $encounter->bill->bill_total;
-					$bill_total_after_discount = $encounter->bill->bill_total_after_discount?:$bill_total;
-					$bill_grand_total = $encounter->bill->bill_grand_total;
-					$total_payable = DojoUtility::roundUp($encounter->bill->bill_grand_total);
+			if (!empty($posted_bill)) {
+					$bill_total = $posted_bill->bill_total;
+					$bill_total_after_discount = $posted_bill->bill_total_after_discount?:$bill_total;
+					$bill_grand_total = $posted_bill->bill_grand_total;
+					$total_payable = DojoUtility::roundUp($posted_bill->bill_grand_total);
 			}
 
 			//$helper = new OrderHelper();

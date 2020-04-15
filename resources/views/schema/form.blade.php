@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 
 <h3>{{ $table }}</h3>
 
@@ -115,4 +112,3 @@
 
 	$('.clockpicker').clockpicker();
 	</script>
-@endsection

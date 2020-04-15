@@ -157,7 +157,10 @@ class OrderMaintenanceController extends Controller
 					->paginate($this->paginateValue);
 
 			return view('order_maintenances.index', [
-					'orders'=>$orders
+					'orders'=>$orders,
+					'encounter_id'=>null,
+					'order_id'=>$id,
+					'product_code'=>null,
 			]);
 	}
 }

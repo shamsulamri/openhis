@@ -14,6 +14,7 @@ class BillTotal extends Model
 	protected $table = 'bill_totals';
 	protected $fillable = [
 				'encounter_id',
+				'bill_non_claimable',
 				'bill_total',
 				'bill_deposit',
 				'bill_total_after_discount',

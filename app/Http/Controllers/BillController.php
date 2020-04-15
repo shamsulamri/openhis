@@ -20,6 +20,10 @@ use App\Sponsor;
 use App\BillAging;
 use App\BillHelper;
 use App\EncounterType;
+use App\Order;
+use App\StockHelper;
+use App\Inventory;
+use App\ProductUom;
 
 class BillController extends Controller
 {
@@ -75,6 +79,7 @@ class BillController extends Controller
 							$bill_helper = new BillHelper();
 							$encounter->bill_status = $bill_helper->billStatus($encounter->encounter_id);
 							$encounter->save();
+							$this->addSales($bill->encounter_id);	
 							return view('bills.post', [
 									'patient'=>$encounter->patient,
 									'encounter'=>$encounter,
@@ -85,6 +90,96 @@ class BillController extends Controller
 							->withErrors($valid)
 							->withInput();
 			}
+	}
+
+	public function addSales($id) {
+			$ids = Order::select("order_id")
+						->where('encounter_id', $id)
+						->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
+						->where('product_drop_charge', '1')
+						->pluck("order_id");
+
+			$orders = Order::whereIn('order_id', $ids)->get();
+
+			foreach ($orders as $order) {
+
+					Log::info("-------->");
+					Log::info($order);
+					$helper = new StockHelper();
+					$batches = $helper->getBatches($order->product_code)?:null;
+
+					if ($batches->count()>0) {
+							$total_supply = 0;
+							foreach($batches as $batch) {
+									if ($batch->batch()) {
+											$unit_supply = $order->order_quantity_supply;
+											if ($unit_supply>0) {
+													$total_supply = $total_supply + $unit_supply;
+
+													$uom = $this->getUOM($order);
+
+													$inventory = new Inventory();
+													$inventory->order_id = $order->order_id;
+													$inventory->store_code = $order->store_code;
+													$inventory->product_code = $order->product_code;
+													$inventory->unit_code = $order->unit_code;
+													$inventory->uom_rate =  $uom->uom_rate;
+													$inventory->unit_code = $uom->unit_code;
+													$inventory->inv_unit_cost =  $uom->uom_cost?:0;
+													$inventory->inv_quantity = -($unit_supply*$uom->uom_rate);
+													$inventory->inv_physical_quantity = $unit_supply;
+													$inventory->inv_subtotal =  -($uom->uom_cost*$inventory->inv_physical_quantity);
+													$inventory->move_code = 'sale';
+													$inventory->inv_batch_number = $batch->inv_batch_number;
+													$inventory->inv_posted = 1;
+													$inventory->save();
+													Log::info($inventory);
+											}
+									}
+							}
+					} else {
+							$total_supply = $order->order_quantity_supply?:1;
+
+							if ($order->product->product_stocked==1) {
+
+									$uom = $this->getUOM($order);
+
+									$inventory = new Inventory();
+									$inventory->order_id = $order->order_id;
+									$inventory->store_code = $order->store_code;
+									$inventory->product_code = $order->product_code;
+									$inventory->unit_code = $order->unit_code;
+									$inventory->uom_rate =  $uom->uom_rate;
+									$inventory->inv_unit_cost =  $uom->uom_cost?:0;
+									$inventory->inv_quantity = -($total_supply*$uom->uom_rate);
+									$inventory->inv_physical_quantity = $total_supply;
+									$inventory->inv_subtotal =  $uom->uom_cost*$inventory->inv_physical_quantity;
+									$inventory->move_code = 'sale';
+									$inventory->inv_posted = 1;
+									$inventory->save();
+									Log::info($inventory);
+							}
+					}
+			}
+
+
+			return $orders;
+
+	}
+
+	public function getUOM($order) {
+			$uom = null;
+			$uom = ProductUom::where('product_code', $order->product_code)
+					->where('uom_default_price', 1)
+					->first();
+
+			if (empty($uom)) {
+					$uom = productuom::where('product_code', $order->product_code)
+							->where('unit_code', $order->unit_code)
+							->first();
+			}
+
+			return $uom;
 	}
 
 	public function edit($id) 

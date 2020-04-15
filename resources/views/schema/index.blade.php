@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <h1>Index
 <a href='/schema/form/{{ $table }}' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
@@ -12,8 +9,7 @@
 		</span>
 	</div>
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">
-</form>
-<br>
+</form> <br>
 
 @if ($records->total()>0)
 <table class="table table-hover">
@@ -54,4 +50,3 @@
 @else
 	No record found.
 @endif
-@endsection

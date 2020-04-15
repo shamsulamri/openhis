@@ -94,7 +94,7 @@ $allocated=0;
 			</td>
 			<td>
 				<div align='center'>
-				{{ $product->unit_shortname }}
+				{{ $product->unit_name }}
 				</div>
 			</td>
 			<td align='right'>

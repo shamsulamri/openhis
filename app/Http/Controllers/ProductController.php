@@ -497,7 +497,7 @@ class ProductController extends Controller
 	{
 			$sql = "
 				select a.product_code, product_name, store_name, sum(inv_quantity) as on_hand, sum(inv_subtotal) as total_cost,
-					 sum(inv_subtotal)/sum(inv_quantity) as average_cost, IFNULL(allocated, 0) as allocated ,sum(inv_quantity)-IFNULL(allocated,0) as available, unit_shortname, inv_batch_number, batch_expiry_date, a.store_code
+					 sum(inv_subtotal)/sum(inv_quantity) as average_cost, IFNULL(allocated, 0) as allocated ,sum(inv_quantity)-IFNULL(allocated,0) as available, unit_shortname, inv_batch_number, batch_expiry_date, a.store_code, unit_name
 				from inventories a
 				left join products as b on (a.product_code = b.product_code)
 				left join stores as c on (c.store_code = a.store_code)

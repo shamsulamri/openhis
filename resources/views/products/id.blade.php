@@ -31,6 +31,9 @@
 		<a class='btn btn-default' href='{{ URL::to('explode_assembly/'. $product->product_code) }}'>
 			<span class='glyphicon glyphicon-fire' aria-hidden='true'></span><br>Explode<br>Assembly
 		</a>
+		<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=product_barcode&productCode={{ $product->product_code }}" role="button" target="_blank">
+			<span class='glyphicon glyphicon-barcode' aria-hidden='true'></span><br>Print<br>Barcode
+		</a>
 		<!--
 		<a class='btn btn-default' href='{{ URL::to('product_maintenances/'. $product->product_code) }}'>
 			<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span><br>Product<br>Maintenance

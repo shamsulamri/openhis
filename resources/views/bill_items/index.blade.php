@@ -25,7 +25,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 @endif
 
 @if (!empty($encounter->sponsor_code))
-	@if ($non_claimable_amount>0 && $claimable_amount>0 && count($encounter->bill)==1)
+	@if ($non_claimable_amount>0 && $claimable_amount>0 && count($encounter->bills)==1)
 			<div class='alert alert-danger'>
 			You have unposted bill.
 			</div>

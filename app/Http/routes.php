@@ -26,7 +26,7 @@
 Route::group(['middleware' => ['web','input_sanitizer_middleware']], function () {
 		Route::auth();
 
-		Route::get('/test/{id}', 'TestController@consultation');
+		Route::get('/test/{id}', 'BillController@addSales');
 
 		Route::get('/home', function() {
 				//return view('welcome');
@@ -1614,7 +1614,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/users/delete/{id}', 'UserController@delete');
 
 				Route::resource('order_maintenances', 'OrderMaintenanceController');
-				Route::get('/order_maintenances/id/{race_code}', 'OrderMaintenanceController@searchById');
+				Route::get('/order_maintenances/id/{id}', 'OrderMaintenanceController@searchById');
 				Route::post('/order_maintenance/search', 'OrderMaintenanceController@search');
 				Route::get('/order_maintenance/search', 'OrderMaintenanceController@search');
 				Route::get('/order_maintenances/delete/{id}', 'OrderMaintenanceController@delete');

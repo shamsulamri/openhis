@@ -25,6 +25,7 @@ class EncounterType extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'encounter_name'=>'required',
+				'encounter_bill_prefix'=>'required',
 			];
 
 			

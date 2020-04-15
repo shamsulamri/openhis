@@ -49,12 +49,13 @@ class Newborn extends Model
 				'encounter_id'=>'required',
 				'gender_code'=>'required',
 				'delivery_code'=>'required',
+			];
+			
+			/*
 				'newborn_weight'=>'required',
 				'newborn_length'=>'required',
 				'newborn_head_circumferance'=>'required',
-			];
-
-			
+			*/
 			
 			$messages = [
 				'required' => 'This field is required'
