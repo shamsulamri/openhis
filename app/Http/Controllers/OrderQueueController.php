@@ -435,7 +435,8 @@ class OrderQueueController extends Controller
 
 					$order_queues = $order_queues->where(function ($query) use ($request) {
 							$query->where('patient_mrn','like','%'.$request->search.'%')
-								->orWhere('patient_name', 'like','%'.$request->search.'%');
+								->orWhere('patient_name', 'like','%'.$request->search.'%')
+								->orWhere('orders.encounter_id', 'like','%'.$request->search.'%');
 					});
 			}
 

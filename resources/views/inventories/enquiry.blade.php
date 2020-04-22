@@ -47,6 +47,7 @@
     <th>Store</th>
     <th>Batch</th>
     <th><div align='right'>Quantity</div></th> 
+    <th><div align='right'>Unit</div></th> 
     <th><div align='right'>Unit Cost</div></th> 
     <th><div align='right'>Total</div></th> 
 	</tr>
@@ -85,6 +86,9 @@
 			</td>
 			<td align='right'>
 					{{ $inventory->inv_quantity }}
+			</td>
+			<td align='right'>
+					{{ $inventory->unit_name }}
 			</td>
 			<td align='right'>
 					{{ number_format(abs($inventory->inv_unit_cost),2) }}

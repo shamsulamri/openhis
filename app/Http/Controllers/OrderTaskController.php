@@ -504,6 +504,7 @@ class OrderTaskController extends Controller
 												$inventory->inv_batch_number = $batch->inv_batch_number;
 												$inventory->inv_posted = 1;
 												$inventory->save();
+												Log::info("wwwwwwwwwwwwwwwwwwwwwwwwwwww");
 										}
 									}
 								}
@@ -531,6 +532,7 @@ class OrderTaskController extends Controller
 									$inventory->move_code = 'sale';
 									$inventory->inv_posted = 1;
 									$inventory->save();
+									Log::info("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
 							}
 						}
 

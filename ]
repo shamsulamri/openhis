@@ -92,53 +92,24 @@ class BillController extends Controller
 			}
 	}
 
-	public function updateInvDatetime() {
-			ini_set('max_execution_time', 500);
-			set_time_limit(500);
-
-			$invs = Inventory::select('inv_id', 'b.created_at')
-					->leftjoin('orders as b', 'b.order_id', '=', 'inventories.order_id')
-					//->where('inventories.product_code', '201744')
-					->where('move_code', 'sale')
-					->where('inv_drop_charge', 1)
-					//->where('encounter_id', 7047)
-					->get();
-
-			foreach($invs as $inv) {
-
-				Inventory::where('inv_id', $inv->inv_id)->update(['inv_datetime'=>$inv->created_at]);
-				Log::info($inv);
-			}
-
-			return "Ok...";
-	}
-	
 	public function fixDropChargeSales() {
 
-			// Steps
-			// 1 - test2
-			// 2 - test3
-			//
-			
-			ini_set('max_execution_time', 500);
-			set_time_limit(500);
+			ini_set('max_execution_time', 300);
+			set_time_limit(300);
 
 			$ids = Order::distinct("orders.encounter_id")
 						->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
 						->leftjoin('inventories as c', 'c.order_id', '=', 'orders.order_id')
 						->where('product_drop_charge', '1')
 						->where('product_stocked', '1')
-						->where('b.category_code', 'drugs')
+						->where('b.category_code', 'consumable')
 						->whereNull('c.order_id')
-						//->where('orders.product_code', '201744')
-						->where('encounter_id', '7086')
-						->orderBy('encounter_id')
 						->pluck("encounter_id");
 
+			$this->addSales(7047);
+			return "QED";
 			foreach($ids as $id) {
-				Log::info("-------->");
 				Log::info($id);
-				Log::info("-------->");
 				$this->addSales($id);
 			}
 
@@ -153,7 +124,7 @@ class BillController extends Controller
 						->leftjoin('inventories as c', 'c.order_id', '=', 'orders.order_id')
 						->where('product_drop_charge', '1')
 						->where('product_stocked', '1')
-						->where('b.category_code', 'drugs')
+						->where('b.category_code', 'consumable')
 						->whereNull('c.order_id')
 						->pluck("orders.order_id");
 
@@ -161,10 +132,10 @@ class BillController extends Controller
 
 			foreach ($orders as $order) {
 
-					Log::info("-------->");
-					Log::info("order id: ".$order->product->product_name);
+					//Log::info("-------->");
+					//Log::info($order->product_code);
 					$helper = new StockHelper();
-					$batches = $helper->getBatches($order->product_code, $order->order_id)?:null;
+					$batches = $helper->getBatches($order->product_code)?:null;
 
 					if ($batches->count()>0) {
 							$total_supply = 0;
@@ -176,10 +147,10 @@ class BillController extends Controller
 
 													$uom = $this->getUOM($order);
 													if (empty($uom)) {
-															$uom_cost = 0;
+															$uom_cost = 1;
 															$uom_rate = 1;
 													} else {
-															$uom_cost = $uom->uom_cost?:0;
+															$uom_cost = $uom->uom_cost?:1;
 															$uom_rate = $uom->uom_rate?:1;
 													}
 
@@ -210,10 +181,10 @@ class BillController extends Controller
 
 									$uom = $this->getUOM($order);
 									if (empty($uom)) {
-											$uom_cost = 0;
+											$uom_cost = 1;
 											$uom_rate = 1;
 									} else {
-											$uom_cost = $uom->uom_cost?:0;
+											$uom_cost = $uom->uom_cost?:1;
 											$uom_rate = $uom->uom_rate?:1;
 									}
 
@@ -234,6 +205,10 @@ class BillController extends Controller
 							}
 					}
 			}
+
+
+			return $orders;
+
 	}
 
 	public function getUOM($order) {

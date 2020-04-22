@@ -295,8 +295,17 @@ class StockHelper
 							->where('inv_posted', 1)
 							->whereNotNull('inv_batch_number');
 
+			if ($order_id) {
+					$order = Order::find($order_id);
+					if ($order->product->product_local_store==1) {
+							$store_code = $order->store_code;
+					}
+					$batches = $batches->where('inventories.created_at', '<', $order->created_at)
+								->where('inventories.unit_code', '=', $order->unit_code);
+			}
+
 			if ($store_code) {
-				$batches = $batches->where('store_code', $store_code);
+				$batches = $batches->where('inventories.store_code', $store_code);
 			}
 
 			$batches = $batches->get();

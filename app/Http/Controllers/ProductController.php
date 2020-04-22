@@ -540,7 +540,7 @@ class ProductController extends Controller
 				$sql = $sql." and batch_expiry_date < '".$expiry_date."'";
 			}
 
-			$sql = $sql." group by a.store_code, product_code, inv_batch_number";
+			$sql = $sql." group by a.store_code, product_code, a.unit_code, inv_batch_number";
 
 			if (!empty($request->expire_days)) {
 				$sql = $sql." order by batch_expiry_date desc";

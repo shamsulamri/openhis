@@ -282,13 +282,14 @@ class InventoryController extends Controller
 
 	public function enquiry(Request $request)
 	{
-			$inventories = Inventory::orderBy('inv_id', 'desc')
-							->select('inv_datetime', 'b.product_code', 'b.product_name', 'c.move_name', 'inventories.move_description', 'inv_batch_number', 'inv_quantity', 'store_name', 'inv_subtotal', 'inv_unit_cost', 'encounter_id', 'c.move_code')
+			$inventories = Inventory::orderBy('inv_datetime', 'desc')
+							->select('inv_datetime', 'b.product_code', 'b.product_name', 'c.move_name', 'inventories.move_description', 'inv_batch_number', 'inv_quantity', 'store_name', 'inv_subtotal', 'inv_unit_cost', 'encounter_id', 'c.move_code', 'unit_name')
 							->leftJoin('products as b', 'b.product_code', '=', 'inventories.product_code')
 							->leftJoin('stock_movements as c', 'c.move_code', '=', 'inventories.move_code')
 							->leftJoin('stores as d', 'd.store_code', '=', 'inventories.store_code')
 							->leftJoin('inventory_movements as e', 'e.move_id', '=', 'inventories.move_id')
 							->leftjoin('orders as f', 'f.order_id', '=', 'inventories.order_id')
+							->leftjoin('ref_unit_measures as g', 'g.unit_code', '=', 'inventories.unit_code')
 							->where('inv_posted', 1);
 
 			/*** Batch ***/
