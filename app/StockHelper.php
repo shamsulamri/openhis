@@ -293,19 +293,22 @@ class StockHelper
 							->havingRaw('sum(inv_quantity)>?',[0])
 							->whereNotNull('batch_id')
 							->where('inv_posted', 1)
+							->whereNull('b.deleted_at')
 							->whereNotNull('inv_batch_number');
 
 			if ($order_id) {
+
 					$order = Order::find($order_id);
+
 					if ($order->product->product_local_store==1) {
 							$store_code = $order->store_code;
 					}
-					$batches = $batches->where('inventories.created_at', '<', $order->created_at)
-								->where('inventories.unit_code', '=', $order->unit_code);
+					$batches = $batches->where('inventories.created_at', '<', $order->created_at);
+								//->where('inventories.unit_code', '=', $order->unit_code);
 			}
 
 			if ($store_code) {
-				$batches = $batches->where('inventories.store_code', $store_code);
+				$batches = $batches->where('b.store_code', $store_code);
 			}
 
 			$batches = $batches->get();

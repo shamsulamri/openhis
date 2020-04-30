@@ -88,6 +88,9 @@
 					{{ $inventory->inv_quantity }}
 			</td>
 			<td align='right'>
+				@if ($inventory->inv_physical_quantity != $inventory->inv_quantity && $inventory->inv_quantity>0)
+					{{ $inventory->inv_physical_quantity }}	
+				@endif
 					{{ $inventory->unit_name }}
 			</td>
 			<td align='right'>

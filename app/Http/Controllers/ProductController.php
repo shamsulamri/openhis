@@ -512,7 +512,7 @@ class ProductController extends Controller
 						group by store_code, product_code
 				) as d on (d.store_code = a.store_code and d.product_code = a.product_code)
 				left join ref_unit_measures as e on (e.unit_code = a.unit_code)
-				left join inventory_batches as f on (f.batch_number = a.inv_batch_number)
+				left join inventory_batches as f on (f.batch_number = a.inv_batch_number and f.deleted_at is null)
 				where inv_posted = 1
 			";
 
@@ -540,7 +540,7 @@ class ProductController extends Controller
 				$sql = $sql." and batch_expiry_date < '".$expiry_date."'";
 			}
 
-			$sql = $sql." group by a.store_code, product_code, a.unit_code, inv_batch_number";
+			$sql = $sql." group by a.store_code, product_code, inv_batch_number";
 
 			if (!empty($request->expire_days)) {
 				$sql = $sql." order by batch_expiry_date desc";
