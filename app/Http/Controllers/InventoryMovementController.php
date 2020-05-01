@@ -319,8 +319,16 @@ class InventoryMovementController extends Controller
 			$documents = InventoryMovement::where('move_posted',1)
 					->where('move_number', 'like','%'.$request->search.'%')
 					->where('store_code', Auth::user()->defaultStore($request?:null))
-					->orderBy('move_id', 'desc')
-					->paginate($this->paginateValue);
+					->orderBy('move_id', 'desc');
+
+			if ($documents->count()==0) {
+					$documents = InventoryMovement::where('move_posted',1)
+							->where('move_number', 'like','%'.$request->search.'%')
+							->where('target_store', Auth::user()->defaultStore($request?:null))
+							->orderBy('move_id', 'desc');
+			}
+
+			$documents = $documents->paginate($this->paginateValue);
 
 			$movement = InventoryMovement::find($request->move_id);
 

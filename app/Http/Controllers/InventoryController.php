@@ -282,7 +282,7 @@ class InventoryController extends Controller
 	public function enquiry(Request $request)
 	{
 			$inventories = Inventory::orderBy('inv_datetime', 'desc')
-							->select('inv_datetime', 'b.product_code', 'b.product_name', 'c.move_name', 'inventories.move_description', 'inv_batch_number', 'inv_quantity', 'store_name', 'inv_subtotal', 'inv_unit_cost', 'encounter_id', 'c.move_code', 'unit_name', 'inv_physical_quantity')
+							->select('inv_datetime', 'b.product_code', 'b.product_name', 'c.move_name', 'inventories.move_description', 'inv_batch_number', 'inv_quantity', 'store_name', 'inv_subtotal', 'inv_unit_cost', 'encounter_id', 'c.move_code', 'unit_name', 'inv_physical_quantity', 'inventories.unit_code', 'move_number','e.move_id')
 							->leftJoin('products as b', 'b.product_code', '=', 'inventories.product_code')
 							->leftJoin('stock_movements as c', 'c.move_code', '=', 'inventories.move_code')
 							->leftJoin('stores as d', 'd.store_code', '=', 'inventories.store_code')

@@ -42,6 +42,7 @@
 	<tr> 
     <th>Date</th> 
     <th>Movement</th>
+    <th>Number</th>
     <th>Code</th>
     <th>Product</th>
     <th>Store</th>
@@ -71,6 +72,11 @@
 				@endif
 			</td>
 			<td>
+				<a href = '{{ URL::to('inventory_movements/show/'.$inventory->move_id) }}'>
+				{{ $inventory->move_number }}
+				</a>
+			</td>
+			<td>
 				{{ $inventory->product_code }}
 			</td>
 			<td>
@@ -85,10 +91,14 @@
 					{{ $inventory->inv_batch_number?:'-' }}
 			</td>
 			<td align='right'>
-					{{ $inventory->inv_quantity }}
+			@if ($inventory->inv_quantity<0)
+					({{ abs($inventory->inv_quantity) }})
+			@else
+					{{ abs($inventory->inv_quantity) }}
+			@endif
 			</td>
 			<td align='right'>
-				@if ($inventory->inv_physical_quantity != $inventory->inv_quantity && $inventory->inv_quantity>0)
+				@if ($inventory->unit_code != 'unit' && $inventory->move_code != 'sale')
 					{{ $inventory->inv_physical_quantity }}	
 				@endif
 					{{ $inventory->unit_name }}
