@@ -308,7 +308,7 @@ class StockHelper
 			}
 
 			if ($store_code) {
-				$batches = $batches->where('b.store_code', $store_code);
+				$batches = $batches->where('store_code', $store_code);
 			}
 
 			$batches = $batches->get();

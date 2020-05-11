@@ -45,10 +45,6 @@
 				</a>
 			@can('system-administrator')
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('deposits/delete/'. $deposit->deposit_id) }}'>Delete</a>
-			@else
-				@if (empty($deposit->encounter_id))
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('deposits/delete/'. $deposit->deposit_id) }}'>Delete</a>
-				@endif
 			@endcan
 			</td>
 	</tr>

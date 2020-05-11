@@ -482,6 +482,7 @@ class OrderHelper
 
 	public static function dropCharge($consultation_id) 
 	{
+
 		$orders = Order::where('consultation_id',$consultation_id)
 					->leftJoin('products as c', 'c.product_code', '=', 'orders.product_code')
 					->where('product_duration_use', '=',0)
@@ -529,6 +530,7 @@ class OrderHelper
 						$batches = $stock_helper->getBatches($order->product_code, null, $order->store_code)?:null;
 
 						if ($batches->count()>0) {
+							Log::info("@@@@@@@@@@@@@@@@@@@@@@@@@@");
 							$quantity_request = $order->order_quantity_request;
 							foreach ($batches as $batch) {
 									$supply = 0;
@@ -543,6 +545,7 @@ class OrderHelper
 									//self::addToInventory($order, $batch->inv_batch_number);
 							}
 						} else {
+							Log::info("==============================");
 							//self::addToInventory($order);
 						}
 
@@ -617,7 +620,12 @@ class OrderHelper
 								$product = $bom->product;
 								$order_id = $order_helper->orderItem($product, null);
 								$bom_order = Order::find($order_id);
+								Log::info($order_id);
+								Log::info("-----------");
+								Log::info($order->product->product_name);
+								Log::info($product->product_name);
 								$bom_order->order_quantity_request = $bom->bom_quantity*$order->order_quantity_request;
+								Log::info("-----------");
 								$bom_order->order_quantity_supply = $bom_order->order_quantity_request;
 								$bomUnitPrice = $bom->unitPrice($bom->bom_product_code, $bom->unit_code);
 								if (!empty($bomUnitPrice)) {

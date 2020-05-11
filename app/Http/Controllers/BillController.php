@@ -79,7 +79,7 @@ class BillController extends Controller
 							$bill_helper = new BillHelper();
 							$encounter->bill_status = $bill_helper->billStatus($encounter->encounter_id);
 							$encounter->save();
-							$this->addSales($bill->encounter_id);	
+							$this->addDropchargeSales($bill->encounter_id);	
 							return view('bills.post', [
 									'patient'=>$encounter->patient,
 									'encounter'=>$encounter,
@@ -139,14 +139,14 @@ class BillController extends Controller
 				Log::info("-------->");
 				Log::info($id);
 				Log::info("-------->");
-				$this->addSales($id);
+				$this->addDropchargeSales($id);
 			}
 
 			return "Ok";
 		
 	}
 
-	public function addSales($id) {
+	public function addDropchargeSales($id) {
 			$ids = Order::select("orders.order_id")
 						->where('encounter_id', $id)
 						->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
