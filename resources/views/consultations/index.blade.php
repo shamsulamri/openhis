@@ -53,6 +53,10 @@
 					@else
 							<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Open</a>
 					@endif
+
+					@if ($consultation->discharge)
+							<a class='btn btn-default btn-xs' href='{{ URL::to('discharge/summary/'. $consultation->discharge->discharge_id) }}'>Summary</a>
+					@endif
 			</td>
 	</tr>
 @endforeach

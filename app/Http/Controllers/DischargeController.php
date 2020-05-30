@@ -262,6 +262,7 @@ class DischargeController extends Controller
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/consultations');
 			} else {
+					return $valid->errors();
 					return view('discharges.edit', [
 							'discharge'=>$discharge,
 					'type' => Type::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
@@ -487,5 +488,34 @@ class DischargeController extends Controller
 					'patient_types' => PatientType::all()->sortBy('type_name')->lists('type_name', 'type_code')->prepend('',''),
 					'type_code' => $request->type_code,
 					]);
+	}
+
+	public function summary($id)
+	{
+		$discharge = Discharge::findOrFail($id);
+		return view('discharges.summary', [
+			'discharge'=>$discharge,
+			'patient' => $discharge->encounter->patient,
+		]);
+	}
+
+	public function update_summary(Request $request, $id) 
+	{
+			$discharge = Discharge::findOrFail($id);
+			$discharge->fill($request->input());
+
+			$valid = $discharge->validate($request->all(), $request->_method);	
+
+			if ($valid->passes()) {
+					return $discharge;
+					$discharge->save();
+					Session::flash('message', 'Record successfully updated.');
+					return redirect('/consultations');
+			} else {
+					return $valid->errors();
+					return redirect('/discharge/summary/'.$id)
+							->withErrors($valid)			
+							->withInput();
+			}
 	}
 }

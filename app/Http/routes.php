@@ -1016,11 +1016,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 		Route::group(['middleware' => 'consultation'], function () {
 
+				Route::post('/discharge/update_summary/{id}', 'DischargeController@update_summary');
 				Route::get('/discharges/ward/{id}', 'DischargeController@ward');
 				Route::resource('discharges', 'DischargeController', ['except'=>['index','show']]);
 				Route::get('/discharges/create', 'DischargeController@create');
 				Route::get('/discharges/id/{id}', 'DischargeController@searchById');
 				Route::get('/discharges/delete/{id}', 'DischargeController@delete');
+				Route::get('/discharge/summary/{id}', 'DischargeController@summary');
 
 				Route::resource('patient_lists', 'PatientListController');
 				Route::get('/patient_lists/id/{id}', 'PatientListController@searchById');

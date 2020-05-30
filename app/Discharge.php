@@ -27,15 +27,16 @@ class Discharge extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-				'consultation_id'=>'required',
-				'encounter_id'=>'required',
-				'type_code'=>'required',
 				'discharge_date'=>'size:10|date_format:d/m/Y',
-				'user_id'=>'required',
 			];
+			
+        	if ($method=='') {
+				$rules['consultation_id'] = 'required';
+				$rules['encounter_id'] = 'required';
+				$rules['type_code'] = 'required';
+				$rules['user_id'] = 'required';
+			}
 
-			
-			
 			$messages = [
 				'required' => 'This field is required'
 			];

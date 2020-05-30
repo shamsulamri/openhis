@@ -23,6 +23,8 @@ class Supplier extends Model
 				'supplier_country',
 				'supplier_phone',
 				'supplier_person',
+				'supplier_email',
+				'supplier_fax',
 				'supplier_account'];
 	
     	protected $guarded = ['supplier_code'];

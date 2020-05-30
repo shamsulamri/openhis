@@ -136,11 +136,28 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('supplier_fax')) has-error @endif'>
+        {{ Form::label('supplier_fax', 'Fax Number',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('supplier_fax', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
+            @if ($errors->has('supplier_fax')) <p class="help-block">{{ $errors->first('supplier_fax') }}</p> @endif
+        </div>
+    </div>
+
+
     <div class='form-group  @if ($errors->has('supplier_person')) has-error @endif'>
         {{ Form::label('supplier_person', 'Contact Person',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::text('supplier_person', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
             @if ($errors->has('supplier_person')) <p class="help-block">{{ $errors->first('supplier_person') }}</p> @endif
+        </div>
+    </div>
+
+    <div class='form-group  @if ($errors->has('supplier_email')) has-error @endif'>
+        {{ Form::label('supplier_email', 'Email',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('supplier_email', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'200']) }}
+            @if ($errors->has('supplier_email')) <p class="help-block">{{ $errors->first('supplier_email') }}</p> @endif
         </div>
     </div>
 

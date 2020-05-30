@@ -53,6 +53,11 @@ class Consultation extends Model
 			return $this->belongsTo('App\Encounter', 'encounter_id', 'encounter_id');
 	}
 
+	public function discharge()
+	{
+			return $this->hasOne('App\Discharge', 'consultation_id', 'consultation_id');
+	}
+
  	public function user()
 	{
 			return $this->hasOne('App\User','id','user_id');
