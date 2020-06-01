@@ -431,6 +431,7 @@ class OrderController extends Controller
 
 	public function removeOrder(Request $request) 
 	{
+			Log::info("Remove order....");
 			$product_code = $request->product_code;
 			$encounter_id = Session::get('encounter_id');
 			$consultation_id = Session::get('consultation_id');
@@ -643,7 +644,7 @@ class OrderController extends Controller
 					'consultation'=>$consultation,
 					'patient'=>$encounter->patient,
 					'encounter'=>$encounter,
-					'plan'=>null,
+					'plan'=>'procedure',
 			]);
 	}
 
@@ -662,7 +663,7 @@ class OrderController extends Controller
 					'medications'=>$medications,
 					'patient'=>$consultation->encounter->patient,
 					'consultation'=>$consultation,
-					'plan'=>null,
+					'plan'=>'medication',
 			]);
 	}
 
@@ -675,7 +676,7 @@ class OrderController extends Controller
 					'consultation'=>$consultation,
 					'patient'=>$encounter->patient,
 					'encounter'=>$encounter,
-					'plan'=>null,
+					'plan'=>'discussion',
 			]);
 	}
 
@@ -741,7 +742,7 @@ class OrderController extends Controller
 					'encounter'=>$encounter,
 					'tab'=>'order',
 					'consultOption' => 'consultation',
-					'plan'=>null,
+					'plan'=>'order',
 			]);
 	}
 

@@ -12,6 +12,10 @@ class BillHelper
 
 	public function paymentOutstanding($patient_id, $encounter_id, $non_claimable) 
 	{
+			Log::info("--------------");
+			Log::info($patient_id);
+			Log::info($encounter_id);
+			Log::info($non_claimable);
 			$bill_grand_total = DB::table('bill_items')
 					->where('encounter_id','=', $encounter_id);
 
@@ -40,6 +44,8 @@ class BillHelper
 					->where('encounter_id','=', $encounter_id)
 					->where('payment_non_claimable', '=', $non_claimable)
 					->sum('payment_amount');
+
+			Log::info($payment_total);
 			
 			$deposit_total = DB::table('deposits as a')
 					->leftjoin('encounters as b', 'a.encounter_id','=','b.encounter_id')

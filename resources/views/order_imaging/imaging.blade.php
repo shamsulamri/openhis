@@ -15,18 +15,11 @@ select {
 @endcan
 @endif
 
-<ul class="nav nav-tabs">
-  <li @if ($plan=='laboratory') class="active" @endif><a href="/orders/plan?plan=laboratory">Laboratory</a></li>
-  <li @if ($plan=='imaging') class="active" @endif><a href="/imaging">Imaging</a></li>
-  <li><a href="/orders/procedure">Procedures</a></li>
-  <li><a href="/orders/medication">Medications</a></li>
-  <li @if ($plan=='fee_consultant') class="active" @endif><a href="/orders/plan?plan=fee_consultant">Fees</a></li>
-  <li><a href="/orders/discussion">Discussion</a></li>
-  <li><a href="/orders/make">Orders</a></li>
-</ul>
-<br>
+@include('orders.tab')
 
-
+@if ($consultation->encounter->bill)
+		@include('orders.order_stop')
+@else
 <form id='form' action='/imaging' method='post' class='form-horizontal'>
 
 <table style="width:100%">
@@ -114,6 +107,7 @@ select {
 <br>
 @endforeach
 </table>
+@endif
 @endif
 <script>
 	var addButton = document.getElementById('add');

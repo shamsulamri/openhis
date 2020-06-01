@@ -21,7 +21,9 @@
 			<div align="right" class="col-xs-8">
 @if (Auth::user()->author_id == 5)
 					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=order_labels&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
- Lab Label</a>
+ Order Label</a>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_lab&id={{ $encounter->patient_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+ Patient Label</a>
 @endif
 @if (Auth::user()->author_id == 15)
 					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=request_form&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>

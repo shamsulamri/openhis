@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Payment;
 use App\PaymentMethod;
 use App\PaymentCredit;
+use App\PaymentPayor;
 use App\Patient;
 use Log;
 use DB;
@@ -18,6 +19,7 @@ use App\Encounter;
 use App\BillHelper;
 use App\CreditCard;
 use App\Nation;
+use App\State;
 use App\Sponsor;
 use App\DojoUtility;
 use App\User;
@@ -122,8 +124,11 @@ class PaymentController extends Controller
 					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					'discharges' => $discharges,
 					'credit' => new PaymentCredit(),
+					'payor' => new PaymentPayor(),
 					'non_claimable' => $non_claimable,
 					'bills' => $bills,
+					'is_edit'=>false,
+					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
 					]);
 	}
 
@@ -131,14 +136,25 @@ class PaymentController extends Controller
 	{
 
 			$payment_credit = new PaymentCredit();
-			$valid = $payment_credit->validate($request->all(), $request->_method);
-
+			$payment_payor = new PaymentPayor();
 
 			if ($request->payment_code=='credit_card') {
+					$valid = $payment_credit->validate($request->all(), $request->_method);
 					if ($valid->passes()) {
 							$payment_credit = new PaymentCredit($request->all());
 					} else {
-							return redirect('/payments/create/'.$request->patient_id.'/'.$request->encounter_id)
+							return redirect('/payments/create/'.$request->patient_id.'/'.$request->encounter_id.'/'.$request->payment_non_claimable)
+									->withErrors($valid)
+									->withInput();
+					}
+			}
+
+			if ($request->payment_code=='cash') {
+					$valid = $payment_payor->validate($request->all(), $request->_method);
+					if ($valid->passes()) {
+							$payment_payor = new PaymentPayor($request->all());
+					} else {
+							return redirect('/payments/create/'.$request->patient_id.'/'.$request->encounter_id.'/'.$request->payment_non_claimable)
 									->withErrors($valid)
 									->withInput();
 					}
@@ -186,6 +202,14 @@ class PaymentController extends Controller
 				$credit = PaymentCredit::where('payment_id', $id)->first();
 			}
 
+			$payor = new PaymentPayor();
+			if ($payment->payment_code=='cash') {
+				$payor = PaymentPayor::where('encounter_id', $payment->encounter_id)->first();
+				if (empty($payor)) {
+					$payor = new PaymentPayor();
+				}
+			}
+
 			$encounter = Encounter::find($payment->encounter_id);
 
 			$discharges = Discharge::select('discharges.encounter_id', 'discharge_date')
@@ -209,13 +233,16 @@ class PaymentController extends Controller
 					'sponsor' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					'card' => CreditCard::all()->sortBy('card_name')->lists('card_name', 'card_code')->prepend('',''),
 					'nation' => Nation::all()->sortBy('nation_name')->lists('nation_name', 'nation_code')->prepend('',''),
+					'state' => State::all()->sortBy('state_name')->lists('state_name', 'state_code')->prepend('',''),
 					'expiry_months'=>$this->months,
 					'expiry_years'=>$this->years,
 					'credit'=> $credit,
+					'payor'=> $payor,
 					'non_claimable' => $payment->payment_non_claimable,
 					'edit' => true,
 					'discharges' => $discharges,
 					'bills' => $bills,
+					'is_edit'=>true,
 					]);
 	}
 
@@ -233,6 +260,17 @@ class PaymentController extends Controller
 						$payment_credit = PaymentCredit::where('payment_id', $id)->first();
 						$payment_credit->fill($request->input());
 						$payment_credit->save();
+					}
+
+					if ($payment->payment_code=='cash') {
+						$payment_payor = PaymentPayor::where('encounter_id', $payment->encounter_id)->first();
+						if (empty($payment_payor)) {
+							$payment_payor = new PaymentPayor($request->all());
+							$payment_payor->encounter_id = $payment->encounter_id;
+						} else {
+							$payment_payor->fill($request->input());
+						}
+						$payment_payor->save();
 					}
 
 					Session::flash('message', 'Record successfully updated.');
@@ -265,6 +303,13 @@ class PaymentController extends Controller
 	public function destroy($id)
 	{	
 			$payment = Payment::find($id);
+
+			PaymentCredit::where('payment_id', $id)->delete();
+
+			if ($payment->payment_code == 'cash') {
+					PaymentPayor::where('encounter_id', $payment->encounter_id)->delete();
+			}
+
 			Payment::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			if ($payment->encounter_id>0) {

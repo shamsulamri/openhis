@@ -100,7 +100,7 @@ class BillController extends Controller
 					->leftjoin('orders as b', 'b.order_id', '=', 'inventories.order_id')
 					//->where('inventories.product_code', '201744')
 					->where('move_code', 'sale')
-					->where('inv_drop_charge', 1)
+					->where('inv_fix', 1)
 					//->where('encounter_id', 7047)
 					->get();
 
@@ -116,6 +116,7 @@ class BillController extends Controller
 	public function fixDropChargeSales() {
 
 			// Steps
+			// add inv_fix in inventories
 			// 1 - test2
 			// 2 - test3
 			//
@@ -123,22 +124,21 @@ class BillController extends Controller
 			ini_set('max_execution_time', 500);
 			set_time_limit(500);
 
+			Inventory::where('inv_fix',1)->delete();
+
 			$ids = Order::distinct("orders.encounter_id")
 						->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
 						->leftjoin('inventories as c', 'c.order_id', '=', 'orders.order_id')
 						->where('product_drop_charge', '1')
 						->where('product_stocked', '1')
-						->where('b.category_code', 'drugs')
 						->whereNull('c.order_id')
-						//->where('orders.product_code', '201744')
-						->where('encounter_id', '7086')
+						->where('encounter_id', '7047')
 						->orderBy('encounter_id')
 						->pluck("encounter_id");
 
 			foreach($ids as $id) {
 				Log::info("-------->");
 				Log::info($id);
-				Log::info("-------->");
 				$this->addDropchargeSales($id);
 			}
 
@@ -153,7 +153,6 @@ class BillController extends Controller
 						->leftjoin('inventories as c', 'c.order_id', '=', 'orders.order_id')
 						->where('product_drop_charge', '1')
 						->where('product_stocked', '1')
-						->where('b.category_code', 'drugs')
 						->whereNull('c.order_id')
 						->pluck("orders.order_id");
 
@@ -161,8 +160,6 @@ class BillController extends Controller
 
 			foreach ($orders as $order) {
 
-					Log::info("-------->");
-					Log::info("order id: ".$order->product->product_name);
 					$helper = new StockHelper();
 					$batches = $helper->getBatches($order->product_code, $order->order_id)?:null;
 
@@ -198,6 +195,7 @@ class BillController extends Controller
 													$inventory->move_code = 'sale';
 													$inventory->inv_batch_number = $batch->inv_batch_number;
 													$inventory->inv_posted = 1;
+													$inventory->inv_fix = 1;
 													$inventory->save();
 													//Log::info($inventory);
 											}

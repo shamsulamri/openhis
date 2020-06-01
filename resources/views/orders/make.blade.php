@@ -19,6 +19,7 @@ iframe { border: 1px #e5e5e5 solid; }
 		<br>
 @endcannot
 
+<!--
 <ul class="nav nav-tabs">
   <li @if ($plan=='laboratory') class="active" @endif><a href="plan?plan=laboratory">Laboratory</a></li>
   <li @if ($plan=='imaging') class="active" @endif><a href="/imaging">Imaging</a></li>
@@ -29,6 +30,12 @@ iframe { border: 1px #e5e5e5 solid; }
   <li class="active"><a href="make">Orders</a></li>
 </ul>
 <br>
+-->
+
+@include('orders.tab')
+@if ($consultation->encounter->bill)
+		@include('orders.order_stop')
+@else
 <div class="row">
 	<div class="col-xs-6">
 		<iframe name='frameIndex' id='frameIndex' width='100%' height='850px' src='/order_products'></iframe>
@@ -37,6 +44,7 @@ iframe { border: 1px #e5e5e5 solid; }
 		<iframe name='frameDetail' id='frameDetail' width='100%' height='850px' src='/orders'><iframe>
 	</div>
 </div>
+@endif
 
 
 @endsection

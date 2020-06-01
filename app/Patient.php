@@ -456,7 +456,9 @@ class Patient extends Model
 							}
 							$status = "<span class='label label-primary'>".$status."</span>";
 							if (empty($encounter->bill)) {
-								$status.=' ('.$encounter->encounter_description.')';
+								if (!empty($encounter->encounter_description)) {
+										$status.=' ('.$encounter->encounter_description.')';
+								}
 							}
 					} else {
 							if ($encounter->admission) {

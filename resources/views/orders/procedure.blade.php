@@ -11,6 +11,7 @@ iframe { border: 1px #e5e5e5 solid; }
 @endcan
 @endif
 
+<!--
 <ul class="nav nav-tabs">
   <li @if ($plan=='laboratory') class="active" @endif><a href="plan?plan=laboratory">Laboratory</a></li>
   <li @if ($plan=='imaging') class="active" @endif><a href="/imaging">Imaging</a></li>
@@ -21,5 +22,11 @@ iframe { border: 1px #e5e5e5 solid; }
   <li><a href="make">Orders</a></li>
 </ul>
 <br>
-@include('consultation_procedures.procedure')
+-->
+@include('orders.tab')
+@if ($consultation->encounter->bill)
+		@include('orders.order_stop')
+@else
+		@include('consultation_procedures.procedure')
+@endif
 @endsection

@@ -28,9 +28,8 @@ class OrderDrug extends Model
 
 	public function validate($input, $method) {
 			$rules = [
-			];
 
-			
+			];
 			
 			$messages = [
 				'required' => 'This field is required'
@@ -74,7 +73,6 @@ class OrderDrug extends Model
 
 			static::updated(function($orderDrug)
 			{
-					Log::info("Updated!!!!");
 					$drug_label = OrderDrugLabel::where('order_id', $orderDrug->order_id)->first();
 					$drug_label->drug_strength = $orderDrug->drug_strength;
 					$drug_label->unit_code = $orderDrug->unit_code;
@@ -87,10 +85,8 @@ class OrderDrug extends Model
 					$drug_label->save();
 			});
 
-			/**
 			static::created(function($orderDrug)
 			{
-					Log::info("Created!!!!");
 					$drug_label = new OrderDrugLabel();
 					$drug_label->order_id = $orderDrug->order_id;
 					$drug_label->drug_strength = $orderDrug->drug_strength;
@@ -102,8 +98,6 @@ class OrderDrug extends Model
 					$drug_label->drug_duration = $orderDrug->drug_duration;
 					$drug_label->period_code = $orderDrug->period_code;
 					$drug_label->save();
-					Log::info($drug_label);
 			});
-			**/
 	}
 }

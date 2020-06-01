@@ -28,19 +28,20 @@
             {{ Form::label('execute', DojoUtility::dateTimeReadFormat($order_task->consultation->created_at), ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
-	@if (Auth::user()->author_id == 5)
-    <div class='form-group  @if ($errors->has('order_custom_id')) has-error @endif'>
-        {{ Form::label('order_custom_id', 'Custom Id',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('order_custom_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
-            @if ($errors->has('order_custom_id')) <p class="help-block">{{ $errors->first('order_custom_id') }}</p> @endif
-        </div>
-    </div>
-	@endif
     <div class='form-group  @if ($errors->has('order_report')) has-error @endif'>
         {{ Form::label('order_report', 'Report',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::textarea('order_report', null, ['id'=>'order_report','onkeyup'=>'taskCompleted()','class'=>'form-control','placeholder'=>'','rows'=>'25']) }}
+        </div>
+    </div>
+	@endif
+
+	@if (Auth::user()->author_id == 5)
+    <div class='form-group  @if ($errors->has('order_custom_id')) has-error @endif'>
+        {{ Form::label('order_custom_id', 'Lab Number',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('order_custom_id', null, ['class'=>'form-control','placeholder'=>'',]) }}
+            @if ($errors->has('order_custom_id')) <p class="help-block">{{ $errors->first('order_custom_id') }}</p> @endif
         </div>
     </div>
 	@endif

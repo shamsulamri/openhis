@@ -16,6 +16,7 @@
     <th>Date</th>
     <th>Name</th> 
     <th>Room/Bed</th> 
+    <th>Status</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -47,16 +48,19 @@
 						@endif
 					@endif
 			</td>
-			<td align='right'>
-					@if (empty($consultation->bill))
-							<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Edit</a>
+			<td>
+					@if ($consultation->encounter->bill)
+						<span class='label label-secondary'>Bill Closed</span>
 					@else
-							<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Open</a>
+						{!! $consultation->encounter->patient->getCurrentEncounter() !!}
 					@endif
-
+			</td>
+			<td align='right'>
 					@if ($consultation->discharge)
 							<a class='btn btn-default btn-xs' href='{{ URL::to('discharge/summary/'. $consultation->discharge->discharge_id) }}'>Summary</a>
 					@endif
+					<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Open</a>
+
 			</td>
 	</tr>
 @endforeach

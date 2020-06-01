@@ -31,8 +31,6 @@ class Payment extends Model
 				'payment_amount'=>'numeric',
 				'payment_code'=>'required',
 			];
-
-			
 			
 			$messages = [
 				'required' => 'This field is required'

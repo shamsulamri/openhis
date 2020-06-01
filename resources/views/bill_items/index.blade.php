@@ -119,6 +119,9 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 	@can('system-administrator')	
 	<th></th>
 	@endcan
+	@if (!$billPosted)
+	<th></th>
+	@endif
 	</tr>
 </thead>
 	<tbody>
@@ -184,11 +187,11 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 								<span>
 							@endif
 					</td>
+					@if (!$billPosted)
 					<td align='right' width='80'>
-						@if (!$billPosted)
 							<a class='btn btn-danger btn-xs' href='{{ URL::to('bill_items/delete/'. $bill->bill_id) }}'>Delete</a>
-						@endif
 					</td>
+					@endif
 			</tr>
 		@endforeach
 	<tr>
