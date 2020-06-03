@@ -1225,13 +1225,14 @@ class BillItemController extends Controller
 			return redirect('/bill_items/'.$bill->encounter_id);
 	}
 	
-	public function reload($id)
+	public function reload(Request $request, $id)
 	{
 		//$bill = BillItem::where('encounter_id','=',$id)->first();
 		$encounter = Encounter::find($id);
 		return view('bill_items.reload', [
 			'patient'=>$encounter->patient,
 			'encounter'=>$encounter,
+			'lock'=>$request->lock,
 			]);
 
 	}

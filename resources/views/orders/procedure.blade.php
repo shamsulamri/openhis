@@ -24,7 +24,7 @@ iframe { border: 1px #e5e5e5 solid; }
 <br>
 -->
 @include('orders.tab')
-@if ($consultation->encounter->bill)
+@if ($consultation->encounter->bill || $consultation->encounter->lock_orders)
 		@include('orders.order_stop')
 @else
 		@include('consultation_procedures.procedure')

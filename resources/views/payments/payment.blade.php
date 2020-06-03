@@ -233,6 +233,8 @@
 	<br>
 	<h3>Payor Information</h3>
 	<hr>
+	<h4>Fill in the details below if the payor is not the patient.</h4>
+	<br>
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('payor_first_name')) has-error @endif'>

@@ -8,13 +8,23 @@ Reset Billing Information
 
 <br>
 <h3>
-Are you sure you want to reload the billing information ? 
+@if (!$lock)
+Are you sure you want to reset the billing information ? 
+@else
+<p>
+You have lock orders for this encounter. It is recommended that you reset the bill to get the latest billing items. 
+</p>
+<p>
+Do you want to reset the billing information ?
+</p>
+@endif
 <br>
 <br>Warning all previous information will be lost.
 <br>
 <br>
-	<a class="btn btn-warning" href="/bill_items/generate/{{ $encounter->encounter_id }}" role="button">Reset</a>
-	<a class="btn btn-default" href="/bill_items/{{ $encounter->encounter_id }}" role="button">Cancel</a>
+<br>
+	<a class="btn btn-primary" href="/bill_items/generate/{{ $encounter->encounter_id }}" role="button">Reset</a>
+	<a class="btn btn-default" href="/bill_items/{{ $encounter->encounter_id }}" role="button">&nbsp;&nbsp;No&nbsp;&nbsp;</a>
 
 </h3>
 @endsection

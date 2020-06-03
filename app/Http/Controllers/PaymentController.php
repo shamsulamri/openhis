@@ -160,6 +160,7 @@ class PaymentController extends Controller
 					}
 			}
 
+
 			$payment = new Payment();
 			$valid = $payment->validate($request->all(), $request->_method);
 
@@ -176,6 +177,9 @@ class PaymentController extends Controller
 					if ($payment->payment_code=='credit_card') {
 							$payment_credit->payment_id = $payment->payment_id;
 							$payment_credit->save();
+					}
+					if ($payment->payment_code=='cash') {
+							$payment_payor->save();
 					}
 
 					Session::flash('message', 'Record successfully created.');

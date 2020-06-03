@@ -606,4 +606,17 @@ class EncounterController extends Controller
 					'encounters'=>$encounters
 			]);
 	}
+
+	public function lockOrders($id)
+	{
+			$encounter = Encounter::find($id);
+			$encounter->lock_orders = !$encounter->lock_orders;
+			$encounter->save();
+			if ($encounter->lock_orders) {
+					return redirect('/bill_items/reload/'.$id.'?lock=true');
+			} else {
+					Session::flash('message', 'Orders has been unlock.');
+					return redirect('/bill_items/'.$id);
+			}
+	}
 }
