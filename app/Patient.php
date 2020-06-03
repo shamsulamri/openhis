@@ -429,7 +429,6 @@ class Patient extends Model
 									}
 
 									if ($claimable_amount>0 && $non_claimable_amount>0) {
-											Log::info("-----");
 											if ($claimable_bill && $non_claimable_bill) {
 												$bill_complete = true;
 											}
@@ -440,10 +439,6 @@ class Patient extends Model
 													}
 											}
 									}
-
-
-									Log::info("X: ".$claimable_amount);
-									Log::info("X: ".$non_claimable_amount);
 
 									if (!$bill_complete) {
 											$status =  "Billing process...";
@@ -457,7 +452,7 @@ class Patient extends Model
 							$status = "<span class='label label-primary'>".$status."</span>";
 							if (empty($encounter->bill)) {
 								if (!empty($encounter->encounter_description)) {
-										$status.=' ('.$encounter->encounter_description.')';
+										$status.="&nbsp;<span class='label label-warning'>".$encounter->encounter_description."</span>";
 								}
 							}
 					} else {
