@@ -10,6 +10,9 @@
 <h1>
 Medication Administration Records
 </h1>
+@if ($encounter->lock_orders)
+	@include('orders.order_stop')
+@endif
 @if ($view)
 <a href='/order_tasks/task/{{ $encounter->encounter_id }}/pharmacy' class='btn btn-primary'>Order Task</a>
 <br>
@@ -34,9 +37,13 @@ if (empty($encounter->discharge)) {
 			@if ($drug->stop_id) <strike> @endif
 			<h4>
 			@if (!empty($encounter->discharge) && !$view) 
+					@if (!$encounter->lock_orders)
 					<a href='/order_tasks/{{ $drug->order_id }}/edit?mar=true'>
 					{{ $drug->product_name }}
 					</a>
+					@else
+							{{ $drug->product_name }}
+					@endif
 			@else
 					{{ $drug->product_name }}
 			@endif

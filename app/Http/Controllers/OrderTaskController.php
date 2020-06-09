@@ -412,7 +412,6 @@ class OrderTaskController extends Controller
 			/*** Validation ***/
 			Log::info("Validate....");
 			foreach($orders as $order) {
-				Log::info("Checkin === ".$order->order_id);
 				$checked = $request[$order->order_id] ?:0;
 
 				if ($checked == 1) {
@@ -421,13 +420,10 @@ class OrderTaskController extends Controller
 						if ($batches->count()>0) {
 								$unit_supply = 0;
 								foreach($batches as $batch) {
-										Log::info('--->'.$batch->batch());
 										if (!empty($batch->batch())) {
-										Log::info('================='.'batch_'.$order->order_id.'_'.$batch->product_code."_".$batch->batch()->batch_id);
-										Log::info('================='.$request['batch_'.$order->order_id.'_'.$batch->product_code."_".$batch->batch()->batch_id]);
-										$unit_supply += $request['batch_'.$order->order_id.'_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
-										$last_batch = $batch->batch()->batch_id;
-										Log::info('unit supply:'.$unit_supply);
+												$unit_supply += $request['batch_'.$order->order_id.'_'.$batch->product_code."_".$batch->batch()->batch_id]?:0;
+												$last_batch = $batch->batch()->batch_id;
+												Log::info('unit supply:'.$unit_supply);
 										}
 								}
 								if ($unit_supply == 0) {

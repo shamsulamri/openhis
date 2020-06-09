@@ -58,7 +58,7 @@ label {
 
 @include('orders.tab')
 
-@if ($consultation->encounter->bill)
+@if ($consultation->encounter->bill || $consultation->encounter->lock_orders)
 		@include('orders.order_stop')
 @else
 <a href="/order_drugs/post/{{ $consultation->consultation_id }}" class='btn btn-success'>Post Drugs</a>

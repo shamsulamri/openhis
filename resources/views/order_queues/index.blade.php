@@ -139,14 +139,17 @@ Order Queues
 			</td>
 			<td>
 					@if ($order->admission) 
-							{{ $order->admission->bed->bed_name }}
-							({{ $order->admission->bed->ward->ward_name }})
+							{{ strtoupper($order->admission->bed->bed_name) }}
+							<br>
+							<small>
+							{{ strtoupper($order->admission->bed->ward->ward_name) }}
+							</small>
 					@else
-							{{ $order->consultation->encounter->queue->location->location_name }}
+							{{ strtoupper($order->consultation->encounter->queue->location->location_name) }}
 					@endif						
 			</td>
 			<td>
-					{{ $order->consultation->user->name }}<br>
+					{{ strtoupper($order->consultation->user->name) }}
 
 			</td>
 			<td align='right'>

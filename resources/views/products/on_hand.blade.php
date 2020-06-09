@@ -68,8 +68,10 @@
 	<tbody>
 @foreach ($products as $product)
 <?php
-$on_hand=0;
 $allocated=0;
+$on_hand = $stock_helper->getStockOnHand($product->product_code, $product->store_code, $product->inv_batch_number)?:0;
+$allocated = $stock_helper->getStockAllocated($product->product_code, $product->store_code, $product->inv_batch_number)?:0;
+$available = $on_hand-$allocated;
 ?>
 	<tr>
 			<td>
@@ -103,14 +105,14 @@ $allocated=0;
 			-->
 			<td align='right'>
 				<a href='{{ URL::to('inventory/enquiry?search='.$product->product_code.'&store_code='.$product->store_code) }}'>
-				{{ $product->on_hand }} 
+				{{ $on_hand }} 
 				</a>
 			</td>
 			<td align='right'>
 				{{ $product->allocated }}
 			</td>
 			<td align='right'>
-				{{ $product->available }}
+				{{ $available }}
 			</td>
 			<td align='right'>
 				{{ number_format($product->average_cost,2) }}

@@ -14,7 +14,7 @@ Are you sure you want to delete the selected record ?
 {{ $bill->product->product_name }}
 {{ Form::open(['url'=>'bill_items/'.$bill->bill_id, 'class'=>'pull-right']) }}
 	{{ method_field('DELETE') }}
-	<a class="btn btn-default" href="/bills/{{ $bill->encounter_id }}" role="button">Cancel</a>
+	<a class="btn btn-default" href="/bill_items/{{ $bill->encounter_id }}" role="button">Cancel</a>
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}
 {{ Form::close() }}
 

@@ -45,10 +45,10 @@
 	<tr> 
     <th>Encounter</th>
     <th>Discharge</th>
+    <th>Outcome</th> 
     <th>Queue Number</th>
     <th>Name</th> 
     <th>Panel</th> 
-    <th>Discharge</th> 
     <th>Physician</th> 
     <th>Bill Status</th> 
 	<th></th>
@@ -92,6 +92,10 @@
 					-->
 			</td>
 			<td>
+					{{$discharge->type_name}}
+
+			</td>
+			<td>
 					{{ $discharge->encounter_description }}
 			</td>
 			<td>
@@ -128,11 +132,7 @@
 					@endif
 			</td>
 			<td>
-					{{$discharge->type_name}}
-
-			</td>
-			<td>
-					{{$discharge->name}}
+					{{ strtoupper($discharge->name) }}
 					<br>
 					<small>{{$discharge->ward_name}}</small>
 			</td>
@@ -206,7 +206,7 @@
 			@endif
 			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=referral_letter&id={{ $discharge->encounter_id }}" target="_blank">Referral Letter</a></li>
 			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=reply_letter&id={{ $discharge->encounter_id }}" target="_blank">Reply Letter</a></li>
-			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=discharge_summary&id={{ $discharge->encounter_id }}" target="_blank">Discharge Summary</a></li>
+			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=discharge_summary2&id={{ $discharge->encounter_id }}" target="_blank">Discharge Summary</a></li>
 		  </ul>
 		</div>
 	@endcan

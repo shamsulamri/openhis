@@ -495,28 +495,7 @@ class OrderHelper
 
 			$drop_now = false;
 
-			//if ($order->product->location_code=='none' or $order->product->location == null) $drop_now = true;
 			if ($order->product_drop_charge==1) $drop_now = true;
-
-				/**
-				if ($order->product->product_stocked==1 & $order->product_drop_charge==1) {
-					if ($stock_helper->getStockCountByStore($order->product_code,$order->store_code)>0) {
-						$ward = Ward::where('ward_code', $ward_code)->first();
-						$order->store_code = $ward->store_code;
-					}
-				}
-				**/
-					
-			/*
-			if ($order->order_is_discharge==1) {
-					$route = OrderRoute::where('encounter_code', $order->consultation->encounter->encounter_code)
-							->where('category_code', $order->product->category_code)
-							->first();
-					if ($route) {
-							$drop_now = false;
-					}
-			}
-			 */
 
 			if ($drop_now) {
 				if (!$order->orderCancel) {
@@ -530,7 +509,6 @@ class OrderHelper
 						$batches = $stock_helper->getBatches($order->product_code, null, $order->store_code)?:null;
 
 						if ($batches->count()>0) {
-							Log::info("@@@@@@@@@@@@@@@@@@@@@@@@@@");
 							$quantity_request = $order->order_quantity_request;
 							foreach ($batches as $batch) {
 									$supply = 0;
@@ -545,7 +523,7 @@ class OrderHelper
 									//self::addToInventory($order, $batch->inv_batch_number);
 							}
 						} else {
-							Log::info("==============================");
+							// Replace with addDropChargeSales in BillController
 							//self::addToInventory($order);
 						}
 

@@ -202,7 +202,11 @@
 
 
 
-<h2>Encounters</h2>
+	<div class='page-header'>
+		<h4>Encounter Orders</h4>
+	</div>
+	<p>Users in this group able to receive orders from:</p>
+	<br>
 @foreach ($encounters as $encounter)
 		<?php $checked = 0; ?>
 		@if (!empty($queue_encounters))
@@ -214,7 +218,9 @@
 		<br>
 @endforeach
 
-<h2>Product Categories</h2>
+<br>
+<p>within the following product categories:</p>
+<br>
 @foreach ($categories as $category)
 		<?php $checked = 0; ?>
 		@if (!empty($queue_categories))

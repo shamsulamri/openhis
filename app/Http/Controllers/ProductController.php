@@ -366,7 +366,7 @@ class ProductController extends Controller
 		if (!empty($request->store_code)) {
 				$store_code = $request->store_code;
 		} else {
-				$store_code = Auth::user()->defaultStore($request);
+				//$store_code = Auth::user()->defaultStore($request);
 		}
 
 		return view('products.enquiry', [
@@ -549,6 +549,7 @@ class ProductController extends Controller
 			}
 
 			$data = DB::select($sql);
+			Log::info("----------------");
 			Log::info($sql);
 
 			if ($request->export_report) {

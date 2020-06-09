@@ -66,15 +66,22 @@
 					</a>
 				@else
 						{{ $inventory->move_name }}
+					</a>
 				@endif
 				@if (!empty($inventory->move_description))
 				 ({{ $inventory->move_description }})
 				@endif
 			</td>
 			<td>
+			@if ($inventory->move_number)
 				<a href = '{{ URL::to('inventory_movements/show/'.$inventory->move_id) }}'>
 				{{ $inventory->move_number }}
 				</a>
+			@else
+				<a href = '{{ URL::to('purchase_lines/show/'.$inventory->purchase_id) }}'>
+				{{ $inventory->purchase_number }}
+				</a>
+			@endif
 			</td>
 			<td>
 				{{ $inventory->product_code }}

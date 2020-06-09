@@ -181,6 +181,7 @@ class OrderQueueController extends Controller
 					'helper'=> new OrderHelper(),
 					'encounter_helper'=> new EncounterHelper(),
 					'future_count'=>count($futures),
+					'dojo'=>new DojoUtility(),
 					]);
 	}
 

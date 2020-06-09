@@ -54,6 +54,7 @@
 				<a href="{{ url('/consultations') }}">Consultation</a><br>
 				<a href="{{ url('/patient_lists') }}">Patient Lists</a><br>
 				<a href="{{ url('/discharges') }}">Discharges</a><br>
+				<a href="{{ url('/discharge_summaries') }}">Discharge Summaries</a><br>
 				<a href="{{ url('/sets') }}">Order Sets</a><br>
 			</div>
 			<div class="col-xs-6">

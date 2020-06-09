@@ -113,7 +113,7 @@
 			</td>
 			<td>
 					@if ($purchase->user)
-					{{$purchase->user->name }}
+					{{ ucwords(strtolower($purchase->user->name)) }}
 					@endif
 			</td>
 			<td>

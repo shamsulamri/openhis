@@ -37,7 +37,9 @@
 			</td>
 			<td>
 				@can('product_purchase_edit')
-					{{number_format($product_uom->uom_cost,2)}}
+					@if ($product_uom->uom_cost)
+						{{number_format($product_uom->uom_cost,2)}}
+					@endif
 				@else
 					-
 				@endcan

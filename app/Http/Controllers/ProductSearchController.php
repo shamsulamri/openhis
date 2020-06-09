@@ -48,7 +48,8 @@ class ProductSearchController extends Controller
 			 */
 
 			$product_searches = Product::orderBy('product_name')
-					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code');
+					->leftjoin('product_categories as b', 'b.category_code','=', 'products.category_code')
+					->where('status_code', 'active');
 
 			$product_authorization = ProductAuthorization::select('category_code')->where('author_id', Auth::user()->author_id);
 			if (!$product_authorization->get()->isEmpty()) {
@@ -103,7 +104,6 @@ class ProductSearchController extends Controller
 				";
 
 					$data = DB::select($sql);
-				Log::info($sql);
 
 					/** Pagination **/
 					$page = Input::get('page', 1); 

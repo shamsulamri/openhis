@@ -57,7 +57,7 @@
 			</td>
 			<td align='right'>
 					@if ($consultation->discharge)
-							<a class='btn btn-default btn-xs' href='{{ URL::to('discharge/summary/'. $consultation->discharge->discharge_id) }}'>Summary</a>
+							<a class='btn btn-default btn-xs' href='{{ URL::to('discharge/summary/'. $consultation->encounter_id) }}'>Summary</a>
 					@endif
 					<a class='btn btn-default btn-xs' href='{{ URL::to('consultations/'. $consultation->consultation_id.'/edit') }}'>Open</a>
 

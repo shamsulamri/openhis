@@ -1,8 +1,9 @@
 @if ($product)
 <?php 
-$on_hand = $stock_helper->getStockOnHand($product->product_code, $store_code)?:0;
-$allocated = $stock_helper->getStockAllocated($product->product_code, $store_code)?:0;
+$on_hand = $stock_helper->getStockOnHand($product->product_code, $store_code);
+$allocated = $stock_helper->getStockAllocated($product->product_code, $store_code);
 $stock_limit = $product->getStockLimits($store_code);
+$average_cost = $stock_helper->getStockAverageCost($product->product_code, $store_code);
 ?>
 <div class='form-horizontal'>
 	<!-- Information -->
@@ -27,42 +28,31 @@ $stock_limit = $product->getStockLimits($store_code);
         </div>
     </div>
 
-	<div class="row">
-			<div class="col-xs-6">
-					<div class='form-group'>
-						<label for='category_code' class='col-sm-4 control-label'>Category</label>
-						<div class='col-sm-8'>
-            				{{ Form::label('category_code', $product->category->category_name, ['class'=>'form-control']) }}
-						</div>
-					</div>
-			</div>
-			<div class="col-xs-6">
-					<div class='form-group'>
-						{{ Form::label('unit_code', 'Unit',['class'=>'col-sm-4 control-label']) }}
-						<div class='col-sm-8'>
-            				{{ Form::label('unit_code', $product->unit?$product->unit->unit_name:'-', ['class'=>'form-control']) }}
-						</div>
-					</div>
-			</div>
-	</div>
-
+	<div class='form-group'>
+        <label for='category_code' class='col-sm-2 control-label'>Category</label>
+        <div class='col-sm-10'>
+            	{{ Form::label('category_code', $product->category->category_name, ['class'=>'form-control']) }}
+        </div>
+    </div>
 
 	<div class="row">
 			<div class="col-xs-6">
 					<div class='form-group'>
 						<label for='average_cost' class='col-sm-4 control-label'>Average Cost</label>
 						<div class='col-sm-8'>
-            				{{ Form::label('average_cost', $stock_helper->getStockAverageCost($product->product_code, $store_code)?:'0 ' , ['class'=>'form-control']) }}
+            				{{ Form::label('average_cost', number_format($average_cost,2) , ['class'=>'form-control']) }}
 						</div>
 					</div>
 			</div>
 			<div class="col-xs-6">
+					<!--
 					<div class='form-group'>
 						{{ Form::label('form_code', 'Total Cost',['class'=>'col-sm-4 control-label']) }}
 						<div class='col-sm-8'>
-            				{{ Form::label('form_code', $stock_helper->getStockTotalCost($product->product_code, $store_code), ['class'=>'form-control']) }}
+            				{{ Form::label('form_code', number_format($average_cost*$on_hand, 2), ['class'=>'form-control']) }}
 						</div>
 					</div>
+					-->
 			</div>
 	</div>
 	<div class="row">

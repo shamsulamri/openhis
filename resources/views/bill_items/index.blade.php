@@ -352,8 +352,6 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 			</td>
 			@endif
 	</tr>
-</tbody>
-</table>
 @else
 	
 		<h4 class='text-danger'>
@@ -364,7 +362,6 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 	<br>
 	<br>
 @endif
-<table width='100%'>
 	@if ($payment_total-$total_payable<0)
 	<tr>
 			<td>
@@ -401,6 +398,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 			@endif
 	</tr>
 	@endif
+</tbody>
 </table>
 </div>
 <!--

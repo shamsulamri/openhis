@@ -28,6 +28,7 @@ use App\BedCharge;
 use App\PatientType;
 use App\BillHelper;
 use App\Room;
+use App\DischargeSummary;
 
 class DischargeController extends Controller
 {
@@ -492,10 +493,17 @@ class DischargeController extends Controller
 
 	public function summary($id)
 	{
-		$discharge = Discharge::findOrFail($id);
+		$discharge = Discharge::where('encounter_id', $id)->first();
+		$summary = DischargeSummary::where('encounter_id', $discharge->encounter_id)->first();
+
+		if (!$summary) {
+			return redirect('/discharge_summary/reset/'.$id);
+		}
+
 		return view('discharges.summary', [
 			'discharge'=>$discharge,
 			'patient' => $discharge->encounter->patient,
+			'summary' => $summary,
 		]);
 	}
 

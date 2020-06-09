@@ -29,6 +29,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		//Route::get('/test/{id}', 'BillController@addSales');
 		Route::get('/test2', 'BillController@fixDropChargeSales');
 		Route::get('/test3', 'BillController@updateInvDatetime');
+		Route::get('/test4', 'BillController@fixInventoryCost');
 
 		Route::get('/home', function() {
 				//return view('welcome');
@@ -47,6 +48,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 					return redirect('/login');
 				}
 		});
+
+		Route::resource('discharge_summaries', 'DischargeSummaryController');
+		Route::get('/discharge_summaries/id/{id}', 'DischargeSummaryController@searchById');
+		Route::post('/discharge_summary/search', 'DischargeSummaryController@search');
+		Route::get('/discharge_summary/search', 'DischargeSummaryController@search');
+		Route::get('/discharge_summary/reset/{id}', 'DischargeSummaryController@reset');
+		Route::get('/discharge_summaries/delete/{id}', 'DischargeSummaryController@delete');
 
 		Route::get('/lock_orders/{id}', 'EncounterController@lockOrders');
 		Route::get('/convert/{id}', 'EncounterController@convertPatientOrders');

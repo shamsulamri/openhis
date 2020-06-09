@@ -14,9 +14,35 @@ class StockHelper
 {
 	public function getStockOnHand($product_code, $store_code = null, $batch_number = null)
 	{
-			$value = Inventory::where('product_code',$product_code)
+
+			/*
+			$last_adjustment = Inventory::where('product_code',$product_code)
+						->where('move_code', 'stock_adjust')
+						->orderBy('inv_id', 'desc')
 						->where('inv_posted', 1);
 
+			if (!empty($batch_number)) {
+				$last_adjustment = $last_adjustment->where('inv_batch_number', $batch_number);
+			}
+
+			if (!empty($store_code)) {
+					$last_adjustment = $last_adjustment->where('store_code', $store_code);
+			}
+
+			$last_adjustment = $last_adjustment->first();
+
+			$value = null;
+			if ($last_adjustment) {
+					$value = Inventory::where('product_code',$product_code)
+						->where('inv_posted', 1)
+						->where('inv_id', '>=', $last_adjustment->inv_id);
+			} else {
+					$value = Inventory::where('product_code',$product_code)
+						->where('inv_posted', 1);
+			}
+			*/
+			$value = Inventory::where('product_code',$product_code)
+				->where('inv_posted', 1);
 
 			if (!empty($store_code)) {
 					$value = $value->where('store_code', $store_code);
@@ -138,7 +164,44 @@ class StockHelper
 			}
 	}
 
-	public function getStockAverageCost($product_code, $store_code = null, $batch_number = null)
+	public function getStockAverageCost($product_code, $date=null)
+	{
+			/*
+			$sql = "
+				select sum(inv_subtotal)/sum(inv_quantity) as average_cost
+				from inventories as a
+				where move_code = 'goods_receive'
+				and product_code = '".$product_code."'
+				and inv_posted=1";
+			 */
+
+			$sql = "
+				select sum(line_subtotal_tax)/sum(uom_rate*line_quantity) as average_cost
+				from purchase_lines a
+				left join purchases as b on (b.purchase_id = a.purchase_id)
+				where product_code = '".$product_code."'
+				and document_code = 'goods_receive'
+				and line_posted = 1
+			";
+
+
+			if ($date) {
+				$sql = $sql." and a.created_at<'".$date."'";
+				Log::info($sql);
+			}
+
+			$data = DB::select($sql);
+
+			if (sizeof($data)==0) {
+					return 0;
+			} else {
+					return $data[0]->average_cost;
+
+			}
+
+	}
+
+	public function getStockAverageCost2($product_code, $store_code = null, $batch_number = null)
 	{
 			$average_cost=0;
 			$value = Inventory::where('product_code',$product_code)

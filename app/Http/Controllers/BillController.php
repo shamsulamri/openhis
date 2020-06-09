@@ -79,7 +79,9 @@ class BillController extends Controller
 							$bill_helper = new BillHelper();
 							$encounter->bill_status = $bill_helper->billStatus($encounter->encounter_id);
 							$encounter->save();
+
 							$this->addDropchargeSales($bill->encounter_id);	
+									
 							return view('bills.post', [
 									'patient'=>$encounter->patient,
 									'encounter'=>$encounter,
@@ -96,23 +98,21 @@ class BillController extends Controller
 			ini_set('max_execution_time', 500);
 			set_time_limit(500);
 
-			$invs = Inventory::select('inv_id', 'b.created_at')
-					->leftjoin('orders as b', 'b.order_id', '=', 'inventories.order_id')
-					//->where('inventories.product_code', '201744')
+			// 201744, 7047
+			$invs = Inventory::select('inv_id', 'order_id')
 					->where('move_code', 'sale')
 					->where('inv_fix', 1)
-					//->where('encounter_id', 7047)
 					->get();
 
 			foreach($invs as $inv) {
-
-				Inventory::where('inv_id', $inv->inv_id)->update(['inv_datetime'=>$inv->created_at]);
-				Log::info($inv);
+				$order = Order::where('order_id', $inv->order_id)->first();
+				Inventory::where('inv_id', $inv->inv_id)->update(['inv_datetime'=>$order->created_at]);
 			}
 
 			return "Ok...";
+
 	}
-	
+
 	public function fixDropChargeSales() {
 
 			// Steps
@@ -124,26 +124,65 @@ class BillController extends Controller
 			ini_set('max_execution_time', 500);
 			set_time_limit(500);
 
+			Inventory::leftjoin('products as b', 'b.product_code', '=', 'inventories.product_code')
+						->where('product_drop_charge', '1')
+						->where('product_stocked', '1')
+						->where('move_code', 'sale')
+						->delete();
+
 			Inventory::where('inv_fix',1)->delete();
 
 			$ids = Order::distinct("orders.encounter_id")
 						->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
-						->leftjoin('inventories as c', 'c.order_id', '=', 'orders.order_id')
+						//->leftjoin('inventories as c', 'c.order_id', '=', 'orders.order_id')
 						->where('product_drop_charge', '1')
 						->where('product_stocked', '1')
-						->whereNull('c.order_id')
-						->where('encounter_id', '7047')
+						//->where('orders.product_code', '201744')
 						->orderBy('encounter_id')
 						->pluck("encounter_id");
 
+			Log::info("Count:".$ids->count());
+			$index = 0;
 			foreach($ids as $id) {
-				Log::info("-------->");
-				Log::info($id);
+				$index += 1;
+				Log::info($index." of ".$ids->count());
+
 				$this->addDropchargeSales($id);
 			}
 
 			return "Ok";
 		
+	}
+
+	public function fixInventoryCost() {
+			//$this->fixAverageCost("201744");
+			$this->fixAverageCost("PH15-0018");
+	}
+
+	public function fixAverageCost($product_code) {
+
+			ini_set('max_execution_time', 500);
+			set_time_limit(500);
+
+			Log::info("-----------------------------------");
+			Log::info("Fix average cost: ".$product_code);
+			$inventories = Inventory::leftjoin('products as b', 'b.product_code', '=', 'inventories.product_code')
+						->where('inventories.product_code', $product_code)
+						//->where('product_drop_charge', '1')
+						//->where('product_stocked', '1')
+						->where('move_code', '<>', 'goods_receive')
+						->orderBy('inv_datetime')
+						->get();
+
+			$helper = new StockHelper();
+			foreach ($inventories as $inv) {
+					Log::info($inv->move_code);
+					$avg_cost = $helper->getStockAverageCost($product_code, $inv->inv_datetime);
+					Log::info($avg_cost);
+					$inv->inv_unit_cost = $avg_cost;
+					$inv->inv_subtotal = $avg_cost*$inv->inv_physical_quantity;
+					$inv->save();
+			}
 	}
 
 	public function addDropchargeSales($id) {
@@ -153,7 +192,7 @@ class BillController extends Controller
 						->leftjoin('inventories as c', 'c.order_id', '=', 'orders.order_id')
 						->where('product_drop_charge', '1')
 						->where('product_stocked', '1')
-						->whereNull('c.order_id')
+						//->where('orders.product_code', '201744')
 						->pluck("orders.order_id");
 
 			$orders = Order::whereIn('order_id', $ids)->get();
@@ -227,8 +266,8 @@ class BillController extends Controller
 									$inventory->inv_subtotal =  $uom_cost*$inventory->inv_physical_quantity;
 									$inventory->move_code = 'sale';
 									$inventory->inv_posted = 1;
+									$inventory->inv_fix = 1;
 									$inventory->save();
-									//Log::info($inventory);
 							}
 					}
 			}

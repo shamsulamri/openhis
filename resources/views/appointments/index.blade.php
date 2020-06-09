@@ -60,7 +60,7 @@
 					<small>{{$appointment->patient->patient_mrn}}</small>
 			</td>
 			<td>
-					{{$appointment->service->service_name}}
+					{{ strtoupper($appointment->service->service_name) }}
 			</td>
 			<td>
 				{{ $appointment->patient->patient_phone_home }}

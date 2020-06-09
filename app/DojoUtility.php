@@ -451,5 +451,10 @@ class DojoUtility
 
 				return $finalArray;
 		}
+
+		public static function titleCase($str) {
+			return ucwords(strtolower($str));
+		}
+
 }
 

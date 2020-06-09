@@ -282,13 +282,15 @@ class InventoryController extends Controller
 	public function enquiry(Request $request)
 	{
 			$inventories = Inventory::orderBy('inv_datetime', 'desc')
-							->select('inv_datetime', 'b.product_code', 'b.product_name', 'c.move_name', 'inventories.move_description', 'inv_batch_number', 'inv_quantity', 'store_name', 'inv_subtotal', 'inv_unit_cost', 'encounter_id', 'c.move_code', 'unit_name', 'inv_physical_quantity', 'inventories.unit_code', 'move_number','e.move_id')
+							->select('inv_datetime', 'b.product_code', 'b.product_name', 'c.move_name', 'inventories.move_description', 'inv_batch_number', 'inv_quantity', 'store_name', 'inv_subtotal', 'inv_unit_cost', 'encounter_id', 'c.move_code', 'unit_name', 'inv_physical_quantity', 'inventories.unit_code', 'move_number','e.move_id', 'inv_id', 'h.purchase_id', 'i.purchase_number')
 							->leftJoin('products as b', 'b.product_code', '=', 'inventories.product_code')
 							->leftJoin('stock_movements as c', 'c.move_code', '=', 'inventories.move_code')
 							->leftJoin('stores as d', 'd.store_code', '=', 'inventories.store_code')
 							->leftJoin('inventory_movements as e', 'e.move_id', '=', 'inventories.move_id')
 							->leftjoin('orders as f', 'f.order_id', '=', 'inventories.order_id')
 							->leftjoin('ref_unit_measures as g', 'g.unit_code', '=', 'inventories.unit_code')
+							->leftjoin('purchase_lines as h', 'h.line_id', '=', 'inventories.line_id')
+							->leftjoin('purchases as i', 'i.purchase_id', '=', 'h.purchase_id')
 							->where('inv_posted', 1);
 
 			/*** Batch ***/
@@ -300,7 +302,7 @@ class InventoryController extends Controller
 			if (!empty($request->store_code)) {
 				$inventories = $inventories->where('inventories.store_code', $request->store_code);
 			} else {
-				$stores = Auth::user()->authorizedStores();
+				$stores = Auth::user()->authorizedStores()->toArray();
 				$inventories = $inventories->whereIn('inventories.store_code', $stores);
 			}
 			/*** Seach Param ***/
@@ -319,7 +321,6 @@ class InventoryController extends Controller
 				DojoUtility::export_report($inventories);
 			}
 
-			//return $inventories->get();
 			$inventories = $inventories->paginate($this->paginateValue);
 
 			return view('inventories.enquiry', [

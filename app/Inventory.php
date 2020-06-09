@@ -105,7 +105,6 @@ class Inventory extends Model
 						->where('batch_number', '=', $this->inv_batch_number)
 						->first();
 
-			Log::info("Batch number:".$this->inv_batch_number);
 			return $batch;
 	}
 
