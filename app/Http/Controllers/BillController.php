@@ -104,12 +104,15 @@ class BillController extends Controller
 					->where('inv_fix', 1)
 					->get();
 
+			$index = 0;
 			foreach($invs as $inv) {
 				$order = Order::where('order_id', $inv->order_id)->first();
 				Inventory::where('inv_id', $inv->inv_id)->update(['inv_datetime'=>$order->created_at]);
+				$index +=1;
+				Log::info($index.' of '.$invs->count());
 			}
 
-			return "Ok...";
+			return "Ok date updated...";
 
 	}
 
