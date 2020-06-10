@@ -13,6 +13,7 @@ use App\Encounter;
 use Log;
 use DB;
 use Session;
+use App\DischargeHelper;
 
 class DischargeSummaryController extends Controller
 {
@@ -131,65 +132,10 @@ class DischargeSummaryController extends Controller
 	public function reset($id)
 	{
 
-			$discharge_summary = DischargeSummary::find($id);
-			if ($discharge_summary) {
-				DischargeSummary::find($id)->delete();
-			}
-
-			$discharge = Discharge::where('encounter_id', $id)->first();
-
-			$treatments = Order::select('product_name')
-					->where('encounter_id', $id)
-					->whereIn('category_code', ['lab','imaging', 'physio_service'])
-					->where('order_completed', 1)
-					->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
-					->pluck('product_name');
-
-			$drugs = Order::select('product_name')
-					->where('encounter_id', $id)
-					->whereIn('category_code', ['drugs'])
-					->where('order_completed', 1)
-					->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
-					->pluck('product_name');
-
-			$procedures = Order::select('product_name')
-					->where('encounter_id', $id)
-					->whereIn('category_code', ['fee_procedure'])
-					->where('order_completed', 1)
-					->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
-					->pluck('product_name');
-
-			$follow_up = Encounter::select('appointment_datetime', 'service_name')
-							->leftjoin('appointments as b', 'b.patient_id', '=', 'encounters.patient_id')
-							->leftjoin('appointment_services as c', 'c.service_id', '=', 'b.service_id')
-							->where('encounter_id', $id)
-							->where('appointment_datetime', '>', 'encounters.created_at')
-							->pluck('service_name');
-
-			$summary = new DischargeSummary();
-			$summary->encounter_id = $id;
-			$summary->summary_diagnosis = $discharge->discharge_summary;
-			$summary->summary_treatment = $this->toList($treatments);
-			$summary->summary_medication = $this->toList($drugs);
-			$summary->summary_surgical = $this->toList($procedures);
-			$summary->summary_follow_up = $this->toList($follow_up);
-			$summary->save();
-
+			$helper = new DischargeHelper();
+			$helper->populateSummary($id);
 			return redirect('/discharge/summary/'.$id);
 	}
 
-	public function toList($items) {
-			$list = "";
-			$index = 1;
-			foreach($items as $item) {
-				$list = $list.$index.". ".$item;
-				if ($index<sizeof($items)) {
-						$list = $list."\n";
-				}
-				$index +=1;
-			}
-
-			return $list;
-	}
 
 }

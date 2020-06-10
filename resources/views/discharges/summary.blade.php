@@ -11,7 +11,7 @@
 {{ Form::model($summary, ['route'=>['discharge_summaries.update', $summary->encounter_id],'method'=>'put', 'class'=>'form-horizontal']) }} 
     
     <div class='form-group  @if ($errors->has('summary_diagnosis')) has-error @endif'>
-        {{ Form::label('summary_diagnosis', 'Discharge Diagnosis',['class'=>'col-sm-3 control-label']) }}
+        {{ Form::label('summary_diagnosis', 'Final Diagnosis',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::textarea('summary_diagnosis', null, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
             @if ($errors->has('summary_diagnosis')) <p class="help-block">{{ $errors->first('summary_diagnosis') }}</p> @endif
