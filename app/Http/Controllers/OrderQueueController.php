@@ -538,12 +538,13 @@ class OrderQueueController extends Controller
 					->whereIn('c.encounter_code', $queue_encounters)
 					->whereIn('o.category_code', $queue_categories)
 					->where('order_completed','=',1)
-					->where('category_code','=','imaging2')
 					->whereNull('cancel_id')
 					->whereNotNull('n.post_id')
 					->distinct('orders.order_id')
 					->orderBy('c.created_at', 'desc');
 
+			//->where('category_code','=','imaging2') Apply this when imaging confirm to above
+			
 			$locations = QueueLocation::orderBy('location_name')->lists('location_name', 'location_code')->prepend('','');
 			$status = array(''=>'','incomplete'=>'Incomplete', 'completed'=>'Completed');
 
