@@ -268,7 +268,7 @@
 						triage.disabled=true;
 			}
 
-			if (encounterCode == 'outpatient' || encounterCode == 'walkin' || encounterCode == 'drive') {
+			if (encounterCode == 'outpatient' || encounterCode == 'walkin' || encounterCode == 'drive_thru') {
 					hide(document.querySelectorAll('.target'));
 					document.getElementById('location_code').disabled = false;
 			} 

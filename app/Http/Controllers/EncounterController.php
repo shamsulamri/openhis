@@ -298,7 +298,7 @@ class EncounterController extends Controller
 					}
 
 					$queueFlag = False;
-					if ($encounter->encounter_code == 'outpatient' || $encounter->encounter_code == 'drive') $queueFlag=True;
+					if ($encounter->encounter_code == 'outpatient' || $encounter->encounter_code == 'drive_thru') $queueFlag=True;
 					//if ($encounter->encounter_code == 'emergency' && $encounter->triage_code=='green') $queueFlag=True;
 					if ($encounter->encounter_code == 'emergency' && !empty($request->location_code)) {
 							$queueFlag=True;
