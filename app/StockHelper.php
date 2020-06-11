@@ -48,9 +48,12 @@ class StockHelper
 					$value = $value->where('store_code', $store_code);
 			}
 
+			/*
 			if (!empty($batch_number)) {
 					$value = $value->where('inv_batch_number', $batch_number);
 			}
+			 */
+			$value = $value->where('inv_batch_number', $batch_number);
 
 			$value = $value->sum('inv_quantity');
 			
@@ -366,7 +369,7 @@ class StockHelper
 					if ($order->product->product_local_store==1) {
 							$store_code = $order->store_code;
 					}
-					$batches = $batches->where('inventories.created_at', '<', $order->created_at);
+					$batches = $batches->where('inventories.inv_datetime', '<', $order->created_at);
 								//->where('inventories.unit_code', '=', $order->unit_code);
 			}
 

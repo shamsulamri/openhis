@@ -433,6 +433,8 @@ class OrderTaskController extends Controller
 								if ($order->product->product_stocked == 1) {
 										$unit_supply = $request["quantity_".$order->order_id];
 										if ($unit_supply == 0) {
+												Log::info("ttttttt");
+												Log::info($order);
 												$valid["quantity_".$order->order_id] = "Cannot be zero";
 										}
 								}
@@ -530,6 +532,7 @@ class OrderTaskController extends Controller
 									$inventory->move_code = 'sale';
 									$inventory->inv_posted = 1;
 									$inventory->save();
+									Log::info($inventory);
 							}
 						}
 
