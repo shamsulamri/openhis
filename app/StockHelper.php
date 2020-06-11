@@ -48,12 +48,9 @@ class StockHelper
 					$value = $value->where('store_code', $store_code);
 			}
 
-			/*
 			if (!empty($batch_number)) {
 					$value = $value->where('inv_batch_number', $batch_number);
 			}
-			 */
-			$value = $value->where('inv_batch_number', $batch_number);
 
 			$value = $value->sum('inv_quantity');
 			

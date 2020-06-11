@@ -268,6 +268,7 @@ class BillController extends Controller
 									$inventory->inv_physical_quantity = $total_supply;
 									$inventory->inv_subtotal =  $uom_cost*$inventory->inv_physical_quantity;
 									$inventory->move_code = 'sale';
+									$inventory->inv_batch_number = 'N/A';
 									$inventory->inv_posted = 1;
 									$inventory->inv_fix = 1;
 									$inventory->save();

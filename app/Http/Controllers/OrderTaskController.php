@@ -519,6 +519,7 @@ class OrderTaskController extends Controller
 									$inventory->store_code = $store_code;
 									$inventory->product_code = $order->product_code;
 									$inventory->unit_code = $order->unit_code;
+									$inventory->inv_batch_number = "N/A";
 
 									$uom = ProductUom::where('product_code', $order->product_code)
 											->where('unit_code', $inventory->unit_code)
