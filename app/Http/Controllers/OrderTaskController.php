@@ -433,8 +433,6 @@ class OrderTaskController extends Controller
 								if ($order->product->product_stocked == 1) {
 										$unit_supply = $request["quantity_".$order->order_id];
 										if ($unit_supply == 0) {
-												Log::info("ttttttt");
-												Log::info($order);
 												$valid["quantity_".$order->order_id] = "Cannot be zero";
 										}
 								}

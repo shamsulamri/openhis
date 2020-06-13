@@ -24,6 +24,8 @@ use App\Order;
 use App\StockHelper;
 use App\Inventory;
 use App\ProductUom;
+use App\InventoryBatch;
+use App\Product;
 
 class BillController extends Controller
 {
@@ -94,14 +96,125 @@ class BillController extends Controller
 			}
 	}
 
+	public function showBatch($product_code) 
+	{
+			$helper = new StockHelper();
+			$batches = $helper->getBatches($product_code, null, 'pharmaceutical');
+
+			return $batches;
+	}
+
+	public function addSale($order_id) 
+	{
+			$order = Order::find($order_id);
+
+			if ($order->product->product_stocked==0) {
+				Log::info("Product not stocked!!!!");
+				return;
+			}
+
+			$helper = new StockHelper();
+
+			$batches = $helper->getBatches($order->product_code, $order->order_id);
+
+			$uom = $this->getUOM($order);
+			if (empty($uom)) {
+					$uom_cost = 0;
+					$uom_rate = 1;
+			} else {
+					$uom_cost = $uom->uom_cost?:0;
+					$uom_rate = $uom->uom_rate?:1;
+			}
+
+			$unit_supply = $order->order_quantity_supply?:1;
+
+			$unit_supply = 100;
+
+			$inventory = new Inventory();
+			$inventory->order_id = $order->order_id;
+			$inventory->store_code = $order->store_code;
+			$inventory->product_code = $order->product_code;
+			$inventory->unit_code = $order->unit_code;
+			$inventory->uom_rate =  $uom_rate?:1;
+			$inventory->unit_code = $uom?$uom->unit_code:'unit';
+			$inventory->inv_unit_cost =  $uom_cost?:0;
+			$inventory->inv_quantity = -($unit_supply);
+			$inventory->inv_physical_quantity = $unit_supply;
+			$inventory->inv_subtotal =  -($uom_cost*$inventory->inv_physical_quantity);
+			$inventory->inv_batch_number = "N/A";
+			$inventory->move_code = 'sale';
+			$inventory->inv_posted = 1;
+
+			Log::info("-------------------------------");
+			if ($batches) {
+					foreach($batches as $batch) {
+							if ($batch->sum_quantity>=$inventory->inv_physical_quantity) {
+									$batch->sum_quantity = $batch->sum_quantity - $inventory->inv_physical_quantity;
+									$inventory->inv_batch_number = $batch->inv_batch_number;
+									$inventory->inv_datetime = $order->created_at;
+									$unit_supply = 0;
+									$inventory->save();
+									Log::info($inventory->inv_batch_number." = ". $inventory->inv_quantity);
+									break;
+							} 
+
+							if ($batch->sum_quantity<=$inventory->inv_physical_quantity) {
+									$deficit = $inventory->inv_physical_quantity-$batch->sum_quantity;
+
+									$inventory->inv_batch_number = $batch->inv_batch_number;
+									$inventory->inv_quantity = -($batch->sum_quantity);
+									$inventory->inv_physical_quantity = $batch->sum_quantity;
+									$inventory->inv_subtotal =  -($uom_cost*$inventory->inv_physical_quantity);
+									$inventory->inv_datetime = $order->created_at;
+									$unit_supply = $unit_supply - $batch->sum_quantity;
+									$batch->sum_quantity = 0;
+
+									$inventory->save();
+									Log::info($inventory->inv_batch_number." = ". $inventory->inv_quantity);
+
+									$parent_id = $inventory->order_id;
+									$inventory = $inventory->replicate();
+									$inventory->inv_physical_quantity = $deficit;
+									$inventory->inv_subtotal =  -($uom_cost*$inventory->inv_physical_quantity);
+									$inventory->order_id = null;
+									$inventory->order_parent_id = $parent_id;
+									$inventory->inv_quantity = -$deficit;
+							}
+					}
+
+					/** Batch exhausted **/
+					if ($unit_supply>0) {
+							$inventory = $inventory->replicate();
+							$inventory->inv_quantity = -($unit_supply);
+							$inventory->inv_physical_quantity = $unit_supply;
+							$inventory->inv_subtotal =  -($uom_cost*$inventory->inv_physical_quantity);
+							$inventory->inv_batch_number = "N/A";
+							$inventory->inv_datetime = $order->created_at;
+							$inventory->save();
+							Log::info($inventory->inv_batch_number." = ". $inventory->inv_quantity);
+					}
+
+			} else {
+					/** No batch **/
+					$inventory->inv_datetime = $order->created_at;
+					$inventory->save();
+					Log::info($inventory->inv_batch_number." = ". $inventory->inv_quantity);
+			}
+
+			return $batches;
+	}
+
 	public function updateInvDatetime() {
 			ini_set('max_execution_time', 500);
 			set_time_limit(500);
 
 			// 201744, 7047
 			$invs = Inventory::select('inv_id', 'order_id')
+					->leftjoin('products as b', 'b.product_code', '=', 'inventories.product_code')
+					->where('product_drop_charge', '1')
+					->where('product_stocked', '1')
 					->where('move_code', 'sale')
-					->where('inv_fix', 1)
+					//->where('inv_fix', 1)
 					->get();
 
 			$index = 0;
@@ -116,7 +229,30 @@ class BillController extends Controller
 
 	}
 
-	public function fixDropChargeSales() {
+	public function fixInventoryDatetime($product_code) {
+			ini_set('max_execution_time', 500);
+			set_time_limit(500);
+
+			// 201744, 7047
+
+			$invs = Inventory::where('product_code', $product_code)
+					->where('move_code', '<>', 'sale')
+					->get();
+
+			$index = 0;
+			foreach($invs as $inv) {
+				Inventory::where('inv_id', $inv->inv_id)->update(['inv_datetime'=>$inv->created_at]);
+				$index +=1;
+				Log::info("Fix inv datetime: ".$index.' of '.$invs->count());
+			}
+
+			return "Ok date updated...";
+
+	}
+
+
+	/*
+	public function fixDropChargeSales2() {
 
 			// Steps
 			// add inv_fix in inventories
@@ -131,6 +267,7 @@ class BillController extends Controller
 						->where('product_drop_charge', '1')
 						->where('product_stocked', '1')
 						->where('move_code', 'sale')
+						->where('inventories.product_code', 'PH01-0003')
 						->delete();
 
 			Inventory::where('inv_fix',1)->delete();
@@ -140,7 +277,7 @@ class BillController extends Controller
 						//->leftjoin('inventories as c', 'c.order_id', '=', 'orders.order_id')
 						->where('product_drop_charge', '1')
 						->where('product_stocked', '1')
-						//->where('orders.product_code', '201744')
+						->where('orders.product_code', 'PH01-0003')
 						->orderBy('encounter_id')
 						->pluck("encounter_id");
 
@@ -154,39 +291,240 @@ class BillController extends Controller
 			}
 
 			return "Ok";
+	}
+	 */
+
+	public function fixDropChargeSales()
+	{
+			Inventory::where('inv_fix',1)->delete();
+
+			$products = Product::where('product_drop_charge', 1)
+						->where('product_stocked', 1)
+						->limit(2)
+						->get();
+
+			$sql = "select count(*) as x, a.product_code
+				from orders a
+				left join products as b on (b.product_code = a.product_code)
+				where b.product_drop_charge = 1
+				and product_stocked = 1
+				group by a.product_code
+				order by x";
+
+				//having count(*)<=10
+			$sql = "select product_code from products where product_code in ('PH04-0005')";
+					
+			$results = DB::select($sql);
+
+			foreach($results as $result) {
+				Log::info($result->product_code);
+				$this->fixInventoryDatetime($result->product_code);
+				$this->dropChargeSales($result->product_code);
+			}
+
+			return "Ok computer!";
 		
 	}
 
-	public function fixInventoryCost() {
-			//$this->fixAverageCost("201744");
-			$this->fixAverageCost("PH15-0018");
-	}
-
-	public function fixAverageCost($product_code) {
-
+	public function dropChargeSales($product_code) 
+	{
+			#$product_code = 'PH01-0003';
+			#$product_code = 'PH03-0009';
 			ini_set('max_execution_time', 500);
 			set_time_limit(500);
 
-			Log::info("-----------------------------------");
-			Log::info("Fix average cost: ".$product_code);
-			$inventories = Inventory::leftjoin('products as b', 'b.product_code', '=', 'inventories.product_code')
+
+			Inventory::leftjoin('products as b', 'b.product_code', '=', 'inventories.product_code')
+						->where('move_code', 'sale')
 						->where('inventories.product_code', $product_code)
-						//->where('product_drop_charge', '1')
-						//->where('product_stocked', '1')
-						->where('move_code', '<>', 'goods_receive')
-						->orderBy('inv_datetime')
+						->delete();
+
+			$orders = Order::selectRaw("orders.*")
+						->where('product_code', $product_code)
+						->leftjoin('order_cancellations as b', 'b.order_id', '=', 'orders.order_id')
+						->whereNull('cancel_id')
+						->orderBy('encounter_id')
+						//->where('store_code', 'pharmaceutical')
+						//->limit(20)
 						->get();
 
-			$helper = new StockHelper();
-			foreach ($inventories as $inv) {
-					Log::info($inv->move_code);
-					$avg_cost = $helper->getStockAverageCost($product_code, $inv->inv_datetime);
-					Log::info($avg_cost);
-					$inv->inv_unit_cost = $avg_cost;
-					$inv->inv_subtotal = $avg_cost*$inv->inv_physical_quantity;
-					$inv->save();
+			$index = 0;
+			Log::info($orders->count());
+
+			foreach ($orders as $order) {
+					$index += 1;
+					Log::info($product_code." = ".$index." of ".$orders->count());
+
+					$uom = $this->getUOM($order);
+					if (empty($uom)) {
+							$uom_cost = 0;
+							$uom_rate = 1;
+					} else {
+							$uom_cost = $uom->uom_cost?:0;
+							$uom_rate = $uom->uom_rate?:1;
+					}
+
+					$unit_supply = $order->order_quantity_supply?:1;
+
+					$inventory = new Inventory();
+					$inventory->order_id = $order->order_id;
+					$inventory->store_code = $order->store_code;
+					$inventory->product_code = $order->product_code;
+					$inventory->unit_code = $order->unit_code;
+					$inventory->uom_rate =  $uom_rate?:1;
+					$inventory->unit_code = $uom?$uom->unit_code:'unit';
+					$inventory->inv_unit_cost =  $uom_cost?:0;
+					$inventory->inv_quantity = -($unit_supply*$uom_rate);
+					$inventory->inv_physical_quantity = $unit_supply;
+					$inventory->inv_subtotal =  -($uom_cost*$inventory->inv_physical_quantity);
+					$inventory->inv_batch_number = "N/A";
+					$inventory->move_code = 'sale';
+					$inventory->inv_posted = 1;
+					$inventory->inv_fix = 1;
+					$inventory->save();
+
+
+					$inventory->inv_datetime = $order->created_at;
+					$inventory->save();
+
+
 			}
+			
+
+			$stores = Inventory::distinct()
+						->where('product_code', $product_code)->get(['store_code']);
+
+			Log::info("------------- Set batch number --------------");
+			foreach($stores as $store) {
+					Log::info($store->store_code);
+					$this->setBatchNumber($product_code, $store->store_code);
+			}
+			return "Ok done...";
 	}
+
+	public function setBatchNumber($product_code, $store_code=null)
+	{
+			$inventories = Inventory::where('product_code', $product_code)
+							->orderBy('inv_datetime');
+
+			if ($store_code) {
+					$inventories = $inventories->where('store_code', $store_code);
+			}
+
+			$inventories = $inventories->get();
+
+			$batches = [];
+			foreach ($inventories as $inv) {
+					if ($inv->move_code == 'goods_receive') {
+							if (!array_key_exists($inv->inv_batch_number, $batches)) {
+									$batches[strtoupper($inv->inv_batch_number)] = $inv->inv_quantity;
+
+									$batch_list = InventoryBatch::where('product_code', $product_code)
+													->orderBy('batch_expiry_date')
+													->get();
+
+							} else {
+									$batches[$inv->inv_batch_number] += $inv->inv_quantity;
+
+							}
+
+							/** Sort expiry date **/
+							/** Batch not exist in inventory_batches will be added **/
+							$new_batches = [];
+							foreach($batch_list as $list) {
+									$list_batch_number = strtoupper($list->batch_number);
+									if (array_key_exists($list_batch_number, $batches)) {
+											$new_batches[$list_batch_number] = $batches[$list_batch_number];
+									}
+							}
+
+							$batches = $new_batches;
+					}
+
+					if ($inv->move_code == 'stock_adjust') {
+
+					}
+
+					if ($inv->move_code == 'sale') {
+							if (sizeof($batches)>0) {
+									$unit_supply = $inv->inv_physical_quantity;
+									foreach($batches as $key=>$value) {
+										if ($batches[$key]>0) {
+											if ($batches[$key]>=$inv->inv_physical_quantity) {
+													$batches[$key] = $batches[$key] - $inv->inv_physical_quantity;
+													$inv->inv_batch_number = $key;
+													$unit_supply=0;
+													$inv->save();
+													Log::info($inv->inv_batch_number." = ". $inv->inv_quantity);
+													break;
+											} 
+
+											if ($batches[$key]<$inv->inv_physical_quantity) {
+												$deficit = $inv->inv_physical_quantity-$batches[$key];
+
+												$inv->inv_batch_number = $key;
+												$inv->inv_quantity = -($batches[$key]);
+												$inv->inv_physical_quantity = $batches[$key];
+												$unit_supply = $unit_supply - $batches[$key];
+												$inv->save();
+												Log::info($inv->inv_batch_number." = ". $inv->inv_quantity);
+
+												$parent_id = $inv->order_id;
+												$inv = $inv->replicate();
+												$inv->inv_physical_quantity = $deficit;
+												$inv->order_id = null;
+												$inv->order_parent_id = $parent_id;
+												$inv->inv_quantity = -$deficit;
+												$batches[$key] = 0;
+												Log::info("-- Replicate --");
+												Log::info($inv);
+											}
+										}
+									}
+
+									/*** Batches depleted ***/
+									if ($unit_supply>0) {
+											$inv = $inv->replicate();
+											$inv->inv_quantity = -($unit_supply);
+											$inv->inv_physical_quantity = $unit_supply;
+											$inv->inv_subtotal =  -($inv->inv_unit_cost*$inv->inv_physical_quantity);
+											$inv->inv_batch_number = "N/A";
+											$inv->save();
+											Log::info($inv->inv_batch_number." = ". $inv->inv_quantity);
+									}
+							} else {
+								$inv->inv_batch_number = "N/A";
+								$inv->save();
+							}
+					}
+
+
+
+			}
+
+			Log::info($batches);
+
+
+	}
+
+	public function getBatches($product_code) 
+	{
+			$batches = InventoryBatch::where('product_code', $product_code)->get();
+			foreach ($batches as $batch) {
+					$sql = "select sum(uom_rate*line_quantity) as quantity, batch_number from purchase_lines 
+							where product_code='".$product_code."'
+							and batch_number='".$batch->batch_number."' group by batch_number";
+
+					$results = DB::select($sql);
+					Log::info("------");
+					Log::info($results[0]->batch_number);
+
+					$batch->batch_quantity = $results[0]->quantity;
+			}
+
+			return $batches;
+	}
+
 
 	public function addDropchargeSales($id) {
 			$ids = Order::select("orders.order_id")
@@ -195,12 +533,10 @@ class BillController extends Controller
 						->leftjoin('inventories as c', 'c.order_id', '=', 'orders.order_id')
 						->where('product_drop_charge', '1')
 						->where('product_stocked', '1')
-						//->where('orders.product_code', '201744')
 						->pluck("orders.order_id");
 
-			$orders = Order::whereIn('order_id', $ids)->get();
-
 			foreach ($orders as $order) {
+					$this->addSale($order->order_id);
 
 					$helper = new StockHelper();
 					$batches = $helper->getBatches($order->product_code, $order->order_id)?:null;
@@ -222,7 +558,6 @@ class BillController extends Controller
 															$uom_rate = $uom->uom_rate?:1;
 													}
 
-
 													$inventory = new Inventory();
 													$inventory->order_id = $order->order_id;
 													$inventory->store_code = $order->store_code;
@@ -239,7 +574,11 @@ class BillController extends Controller
 													$inventory->inv_posted = 1;
 													$inventory->inv_fix = 1;
 													$inventory->save();
-													//Log::info($inventory);
+
+													$inventory->inv_datetime = $order->created_at;
+													$inventory->save();
+
+
 											}
 									}
 							}
@@ -271,6 +610,9 @@ class BillController extends Controller
 									$inventory->inv_batch_number = 'N/A';
 									$inventory->inv_posted = 1;
 									$inventory->inv_fix = 1;
+									$inventory->save();
+
+									$inventory->inv_datetime = $order->created_at;
 									$inventory->save();
 							}
 					}

@@ -57,16 +57,21 @@
 @foreach ($inventories as $inventory)
 	<tr>
 			<td>
+{{$inventory->inv_id}}
 					{{ DojoUtility::dateReadFormat($inventory->inv_datetime) }}
 			</td>
 			<td>
 				@if ($inventory->move_code == 'sale')
-					<a href='{{ URL::to('order/enquiry?encounter_id='. $inventory->encounter_id.'&product_code='.$inventory->product_code) }}'>
+					{{ $inventory->order_id }}
+					@if (!empty($inventory->origin_encounter))
+					<a href='{{ URL::to('order/enquiry?encounter_id='. $inventory->origin_encounter.'&product_code='.$inventory->product_code) }}'>
+					@else
+					<a href='{{ URL::to('order/enquiry?encounter_id='. $inventory->replicate_encounter.'&product_code='.$inventory->product_code) }}'>
+					@endif
 						{{ $inventory->move_name }}
 					</a>
 				@else
 						{{ $inventory->move_name }}
-					</a>
 				@endif
 				@if (!empty($inventory->move_description))
 				 ({{ $inventory->move_description }})

@@ -125,6 +125,7 @@
  <thead>
 	<tr> 
     <th>EID</th>
+    <th>OID</th>
     <th>Patient</th>
     <th>Type</th>
 	<th>Product</th>
@@ -148,6 +149,9 @@
 					{{ $order->encounter_id }}
 					<br>
 					{{ $order->encounter_name }}
+			</td>
+			<td>
+					{{ $order->order_id }}
 			</td>
 			<td>
 					{{$order->patient_name}}

@@ -83,7 +83,7 @@ $available = $on_hand-$allocated;
 			</td>
 			<td>
 				@if ($product->inv_batch_number)
-				<a href='{{ URL::to('inventory/enquiry?batch_number='.$product->inv_batch_number) }}'>
+				<a href='{{ URL::to('inventory/enquiry?store_code='.$product->store_code.'&batch_number='.$product->inv_batch_number) }}'>
 				{{ $product->inv_batch_number }}
 				</a>
 				@else

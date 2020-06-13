@@ -367,11 +367,11 @@ class StockHelper
 							$store_code = $order->store_code;
 					}
 					$batches = $batches->where('inventories.inv_datetime', '<', $order->created_at);
-								//->where('inventories.unit_code', '=', $order->unit_code);
+					Log::info($order->created_at);
 			}
 
 			if ($store_code) {
-				$batches = $batches->where('store_code', $store_code);
+					$batches = $batches->where('store_code', $store_code);
 			}
 
 			$batches = $batches->get();

@@ -20,6 +20,7 @@ class Inventory extends Model
 	protected $fillable = [
 				'line_id',
 				'order_id',
+				'order_parent_id',
 				'move_id',
 				'move_reference',
 				'move_description',

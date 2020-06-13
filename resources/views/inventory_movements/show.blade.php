@@ -8,6 +8,11 @@ iframe { border: 1px #e5e5e5 solid; }
 <h3>{{ ($movement->store)?$movement->store->store_name:'' }}</h3>
 <h3>{{ $movement->move_number }}</h3>
 <br>
+<h3>
+{{ DojoUtility::dateLongFormat($movement->created_at) }}
+</h3>
+<br>
+<br>
 
 <a class="btn btn-default" href="/inventory_movements" role="button">Back</a>
 <a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=stock_movement&id={{ $movement->move_id }}" role="button" target="_blank">Print</a> 

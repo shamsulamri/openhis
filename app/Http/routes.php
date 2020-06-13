@@ -28,7 +28,10 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 
 		//Route::get('/test/{id}', 'BillController@addSales');
 		Route::get('/test2', 'BillController@fixDropChargeSales');
-		Route::get('/test3', 'BillController@updateInvDatetime');
+		Route::get('/test3', 'BillController@updateInvDatetime2');
+		Route::get('/test4', 'BillController@dropChargeSales');
+		Route::get('/addsale/{id}', 'BillController@addSale');
+		Route::get('/showbatch/{id}', 'BillController@showBatch');
 
 		Route::get('/home', function() {
 				//return view('welcome');

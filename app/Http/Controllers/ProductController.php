@@ -545,7 +545,7 @@ class ProductController extends Controller
 			if (!empty($request->expire_days)) {
 				$sql = $sql." order by batch_expiry_date desc";
 			} else {
-				$sql = $sql." order by product_name";
+				$sql = $sql." order by batch_expiry_date";
 			}
 
 			$data = DB::select($sql);

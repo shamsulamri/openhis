@@ -61,7 +61,9 @@
 					@endif
 			</td>
 			<td valign='top' colspan='1'>
+					<a href='/showbatch/{{ $order->product_code }}'>
 					{{$order->product_code}}
+					</a>
 			</td>
 			<td valign='top' colspan='5'>
 				@if ($order->order_completed==0)
