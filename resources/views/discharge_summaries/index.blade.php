@@ -19,8 +19,9 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>summary_treatment</th>
-    <th>encounter_id</th> 
+    <th>Encounter</th> 
+    <th>Patient</th> 
+    <th>MRN</th> 
 	@can('system-administrator')
 	<th></th>
 	@endcan
@@ -31,11 +32,14 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('discharge_summaries/'. $discharge_summary->encounter_id . '/edit') }}'>
-						{{$discharge_summary->summary_treatment}}
+							{{$discharge_summary->encounter_id}}
 					</a>
 			</td>
 			<td>
-					{{$discharge_summary->encounter_id}}
+					{{$discharge_summary->encounter->patient->patient_name}}
+			</td>
+			<td>
+					{{$discharge_summary->encounter->patient->patient_mrn}}
 			</td>
 			@can('system-administrator')
 			<td align='right'>

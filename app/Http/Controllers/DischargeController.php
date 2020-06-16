@@ -214,6 +214,10 @@ class DischargeController extends Controller
 							->where('post_id','=',0)
 							->update(['post_id'=>$post->post_id, 'order_is_discharge'=>1]);
 
+
+					$helper = new DischargeHelper();
+					$helper->populateSummary($request->encounter_id);
+
 					Session::flash('message', 'Patient has been discharged.');
 					return redirect('/patient_lists');
 			} else {
@@ -282,6 +286,10 @@ class DischargeController extends Controller
 	}
 	public function destroy($id)
 	{	
+			$discharge = Discharge::findOrFail($id);
+			Consultation::where('consultation_id', $discharge->consultation_id)->update(['consultation_status'=>1]);
+			DischargeSummary::where('encounter_id', $discharge->encounter_id)->delete();
+
 			Discharge::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/discharges');

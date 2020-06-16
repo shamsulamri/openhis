@@ -39,5 +39,9 @@ class DischargeSummary extends Model
 			return validator::make($input, $rules ,$messages);
 	}
 
+	public function encounter() 
+	{
+			return $this->belongsto('App\Encounter', 'encounter_id');
+	}
 	
 }

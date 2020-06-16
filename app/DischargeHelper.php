@@ -66,6 +66,7 @@ class DischargeHelper
 					->where('encounter_id', $id)
 					->whereIn('category_code', ['drugs'])
 					->whereNull('cancel_id')
+					->where('order_is_discharge', 1)
 					->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
 					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'orders.order_id')
 					->pluck('product_name');
