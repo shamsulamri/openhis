@@ -865,7 +865,8 @@ class BillController extends Controller
 
 			$reports = ['bill_report'=>'Bill Report',
 						'panel_report'=>'Panel Report',
-						'consultant_summary'=>'Consultant Report',
+						'consultant_summary'=>'Consultant Report By User',
+						'consultant_summary2'=>'Consultant Report By Product',
 						'shift_report'=>'Shift Report',
 						];
 
