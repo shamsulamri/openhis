@@ -608,6 +608,7 @@ class OrderTaskController extends Controller
 			Inventory::find($id)->delete();
 	}
 
+	/*
 	public function statusBatch(Request $request, $stock) 
 	{
 		$stock_helper = new StockHelper();
@@ -634,4 +635,5 @@ class OrderTaskController extends Controller
 
 		return $total_quantity;
 	}
+	 */
 }

@@ -91,7 +91,7 @@ $available = $on_hand-$allocated;
 				@endif
 			</td>
 			<td>
-				{{ $product->batch_expiry_date?DojoUtility::dateReadFormat($product->batch_expiry_date):'-' }}
+				{{ $product->batch_expiry_date?DojoUtility::dateReadFormat($product->batch_expiry_date):'N/A' }}
 			</td>
 			<td>
 				{{ $product->store_name }}

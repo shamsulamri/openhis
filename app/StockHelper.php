@@ -259,7 +259,6 @@ class StockHelper
 					->whereNull('cancel_id');
 
 			if (!empty($encounter_id)) {
-					Log::info("X");
 					$allocated = $allocated->where('orders.encounter_id','<>', $encounter_id);
 			}
 
@@ -296,7 +295,6 @@ class StockHelper
 	{
 			$on_hand = $this->getStockOnHand($product_code, $store_code, $batch_number);
 			$allocated = $this->getStockAllocated($product_code, $store_code, $batch_number);
-			Log::info($on_hand.'---'.$allocated);
 
 			return $on_hand - $allocated;
 	}
@@ -355,9 +353,9 @@ class StockHelper
 							->orderBy('inv_batch_number', 'desc')
 							->havingRaw('sum(inv_quantity)>?',[0])
 							->whereNotNull('batch_id')
-							->where('inv_posted', 1)
 							->whereNull('b.deleted_at')
-							->whereNotNull('inv_batch_number');
+							->whereNotNull('inv_batch_number')
+							->where('inv_posted', 1);
 
 			if ($order_id) {
 
@@ -367,7 +365,6 @@ class StockHelper
 							$store_code = $order->store_code;
 					}
 					$batches = $batches->where('inventories.inv_datetime', '<', $order->created_at);
-					Log::info($order->created_at);
 			}
 
 			if ($store_code) {

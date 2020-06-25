@@ -512,7 +512,7 @@ class ProductController extends Controller
 						group by store_code, product_code
 				) as d on (d.store_code = a.store_code and d.product_code = a.product_code)
 				left join ref_unit_measures as e on (e.unit_code = a.unit_code)
-				left join inventory_batches as f on (f.batch_number = a.inv_batch_number and f.deleted_at is null)
+				left join inventory_batches as f on (f.batch_number = a.inv_batch_number and f.product_code=a.product_code and f.deleted_at is null)
 				where inv_posted = 1
 			";
 

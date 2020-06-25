@@ -31,7 +31,7 @@
 	$allocated =  $stock_helper->getStockAllocated($order->product_code, Auth::user()->defaultStore(), $encounter_id); //-$order->order_quantity_request;
 	$on_hand = $stock_helper->getStockOnHand($order->product_code, Auth::user()->defaultStore())?:0;
 	$available = $on_hand-$allocated;
-	$batches = $stock_helper->getBatches($order->product_code, $order->order_id)?:null;
+	$batches = $stock_helper->getBatches($order->product_code)?:null;
 	$quantity_request = $order->order_quantity_request;
 	?>
 	@if ($order->product_stocked)
@@ -61,9 +61,13 @@
 					@endif
 			</td>
 			<td valign='top' colspan='1'>
+					<!--
 					<a href='/showbatch/{{ $order->product_code }}'>
+					-->
 					{{$order->product_code}}
+					<!--
 					</a>
+					-->
 			</td>
 			<td valign='top' colspan='5'>
 				@if ($order->order_completed==0)
@@ -96,7 +100,7 @@
 			@if ($order->order_completed==0)
 			<td colspan='3' valign='top'>
 					@if ($status=='danger')
-						<span class='label label-danger'>Insufficient supply.</span>
+						<span class='label label-danger'>Insufficient supply or no batch.</span>
 					@endif
 			</td>
 			@else
@@ -183,7 +187,11 @@
 					{{ $batch->inv_batch_number }}
 				</td>
 				<td colspan='1' align='center'>
+					@if ($batch->batch_expiry_date)	
 					{{ DojoUtility::dateReadFormat($batch->batch_expiry_date) }}
+					@else
+					N/A
+					@endif
 				</td>
 				@if ($order->order_completed == 0) 
 				<td colspan='1' align='center'>
@@ -221,13 +229,7 @@
 				<td colspan='7'></td>
 				<td colspan='1'>N/A</td>
 				<td colspan='1' align='center'>N/A</td>
-				<td colspan='1' align='center'>
-					@if ($order->product_stocked && $order->order_completed==0)
-							{{ $on_hand - $allocated }}
-					@else
-							-
-					@endif
-				</td>
+				<td colspan='1' align='center'>N/A</td>
 				<td colspan='1' align='center'>
 					@if ($uom = $order_helper->getDefaultPrice($order->product_code))
 					{{ $uom->unitMeasure->unit_name }}
