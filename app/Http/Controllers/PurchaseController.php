@@ -398,7 +398,14 @@ class PurchaseController extends Controller
 					}
 
 			} else {
-					$purchases = $purchases->where('author_id', '=', Auth::user()->author_id);
+					$is_administrator = false;
+					if (Auth::user()->author_id==18) $is_administrator=true;
+					if (Auth::user()->author_id==19) $is_administrator=true;
+
+
+					if (!$is_administrator) {
+							$purchases = $purchases->where('author_id', '=', Auth::user()->author_id);
+					}
 
 					if (!empty($request->document_code)) {
 							$purchases = $purchases->where('document_code', '=', $request->document_code);
