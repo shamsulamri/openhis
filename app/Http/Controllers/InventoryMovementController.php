@@ -46,12 +46,22 @@ class InventoryMovementController extends Controller
 	{
 			$movement = InventoryMovement::find($id);
 
-			$documents = InventoryMovement::orderBy('move_posted')
-					->orderBy('move_id', 'desc')
-					->where('move_posted', 1)
-					->where('move_id', '<>', $id)
-					->where('store_code', Auth::user()->defaultStore($request))
-					->paginate($this->paginateValue);
+			if ($request->reason=='issue') {
+					$documents = InventoryMovement::orderBy('move_posted')
+							->orderBy('move_id', 'desc')
+							->where('move_posted', 1)
+							->where('move_id', '<>', $id)
+							->where('move_code', '=', 'stock_issue')
+							->where('target_store', Auth::user()->defaultStore($request))
+							->paginate($this->paginateValue);
+			} else {
+					$documents = InventoryMovement::orderBy('move_posted')
+							->orderBy('move_id', 'desc')
+							->where('move_posted', 1)
+							->where('move_id', '<>', $id)
+							->where('store_code', Auth::user()->defaultStore($request))
+							->paginate($this->paginateValue);
+			}
 
 
 			return view('inventory_movements.master_document',[

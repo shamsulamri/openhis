@@ -38,6 +38,7 @@ class Purchase extends Model
 			];
 
 			//'supplier_code'=>'required_unless:document_code,==,indent_request',
+			//'supplier_code'=>'required_unless:document_code,==,indent_request',
 			//'store_code'=>'required_if:document_code,==,goods_receive|required_if:document_code,==,purchase_invoice',
 			
 			$messages = [

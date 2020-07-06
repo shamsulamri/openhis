@@ -196,7 +196,7 @@ class PurchaseController extends Controller
 					}
 					 */
 					$purchases = Purchase::where('document_code', 'like', '%_request')
-							->whereNull('status_code')
+							//->whereNull('status_code')
 							->orderBy('purchase_id', 'desc');
 
 					if (Auth::user()->author_id==18) {
