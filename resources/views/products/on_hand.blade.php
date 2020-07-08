@@ -109,7 +109,7 @@ $available = $on_hand-$allocated;
 				</a>
 			</td>
 			<td align='right'>
-				{{ $product->allocated }}
+				{{ $allocated }}
 			</td>
 			<td align='right'>
 				{{ $available }}

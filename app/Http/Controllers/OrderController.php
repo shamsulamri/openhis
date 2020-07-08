@@ -30,6 +30,7 @@ use App\ProductCategory;
 use App\AMQPHelper as Amqp;
 use App\Document;
 use App\Set;
+use App\Store;
 
 class OrderController extends Controller
 {
@@ -271,6 +272,7 @@ class OrderController extends Controller
 					'current_id'=>$current_id,
 					'available'=>$available,
 					'order_single'=>$request->order_single,
+					'store' => Store::all()->sortBy('store_name')->lists('store_name', 'store_code')->prepend('',''),
 			]);
 	}
 

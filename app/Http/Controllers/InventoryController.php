@@ -192,7 +192,7 @@ class InventoryController extends Controller
 			$inventory->unit_code = $request['unit_'.$line->inv_id]?:'unit';
 			$inventory->uom_rate = 1;
 			$inventory->inv_book_quantity = $request['book_'.$line->inv_id];
-			$inventory->inv_batch_number = $request['batch_'.$line->inv_id];
+			$inventory->inv_batch_number = $request['batch_'.$line->inv_id]?:"N/A";
 			$inventory->inv_physical_quantity = $request['physical_'.$line->inv_id];
 			$inventory->inv_quantity = $inventory->uom_rate*$inventory->inv_physical_quantity;
 
@@ -236,7 +236,7 @@ class InventoryController extends Controller
 						if ($inventory->inv_book_quantity>0) {
 								$inventory->inv_quantity = ($inventory->inv_physical_quantity*$inventory->uom_rate)-$inventory->inv_book_quantity;
 						} else {
-								$inventory->inv_quantity = $inventory->inv_physical_quantity*$inventory->uom_rate;
+								$inventory->inv_quantity = ($inventory->inv_physical_quantity+abs($inventory->inv_book_quantity))*$inventory->uom_rate;
 						}
 				} elseif ($movement->move_code == 'stock_receive') {
 						$inventory->inv_quantity = $inventory->inv_physical_quantity*$inventory->uom_rate;
@@ -244,7 +244,10 @@ class InventoryController extends Controller
 						$inventory->inv_quantity = -($inventory->inv_physical_quantity*$inventory->uom_rate);
 				}
 				$inventory->inv_unit_cost = $product_uom->uom_cost/$inventory->uom_rate;
-				$inventory->inv_subtotal = $inventory->inv_quantity*$inventory->inv_unit_cost;
+				$inventory->inv_subtotal = $inventory->inv_physical_quantity*$inventory->inv_unit_cost;
+				if ($inventory->inv_quantity<0) {
+					$inventory->inv_subtotal = abs($inventory->inv_quantity)*$inventory->inv_unit_cost;
+				}
 			}
 
 

@@ -253,9 +253,8 @@ class StockHelper
 	{
 			$allocated = Order::where('product_code','=',$product_code)
 					->leftjoin('order_cancellations as a', 'a.order_id', '=', 'orders.order_id')
-					->leftjoin('discharges as b', 'b.encounter_id', '=', 'orders.encounter_id')
-					->where('order_completed','=', 0)
-					->whereNull('discharge_id')
+					->leftjoin('bills as b', 'b.encounter_id', '=', 'orders.encounter_id')
+					->whereNull('b.id')
 					->whereNull('cancel_id');
 
 			if (!empty($encounter_id)) {

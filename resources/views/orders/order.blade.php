@@ -51,6 +51,13 @@
         </div>
     </div>
 
+    <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
+        {{ Form::label('Store', 'Store',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+			{{ Form::select('store_code', $store, null, ['class'=>'form-control','maxlength'=>'10']) }}
+            @if ($errors->has('store_code')) <p class="help-block">{{ $errors->first('store_code') }}</p> @endif
+        </div>
+    </div>
 	<!--
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
         {{ Form::label('Send To', 'Send To',['class'=>'col-sm-3 control-label']) }}

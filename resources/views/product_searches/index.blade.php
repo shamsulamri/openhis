@@ -25,7 +25,12 @@
 		-->
 		<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=stock'>Documents</a>
 		<a class='btn btn-default btn-sm' href='/product_searches?reason=stock&move_id={{ $movement->move_id }}'>Products</a>
+		@if ($movement->move_code == 'stock_issue')
 		<a class='btn btn-default btn-sm' href='/purchases/master_document?reason=request&move_id={{ $movement->move_id }}'>Request</a>
+		@endif
+		@if ($movement->move_code == 'stock_receive')
+		<a class='btn btn-default btn-sm' href='/inventory_movements/master_document/{{ $movement->move_id }}?reason=issue'>Issues</a>
+		@endif
 		<br><br>
 	@endif
 @endif

@@ -104,7 +104,7 @@
 			@if ($inventory->inv_quantity<0)
 					({{ abs($inventory->inv_quantity) }})
 			@else
-					{{ abs($inventory->inv_quantity) }}
+					{{ abs($inventory->inv_physical_quantity) }}
 			@endif
 			</td>
 			<td align='right'>
