@@ -104,7 +104,11 @@
 			@if ($inventory->inv_quantity<0)
 					({{ abs($inventory->inv_quantity) }})
 			@else
-					{{ abs($inventory->inv_physical_quantity) }}
+					@if ($inventory->unit_code != 'unit' && $inventory->move_code != 'sale')
+							{{ abs($inventory->inv_quantity) }}
+					@else
+							{{ abs($inventory->inv_physical_quantity) }}
+					@endif
 			@endif
 			</td>
 			<td align='right'>
