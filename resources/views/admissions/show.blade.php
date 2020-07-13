@@ -7,6 +7,9 @@
 <br>
 <h4>
 
+				<span class='fa fa-clipboard' aria-hidden='true'></span>
+				<a href='{{ URL::to('order_sheet/'. $admission->encounter_id) }}'>Order Sheet</a>
+				<br><br>
 
 		</a>
 				@if (!empty($admission->encounter->discharge))

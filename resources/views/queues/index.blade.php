@@ -45,6 +45,7 @@
   </thead>
 	<tbody>
 @foreach ($queues as $queue)
+	@if ($queue->encounter)
 	<tr>
 			<td width='15%'>
 					{{ date('d F Y, H:i', strtotime($queue->created_at)) }}
@@ -65,7 +66,7 @@
 					@endif
 			</td>
 			<td>
-					<a href='{{ URL::to('queues/'. $queue->queue_id . '/edit') }}'>
+					<a href='{{ URL::to('queues/'. $queue->queue_id) }}'>
 						{{strtoupper($queue->patient_name)}}
 					</a>
 					<br>
@@ -96,6 +97,7 @@
 					@endcan
 			</td>
 	</tr>
+	@endif
 @endforeach
 @endif
 </tbody>

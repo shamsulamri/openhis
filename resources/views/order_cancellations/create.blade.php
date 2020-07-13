@@ -2,7 +2,7 @@
 
 @section('content')
 
-<h3>Order Cancellation</h3>
+<h3>Cancel Order</h3>
 
 
 {{ Form::model($order_cancellation, ['url'=>'order_cancellations', 'class'=>'form-horizontal']) }} 

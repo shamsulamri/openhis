@@ -44,6 +44,11 @@ class OrderCancellationController extends Controller
 				$is_drug=True;
 				$create_file = 'create_mar';
 			}
+			
+			if ($request['sheet']) {
+				$is_drug=False;
+				$create_file = 'create_sheet';
+			}
 
 			return view('order_cancellations.'.$create_file, [
 					'order_cancellation' => $order_cancellation,
@@ -96,6 +101,7 @@ class OrderCancellationController extends Controller
 					'consultation' => $order_cancellation->order->consultation,
 					'tab' => 'order',			
 					'consultOption' => 'consultation',			
+					'patient'=>$order_cancellation->order->encounter->patient,
 					]);
 	}
 

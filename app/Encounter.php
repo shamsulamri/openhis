@@ -97,6 +97,11 @@ class Encounter extends Model
 			return $this->hasMany('App\FormValue', 'encounter_id');
 	}
 
+	public function orders()
+	{
+			return $this->hasMany('App\Order', 'encounter_id')->orderBy('product_code')->orderBy('created_at');
+	}
+
 	public function queue()
 	{
 			return $this->hasOne('App\Queue', 'encounter_id');

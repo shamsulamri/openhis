@@ -62,6 +62,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 	}
 ?>
 @if (!$billPosted)
+<a href='/order_sheet/{{ $encounter_id }}' class='btn btn-primary'>Order Sheet</a>
 <a href='/lock_orders/{{ $encounter_id }}' class='btn {{ $lock_button }}'>{{ $lock_label }}</a>
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reset Bill</a>
 <p class='pull-right'>&nbsp;</p>

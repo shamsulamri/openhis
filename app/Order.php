@@ -18,6 +18,7 @@ class Order extends Model
 				'consultation_id',
 				'user_id',
 				'admission_id',
+				'encounter_id',
 				'product_code',
 				'bom_code',
 				'ward_code',
@@ -169,9 +170,19 @@ class Order extends Model
 			return $this->belongsTo('App\User', 'updated_by','id');
 	}
 
+	public function dispensedBy()
+	{
+			return $this->belongsTo('App\User', 'dispensed_by','id');
+	}
+
 	public function admission()
 	{
 			return $this->belongsTo('App\Admission', 'admission_id');
+	}
+
+	public function encounter()
+	{
+			return $this->belongsTo('App\Encounter', 'encounter_id');
 	}
 
 	public static function boot()

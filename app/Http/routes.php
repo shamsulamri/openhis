@@ -32,6 +32,14 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/addsale/{id}', 'BillController@addSale');
 		Route::get('/showbatch/{id}', 'BillController@showBatch');
 
+		Route::get('/order_sheet/cancel/{id}/edit', 'OrderSheetController@cancel_edit');
+		Route::get('/order_sheet/cancel/{id}', 'OrderSheetController@cancel');
+		Route::get('/order_sheet/delete/{id}', 'OrderSheetController@cancel_delete');
+		Route::post('/order_sheet/cancel/{id}', 'OrderSheetController@cancel_post');
+		Route::get('/order_sheet/{id}', 'OrderSheetController@index');
+		Route::post('/order_sheet/{id}', 'OrderSheetController@update');
+		Route::delete('/order_sheet/{id}', 'OrderSheetController@cancel_destroy');
+
 		Route::get('/home', function() {
 				//return view('welcome');
 				if (Auth::check()) {

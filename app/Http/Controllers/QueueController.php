@@ -109,7 +109,10 @@ class QueueController extends Controller
 			$locations = $locations->orderBy('location_name')
 							->lists('location_name', 'location_code')->prepend('','');
 			
-			$encounters = EncounterType::all()->lists('encounter_name', 'encounter_code')
+			$encounters = EncounterType::where('encounter_code', '<>', 'inpatient')
+					->where('encounter_code', '<>', 'daycare')
+					->where('encounter_code', '<>', 'mortuary')
+					->lists('encounter_name', 'encounter_code')
 					->sortBy('encounter_name')
 					->prepend('','');
 
@@ -392,5 +395,16 @@ class QueueController extends Controller
 							->lists('name','id')
 							->prepend('','');
 			return $consultants;
+	}
+
+	public function show($id) 
+	{
+			$queue = Queue::findOrFail($id);
+
+			return view('queues.show', [
+					'queue'=>$queue,
+					'encounter'=>$queue->encounter,
+					'patient'=> $queue->encounter->patient,
+			]);
 	}
 }
