@@ -40,7 +40,7 @@ class PurchaseHelper
 					->where('purchase_posted', 1)
 					->whereNull('status_code');
 
-			if (Auth::user()->author_id==18) {
+			if (Auth::user()->author_id==18 or Auth::user()->author_id==13) {
 				$purchases = $purchases->where('supplier_code', 'pmc_pharmacy');
 			} else {
 				$purchases = $purchases->where('supplier_code', 'pmc_purchase');

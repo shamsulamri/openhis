@@ -136,7 +136,7 @@ class OrderTaskController extends Controller
 					'stop_description',
 					'p.created_at as stop_at',
 					'q.name as stop_by',
-					'payment_id',
+					//'payment_id',
 					'a.unit_code'
 					];
 
@@ -158,7 +158,7 @@ class OrderTaskController extends Controller
 					->leftjoin('users as o','o.id','=', 'a.dispensed_by')
 					->leftjoin('order_stops as p', 'p.order_id', '=', 'a.order_id')
 					->leftjoin('users as q', 'q.id', '=', 'p.user_id')
-					->leftjoin('payments as r','r.encounter_id','=','a.encounter_id')
+					//->leftjoin('payments as r','r.encounter_id','=','a.encounter_id')
 					->where('a.encounter_id','=', $encounter_id)
 					->whereIn('e.category_code', $queue_categories)
 					->where('a.post_id','>',0) 

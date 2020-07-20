@@ -55,7 +55,7 @@
 						{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
 					@else
 
-						@if ($order->order_completed==1 && empty($order->stop_id) && $order->product_local_store==0 && !$order->payment_id)
+						@if ($order->order_completed==1 && empty($order->stop_id) && $order->product_local_store==0)
 							<a href='/order_task/reopen/{{ $order->order_id }}' class='btn btn-danger btn-xs'>Reopen</a>
 						@endif
 					@endif
