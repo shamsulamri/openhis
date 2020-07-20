@@ -90,6 +90,9 @@
 				{{ DojoUtility::titleCase($order->orderer_name) }}<br>
 				{{ DojoUtility::militaryFormat($order->order_at) }}
 				</small>
+				@if (empty($order->post_id))
+				<span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>
+				@endif
 		</td>
 		<td width='20%'>
 		<small>
