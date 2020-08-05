@@ -34,6 +34,7 @@ class Product extends Model
 				'status_code',
 				'product_average_cost',
 				'product_on_hand',
+				'product_edit_price',
 				'product_local_store',
 				'product_non_claimable',
 				'product_duration_use',

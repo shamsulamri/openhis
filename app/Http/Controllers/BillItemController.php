@@ -637,7 +637,8 @@ class BillItemController extends Controller
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity;
 					//$item->bill_unit_code = "unit";
-					$item->bill_discount = 0;
+					//$item->bill_discount = $order->order_discount;
+					//$item->bill_discount = 0;
 					$item->bill_markup = $order->order_markup;
 					$item->bill_non_claimable = $non_claimable;
 					$item->bill_unit_price = $order->order_unit_price?:0;
@@ -727,6 +728,7 @@ class BillItemController extends Controller
 					$item->bill_quantity = $order->total_quantity;
 					$item->bill_name = $order->product_name;
 					$item->bill_amount = $order->total_price?:0;
+					//$item->bill_discount = $order->order_discount;
 					Log::info("------");
 					Log::info($order->product_code);
 					$item->bill_unit_price = $order->total_price/$order->total_quantity;

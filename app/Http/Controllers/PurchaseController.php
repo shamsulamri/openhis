@@ -36,14 +36,10 @@ class PurchaseController extends Controller
 
 	public function index(Request $request)
 	{
-			$purchases = Purchase::orderBy('purchase_posted')
-					->where(function ($query) use ($request) {
-							$query->where('author_id', '=', Auth::user()->author_id)
-								  ->orWhere('status_code', '=', 'approved');
-					});
+			$purchases = Purchase::orderBy('purchase_posted');
 
-			//$store_code = StockHelper::getDefaultStore($request);
 			$store_code = Auth::User()->defaultStore($request);
+
 			if (!empty($store_code)) {
 					$purchases = $purchases->where('store_code', $store_code);
 			}
@@ -78,8 +74,6 @@ class PurchaseController extends Controller
 							$query->where('author_id', '=', Auth::user()->author_id)
 									->orWhere('author_id','=', 7);
 					});
-			//		->where('author_id', '=', Auth::user()->author_id);
-
 
 			$purchases = $purchases
 					->where(function ($query) use ($request) {
@@ -94,30 +88,6 @@ class PurchaseController extends Controller
 					$id = $request->purchase_id;
 			}
 
-
-			/*
-			if ($reason == 'request') {
-				$id = $request->move_id;
-				$movement = InventoryMovement::find($request->move_id);		
-
-				if ($request->type=='indent') {
-						$find = 'Find indent request';
-						$helper = new PurchaseHelper();
-						$purchases = $helper->backOrder('indent_request');
-						$purchases = $purchases->where('store_code', $movement->target_store);
-						if (Auth::user()->author_id==18) {
-								$purchases = $purchases->where('supplier_code', 'pmc_pharmacy');
-						} else {
-								$purchases = $purchases->where('supplier_code', 'pmc_purchase');
-						}
-				} else {
-						$find = 'Find purchase request';
-						$purchases = Purchase::where('document_code', '=', 'purchase_request')
-								->where('status_code', '=', 'approved')
-								->orderBy('purchase_id', 'desc');
-				}
-			}
-			 */
 			if ($reason == 'request') {
 					$id = $request->move_id;
 					$movement = InventoryMovement::find($request->move_id);		
@@ -126,7 +96,7 @@ class PurchaseController extends Controller
 							->whereNull('status_code')
 							->orderBy('purchase_id', 'desc');
 
-					if (Auth::user()->author_id==18) {
+					if (Auth::user()->author_id==18 or Auth::user()->author_id==13) {
 							$purchases = $purchases->where('supplier_code', 'pmc_pharmacy');
 					} else {
 							$purchases = $purchases->where('supplier_code', 'pmc_purchase');
@@ -141,7 +111,6 @@ class PurchaseController extends Controller
 				$movement = InventoryMovement::find($request->move_id);		
 				$id = $request->move_id;
 			}
-
 
 			return view('purchases.master_document', [
 					'purchases'=>$purchases,
@@ -179,7 +148,7 @@ class PurchaseController extends Controller
 
 			if ($reason == 'purchase') {
 					$purchase = Purchase::find($request->purchase_id);
-					//$purchases = $purchases->where('supplier_code', '=', $purchase->supplier_code);
+
 					if (!empty($request->search)) {
 						$purchases = $purchases->where('purchase_number', 'like', '%'.trim($request->search).'%');
 					}
@@ -188,18 +157,10 @@ class PurchaseController extends Controller
 			}
 
 			if ($reason == 'request') {
-					/*
-					if ($request->type=='indent') {
-							$purchases = Purchase::where('document_code', '=', 'indent_request');
-					} else {
-							$purchases = Purchase::where('document_code', '=', 'purchase_request');
-					}
-					 */
 					$purchases = Purchase::where('document_code', 'like', '%_request')
-							//->whereNull('status_code')
 							->orderBy('purchase_id', 'desc');
 
-					if (Auth::user()->author_id==18) {
+					if (Auth::user()->author_id==18 or Auth::user()->author_id==13) {
 							$purchases = $purchases->where('supplier_code', 'pmc_pharmacy');
 					} else {
 							$purchases = $purchases->where('supplier_code', 'pmc_purchase');
@@ -301,7 +262,6 @@ class PurchaseController extends Controller
 			$purchase->save();
 
 			$affected = DB::update('update '.$table.' set document_number= ? where id=?', [$purchase->purchase_number, $id]);
-			Log::info($affected);
 
 	}
 
@@ -398,15 +358,6 @@ class PurchaseController extends Controller
 					}
 
 			} else {
-					$is_administrator = false;
-					if (Auth::user()->author_id==18) $is_administrator=true;
-					if (Auth::user()->author_id==19) $is_administrator=true;
-
-
-					if (!$is_administrator) {
-							$purchases = $purchases->where('author_id', '=', Auth::user()->author_id);
-					}
-
 					if (!empty($request->document_code)) {
 							$purchases = $purchases->where('document_code', '=', $request->document_code);
 					}
@@ -421,7 +372,7 @@ class PurchaseController extends Controller
 													->where('document_code', $request->document_code)
 													->orderBy('purchase_id', 'desc');
 
-									if (Auth::user()->author_id == 18) {
+									if (Auth::user()->author_id == 18 or Auth::user()->author_id == 13) {
 											$purchases = $purchases->where('supplier_code', 'pmc_pharmacy');
 									} else {
 											$purchases = $purchases->where('supplier_code', 'pmc_purchase');

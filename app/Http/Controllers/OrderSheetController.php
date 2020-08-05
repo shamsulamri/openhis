@@ -58,6 +58,7 @@ class OrderSheetController extends Controller {
 						->leftjoin('order_cancellations as e', 'e.order_id', '=', 'orders.order_id')
 						->leftjoin('users as f', 'f.id', '=', 'e.user_id')
 						->leftjoin('users as g', 'g.id', '=', 'orders.updated_by')
+						->where('b.category_code', '<>', 'bed')
 						->orderBy('category_name')
 						->orderBy('product_name')
 						->orderBy('orders.created_at');
@@ -69,7 +70,7 @@ class OrderSheetController extends Controller {
 			$orders = $base->selectRaw('orders.order_id, orders.product_code, product_name, category_name, orders.created_at as order_at, order_completed, 
 					d.name as orderer_name, order_quantity_supply, order_discount, b.category_code,
 					cancel_id, cancel_reason, f.name as cancel_name, e.created_at as cancel_at,
-					g.name as update_name,  orders.updated_at as update_at, orders.post_id
+					g.name as update_name,  orders.updated_at as update_at, orders.post_id, order_unit_price
 					')->get();
 
 			$keys = [];
@@ -99,15 +100,15 @@ class OrderSheetController extends Controller {
 
 			foreach ($orders as $order) {
 				$is_dirty = false;
-				$supply = $request[$order->order_id."_supply"];
-				$discount = $request[$order->order_id."_discount"];
+				$supply = $request[$order->order_id."_supply"]?:$order->order_quantity_supply;
+				$discount = $request[$order->order_id."_discount"]?:$order->order_discount;
+				$unit_price = $request[$order->order_id."_unit_price"]?:$order->order_unit_price;
 				$completed = $request[$order->order_id."_completed"]?:0;
 
 				Log::info($order->order_completed." - ". $completed);
 				if ($order->order_completed != $completed) {
 					$order->order_completed = $completed;
 					$is_dirty = true;
-					Log::info($order->order_id);
 				}
 
 				if ($order->order_quantity_supply != $supply) {
@@ -122,6 +123,12 @@ class OrderSheetController extends Controller {
 					$is_dirty = true;
 				}
 
+				if ($order->order_unit_price != $unit_price) {
+					$order->order_unit_price = $unit_price;
+					$order->order_completed = 1;
+					$is_dirty = true;
+				}
+
 				if ($is_dirty) {
 					$order->updated_by = Auth::user()->id;
 					$order->save();
@@ -129,8 +136,9 @@ class OrderSheetController extends Controller {
 			}
 
 			Session::flash('message', 'Record successfully updated.');
-			if (Auth::user()->author_id==19) {
-					return redirect('/order_sheet/'.$encounter->encounter_id);
+			if (Auth::user()->author_id==19 or Auth::user()->author_id==6) {
+					return redirect('/bill_items/generate/'.$encounter->encounter_id);
+					//return redirect('/order_sheet/'.$encounter->encounter_id);
 			} else {
 					if ($encounter->encounter_code == 'inpatient') {
 							return redirect('/admissions/'.$encounter->admission->admission_id);

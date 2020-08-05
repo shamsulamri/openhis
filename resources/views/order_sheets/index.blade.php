@@ -10,9 +10,9 @@
 
 {{ Form::open(['url'=>'/order_sheet/'.$encounter->encounter_id]) }}
 @if (Auth::user()->author_id==19)
-<a class='btn btn-default pull-right' href='/bill_items/generate/{{ $encounter->encounter_id }}'>Back to Final Bill</a>
+<a class='btn btn-default' href='/bill_items/{{ $encounter->encounter_id }}'>Cancel</a>
 @endif
-{{ Form::submit('Update', ['class'=>'btn btn-primary']) }}
+{{ Form::submit('Update', ['class'=>'btn btn-primary pull-right']) }}
 <br>
 <br>
 <table class="table table-hover">
@@ -22,7 +22,8 @@
     <th>Product</th> 
     <th>Orderer</th> 
     <th>Update / Cancel</th> 
-    <th><div align='right'>Discount</div></th> 
+    <th><div align='right'>Discount Request</div></th> 
+    <th><div align='right'>Price/Unit</div></th> 
     <th><div align='right'>Quantity</div></th> 
     <th></th> 
 	</tr>
@@ -32,7 +33,17 @@
 	@if (array_key_exists($order->category_code, $authorized_categories))
 	<?php
 		$is_cancel = false;
-		if ($order->cancel_id) $is_cancel = true;
+		$allow_edit = false;
+		$edit_discount = true;
+		if ($order->product->product_edit_price) $allow_edit = true;
+		if (Auth::user()->author_id==7) {
+				$allow_edit = false;
+				$edit_discount = false;
+		}
+		if ($order->cancel_id) {
+				$is_cancel = true;
+				$allow_edit = false;
+		}
 	?>
 	@if ($category != $order->category_name)
 	<tr style='background-color:#EFEFEF'>
@@ -49,7 +60,7 @@
 				  </ul>
 				</div>
 		</td>
-		<td colspan='6'>
+		<td colspan='7'>
 				<strong>
 				<div id='{{ $order->category_code }}'>
 				{{ strtoupper($order->category_name) }}
@@ -82,7 +93,7 @@
 				@endif
 				<br>
 				<small>
-				{{ $order->product_code }} 
+				{{ $order->product_code }} ({{ $order->order_id }})
 				</small>
 		</td>
 		<td width='20%'>
@@ -90,9 +101,12 @@
 				{{ DojoUtility::titleCase($order->orderer_name) }}<br>
 				{{ DojoUtility::militaryFormat($order->order_at) }}
 				</small>
-				@if (empty($order->post_id))
-				<span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>
-				@endif
+			@if (empty($order->post_id))
+				<br>
+				<small>
+				<label class='text-danger'>Not Posted</div>
+				</small>
+			@endif
 		</td>
 		<td width='20%'>
 		<small>
@@ -110,7 +124,7 @@
 		</td>
 		<td width='80'>
 		<div align='right'>
-			@if (!$is_cancel)
+			@if ($edit_discount)
 				{{ Form::text($order->order_id.'_discount', $order->order_discount, ['id'=>$order->order_id.'_discount', 'class'=>'form-control']) }}
 			@else
 				{{ Form::text($order->order_id.'_discount', $order->order_discount?:" ", ['class'=>'form-control', 'disabled'=>'disabled']) }}
@@ -119,11 +133,24 @@
 		</td>
 		<td width='80'>
 		<div align='right'>
+    		<div class='@if (empty($order->order_unit_price)) has-error @endif'>
+			@if ($allow_edit)
+				{{ Form::text($order->order_id.'_unit_price', $order->order_unit_price, ['id'=>$order->order_id.'_unit_price', 'class'=>'form-control']) }}
+			@else
+				{{ Form::text($order->order_id.'_unit_price', $order->order_unit_price?:" ", ['class'=>'form-control', 'disabled'=>'disabled']) }}
+			@endif
+			</div>
+		</div>
+		</td>
+		<td width='80'>
+		<div align='right'>
+    		<div class='@if (empty($order->order_quantity_supply)) has-error @endif'>
 			@if (!$is_cancel)
 				{{ Form::text($order->order_id.'_supply', $order->order_quantity_supply, ['id'=>$order->order_id.'_supply', 'class'=>'form-control']) }}
 			@else
 				{{ Form::text($order->order_id.'_supply', $order->order_quantity_supply?:" ", ['class'=>'form-control', 'disabled'=>'disabled']) }}
 			@endif
+			</div>
 		</div>
 		</td>
 		<td>
@@ -143,5 +170,6 @@
 @endforeach
 	</tbody>
 </table>
+{{ Form::submit('Update', ['class'=>'btn btn-primary pull-right']) }}
 </form>
 @endsection
