@@ -15,6 +15,7 @@ class ProductCategory extends Model
 				'category_price',
 				'category_is_consultation',
 				'group_code',
+				'parent_code',
 				'gl_code',
 		];
 	

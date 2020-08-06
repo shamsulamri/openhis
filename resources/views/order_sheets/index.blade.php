@@ -44,6 +44,11 @@
 				$is_cancel = true;
 				$allow_edit = false;
 		}
+
+		/*** Remove this after patient discharge ****/
+		if ($order->order_discount==0) {
+			$order->order_discount = $helper->getDiscountAmount($order->encounter_id,$order->product_code);
+		}
 	?>
 	@if ($category != $order->category_name)
 	<tr style='background-color:#EFEFEF'>

@@ -32,14 +32,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::get('/addsale/{id}', 'BillController@addSale');
 		Route::get('/showbatch/{id}', 'BillController@showBatch');
 
-		Route::get('/order_sheet/cancel/{id}/edit', 'OrderSheetController@cancel_edit');
-		Route::get('/order_sheet/cancel/{id}', 'OrderSheetController@cancel');
-		Route::get('/order_sheet/delete/{id}', 'OrderSheetController@cancel_delete');
-		Route::post('/order_sheet/cancel/{id}', 'OrderSheetController@cancel_post');
-		Route::get('/order_sheet/{id}', 'OrderSheetController@index');
-		Route::post('/order_sheet/{id}', 'OrderSheetController@update');
-		Route::delete('/order_sheet/{id}', 'OrderSheetController@cancel_destroy');
-
 		Route::get('/home', function() {
 				//return view('welcome');
 				if (Auth::check()) {
@@ -50,13 +42,32 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		});
 
 		Route::get('/', function(Request $request) {
-				//return view('welcome');
 				if (Auth::check()) {
 					return redirect('/landing');
 				} else {
 					return redirect('/login');
 				}
 		});
+
+		Route::get('/order_sheet/cancel/{id}/edit', 'OrderSheetController@cancel_edit');
+		Route::get('/order_sheet/cancel/{id}', 'OrderSheetController@cancel');
+		Route::get('/order_sheet/delete/{id}', 'OrderSheetController@cancel_delete');
+		Route::post('/order_sheet/cancel/{id}', 'OrderSheetController@cancel_post');
+		Route::get('/order_sheet/{id}', 'OrderSheetController@index');
+		Route::post('/order_sheet/{id}', 'OrderSheetController@update');
+		Route::delete('/order_sheet/{id}', 'OrderSheetController@cancel_destroy');
+
+		Route::resource('product_category_parents', 'ProductParentController');
+		Route::get('/product_category_parents/id/{id}', 'ProductParentController@searchById');
+		Route::post('/product_category_parent/search', 'ProductParentController@search');
+		Route::get('/product_category_parent/search', 'ProductParentController@search');
+		Route::get('/product_category_parents/delete/{id}', 'ProductParentController@delete');
+
+		Route::resource('discount_rules', 'DiscountRuleController');
+		Route::get('/discount_rules/id/{id}', 'DiscountRuleController@searchById');
+		Route::post('/discount_rule/search', 'DiscountRuleController@search');
+		Route::get('/discount_rule/search', 'DiscountRuleController@search');
+		Route::get('/discount_rules/delete/{id}', 'DiscountRuleController@delete');
 
 		Route::resource('discharge_summaries', 'DischargeSummaryController');
 		Route::get('/discharge_summaries/id/{id}', 'DischargeSummaryController@searchById');

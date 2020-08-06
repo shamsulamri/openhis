@@ -410,6 +410,8 @@ class BillItemController extends Controller
 			$orders = DB::select($sql);
 			
 			foreach ($orders as $order) {
+					Log::info($order->product_code);
+					Log::info($order->order_unit_price);
 					$item = new BillItem();
 					//$item->order_id = $order->order_id;
 					$item->encounter_id = $encounter_id;
@@ -718,8 +720,6 @@ class BillItemController extends Controller
 			$orders = DB::select($sql);
 
 			foreach ($orders as $order) {
-					Log::info('---'.$order->product_code);
-					Log::info('---'.$order->total_price);
 					$item = new BillItem();
 					$item->encounter_id = $encounter_id;
 					$item->product_code = $order->product_code;
@@ -729,7 +729,6 @@ class BillItemController extends Controller
 					$item->bill_name = $order->product_name;
 					$item->bill_amount = $order->total_price?:0;
 					//$item->bill_discount = $order->order_discount;
-					Log::info("------");
 					Log::info($order->product_code);
 					$item->bill_unit_price = $order->total_price/$order->total_quantity;
 					$item->bill_amount_exclude_tax = $item->bill_amount;

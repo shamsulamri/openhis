@@ -92,6 +92,7 @@
 			<small>
 				<a href="{{ url('/purchase_documents') }}">Purchase Documents</a><br>
 				<a href="{{ url('/purchase_request_statuses') }}">Purchase Request Statuses</a><br>
+				<a href="{{ url('/product_category_parents') }}">Product Parent Categories</a><br>
 				<a href="{{ url('/product_categories') }}">Product Categories</a><br>
 				<a href="{{ url('/product_groups') }}">Product Groups</a><br>
 				<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
@@ -154,6 +155,7 @@
 				<a href="{{ url('/payments') }}">Payments</a><br>
 				<a href="{{ url('/refunds') }}">Refunds</a><br>
 				<a href="{{ url('/payment_credits') }}">Credit Payments</a><br>
+				<a href="{{ url('/discount_rules') }}">Discount Rules</a><br>
 			</div>
 			<div class="col-xs-6">
 			<small>

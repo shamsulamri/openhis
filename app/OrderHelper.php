@@ -277,6 +277,7 @@ class OrderHelper
 			$location_code = (new self)->getTargetLocation($product);
 			$order->location_code = $location_code;
 			$order->store_code = (new self)->getTargetStore($product);
+			$order->order_discount = (new self)->getDiscountAmount($order->encounter_id, $product->product_code);
 
 			$order->save();
 
@@ -767,6 +768,23 @@ class OrderHelper
 			}
 
 
+
+	}
+
+	public function getDiscountAmount($encounter_id, $product_code=null)
+	{
+			$encounter = Encounter::findOrFail($encounter_id);
+			$product = Product::where('product_code', '=', $product_code)->first();
+
+			$rules = DiscountRule::all();
+
+			foreach($rules as $rule) {
+					if ($rule->sponsor_code == $encounter->sponsor_code) {
+							if ($rule->parent_code == $product->category->parent_code) {
+									return $rule->discount_amount;
+							}
+					}
+			}
 
 	}
 

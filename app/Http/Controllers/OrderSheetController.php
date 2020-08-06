@@ -16,6 +16,7 @@ use App\DojoUtility;
 use App\Order;
 use App\OrderCancellation;
 use App\ProductCategory;
+use App\OrderHelper;
 
 class OrderSheetController extends Controller {
 	public $paginateValue=10;
@@ -70,7 +71,7 @@ class OrderSheetController extends Controller {
 			$orders = $base->selectRaw('orders.order_id, orders.product_code, product_name, category_name, orders.created_at as order_at, order_completed, 
 					d.name as orderer_name, order_quantity_supply, order_discount, b.category_code,
 					cancel_id, cancel_reason, f.name as cancel_name, e.created_at as cancel_at,
-					g.name as update_name,  orders.updated_at as update_at, orders.post_id, order_unit_price
+					g.name as update_name,  orders.updated_at as update_at, orders.post_id, order_unit_price, orders.encounter_id
 					')->get();
 
 			$keys = [];
@@ -89,6 +90,7 @@ class OrderSheetController extends Controller {
 					'orders'=>$orders,
 					'authorized_categories'=>$authorized_categories->toArray(),
 					'bookmarks'=>$bookmarks,
+					'helper'=>new OrderHelper(),
 			]);
 	}
 
@@ -132,6 +134,7 @@ class OrderSheetController extends Controller {
 				if ($is_dirty) {
 					$order->updated_by = Auth::user()->id;
 					$order->save();
+					Log::info($unit_price);
 				}
 			}
 
