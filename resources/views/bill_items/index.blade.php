@@ -73,9 +73,9 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=receipt_official&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Receipt</a> 
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=invoice&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=invoice_header&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Invoice</a> 
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=invoice_summary&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Summary Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=invoice_summary_header&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Summary Invoice</a> 
 @endif
 <p class='pull-right'>&nbsp;</p>
 <a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_order&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Invoice Detail</a> 
@@ -96,9 +96,7 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 	<br>
 @endif
 
-@if (!$billPosted)
-		<div class="widget style1 gray-bg">
-		<h4>Billing Method</h4>
+@if (!$billPosted) <div class="widget style1 gray-bg"> <h4>Billing Method</h4>
 		@if ($encounter->sponsor)
 			<h4>
 			<strong>
