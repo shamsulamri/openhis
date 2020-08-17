@@ -171,7 +171,7 @@ class OrderImagingController extends Controller
 					'side_code'=>$request->side_code?:null,
 					'region_code'=>$request->region_code?:null,
 					'patient'=>$encounter->patient,
-					'plan'=>'imaging',
+					'plan'=>'imaging2',
 			]);
 	}
 

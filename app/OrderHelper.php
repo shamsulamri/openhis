@@ -598,26 +598,28 @@ class OrderHelper
 							foreach ($order->product->bom as $bom) {
 								$product = $bom->product;
 								$order_id = $order_helper->orderItem($product, null);
-								$bom_order = Order::find($order_id);
-								Log::info($order_id);
-								Log::info("-----------");
-								Log::info($order->product->product_name);
-								Log::info($product->product_name);
-								$bom_order->order_quantity_request = $bom->bom_quantity*$order->order_quantity_request;
-								Log::info("-----------");
-								$bom_order->order_quantity_supply = $bom_order->order_quantity_request;
-								$bomUnitPrice = $bom->unitPrice($bom->bom_product_code, $bom->unit_code);
-								if (!empty($bomUnitPrice)) {
-									$bom_order->order_unit_price = $bomUnitPrice;
-								} else {
-									$bom_order->order_unit_price = 0;
-								}
-								$bom_order->unit_code = $bom->unit_code;
-								$bom_order->save();
+								if (!empty($order_id)) {
+										$bom_order = Order::find($order_id);
+										Log::info($order_id);
+										Log::info("-----------");
+										Log::info($order->product->product_name);
+										Log::info($product->product_name);
+										$bom_order->order_quantity_request = $bom->bom_quantity*$order->order_quantity_request;
+										Log::info("-----------");
+										$bom_order->order_quantity_supply = $bom_order->order_quantity_request;
+										$bomUnitPrice = $bom->unitPrice($bom->bom_product_code, $bom->unit_code);
+										if (!empty($bomUnitPrice)) {
+											$bom_order->order_unit_price = $bomUnitPrice;
+										} else {
+											$bom_order->order_unit_price = 0;
+										}
+										$bom_order->unit_code = $bom->unit_code;
+										$bom_order->save();
 
-								$record = Order::find($order_id);
-								$record->bom_code = $order->product_code;
-								$record->save();
+										$record = Order::find($order_id);
+										$record->bom_code = $order->product_code;
+										$record->save();
+								}
 							}
 					}
 			}

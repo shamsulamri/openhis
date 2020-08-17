@@ -45,6 +45,10 @@
 				$allow_edit = false;
 		}
 
+		if ($order->bom_code) {
+				$allow_edit = false;
+		}
+
 		/*** Remove this after patient discharge ****/
 		if ($order->order_discount==0) {
 			$order->order_discount = $helper->getDiscountAmount($order->encounter_id,$order->product_code);
@@ -98,7 +102,10 @@
 				@endif
 				<br>
 				<small>
-				{{ $order->product_code }} ({{ $order->order_id }})
+				{{ $order->product_code }} | {{ $order->order_id }}
+				@if ($order->bom_code)
+				 | {{ $order->bom_code }}
+				@endif
 				</small>
 		</td>
 		<td width='20%'>

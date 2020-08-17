@@ -71,7 +71,7 @@ class OrderSheetController extends Controller {
 			$orders = $base->selectRaw('orders.order_id, orders.product_code, product_name, category_name, orders.created_at as order_at, order_completed, 
 					d.name as orderer_name, order_quantity_supply, order_discount, b.category_code,
 					cancel_id, cancel_reason, f.name as cancel_name, e.created_at as cancel_at,
-					g.name as update_name,  orders.updated_at as update_at, orders.post_id, order_unit_price, orders.encounter_id
+					g.name as update_name,  orders.updated_at as update_at, orders.post_id, order_unit_price, orders.encounter_id, bom_code
 					')->get();
 
 			$keys = [];

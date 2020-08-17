@@ -20,6 +20,8 @@ select {
 @if ($consultation->encounter->bill)
 		@include('orders.order_stop')
 @else
+<h1 class="text-danger"><i class="fa fa-warning"></i>&nbsp;DO NOT USE THIS FEATURE. STILL UNDER DEVELOPMENT</h1>
+<br>
 <form id='form' action='/imaging' method='post' class='form-horizontal'>
 
 <table style="width:100%">

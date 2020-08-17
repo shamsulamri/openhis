@@ -420,6 +420,19 @@ class BillItemController extends Controller
 					if ($order->order_is_discharge == 1 && $order->category_code == 'drugs') {
 						$item->bill_name = $order->product_name . " (Take Home)";
 					}
+
+					/** Show bom product names **/
+					if ($item->product->bom()) {
+						$item->bill_name = $item->bill_name." (";
+						foreach($item->product->bom as $index=>$bom_product) {
+								$item->bill_name = $item->bill_name.$bom_product->product->product_name;
+								if ($index<$item->product->bom->count()-1) {
+									$item->bill_name = $item->bill_name.", ";
+								}
+						}
+						$item->bill_name = $item->bill_name.")";
+					}
+
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity?:0;

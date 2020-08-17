@@ -4,6 +4,12 @@
             {{ Form::label('product_name', $product->product_name, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
+    <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
+        <label for='product_name' class='col-sm-3 control-label'>Description</label>
+        <div class='col-sm-9'>
+            {{ Form::label('product_name', $order_task->order_description, ['class'=>'form-control','placeholder'=>'',]) }}
+        </div>
+    </div>
     <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
         <label for='user' class='col-sm-3 control-label'>Ordered By</label>
         <div class='col-sm-9'>
