@@ -142,7 +142,7 @@ class OrderController extends Controller
 					//->orderBy('b.category_code')
 			if (Auth::user()->authorization->module_support != 1) {
 					if (Auth::user()->authorization->module_discharge != 1) {
-							$orders = $orders->where('orders.user_id','=',Auth::user()->id);
+							//$orders = $orders->where('orders.user_id','=',Auth::user()->id);
 					}
 			}
 
