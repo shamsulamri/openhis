@@ -137,9 +137,9 @@ $category='';
 									</a>
 								@endif
 						@endif
-						@if ($order->order_report != '')
-							<a class='btn btn-default btn-xs' href='{{ URL::to('orders/'. $order->order_id .'/show') }}'>Report</a>
-						@endif
+				@endif
+				@if ($order->order_report != '')
+					<a class='btn btn-default btn-xs' href='{{ URL::to('orders/'. $order->order_id .'/show') }}'>Report</a>
 				@endif
 				@if (!empty($order->document_uuid))
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $order->document_uuid) }}'>Report</a>
