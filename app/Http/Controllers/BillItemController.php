@@ -422,7 +422,7 @@ class BillItemController extends Controller
 					}
 
 					/** Show bom product names **/
-					if ($item->product->bom()) {
+					if ($item->product->bom()->count()>0) {
 						$item->bill_name = $item->bill_name." (";
 						foreach($item->product->bom as $index=>$bom_product) {
 								$item->bill_name = $item->bill_name.$bom_product->product->product_name;
