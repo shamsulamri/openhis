@@ -88,7 +88,7 @@ class DischargeHelper
 
 			$summary = new DischargeSummary();
 			$summary->encounter_id = $id;
-			$summary->summary_diagnosis = $discharge->discharge_summary;
+			$summary->summary_diagnosis = $discharge->discharge_diagnosis;
 			$summary->summary_treatment = $this->toList($treatments);
 			$summary->summary_medication = $this->toList($drugs);
 			$summary->summary_surgical = $this->toList($procedures);
