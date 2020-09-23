@@ -130,12 +130,15 @@ class AdmissionController extends Controller
 					->leftJoin('teams as n', 'n.team_code', '=', 'admissions.team_code')
 					->leftJoin('beds as o', 'o.bed_code', '=', 'admissions.anchor_bed')
 					->leftJoin('wards as p', 'p.ward_code', '=', 'o.ward_code');
+
+
 			if (!empty($ward_code)) {
 					$admissions = $admissions->where(function ($query) use ($request, $ward_code) {
 						$query->where('h.ward_code', '=', $ward_code)
 							->orwhere('p.ward_code', '=', $ward_code);
 					});
 			}
+
 
 			$admissions = $admissions->whereNull('f.encounter_id')
 					->orderBy('arrival_id')
@@ -149,6 +152,22 @@ class AdmissionController extends Controller
 							->orderBy('a.bed_code');
 			}
 			 */
+
+			$admission_ids = $admissions->pluck('admissions.admission_id');
+
+			$transits = BedMovement::select('f.admission_id', 'patient_name', 'f.created_at as admission_date', 'bed_movements.created_at as transit_date', 'g.name as consultant_name', 'c.bed_name', 'sponsor_name', 'patient_mrn')
+					->leftjoin('discharges as b', 'b.encounter_id', '=',  'bed_movements.encounter_id')
+					->leftjoin('beds as c', 'c.bed_code', '=', 'move_to')
+					->leftjoin('encounters as d', 'd.encounter_id', '=', 'bed_movements.encounter_id')
+					->leftjoin('patients as e', 'e.patient_id', '=', 'd.patient_id')
+					->leftjoin('admissions as f', 'f.encounter_id', '=', 'bed_movements.encounter_id')
+					->leftjoin('users as g', 'g.id', '=', 'f.user_id')
+					->leftjoin('sponsors as h', 'h.sponsor_code', '=', 'd.sponsor_code')
+					->where('bed_transit', 1)
+					->whereNull('discharge_id')
+					->where('ward_code', $ward_code)
+					->whereNotIn('f.admission_id', $admission_ids)
+					->get();
 
 			$admissions = $admissions->paginate($this->paginateValue);
 
@@ -171,6 +190,7 @@ class AdmissionController extends Controller
 					'bedHelper'=> new BedHelper(),
 					'ward_code'=>$ward_code,
 					'search'=>null,
+					'transits'=>$transits,
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 			]);
 	}
@@ -509,13 +529,14 @@ class AdmissionController extends Controller
 			return redirect('/admissions');
 	}
 	
-	public function consultation($id) 
+	public function consultation(Request $request, $id) 
 	{
 			$admission = Admission::find($id);
 			return view('admissions.consultation', [
 					'admission'=>$admission,
 					'patient'=>$admission->encounter->patient,
 					'wardHelper'=>new WardHelper(),
+					'transit'=> $request->transit?:null,
 			]);
 	}
 	

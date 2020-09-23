@@ -231,9 +231,15 @@
 			<div class='pull-right'>
 			@can('module-consultation')
 				@can('discharge_patient')
-			<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$admission->admission_id) }}'>
-				<i class="fa fa-stethoscope"></i>
-			</a>
+					@if ($ward->ward_code != $admission->ward_code) 
+							<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$admission->admission_id.'?transit='.$ward->ward_code) }}'>
+								<i class="fa fa-stethoscope"></i>
+							</a>
+					@else
+							<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$admission->admission_id) }}'>
+								<i class="fa fa-stethoscope"></i>
+							</a>
+					@endif
 				@endcan
 			@endcan
 			@can('system-administrator')
@@ -255,6 +261,58 @@
 @endif
 </tbody>
 </table>
+
+@if ($transits->count()>0) 
+<h4>Transfer Out</h4>
+<table class="table table-hover">
+ <thead>
+	<tr> 
+    <th>Date</th>
+    <th>Patient</th>
+    <th>Panel</th>
+    <th>Consultant</th>
+    <th>Bed</th>
+	</tr>
+  </thead>
+	@foreach($transits as $transit)
+	<tr>
+			<td>
+					{{ DojoUtility::dateTimeReadFormat($transit->admission_date) }}
+					<br>
+					<small>
+					<?php $ago =$dojo->diffForHumans($transit->admission_date); ?> 
+					{{ $ago }}
+					</small>	
+			</td>
+			<td>
+				{{ $transit->patient_name }}<br>
+				{{ $transit->patient_mrn }}
+			</td>
+			<td>
+				{{ $transit->sponsor_name }}
+			</td>
+			<td>
+				{{ $transit->consultant_name }}
+			</td>
+			<td>
+				{{ $transit->bed_name }}
+			</td>
+			<td>
+			@can('module-consultation')
+				@can('discharge_patient')
+			<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$transit->admission_id.'?transit='.$ward->ward_code) }}'>
+				<i class="fa fa-stethoscope"></i>
+			</a>
+				@endcan
+			@endcan
+			</td>
+	</tr>
+	@endforeach
+	<br>
+</table>
+@endif
+
+
 {{ $admissions->appends(['search'=>$search, 'ward_code'=>$ward_code])->render() }}
 <br>
 @if ($admissions->total()>0)

@@ -8,6 +8,12 @@
 				<a href='{{ URL::to('order_sheet/'. $encounter->encounter_id) }}'>Order Sheet</a>
 				<br><br>
 
+				<span class='fa fa-medkit' aria-hidden='true'></span>
+				<a href="{{ URL::to('medication_record/mar/'. $encounter->encounter_id) }}">
+					Medication Administration Record
+				</a>
+				<br><br>
+
 				<span class='fa fa-users' aria-hidden='true'></span>
 				<a href='{{ URL::to('queues/'. $queue->queue_id.'/edit') }}'>Edit Queue</a>
 				<br><br>

@@ -359,6 +359,7 @@ class ConsultationController extends Controller
 					$consultation->encounter_id = $request->encounter_id;
 					$consultation->patient_id = $encounter->patient_id;
 					$consultation->consultation_status=1;
+					$consultation->transit_ward = $request->transit?:null;
 					$consultation->save();
 
 					Session::set('consultation_id', $consultation->consultation_id);
@@ -391,6 +392,7 @@ class ConsultationController extends Controller
 
 	public function store(Request $request) 
 	{
+			return "RRR";
 			$consultation = new Consultation();
 			$valid = $consultation->validate($request->all(), $request->_method);
 

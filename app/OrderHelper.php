@@ -137,7 +137,7 @@ class OrderHelper
 	}
 	**/
 
-	public static function getTargetLocation($product)
+	public static function getTargetLocation($product, $consultation=null)
 	{
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 			$encounter = Encounter::find(Session::get('encounter_id'));
@@ -168,7 +168,7 @@ class OrderHelper
 			return $target_location;
 	}
 
-	public static function getTargetStore($product)
+	public static function getTargetStore($product, $consultation=null)
 	{
 			$store_code = null;
 			if ($product->product_stocked==1) {
@@ -179,22 +179,26 @@ class OrderHelper
 					if (!empty($location_code)) {
 								$store_code = QueueLocation::find($location_code)->store_code;
 					} else {
-								$store_code = (new self)->getLocalStore($encounter, $admission);
+								$store_code = (new self)->getLocalStore($encounter, $admission, $consultation);
 					}
 
 					if ($product->product_local_store==1) {
-								$store_code = (new self)->getLocalStore($encounter, $admission);
+								$store_code = (new self)->getLocalStore($encounter, $admission, $consultation);
 					}
 			}
 
 			return $store_code;
 	}
 
-	public static function getLocalStore($encounter, $admission)
+	public static function getLocalStore($encounter, $admission, $consultation=null)
 	{
 				$store_code = null;
 				if ($admission) {
 						$store_code = $admission->bed->ward->store_code;
+						if (!empty($consultation)) {
+							$ward = Ward::find($consultation->transit_ward);
+							$store_code = $ward->store_code;
+						}
 				} else {
 						$location = Queue::where('encounter_id', '=', $encounter->encounter_id)->first()->location;
 						if ($location) $store_code = $location->store_code;
@@ -222,10 +226,12 @@ class OrderHelper
 
 	public static function orderItem($product, $ward_code, $renew_drug=null)
 	{
-			Log::info($product->product_code);
 			if ($product->status_code != 'active') {
 				return;
 			}
+
+			$consultation = Consultation::find(Session::get('consultation_id'));
+
 			$admission = EncounterHelper::getCurrentAdmission(Session::get('encounter_id'));
 
 			$order = Order::where('consultation_id', Session::get('consultation_id'))
@@ -278,6 +284,12 @@ class OrderHelper
 			$order->location_code = $location_code;
 			$order->store_code = (new self)->getTargetStore($product);
 			$order->order_discount = (new self)->getDiscountAmount($order->encounter_id, $product->product_code);
+
+			/** Overide: Transit Ward Order **/
+			if (!empty($consultation->transit_ward)) {
+				$order->ward_code = $consultation->transit_ward;
+				$order->store_code = (new self)->getTargetStore($product, $consultation);
+			}
 
 			$order->save();
 

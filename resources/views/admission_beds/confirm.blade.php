@@ -42,7 +42,7 @@ Are you sure you want to move the patient ?
 {{ Form::open(['url'=>'admission_beds/move/'.$admission->admission_id.'/'.$bed_code.'?book_id='.$book_id, 'class'=>'pull-right']) }}
 @endif
 	<a class="btn btn-default" href="/admission_beds?flag=1&admission_id={{ $admission->admission_id }}" role="button">Cancel</a>
-	{{ Form::submit('Yes', ['class'=>'btn btn-danger']) }}
+	{{ Form::submit('Yes', ['class'=>'btn btn-primary']) }}
 {{ Form::close() }}
 
 </h3>

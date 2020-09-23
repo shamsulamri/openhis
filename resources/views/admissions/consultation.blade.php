@@ -15,7 +15,11 @@ $consultation = $wardHelper->hasOpenConsultation($admission->encounter->patient_
 		Are you sure you want to start a new consultation ?
 		<div class='pull-right'>
 		<a class="btn btn-default" href="/admissions" role="button">Cancel</a>
+		@if (!empty($transit))
+		<a class='btn btn-primary' href='{{ URL::to('consultations/create?encounter_id='. $admission->encounter_id.'&transit='.$transit) }}'>Start</a>
+		@else
 		<a class='btn btn-primary' href='{{ URL::to('consultations/create?encounter_id='. $admission->encounter_id) }}'>Start</a>
+		@endif
 		</div>
 		</h3>
 @else

@@ -147,7 +147,11 @@ class OrderController extends Controller
 			}
 
 			if ($encounter->admission) {
-				$orders = $orders->where('ward_code', $encounter->admission->bed->ward_code);
+				if (!empty($consultation->transit_ward)) {
+					$orders = $orders->where('ward_code', $consultation->transit_ward);
+				} else {
+					$orders = $orders->where('ward_code', $encounter->admission->bed->ward_code);
+				}
 			}
 
 			/*
@@ -532,6 +536,7 @@ class OrderController extends Controller
 						->get();
 
 			$encounter = Encounter::find($encounter_id);
+
 			/*
 			if (!$encounter->admission) {
 					if ($orders->count()>0) {

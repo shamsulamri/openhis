@@ -13,6 +13,12 @@ Prints
 		Patient Label
 		</a>
 
+		<br><br>
+		<span class='fa fa-file-o' aria-hidden='true'></span>
+		<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_lab&id={{ $patient->patient_id }}">
+		Patient Label (Compact)
+		</a>
+
 @if ($patient->activeEncounter()) 
 		<br><br>
 		<span class='fa fa-file-o' aria-hidden='true'></span>
