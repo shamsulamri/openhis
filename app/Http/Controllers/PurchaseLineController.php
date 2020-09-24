@@ -254,6 +254,7 @@ class PurchaseLineController extends Controller
 					'purchase_line' => $purchase_line,
 					'purchase'=>$purchase,
 					'author_id'=>Auth::user()->author_id,
+					'store'=>Auth::user()->storeList()->prepend('',''),
 					'purchase_request_status' => PurchaseRequestStatus::all()->sortBy('status_name')->lists('status_name', 'status_code')->prepend('',''),
 			]);
 	}
@@ -623,10 +624,15 @@ class PurchaseLineController extends Controller
 		return redirect('/purchase/search?document_code=purchase_request');
 	}
 
-	public function post($id)
+	public function post(Request $request, $id)
 	{
 		$purchase = Purchase::find($id);
 		$purchase->purchase_posted = 1;
+		if ($purchase->document_code == 'goods_receive') {
+			if (!empty($request->store_code)) {
+					$purchase->store_code = $request->store_code;
+			}
+		}
 		$purchase->save();
 
 		$purchase_lines = PurchaseLine::where('purchase_id', $id)

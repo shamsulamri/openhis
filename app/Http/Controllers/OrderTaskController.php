@@ -393,6 +393,7 @@ class OrderTaskController extends Controller
 	public function status(Request $request)
 	{
 			$valid = null;
+			/*
 			if (!empty(Auth::user()->authorization->location_code)) {
 				$location_code = Auth::user()->authorization->location_code;
 			} else {
@@ -400,6 +401,10 @@ class OrderTaskController extends Controller
 			}
 			$location = Location::find($location_code);
 			$store_code = $location->store_code;
+			*/
+
+			$store_code = Auth::user()->defaultStore($request);
+			$location_code =  Auth::user()->defaultLocation($request);
 
 			$helper = new StockHelper();
 

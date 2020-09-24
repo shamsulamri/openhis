@@ -145,43 +145,9 @@ class User extends Authenticatable
 			return $location_code;
 	}
 
-	public function defaultStore2($request = null)
-	{
-			$default_store=null;
-			$store = null;
-			if ($this->authorization->store_code) {
-				$default_store = $this->authorization->store_code;
-			} else {
-				/*
-				if (empty($request)) {
-					if ($this->authorization->module_inventory==1) {
-							$ward_code = $request->cookie('ward');
-							$ward = Ward::find($ward_code);
-							if ($ward) {
-								$default_store = $ward->store_code;
-							} 
-					} 		
-				} 		
-				 */
-				if (!empty($request)) {
-					if (!empty($request->cookie('store'))) {
-							$default_store = $request->cookie('store');
-					}
-				}
-
-				/*
-				if ($default_store == null) {
-						$default_store = $this->authorizedStores()[0];
-				}
-				 */
-			}
-			return $default_store;
-	}
-
 	public function defaultStore($request = null) {
 			$store_code = null;
 
-			Log::info('---------------------');
 			if ($request) {
 					if ($this->authorization->module_ward == 1) {
 							$ward_code = $request->cookie('ward');

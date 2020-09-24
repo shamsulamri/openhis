@@ -608,6 +608,7 @@ class AdmissionController extends Controller
 			}
 			 */
 
+			$admission_ids = $admissions->pluck('admissions.admission_id');
 			$admissions = $admissions->paginate($this->paginateValue);
 
 			$wardHelper = null;
@@ -617,6 +618,24 @@ class AdmissionController extends Controller
 			$wards = Ward::all()
 					->sortBy('ward_name')
 					->lists('ward_name', 'ward_code');
+
+			$transits = null;
+
+			if (!empty($ward_code)) {
+			$transits = BedMovement::select('f.admission_id', 'patient_name', 'f.created_at as admission_date', 'bed_movements.created_at as transit_date', 'g.name as consultant_name', 'c.bed_name', 'sponsor_name', 'patient_mrn')
+					->leftjoin('discharges as b', 'b.encounter_id', '=',  'bed_movements.encounter_id')
+					->leftjoin('beds as c', 'c.bed_code', '=', 'move_to')
+					->leftjoin('encounters as d', 'd.encounter_id', '=', 'bed_movements.encounter_id')
+					->leftjoin('patients as e', 'e.patient_id', '=', 'd.patient_id')
+					->leftjoin('admissions as f', 'f.encounter_id', '=', 'bed_movements.encounter_id')
+					->leftjoin('users as g', 'g.id', '=', 'f.user_id')
+					->leftjoin('sponsors as h', 'h.sponsor_code', '=', 'd.sponsor_code')
+					->where('bed_transit', 1)
+					->whereNull('discharge_id')
+					->where('ward_code', $ward_code)
+					->whereNotIn('f.admission_id', $admission_ids)
+					->get();
+			}
 
 			return view('admissions.index', [
 					'admissions'=>$admissions,
@@ -629,6 +648,8 @@ class AdmissionController extends Controller
 					'bedHelper'=> new BedHelper(),
 					'ward_code'=>$request->ward_code,
 					'search'=>$request->search,
+					'transits'=>$transits,
+					'admission_ids'=>$admission_ids,
 					'admission_code'=>$request->admission_code,
 					'admission_type' => AdmissionType::where('admission_code','<>','observe')->orderBy('admission_name')->lists('admission_name', 'admission_code')->prepend('',''),
 			]);

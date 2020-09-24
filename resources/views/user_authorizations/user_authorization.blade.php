@@ -175,7 +175,7 @@
         </div>
     </div>
 	<div class='page-header'>
-		<h4>Default Location</h4>
+		<h4>Default Store & Location</h4>
 	</div>
     <div class='form-group  @if ($errors->has('store_code')) has-error @endif'>
         {{ Form::label('store_code', 'Store',['class'=>'col-sm-4 control-label']) }}
@@ -203,7 +203,7 @@
 
 
 	<div class='page-header'>
-		<h4>Encounter Orders</h4>
+		<h4>Order Routing</h4>
 	</div>
 	<p>Users in this group able to receive orders from:</p>
 	<br>

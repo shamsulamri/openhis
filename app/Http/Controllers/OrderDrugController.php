@@ -396,7 +396,7 @@ class OrderDrugController extends Controller
 					<table>
 						 <thead>
 							<tr>
-							<th><i class='fa fa-home'></i></th>
+							<th><i class='fa fa-home' title='Discharge/Take home'></i></th>
 							<th></th>
 							<th>Drug</th>
 							<th colspan=2>Strength</th>

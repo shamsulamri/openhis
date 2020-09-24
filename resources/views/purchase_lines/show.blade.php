@@ -7,19 +7,37 @@ iframe { border: 1px #e5e5e5 solid; }
 <h1>{{ $purchase->document->document_name }}</h1>
 
 	<div class="row">
-			<div class="col-xs-7">
+			<div class="col-xs-3">
 					<div class='form-group'>
 						<a class="btn btn-default" href="/purchases" role="button">Back</a>
 						<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report={{ $purchase->document_code=='indent_request'?'indent':'purchase' }}&id={{ $purchase->purchase_id }}&store_code={{ $purchase->store_code }}" role="button" target="_blank">Print</a> 
 					</div>
 			</div>
-			<div class="col-xs-5">
+			<div class="col-xs-9">
 					<div class='form-group'>
 		@if ($purchase->purchase_posted == 0)
 		{{ Form::open(['url'=>'purchase_lines/post/'.$purchase_id, 'class'=>'pull-right']) }}
 			{{ method_field('POST') }}
+			<table>
+				<tr>
+			@if ($purchase->document_code=='goods_receive')
+					<td>
+Receiving Store&nbsp;
+					</td>
+					<td>
+            {{ Form::select('store_code', $store,$purchase->store_code, ['id'=>'store_code','class'=>'form-control']) }}
+					</td>
+					<td width=50>
+					</td>
+			@endif
+					<td>
 			{{ Form::checkbox('close_check', 1, false,['id'=> 'close_check', 'class'=>'i-checks']) }} Post transaction. &nbsp;&nbsp;
+					</td>
+					<td>
 			{{ Form::submit('Submit', ['id'=>'close_button','class'=>'btn btn-primary']) }}
+					</td>
+				</tr>
+			</table>
 		{{ Form::close() }}
 		@endif
 

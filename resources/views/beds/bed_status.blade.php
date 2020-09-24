@@ -25,3 +25,4 @@
 	{{ Form::hidden('ward_code', $bed->ward_code) }}
 	{{ Form::hidden('encounter_code', $bed->encounter_code) }}
 	{{ Form::hidden('class_code', $bed->class_code) }}
+	{{ Form::hidden('bed_transit', $bed->bed_transit) }}
