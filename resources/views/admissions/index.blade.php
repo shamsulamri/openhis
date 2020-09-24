@@ -231,6 +231,7 @@
 			<div class='pull-right'>
 			@can('module-consultation')
 				@can('discharge_patient')
+				@if (!empty($ward->ward_code))
 					@if ($ward->ward_code != $admission->ward_code) 
 							<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$admission->admission_id.'?transit='.$ward->ward_code) }}'>
 								<i class="fa fa-stethoscope"></i>
@@ -240,6 +241,11 @@
 								<i class="fa fa-stethoscope"></i>
 							</a>
 					@endif
+				@else
+							<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$admission->admission_id) }}'>
+								<i class="fa fa-stethoscope"></i>
+							</a>
+				@endif
 				@endcan
 			@endcan
 			@can('system-administrator')
@@ -262,7 +268,7 @@
 </tbody>
 </table>
 
-@if ($transits->count()>0) 
+@if (count($transits))
 <h4>Transfer Out</h4>
 <table class="table table-hover">
  <thead>

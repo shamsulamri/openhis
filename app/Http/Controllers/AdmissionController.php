@@ -155,6 +155,9 @@ class AdmissionController extends Controller
 
 			$admission_ids = $admissions->pluck('admissions.admission_id');
 
+			$transits = null;
+
+			if (!empty($ward_code)) {
 			$transits = BedMovement::select('f.admission_id', 'patient_name', 'f.created_at as admission_date', 'bed_movements.created_at as transit_date', 'g.name as consultant_name', 'c.bed_name', 'sponsor_name', 'patient_mrn')
 					->leftjoin('discharges as b', 'b.encounter_id', '=',  'bed_movements.encounter_id')
 					->leftjoin('beds as c', 'c.bed_code', '=', 'move_to')
@@ -168,6 +171,7 @@ class AdmissionController extends Controller
 					->where('ward_code', $ward_code)
 					->whereNotIn('f.admission_id', $admission_ids)
 					->get();
+			}
 
 			$admissions = $admissions->paginate($this->paginateValue);
 
