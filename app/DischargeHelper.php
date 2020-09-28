@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use DB;
 use Log;
 use App\DischargeSummary;
+use App\OrderHelper;
 
 class DischargeHelper 
 {
@@ -62,14 +63,27 @@ class DischargeHelper
 					->whereNull('cancel_id')
 					->pluck('product_name');
 
-			$drugs = Order::select('product_name')
+			$drugs = Order::select('orders.order_id')
 					->where('encounter_id', $id)
 					->whereIn('category_code', ['drugs'])
 					->whereNull('cancel_id')
 					->where('order_is_discharge', 1)
 					->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
 					->leftjoin('order_cancellations as c', 'c.order_id', '=', 'orders.order_id')
-					->pluck('product_name');
+					->pluck('order_id');
+
+			$prescriptions=[];
+			$order_helper = new OrderHelper();
+
+			foreach($drugs as $order_id) {
+				$order = Order::find($order_id);
+				$drug_name = $order->product->product_name;
+				$drug_prescription = $order_helper->getPrescription($order_id);
+				if (!empty($drug_prescription)) {
+					$drug_name = $drug_name.", ";
+				}
+				array_push($prescriptions, $drug_name.$drug_prescription);
+			}
 
 			$procedures = Order::select('product_name')
 					->where('encounter_id', $id)
@@ -90,7 +104,7 @@ class DischargeHelper
 			$summary->encounter_id = $id;
 			$summary->summary_diagnosis = $discharge->discharge_diagnosis;
 			$summary->summary_treatment = $this->toList($treatments);
-			$summary->summary_medication = $this->toList($drugs);
+			$summary->summary_medication = $this->toList($prescriptions);
 			$summary->summary_surgical = $this->toList($procedures);
 			$summary->summary_follow_up = $this->toList($follow_up);
 			$summary->save();

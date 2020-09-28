@@ -426,6 +426,11 @@ class ConsultationProcedureController extends Controller
 							$procedure->order_id,
 							$procedure->order_markup
 						);
+						$item_description = sprintf("<textarea placeholder='Enter description' rows=2 id='description_%s' name='description_%s' class='form-control input-sm small-font'>%s</textarea>",
+							$procedure->order_id,
+							$procedure->order_id,
+							$procedure->order_description
+						);
 				} else {
 						$item_price = sprintf("<label id='price_%s' name='price_%s' class='form-control input-sm small-font'>%s</label>",
 							$procedure->order_id,
@@ -443,11 +448,21 @@ class ConsultationProcedureController extends Controller
 							$procedure->order_id,
 							$procedure->order_markup
 						);
+						$item_description = sprintf("<p style='white-space:pre-wrap' id='description_%s' name='markup_%s'>%s</p>",
+							$procedure->order_id,
+							$procedure->order_id,
+							$procedure->order_description
+						);
+
+						if (empty($procedure->order_description)) {
+							$item_description = "";
+						}
 				}
 
 				$table_row .=sprintf(" 
-							<tr height=35>
-							        <td width='100' style='vertical-align:top'>%s</td>
+							<tr height=5 style='border-top: 1px solid #EFEFEF'></tr>
+							<tr height=40>
+							        <td width='100'>%s</td>
 							        <td>%s</td>
 							        <td width=100>%s</td>
 							        <td width=100>%s</td>
@@ -456,18 +471,27 @@ class ConsultationProcedureController extends Controller
 							        <td width=100>%s</td>
 							        <td width=5></td>
 							        <td width=100>%s</td>
-							        <td width=100>%s</td>
+							        <td width=50>%s</td>
 							</tr>
-							<tr height=10></tr>
+							<tr>
+									<td></td>
+									<td colspan=8>%s</td>
+							</tr>
+							<tr height=30>
+									<td></td>
+									<td colspan=8>%s</td>
+							</tr>
 					", 
 					$procedure->product_code,
-					$procedure->product_name.'<br><small>'.$procedure->user->name.'</small>',
+					$procedure->product_name,
 					$item_surgeon,
 					$item_anaes,
 					$item_price,
 					$item_discount,
 					$item_markup,
-					$item_remove
+					$item_remove,
+					$item_description,
+					$procedure->user->name
 				);
 			}
 
@@ -516,6 +540,7 @@ class ConsultationProcedureController extends Controller
 					$order->order_unit_price = $request->price;
 					$order->order_discount = $request->discount;
 					$order->order_markup = $request->markup;
+					$order->order_description = $request->description;
 					$order->save();
 			}
 	}

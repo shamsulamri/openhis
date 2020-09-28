@@ -484,6 +484,7 @@ class OrderQueueController extends Controller
 					'location_code'=>$request->location_code,
 					'future_count'=>count($futures),
 					'encounter_helper'=>new EncounterHelper(),
+					'helper'=> new OrderHelper(),
 					]);
 	}
 

@@ -91,11 +91,19 @@ Order Queues
   </thead>
 	<tbody>
 @foreach ($order_queues as $order)
-	<tr>
+  	<?php 
+		$discharge_drugs='';
+		if ($order->encounter_code == 'inpatient' && $location->location_code=='pharmacy') {
+			if ($helper->hasDischargeDrugs($order->encounter_id)) {
+				$discharge_drugs = 'success';
+			}
+		}
+	?>
+	<tr class='{{ $discharge_drugs }}'>
 			<td>
 				<?php 
 				$label = 'warning'; 
-				switch ($order->consultation->encounter->encounter_code) {
+				switch ($order->encounter_code) {
 						case "inpatient":
 								$label = 'success';
 								break;

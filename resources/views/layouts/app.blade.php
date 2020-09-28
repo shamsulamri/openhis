@@ -361,6 +361,17 @@ if ($_COOKIE['his-navbar']==1) {
             <div class="row full-height">
                     <div class="full-height-scroll white-bg border-left">
 						<div class="col-lg-12">
+<?php
+	$indent = DojoUtility::openRequest(Auth::user(), 'indent_request');
+?>
+@if ($indent>0)
+<br>
+<div class="alert alert-info" role="alert">
+			<a href='/purchase/search?status_code=indent_request'>
+				You have <strong>{{ $indent }}</strong> indent request.
+			</a>
+</div>
+@endif
 								@yield('content')
 								<br>
 								<br>

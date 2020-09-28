@@ -15,16 +15,26 @@ $(document).ready(function(){
 					}
 			});
 
+			$(document).on('focusout', 'textarea', function(e) {
+					var id = e.currentTarget.name;
+					if (e.currentTarget.name != 'search') {
+						updateProcedure(id);
+					}
+			});
+
 			function updateProcedure(id) {
 					id = id.split('_')[1];
 					var price = $('#price_'.concat(id)).val();
 					var discount = $('#discount_'.concat(id)).val();
 					var markup = $('#markup_'.concat(id)).val();
+					var description = $('#description_'.concat(id)).val();
+					description = encodeURIComponent(description);
 
-					var dataString = parse('price=%s&discount=%s&markup=%s&order_id=%s', 
+					var dataString = parse('price=%s&discount=%s&markup=%s&description=%s&order_id=%s', 
 							price,
 							discount,
 							markup,
+							description,
 							id);
 
 					$.ajax({

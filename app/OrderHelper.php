@@ -51,6 +51,17 @@ class OrderHelper
 			return $order;
 	}
 
+	public static function hasDischargeDrugs($encounter_id) {
+			$discharge_orders = Order::where('encounter_id', $encounter_id)
+					->leftjoin('products as b', 'b.product_code', '=', 'orders.product_code')
+					->where('order_is_discharge', 1)
+					->where('category_code', 'drugs')
+					->count();
+
+			Log::info($discharge_orders);
+			return $discharge_orders>0?true:false;
+	}
+
 	public function getPrescription($order_id)
 	{
 			$drug = OrderDrug::where('order_id', $order_id)->first();
@@ -242,6 +253,9 @@ class OrderHelper
 
 			if (!empty($order)) {
 				if ($product->category_code == 'drugs') {
+					$order = null;
+				}
+				if ($product->category_code == 'fee_procedure') {
 					$order = null;
 				}
 			}
