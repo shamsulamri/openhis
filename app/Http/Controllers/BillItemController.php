@@ -601,6 +601,7 @@ class BillItemController extends Controller
 			$encounter = Encounter::find($encounter_id);
 			$patient_id = $encounter->patient_id;
 
+			/*
 			$base_sql = "
 				select a.product_code, sum(order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, sum(order_quantity_supply) as total_quantity, order_markup, order_discount, name, department_name, product_name
 				from orders as a
@@ -621,6 +622,28 @@ class BillItemController extends Controller
 				and order_multiple=0
 				and cancel_id is null
 				group by a.user_id, product_code,order_unit_price
+			";
+			 */
+
+			$base_sql = "
+				select a.product_code, (order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, (order_quantity_supply) as total_quantity, order_markup, order_discount, name, department_name, product_name
+				from orders as a
+				left join products as b on b.product_code = a.product_code 
+				left join tax_codes as c on c.tax_code = b.product_output_tax 
+				left join bill_items as f on (f.encounter_id=a.encounter_id and f.product_code = a.product_code)
+				left join encounters as g on (g.encounter_id=a.encounter_id)
+				left join patients as h on (h.patient_id = g.patient_id)
+				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
+				left join users as j on (j.id = a.user_id)
+				left join departments as k on (k.department_code = j.department_code)
+				left join order_cancellations as l on (l.order_id = a.order_id)
+				where b.deleted_at is null
+				%s
+				and b.category_code='fee_procedure'
+				and g.encounter_id = %d
+				and bill_id is null 
+				and order_multiple=0
+				and cancel_id is null
 			";
 
 			//and h.patient_id = %d
