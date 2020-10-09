@@ -367,7 +367,7 @@ class BillItemController extends Controller
 			$patient_id = $encounter->patient_id;
 
 			$base_sql = "
-				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, sum(order_quantity_request) as total_request, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name, bom_code, order_is_discharge, b.category_code
+				select a.product_code, a.unit_code, sum(order_quantity_supply) as total_quantity, sum(order_quantity_request) as total_request, c.tax_rate, c.tax_code, order_discount, order_unit_price, order_markup, bill_markup, product_name, bom_code, order_is_discharge, b.category_code, name, b.category_code
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -419,6 +419,17 @@ class BillItemController extends Controller
 					$item->bill_name = $order->product_name;
 					if ($order->order_is_discharge == 1 && $order->category_code == 'drugs') {
 						$item->bill_name = $order->product_name . " (Take Home)";
+					}
+
+					$show_name = false;
+					$show_names = ['mo_procedure','mo_fee'];
+
+					if (in_array($order->category_code, $show_names)) {
+							$show_name = true;
+					}
+
+					if (!empty($order->name) && $show_name) {
+						$item->bill_name .= " (".$order->name.")"; 
 					}
 
 					/** Show bom product names **/
@@ -702,6 +713,7 @@ class BillItemController extends Controller
 			$encounter = Encounter::find($encounter_id);
 			$patient_id = $encounter->patient_id;
 
+			/*
 			$base_sql = "
 				select a.order_id, a.product_code, order_quantity_supply as total_quantity, c.tax_rate, c.tax_code, order_discount, order_unit_price, product_name
 				from orders as a
@@ -721,9 +733,10 @@ class BillItemController extends Controller
 				and cancel_is is null
 				%s
 			";
+			 */
 
 			$base_sql = "
-				select a.product_code, sum(order_unit_price*(IFNULL((100-order_discount),100)/100)) as total_price, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code,product_name
+				select a.product_code, sum(order_unit_price*(IFNULL((100-order_discount),100)/100)) as total_price, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code,product_name, name
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -732,6 +745,7 @@ class BillItemController extends Controller
 				left join patients as h on (h.patient_id = g.patient_id)
 				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
 				left join order_cancellations as k on (k.order_id = a.order_id)
+				left join users as j on (j.id = a.user_id)
 				where (b.category_code='fee_consultation' or b.category_code = 'consultation' or b.category_code = 'wv')
 				and b.deleted_at is null
 				and h.patient_id = %d
@@ -763,6 +777,9 @@ class BillItemController extends Controller
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity;
 					$item->bill_name = $order->product_name;
+					if (!empty($order->name)) {
+						$item->bill_name .= " (".$order->name.")";
+					}
 					$item->bill_amount = $order->total_price?:0;
 					//$item->bill_discount = $order->order_discount;
 					Log::info($order->product_code);
