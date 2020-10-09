@@ -41,4 +41,8 @@ class DiscountRule extends Model
 	}
 
 	
+	public function sponsor()
+	{
+			return $this->belongsTo('App\Sponsor', 'sponsor_code');
+	}
 }

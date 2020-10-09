@@ -5,9 +5,15 @@
         </div>
     </div>
     <div class='form-group  @if ($errors->has('order_description')) has-error @endif'>
-        <label for='product_name' class='col-sm-3 control-label'>Description</label>
+		<label for='order_description' class='col-sm-3 control-label'>
+			@if ($order_task->drugLabel)
+					Special Instruction
+			@else
+					Description
+			@endif
+		</label>
         <div class='col-sm-9'>
-            {{ Form::label('product_name', $order_task->order_description, ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('order_description', empty($order_task->order_description)?" ":$order_task->order_description, ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
     <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
@@ -75,9 +81,9 @@
 			</div>
 			-->
     <div class='form-group  @if ($errors->has('product_code')) has-error @endif'>
-        <label for='user' class='col-sm-3 control-label'>Original Prescription</label>
+        <label for='original_prescription' class='col-sm-3 control-label'>Original Prescription</label>
         <div class='col-sm-9'>
-            {{ Form::label('user', $order_helper->getPrescription($order_task->order_id), ['class'=>'form-control','placeholder'=>'',]) }}
+            {{ Form::label('original_prescription', $order_helper->getPrescription($order_task->order_id)?:" ", ['class'=>'form-control','placeholder'=>'',]) }}
         </div>
     </div>
 	<div class="row">

@@ -766,39 +766,6 @@ class OrderHelper
 			return $uom;
 	}
 
-	public function syncOrderBillPrice($encounter_id) {
-
-			$sql = sprintf("
-				select a.product_code, order_unit_price, bill_unit_price
-				from orders as a
-				left join (
-					select product_code, bill_unit_price
-					from bill_items
-					where encounter_id = %d
-				) as b on (b.product_code = a.product_code)
-				where a.encounter_id = %d
-				and order_unit_price<>bill_unit_price
-				order by product_code
-			", $encounter_id, $encounter_id);
-
-			Log::info($sql);
-
-			$results = DB::select($sql);
-
-			if (!empty($results)) {
-					foreach($results as $row) {
-
-							Order::where('encounter_id', $encounter_id)
-									->where('product_code', $row->product_code)
-									->update(['order_unit_price'=>$row->bill_unit_price]);
-
-					}
-			}
-
-
-
-	}
-
 	public function getDiscountAmount($encounter_id, $product_code=null)
 	{
 			$encounter = Encounter::findOrFail($encounter_id);
@@ -809,6 +776,9 @@ class OrderHelper
 			foreach($rules as $rule) {
 					if ($rule->sponsor_code == $encounter->sponsor_code) {
 							if ($rule->parent_code == $product->category->parent_code) {
+									return $rule->discount_amount;
+							}
+							if ($rule->category_code == $product->category_code) {
 									return $rule->discount_amount;
 							}
 					}

@@ -1122,9 +1122,6 @@ class BillItemController extends Controller
 					$total_payable = DojoUtility::roundUp($posted_bill->bill_grand_total);
 			}
 
-			//$helper = new OrderHelper();
-			//$helper->syncOrderBillPrice($id);
-
 			return view('bill_items.index', [
 					'bills'=>$bills,
 					'billPosted'=>$billPosted,

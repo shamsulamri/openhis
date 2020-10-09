@@ -19,8 +19,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>sponsor_code</th>
-    <th>rule_id</th> 
+    <th>Sponsor</th>
 	@can('system-administrator')
 	<th></th>
 	@endcan
@@ -31,11 +30,8 @@
 	<tr>
 			<td>
 					<a href='{{ URL::to('discount_rules/'. $discount_rule->rule_id . '/edit') }}'>
-						{{$discount_rule->sponsor_code}}
+						{{$discount_rule->sponsor->sponsor_name}}
 					</a>
-			</td>
-			<td>
-					{{$discount_rule->rule_id}}
 			</td>
 			@can('system-administrator')
 			<td align='right'>
