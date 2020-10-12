@@ -177,6 +177,8 @@ class BedController extends Controller
 					$product = Product::find($bed->bed_code);
 					if ($product) {
 							$product->product_name = $bed->bed_name;
+							$ward_class = WardClass::find($bed->class_code);
+							$uoms = ProductUom::where('product_code', $product->product_code)->update(array('uom_price'=>$ward_class->class_price));
 							$product->save();
 					}
 					Session::flash('message', 'Record successfully updated.');

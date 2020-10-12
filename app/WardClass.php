@@ -24,7 +24,6 @@ class WardClass extends Model
 	public function validate($input, $method) {
 			$rules = [
 				'class_name'=>'required',
-				'class_price'=>'required',
 			];
 
 			

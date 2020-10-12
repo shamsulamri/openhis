@@ -168,6 +168,27 @@ class PatientListController extends Controller
 					->orderBy('a.created_at')
 					->paginate($this->paginateValue);
 
+			$emergencies = DB::table('queues as a')
+					->select('f.user_id','discharge_id', 'location_name', 'queue_id','patient_mrn', 'patient_name', 'consultation_status', 'a.created_at', 'a.encounter_id', 'f.consultation_id', 'patient_birthdate', 'gender_name','location_name', 'encounter_description','sponsor_name','b.patient_id', 'queue_id', 'queue_description')
+					->leftjoin('encounters as b', 'b.encounter_id','=', 'a.encounter_id')
+					->leftjoin('patients as c', 'c.patient_id','=', 'b.patient_id')
+					->leftjoin('queue_locations as d', 'd.location_code','=', 'a.location_code')
+					->leftJoin('discharges as e', 'e.encounter_id','=', 'b.encounter_id')
+					->leftJoin('consultations as f', function($q) 
+					{
+						$q->on('f.encounter_id','=','a.encounter_id')
+		   				  ->where('f.user_id','=',Auth::user()->id)
+		   				  ->where('consultation_status', '=', 1);
+					})
+					->leftJoin('ref_genders as k', 'k.gender_code', '=', 'c.gender_code')
+					->leftJoin('sponsors as l', 'l.sponsor_code', '=', 'b.sponsor_code')
+					->where('b.encounter_code', 'emergency')
+					->whereNull('discharge_id')
+					->whereNull('a.deleted_at')
+					->orWhere('a.location_code','pool')
+					->orderBy('discharge_id')
+					->orderBy('a.created_at')
+					->paginate($this->paginateValue);
 
 			$orders = Order::where('orders.user_id', Auth::user()->id)
 					->leftJoin('discharges as b', 'b.encounter_id', '=', 'orders.encounter_id')
@@ -192,6 +213,7 @@ class PatientListController extends Controller
 					'inpatients' => $inpatients,
 					'observations' => $observations,
 					'outpatients'=>$outpatients,
+					'emergencies'=>$emergencies,
 					'daycare' => $daycare,
 					'mortuary' => $mortuary,
 					'admission' => new Admission(),

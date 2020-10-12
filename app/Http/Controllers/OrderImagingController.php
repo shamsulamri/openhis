@@ -133,20 +133,20 @@ class OrderImagingController extends Controller
 	{
 			$consultation = Consultation::find(Session::get('consultation_id'));
 			$encounter = $consultation->encounter;
-			$params = DB::table('order_imaging')
-						->get();
 
-			$params = OrderImaging::all();
-			/*
-			$procedures = Product::where('category_code', 'radiography')
-								->orderBy('product_name')
-								->lists('product_name', 'product_code');
-			 */
+			$procedures = OrderImaging::orderBy('product_name')
+							->leftjoin('products as b', 'b.product_code', '=', 'order_imaging.product_code')
+							->where('status_code', 'active')
+							->pluck('b.product_code');
+			
+			$params = OrderImaging::whereIn('product_code', $procedures)->get();
+
+
 			$procedures = OrderImaging::orderBy('product_name')
 							->leftjoin('products as b', 'b.product_code', '=', 'order_imaging.product_code')
 							->where('status_code', 'active')
 							->lists('product_name', 'b.product_code');
-			
+
 			$orders = Order::where('consultation_id', $consultation->consultation_id)
 						->leftJoin('products as a', 'a.product_code', '=', 'orders.product_code')
 						->where('category_code', 'imaging2')

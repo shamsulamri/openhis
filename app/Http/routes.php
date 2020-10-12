@@ -21,7 +21,9 @@
 | kernel and includes session state, CSRF protection, and more.
 |
 */
-
+if (env('APP_ENV') === 'production') {
+    URL::forceSchema('https');
+}
 
 Route::group(['middleware' => ['web','input_sanitizer_middleware']], function () {
 		Route::auth();

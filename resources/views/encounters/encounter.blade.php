@@ -83,7 +83,7 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
+    <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
         {{ Form::label('Location', 'Location',['class'=>'col-sm-4 control-label']) }}
         <div class='col-sm-8'>
             {{ Form::select('location_code', [], null, ['id'=>'location_code','onchange'=>'','class'=>'form-control']) }}

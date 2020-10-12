@@ -27,9 +27,9 @@
 			@endif
 			@if ($consultation->encounter->encounter_code=='inpatient')
 			<li><a href="{{ URL::to('admission/classification') }}">Patient Classification</a></li>
+			@endif
 			<li role="separator" class="divider"></li>
 			<li><a href="{{ URL::to('medication_record/mar') }}">Medication Administration Record</a></li>
-			@endif
 		  </ul>
 		</div>
 </div>

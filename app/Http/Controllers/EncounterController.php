@@ -38,6 +38,7 @@ use App\Order;
 use App\OrderInvestigation;
 use App\OrderDrug;
 use App\Payment;
+use Auth;
 		
 class EncounterController extends Controller
 {
@@ -77,7 +78,6 @@ class EncounterController extends Controller
 			}
 
 			$encounter = new Encounter();
-
 
 			/*
 			$locations = Location::select(DB::raw("concat(location_name, ' (', department_name, ')') as location_name, location_code")
@@ -272,6 +272,16 @@ class EncounterController extends Controller
 
 			}
 
+			if ($request->encounter_code == 'outpatient') {
+					if (empty($request->location_code)) $valid['location_code']='This field is required.';
+					if (!empty($valid)) {
+							return redirect('/encounters/create?patient_id='.$request->patient_id)
+								->withErrors($valid)
+								->withInput();
+					} 
+
+			}
+
 			$encounter = new Encounter($request->all());
 			$valid = $encounter->validate($request->all(), $request->_method);
 
@@ -288,15 +298,6 @@ class EncounterController extends Controller
 					}
 					 */
 
-					/** Set patient mrn if empty **/
-					$patient = Patient::find($encounter->patient_id);
-					if (empty($patient->patient_mrn)) {
-							$mrn = "MSU".str_pad($patient->patient_id, 6, '0', STR_PAD_LEFT);
-							$patient->patient_mrn = $mrn;
-							$patient->save();
-							Log::info($patient->patient_mrn);
-					}
-
 					$queueFlag = False;
 					if ($encounter->encounter_code == 'outpatient' || $encounter->encounter_code == 'drive_thru') $queueFlag=True;
 					//if ($encounter->encounter_code == 'emergency' && $encounter->triage_code=='green') $queueFlag=True;
@@ -310,7 +311,11 @@ class EncounterController extends Controller
 							$queue->encounter_id = $encounter->encounter_id;
 							$queue->save();
 							Session::flash('message', 'Record successfully created.');
-							return redirect('/queues?queue_id='.$queue->queue_id);
+							if (Auth::user()->author_id == 2) {
+								return redirect('/patient_lists');
+							} else {
+								return redirect('/queues?queue_id='.$queue->queue_id);
+							}
 					}
 
 					if (!$queueFlag) {

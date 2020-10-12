@@ -134,19 +134,6 @@ class Encounter extends Model
 
 			static::created(function($encounter)
 			{
-					/* Old */
-					/*
-					if (!$encounter->patient->patient_mrn) {
-							$patient = $encounter->patient;
-							//$prefix = config('host.mrn_prefix') . date('Ymd', strtotime(Carbon::now()));
-							//$mrn = $prefix.str_pad(Encounter::where('created_at','>=', Carbon::today())->count(), 4, '0', STR_PAD_LEFT);
-							$prefix = config('host.mrn_prefix');
-							$mrn = $prefix.str_pad($patient->patient_id, 8, '0', STR_PAD_LEFT);
-							$patient->patient_mrn = $mrn;
-							$patient->save();
-					}
-					 */
-
 					if (!$encounter->patient->patient_mrn) {
 							$patient = $encounter->patient;
 							$prefix = config('host.mrn_prefix');
@@ -160,17 +147,7 @@ class Encounter extends Model
 					}
 			});
 	}
-	
-	/*
-	public function encounterPaid()
-	{
-			$amount = DB::table('bills as a')
-						->where('encounter_id','=',$this->encounter_id)
-						->count('bill_outstanding');
 
-			return $amount;
-	}
-	 */
 	public function encounterPaid() {
 
 			$paid=False;
@@ -183,10 +160,7 @@ class Encounter extends Model
 							$paid=True;
 					}
 			} 			
-			
 
 			return $paid;
 	}
-
-
 }

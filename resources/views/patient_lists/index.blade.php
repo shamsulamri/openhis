@@ -72,6 +72,15 @@
 					</a>
 				</li>
 				@endif
+				@if (env('SHOW_EMERGENCY')==1)
+				<li>
+					<a data-toggle="tab" href="#tab-6">Emergency
+						@if (count($emergencies)>0)
+							 <label class="label label-primary">{{ count($emergencies) }}</label>
+						@endif
+					</a>
+				</li>
+				@endif
 		</ul>
 		<div class="tab-content">
 			<div id="tab-1" class="tab-pane active">
@@ -118,6 +127,16 @@
 						$title = "Mortuary";
 						?>
 						@include('patient_lists.patients')
+				</div>
+			</div>
+			@endif
+			@if (env('SHOW_EMERGENCY')==1)
+			<div id="tab-6" class="tab-pane">
+				<div class="panel-body">
+						<?php 
+						$title = "Emergency";
+						?>
+						@include('patient_lists.emergency')
 				</div>
 			</div>
 			@endif

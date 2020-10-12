@@ -193,13 +193,6 @@
     </div>
 	<br>
 
-    <div class='form-group'>
-        <div class="col-sm-offset-4 col-sm-8">
-            <a class="btn btn-default" href="/user_authorizations" role="button">Cancel</a>
-            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
-        </div>
-    </div>
-
 
 
 	<div class='page-header'>
@@ -219,7 +212,7 @@
 @endforeach
 
 <br>
-<p>within the following product categories:</p>
+<p>from the following product categories:</p>
 <br>
 @foreach ($categories as $category)
 		<?php $checked = 0; ?>
@@ -231,3 +224,12 @@
 		{{ Form::checkbox($category->category_code, '1', $checked) }} {{ $category->category_name }}
 		<br>
 @endforeach
+    <div class='form-group'>
+        <div class="col-sm-12">
+			<div class='pull-right'>
+            <a class="btn btn-default" href="/user_authorizations" role="button">Cancel</a>
+            {{ Form::submit('Save', ['class'=>'btn btn-primary']) }}
+			</div>
+        </div>
+    </div>
+

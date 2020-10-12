@@ -466,7 +466,9 @@ class OrderDrugController extends Controller
 						$sql .=")";
 				}
 
-				$sql .=" and category_code = 'drugs' limit 10";
+				$sql .=" and category_code in ('drugs', 'drug_trade') limit 10";
+
+				Log::info($sql);
 
 				$data = DB::select($sql);
 

@@ -578,8 +578,6 @@ class OrderController extends Controller
 							->orderBy('product_name')
 							->pluck('product_code');
 
-					//$favorites = ['CONSULTANT001A', 'CONSULTANT002A'];
-
 					$ordered_items = Order::select('product_code')
 										->where('consultation_id', $consultation->consultation_id)
 										->pluck('product_code')

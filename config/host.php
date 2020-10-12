@@ -8,6 +8,7 @@ return [
     'tax_number'      => env('GST_NUMBER', 'GST123456'),
     'reservation_limit'      => env('RESERVATION_LIMIT', 5),
     'unit_of_dose'      => env('UNIT_OF_DOSE', 0),
+    'show_emergency'      => env('SHOW_EMERGENCY', 0),
 ]
 
 ?>

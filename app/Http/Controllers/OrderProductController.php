@@ -259,7 +259,9 @@ class OrderProductController extends Controller
 				 */
 
 				if (empty($request->categories)) {
-						$order_products = $order_products->whereIn('category_code',$categoryCodes);
+						if (count($categoryCodes)>0) {
+								$order_products = $order_products->whereIn('category_code',$categoryCodes);
+						}
 				} else {
 						$order_products = $order_products->where('category_code','=', $request->categories);
 				}

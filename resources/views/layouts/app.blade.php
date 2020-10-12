@@ -298,7 +298,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<!-- Financial Module -->
 						@can('module-discharge')
 						<div class="dropdown profile-element"> 
-								<h4>&nbsp;Financial</h4>
+								<h4>&nbsp;Patient</h4>
 						</div>
 						<li><a title='Patient List' href="{{ url('/patients') }}"><i class='fa fa-user'></i><span class='nav-label'>Patients</span></a></li>
 						<li><a title='Discharges' href="{{ url('/discharges') }}"><i class='fa fa-home'></i><span class='nav-label'>Discharges</span></a></li>

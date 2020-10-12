@@ -65,19 +65,6 @@ return [
             'strict'    => false,
         ],
 
-        'mysql2' => [
-            'driver'    => 'mysql',
-            'host'      => env('SISO_HOST','192.168.1.143'),
-            'database'  => env('SISO_DATABASE', 'his_integration'),
-            'username'  => env('SISO_USERNAME', 'msu'),
-            'password'  => env('SISO_PASSWORD', 'msu'),
-			'port'		=> env('SISO_PORT', 3306),
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
-            'strict'    => false,
-        ],
-
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', 'localhost'),

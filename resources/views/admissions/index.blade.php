@@ -26,54 +26,54 @@
 @endcan
 @can('module-ward')
 <div class="row">
-	<div class="col-md-2">
-		<div class='panel panel-default'>
-			<div class='panel-body' align='middle'>
-				<h5><strong>Admission</strong></h5>	
-				<h4><strong>{{ $wardHelper->totalAdmission() }}</strong></h4>	
-			</div>
-		</div>
-	</div>
-	<div class="col-md-2">
-		<div class='panel panel-default'>
-			<div class='panel-body' align='middle'>
-				<h5><strong>Discharge</strong></h5>	
-				<h4><strong>{{ $wardHelper->wardDischarge() }}</strong></h4>	
-			</div>
-		</div>
-	</div>
-	<div class="col-md-2">
-		<div class='panel panel-default'>
-			<div class='panel-body' align='middle'>
-				<h5><strong>Available</strong></h5>	
-				<h4><strong>{{ $wardHelper->bedAvailable() }}</strong></h4>	
-			</div>
-		</div>
-	</div>
-	<div class="col-md-2">
-		<div class='panel panel-default'>
-			<div class='panel-body' align='middle'>
-				<h5><strong>Disabled Bed</strong></h5>	
-				<h4><strong>{{ $bedHelper->bedDisabled($ward_code) }}</strong></h4>	
-			</div>
-		</div>
-	</div>
-	<div class="col-md-2">
-		<div class='panel panel-default'>
-			<div class='panel-body' align='middle'>
-				<h5><strong>Total Bed</strong></h5>	
-				<h4><strong>{{ $wardHelper->totalBed() }}</strong></h4>	
-			</div>
-		</div>
-	</div>
-	<div class="col-md-2">
-		<div class='panel panel-default'>
-			<div class='panel-body' align='middle'>
-				<h5><strong>Bed Occupancy</strong></h5>	
-				<h4><strong>{{ $bedHelper->bedOccupancyRate($ward->department->department_code, DojoUtility::thisYear(), DojoUtility::thisMonth()) }}%</strong></h4>	
-			</div>
-		</div>
-	</div>
+       <div class="col-md-2">
+               <div class='panel panel-default'>
+                       <div class='panel-body' align='middle'>
+                               <h5><strong>Admission</strong></h5>
+                               <h4><strong>{{ $wardHelper->totalAdmission() }}</strong></h4>
+                       </div>
+               </div>
+       </div>
+       <div class="col-md-2">
+               <div class='panel panel-default'>
+                       <div class='panel-body' align='middle'>
+                               <h5><strong>Discharge</strong></h5>
+                               <h4><strong>{{ $wardHelper->wardDischarge() }}</strong></h4>
+                       </div>
+               </div>
+       </div>
+       <div class="col-md-2">
+               <div class='panel panel-default'>
+                       <div class='panel-body' align='middle'>
+                               <h5><strong>Available</strong></h5>
+                               <h4><strong>{{ $wardHelper->bedAvailable() }}</strong></h4>
+                       </div>
+               </div>
+       </div>
+       <div class="col-md-2">
+               <div class='panel panel-default'>
+                       <div class='panel-body' align='middle'>
+                               <h5><strong>Disabled Bed</strong></h5>
+                               <h4><strong>{{ $bedHelper->bedDisabled($ward_code) }}</strong></h4>
+                       </div>
+               </div>
+       </div>
+       <div class="col-md-2">
+               <div class='panel panel-default'>
+                       <div class='panel-body' align='middle'>
+                               <h5><strong>Total Bed</strong></h5>
+                               <h4><strong>{{ $wardHelper->totalBed() }}</strong></h4>
+                       </div>
+               </div>
+       </div>
+       <div class="col-md-2">
+               <div class='panel panel-default'>
+                       <div class='panel-body' align='middle'>
+                               <h5><strong>Bed Occupancy</strong></h5>
+                               <h4><strong>{{ $bedHelper->bedOccupancyRate($ward->department->department_code, DojoUtility::thisYear(), DojoUtility::thisMonth()) }}%</strong></h4>
+                       </div>
+               </div>
+       </div>
 </div>
 @endcan
 @can('module-patient')
@@ -253,7 +253,7 @@
 			@endcan
 			@can('module-discharge')
 							<a class='btn btn-primary ' href='{{ URL::to('deposits/index/'. $admission->patient_id) }}'>Deposit</a>
-							<a class='btn btn-primary ' href='{{ URL::to('bill_items/'. $admission->encounter_id) }}'>Bill</a>
+							<a class='btn btn-primary ' href='{{ URL::to('bill_items/'. $admission->encounter_id) }}'>Interim Bill</a>
 					<!--
 					<a class='btn btn-primary' title='Start consultation' href='{{ URL::to('admission/consultation/'.$admission->admission_id) }}'>
 						<i class="fa fa-stethoscope"></i>

@@ -21,7 +21,7 @@
 		</h1>
 		<br>
 		<h3>
-		You have a pending consultation with this patient. Click Resume button to continue. {{ $consultation->consultation_id }}
+		You have a pending consultation with this patient. Click Resume button to continue. 
 		<div class='pull-right'>
 		<a class='btn btn-primary' href='{{ URL::to('consultations/'. $consultation->consultation_id. '/edit') }}'>Resume</a>
 		</div>
