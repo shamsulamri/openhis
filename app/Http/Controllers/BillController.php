@@ -870,6 +870,12 @@ class BillController extends Controller
 						'shift_report'=>'Shift Report',
 						];
 
+			$consultants = User::leftjoin('user_authorizations as a','a.author_id', '=', 'users.author_id')
+							->where('consultant',1)
+							->orderby('name')
+							->lists('name','id')
+							->prepend('','');
+
 			return view('bills.bill_report', [
 					'date_start'=>$date_start,
 					'date_end'=>$date_end,
@@ -880,6 +886,7 @@ class BillController extends Controller
 					'sponsors' => Sponsor::all()->sortBy('sponsor_name')->lists('sponsor_name', 'sponsor_code')->prepend('',''),
 					'sponsor_code' => $request->sponsor_code,
 					'reports'=>$reports,
+					'consultants'=>$consultants,
 			]);
 	}
 }

@@ -59,8 +59,10 @@
     <th>Unit</th> 
 	-->
     <th width='100'><div align='right'>On Hand</div></th> 
+	<!--
     <th width='50'><div align='right'>Allocated</div></th> 
     <th width='50'><div align='right'>Available</div></th> 
+	-->
     <th width='100'><div align='right'>Average Cost</div></th> 
     <th width='100'><div align='right'>Total Cost</div></th> 
 	</tr>
@@ -70,7 +72,7 @@
 <?php
 $allocated=0;
 $on_hand = $stock_helper->getStockOnHand($product->product_code, $product->store_code, $product->inv_batch_number)?:0;
-$allocated = $stock_helper->getStockAllocated($product->product_code, $product->store_code, $product->inv_batch_number)?:0;
+$allocated = $stock_helper->getStockAllocated($product->product_code, $product->store_code)?:0;
 $available = $on_hand-$allocated;
 ?>
 	<tr>
@@ -83,7 +85,7 @@ $available = $on_hand-$allocated;
 			</td>
 			<td>
 				@if ($product->inv_batch_number)
-				<a href='{{ URL::to('inventory/enquiry?store_code='.$product->store_code.'&batch_number='.$product->inv_batch_number) }}'>
+				<a href='{{ URL::to('inventory/enquiry?search='.$product->product_code.'&store_code='.$product->store_code.'&batch_number='.$product->inv_batch_number) }}'>
 				{{ $product->inv_batch_number }}
 				</a>
 				@else
@@ -108,12 +110,14 @@ $available = $on_hand-$allocated;
 				{{ $on_hand }} 
 				</a>
 			</td>
+	<!--
 			<td align='right'>
 				{{ $allocated }}
 			</td>
 			<td align='right'>
 				{{ $available }}
 			</td>
+	-->
 			<td align='right'>
 				{{ number_format($product->average_cost,2) }}
 			</td>

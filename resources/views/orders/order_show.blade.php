@@ -1,4 +1,3 @@
-	<h3>Order Report</h3>
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-warning" href="/orders" role="button">Back</a>
@@ -12,6 +11,7 @@
 						@endif
         </div>
     </div>
+	<h3>Order Report</h3>
 	<div class='form-group'>
         {{ Form::label('product', 'Product',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

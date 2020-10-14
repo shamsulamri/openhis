@@ -387,7 +387,6 @@ class BillItemController extends Controller
 				and a.encounter_id = %d
 				and bill_id is null 
 				and order_multiple=0
-				and bom_code is null
 				and cancel_id is null
 				and order_is_future<>1
 				group by product_code, order_is_discharge, a.unit_code, order_discount
@@ -433,6 +432,7 @@ class BillItemController extends Controller
 					}
 
 					/** Show bom product names **/
+					/*
 					if ($item->product->bom()->count()>0) {
 						$item->bill_name = $item->bill_name." (";
 						foreach($item->product->bom as $index=>$bom_product) {
@@ -443,6 +443,7 @@ class BillItemController extends Controller
 						}
 						$item->bill_name = $item->bill_name.")";
 					}
+					 */
 
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
@@ -465,6 +466,14 @@ class BillItemController extends Controller
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
+
+					if (!empty($order->bom_code)) {
+						$bom = Product::find($order->bom_code);
+						$item->bill_name .= " (".$bom->product_name.")";
+						$item->bill_amount = 0;
+						$item->bill_amount_exclude_tax = 0;
+					}
+
 					try {
 							$item->save();
 					} catch (\Exception $e) {
@@ -637,7 +646,7 @@ class BillItemController extends Controller
 			 */
 
 			$base_sql = "
-				select a.product_code, (order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, (order_quantity_supply) as total_quantity, order_markup, order_discount, name, department_name, product_name
+				select a.product_code, (order_unit_price*((100-IFNULL(order_discount,0))/100)) as order_unit_price, c.tax_rate, c.tax_code, (order_quantity_supply) as total_quantity, order_markup, order_discount, name, department_name, product_name, bom_code
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -655,6 +664,7 @@ class BillItemController extends Controller
 				and bill_id is null 
 				and order_multiple=0
 				and cancel_id is null
+				group by a.product_code, bom_code
 			";
 
 			//and h.patient_id = %d
@@ -698,6 +708,14 @@ class BillItemController extends Controller
 					if ($order->tax_rate) {
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
+
+					if (!empty($order->bom_code)) {
+						$bom = Product::find($order->bom_code);
+						$item->bill_name .= " (".$bom->product_name.")";
+						$item->bill_amount = 0;
+						$item->bill_amount_exclude_tax = 0;
+					}
+
 					try {
 							$item->save();
 					} catch (\Exception $e) {
@@ -736,7 +754,7 @@ class BillItemController extends Controller
 			 */
 
 			$base_sql = "
-				select a.product_code, sum(order_unit_price*(IFNULL((100-order_discount),100)/100)) as total_price, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code,product_name, name
+				select a.product_code, sum(order_unit_price*(IFNULL((100-order_discount),100)/100)) as total_price, sum(order_quantity_supply) as total_quantity, c.tax_rate, c.tax_code,product_name, name, bom_code
 				from orders as a
 				left join products as b on b.product_code = a.product_code 
 				left join tax_codes as c on c.tax_code = b.product_output_tax 
@@ -753,7 +771,7 @@ class BillItemController extends Controller
 				and bill_id is null
 				and cancel_id is null
 				%s
-				group by a.product_code
+				group by a.product_code, bom_code
 			";
 			$sql = sprintf($base_sql, $patient_id, "");
 
@@ -780,6 +798,8 @@ class BillItemController extends Controller
 					if (!empty($order->name)) {
 						$item->bill_name .= " (".$order->name.")";
 					}
+
+
 					$item->bill_amount = $order->total_price?:0;
 					//$item->bill_discount = $order->order_discount;
 					Log::info($order->product_code);
@@ -789,6 +809,12 @@ class BillItemController extends Controller
 						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
 					}
 					$item->bill_non_claimable = $non_claimable;
+					if (!empty($order->bom_code)) {
+						$bom = Product::find($order->bom_code);
+						$item->bill_name .= " (".$bom->product_name.")";
+						$item->bill_amount = 0;
+						$item->bill_amount_exclude_tax = 0;
+					}
 					$item->save();
 			}
 	}

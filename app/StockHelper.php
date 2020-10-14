@@ -255,6 +255,7 @@ class StockHelper
 					->leftjoin('order_cancellations as a', 'a.order_id', '=', 'orders.order_id')
 					->leftjoin('bills as b', 'b.encounter_id', '=', 'orders.encounter_id')
 					->whereNull('b.id')
+					->where('order_completed','=', 0)
 					->whereNull('cancel_id');
 
 			if (!empty($encounter_id)) {
@@ -293,7 +294,7 @@ class StockHelper
 	public function getStockAvailable($product_code, $store_code=null, $batch_number = null)
 	{
 			$on_hand = $this->getStockOnHand($product_code, $store_code, $batch_number);
-			$allocated = $this->getStockAllocated($product_code, $store_code, $batch_number);
+			$allocated = $this->getStockAllocated($product_code, $store_code);
 
 			return $on_hand - $allocated;
 	}

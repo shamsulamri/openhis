@@ -139,7 +139,13 @@ $category='';
 						@endif
 				@endif
 				@if ($order->order_report != '')
+					@if ($order->product->category_code=='imaging')
+					<a target="_blank" class='btn btn-default btn-xs' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=order_report&id={{ $order->order_id }}">
+						Report
+					</a>
+					@else
 					<a class='btn btn-default btn-xs' href='{{ URL::to('orders/'. $order->order_id .'/show') }}'>Report</a>
+					@endif
 				@endif
 				@if (!empty($order->document_uuid))
 					<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $order->document_uuid) }}'>Report</a>
