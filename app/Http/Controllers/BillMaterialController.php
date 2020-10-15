@@ -92,9 +92,8 @@ class BillMaterialController extends Controller
 			$unit = isset($bill_material->product->unitMeasure->unit_shortname) ? $bill_material->product->unitMeasure->unit_shortname : '-';
 
 			$product_uoms =  $bill_material->product->productUnitMeasures();
-			//$uom_list = [];
-			//$uom_list['unit'] = 'Each (Unit)';
 
+			//$uom_list['']='';
 			foreach ($product_uoms as $uom) {
 					//if ($uom->unit_code != 'unit') {
 						$uom_list[$uom->unit_code] = $uom->unitMeasure->unit_name.' ('. $uom->uom_price.')';

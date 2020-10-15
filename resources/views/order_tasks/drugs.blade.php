@@ -9,7 +9,7 @@
 			@endif
 			<tr>
 				<td bgcolor='#EFEFEF' colspan='12'>
-					<h3>&nbsp;{{ $order->name }}, 
+					<h3>&nbsp;{{ strtoupper($order->name) }}, 
 						<small>
 							{{ (DojoUtility::dateTimeReadFormat($order->consultation_date)) }}
 						</small>

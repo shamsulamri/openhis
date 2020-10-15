@@ -62,6 +62,16 @@
 	<div class="row">
 			<div class="col-xs-12">
 					<div class='form-group'>
+						<label class='col-sm-1 control-label'><div align='left'>Consultants</div></label>
+						<div class='col-sm-7'>
+            				{{ Form::select('user_id', $consultants,null, ['id'=>'user_id','class'=>'form-control']) }}
+						</div>
+					</div>
+			</div>
+	</div>
+	<div class="row">
+			<div class="col-xs-12">
+					<div class='form-group'>
 						<label class='col-sm-1 control-label'><div align='left'>Sponsor</div></label>
 						<div class='col-sm-7'>
 							{{ Form::select('sponsor_code', $sponsors,$sponsor_code, ['id'=>'sponsor_code','class'=>'form-control']) }}
@@ -99,8 +109,12 @@
 - From, To, Sponsor
 <br>
 <br>
-<h5>Consultant Report</h5>
-- From, To
+<h5>Consultant Report By User</h5>
+- From, To, Consultant
+<br>
+<br>
+<h5>Consultant Report By Product</h5>
+- From, To 
 <br>
 <br>
 <h5>Shift Report</h5>
@@ -143,6 +157,7 @@
 				url = url.concat("&typeCode=", $("#type_code").val());
 				url = url.concat("&sponsorCode=", $("#sponsor_code").val());
 				url = url.concat("&shiftCode=", $("#shift_code").val());
+				url = url.concat("&user_id=", $("#user_id").val());
 
 				var win = window.open(url, '_blank');
 		}

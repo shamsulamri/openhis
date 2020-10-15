@@ -180,7 +180,8 @@ class AdmissionController extends Controller
 
 			$wards = Ward::all()
 					->sortBy('ward_name')
-					->lists('ward_name', 'ward_code');
+					->lists('ward_name', 'ward_code')
+					->prepend('','');
 
 			return view('admissions.index', [
 					'admissions'=>$admissions,
@@ -617,7 +618,8 @@ class AdmissionController extends Controller
 
 			$wards = Ward::all()
 					->sortBy('ward_name')
-					->lists('ward_name', 'ward_code');
+					->lists('ward_name', 'ward_code')
+					->prepend('','');
 
 			$transits = null;
 

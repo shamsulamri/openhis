@@ -87,6 +87,11 @@ class Encounter extends Model
 			return $this->hasOne('App\Bill', 'encounter_id');
 	}
 
+	public function medical_certificate()
+	{
+			return $this->hasOne('App\MedicalCertificate', 'encounter_id');
+	}
+
 	public function bills()
 	{
 			return $this->hasMany('App\Bill', 'encounter_id');

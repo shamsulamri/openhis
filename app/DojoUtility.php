@@ -405,6 +405,8 @@ class DojoUtility
 						$tempValue = str_replace(substr($valueArray[1], 1), 0, substr($valueArray[1], 1));
 						$tempValue = substr($valueArray[1],0,1).$tempValue;
 						$newvalue = floatval($valueArray[0].".".$tempValue);
+				} elseif ($substringValue == 5) {
+						$newvalue = floatval($value);
 				} elseif($substringValue == 0) {
 						$newvalue = floatval($value);
 				} else {
