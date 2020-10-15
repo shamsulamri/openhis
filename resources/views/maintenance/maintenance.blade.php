@@ -51,7 +51,7 @@
 	<h4>
 	<div class="row">
 			<div class="col-xs-6">
-				<a href="{{ url('/consultations') }}">Consultation</a><br>
+				<a href="{{ url('/consultations') }}">Consultations</a><br>
 				<a href="{{ url('/patient_lists') }}">Patient Lists</a><br>
 				<a href="{{ url('/discharges') }}">Discharges</a><br>
 				<a href="{{ url('/discharge_summaries') }}">Discharge Summaries</a><br>

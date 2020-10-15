@@ -312,6 +312,9 @@ class OrderHelper
 					$order_drug->order_id = $order->order_id;
 					if (empty($renew_drug)) {
 							$drug_prescription = DrugPrescription::where('drug_code', $product->product_code)->first();
+							if (empty($drug_prescription)) {
+									$drug_prescription = DrugPrescription::where('drug_code', $product->product_custom_id)->first();
+							}
 							if ($drug_prescription) { 
 									
 									$order_drug->drug_strength = $drug_prescription->drug->strength;
@@ -322,7 +325,7 @@ class OrderHelper
 									$order_drug->drug_dosage = $drug_prescription->drug_dosage;
 									$order_drug->dosage_code = $drug_prescription->dosage_code;
 									$order_drug->route_code = $drug_prescription->route_code;
-									$order_drug->frequency_code = $drug_prescription->frequency_code;
+									//$order_drug->frequency_code = $drug_prescription->frequency_code;
 									$order_drug->drug_duration = $drug_prescription->drug_duration;
 									$order_drug->period_code = $drug_prescription->period_code;
 									$order->order_quantity_request = $drug_prescription->drug_total_unit;

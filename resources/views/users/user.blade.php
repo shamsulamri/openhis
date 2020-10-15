@@ -24,7 +24,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('employee_id')) has-error @endif'>
-        <label for='employee_id' class='col-sm-3 control-label'>Employee ID<span style='color:red;'> *</span></label>
+        <label for='employee_id' class='col-sm-3 control-label'>Employee ID</label>
         <div class='col-sm-9'>
             {{ Form::text('employee_id', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'255']) }}
             @if ($errors->has('employee_id')) <p class="help-block">{{ $errors->first('employee_id') }}</p> @endif

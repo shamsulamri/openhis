@@ -466,9 +466,7 @@ class OrderDrugController extends Controller
 						$sql .=")";
 				}
 
-				$sql .=" and category_code in ('drugs', 'drug_trade') limit 10";
-
-				Log::info($sql);
+				$sql .=" and category_code in ('drugs', 'drug_trade') limit 10"; 
 
 				$data = DB::select($sql);
 
@@ -712,6 +710,14 @@ class OrderDrugController extends Controller
 					->orderBy('frequency_code')
 					->pluck('frequency_code')
 					->toArray();
+
+			if (empty($prescriptions)) {
+					$product = Product::find($drug_code);
+					$prescriptions = DrugPrescription::where('drug_code', $product->product_custom_id)
+							->orderBy('frequency_code')
+							->pluck('frequency_code')
+							->toArray();
+			}
 
 			$frequencies = Frequency::orderBy('frequency_index')
 					->select('frequency_code', 'frequency_name')

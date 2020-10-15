@@ -83,6 +83,7 @@ input {
 
 </style>
 @include('consultations.panel')
+<h1>Clinical Notes</h1>
 <br>
 <div class="tabs-container">
 		<ul class="nav nav-tabs">

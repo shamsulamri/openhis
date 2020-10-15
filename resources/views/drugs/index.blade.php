@@ -19,8 +19,8 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th>Generic Name</th>
     <th>Code</th> 
+    <th>Generic Name</th>
 	<th></th>
 	</tr>
   </thead>
@@ -34,6 +34,9 @@
 					<a href='{{ URL::to('drugs/'. $drug->drug_code . '/edit') }}'>
 						{{$drug->drug_generic_name}}
 					</a>
+			</td>
+			<td>
+					{{$drug->trade_name}}
 			</td>
 			<td align='right'>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('drugs/delete/'. $drug->drug_code) }}'>Delete</a>
