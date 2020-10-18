@@ -664,7 +664,7 @@ class BillItemController extends Controller
 				and bill_id is null 
 				and order_multiple=0
 				and cancel_id is null
-				group by a.product_code, bom_code
+				group by a.user_id, product_code, bom_code, order_unit_price
 			";
 
 			//and h.patient_id = %d

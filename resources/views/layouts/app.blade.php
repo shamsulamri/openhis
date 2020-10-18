@@ -292,6 +292,7 @@ if ($_COOKIE['his-navbar']==1) {
 								<h4>&nbsp;Medical Record</h4>
 						</div>
 						<li><a title="Patient List" href="{{ url('/patients') }}"><i class='fa fa-user'></i><span class='nav-label'>Patient List</a></li>
+						<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 						<li><a title="Loans" href="{{ url('/loans?type=folder') }}"><i class='fa fa-share-square'></i><span class='nav-label'>Loans</a></li>
 						@endcan
 

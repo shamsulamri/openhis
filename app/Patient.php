@@ -227,6 +227,16 @@ class Patient extends Model
 	{
 			if (!empty($this->attributes['patient_new_ic'])) {
 					return $this->patient_new_ic;
+			} elseif (!empty($this->attributes['patient_old_ic'])) {
+					return $this->patient_old_ic." (Old ID)";
+			} elseif (!empty($this->attributes['patient_birth_certificate'])) {
+					return $this->patient_birth_certificate." (Birth certificate)";
+			} elseif (!empty($this->attributes['patient_passport'])) {
+					return $this->patient_passport." (Passport)";
+			} elseif (!empty($this->attributes['patient_military_id'])) {
+					return $this->patient_military_id." (Military ID)";
+			} elseif (!empty($this->attributes['patient_police_id'])) {
+					return $this->patient_police_id." (Police ID)";
 			} else {
 					return "-";
 			}

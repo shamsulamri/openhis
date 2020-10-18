@@ -16,6 +16,7 @@ use App\Patient;
 use App\Ward;
 use Auth;
 use App\DojoUtility;
+use App\EncounterHelper;
 
 class AppointmentController extends Controller
 {
@@ -29,11 +30,17 @@ class AppointmentController extends Controller
 	public function index(Request $request)
 	{
 
-			$appointments = Appointment::orderBy('appointment_id')
-					->where('appointment_datetime', '>=', Carbon::today());
+			$date_start = DojoUtility::dateTimeWriteFormat(DojoUtility::today().' 00:00');
+			$date_end = DojoUtility::dateTimeWriteFormat(DojoUtility::today().' 23:59');
+
+			//$appointments = Appointment::where('appointment_datetime', '=', $date_start)
+			$appointments = Appointment::whereBetween('appointment_datetime', [$date_start, $date_end])
+					->leftjoin('appointment_services as b', 'b.service_id', '=', 'appointments.service_id')
+					->orderBy('service_name')
+					->orderBy('appointment_datetime');
 
 			if (!empty(Auth::user()->service_id)) {
-				$appointments = $appointments->where('service_id', '=', Auth::user()->service_id);
+				$appointments = $appointments->where('appointments.service_id', '=', Auth::user()->service_id);
 			}
 
 			$service_id = null;
@@ -41,7 +48,7 @@ class AppointmentController extends Controller
 
 			if (!empty($request->cookie('appointment_service'))) {
 					$service_id = $request->cookie('appointment_service');
-					$appointments = $appointments->where('service_id', '=', $service_id);
+					$appointments = $appointments->where('appointments.service_id', '=', $service_id);
 					$service = Service::find($service_id);
 			}
 					
@@ -54,6 +61,8 @@ class AppointmentController extends Controller
 					'service' => $service,
 					'ward' => Ward::where('ward_code', $request->cookie('ward'))->first(),
 					'date_start'=>DojoUtility::today(),
+					'search'=>null,
+					'encounter_helper'=>new EncounterHelper(),
 			]);
 	}
 
@@ -193,27 +202,33 @@ class AppointmentController extends Controller
 	
 	public function search(Request $request)
 	{
-			$service_id = null;
 			$service = null;
 			$appointments = null;
-
 			$date_start = null;
+			$date_end = null;
+
+			$service_id = null;
+
+			if ($request->service_id) $service_id = $request->service_id;
+			if (!empty($request->services)) $service_id = $request->services;
+
+
+
 			if (!empty($request->date_start)) {
 					$date_start = DojoUtility::dateTimeWriteFormat($request->date_start.' 00:00');
-			} else {
-					$date_start = DojoUtility::dateTimeWriteFormat(DojoUtility::today().' 00:00');
-			}
+					$date_end = DojoUtility::dateTimeWriteFormat($request->date_start.' 23:59');
+			} 
 
-			$appointments = Appointment::leftJoin('patients as b', 'appointments.patient_id', '=', 'b.patient_id');
+			$appointments = Appointment::leftJoin('patients as b', 'appointments.patient_id', '=', 'b.patient_id')
+					->leftjoin('appointment_services as c', 'c.service_id', '=', 'appointments.service_id')
+					->orderBy('service_name')
+					->orderBy('appointment_datetime');
 
 			if (!empty($request->cookie('appointment_service'))) {
 					$service_id = $request->cookie('appointment_service');
-					$appointments = $appointments->where('service_id', '=', $service_id);
+					$appointments = $appointments->where('appointments.service_id', '=', $service_id);
 					$service = Service::find($service_id);
-			} else {
-					$service_id = $request->services;
-			}
-
+			} 
 
 			if (!empty($request->search)) {
 					$appointments = $appointments->where(function ($query) use ($request) {
@@ -222,18 +237,20 @@ class AppointmentController extends Controller
 					});
 			}
 
-			if (!empty($request->services)) {
-				$appointments = $appointments->where('service_id', '=', $request->services);
+			if (!empty($service_id)) {
+				$appointments = $appointments->where('appointments.service_id', '=', $service_id);
 			}
 
-			if (!empty($request->date_start)) {
-				$date_offset = DojoUtility::addDays($request->date_start,1);
-				$date_offset = DojoUtility::dateTimeWriteFormat($request->date_start.' 23:59');
-				//$appointments = $appointments->whereBetween('appointment_datetime', array($date_start, $date_offset));
+			if (!empty($date_start) && !empty($date_end)) {
+				$appointments = $appointments->whereBetween('appointment_datetime', [$date_start, $date_end]);
+			} 
+
+			if (empty($date_start)) {
+				$date_start = DojoUtility::dateTimeWriteFormat(DojoUtility::today().' 00:00');
 				$appointments = $appointments->where('appointment_datetime', '>=', $date_start);
-			} else {
-				$appointments = $appointments->where('appointment_datetime', '>=', Carbon::today());
+				$date_start = null;
 			}
+
 
 			$appointments = $appointments->orderBy('appointment_datetime')
 					->paginate($this->paginateValue);
@@ -245,6 +262,7 @@ class AppointmentController extends Controller
 					'service' => $service,
 					'search' => $request->search,
 					'date_start'=>DojoUtility::dateReadFormat($date_start),
+					'encounter_helper'=>new EncounterHelper(),
 					]);
 	}
 
