@@ -18,11 +18,13 @@
 		<br>
 		Reservation 
 </a>
+<!--
 <a class='btn btn-default' href='{{ URL::to('loans/request/'. $patient->patient_mrn.'?type=folder') }}'>
 	<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
 	<br>
 	&nbsp;&nbsp;Folder&nbsp;&nbsp;
 </a>
+-->
 
 <a class='btn btn-default' href='{{ URL::to('patient/prints/'. $patient->patient_id) }}'>
 	<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
