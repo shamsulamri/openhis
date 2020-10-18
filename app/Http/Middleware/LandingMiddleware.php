@@ -54,7 +54,8 @@ class LandingMiddleware
 		} 		
 
 		if ($request->user()->can('module-medical-record')) {
-				return redirect('/loans?type=folder');
+				//return redirect('/loans?type=folder');
+				return redirect('/patients');
 		} 		
         return $next($request);
     }

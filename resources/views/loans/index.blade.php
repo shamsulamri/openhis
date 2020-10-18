@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Request List</h1>
+<h1>Loan Request List</h1>
 <form class='form-horizontal' action='/loan/search' method='post'>
 	<div class="row">
 			<div class="col-xs-4">

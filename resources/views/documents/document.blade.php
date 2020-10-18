@@ -31,19 +31,19 @@
         </div>
     </div>
 	
+    <div class='form-group  @if ($errors->has('document_location')) has-error @endif'>
+        {{ Form::label('document_location', 'Location',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+            {{ Form::text('document_location', null, ['class'=>'form-control','placeholder'=>'Physical location','maxlength'=>'100']) }}
+            @if ($errors->has('document_location')) <p class="help-block">{{ $errors->first('document_location') }}</p> @endif
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('order_id')) has-error @endif'>
         {{ Form::label('order_id', 'Order Id',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::text('order_id', null, ['class'=>'form-control','placeholder'=>'Link document to an order','maxlength'=>'100']) }}
             @if ($errors->has('order_id')) <p class="help-block">{{ $errors->first('order_id') }}</p> @endif
-        </div>
-    </div>
-
-    <div class='form-group  @if ($errors->has('document_location')) has-error @endif'>
-        {{ Form::label('document_location', 'Location',['class'=>'col-sm-3 control-label']) }}
-        <div class='col-sm-9'>
-            {{ Form::text('document_location', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
-            @if ($errors->has('document_location')) <p class="help-block">{{ $errors->first('document_location') }}</p> @endif
         </div>
     </div>
 
@@ -53,7 +53,7 @@
 			<div class='input-group'>
             {{ Form::label('document_uuid', $document->document_uuid, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 				<span class='input-group-btn'>
-				<a class='btn btn-default pull-right' href='{{ Config::get('host.report_server') }}/ReportServlet?report=document_label&id={{ $document->document_id }}'>
+				<a target="_blank" class='btn btn-default pull-right' href='{{ Config::get('host.report_server') }}/ReportServlet?report=document_label&id={{ $document->document_id }}'>
 						Print Label
 				</a>
 				</span>

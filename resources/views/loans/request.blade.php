@@ -144,6 +144,7 @@
 	{{ Form::hidden('loan_request_by', null) }}
 	{{ Form::hidden('loan_code', $loan->loan_code) }}
 	{{ Form::hidden('exchange_id', $loan->exchange_id) }}
+	{{ Form::hidden('type_code', 'folder') }}
 		
 	<script>
 		$(function(){

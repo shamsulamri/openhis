@@ -116,6 +116,7 @@ class LoanController extends Controller
 							->where('loan_code', '<>', 'exchanged')
 							->orderBy('loans.created_at', 'desc')
 							->paginate($this->paginateValue);
+
 			return view('loans.ward', [
 					'loans'=>$loans,
 					'loan_status' => LoanStatus::all()->sortBy('loan_name')->lists('loan_name', 'loan_code')->prepend('',''),
@@ -473,7 +474,7 @@ class LoanController extends Controller
 			if ($valid->passes()) {
 					$loan = new Loan($request->all());
 					$loan->loan_id = $request->loan_id;
-					$loan->loan_quantity_request = $loan->loan_quantity;
+					$loan->loan_quantity_request = $loan->loan_quantity?:1;
 					$loan->exchange_id = $request->exchange_id;
 					if ($request->type_code=='folder') {
 							$loan->type_code=$request->type_code;
@@ -490,7 +491,7 @@ class LoanController extends Controller
 					]);
 					 */
 			} else {
-					if ($loan->type_code=='folder') {
+					if ($request->type_code == 'folder') {
 					return redirect('/loans/request/'.$id.'?type=folder')
 							->withErrors($valid)
 							->withInput();

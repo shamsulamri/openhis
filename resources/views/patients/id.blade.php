@@ -18,6 +18,12 @@
 		<br>
 		Reservation 
 </a>
+<a class='btn btn-default' href='{{ URL::to('loans/request/'. $patient->patient_mrn.'?type=folder') }}'>
+	<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
+	<br>
+	&nbsp;&nbsp;Folder&nbsp;&nbsp;
+</a>
+
 <a class='btn btn-default' href='{{ URL::to('patient/prints/'. $patient->patient_id) }}'>
 	<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
 	<br>
@@ -50,9 +56,9 @@
 
 @can('module-medical-record')
 <a class='btn btn-default'  href="{{ URL::to('documents?patient_mrn='. $patient->patient_mrn.'&from=view') }}">
-		<span class='glyphicon glyphicon-folder-close' aria-hidden='true'></span>
+		<span class='glyphicon glyphicon-file' aria-hidden='true'></span>
 		<br>
-	Medical Record 
+		Documents
 </a>
 <a class='btn btn-default'  href='{{ URL::to('patient/merge/'. $patient->patient_id) }}'>
 <span class='glyphicon glyphicon-duplicate' aria-hidden='true'></span>

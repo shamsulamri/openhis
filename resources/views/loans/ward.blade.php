@@ -54,7 +54,9 @@
 					</a>
 			</td>
 			<td>
+					@if ($loan->product)
 					{{ $loan->product->product_code }}
+					@endif
 			</td>
 			<td>
 					@if ($loan->type_code=='folder')

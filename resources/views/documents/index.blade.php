@@ -20,6 +20,7 @@
 <br>
 
 @can('module-medical-record')
+		<!--
 		@if ($loan_flag)
 		<a class="btn btn-default" href="/loans?type=folder" role="button">Return</a>
 		@else
@@ -27,6 +28,7 @@
 		<a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
 		-->
 		@endif
+		-->
 		<a href='/documents/create?patient_mrn={{ $patient->patient_mrn }}' class='btn btn-primary'>Create</a>
 		<br>
 		<br>
@@ -65,11 +67,11 @@
 								{{$document->status->status_name}}
 					</td>
 					<td>
-								{{ (DojoUtility::dateLongFormat($document->created_at )) }}
+								{{ (DojoUtility::dateReadFormat($document->created_at )) }}
 					</td>
 					<td align='right'>
 						@if (!empty($document->document_file))
-							<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $document->document_uuid) }}'>View File</a>
+							<a target="_blank" class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $document->document_uuid) }}'>View File</a>
 						@endif
 						@can('module-medical-record')
 							<a class='btn btn-danger btn-xs' href='{{ URL::to('documents/delete/'. $document->document_id) }}'>Delete</a>

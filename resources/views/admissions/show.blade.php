@@ -11,6 +11,9 @@
 				<a href='{{ URL::to('order_sheet/'. $admission->encounter_id) }}'>Order Sheet</a>
 				<br><br>
 
+				<span class='fa fa-folder' aria-hidden='true'></span>
+				<a href='{{ URL::to('loans/request/'. $admission->encounter->patient->patient_mrn.'?type=folder') }}'>Folder Request</a>
+				<br><br>
 		</a>
 				@if (!empty($admission->encounter->discharge))
 						<span class='fa fa-sign-out' aria-hidden='true'></span>
