@@ -7,7 +7,7 @@
 </a>
 -->
 						@if (!empty($document->document_file))
-							<a class='btn btn-primary pull-right' href='{{ URL::to('documents/file/'. $document->document_uuid) }}'>View Result</a>
+							<a class='btn btn-primary pull-right' href='{{ URL::to('documents/file/'. $document->document_uuid) }}'><span class='glyphicon glyphicon-file' aria-hidden='true'></span></a>
 						@endif
         </div>
     </div>

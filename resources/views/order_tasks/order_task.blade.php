@@ -219,6 +219,12 @@
 					</a>
 					@endif
 			@endif
+
+			@if ($order_task->product->category_code=='imaging')
+					<a target="_blank" class='btn btn-success pull-right' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=order_report&id={{ $order_task->order_id }}">
+						Report
+					</a>
+			@endif
         </div>
     </div>
 			@if ($report)

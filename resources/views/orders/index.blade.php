@@ -148,7 +148,8 @@ $category='';
 					@endif
 				@endif
 				@if (!empty($order->document_uuid))
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $order->document_uuid) }}'>Report</a>
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $order->document_uuid) }}'><span class='glyphicon glyphicon-file' aria-hidden='true'></span>
+</a>
 				@endif
 			</td>
 	</tr>

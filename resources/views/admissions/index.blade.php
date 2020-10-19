@@ -154,6 +154,8 @@
 			<td>
 					@can('module-ward')
 					<a href='/admissions/{{ $admission->admission_id }}'>
+					@elsecan('module-medical-record')
+					<a href='/patients/{{ $admission->patient_id }}/edit'>
 					@else
 					<a href='/admissions/{{ $admission->admission_id }}/edit'>
 					@endcan

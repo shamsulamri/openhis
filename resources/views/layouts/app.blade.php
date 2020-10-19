@@ -206,7 +206,7 @@ if ($_COOKIE['his-navbar']==1) {
 								<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
 								<li><a title='Queues' href="{{ url('/queues') }}"><i class="fa fa-users"></i><span class='nav-label'>Queues</span></a></li>
 								<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-bed'></i><span class='nav-label'>Admissions</a></li>
-								@endcannot
+								@endcan
 								<!-- Nurses and alike -->
 								@can('module-ward')
 								<div class="dropdown profile-element"> 
@@ -261,9 +261,7 @@ if ($_COOKIE['his-navbar']==1) {
 						@endif
 						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
 						<li><a title="Bed Reservations" href="{{ url('/bed_bookings') }}"><i class='fa fa-calendar-check-o'></i><span class='nav-label'>Bed Reservations</a></li>
-						<!--
 						<li><a title="Loans" href="{{ url('/loans/ward') }}"><i class='fa fa-share-square'></i><span class='nav-label'>Loans</a></li>
-						-->
 						@endcan
 
 						<!-- Inventory Module -->
@@ -293,7 +291,10 @@ if ($_COOKIE['his-navbar']==1) {
 						</div>
 						<li><a title="Patient List" href="{{ url('/patients') }}"><i class='fa fa-user'></i><span class='nav-label'>Patient List</a></li>
 						<li><a title='Appointments' href="{{ url('/appointments') }}"><i class="fa fa-calendar"></i><span class='nav-label'>Appointments</span></a></li>
+						<li><a title="Admissions" href="{{ url('/admissions') }}"><i class='fa fa-bed'></i><span class='nav-label'>Admissions</a></li>
+						<!--
 						<li><a title="Loans" href="{{ url('/loans?type=folder') }}"><i class='fa fa-share-square'></i><span class='nav-label'>Loans</a></li>
+						-->
 						@endcan
 
 						<!-- Financial Module -->
