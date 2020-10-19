@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+<?php
+	$header_id = -1;
+	if (empty($service_id)) $service_id = 0;
+?>
 @section('content')
 <h1>Appointment List</h1>
 @if (!empty($service))
@@ -26,12 +30,11 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
-    <th width='10'></th>
     <th>Slot</th>
     <th>Patient</th>
-    <th>Service</th>
-    <th>Home Phone</th> 
-    <th>Mobile Phone</th> 
+    <th>Identification</th>
+    <th>Last Encounter</th> 
+    <th>Contact Number</th> 
 	<th></th>
 	</tr>
   </thead>
@@ -39,17 +42,32 @@
 @foreach ($appointments as $appointment)
 	<?php
 		$current_encounter = $appointment->patient->activeEncounter();
+		$last_encounter =  $encounter_helper->getLastEncounter($appointment->patient_id);
 	?>
+	@if ($header_id != $appointment->service_id)
+	<tr style='background-color:#EFEFEF'>
+			<td colspan=8>
+					<strong>
+					{{ $appointment->service->service_name }}
+					</strong>
+			</td>
+	</tr>
+	<?php
+		$header_id = $appointment->service_id;
+	?>
+	@endif
 	<tr>
+			<!--
 			<td>
 					{{ Form::checkbox($appointment->appointment_id, 1, null) }}
 			</td>
+			-->
 			<td>
 					<?php
 						$week = DojoUtility::weekOfMonth($appointment->appointment_datetime)-1;
 					?>
 					<a href='{{ URL::to('appointment_services/'. $appointment->patient_id . '/'.$week.'/'.$appointment->service_id. '/'.$appointment->appointment_id) }}?edit=true'>
-					{{ DojoUtility::dateLongFormat($appointment->appointment_datetime) }}
+					{{ DojoUtility::dateTimeReadFormat($appointment->appointment_datetime) }}
 					</a>
 			</td>
 			<td>
@@ -60,22 +78,35 @@
 					<small>{{$appointment->patient->patient_mrn}}</small>
 			</td>
 			<td>
-					{{ strtoupper($appointment->service->service_name) }}
+					{{$appointment->patient->patientIdentification() }}
 			</td>
 			<td>
-				{{ $appointment->patient->patient_phone_home }}
+					@if (!empty($last_encounter))
+					{{ DojoUtility::dateTimeReadFormat($last_encounter->created_at) }}
+					<br>
+					{{ $last_encounter->encounterType->encounter_name}}
+					@else
+					-
+					@endif
 			</td>
 			<td>
 				{{ $appointment->patient->patient_phone_mobile }}
+				@if (!empty($appointment->patient->patient_phone_home))
+				<br> {{ $appointment->patient->patient_phone_home }}
+				@endif 
 			</td>
 			<td align='right'>
 				@if (!isset($current_encounter)) 
 					@can('module-patient')
-					<a class='btn btn-danger btn-xs' href='{{ URL::to('appointments/delete/'. $appointment->appointment_id) }}'>Delete</a>
+					<a class='btn btn-danger btn-sm' href='{{ URL::to('appointments/delete/'. $appointment->appointment_id) }}'>
+						<i class="fa fa-trash"></i>
+					</a>
 					@endcan
-					<a class='btn btn-primary btn-xs' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $appointment->patient_id.'&appointment_id='.$appointment->appointment_id) }}'>
+					@if (Gate::check('module-consultation') || Gate::check('module-patient'))
+					<a class='btn btn-primary btn-sm' data-toggle="tooltip" data-placement="top" title="Start Encounter" href='{{ URL::to('encounters/create?patient_id='. $appointment->patient_id.'&appointment_id='.$appointment->appointment_id) }}'>
 						<i class="fa fa-flag"></i>
 					</a>
+					@endif
 				@else
 					@if ($current_encounter->discharge) 
 						Discharge
@@ -89,19 +120,14 @@
 @endif
 </tbody>
 </table>
+<!--
 			@if ($appointments->total()>0)
-			{{ Form::submit('Delete Selection', ['class'=>'btn btn-warning btn-xs']) }}
+			{{ Form::submit('Delete Selection', ['class'=>'btn btn-danger btn-sm']) }}
 			<input type='hidden' name="_token" value="{{ csrf_token() }}">
 			@endif
-			<!--
-			<input type='hidden' name="_ids" value="{{ $appointments->pluck('appointment_id') }}">
-			-->
+-->
 </form>
-@if (isset($search)) 
-	{{ $appointments->appends(['search'=>$search])->render() }}
-	@else
-	{{ $appointments->render() }}
-@endif
+{{ $appointments->appends(['search'=>$search, 'service_id'=>$service_id, 'date_start'=>$date_start])->render() }}
 <br>
 @if ($appointments->total()>0)
 	{{ $appointments->total() }} records found.

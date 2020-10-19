@@ -66,6 +66,19 @@ class EncounterHelper
 				return $consultation;
 		}
 
+
+		public static function getLastEncounter($patient_id)
+		{
+				$encounter = Encounter::where('patient_id', $patient_id)
+						->leftjoin('discharges as b', 'b.encounter_id', '=', 'encounters.encounter_id')
+						->orderBy('encounters.encounter_id', 'desc')
+						->whereNotNull('discharge_id')
+						->first();
+
+				return $encounter;
+
+		}
+
 }
 
 ?>

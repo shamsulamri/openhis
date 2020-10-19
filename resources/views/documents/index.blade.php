@@ -23,7 +23,9 @@
 		@if ($loan_flag)
 		<a class="btn btn-default" href="/loans?type=folder" role="button">Return</a>
 		@else
+		<!--
 		<a class="btn btn-default" href="/patients/{{ $patient->patient_id }}" role="button">Return</a>
+		-->
 		@endif
 		<a href='/documents/create?patient_mrn={{ $patient->patient_mrn }}' class='btn btn-primary'>Create</a>
 		<br>
