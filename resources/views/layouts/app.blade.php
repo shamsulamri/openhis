@@ -277,6 +277,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Purchases' href="{{ url('/purchases') }}"><i class='fa fa-shopping-cart'></i><span class='nav-label'>Purchases</span></a></li>
 						<li><a title='Stock Movements' href="{{ url('/inventory_movements') }}"><i class='fa fa-truck'></i><span class='nav-label'>Stock Movements</span></a></li>
 						<li><a title='Unit Measures' href="{{ url('/unit_measures') }}"><i class='fa fa-gear'></i><span class='nav-label'>Unit Measures</span></a></li>
+						<li><a title='Order Imaging' href="{{ url('/order_imaging') }}"><i class='fa fa-camera'></i><span class='nav-label'>Order Imaging</span></a></li>
 <!--
 						<li><a title='Order Sets' href="{{ url('/sets') }}"><i class='fa fa-medkit'></i><span class='nav-label'>Order Sets</span></a></li>
 						<li><a title='Product Authorizations' href="{{ url('/product_authorizations') }}"><i class='fa fa-crosshairs'></i><span class='nav-label'>Product Authorizations</span></a></li>
