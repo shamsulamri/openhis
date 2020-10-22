@@ -57,7 +57,11 @@ class QueueController extends Controller
 
 			if (!empty($location_code)) {
 					$location = QueueLocation::find($location_code);
-					$encounter_code = $location->encounter_code;
+					if ($location) {
+						$encounter_code = $location->encounter_code;
+					} else {
+						return redirect('queue_locations');
+					}
 			}
 
 

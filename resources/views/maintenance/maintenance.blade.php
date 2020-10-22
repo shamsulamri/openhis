@@ -8,7 +8,7 @@
 			<div class="col-xs-6">
 				<a href="{{ url('/patients') }}">Patients</a><br>
 				<a href="{{ url('/encounters') }}">Encounters</a><br>
-				<a href="{{ url('/queues') }}">Location Queues</a><br>
+				<a href="{{ url('/queues') }}">Queues</a><br>
 				<a href="{{ url('/order_queues') }}">Outpatient Tasks</a><br>
 				<!--
 				<a href="{{ url('/bills') }}">Bills</a><br>
@@ -91,16 +91,16 @@
 			<div class="col-xs-3">
 			<small>
 				<a href="{{ url('/purchase_documents') }}">Purchase Documents</a><br>
-				<a href="{{ url('/purchase_request_statuses') }}">Purchase Request Statuses</a><br>
+				<a href="{{ url('/purchase_request_statuses') }}">Purchase Request Status</a><br>
 				<a href="{{ url('/product_category_parents') }}">Product Parent Categories</a><br>
 				<a href="{{ url('/product_categories') }}">Product Categories</a><br>
 				<a href="{{ url('/product_groups') }}">Product Groups</a><br>
-				<a href="{{ url('/product_statuses') }}">Product Statuses</a><br>
+				<a href="{{ url('/product_statuses') }}">Product Status</a><br>
 				<a href="{{ url('/stock_movements') }}">Stock Movements</a><br>
 				<a href="{{ url('/stock_tags') }}">Stock Tags</a><br>
 				<a href="{{ url('/order_forms') }}">Order Forms</a><br>
 				<a href="{{ url('/maintenance_reasons') }}">Maintenance Reasons</a><br>
-				<a href="{{ url('/loan_statuses') }}">Loan Statuses</a><br>
+				<a href="{{ url('/loan_statuses') }}">Loan Status</a><br>
 				<a href="{{ url('/loan_types') }}">Loan Types</a><br>
 				<a href="{{ url('/tax_codes') }}">Tax Codes</a><br>
 				<a href="{{ url('/tax_types') }}">Tax Types</a><br>
@@ -181,7 +181,7 @@
 				<a href="{{ url('/rooms') }}">Rooms</a><br>
 				<a href="{{ url('/beds') }}">Beds</a><br>
 				<a href="{{ url('/departments') }}">Departments</a><br>
-				<a href="{{ url('/bed_statuses') }}">Bed Statuses</a><br>
+				<a href="{{ url('/bed_statuses') }}">Bed Status</a><br>
 				<a href="{{ url('/bed_transactions') }}">Bed Transactions</a><br>
 			</div>
 	</div>
@@ -224,7 +224,7 @@
 			<div class="col-xs-6">
 			<small>
 				<a href="{{ url('/document_types') }}">Document Types</a><br>
-				<a href="{{ url('/document_statuses') }}">Document Statuses</a><br>
+				<a href="{{ url('/document_statuses') }}">Document Status</a><br>
 			</div>
 	</div>
 	</h4>
@@ -239,7 +239,7 @@
 				<a href="{{ url('/states') }}">States</a><br>
 				<a href="{{ url('/nations') }}">Nations</a><br>
 				<a href="{{ url('/occupations') }}">Occupations</a><br>
-				<a href="{{ url('/marital_statuses') }}">Marital Statuses</a><br>
+				<a href="{{ url('/marital_statuses') }}">Marital Status</a><br>
 				<a href="{{ url('/titles') }}">Titles</a><br>
 				<a href="{{ url('/unit_measures') }}">Unit Measures</a><br>
 				<a href="{{ url('/periods') }}">Periods</a><br>
@@ -257,9 +257,9 @@
 	<div class="row">
 			<div class="col-xs-6">
 				<a href="{{ url('/users') }}">Users</a><br>
-				<a href="{{ url('/user_authorizations') }}">Authorization Groups</a><br>
-				<a href="{{ url('/employees') }}">Employees</a><br>
+				<a href="{{ url('/user_authorizations') }}">User Authorizations</a><br>
 				<!--
+				<a href="{{ url('/employees') }}">Employees</a><br>
 				<a href="{{ url('/teams') }}">Teams</a><br>
 				<a href="{{ url('/team_members') }}">Team Members</a><br>
 				-->

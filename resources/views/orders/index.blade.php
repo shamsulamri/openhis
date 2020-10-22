@@ -62,14 +62,14 @@ $category='';
 	-->
 	<tr>
 			
-			<td width=10>
+			<td width=5>
 			<!--
 				@if ($order->order_completed==1) <span class='label label-success'>@endif
 					{{ $order->product_code }}
 				@if ($order->order_completed==1) </span>@endif
 			-->
 				<span class='label label-{{ $status }}'>
-					{{ $order->product_code }}
+					&nbsp;
 				</span>
 			</td>
 			<td>
@@ -100,7 +100,10 @@ $category='';
 			<small>
 			@if (empty($order->bom_code))
 			<br>
-			RM{{ number_format($order->order_unit_price*$order->order_quantity_request,2) }}
+			{{ $order->product_code }}
+			<!--
+			(RM{{ number_format($order->order_unit_price*$order->order_quantity_request,2) }})
+			-->
 			@endif
 			@if (!empty($order->bom_code))
 				<br>
@@ -113,11 +116,24 @@ $category='';
 				<br>
 				{{ DojoUtility::dateTimeReadFormat($order->consultation_date) }} ({{ DojoUtility::diffForHumans($order->consultation_date) }})
 			@else
-					<br>
-					{{ DojoUtility::diffForHumans($order->consultation_date) }}
+					({{ DojoUtility::diffForHumans($order->consultation_date) }})
 			@endif
-			<!-- -->
 			</small>
+			</td>
+			<td align='right'>
+				@if ($order->order_report != '')
+					@if ($order->product->category_code=='imaging')
+					<a target="_blank" class='btn btn-default btn-xs' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=order_report&id={{ $order->order_id }}">
+						Report
+					</a>
+					@else
+					<a class='btn btn-default btn-xs' href='{{ URL::to('orders/'. $order->order_id .'/show') }}'>Report</a>
+					@endif
+				@endif
+				@if (!empty($order->document_uuid))
+					<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $order->document_uuid) }}'><span class='glyphicon glyphicon-file' aria-hidden='true'></span>
+</a>
+				@endif
 			</td>
 			<td>
 				<div align='right'>
@@ -137,19 +153,6 @@ $category='';
 									</a>
 								@endif
 						@endif
-				@endif
-				@if ($order->order_report != '')
-					@if ($order->product->category_code=='imaging')
-					<a target="_blank" class='btn btn-default btn-xs' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=order_report&id={{ $order->order_id }}">
-						Report
-					</a>
-					@else
-					<a class='btn btn-default btn-xs' href='{{ URL::to('orders/'. $order->order_id .'/show') }}'>Report</a>
-					@endif
-				@endif
-				@if (!empty($order->document_uuid))
-					<a class='btn btn-primary btn-xs' href='{{ URL::to('documents/file/'. $order->document_uuid) }}'><span class='glyphicon glyphicon-file' aria-hidden='true'></span>
-</a>
 				@endif
 			</td>
 	</tr>

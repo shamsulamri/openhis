@@ -7,22 +7,14 @@ iframe { border: 1px #e5e5e5 solid; }
 @if (!empty($consultation))
 @can('module-consultation')
 		@include('consultations.panel')		
-<h1 class="text-danger"><i class="fa fa-warning"></i>&nbsp;DO NOT USE THIS. STILL UNDER DEVELOPMENT</h1>
 		<h1>Plan</h1>
 @endcan
 @endif
+@include('orders.tab')
 
-<ul class="nav nav-tabs">
-  <li @if ($plan=='laboratory') class="active" @endif><a href="plan?plan=laboratory">Laboratory</a></li>
-  <li @if ($plan=='imaging') class="active" @endif><a href="/imaging">Imaging</a></li>
-  <li><a href="procedure">Procedures</a></li>
-  <li><a href="medication">Medications</a></li>
-  <li @if ($plan=='fee_consultant') class="active" @endif><a href="plan?plan=fee_consultant">Fees</a></li>
-  <li><a href="discussion">Discussion</a></li>
-  <li><a href="make">Orders</a></li>
-</ul>
-<br>
-
+@if ($consultation->encounter->bill)
+		@include('orders.order_stop')
+@else
 <table>
  <thead>
 	<tr> 
@@ -43,6 +35,13 @@ iframe { border: 1px #e5e5e5 solid; }
 			if (array_key_exists($product_root, $amounts)) {
 				$amount = $amounts[$product_root];
 			}
+
+			$productA = $order_helper->getProduct($product_root."A");
+			$productB = $order_helper->getProduct($product_root."B");
+			$priceA = 0;
+			$priceB = 0;
+			if ($productA) $priceA = $productA->uomDefaultPrice()->uom_price;
+			if ($productB) $priceB = $productB->uomDefaultPrice()->uom_price;
 ?>
 	<tr>
 			<td height='10'>
@@ -50,7 +49,7 @@ iframe { border: 1px #e5e5e5 solid; }
 	</tr>
 	<tr>
 			<td width='25%'>
-					<h4>{{ ucwords(strtolower($product->product_name)) }}</h4>
+					<h4>{{ $product->product_name }}</h4>
 			</td>
 			<td width='10%' align='center'>
 					{{ Form::radio($product_root,'A', (in_array($product_root.'A', $ordered_items))?true:false, ['id'=>$product_root.'A'])  }} 
@@ -64,7 +63,8 @@ iframe { border: 1px #e5e5e5 solid; }
 					{{ Form::text($product_root.'_amount', $amount, ['id'=>$product_root.'_amount','class'=>'form-control']) }}
 			</td>
 			<td width='45%'>
-					{{ Form::hidden($product_root.'_price', $product->uomDefaultPrice()->uom_price, ['id'=>$product_root.'_price']) }}
+					{{ Form::hidden($product_root.'A_price', $priceA, ['id'=>$product_root.'A_price']) }}
+					{{ Form::hidden($product_root.'B_price', $priceB, ['id'=>$product_root.'B_price']) }}
 			</td>
 	</tr>
 	@endforeach
@@ -75,6 +75,7 @@ iframe { border: 1px #e5e5e5 solid; }
 
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
+@endif
 <script>
 $(document).ready(function(){
 
@@ -103,13 +104,14 @@ $(document).ready(function(){
 
 		$('input[type=radio]').change(function() {
 				productCode = this.name + this.value;
-				addOrder(productCode, this.name);
-				document.getElementById(this.name + "_amount").value =	document.getElementById(this.name + "_price").value 
+				document.getElementById(this.name + "_amount").value =	document.getElementById(productCode + "_price").value 
 				if (this.value == 'A') {
+					addOrder(productCode, this.name);
 					removeOrder(this.name + 'B')
 				} else {
 					removeOrder(this.name + 'A')
-					updateAmount(this.name);
+					//updateAmount(this.name);
+					addOrder(productCode, this.name);
 				}
 		});
 

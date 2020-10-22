@@ -38,6 +38,12 @@ class OrderHelper
 			return $order;
 	}
 
+	public static function getProduct($product_code) 
+	{
+			$product = Product::find($product_code);
+			return $product;
+	}
+
 	public static function getOrderByConsultation($product_code) {
 			$product_code = $product_code;
 			$encounter_id = Session::get('encounter_id');
@@ -217,24 +223,6 @@ class OrderHelper
 				return $store_code;
 	}
 
-	/**
-	public static function getTargetLocation2($product)
-	{
-			$encounter = Encounter::find(Session::get('encounter_id'));
-
-			$route = OrderRoute::where('encounter_code', $encounter->encounter_code)
-					->where('category_code', $product->category_code)
-					->first();
-
-			$target=$product->location_code;
-			if ($route) {
-					$target = $route->location_code;
-			}
-
-			return $target;
-	}
-	**/
-
 	public static function orderItem($product, $ward_code, $renew_drug=null)
 	{
 			if ($product->status_code != 'active') {
@@ -252,7 +240,8 @@ class OrderHelper
 						->first();
 
 			if (!empty($order)) {
-				if ($product->category_code == 'drugs') {
+				/** Allow similar item to be reorder as new order instead of increasing the quantity **/
+				if ($product->category_code == 'drugs' or $product->category_code == 'drug_generic' or $product->category_code == 'drug_trade') {
 					$order = null;
 				}
 				if ($product->category_code == 'fee_procedure') {

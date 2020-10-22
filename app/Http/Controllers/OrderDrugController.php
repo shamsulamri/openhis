@@ -374,7 +374,7 @@ class OrderDrugController extends Controller
 							$med->order_id,	$med->order_id,	$med->drug_dosage,
 							$this->getDosages($med->order->product_code, $med->order_id, $med->dosage_code),
 							$this->getRoutes($med->order->product_code, $med->order_id, $med->route_code),
-							$this->getPrescriptionSelect($med->order->product_code, $med->order_id, $med->frequency_code),
+							$this->getFrequencies($med->order->product_code, $med->order_id, $med->frequency_code),
 							$med->order_id,
 							$med->order_id,
 							$med->drug_duration,
@@ -439,13 +439,6 @@ class OrderDrugController extends Controller
 
 				$fields = explode(' ', $request->search);
 
-				/*
-				$sql = "select drug_generic_name, trade_name, a.drug_code
-						from drugs as a
-						where (drug_generic_name like '%".$fields[0]."%'
-						or trade_name like '%".$fields[0]."%') ";
-				*/
-
 				$sql = "select product_name_other as drug_generic_name, product_name as trade_name, product_code as drug_code
 						from products as a
 						where status_code = 'active'
@@ -466,7 +459,7 @@ class OrderDrugController extends Controller
 						$sql .=")";
 				}
 
-				$sql .=" and category_code in ('drugs', 'drug_trade') limit 10"; 
+				$sql .=" and category_code in ('drugs', 'drug_trade', 'drug_generic') limit 10"; 
 
 				$data = DB::select($sql);
 
@@ -513,103 +506,6 @@ class OrderDrugController extends Controller
 								$drug_add,
 								$row->trade_name?:'-',
 								$row->drug_generic_name
-					);
-				}
-
-				$html = sprintf('
-					<br>
-					<table class="table table-hover">
-							%s
-					</table>
-				', $table_row);
-
-
-				if (count($data)==0) $html = '';
-				return $html;
-
-			}
-	}
-
-	function find_v1(Request $request)
-	{
-			if (!empty($request->search)) {
-
-				$fields = explode(' ', $request->search);
-
-				$sql = "select drug_generic_name, trade_name, a.drug_code
-						from drugs as a
-						where (drug_generic_name like '%".$fields[0]."%'
-						or trade_name like '%".$fields[0]."%') ";
-
-				unset($fields[0]);
-
-				if (count($fields)>0) {
-						$sql .=" and (";
-						foreach($fields as $key=>$field) {
-								$sql .= "drug_generic_name like '%".$field."%'";
-								if ($key<count($fields)) {
-									$sql .= " and ";
-								}
-						}
-
-						$sql .=")";
-				}
-
-				$sql .=' limit 5';
-
-				$data = DB::select($sql);
-
-				$html = '';
-				$table_row = '';
-				$drug_dosage = "";
-				$drug_route = "";
-
-				foreach($data as $row) {
-					$drug_name = $row->drug_generic_name;
-					if (!empty($row->trade_name)) {
-							$drug_name = sprintf('%s (%s)',$row->trade_name, $row->drug_generic_name);
-					}
-
-
-					$prescriptions = $this->getPrescription($row->drug_code);
-					$route_dosage = null;
-					$drug_prescription = "";
-					$i = 0;
-					foreach($prescriptions as $prescription) {
-							if ($route_dosage != $prescription->drug_dosage.$prescription->dosage_code.$prescription->route_code) {
-								$drug_prescription .= sprintf(' %s %s, %s (%s)',
-										$prescription->drug_dosage,
-										$prescription->dosage->dosage_name,
-										$prescription->route->route_name,
-										$prescription->route->route_code);
-
-								$drug_dosage = sprintf("%s %s", $prescription->drug_dosage, $prescription->dosage->dosage_name);
-								$drug_route = $prescription->route_code;
-							}
-
-							/*
-							$drug_frequencies .= "<a class='btn btn-default btn-xs' href='javascript:addDrug(".$prescription->prescription_id.")' title='".$prescription->frequency->frequency_name."'>".$prescription->frequency->frequency_code."</a>";
-							if ($i==5 && count($prescriptions)>6) {
-									//$drug_frequencies .= "<br><br>";
-							}
-							if ($i+1<count($prescriptions)) {
-									$drug_frequencies .= " ";
-							}
-							 */
-							$route_dosage = $prescription->drug_dosage.$prescription->dosage_code.$prescription->route_code;
-							$i++;
-					}
-
-					$drug_add = sprintf("<a class='btn btn-default btn-xs' href='javascript:addDrug(&quot;%s&quot;)' >+</a>", $row->drug_code);
-					$table_row .=sprintf(" 
-							<tr>
-							        <td width=10>%s</td>
-							        <td>%s</td>
-							        <td>%s</td>
-							</tr>", 
-								$drug_add,
-								$row->drug_generic_name, 
-								$row->trade_name?:'-'
 					);
 				}
 
@@ -704,7 +600,7 @@ class OrderDrugController extends Controller
 			return $html;
 	}
 
-	function getPrescriptionSelect($drug_code, $order_id, $frequency_code)
+	function getFrequencies($drug_code, $order_id, $frequency_code)
 	{
 			$prescriptions = DrugPrescription::where('drug_code', $drug_code)
 					->orderBy('frequency_code')

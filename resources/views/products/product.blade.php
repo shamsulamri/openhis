@@ -107,7 +107,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_stocked')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_stocked', '1') }} <label>Stock Control</label><br>Product is a stocked item.
+							{{ Form::checkbox('product_stocked', '1') }} <label>Stock Control</label><br>Keep track goods and materials.
 							@if ($errors->has('product_stocked')) <p class="help-block">{{ $errors->first('product_stocked') }}</p> @endif
 						</div>
 					</div>
@@ -120,7 +120,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_local_store')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_local_store', '1') }} <label>Floor Store</label><br>Stock taken from local store when consumed.
+							{{ Form::checkbox('product_local_store', '1') }} <label>Floor Store</label><br>Reduce local store count when consumed.
 							@if ($errors->has('product_local_store')) <p class="help-block">{{ $errors->first('product_local_store') }}</p> @endif
 						</div>
 					</div>
@@ -138,7 +138,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_drop_charge')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_drop_charge', '1') }} <label>Drop Charge</label><br>Item will be automatically charge upon closing the consultation.
+							{{ Form::checkbox('product_drop_charge', '1') }} <label>Drop Charge</label><br>Item will be automatically billed.
 							@if ($errors->has('product_drop_charge')) <p class="help-block">{{ $errors->first('product_drop_charge') }}</p> @endif
 						</div>
 					</div>
@@ -146,7 +146,7 @@
 			<div class="col-xs-6">
 					<div class='form-group  @if ($errors->has('product_unit_charge')) has-error @endif'>
 						<div class='col-sm-offset-4 col-sm-8'>
-							{{ Form::checkbox('product_unit_charge', '1') }} <label>Prescription Charge</label><br>The charge amount depends on the total number of unit ordered. Only applicable to drugs.
+							{{ Form::checkbox('product_unit_charge', '1') }} <label>Drug Prescription</label><br>Total unit dispense will be calculated from order prescription.
 							@if ($errors->has('product_unit_charge')) <p class="help-block">{{ $errors->first('product_unit_charge') }}</p> @endif
 						</div>
 					</div>
