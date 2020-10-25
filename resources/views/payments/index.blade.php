@@ -40,10 +40,10 @@
 			<td align='right'>
 <!--
 			@if ($payment->encounter_id==0)
-					<a class="btn btn-default btn-xs pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=receipt&id={{ $payment->payment_id }}" role="button">Print Receipt</a> 
+					<a class="btn btn-default btn-xs pull-right" href="{{ Config::get('host.report_server') }}?report=receipt&id={{ $payment->payment_id }}" role="button">Print Receipt</a> 
 			@endif
 -->
-				<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=payment_receipt&id={{ $payment->payment_id }}'>
+				<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}?report=payment_receipt&id={{ $payment->payment_id }}'>
 				Print Receipt
 				</a>
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('payments/delete/'. $payment->payment_id) }}'>Delete</a>

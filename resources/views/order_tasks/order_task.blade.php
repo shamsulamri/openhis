@@ -210,7 +210,7 @@
 			@endif
 			@if ($report)
 					@if (!empty($order_task->order_report))
-					<a target="_blank" class='btn btn-success pull-right' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=order_report&id={{ $order_task->order_id }}">
+					<a target="_blank" class='btn btn-success pull-right' href="{{ Config::get('host.report_server')  }}?report=order_report&id={{ $order_task->order_id }}">
 						Print
 					</a>
 					@else
@@ -221,7 +221,7 @@
 			@endif
 
 			@if ($order_task->product->category_code=='imaging')
-					<a target="_blank" class='btn btn-success pull-right' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=order_report&id={{ $order_task->order_id }}">
+					<a target="_blank" class='btn btn-success pull-right' href="{{ Config::get('host.report_server')  }}?report=order_report&id={{ $order_task->order_id }}">
 						Report
 					</a>
 			@endif

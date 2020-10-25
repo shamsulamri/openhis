@@ -53,7 +53,7 @@
 			<div class='input-group'>
             {{ Form::label('document_uuid', $document->document_uuid, ['class'=>'form-control','placeholder'=>'','maxlength'=>'100']) }}
 				<span class='input-group-btn'>
-				<a target="_blank" class='btn btn-default pull-right' href='{{ Config::get('host.report_server') }}/ReportServlet?report=document_label&id={{ $document->document_id }}'>
+				<a target="_blank" class='btn btn-default pull-right' href='{{ Config::get('host.report_server') }}?report=document_label&id={{ $document->document_id }}'>
 						Print Label
 				</a>
 				</span>

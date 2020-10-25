@@ -172,14 +172,14 @@
 			<!--
 			@can('module-ward')
 					@if (!empty($discharge->newborn_id))
-						<a class="btn btn-default btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $discharge->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
+						<a class="btn btn-default btn-xs" href="{{ Config::get('host.report_server') }}?report=akuan_bersalin&id={{ $discharge->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
 					@endif
 					@if (!empty($discharge->mc_id))
 							@if (!empty($discharge->mc_start) && empty($discharge->mc_time_start))
-				<a class="btn btn-default btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
+				<a class="btn btn-default btn-xs" href="{{ Config::get('host.report_server') }}?report=medical_certificate&id={{ $discharge->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
 							@endif
 							@if (!empty($discharge->mc_time_start))
-				<a class="btn btn-default btn-xs" href="{{ Config::get('host.report_server') }}/ReportServlet?report=time_slip&id={{ $discharge->encounter_id }}" role="button" target="_blank">Time Slip</a>
+				<a class="btn btn-default btn-xs" href="{{ Config::get('host.report_server') }}?report=time_slip&id={{ $discharge->encounter_id }}" role="button" target="_blank">Time Slip</a>
 							@endif
 					@endif
 			@endcan
@@ -194,19 +194,19 @@
 		  </button>
 		  <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 			@if (!empty($discharge->newborn_id))
-			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $discharge->encounter_id }}" target="_blank">Surat Akuan Bersalin</a></li>
+			<li><a href="{{ Config::get('host.report_server') }}?report=akuan_bersalin&id={{ $discharge->encounter_id }}" target="_blank">Surat Akuan Bersalin</a></li>
 			@endif
 			@if (!empty($discharge->mc_id))
 					@if (!empty($discharge->mc_start) && empty($discharge->mc_time_start))
-			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $discharge->encounter_id }}" target="_blank">Medical Certificate</a></li>
+			<li><a href="{{ Config::get('host.report_server') }}?report=medical_certificate&id={{ $discharge->encounter_id }}" target="_blank">Medical Certificate</a></li>
 					@endif
 					@if (!empty($discharge->mc_time_start))
-			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=time_slip&id={{ $discharge->encounter_id }}" target="_blank">Time Slip</a></li>
+			<li><a href="{{ Config::get('host.report_server') }}?report=time_slip&id={{ $discharge->encounter_id }}" target="_blank">Time Slip</a></li>
 					@endif
 			@endif
-			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=referral_letter&id={{ $discharge->encounter_id }}" target="_blank">Referral Letter</a></li>
-			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=reply_letter&id={{ $discharge->encounter_id }}" target="_blank">Reply Letter</a></li>
-			<li><a href="{{ Config::get('host.report_server') }}/ReportServlet?report=discharge_summary2&id={{ $discharge->encounter_id }}" target="_blank">Discharge Summary</a></li>
+			<li><a href="{{ Config::get('host.report_server') }}?report=referral_letter&id={{ $discharge->encounter_id }}" target="_blank">Referral Letter</a></li>
+			<li><a href="{{ Config::get('host.report_server') }}?report=reply_letter&id={{ $discharge->encounter_id }}" target="_blank">Reply Letter</a></li>
+			<li><a href="{{ Config::get('host.report_server') }}?report=discharge_summary2&id={{ $discharge->encounter_id }}" target="_blank">Discharge Summary</a></li>
 		  </ul>
 		</div>
 	@endcan

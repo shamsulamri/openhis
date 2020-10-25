@@ -10,7 +10,7 @@ iframe { border: 1px #e5e5e5 solid; }
 			<div class="col-xs-3">
 					<div class='form-group'>
 						<a class="btn btn-default" href="/purchases" role="button">Back</a>
-						<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report={{ $purchase->document_code=='indent_request'?'indent':'purchase' }}&id={{ $purchase->purchase_id }}&store_code={{ $purchase->store_code }}" role="button" target="_blank">Print</a> 
+						<a class="btn btn-default" href="{{ Config::get('host.report_server') }}?report={{ $purchase->document_code=='indent_request'?'indent':'purchase' }}&id={{ $purchase->purchase_id }}&store_code={{ $purchase->store_code }}" role="button" target="_blank">Print</a> 
 					</div>
 			</div>
 			<div class="col-xs-9">

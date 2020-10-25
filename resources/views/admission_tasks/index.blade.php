@@ -150,11 +150,11 @@ $header_count=0;
 									@endif
 						-->
 									@if (empty($admission_task->order_drug_id))
-									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=order_label&id={{ $admission_task->order_id }}'>
+									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}?report=order_label&id={{ $admission_task->order_id }}'>
 										Print Label
 									</a>
 									@else
-									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $admission_task->order_id }}'>
+									<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}?report=drug_label&id={{ $admission_task->order_id }}'>
 										Print Label
 									</a>
 									@endif

@@ -69,7 +69,7 @@ class ReportController extends Controller
 
 				switch ($request->report) {
 						case "discharge":
-								$url = sprintf("%s/ReportServlet?report=%s&encounterType=%s&dateStart=%s&dateEnd=%s&reportUser=%s",
+								$url = sprintf("%s?report=%s&encounterType=%s&dateStart=%s&dateEnd=%s&reportUser=%s",
 											$server,
 											$report,
 											$encounter,
@@ -80,7 +80,7 @@ class ReportController extends Controller
 								return redirect($url);
 								break;
 						case "bill_list":
-								$url = sprintf("%s/ReportServlet?report=%s&encounterType=%s&dateReport=%s&sponsorCode=%s&reportUser=%s",
+								$url = sprintf("%s?report=%s&encounterType=%s&dateReport=%s&sponsorCode=%s&reportUser=%s",
 											$server,
 											$report,
 											$encounter,
@@ -91,7 +91,7 @@ class ReportController extends Controller
 								return redirect($url);
 								break;
 						case "bill_group_by_user":
-								$url = sprintf("%s/ReportServlet?report=%s&dateReport=%s",
+								$url = sprintf("%s?report=%s&dateReport=%s",
 											$server,
 											$report,
 											$date_start,
@@ -101,7 +101,7 @@ class ReportController extends Controller
 								return redirect($url);
 								break;
 						case 'preadmission':
-								$url = sprintf("%s/ReportServlet?report=%s&dateStart=%s&dateEnd=%s&wardCode=%s",
+								$url = sprintf("%s?report=%s&dateStart=%s&dateEnd=%s&wardCode=%s",
 											$server,
 											$report,
 											$date_start,
@@ -111,7 +111,7 @@ class ReportController extends Controller
 								return redirect($url);
 								break;
 						case 'appointment':
-								$url = sprintf("%s/ReportServlet?report=%s&dateStart=%s&dateEnd=%s&serviceId=%s",
+								$url = sprintf("%s?report=%s&dateStart=%s&dateEnd=%s&serviceId=%s",
 											$server,
 											$report,
 											$date_start,
@@ -121,7 +121,7 @@ class ReportController extends Controller
 								return redirect($url);
 								break;
 						default:
-								$url = sprintf("%s/ReportServlet?report=%s&dateStart=%s&dateEnd=%s",
+								$url = sprintf("%s?report=%s&dateStart=%s&dateEnd=%s",
 											$server,
 											$report,
 											$date_start,

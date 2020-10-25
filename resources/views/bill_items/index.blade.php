@@ -66,26 +66,26 @@ Encounter date: {{ date('d F Y, H:i', strtotime($encounter->created_at)) }} ({{ 
 <a href='/lock_orders/{{ $encounter_id }}' class='btn {{ $lock_button }}'>{{ $lock_label }}</a>
 <a href='/bill_items/reload/{{ $encounter_id }}' class='btn btn-warning pull-right'>Reset Bill</a>
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Interim Detail Bill</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}?report=bill&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Interim Detail Bill</a> 
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Interim Summary Bill</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}?report=bill_simple&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Interim Summary Bill</a> 
 @else
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=receipt_official&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Receipt</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}?report=receipt_official&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Receipt</a> 
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=invoice_header&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}?report=invoice_header&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Invoice</a> 
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=invoice_summary_header&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Summary Invoice</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}?report=invoice_summary_header&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Summary Invoice</a> 
 @endif
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_order&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Invoice Detail</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}?report=bill_order&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Invoice Detail</a> 
 @if (!empty($encounter->sponsor_code))
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=bill_panel&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Panel Bill</a> 
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}?report=bill_panel&id={{ $encounter->encounter_id }}&billNonClaimable={{ $non_claimable }}" role="button" target="_blank">Panel Bill</a> 
 @endif
 @if ($hasMc) 
 <p class='pull-right'>&nbsp;</p>
-<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
+<a class="btn btn-default pull-right" href="{{ Config::get('host.report_server') }}?report=medical_certificate&id={{ $encounter->encounter_id }}" role="button" target="_blank">Medical Certificate</a>
 @endif
 @if (empty($encounter->sponsor_code))
 <br>

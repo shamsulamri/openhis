@@ -123,7 +123,7 @@ $category='';
 			<td align='right'>
 				@if ($order->order_report != '')
 					@if ($order->product->category_code=='imaging')
-					<a target="_blank" class='btn btn-default btn-xs' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=order_report&id={{ $order->order_id }}">
+					<a target="_blank" class='btn btn-default btn-xs' href="{{ Config::get('host.report_server')  }}?report=order_report&id={{ $order->order_id }}">
 						Report
 					</a>
 					@else

@@ -56,20 +56,20 @@
 						<br>
 						<br>
 						<span class='fa fa-file-o' aria-hidden='true'></span>
-						<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}">
+						<a target="_blank" href="{{ Config::get('host.report_server') }}?report=patient_label&id={{ $patient->patient_id }}">
 								Patient Label
 						</a>
 
 						<br><br>
 						<span class='fa fa-file-o' aria-hidden='true'></span>
-						<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_label&id={{ $admission->encounter_id }}">
+						<a target="_blank" href="{{ Config::get('host.report_server') }}?report=wrist_label&id={{ $admission->encounter_id }}">
 						Patient Wrist Label
 
 						@if ($newborns) 
 							@foreach($newborns as $newborn)
 								<br><br>
 								<span class='fa fa-file-o' aria-hidden='true'></span>
-								<a target="_blank" href="{{ Config::get('host.report_server') }}/ReportServlet?report=wrist_newborn&id={{ $newborn->patient_id }}">
+								<a target="_blank" href="{{ Config::get('host.report_server') }}?report=wrist_newborn&id={{ $newborn->patient_id }}">
 								Newborn Wrist Label
 								</a>
 							@endforeach
@@ -79,7 +79,7 @@
 						<br>
 						<br>
 						<span class='fa fa-file-o' aria-hidden='true'></span>
-						<a href="{{ Config::get('host.report_server') }}/ReportServlet?report=akuan_bersalin&id={{ $admission->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
+						<a href="{{ Config::get('host.report_server') }}?report=akuan_bersalin&id={{ $admission->encounter_id }}" role="button" target="_blank">Akuan Bersalin</a>
 						@endif
 						<br><br>
 						<span class='fa fa-file-o' aria-hidden='true'></span>

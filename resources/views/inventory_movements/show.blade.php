@@ -15,7 +15,7 @@ iframe { border: 1px #e5e5e5 solid; }
 <br>
 
 <a class="btn btn-default" href="/inventory_movements" role="button">Back</a>
-<a class="btn btn-default" href="{{ Config::get('host.report_server') }}/ReportServlet?report=stock_movement&id={{ $movement->move_id }}" role="button" target="_blank">Print</a> 
+<a class="btn btn-default" href="{{ Config::get('host.report_server') }}?report=stock_movement&id={{ $movement->move_id }}" role="button" target="_blank">Print</a> 
 @if ($movement->move_posted == 0)
 {{ Form::open(['url'=>'inventories/post/'.$movement->move_id, 'class'=>'pull-right']) }}
 	{{ method_field('POST') }}

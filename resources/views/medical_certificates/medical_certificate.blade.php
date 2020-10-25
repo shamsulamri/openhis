@@ -84,10 +84,10 @@
 			@if (!empty($consultation->medical_certificate))
 				
 					@if (!empty($medical_certificate->mc_start) && empty($medical_certificate->mc_time_start))
-			<a href="{{ Config::get('host.report_server') }}/ReportServlet?report=medical_certificate&id={{ $medical_certificate->encounter_id }}" class='btn btn-success' target="_blank">Print</a>
+			<a href="{{ Config::get('host.report_server') }}?report=medical_certificate&id={{ $medical_certificate->encounter_id }}" class='btn btn-success' target="_blank">Print</a>
 					@endif
 					@if (!empty($medical_certificate->mc_time_start))
-			<a href="{{ Config::get('host.report_server') }}/ReportServlet?report=time_slip&id={{ $medical_certificate->encounter_id }}" class='btn btn-success ' target="_blank">Print</a>
+			<a href="{{ Config::get('host.report_server') }}?report=time_slip&id={{ $medical_certificate->encounter_id }}" class='btn btn-success ' target="_blank">Print</a>
 					@endif
 			@else
 				<a href="#" class='btn btn-success disabled'>Print</a>

@@ -41,7 +41,7 @@ th,td {
 	<input type='hidden' name="_token" value="{{ csrf_token() }}">	
 </form>
 
-<a class='btn btn-primary pull-right'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=meal_label'>
+<a class='btn btn-primary pull-right'  target="_blank" href='{{ Config::get('host.report_server') }}?report=meal_label'>
 <span class='fa fa-print' aria-hidden='true'></span>
 </a>
 

@@ -158,7 +158,7 @@ Progress Notes
 								@if ($order->product)
 								{{ $order->product->product_name }}
 									@if ($order->product->category_code=='imaging' && $order->order_report)
-									<a target="_blank" class='btn btn-success btn-xs' href="{{ Config::get('host.report_server')  }}/ReportServlet?report=order_report&id={{ $order->order_id }}">
+									<a target="_blank" class='btn btn-success btn-xs' href="{{ Config::get('host.report_server')  }}?report=order_report&id={{ $order->order_id }}">
 										Report
 									</a>
 									,

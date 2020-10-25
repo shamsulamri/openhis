@@ -37,7 +37,7 @@
 
             </form>
 					
-            <p class="m-t"> <small>IODOJO 2016</small> </p>
+            <p class="m-t"> <small><a href='https://iodojo.com'>IODOJO</a></small> </p>
 
         </div>
     </div>

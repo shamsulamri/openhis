@@ -150,7 +150,7 @@
 				}
 
 				report = $("#report_code").val();
-				url = "{{ Config::get('host.report_server') }}/ReportServlet?report="+report;
+				url = "{{ Config::get('host.report_server') }}?report="+report;
 				url = url.concat("&dateStart=", dateStart);
 				url = url.concat("&dateEnd=", dateEnd);
 				url = url.concat("&encounterType=", $("#encounter_code").val());

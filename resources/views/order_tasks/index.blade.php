@@ -20,21 +20,21 @@
 			</div>
 			<div align="right" class="col-xs-8">
 @if (Auth::user()->author_id == 5)
-					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=order_labels&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}?report=order_labels&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Order Label</a>
-					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=patient_lab&id={{ $encounter->patient_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}?report=patient_lab&id={{ $encounter->patient_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Patient Label</a>
 @endif
 @if (Auth::user()->author_id == 15)
-					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=request_form&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}?report=request_form&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Request Form</a>
 @endif
 @if (Auth::user()->author_id == 13 or Auth::user()->author_id == 18)
-					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}?report=drug_label&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Drug Label</a>
-					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_prescription&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}?report=drug_prescription&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Prescription</a>
-					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}/ReportServlet?report=drug_discharge&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
+					<a class="btn btn-primary" href="{{ Config::get('host.report_server') }}?report=drug_discharge&id={{ $encounter->encounter_id }}" target="_blank" role="button"><span class='glyphicon glyphicon-print'></span>
  Discharge</a>
 @endif
 			</div>

@@ -77,7 +77,7 @@
 				<br>
 				<br>
 					<span class='glyphicon glyphicon-print' aria-hidden='true'></span>
-				<a href='{{ Config::get('host.report_server') }}/ReportServlet?report=patient_label&id={{ $patient->patient_id }}'>
+				<a href='{{ Config::get('host.report_server') }}?report=patient_label&id={{ $patient->patient_id }}'>
 						{{ $patient->patient_Id }}Print Label
 				</a>
 </h4>

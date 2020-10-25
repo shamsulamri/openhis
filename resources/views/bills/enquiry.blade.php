@@ -235,7 +235,7 @@
 				//dateEnd = dateEnd.concat(to[2],"/", to[1],"/", to[0]);
 
 				console.log(from);
-				var url = "{{ Config::get('host.report_server') }}/ReportServlet?report=shift_report";
+				var url = "{{ Config::get('host.report_server') }}?report=shift_report";
 				url = url.concat("&dateStart=", dateStart);
 				//url = url.concat("&dateEnd=", dateEnd);
 				url = url.concat("&encounterType=", $("#encounter_code").val());

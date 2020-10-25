@@ -40,7 +40,7 @@
 					{{ number_format($deposit->deposit_amount,2) }}
 			</td>
 			<td align='right'>
-				<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=deposit_receipt&id={{ $deposit->deposit_id }}'>
+				<a class='btn btn-default btn-xs'  target="_blank" href='{{ Config::get('host.report_server') }}?report=deposit_receipt&id={{ $deposit->deposit_id }}'>
 				Print Receipt
 				</a>
 			@can('system-administrator')

@@ -1,12 +1,12 @@
 	
 <div class='pull-right'>
-<a class='btn btn-primary'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=loan_slip&id={{ $loan->loan_id }}'>
+<a class='btn btn-primary'  target="_blank" href='{{ Config::get('host.report_server') }}?report=loan_slip&id={{ $loan->loan_id }}'>
 Loan Slip
 </a>
-<a class='btn btn-primary'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=exchange_slip&id={{ $loan->loan_id }}'>
+<a class='btn btn-primary'  target="_blank" href='{{ Config::get('host.report_server') }}?report=exchange_slip&id={{ $loan->loan_id }}'>
 Exchange Slip
 </a>
-<a class='btn btn-primary'  target="_blank" href='{{ Config::get('host.report_server') }}/ReportServlet?report=return_slip&id={{ $loan->loan_id }}'>
+<a class='btn btn-primary'  target="_blank" href='{{ Config::get('host.report_server') }}?report=return_slip&id={{ $loan->loan_id }}'>
 Return Slip
 </a>
 </div>
