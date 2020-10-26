@@ -28,9 +28,11 @@ Medication Administration Records
 $frequency_count = count(explode(';',$drug->frequency_mar));
 $servings = $order_helper->marServingCount($drug->order_id);
 $cols = 7;
+/*
 if (empty($encounter->discharge)) {
 		$drug->order_quantity_supply = $order_helper->marUnitCount($drug->order_id);
 }
+ */
 ?>
 	<tr>
 		<td width='30%'>

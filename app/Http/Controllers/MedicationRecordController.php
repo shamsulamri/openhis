@@ -83,8 +83,8 @@ class MedicationRecordController extends Controller
 			$mar->save();
 
 			$order = Order::find($mar->order_id);
-			$helper = new OrderHelper();
-			$helper->marUnitCount($mar->order_id);
+			//$helper = new OrderHelper();
+			//$helper->marUnitCount($mar->order_id);
 
 			if ($order->orderDrug->frequency_code == 'STAT') {
 				$order->order_completed = 1;
@@ -123,8 +123,8 @@ class MedicationRecordController extends Controller
 			$medication_record->medication_fail = $request->medication_fail ?: 0;
 			$medication_record->save();
 
-			$helper = new OrderHelper();
-			$helper->marUnitCount($medication_record->order_id);
+			//$helper = new OrderHelper();
+			//$helper->marUnitCount($medication_record->order_id);
 
 			return redirect('/medication_record/mar/'.$medication_record->order->encounter_id);
 	}
