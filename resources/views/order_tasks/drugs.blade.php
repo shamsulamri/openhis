@@ -232,7 +232,7 @@
 					@endif
 				</td>	
 				<td colspan='1' align='center'>
-					{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
+					{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['id'=>$order->order_id,'class'=>'form-control']) }}
 				</td>
 			</tr>
 			@endif
