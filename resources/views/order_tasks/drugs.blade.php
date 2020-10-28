@@ -41,21 +41,20 @@
 	@endif
 	@if ($show_line)
 	<tr class='border_bottom'>
-			<td colspan='11' height='10'>
+			<td colspan='12' height='10'>
 			</td>
 	</tr>
 	<tr>
-			<td colspan='11' height='10'>
+			<td colspan='12' height='10'>
 			</td>
 	</tr>
 	@endif
 	<tr class='{{ $status }}'>
 			<td width='10' valign='top' colspan='1'>
 					@if (!isset($order->cancel_id) && $order->order_completed==0)
-						{{ Form::checkbox($order->order_id, 1, $order->order_completed,['class'=>'i-checks']) }}
+						{{ Form::checkbox($order->order_id, 1, $order->order_completed,['id'=>$order->order_id, 'class'=>'i-checks']) }}
 					@else
-
-						@if ($order->order_completed==1 && empty($order->stop_id) && $order->product_local_store==0)
+						@if ($order->order_completed==1 && empty($order->stop_id))
 							<a href='/order_task/reopen/{{ $order->order_id }}' class='btn btn-danger btn-xs'>Reopen</a>
 						@endif
 					@endif
@@ -123,12 +122,9 @@
 			</td>
 			@endif
 			<td colspan='2' align='right' valign='top' width='100'>
-					@if (!isset($order->cancel_id))
-					@endif
 					@if ($order->order_completed==0 && !isset($order->cancel_id))
 					<a class='btn btn-warning btn-xs' href='{{ URL::to('/task_cancellations/create/'. $order->order_id) }}'>Cancel</a>
 					@endif
-
 					@if ($order->order_completed==1)
 							@if (empty($order->dispensed_by))
 								{{ Form::checkbox('dispense_'.$order->order_id, 1, null,['class'=>'i-checks']) }}
@@ -205,7 +201,7 @@
 				</td>	
 				<td colspan='1'>
 					@if ($order->order_completed == 0) 
-            		{{ Form::text('batch_'.$order->order_id.'_'.$batch->product_code.'_'.$batch->batch_id, $supply?:0, ['class'=>'form-control']) }}
+            		{{ Form::text('batch_'.$order->order_id.'_'.$batch->product_code.'_'.$batch->batch_id, $supply?:0, ['id'=>$order->order_id,'class'=>'form-control']) }}
 					@else
             		{{ Form::label('batch_'.$order->order_id.'_'.$batch->product_code.'_'.$batch->batch_id, abs($supply?:0), ['class'=>'form-control']) }}
 					@endif
@@ -236,7 +232,7 @@
 					@endif
 				</td>	
 				<td colspan='1' align='center'>
-					{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['class'=>'form-control']) }}
+					{{ Form::text('quantity_'.$order->order_id, $order->order_quantity_request, ['id'=>$order->order_id,'class'=>'form-control']) }}
 				</td>
 			</tr>
 			@endif

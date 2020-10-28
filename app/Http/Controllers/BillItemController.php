@@ -448,11 +448,13 @@ class BillItemController extends Controller
 					$item->tax_code = $order->tax_code;
 					$item->tax_rate = $order->tax_rate;
 					$item->bill_quantity = $order->total_quantity?:0;
+					/*
 					if ($item->product->category_code =='drugs') {
 						if (empty($encounter->discharge)) {
 								$item->bill_quantity = $order->total_request;
 						}
 					}
+					 */
 					$item->bill_unit_code = $order->unit_code;
 					$item->bill_discount = $order->order_discount;
 					$item->bill_markup = $order->order_markup;
