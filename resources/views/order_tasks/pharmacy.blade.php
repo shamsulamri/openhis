@@ -135,4 +135,15 @@
 	No orders found.
 	</h3>
 @endif
+
+<script>
+$(document).ready(function(){
+  $("input").keypress(function(e){
+	var id = e.currentTarget.id;
+	//document.getElementById(id).checked = true;
+	$('#'+id).iCheck('check');
+  });
+});
+
+</script>
 @endsection
