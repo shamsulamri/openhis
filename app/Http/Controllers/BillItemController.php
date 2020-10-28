@@ -483,7 +483,6 @@ class BillItemController extends Controller
 					}
 			}
 
-			//$this->multipleOrders($encounter_id);
 			//$this->outstandingCharges($encounter_id);
 			$this->addFutureOrder($encounter_id, $non_claimable);
 	}
@@ -725,7 +724,6 @@ class BillItemController extends Controller
 					}
 			}
 
-			//$this->multipleOrders($encounter_id);
 			//$this->outstandingCharges($encounter_id);
 	}
 	public function compileConsultation($encounter_id, $non_claimable = 2) 
@@ -801,7 +799,6 @@ class BillItemController extends Controller
 						$item->bill_name .= " (".$order->name.")";
 					}
 
-
 					$item->bill_amount = $order->total_price?:0;
 					//$item->bill_discount = $order->order_discount;
 					Log::info($order->product_code);
@@ -818,49 +815,6 @@ class BillItemController extends Controller
 						$item->bill_amount_exclude_tax = 0;
 					}
 					$item->save();
-			}
-	}
-
-	public function multipleOrders($id) 
-	{
-			$sql = sprintf("
-				select count(a.order_id) as order_quantity_supply, b.product_code, d.tax_code, tax_rate, uom_price as product_sale_price, d.tax_code, d.tax_rate, profit_multiplier
-				from order_multiples a
-				left join orders b on (b.order_id = a.order_id)
-				left join products c on (c.product_code = b.product_code)
-				left join tax_codes d on (d.tax_code = c.product_output_tax)
-				left join encounters as g on (g.encounter_id=b.encounter_id)
-				left join patients as h on (h.patient_id = g.patient_id)
-				left join ref_encounter_types as i on (i.encounter_code = g.encounter_code)
-				left join product_uoms as j on (j.product_code = b.product_code and j.unit_code = 'unit')
-				where b.encounter_id=%d
-				and c.deleted_at is null
-				and a.order_completed=1
-				group by a.order_id, uom_price
-			", $id);
-
-			$orders = DB::select($sql);
-
-			foreach ($orders as $order) {
-				$item = new BillItem();
-				$item->encounter_id = $id;
-				$item->product_code = $order->product_code;
-				$item->tax_code = $order->tax_code;
-				$item->tax_rate = $order->tax_rate;
-				$item->bill_quantity = $order->order_quantity_supply;
-				$item->bill_unit_multiplier = $order->profit_multiplier;
-				$item->bill_unit_price = $order->product_sale_price*(1+($order->profit_multiplier/100));
-				$item->bill_amount = $order->order_quantity_supply*$item->bill_unit_price;
-				$item->bill_amount_exclude_tax = $order->order_quantity_supply*$item->bill_unit_price;
-				if ($order->tax_rate) {
-						$item->bill_amount = $item->bill_amount*(($order->tax_rate/100)+1);
-				}
-
-				try {
-					$item->save();
-				} catch (\Exception $e) {
-					\Log::info($e->getMessage());
-				}
 			}
 	}
 

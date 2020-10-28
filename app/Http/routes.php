@@ -509,12 +509,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 		Route::post('/diet_therapeutic/search', 'DietTherapeuticController@search');
 		Route::get('/diet_therapeutic/search', 'DietTherapeuticController@search');
 		Route::get('/diet_therapeutics/delete/{id}', 'DietTherapeuticController@delete');
-
-		Route::resource('order_multiples', 'OrderMultipleController');
-		Route::get('/order_multiples/id/{id}', 'OrderMultipleController@searchById');
-		Route::post('/order_multiple/search', 'OrderMultipleController@search');
-		Route::get('/order_multiple/search', 'OrderMultipleController@search');
-		Route::get('/order_multiples/delete/{id}', 'OrderMultipleController@delete');
 		
 		Route::resource('team_members', 'TeamMemberController');
 		Route::get('/team_members/id/{id}', 'TeamMemberController@searchById');
