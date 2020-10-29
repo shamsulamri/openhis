@@ -52,13 +52,11 @@ Prints
 		Patient Demography	
 		</a>
 
-		<!--
 		<br><br>
 		<span class='fa fa-file-o' aria-hidden='true'></span>
 		<a target="_blank" href="/pdf/{{ $patient->patient_id }}/darah">
 		Borang Persetujuan Pemindahan Darah Atau Komponen Darah
 		</a>
-		-->
 </h4>
 
 @endsection

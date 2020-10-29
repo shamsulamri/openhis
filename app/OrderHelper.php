@@ -382,38 +382,6 @@ class OrderHelper
 
 	}	
 
-	/*
-	public static function createDrugServings($order_drug) 
-	{
-		$unit_of_dose = Config::get('host.unit_of_dose');
-		if ($unit_of_dose==1) {
-				if ($order_drug->order->consultation->encounter->encounter_code == 'inpatient') {
-						if (!empty($order_drug->period->period_mins) && !empty($order_drug->frequency->frequency_value)) {
-							$multi = OrderMultiple::where('order_id','=', $order_drug->order_id)->delete();
-							$frequencies = $order_drug->frequency->frequency_value*$order_drug->drug_duration*($order_drug->period->period_mins/1440);
-							
-							$is_unit_of_dose = Config::get('host.unit_of_dose');
-							if ($frequencies>0 & $is_unit_of_dose==1) {
-									OrderMultiple::where('order_id',$order_drug->order_id)->delete();
-									for ($i=0; $i<$frequencies; $i++) {
-											$multi = new OrderMultiple();
-											$multi->order_id = $order_drug->order_id;
-											$multi->save();
-									}
-									$order = Order::find($order_drug->order_id);
-									$order->order_multiple=1;
-									$order->save();
-							} else {
-									$order = Order::find($order_drug->order_id);
-									$order->order_multiple=0;
-									$order->save();
-							}
-						}
-				}
-		}
-	}
-	 */
-
 	public static function createInvestigationOrders($order_investigation) 
 	{
 		if (!empty($order_investigation->period->period_mins) && !empty($order_investigation->frequency->frequency_mins)) {
