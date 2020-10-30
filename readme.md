@@ -1,6 +1,6 @@
 ## Open Hospital Information System (OpenHIS)
 
-A customizable open source hospital information system for small or large organisation. Contains all the essential modules for running a hospital from patient registration to billing. Built on top of LAMP stack with LARAVEL framework for flexiblity and great support.
+A customizable open source hospital information system for small or large organisation. Contains all the essential modules for running a hospital from patient registration to billing. Built on top of LAMP stack with LARAVEL framework for scalability and great support from the community.
 
 The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a private clinic, hemodialysis center, homecare or any other primary care service it should be able to handle the requirement.
 
@@ -20,7 +20,12 @@ The system was initially designed for secondary care facility but it can also be
 
 ### Installation & Configuration
 
-Run the his_open.sql to restore the database.
+1. See laravel documentation for configuration and installation.
+2. Run the his_open.sql to restore the database.
+
+### Docker Container
+
+I will release a docker container for easy and quick installation soon.
 
 ### Web Resources
 
