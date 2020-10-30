@@ -10,6 +10,6 @@ Run the his_open.sql to restore the database
 
 OpenHIS is open-sourced software licensed under the GNU General Public License v3.0
 
-More update and releases coming soon.
+In view of the pandemic situation right now I've decided to make this project open source to reduce stress on hospital resources and hope that it will ease many of the process related to patient treatment. More update and releases coming soon.
 
 Have fun.
