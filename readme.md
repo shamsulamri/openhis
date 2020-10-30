@@ -1,10 +1,8 @@
 ## Open Hospital Information System (OpenHIS)
 
-A customizable open source hospital information system for small or large organisation. Contains all the essential modules for running a hospital from patient regis
-tration to billing. Built on top of LAMP stack with LARAVEL framework for flexiblity and great support.
+A customizable open source hospital information system for small or large organisation. Contains all the essential modules for running a hospital from patient registration to billing. Built on top of LAMP stack with LARAVEL framework for flexiblity and great support.
 
-The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a priva
-te clinic, hemodialysis center, homecare or any other primary care service it should be able to handle the requirement.
+The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a private clinic, hemodialysis center, homecare or any other primary care service it should be able to handle the requirement.
 
 ### Features
 
@@ -42,8 +40,7 @@ Training Script is at:
 
 OpenHIS is open-sourced software licensed under the GNU General Public License v3.0
 
-In view of the pandemic situation right now I've decided to make this project open source to help reduce stress on hospital resources and hope that it will ease man
-y of the process related to patient treatment. More update and releases coming soon.
+In view of the pandemic situation right now I've decided to make this project open source to help reduce stress on hospital resources and hope that it will ease many of the process related to patient treatment. More update and releases coming soon.
 
 Have fun and stay safe.
 
