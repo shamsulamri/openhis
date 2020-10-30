@@ -16,10 +16,14 @@ Homepage is at:
 
       https://iodojo.com
 
+Demo application is at:
+
+      https://his.iodojo.com
+
 Training Script is at:
 
     https://dojo.iodojo.com
     
 In view of the pandemic situation right now I've decided to make this project open source to help reduce stress on hospital resources and hope that it will ease many of the process related to patient treatment. More update and releases coming soon.
 
-Have fun.
+Have fun and stay safe.
