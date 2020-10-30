@@ -8,6 +8,6 @@ Run the his_open.sql to restore the database
 
 ### License
 
-The Laravel framework is open-sourced software licensed under the GNU General Public License v3.0
+OpenHIS is open-sourced software licensed under the GNU General Public License v3.0
 
 
