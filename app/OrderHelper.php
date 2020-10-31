@@ -4,7 +4,6 @@ namespace App;
 use Carbon\Carbon;
 use DB;
 use App\Encounter;
-use App\OrderMultiple;
 use App\EncounterHelper;
 use App\Order;
 use App\OrderPost;
@@ -25,11 +24,6 @@ class OrderHelper
 	{
 		$encounter = Encounter::find($encounter_id);
 		return $encounter;
-	}
-	public function getMultipleOrder($order_id) 
-	{
-			$orders = OrderMultiple::where('order_id', '=',$order_id)->get();
-			return $orders;
 	}
 
 	public static function getOrder($order_id) 
@@ -381,30 +375,6 @@ class OrderHelper
 			return $order->order_id;
 
 	}	
-
-	public static function createInvestigationOrders($order_investigation) 
-	{
-		if (!empty($order_investigation->period->period_mins) && !empty($order_investigation->frequency->frequency_mins)) {
-			$multi = OrderMultiple::where('order_id','=', $order_investigation->order_id)->delete();
-			$frequencies = ($order_investigation->investigation_duration*$order_investigation->period->period_mins)/$order_investigation->frequency->frequency_mins;
-			
-			if ($frequencies>0) {
-					OrderMultiple::where('order_id',$order_investigation->order_id)->delete();
-					for ($i=0; $i<$frequencies; $i++) {
-							$multi = new OrderMultiple();
-							$multi->order_id = $order_investigation->order_id;
-							$multi->save();
-					}
-					$order = Order::find($order_investigation->order_id);
-					$order->order_multiple=1;
-					$order->save();
-			} else {
-					$order = Order::find($order_investigation->order_id);
-					$order->order_multiple=0;
-					$order->save();
-			}
-		}
-	}
 
 		public static function hasOpenOrders($user_id)
 		{

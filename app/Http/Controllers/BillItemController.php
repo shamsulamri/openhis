@@ -16,7 +16,6 @@ use App\QueueLocation as Location;
 use App\Encounter;
 use App\DojoUtility;
 use App\Order;
-use App\OrderMultiple;
 use Carbon\Carbon;
 use App\FormValue;
 use App\Form;

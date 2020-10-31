@@ -15,7 +15,6 @@ use App\QueueLocation as Location;
 use App\Ward;
 use App\ProductCategory;
 use App\Order;
-use App\OrderMultiple;
 use App\OrderHelper;
 use App\QueueLocation;
 use App\Store;
@@ -351,63 +350,17 @@ class AdmissionTaskController extends Controller
 
 					$name = "order:".$id;
 					if ($order) {
-					Log::info($name);
-									$order->order_completed=$request->$name?1:0;
-									$order->completed_at = $request->$name==1?DojoUtility::dateTimeWriteFormat(DojoUtility::now()):null;
-									$order->updated_by = $request->$name==1?Auth::user()->id:null;
-									$order->store_code = $store_code;
-									$order->location_code = null;
-									$order->save();
-									Log::info($order->order_completed);
+							$order->order_completed=$request->$name?1:0;
+							$order->completed_at = $request->$name==1?DojoUtility::dateTimeWriteFormat(DojoUtility::now()):null;
+							$order->updated_by = $request->$name==1?Auth::user()->id:null;
+							$order->store_code = $store_code;
+							$order->location_code = null;
+							$order->save();
 					}
-					/*
-					else {
-							if ($order->order_completed==1) $order->updated_by = Auth::user()->id;
-							$order->order_completed=0;
-					}
-					 */
-			}
-
-			/** Multiple orders **/
-			$multis = explode(",",$request->multiple_ids);
-
-			foreach($multis as $multi) {
-					$multiple_order = OrderMultiple::find($multi);
-
-					$name = "multi:".$multi;
-					if (!empty($multiple_order)) {
-							if ($request->$name==1) {
-									$multiple_order->order_completed=1;
-									$multiple_order->updated_by = Auth::user()->id;
-									$multiple_order->store_code = $store_code;
-									$multiple_order->save();
-									$multiple_completed = OrderMultiple::where('order_id','=', $multiple_order->order_id);
-
-									$count_total = $multiple_completed->count();
-									$count_completed = $multiple_completed->where('order_completed',1)->count();
-									Log::info("Count order:".$count_total);
-									Log::info("Count order:".$count_completed);
-
-									if ($count_total==$count_completed) {
-											$parent_order = Order::find($multiple_order->order_id);
-											$parent_order->order_completed=1;
-											$parent_order->updated_by = Auth::user()->id;
-											$parent_order->store_code = $store_code;
-											$parent_order->save();
-									}
-							} 
-					}
-					/*
-					else {
-							if ($order->order_completed==1) $order->updated_by = Auth::user()->id;
-							$order->order_completed=0;
-					}
-					 */
 			}
 
 			Session::flash('message', 'Record successfully updated.');
 			return redirect('/admission_tasks');
-			//return redirect()->action('AdmissionTaskController@search', $request);
 	}
 
 }

@@ -14,7 +14,6 @@ use App\Consultation;
 use App\Order;
 use App\Product;
 use App\OrderHelper;
-use App\OrderMultiple;
 
 class ConsultationProcedureController extends Controller
 {
@@ -525,7 +524,6 @@ class ConsultationProcedureController extends Controller
 	{
 			$order_id = $request->order_id;
 			$order = Order::find($order_id);
-			OrderMultiple::where('order_id', $order_id)->delete();
 			Order::find($order_id)->delete();
 					
 			return $this->listProcedure();

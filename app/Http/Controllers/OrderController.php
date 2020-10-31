@@ -24,7 +24,6 @@ use App\EncounterHelper;
 use App\OrderHelper;
 use App\Ward;
 use App\StockHelper;
-use App\OrderMultiple;
 use App\User;
 use App\ProductCategory;
 use App\AMQPHelper as Amqp;
@@ -360,7 +359,6 @@ class OrderController extends Controller
 	public function destroy($id)
 	{	
 			$order = Order::find($id);
-			OrderMultiple::where('order_id', $id)->delete();
 			Order::find($id)->delete();
 			Session::flash('message', 'Record deleted.');
 			return redirect('/orders/');
@@ -457,7 +455,6 @@ class OrderController extends Controller
 									$id = $order->order_id;
 									if (!empty($id)) {
 											$order = Order::find($id);
-											OrderMultiple::where('order_id', $id)->delete();
 											Order::find($id)->delete();
 									}
 							}
@@ -486,7 +483,6 @@ class OrderController extends Controller
 											$id = $order->order_id;
 											if (!empty($id)) {
 													$order = Order::find($id);
-													OrderMultiple::where('order_id', $id)->delete();
 													Order::find($id)->delete();
 											}
 									}

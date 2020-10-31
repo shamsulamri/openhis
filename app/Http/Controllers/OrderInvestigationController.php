@@ -15,7 +15,6 @@ use App\Period;
 use App\Frequency;
 use App\Consultation;
 use App\Order;
-use App\OrderMultiple;
 use App\OrderHelper;
 use App\Product;
 use App\EncounterHelper;
@@ -253,8 +252,6 @@ class OrderInvestigationController extends Controller
 
 			if ($valid->passes() && $valid2->passes()) {
 					$order_investigation->save();
-					OrderHelper::createInvestigationOrders($order_investigation);
-
 					$order = Order::find($order_investigation->order_id);
 					$order->post_id=0;
 					$order->save();

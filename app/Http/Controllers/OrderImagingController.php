@@ -149,7 +149,7 @@ class OrderImagingController extends Controller
 
 			$orders = Order::where('consultation_id', $consultation->consultation_id)
 						->leftJoin('products as a', 'a.product_code', '=', 'orders.product_code')
-						->where('category_code', 'imaging2')
+						->where('category_code', 'imaging')
 						->where('post_id', 0)
 						->orderBy('order_id', 'desc')
 						->get();

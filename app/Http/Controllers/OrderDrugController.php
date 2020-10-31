@@ -21,7 +21,6 @@ use App\Consultation;
 use App\Product;
 use Auth;
 use App\DrugPrescription;
-use App\OrderMultiple;
 use App\OrderHelper;
 use App\StockHelper;
 use App\OrderRoute;
@@ -99,7 +98,6 @@ class OrderDrugController extends Controller
 			Log::info("**********Remove Drug***************");
 			$order_id = $request->order_id;
 			$order = Order::find($order_id);
-			//OrderMultiple::where('order_id', $order_id)->delete();
 			Order::find($order_id)->delete();
 					
 			return $this->medicationTable();
