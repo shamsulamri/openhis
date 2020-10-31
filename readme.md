@@ -41,6 +41,8 @@ Training Script is at:
 
 	https://dojo.iodojo.com
 
+The scripts are a bit rough, going through updating process right now.
+
 ### License
 
 OpenHIS is open-sourced software licensed under the GNU General Public License v3.0
