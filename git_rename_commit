@@ -1,0 +1,4 @@
+git filter-branch -f --env-filter "
+    GIT_AUTHOR_NAME='graymatter'
+    GIT_AUTHOR_EMAIL='shamsulamrimd@gmail.com'
+  " HEAD
