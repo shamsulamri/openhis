@@ -9,8 +9,6 @@
   <li @if ($plan=='procedure') class="active" @endif><a href="/orders/procedure">Procedures</a></li>
   <li @if ($plan=='medication') class="active" @endif><a href="/orders/medication">Medications</a></li>
   <li @if ($plan=='fee_consultant') class="active" @endif><a href="/orders/plan?plan=fee_consultant">Consultation Fees</a></li>
-<!--
-  <li @if ($plan=='discussion') class="active" @endif><a href="/orders/discussion">Discussion</a></li>
--->
+  <li @if ($plan=='discussion') class="active" @endif><a href="/orders/discussion">Plan</a></li>
 </ul>
 <br>

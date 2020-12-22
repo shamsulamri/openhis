@@ -9,5 +9,4 @@
 	@include('consultation_procedures.consultation_procedure')
 {{ Form::close() }}
 
-	@include('consultation_procedures.procedure')
 @endsection

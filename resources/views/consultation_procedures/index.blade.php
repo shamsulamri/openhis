@@ -2,9 +2,7 @@
 
 @section('content')
 @include('consultations.panel')
-<h1>Procedures</h1>
-	@include('consultation_procedures.procedure')
-<!--
+<h1>Clinical Procedures</h1>
 <br>
 <a href='/consultation_procedures/create' class='btn btn-primary'>Create</a>
 <br>
@@ -69,5 +67,4 @@
 @else
 	No record found.
 @endif
--->
 @endsection

@@ -2,7 +2,15 @@
 
 @section('content')
 @include('consultations.panel')
-<h1>Histories</h1>
+<h1>Patient Histories</h1>
+<br>
+<iframe 
+		style="border:1px #d8d8d8 solid"
+		src="http://localhost:8084/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?soap=pmh&view=true"
+		width='100%'
+		height="500">
+</iframe>
+<!--
 <br>
 <?php $active = 'active'; ?>
 <div class="tabs-container">
@@ -90,4 +98,5 @@ $(document).ready(function(){
 
 });
 </script>
+-->
 @endsection

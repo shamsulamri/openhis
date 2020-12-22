@@ -40,7 +40,6 @@ class ConsultationProcedureController extends Controller
 
 					//->where('d.patient_id', $consultation->encounter->patient->patient_id)
 
-			/*
 			if ($consultation_procedures->count()==0) {
 					return $this->create();
 			} else {
@@ -52,8 +51,8 @@ class ConsultationProcedureController extends Controller
 							'consultOption' => 'consultation',
 					]);
 			}
-			 */
 
+			/*
 			return view('consultation_procedures.index', [
 					'consultation_procedures'=>$consultation_procedures,
 					'consultation' => $consultation,
@@ -61,6 +60,7 @@ class ConsultationProcedureController extends Controller
 					'tab'=>'procedure',
 					'consultOption' => 'consultation',
 			]);
+			 */
 	}
 
 	public function create()

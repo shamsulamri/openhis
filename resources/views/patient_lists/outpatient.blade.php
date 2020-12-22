@@ -51,7 +51,7 @@
 						@endif
 					@endif
 					<td>
-					<a href='{{ URL::to('queues/'. $list->queue_id . '/edit?refer=1') }}'>
+					<a href="{{ URL::to('queues/'. $list->queue_id . '/edit?refer=1') }}">
 						{{$list->patient_name}}
 					</a>
 					@if ($list->patient_birthdate)

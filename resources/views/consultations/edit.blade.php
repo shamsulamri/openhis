@@ -87,11 +87,12 @@ input {
 <br>
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
-				<li class="active"><a data-toggle="tab" href="#tab-1"><span class="glyphicon glyphicon-comment"></span></a></li>
+				<li class="active"><a data-toggle="tab" href="#tab-3"><span class="glyphicon glyphicon-th-list"></span></a></li>
+				<li class=""><a data-toggle="tab" href="#tab-1"><span class="glyphicon glyphicon-comment"></span></a></li>
 				<li class=""><a data-toggle="tab" href="#tab-2"><span class="glyphicon glyphicon-pencil"></span></a></li>
 		</ul>
 		<div class="tab-content">
-			<div id="tab-1" class="tab-pane active">
+			<div id="tab-1" class="tab-pane">
 				<div class="panel-body">
 						{{ Form::model($consultation, ['tabindex'=>1,'id'=>'my_form','route'=>['consultations.update',$consultation->consultation_id],'method'=>'PUT', 'class'=>'form-horizontal']) }} 
 						@include('consultations.consultation')
@@ -102,6 +103,18 @@ input {
 				<div class="panel-body">
 						<!--- Annotation -->
 						@include('consultations.annotation')
+						<!--- End -->
+				</div>
+			</div>
+			<div id="tab-3" class="tab-pane active">
+				<div class="panel-body">
+						<!--- Clinical Pathway -->
+						<iframe 
+								style="border:0"
+							  	src="http://localhost:8084/cp/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}"
+							   	width="100%" frameBorder="0"
+							   	height="800">
+						</iframe>
 						<!--- End -->
 				</div>
 			</div>

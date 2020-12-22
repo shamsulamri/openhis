@@ -54,7 +54,7 @@ label {
   font-weight: normal;
 }
 </style>
-<h1>Plan</h1>
+<h1>Orders</h1>
 
 @include('orders.tab')
 

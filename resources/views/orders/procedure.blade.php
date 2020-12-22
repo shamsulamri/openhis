@@ -7,7 +7,7 @@ iframe { border: 1px #e5e5e5 solid; }
 @if (!empty($consultation))
 @can('module-consultation')
 		@include('consultations.panel')		
-		<h1>Plan</h1>
+		<h1>Orders</h1>
 @endcan
 @endif
 

@@ -1,5 +1,5 @@
 
-<h1>Diagnoses</h1>
+<h1>Clinical Diagnoses</h1>
 <br>
 	<div class='form-group  @if ($errors->has('diagnosis_clinical')) has-error @endif'>
         <div class='col-sm-12'>

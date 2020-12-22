@@ -35,50 +35,30 @@
 </div>
 
 <div class="btn-group" role="group" aria-label="...">
-    <a class="btn btn-success" href="/consultations/progress2/{{ $consultation->consultation_id }}" role="button">Progress</a>
-	<a href="/consultations/{{ $consultation->consultation_id }}/edit" class="btn btn-primary">Clinical Notes</a>
-	<a href="/consultation_histories" class="btn btn-primary">Histories</a>
-	<a href="/consultation_diagnoses" class="btn btn-primary">Diagnoses</a>
+	<a href="/consultations/{{ $consultation->consultation_id }}/edit" class="btn btn-success">Clinical Notes</a>
+    <a class="btn btn-warning" href="/consultations/progress2/{{ $consultation->consultation_id }}" role="button">Progress</a>
+	<a href="/consultation_histories" class="btn btn-warning">Histories</a>
 	<!--
-	<a href="/consultation_procedures" class="btn btn-primary">Procedures</a>
 	<a href="/orders/make" class="btn btn-primary">Orders</a>
 	<a href="/medications" class="btn btn-primary">Medications</a>
 	-->
 
-	<div class="btn-group">
-<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Plan
-      <span class="caret"></span>
-    </button>
-		<ul class="dropdown-menu">
-		<li><a href="/orders/plan?plan=laboratory">Laboratory</a></li>
-		<li><a href="/imaging?plan=imaging2">Imaging</a></li>
-		<!--
-  		<li><a href="/orders/plan?plan=imaging">Imaging</a></li>
-		-->
-		<li><a href="/orders/procedure">Procedure</a></li>
-		<li><a href="/orders/medication">Medications</a></li>
-		<!--
-		<li><a href="/orders/plan?plan=fee_consultant">Fee</a></li>
-		<li><a href="/orders/discussion">Discussion</a></li>
-		-->
-		<li><a href="/orders/plan?plan=fee_consultant">Consultation Fees</a></li>
-		<li role="separator" class="divider"></li>
-		<li><a href="/orders/make">Orders</a></li>
-		</ul>
-	</div>
 
 
 </div>
 
 <div class="btn-group" role="group" aria-label="...">
+	<!--
 	<a href="/orders/procedure" class="btn btn-danger">Procedures</a>
-	<a href="/orders/medication" class="btn btn-danger">Medications</a>
-	<a href="/orders/make" class="btn btn-danger">Orders</a>
+	-->
+	<a href="/consultation_diagnoses" class="btn btn-primary">Diagnoses</a>
+	<a href="/consultation_procedures" class="btn btn-primary">Procedures</a>
+	<a href="/orders/medication" class="btn btn-primary">Medications</a>
+	<a href="/orders/make" class="btn btn-primary">Orders</a>
 </div>
 
 <div class="dropdown pull-right">
-  <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+  <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
     Close
     <span class="caret"></span>
   </button>

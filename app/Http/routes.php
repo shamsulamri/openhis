@@ -1069,6 +1069,8 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::get('/consultation/search', 'ConsultationController@search');
 				Route::get('/consultations/delete/{id}', 'ConsultationController@delete');
 
+				Route::get('/clinical_pathway', 'ClinicalPathwayController@index');
+
 				Route::post('/consultation_diagnosis/drop', 'ConsultationDiagnosisController@drop')->name('diagnosis.drop');
 				Route::get('/consultation_diagnoses/encounter', 'ConsultationDiagnosisController@getDiagnoses');
 				Route::resource('consultation_diagnoses', 'ConsultationDiagnosisController');

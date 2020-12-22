@@ -11,7 +11,7 @@ select {
 @if (!empty($consultation))
 @can('module-consultation')
 		@include('consultations.panel')		
-		<h1>Plan</h1>
+		<h1>Orders</h1>
 @endcan
 @endif
 

@@ -196,7 +196,7 @@ class ConsultationController extends Controller
 
 
 			$sql = "
-				select consultation_notes, annotations, a.consultation_id, orders, diagnoses, medications
+				select consultation_notes, consultation_pathway, annotations, a.consultation_id, orders, diagnoses, medications
 				from consultations as a
 				left join (
 					select count(*) as annotations, a.consultation_id
@@ -248,13 +248,13 @@ class ConsultationController extends Controller
 
 
 			if ($request->show_all=='false' or empty($request->show_all)) {
-					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $encounter_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0 or medications>0)");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $encounter_id, $userSql, " and (consultation_notes is not null or consultation_pathway is not null or annotations>0 or orders>0 or medications>0)");
 			} else {
 					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $encounter_id, $userSql, "");
 			}
 
 			if ($request->show_physician =='true') {
-					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $encounter_id, $userSql, " and (consultation_notes is not null or annotations>0 or orders>0 or medications>0)");
+					$sql = sprintf($sql, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $authorSql, $patient_id, $patient_id, $encounter_id, $userSql, " and (consultation_notes is not null or consultation_pathway is not null or annotations>0 or orders>0 or medications>0)");
 			}
 
 			$notes = DB::select($sql);

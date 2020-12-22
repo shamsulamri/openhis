@@ -113,6 +113,18 @@ Progress Notes
 						@if (count($note->annotations)==0)
 						@endif
 					@endif
+
+
+					<!-- Pathway -->
+					@if ($note->consultation_pathway) 
+						<iframe 
+								style="border:1px #d8d8d8 solid"
+							  	src="http://localhost:8084/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?view=true"
+								width='100%'
+							   	height="500">
+						</iframe>
+					@endif
+
 					<!-- Annotations -->
 					@if (count($note->annotations)>0)
 							@foreach ($note->annotations as $annotation)
