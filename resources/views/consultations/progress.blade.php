@@ -107,8 +107,9 @@ Progress Notes
 	<div id='consultation_{{ $nota->consultation_id }}'>	
 					<br>
 					@if ($note->consultation_notes)
-            		{{ Form::textarea('consultation_notes', $note->consultation_notes, ['id'=>'consultation_notes', 'tabindex'=>1, 'class'=>'form-control','rows'=>'13']) }}
+            		{{ Form::textarea('consultation_notes', $note->consultation_notes, ['id'=>'consultation_notes', 'tabindex'=>1, 'class'=>'form-control','rows'=>'13', 'style'=>'color:#000000;font-size:14px']) }}
 					<br>
+
 					@else
 						@if (count($note->annotations)==0)
 						@endif
@@ -118,23 +119,22 @@ Progress Notes
 					<!-- Pathway -->
 					@if ($note->consultation_pathway) 
 						<iframe 
-								style="border:1px #d8d8d8 solid"
+								style="border:1px #e5e5e5 solid"
 							  	src="http://localhost:8084/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?view=true"
 								width='100%'
-							   	height="500">
+							   	height="400">
 						</iframe>
+						<br>
+						<br>
 					@endif
 
 					<!-- Annotations -->
 					@if (count($note->annotations)>0)
 							@foreach ($note->annotations as $annotation)
-								@if ($note->created_at<$cutoff_date)
-								<canvas tabindex=0 id="canvas_{{ $annotation->annotation_id }}" width="800" height="460"></canvas>
-								@else
 								<canvas tabindex=0 id="canvas_{{ $annotation->annotation_id }}" width="800" height="700"></canvas>
-								@endif
+								<br>
+								<br>
 							@endforeach
-						
 					<br>
 					<br>
 					@endif

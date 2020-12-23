@@ -4,24 +4,28 @@
 @include('consultations.panel')
 <h1>Patient Histories</h1>
 <br>
-<iframe 
-		style="border:1px #d8d8d8 solid"
-		src="http://localhost:8084/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?soap=pmh&view=true"
-		width='100%'
-		height="500">
-</iframe>
-<!--
-<br>
-<?php $active = 'active'; ?>
+<?php $active = ''; ?>
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
+				<li class="active"><a data-toggle="tab" href="#tab_cp">Pathway</a></li>
 				@foreach ($histories as $history)
-				<li class="{{ $active }}"><a data-toggle="tab" href="#tab_{{ $history->history_code }}">{{ str_replace("History", "History", $history->history_name) }}</a></li>
+				<li class="{{ $active }}"><a data-toggle="tab" href="#tab_{{ $history->history_code }}">{{ str_replace("History", "", $history->history_name) }}</a></li>
 <?php $active = ""; ?>
 				@endforeach
 		</ul>
 		<div class="tab-content">
-<?php $active = 'active'; ?>
+<?php $active = ''; ?>
+			<div id="tab_cp" class="tab-pane active">
+<?php $active = ""; ?>
+				<div class="panel-body">
+<iframe 
+		style="border:0px #d8d8d8 solid"
+		src="http://localhost:8084/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?soap=pmh&view=true"
+		width='100%'
+		height="326">
+</iframe>
+				</div>
+			</div>
 			@foreach ($histories as $history)
 <?php
 	$note = "";
@@ -34,7 +38,7 @@
 				<div class="panel-body">
 	{{ Form::textarea($history->history_code, 
 				$note,
-				['id'=>$history->history_code, 'name'=>$history->history_code, 'class'=>'form-control','rows'=>'15', 'style'=>'border:none;font-size: 1.2em']) }}
+				['id'=>$history->history_code, 'name'=>$history->history_code, 'class'=>'form-control','rows'=>'15', 'style'=>'border:none;color:#000000;font-size: 1.1em']) }}
 				</div>
 			</div>
 			@endforeach
@@ -98,5 +102,4 @@ $(document).ready(function(){
 
 });
 </script>
--->
 @endsection
