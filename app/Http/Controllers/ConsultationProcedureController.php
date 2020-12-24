@@ -40,6 +40,11 @@ class ConsultationProcedureController extends Controller
 
 					//->where('d.patient_id', $consultation->encounter->patient->patient_id)
 
+			$has_principal = ConsultationProcedure::where('procedure_is_principal',1)
+								->where('consultation_id', Session::get('consultation_id'))
+								->first()?1:0;
+
+
 			if ($consultation_procedures->count()==0) {
 					return $this->create();
 			} else {
@@ -49,6 +54,7 @@ class ConsultationProcedureController extends Controller
 							'patient'=>$consultation->encounter->patient,
 							'tab'=>'procedure',
 							'consultOption' => 'consultation',
+							'has_principal'=>$has_principal,
 					]);
 			}
 

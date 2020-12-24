@@ -37,6 +37,10 @@ class ConsultationDiagnosisController extends Controller
 					->paginate($this->paginateValue);
 
 					//->where('encounter_id','=',$consultation->encounter_id)
+			$has_principal = ConsultationDiagnosis::where('diagnosis_is_principal',1)
+								->where('consultation_id', Session::get('consultation_id'))
+								->first()?1:0;
+
 
 			if ($consultation_diagnoses->count()==0) {
 					return $this->create();
@@ -47,6 +51,7 @@ class ConsultationDiagnosisController extends Controller
 							'patient'=>$consultation->encounter->patient,
 							'tab'=>'diagnosis',
 							'consultOption' => 'consultation',
+							'has_principal'=>$has_principal,
 					]);
 			}
 	}

@@ -3,11 +3,16 @@
 @section('content')
 @include('consultations.panel')
 <h1>Clinical Procedures</h1>
-<br>
+@if (!$has_principal)
+	<div class='alert alert-warning' role='alert'>
+	Please define principal procedure.
+	</div>
+@else
+	<br>
+@endif
 <a href='/consultation_procedures/create' class='btn btn-primary'>Create</a>
 <br>
 <br>
-<?php $hasPrincipal=False; ?>
 @if ($consultation_procedures->total()>0)
 <table class="table table-hover">
  <thead>
@@ -23,7 +28,6 @@
 	<tr>
 			<td width='5%'>
 			@if ($consultation_procedure->procedure_is_principal)
-				<?php $hasPrincipal=True; ?>
 				<div class='label label-primary' title='Princiapl Diagnosis'>
 				1°	
 				</div>
@@ -50,11 +54,6 @@
 </tbody>
 </table>
 
-@if (!$hasPrincipal)
-	<div class='alert alert-warning' role='alert'>
-	Please define a principal diagnosis.
-	</div>
-@endif
 
 @if (isset($search)) 
 	{{ $consultation_procedures->appends(['search'=>$search])->render() }}
