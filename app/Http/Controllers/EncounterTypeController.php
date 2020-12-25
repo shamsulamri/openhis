@@ -76,6 +76,7 @@ class EncounterTypeController extends Controller
 			$valid = $encounter_type->validate($request->all(), $request->_method);	
 
 			if ($valid->passes()) {
+					$encounter_type->encounter_active = $request->encounter_active?:0;
 					$encounter_type->save();
 					Session::flash('message', 'Record successfully updated.');
 					return redirect('/encounter_types/id/'.$id);

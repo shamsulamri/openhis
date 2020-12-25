@@ -15,6 +15,14 @@
         </div>
     </div>
 
+	<div class='form-group  @if ($errors->has('encounter_active')) has-error @endif'>
+        <label for='encounter_active' class='col-sm-3 control-label'>Active</label>
+        <div class='col-sm-9'>
+			{{ Form::checkbox('encounter_active', '1') }} 
+			@if ($errors->has('encounter_active')) <p class="help-block">{{ $errors->first('encounter_active') }}</p> @endif
+		</div>
+	</div>
+
     <div class='form-group'>
         <div class="col-sm-offset-3 col-sm-9">
             <a class="btn btn-default" href="/encounter_types" role="button">Cancel</a>

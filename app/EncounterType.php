@@ -15,6 +15,7 @@ class EncounterType extends Model
 				'profit_multiplier',
 				'encounter_name',
 				'encounter_bill_prefix',
+				'encounter_active',
 		];
 	
     protected $guarded = ['encounter_code'];

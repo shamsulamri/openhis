@@ -189,7 +189,7 @@ class EncounterController extends Controller
 					'entitlement' => Entitlement::all()->sortBy('entitlement_name')->lists('entitlement_name', 'entitlement_code')->prepend('',''),
 					'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
 					'relationship' => Relationship::all()->sortBy('relation_name')->lists('relation_name', 'relation_code')->prepend('',''),
-					'encounter_type' => EncounterType::all()->sortBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
+					'encounter_type' => EncounterType::where('encounter_active', 1)->orderBy('encounter_name')->lists('encounter_name', 'encounter_code')->prepend('',''),
 					'patientOption' => 'encounter',
 					'locations' => $locations,
 					'consultants' => $consultants,

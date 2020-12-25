@@ -55,12 +55,6 @@
         </div>
     </div>
 
-
-
-
-
-
-
         </div>
         <div class='col-xs-6'>
 
@@ -84,29 +78,28 @@
     </div>
 
     <div class='form-group  @if ($errors->has('location_code')) has-error @endif'>
-        {{ Form::label('Location', 'Location',['class'=>'col-sm-4 control-label']) }}
+        {{ Form::label('Location', Config::get('host.label_location'),['class'=>'col-sm-4 control-label']) }}
         <div class='col-sm-8'>
             {{ Form::select('location_code', [], null, ['id'=>'location_code','onchange'=>'','class'=>'form-control']) }}
         </div>
     </div>
 
     <div class='form-group  @if ($errors->has('encounter_description')) has-error @endif'>
-        {{ Form::label('Description', 'Description',['class'=>'col-sm-4 control-label']) }}
+        {{ Form::label('Description', Config::get('host.label_description_label'), ['class'=>'col-sm-4 control-label']) }}
         <div class='col-sm-8'>
-            {{ Form::text('encounter_description', null, ['id'=>'encounter_description','placeholder'=>'Queue number or other relevant information','class'=>'form-control']) }}
+            {{ Form::text('encounter_description', null, ['id'=>'encounter_description','placeholder'=>Config::get('host.label_description_placeholder'),'class'=>'form-control']) }}
         </div>
     </div>
-
         </div>
     </div>
 
 <div class="target">
 	<br>
-		<h3>Admission</h3>
+		<h3>{{ Config::get('host.label_admission') }}</h3>
 	<hr>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>
-        {{ Form::label('Ward', 'Ward',['class'=>'col-sm-3 control-label']) }}
+        {{ Form::label('Ward', Config::get('host.label_ward'),['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::select('ward_code', $wards, null, ['id'=>'ward_code','onchange'=>'wardChanged()','class'=>'form-control']) }}
         </div>
@@ -150,7 +143,7 @@
     </div>
 
     <div class='form-group  @if ($errors->has('user_id')) has-error @endif'>
-        <label for='user_id' class='col-sm-3 control-label'>Consultant<span style='color:red;'> *</span></label>
+        <label for='user_id' class='col-sm-3 control-label'>{{ Config::get('host.label_consultant') }}<span style='color:red;'> *</span></label>
         <div class='col-sm-9'>
             {{ Form::select('user_id', $consultants,null, ['id'=>'user_id','class'=>'form-control']) }}
             @if ($errors->has('user_id')) <p class="help-block">{{ $errors->first('user_id') }}</p> @endif

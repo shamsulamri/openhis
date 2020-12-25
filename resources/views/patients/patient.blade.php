@@ -357,7 +357,7 @@
 					<!-- section -->
 						<div class="row">
 								<div class="col-xs-6">
-									<h4>Current Address</h4>
+									<h4>{{ Config::get('host.label_current_address') }}</h4>
 									<hr>
 									<div class='form-group  @if ($errors->has('patient_cur_street_1')) has-error @endif'>
 										{{ Form::label('Street 1', 'Address 1',['class'=>'col-sm-3 control-label']) }}
@@ -413,7 +413,7 @@
 
 								</div>
 								<div class="col-xs-6">
-									<h4>Permanent Address</h4>
+									<h4>{{ Config::get('host.label_permanent_address') }}</h4>
 									<hr>
 									<div class='form-group  @if ($errors->has('patient_per_street_1')) has-error @endif'>
 										{{ Form::label('Address 1', 'Address 1',['class'=>'col-sm-3 control-label']) }}

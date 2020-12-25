@@ -94,7 +94,6 @@
 				<a href="{{ url('/purchase_request_statuses') }}">Purchase Request Status</a><br>
 				<a href="{{ url('/product_category_parents') }}">Product Parent Categories</a><br>
 				<a href="{{ url('/product_categories') }}">Product Categories</a><br>
-				<a href="{{ url('/product_groups') }}">Product Groups</a><br>
 				<a href="{{ url('/product_statuses') }}">Product Status</a><br>
 				<a href="{{ url('/stock_movements') }}">Stock Movements</a><br>
 				<a href="{{ url('/stock_tags') }}">Stock Tags</a><br>
@@ -132,7 +131,6 @@
 			</div>
 	</div>
 	</h4>
-<br>
 <h3>Form</h3>
 	<h4>
 	<div class="row">
@@ -215,6 +213,7 @@
 			</div>
 	</div>
 	</h4>
+<br>
 <h3>Medical Record</h3>
 	<h4>
 	<div class="row">
