@@ -1,8 +1,8 @@
 # OpenHIS
 
-## (Hospital Information System)
+## Hospital Information System
 
-### https://shamsulamri.github.io[https://shamsulamri.github.io]
+### [https://shamsulamri.github.io](https://shamsulamri.github.io)
 
 An open source hospital information system for small or large organisation. Contains all the essential modules for running a hospital from patient registration to billing. Built on top of LAMP stack with LARAVEL framework for scalability and great support from the community.
 
