@@ -4,6 +4,8 @@ An open source hospital information system for small or large organisation. Cont
 
 The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a private clinic, hemodialysis center, homecare or any other primary care service it should be able to handle the requirement.
 
+<img src='https://shamsulamri.github.io/assets/img/prescription.png' class='img-fluid border border-secondary'>
+
 ### Features
 
 - Patient registration, appointment & scheduling
@@ -83,7 +85,7 @@ In order to ensure the application runs first time I have decided to use the dev
 
 7. Change directory to /var/www/html/openhis/ and change the folder permission 
 
-		cd openhis/
+		cd /var/www/html/openhis/
 		chmod -R gu+w storage
 		chmod -R guo+w storage
 		chmod -R gu+w bootstrap/cache
@@ -109,7 +111,7 @@ In order to ensure the application runs first time I have decided to use the dev
 		DocumentRoot /var/www/html/openhis/public
 
 		<Directory "/var/www/html/openhis/public">
-				Allowoverride All
+			Allowoverride All
 		</Directory>
 
 11. Run the following command and restart webserver
