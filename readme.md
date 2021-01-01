@@ -4,7 +4,7 @@ An open source hospital information system for small or large organisation. Cont
 
 The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a private clinic, hemodialysis center, homecare or any other primary care service it should be able to handle the requirement.
 
-<img src='https://shamsulamri.github.io/assets/img/prescription.png' class='img-fluid border border-secondary'>
+[Read more...](https://shamsulamri.github.io)
 
 ### Features
 
@@ -47,7 +47,7 @@ In order to ensure the application runs first time I have decided to use the dev
 
 		alias composer='/usr/local/bin/composer.phar'
 
-2. MySQL (5.7.32)
+3. MySQL (5.7.32)
 
 	For details visits https://computingforgeeks.com/how-to-install-mysql-on-ubuntu-focal/
 
@@ -65,25 +65,25 @@ In order to ensure the application runs first time I have decided to use the dev
 
 		sudo apt install -f mysql-client=5.7.32-1ubuntu18.04 mysql-community-server=5.7.32-1ubuntu18.04 mysql-server=5.7.32-1ubuntu18.04
 
-3. Clone the project
+4. Clone the project
 	
 		git clone https://github.com/shamsulamri/openhis.git
 
-4. Create database
+5. Create database
 
 		mysql -u root -p
 		create database his_open;
 		exit
 
-5. Restore the included sql file (his_open.sql) located in the openhis folder.
+6. Restore the included sql file (his_open.sql) located in the openhis folder.
 
 		mysql -u root -p his_open < his_open.sql
 
-6. Move the openhis folder
+7. Move the openhis folder
 
 		sudo mv openhis/ /var/www/html/
 
-7. Change directory to /var/www/html/openhis/ and change the folder permission 
+8. Change directory to /var/www/html/openhis/ and change the folder permission 
 
 		cd /var/www/html/openhis/
 		chmod -R gu+w storage
@@ -91,7 +91,7 @@ In order to ensure the application runs first time I have decided to use the dev
 		chmod -R gu+w bootstrap/cache
 		chmod -R guo+w bootstrap/cache
 
-8. While in the openhis/ directory 
+9. While in the openhis/ directory 
 
 		cp .env.example .env
 
@@ -102,11 +102,11 @@ In order to ensure the application runs first time I have decided to use the dev
 		DB_USERNAME=root
 		DB_PASSWORD=password
 
-9. Run the following command
+10. Run the following command
 
 		php artisan key:generate
 
-10. Edit /etc/apache2/sites-available/000-default.conf and add the following lines:
+11. Edit /etc/apache2/sites-available/000-default.conf and add the following lines:
 
 		DocumentRoot /var/www/html/openhis/public
 
@@ -114,12 +114,12 @@ In order to ensure the application runs first time I have decided to use the dev
 			Allowoverride All
 		</Directory>
 
-11. Run the following command and restart webserver
+12. Run the following command and restart webserver
 
 		a2enmod rewrite
 		service apache2 restart
 
-12. Open browser and enter http://localhost in the URL.
+13. Open browser and enter http://localhost in the URL.
 
 ### Docker Container
 
