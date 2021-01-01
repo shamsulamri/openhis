@@ -4,7 +4,7 @@ An open source hospital information system for small or large organisation. Cont
 
 The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a private clinic, hemodialysis center, homecare or any other primary care service it should be able to handle the requirement.
 
-<img Gsrc='https://shamsulamri.github.io/assets/img/prescription.png' class='img-fluid border border-secondary'>
+<img src='https://shamsulamri.github.io/assets/img/prescription.png' class='img-fluid border border-secondary'>
 
 ### Features
 
