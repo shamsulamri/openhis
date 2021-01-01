@@ -20,11 +20,11 @@ The system was initially designed for secondary care facility but it can also be
 
 ### Installation & Configuration
 
-In order to ensure the application runs first time I have decided to use the development versions but feel free to upgrade them later.
+In order to ensure the application runs first time I have decided to use the development versions but feel free to upgrade them later. The installation script below was created in Ubuntu 20.04.1 LTS.
 
 1. PHP (5.6)
 
-	https://tecadmin.net/install-php5-on-ubuntu/
+	For details visit https://tecadmin.net/install-php5-on-ubuntu/
 
 		sudo add-apt-repository ppa:ondrej/php
 		sudo apt-get update
@@ -37,7 +37,7 @@ In order to ensure the application runs first time I have decided to use the dev
 
 2. Composer
 
-		https://getcomposer.org/download/
+	For details visit https://getcomposer.org/download/
 
 	Run composer from anywhere:
 
@@ -47,7 +47,7 @@ In order to ensure the application runs first time I have decided to use the dev
 
 2. MySQL (5.7.24)
 
-	https://computingforgeeks.com/how-to-install-mysql-on-ubuntu-focal/
+	For details visits https://computingforgeeks.com/how-to-install-mysql-on-ubuntu-focal/
 
 		sudo apt update
 		sudo apt install wget -y
@@ -106,11 +106,11 @@ In order to ensure the application runs first time I have decided to use the dev
 
 10. Edit /etc/apache2/sites-available/000-default.conf and add the following lines:
 
-	DocumentRoot /var/www/html/openhis/public
+		DocumentRoot /var/www/html/openhis/public
 
-	<Directory "/var/www/html/openhis/public">
-		Allowoverride All
-	</Directory>
+		<Directory "/var/www/html/openhis/public">
+				Allowoverride All
+		</Directory>
 
 11. Run the following command and restart webserver
 
