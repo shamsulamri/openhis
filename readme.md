@@ -45,7 +45,7 @@ In order to ensure the application runs first time I have decided to use the dev
 
 		alias composer='/usr/local/bin/composer.phar'
 
-2. MySQL (5.7.24)
+2. MySQL (5.7.32)
 
 	For details visits https://computingforgeeks.com/how-to-install-mysql-on-ubuntu-focal/
 
@@ -73,7 +73,7 @@ In order to ensure the application runs first time I have decided to use the dev
 		create database his_open;
 		exit
 
-5. Restore the sql file
+5. Restore the included sql file (his_open.sql) located in the openhis folder.
 
 		mysql -u root -p his_open < his_open.sql
 
@@ -116,6 +116,8 @@ In order to ensure the application runs first time I have decided to use the dev
 
 		a2enmod rewrite
 		service apache2 restart
+
+12. Open browser and enter http://localhost in the URL.
 
 ### Docker Container
 
