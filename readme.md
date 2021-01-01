@@ -121,7 +121,23 @@ In order to ensure the application runs first time I have decided to use the dev
 		a2enmod rewrite
 		service apache2 restart
 
-13. Finally open browser and enter http://localhost in the URL.
+13. Finally open browser and enter http://localhost in the URL. Below is a list of users (username:password) you can start with.
+
+	Patient Registration
+
+		walter:password
+
+	Physician
+
+		shamsul:password
+
+	Billing
+
+		hidayat:password
+
+	System Administrator
+
+		sa:password
 
 ### Docker Container
 
@@ -131,11 +147,11 @@ I will release a docker container for easy and quick installation soon.
 
 Homepage is at:
 
-[https://shamsulamri.github.io](https://shamsulamri.github.io)
+[https://iodojo.com](https://iodojo.com)
 
 Demo application is at:
 
-[https://iodojo.com](https://iodojo.com)
+[https://his.iodojo.com](https://his.iodojo.com)
 
 Training Script is at:
 
