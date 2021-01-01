@@ -479,5 +479,18 @@ class DojoUtility
 
 			return 0;
 		}
+
+		public static function multipleBill()
+		{
+				return true;
+				/*
+				if (Config::get('host.multiple_bill')==1) {
+						return true;	
+				} else {
+						return false;
+				}
+				 */
+		}
+
 }
 

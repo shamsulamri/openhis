@@ -14,6 +14,7 @@ class BillTotal extends Model
 	protected $table = 'bill_totals';
 	protected $fillable = [
 				'encounter_id',
+				'multi_id',
 				'bill_non_claimable',
 				'bill_total',
 				'bill_deposit',
@@ -22,8 +23,8 @@ class BillTotal extends Model
 				'bill_total_payable',
 				'deleted_at'];
 	
-    protected $guarded = ['encounter_id'];
-    protected $primaryKey = 'encounter_id';
+    protected $guarded = ['id'];
+    protected $primaryKey = 'id';
     public $incrementing = true;
     
 

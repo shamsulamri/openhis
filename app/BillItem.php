@@ -13,6 +13,7 @@ class BillItem extends Model
 	protected $fillable = [
 				'encounter_id',
 				'order_id',
+				'multi_id',
 				'product_code',
 				'tax_code',
 				'tax_rate',

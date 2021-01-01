@@ -134,7 +134,6 @@ class PaymentController extends Controller
 
 	public function store(Request $request) 
 	{
-
 			$payment_credit = new PaymentCredit();
 			$payment_payor = new PaymentPayor();
 

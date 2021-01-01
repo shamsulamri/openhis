@@ -29,6 +29,7 @@ class Encounter extends Model
 				'book_id',
 				'appointment_id',
 				'bill_status',
+				'bill_close',
 		];
 	
     protected $guarded = ['encounter_id'];
@@ -86,6 +87,21 @@ class Encounter extends Model
 	{
 			return $this->hasOne('App\Bill', 'encounter_id');
 	}
+
+	/*
+	public function hasBilled()
+	{
+			if (config('host.multiple_bill')==1) {
+					return false;
+			} else {
+					if ($this->hasOne('App\Bill', 'encounter_id')) {
+							return true;
+					} else {
+							return false;
+					}
+			}
+	}
+	 */
 
 	public function medical_certificate()
 	{

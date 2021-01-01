@@ -26,6 +26,11 @@ use App\Inventory;
 use App\ProductUom;
 use App\InventoryBatch;
 use App\Product;
+use App\BillItem;
+use App\BillTotal;
+use App\BedCharge;
+use App\Payment;
+use App\PaymentPayor;
 
 class BillController extends Controller
 {
@@ -80,9 +85,30 @@ class BillController extends Controller
 							$encounter = Encounter::find($bill->encounter_id);
 							$bill_helper = new BillHelper();
 							$encounter->bill_status = $bill_helper->billStatus($encounter->encounter_id);
+							if ($request->bill_close) $encounter->bill_close=1;
 							$encounter->save();
 
 							$this->addDropchargeSales($bill->encounter_id);	
+
+							BillItem::where('encounter_id', $bill->encounter_id)
+									->where('multi_id', 0)
+									->update(['multi_id'=>$bill->id]);
+							
+							BillTotal::where('encounter_id', $bill->encounter_id)
+									->where('multi_id', 0)
+									->update(['multi_id'=>$bill->id]);
+
+							BedCharge::where('encounter_id', $bill->encounter_id)
+									->where('multi_id', 0)
+									->update(['multi_id'=>$bill->id]);
+
+							Payment::where('encounter_id', $bill->encounter_id)
+									->where('multi_id', 0)
+									->update(['multi_id'=>$bill->id]);
+									
+							PaymentPayor::where('encounter_id', $bill->encounter_id)
+									->where('multi_id', 0)
+									->update(['multi_id'=>$bill->id]);
 									
 							return view('bills.post', [
 									'patient'=>$encounter->patient,

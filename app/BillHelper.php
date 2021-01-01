@@ -17,7 +17,8 @@ class BillHelper
 			Log::info($encounter_id);
 			Log::info($non_claimable);
 			$bill_grand_total = DB::table('bill_items')
-					->where('encounter_id','=', $encounter_id);
+					->where('encounter_id','=', $encounter_id)
+					->where('multi_id', 0);
 
 			$bill_grand_total = $bill_grand_total->where('bill_non_claimable','=', $non_claimable);
 
@@ -43,6 +44,7 @@ class BillHelper
 					->where('patient_id','=', $patient_id)
 					->where('encounter_id','=', $encounter_id)
 					->where('payment_non_claimable', '=', $non_claimable)
+					->where('multi_id', 0)
 					->sum('payment_amount');
 
 			Log::info($payment_total);
@@ -147,6 +149,11 @@ class BillHelper
 
 	public function billStatus($encounter_id)
 	{
+			/*
+			 * Bill status
+			 * 0 = open
+			 * 1 = close
+			 */
 			$encounter = Encounter::find($encounter_id);
 
 			$status = 0;

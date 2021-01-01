@@ -33,6 +33,7 @@ use App\BedCharge;
 use App\Payment;
 use App\OrderHelper;
 use App\User;
+use App\PaymentPayor;
 
 class BillItemController extends Controller
 {
@@ -46,15 +47,27 @@ class BillItemController extends Controller
 	public function generate($id) 
 	{
 			$bill_existing = DB::table('bill_items')
-								->where('encounter_id','=',$id);
-			$bill_existing->delete();
-			$payments = Payment::where('encounter_id', '=', $id)->delete();
+								->where('encounter_id','=',$id)
+								->where('multi_id', 0)
+								->delete();
+
+			Payment::where('encounter_id', '=', $id)
+					->where('multi_id', 0)
+					->delete();
+
+			PaymentPayor::where('encounter_id', '=', $id)
+					->where('multi_id', 0)
+					->delete();
+
+			BillTotal::where('encounter_id', '=', $id)
+					->where('multi_id', 0)
+					->delete();
 
 			$this->updateOrderPrices($id);
 			return redirect('/bill_items/'.$id);
 	}
 
-	public function bedBills($encounter_id) {
+	public function bedBills($encounter_id, $multi_id = 0) {
 			$encounter = Encounter::find($encounter_id);
 			$sql = "
 				select bed_code, bed_stop, datediff(bed_stop, bed_start) as los, datediff(now(),bed_start) as los2, b.product_code, c.tax_code, tax_rate, uom_price as product_sale_price, block_room, product_name 
@@ -63,10 +76,10 @@ class BillItemController extends Controller
 				left join tax_codes as c on (c.tax_code = b.product_output_tax)
 				left join discharges as d on (d.encounter_id = a.encounter_id)
 				left join product_uoms as g on (g.product_code = b.product_code and g.unit_code = b.unit_code)
-				where a.encounter_id=%d
+				where a.encounter_id=%d and multi_id = %d
 			";
 
-			$sql = sprintf($sql, $encounter_id);
+			$sql = sprintf($sql, $encounter_id, $multi_id);
 
 			$beds = DB::select($sql);
 
@@ -900,12 +913,25 @@ class BillItemController extends Controller
 			}
 	}
 
-	public function index($id, $non_claimable=null)
+	public function index(Request $request, $id, $non_claimable=null, $multi_id=0)
 	{
+			$encounter = Encounter::find($id);
+			if ($request->multi_id) {
+					$multi_id = $request->multi_id;
+			}
+
+			if ($encounter->bill_close==0) {
+					$generated_bills = Bill::where('encounter_id', $id)->lists('id', 'id')->prepend('Latest','0');
+			} else {
+					$generated_bills = Bill::where('encounter_id', $id)->lists('id', 'id');
+					if (!$request->multi_id) {
+							$multi_id = Bill::where('encounter_id', $id)->first()->id;
+					}
+			}
+
 			$this->updateBedOrder($id);
 			$this->updateOrderPrices($id);
 			$bill_label = "";
-			$encounter = Encounter::find($id);
 
 			if (!empty($encounter->sponsor_code)) {
 				if (!empty($non_claimable)) {
@@ -933,6 +959,8 @@ class BillItemController extends Controller
 					->orderBy('category_name')
 					->orderBy('product_name');
 
+			$bills = $bills->where('multi_id', $multi_id);
+
 			$bills = $bills->where('bill_non_claimable','=', $non_claimable);
 			$bills = $bills->paginate($this->paginateValue);
 
@@ -944,7 +972,7 @@ class BillItemController extends Controller
 							->update(['encounter_id' => $id]);
 			}
 
-			if ($bills->count()==0 && empty($encounter->bill)) {
+			if ($bills->count()==0 && $multi_id==0) {
 				$encounter = Encounter::find($id);
 
 				if (!empty($encounter->sponsor_code)) {
@@ -964,7 +992,7 @@ class BillItemController extends Controller
 				}
 
 				/** Compile bed bills **/
-				$this->bedBills($id);
+				$this->bedBills($id, $multi_id);
 
 				//$this->minusPackages($id);
 
@@ -978,6 +1006,8 @@ class BillItemController extends Controller
 					->where('bill_non_claimable','=', $non_claimable)
 					->orderBy('category_name')
 					->orderBy('product_name');
+
+				$bills = $bills->where('multi_id', $multi_id);
 
 				$bills = $bills->paginate($this->paginateValue);
 				$bill_label = "(Claimable)";
@@ -1008,13 +1038,20 @@ class BillItemController extends Controller
 			$payments = DB::table('payments as a')
 					->leftJoin('payment_methods as b', 'b.payment_code','=','a.payment_code')
 					->where('encounter_id','=', $id)
-					->where('payment_non_claimable', '=', $non_claimable)
-					->paginate($this->paginateValue);
+					->where('payment_non_claimable', '=', $non_claimable);
+
+			$payments = $payments->where('multi_id', $multi_id);
+
+			$payment_total = $payments->sum('payment_amount');
+
+			$payments = $payments->paginate($this->paginateValue);
 			
+			/*
 			$payment_total = DB::table('payments')
 					->where('encounter_id','=', $id)
 					->where('payment_non_claimable', '=', $non_claimable)
 					->sum('payment_amount');
+			 */
 
 			if (empty($payment_total)) {
 					$payment_total=0;
@@ -1047,6 +1084,12 @@ class BillItemController extends Controller
 			
 			$billPosted=False;
 			if (count($billPost)>0) $billPosted=True;
+
+			if (DojoUtility::multipleBill()==1) {
+				if ($multi_id==0) {
+						$billPosted = False;
+				}
+			}
 
 			$hasMc = False;
 			$mc = MedicalCertificate::where('encounter_id', '=', $id)->get();
@@ -1089,18 +1132,25 @@ class BillItemController extends Controller
 			$total_payable = DojoUtility::roundUp($bill_grand_total);
 
 			// Bill Footer 
-			$posted_bill = Bill::where('encounter_id', '=', $id)
-					->where('bill_non_claimable', '=', $non_claimable)
-					->first();
+			if ($billPosted) {
+					$posted_bill = Bill::where('encounter_id', '=', $id)
+							->where('bill_non_claimable', '=', $non_claimable);
+					if ($multi_id>0) { 
+							$posted_bill = $posted_bill->where('id', $multi_id);
+					} 
+					$posted_bill = $posted_bill->first();
+			}
 
-			if (empty($postedBill)) {
+			if (empty($billPosted)) {
 					$billFooter = BillTotal::where('encounter_id', $id)
 							->where('bill_non_claimable', $non_claimable)
+							->where('multi_id', 0)
 							->first();
-					if ($billFooter) {
-							$billFooter->delete();
-					}
-					$billFooter = new BillTotal();
+
+					if (empty($billFooter)) {
+							$billFooter = new BillTotal();
+					} 
+
 					$billFooter->encounter_id = $id;
 					$billFooter->bill_non_claimable = $non_claimable;
 					$billFooter->bill_total = $bill_total;
@@ -1110,6 +1160,9 @@ class BillItemController extends Controller
 					$billFooter->bill_total_payable = $total_payable;
 					$billFooter->save();
 			} else {
+					$billFooter = BillTotal::where('encounter_id', $id)
+							->where('multi_id', $multi_id)
+							->first();
 					$total_payable = $billFooter->bill_total_payable;
 			}
 
@@ -1119,6 +1172,7 @@ class BillItemController extends Controller
 					$bill_grand_total = $posted_bill->bill_grand_total;
 					$total_payable = DojoUtility::roundUp($posted_bill->bill_grand_total);
 			}
+
 
 			return view('bill_items.index', [
 					'bills'=>$bills,
@@ -1143,6 +1197,8 @@ class BillItemController extends Controller
 					'claimable_amount'=>$claimable_amount,
 					'hasMc'=>$hasMc,
 					'total_payable'=>$total_payable,
+					'generated_bills'=>$generated_bills,
+					'multi_id'=>$request->multi_id?:0,
 			]);
 	}
 

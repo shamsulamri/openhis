@@ -20,8 +20,102 @@ The system was initially designed for secondary care facility but it can also be
 
 ### Installation & Configuration
 
-1. See laravel documentation for configuration and installation.
-2. Run the his_open.sql to restore the database.
+In order to ensure the application runs first time I have decided to use the development versions but feel free to upgrade them later.
+
+1. PHP (5.6)
+
+	https://tecadmin.net/install-php5-on-ubuntu/
+
+		sudo add-apt-repository ppa:ondrej/php
+		sudo apt-get update
+		sudo apt-get install -y php5.6
+		sudo apt-get install -y php5.6-mysql 
+
+	Confirm the installed php version:
+
+		php -v
+
+2. Composer
+
+		https://getcomposer.org/download/
+
+	Run composer from anywhere:
+
+		sudo mv composer.phar /usr/local/bin/
+
+		alias composer='/usr/local/bin/composer.phar'
+
+2. MySQL (5.7.24)
+
+	https://computingforgeeks.com/how-to-install-mysql-on-ubuntu-focal/
+
+		sudo apt update
+		sudo apt install wget -y
+		wget https://dev.mysql.com/get/mysql-apt-config_0.8.12-1_all.deb
+
+	Once downloaded, install the repository by running the command below:
+
+		sudo dpkg -i mysql-apt-config_0.8.12-1_all.deb
+
+	Run the below command to update your system packages
+
+		sudo apt-get update
+
+		sudo apt install -f mysql-client=5.7.32-1ubuntu18.04 mysql-community-server=5.7.32-1ubuntu18.04 mysql-server=5.7.32-1ubuntu18.04
+
+3. Clone the project
+	
+		git clone https://github.com/shamsulamri/openhis.git
+
+4. Create database
+
+		mysql -u root -p
+		create database his_open;
+		exit
+
+5. Restore the sql file
+
+		mysql -u root -p his_open < his_open.sql
+
+6. Move the openhis folder
+
+		sudo mv openhis/ /var/www/html/
+
+7. Change directory to /var/www/html/openhis/ and change the folder permission 
+
+		cd openhis/
+		chmod -R gu+w storage
+		chmod -R guo+w storage
+		chmod -R gu+w bootstrap/cache
+		chmod -R guo+w bootstrap/cache
+
+8. While in the openhis/ directory 
+
+		cp .env.example .env
+
+	Edit the .env and change the database parameter:
+
+		DB_HOST=localhost
+		DB_DATABASE=his_open
+		DB_USERNAME=root
+		DB_PASSWORD=password
+
+9. Run the following command
+
+		php artisan key:generate
+
+10. Edit /etc/apache2/sites-available/000-default.conf and add the following lines:
+
+	DocumentRoot /var/www/html/openhis/public
+
+	<Directory "/var/www/html/openhis/public">
+		Allowoverride All
+	</Directory>
+
+11. Run the following command and restart webserver
+
+		a2enmod rewrite
+		service apache2 restart
 
 ### Docker Container
 

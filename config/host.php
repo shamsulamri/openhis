@@ -16,6 +16,7 @@ return [
     'label_permanent_address'      => env('LABEL_PERMANENT_ADDRESS', 'Permanent Address'),
     'label_description_placeholder'      => env('LABEL_DESCRIPTION_PLACEHOLDER', 'Queue number or other relevant information'),
     'label_description_label'      => env('LABEL_DESCRIPTION_LABEL', 'Description'),
+    'multiple_bill'      => env('MULTIPLE_BILL', 0),
 ]
 
 ?>
