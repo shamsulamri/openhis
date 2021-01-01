@@ -1,4 +1,4 @@
-## Open Hospital Information System (OpenHIS)
+## OpenHIS (Hospital Information System)
 
 An open source hospital information system for small or large organisation. Contains all the essential modules for running a hospital from patient registration to billing. Built on top of LAMP stack with LARAVEL framework for scalability and great support from the community.
 
@@ -119,7 +119,7 @@ In order to ensure the application runs first time I have decided to use the dev
 		a2enmod rewrite
 		service apache2 restart
 
-13. Open browser and enter http://localhost in the URL.
+13. Finally open browser and enter http://localhost in the URL.
 
 ### Docker Container
 
@@ -129,15 +129,15 @@ I will release a docker container for easy and quick installation soon.
 
 Homepage is at:
 
-	https://shamsulamri.github.io
+	[https://shamsulamri.github.io](https://shamsulamri.github.io)
 
 Demo application is at:
 
-	https://iodojo.com
+	[https://iodojo.com](https://iodojo.com)
 
 Training Script is at:
 
-	https://dojo.iodojo.com
+	[https://dojo.iodojo.com](https://dojo.iodojo.com)
 
 The scripts are a bit rough, going through updating process right now.
 
