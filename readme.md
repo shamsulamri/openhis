@@ -129,15 +129,16 @@ I will release a docker container for easy and quick installation soon.
 
 Homepage is at:
 
-	[https://shamsulamri.github.io](https://shamsulamri.github.io)
+[https://shamsulamri.github.io](https://shamsulamri.github.io)
 
 Demo application is at:
 
-	[https://iodojo.com](https://iodojo.com)
+[https://iodojo.com](https://iodojo.com)
 
 Training Script is at:
 
-	[https://dojo.iodojo.com](https://dojo.iodojo.com)
+[https://dojo.iodojo.com](https://dojo.iodojo.com)
+
 
 The scripts are a bit rough, going through updating process right now.
 
