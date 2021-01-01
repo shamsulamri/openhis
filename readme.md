@@ -1,10 +1,12 @@
-## OpenHIS (Hospital Information System)
+# OpenHIS
+
+## (Hospital Information System)
+
+### https://shamsulamri.github.io[https://shamsulamri.github.io]
 
 An open source hospital information system for small or large organisation. Contains all the essential modules for running a hospital from patient registration to billing. Built on top of LAMP stack with LARAVEL framework for scalability and great support from the community.
 
 The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a private clinic, hemodialysis center, homecare or any other primary care service it should be able to handle the requirement.
-
-[Read more...](https://shamsulamri.github.io)
 
 ### Features
 
@@ -55,11 +57,11 @@ In order to ensure the application runs first time I have decided to use the dev
 		sudo apt install wget -y
 		wget https://dev.mysql.com/get/mysql-apt-config_0.8.12-1_all.deb
 
-	Once downloaded, install the repository by running the command below:
+	Once downloaded, install the repository by running the command below
 
 		sudo dpkg -i mysql-apt-config_0.8.12-1_all.deb
 
-	Run the below command to update your system packages
+	Run the command below to update your system packages
 
 		sudo apt-get update
 
