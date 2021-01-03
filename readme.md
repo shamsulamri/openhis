@@ -6,9 +6,9 @@
 
 An open source hospital information system for small or large organisation. Contains all the essential modules for running a hospital from patient registration to billing. Built on top of LAMP stack with LARAVEL framework for scalability and great support from the community.
 
-The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a private clinic, hemodialysis center, homecare or any other primary care service it should be able to handle the requirement.
+The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a private clinic, hemodialysis center, homecare or any other primary care services it should be able to handle the requirement.
 
-### Features
+### Modules
 
 - Patient registration, appointment & scheduling
 - Admission, Queue, Discharge and Transfer
@@ -139,9 +139,13 @@ In order to ensure the application runs first time I have decided to use the dev
 
 		sa:password
 
+14. In order to understand how to use the application I have created a training script for the users to follow and understand the process of patient journey from registration to billing and everything in between. Please visit iodojo.com to use the training module and familirize yourself with the application. I use it as a replacement for face to face training during this trying time. I will continue to add new content and updates the scripts regularly.
+
 ### Docker Container
 
-I will release a docker container for easy and quick installation soon.
+Docker image can be downloaded at:
+
+https://hub.docker.com/r/graymatter/openhis
 
 ### Web Resources
 
