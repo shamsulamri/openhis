@@ -97,7 +97,7 @@ In order to ensure the application runs first time I have decided to use the dev
 
 		cp .env.example .env
 
-	Edit the .env and change the database parameter:
+	Edit the .env file and change the database connection parameters:
 
 		DB_HOST=localhost
 		DB_DATABASE=his_open
@@ -139,13 +139,26 @@ In order to ensure the application runs first time I have decided to use the dev
 
 		sa:password
 
-14. In order to understand how to use the application I have created a training script for the users to follow and understand the process of patient journey from registration to billing and everything in between. Please visit iodojo.com to use the training module and familirize yourself with the application. I use it as a replacement for face to face training during this trying time. I will continue to add new content and updates the scripts regularly.
+14. In order to understand how to use the application I have created a training script for the users to follow and understand the process of patient journey from registration to billing and everything in between. Please visit iodojo.com to use the training module and familirize yourself with the application. I use it as a replacement for face to face application training during this trying time. I will continue to add new content and updates the scripts regularly.
 
 ### Docker Container
 
-Docker image can be downloaded at:
+Docker repository is at:
 
 https://hub.docker.com/r/graymatter/openhis
+
+Instruction:
+
+1. Run the following command
+
+		sudo docker run -it -p 80:80 --name openhis graymatter/openhis
+
+2. Once the container starts in the interactive mode start the following service
+
+		service apache2 start
+		service mysql start
+
+3. Finally open your browser and enter *localhost* in the address bar. 
 
 ### Web Resources
 
