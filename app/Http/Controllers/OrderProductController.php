@@ -58,7 +58,7 @@ class OrderProductController extends Controller
 			$order_products = Product::whereIn('products.product_code', $favorites)
 					->join(DB::raw('(select count(*) as total, product_code from orders where user_id='.Auth::user()->id.' group by product_code having total>1 limit 20) totalOrders'), function($join)
 					{
-							$join->on('products.product_code', '=', '.totalOrders.product_code');
+							$join->on('products.product_code', '=', 'totalOrders.product_code');
 					})
 					->orderBy('total', 'desc')
 									->paginate($this->paginateValue);
