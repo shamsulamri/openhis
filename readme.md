@@ -147,19 +147,6 @@ Docker repository is at:
 
 https://hub.docker.com/r/graymatter/openhis
 
-Instruction:
-
-1. Run the following command
-
-		sudo docker run -it -p 80:80 --name openhis graymatter/openhis
-
-2. Once the container starts in the interactive mode start the following service
-
-		service apache2 start
-		service mysql start
-
-3. Finally open your browser and enter *localhost* in the address bar. 
-
 ### Web Resources
 
 Homepage is at:
