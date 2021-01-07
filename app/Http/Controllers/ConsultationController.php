@@ -373,6 +373,7 @@ class ConsultationController extends Controller
 						'investigations'=>$investigations,
 						'orders'=>$consultation->orders->pluck('product_code')->toArray(),
 						'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
+						'session_id'=>Session::getId(),
 					]);
 			} else {
 					Log::info("Edit consultation");
@@ -386,6 +387,7 @@ class ConsultationController extends Controller
 						'investigations'=>$investigations,
 						'orders'=>$consultation->orders->pluck('product_code')->toArray(),
 						'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
+						'session_id'=>Session::getId(),
 					]);
 			};
 	}
@@ -756,6 +758,7 @@ class ConsultationController extends Controller
 					'investigations'=>$investigations,
 					'encounter'=>$consultation->encounter,
 					'triage' => Triage::all()->sortBy('triage_position')->lists('triage_name', 'triage_code')->prepend('',''),
+					'session_id'=>Session::getId(),
 					]);
 	}
 

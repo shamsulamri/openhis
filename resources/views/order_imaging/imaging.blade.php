@@ -17,7 +17,7 @@ select {
 
 @include('orders.tab')
 
-@if ($consultation->encounter->bill)
+@if ($consultation->encounter->bill_close || $consultation->encounter->lock_orders)
 		@include('orders.order_stop')
 @else
 <form id='form' action='/imaging' method='post' class='form-horizontal'>

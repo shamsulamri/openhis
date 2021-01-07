@@ -6,6 +6,7 @@ use DateTime;
 use Log;
 use Excel;
 use App\StockHelper;
+use Config;
 
 class DojoUtility 
 {
@@ -482,14 +483,11 @@ class DojoUtility
 
 		public static function multipleBill()
 		{
-				return true;
-				/*
 				if (Config::get('host.multiple_bill')==1) {
 						return true;	
 				} else {
 						return false;
 				}
-				 */
 		}
 
 }

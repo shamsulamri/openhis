@@ -111,7 +111,7 @@ input {
 						<!--- Clinical Pathway -->
 						<iframe 
 								style="border:0"
-							  	src="http://localhost:8084/cp/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}"
+							  	src="http://localhost:8084/cp/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?session_id={{ $session_id }}"
 							   	width="100%" frameBorder="0"
 							   	height="800">
 						</iframe>

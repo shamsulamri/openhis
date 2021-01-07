@@ -95,7 +95,7 @@
 
 <div class="target">
 	<br>
-		<h3>{{ Config::get('host.label_admission') }}</h3>
+		<h3>{{ Config::get('host.label_inpatient') }}</h3>
 	<hr>
 
     <div class='form-group  @if ($errors->has('type_code')) has-error @endif'>

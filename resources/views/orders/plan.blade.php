@@ -13,7 +13,7 @@ iframe { border: 1px #e5e5e5 solid; }
 
 @include('orders.tab')
 
-@if ($consultation->encounter->bill || $consultation->encounter->lock_orders)
+@if ($consultation->encounter->bill_close || $consultation->encounter->lock_orders)
 		@include('orders.order_stop')
 @else
 <div class="row">

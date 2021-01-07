@@ -33,7 +33,7 @@
 				@if ($location->encounter_code =='emergency')
 						Emergency
 				@else
-						Outpatient
+						{{ Config::get('host.label_outpatient') }}
 				@endif
 						@if (count($outpatients)>0)
 							 <label class="label label-primary">{{ count($outpatients) }}</label>
@@ -41,7 +41,8 @@
 					</a>
 				</li>
 				<li>
-					<a data-toggle="tab" href="#tab-2">Inpatient
+					<a data-toggle="tab" href="#tab-2">
+						{{ Config::get('host.label_inpatient') }}
 						@if (count($inpatients)>0)
 							 <label class="label label-primary">{{ count($inpatients) }}</label>
 						@endif

@@ -58,7 +58,7 @@ label {
 
 @include('orders.tab')
 
-@if ($consultation->encounter->bill || $consultation->encounter->lock_orders)
+@if ($consultation->encounter->bill_close || $consultation->encounter->lock_orders)
 		@include('orders.order_stop')
 @else
 <!--

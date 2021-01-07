@@ -438,10 +438,10 @@ if (!empty($encounter->sponsor_code)) {
 		</tr>
 		<tr>
 				<td width='30'>
-					<input type='checkbox' name='bill_close' id='bill_close' value='1' onchange='javascript:enablePostButton()'>
+					<input type='checkbox' name='bill_close' id='bill_close' value='1' onchange='javascript:enablePostButton2()'>
 				</td>
 				<td>
-					This is the final bill posting.
+					<strong>Close encounter and end bill.</strong>
 				</td>
 		</tr>
 	</table>
@@ -474,12 +474,38 @@ This bill has been posted.
 			postForm = document.getElementById('post_form');
 			postForm.button_post.disabled=true;
 	}
+
+	function enablePostButton2() {
+			postCheckbox = document.getElementById("post_checkbox");
+			billClose = document.getElementById("bill_close");
+
+			if (billClose.checked==false) {
+					postCheckbox.checked=false;
+					postForm.button_post.disabled=true;
+			} else {
+					postCheckbox.checked=true;
+					if (postForm.post_checkbox.checked==true) {
+							postForm.button_post.disabled=false;
+					} else {
+							postForm.button_post.disabled=true;
+					}
+			}
+	}
+
 	function enablePostButton() {
 			postForm = document.getElementById('post_form');
-			if (postForm.post_checkbox.checked==true) {
-					postForm.button_post.disabled=false;
-			} else {
+			postCheckbox = document.getElementById("post_checkbox");
+			billClose = document.getElementById("bill_close");
+
+			if (postCheckbox.checked==false) {
+					billClose.checked = false;
 					postForm.button_post.disabled=true;
+			} else {
+					if (postForm.post_checkbox.checked==true) {
+							postForm.button_post.disabled=false;
+					} else {
+							postForm.button_post.disabled=true;
+					}
 			}
 	}
 

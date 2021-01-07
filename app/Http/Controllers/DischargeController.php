@@ -194,9 +194,11 @@ class DischargeController extends Controller
 							}
 					}
 
-					DB::table('bill_items')
-						->where('encounter_id','=',$discharge->encounter_id)
-						->delete();
+					if (!DojoUtility::multipleBill()) {
+							DB::table('bill_items')
+								->where('encounter_id','=',$discharge->encounter_id)
+								->delete();
+					}
 
 					$consultation = Consultation::findOrFail($discharge->consultation_id);
 					$consultation->consultation_status = 2;

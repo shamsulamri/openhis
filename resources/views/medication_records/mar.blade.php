@@ -10,7 +10,7 @@
 <h1>
 Medication Administration Records
 </h1>
-@if ($encounter->lock_orders)
+@if ($encounter->bill_close || $encounter->lock_orders)
 	@include('orders.order_stop')
 @endif
 @if ($view)

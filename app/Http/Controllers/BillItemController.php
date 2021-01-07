@@ -1085,7 +1085,7 @@ class BillItemController extends Controller
 			$billPosted=False;
 			if (count($billPost)>0) $billPosted=True;
 
-			if (DojoUtility::multipleBill()==1) {
+			if (DojoUtility::multipleBill()) {
 				if ($multi_id==0) {
 						$billPosted = False;
 				}
