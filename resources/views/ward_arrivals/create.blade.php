@@ -2,7 +2,7 @@
 
 @section('content')
 @include('patients.id_only')
-<h1>Log Ward Arrival</h1>
+<h1>Log Arrival</h1>
 <br>
 
 {{ Form::model($ward_arrival, ['url'=>'ward_arrivals', 'class'=>'form-horizontal','onsubmit'=>'submitButton.disabled = true; return true;']) }} 

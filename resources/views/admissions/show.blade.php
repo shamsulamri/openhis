@@ -3,7 +3,7 @@
 @section('content')
 @include('patients.id_only')
 
-<h1>Admission Options</h1>
+<h1>Options</h1>
 <br>
 <h4>
 
@@ -12,7 +12,7 @@
 				<br><br>
 
 				<span class='fa fa-folder' aria-hidden='true'></span>
-				<a href='{{ URL::to('loans/request/'. $admission->encounter->patient->patient_mrn.'?type=folder') }}'>Folder Request</a>
+				<a href="{{ URL::to('loans/request/'. $admission->encounter->patient->patient_mrn.'?type=folder') }}">Folder Request</a>
 				<br><br>
 		</a>
 				@if (!empty($admission->encounter->discharge))

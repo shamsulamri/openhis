@@ -14,29 +14,36 @@ class BlockDate extends Model
 	protected $fillable = [
 				'block_name',
 				'block_date',
+				'block_date_end',
+				'block_time_start',
+				'block_time_end',
 				'block_recur',
 				'service_id',
 		];
 	
-    protected $guarded = ['block_code'];
-    protected $primaryKey = 'block_code';
+    protected $guarded = ['block_id'];
+    protected $primaryKey = 'block_id';
     public $incrementing = false;
     
 
 	public function validate($input, $method) {
 			$rules = [
-				'block_date'=>'size:10|date_format:d/m/Y',
+        	    'block_date'=>'required|date_format:d/m/Y',
+        	    'block_date_end'=>'date|after:block_date|date_format:d/m/Y',
+				'block_time_end'=>'required_with:block_time_start|date_format:H:i',
+				'block_time_start'=>'date_format:H:i',
 			];
-
 			
         	if ($method=='') {
-        	    $rules['block_code'] = 'required|max:20.0|unique:appointment_block_dates';
-        	    $rules['block_date'] = 'required|date_format:d/m/Y';
+        	    $rules['block_code'] = 'max:20.0';
         	}
-        
 			
 			$messages = [
-				'required' => 'This field is required'
+				'required' => 'This field is required',
+				'block_date_end.after' => 'Date end must be greater than date start.',
+				'block_time_end.required_with' => 'Time end required.',
+				'block_time_start.date_format' => 'Invalid time.',
+				'block_time_end.date_format' => 'Invalid time.',
 			];
 			
 			return validator::make($input, $rules ,$messages);
@@ -47,6 +54,8 @@ class BlockDate extends Model
 	{
 		if (DojoUtility::validateDate($value)==true) {
 			$this->attributes['block_date'] = DojoUtility::dateWriteFormat($value);
+		} else {
+			$this->attributes['block_date'] = null;
 		}
 	}
 
@@ -64,4 +73,33 @@ class BlockDate extends Model
 		return $this->attributes['block_date'];
 	}
 
+	public function setBlockDateEndAttribute($value)
+	{
+		if (DojoUtility::validateDate($value)==true) {
+			$this->attributes['block_date_end'] = DojoUtility::dateWriteFormat($value);
+		} else {
+			$this->attributes['block_date_end'] = null;
+		}
+	}
+
+	public function getBlockDateEnd() 
+	{
+		return $this->attributes['block_date_end'];
+	}
+
+	public function service()
+	{
+			return $this->belongsTo('App\AppointmentService','service_id');
+	}
+
+
+	public function getBlockTimeStartAttribute($value)
+	{
+			return DojoUtility::timeReadFormat($value);
+	}
+
+	public function getBlockTimeEndAttribute($value)
+	{
+			return DojoUtility::timeReadFormat($value);
+	}
 }

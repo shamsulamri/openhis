@@ -907,6 +907,13 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/patient_dependant/search', 'PatientDependantController@search');
 				Route::get('/patient_dependant/search', 'PatientDependantController@search');
 				Route::get('/patient_dependants/delete/{id}', 'PatientDependantController@delete');
+
+				Route::resource('block_dates', 'BlockDateController');
+				Route::get('/block_dates/id/{id}', 'BlockDateController@searchById');
+				Route::post('/block_date/search', 'BlockDateController@search');
+				Route::get('/block_date/search', 'BlockDateController@search');
+				Route::get('/block_dates/delete/{id}', 'BlockDateController@delete');
+				
 		});
 
 		Route::group(['middleware' => 'appointment_function_middleware'], function () {
@@ -1321,12 +1328,6 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				Route::post('/encounter_type/search', 'EncounterTypeController@search');
 				Route::get('/encounter_type/search', 'EncounterTypeController@search');
 				Route::get('/encounter_types/delete/{id}', 'EncounterTypeController@delete');
-				
-				Route::resource('block_dates', 'BlockDateController');
-				Route::get('/block_dates/id/{id}', 'BlockDateController@searchById');
-				Route::post('/block_date/search', 'BlockDateController@search');
-				Route::get('/block_date/search', 'BlockDateController@search');
-				Route::get('/block_dates/delete/{id}', 'BlockDateController@delete');
 				
 				
 				

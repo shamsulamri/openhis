@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Admission List</h1>
+<h1>{{ Config::get('host.label_inpatient') }} List</h1>
 @can('module-consultation')
 <form action='/admission/search' method='post' class='form-horizontal'>
 	<div class="row">

@@ -1,6 +1,6 @@
 
     <div class='form-group  @if ($errors->has('arrival_description')) has-error @endif'>
-        {{ Form::label('ward', 'Ward',['class'=>'col-sm-3 control-label']) }}
+        {{ Form::label('ward', Config::get('host.label_ward'),['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
             {{ Form::label('ward', $encounter->admission->bed->ward->ward_name, ['class'=>'form-control','placeholder'=>'','rows'=>'4']) }}
         </div>

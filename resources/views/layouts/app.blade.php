@@ -193,6 +193,7 @@ if ($_COOKIE['his-navbar']==1) {
 						<li><a title='Bed Reservation' href="{{ url('/bed_bookings?type=preadmission') }}"><i class="fa fa-calendar-check-o"></i><span class='nav-label'>Bed Reservations</span></a></li>
 						<li><a title='Discharges' href="{{ url('/discharges') }}"><i class="fa fa-home"></i><span class='nav-label'>Discharges</span></a></li>
 						<li><a title='Beds' href="{{ url('/beds') }}"><i class="glyphicon glyphicon-bed"></i><span class='nav-label'>Beds</span></a></li>
+						<li><a title='Block Dates' href="{{ url('/block_dates') }}"><i class="fa fa-th"></i><span class='nav-label'>Block Dates</span></a></li>
 						@endcan
 						<!-- Consultation Module -->
 						@can('module-consultation')

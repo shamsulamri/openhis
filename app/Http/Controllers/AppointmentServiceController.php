@@ -222,7 +222,13 @@ class AppointmentServiceController extends Controller
 			}
 
 			
-			$block_dates = BlockDate::orderBy('block_date')->get();
+			$block_dates = BlockDate::where('block_code', '<>', 'block')
+					->orderBy('block_date')
+					->get();
+
+			$block_service_dates = BlockDate::where('service_id', $service_id)
+					->orderBy('block_date')
+					->get();
 
 			if ($appointment_id) {
 					$appointment = Appointment::find($appointment_id);
@@ -247,6 +253,7 @@ class AppointmentServiceController extends Controller
 					'block_dates'=> $block_dates,
 					'today'=>new Carbon('monday this week'),
 					'start_week'=>$start_week,
+					'block_service_dates'=>$block_service_dates,
 					]);
 
 	}

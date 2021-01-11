@@ -160,6 +160,28 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 									@endif
 								@endif
 							@endforeach
+
+							@foreach ($block_service_dates as $block_date)
+								<?php
+											$start_period = new DateTime($block_date->block_date);
+											if (!$block_date->block_date_end) {
+													$end_period = new DateTime($block_date->block_date);
+											} else {
+													$end_period = new DateTime($block_date->block_date_end);
+											}
+											$end_period = $end_period->modify( '+1 day' );
+											$periods = new DatePeriod($start_period, new DateInterval('P1D'), $end_period);
+
+								?>
+								@foreach ($periods as $p)
+									@if (DojoUtility::dateIsBetween($p->format("Y-m-d")." ".($block_date->block_time_start?:'00:00'), $p->format("Y-m-d")." ".($block_date->block_time_end?:'23:59'), $day->format('Y-m-d')." ".$slot_time->format('H:i')))
+											<?php $block_day = True; ?>
+											<span  data-toggle="tooltip" title="{{ $block_date->block_name }}" class="label label-default">Block</span>
+									@endif
+								@endforeach
+
+							@endforeach
+
 							@if ($day>=$today && $showDay==true && !$block_day)
 								@if ($index===FALSE)
 									@if ($day==$today)

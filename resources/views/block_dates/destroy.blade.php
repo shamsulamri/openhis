@@ -9,7 +9,7 @@ Delete Block Date
 <h3>
 Are you sure you want to delete the selected record ?
 {{ $block_date->block_name }}
-{{ Form::open(['url'=>'block_dates/'.$block_date->block_code, 'class'=>'pull-right']) }}
+{{ Form::open(['url'=>'block_dates/'.$block_date->block_id, 'class'=>'pull-right']) }}
 	{{ method_field('DELETE') }}
 	<a class="btn btn-default" href="/block_dates" role="button">Cancel</a>
 	{{ Form::submit('Delete', ['class'=>'btn btn-danger']) }}

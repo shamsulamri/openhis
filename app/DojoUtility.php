@@ -292,6 +292,21 @@ class DojoUtility
 				return $days;
 		}
 
+		public static function dateIsBetween($dateStart, $dateEnd, $dateValue) 
+		{
+				$end = Carbon::parse($dateEnd);
+				$start = Carbon::parse($dateStart);
+				$value = Carbon::parse($dateValue);
+
+				Log::info($start."-".$end." = ".$value);
+
+				if ($value >= $start && $value <= $end) {
+						return true;
+				} else {
+						return false;
+				}
+		}
+
 		public static function removeTrailingZeros($value) 
 		{
 				return str_replace(".00","",$value);
