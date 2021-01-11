@@ -54,7 +54,6 @@ class BlockDateController extends Controller
 
 			if ($valid->passes()) {
 					$block_date = new BlockDate($request->all());
-					$block_date->block_code = $request->block_code;
 					$block_date->save();
 					Session::flash('message', 'Record successfully created.');
 					return redirect('/block_dates/id/'.$block_date->block_id);

@@ -23,7 +23,7 @@ class BlockDate extends Model
 	
     protected $guarded = ['block_id'];
     protected $primaryKey = 'block_id';
-    public $incrementing = false;
+    public $incrementing = true;
     
 
 	public function validate($input, $method) {
