@@ -224,6 +224,7 @@ class AppointmentServiceController extends Controller
 			
 			$block_dates = BlockDate::where('block_code', '<>', 'block')
 					->orderBy('block_date')
+					->whereNull('service_id')
 					->get();
 
 			$block_service_dates = BlockDate::where('service_id', $service_id)
