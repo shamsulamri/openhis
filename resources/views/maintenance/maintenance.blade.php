@@ -38,11 +38,12 @@
 	<div class="row">
 			<div class="col-xs-6">
 				<a href="{{ url('/appointments') }}">Appointments</a><br>
+				<a href="{{ url('/block_dates') }}">Block Slot</a><br>
 			</div>
 			<div class="col-xs-6">
 			<small>
 				<a href="{{ url('/appointment_services') }}">Appointment Services</a><br>
-				<a href="{{ url('/block_dates') }}">Block Slot</a><br>
+				<a href="{{ url('/block_types') }}">Block Types</a><br>
 			</small>
 			</div>
 	</div>

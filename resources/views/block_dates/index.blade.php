@@ -42,6 +42,7 @@
 <table class="table table-hover">
  <thead>
 	<tr> 
+    <th>Type</th>
     <th>Description</th>
     <th>Service</th> 
     <th>Start</th> 
@@ -53,8 +54,13 @@
 @foreach ($block_dates as $block_date)
 	<tr>
 			<td>
+					@if (!empty($block_date->type))
+						{{$block_date->type->block_name }}
+					@endif
+			</td>
+			<td>
 					<a href='{{ URL::to('block_dates/'. $block_date->block_id . '/edit') }}'>
-						{{$block_date->block_name}}
+						{{$block_date->block_description}}
 					</a>
 			</td>
 			<td>

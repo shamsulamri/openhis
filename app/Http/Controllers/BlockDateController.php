@@ -12,6 +12,7 @@ use DB;
 use Session;
 use Carbon\Carbon;
 use App\AppointmentService;
+use App\BlockType;
 
 class BlockDateController extends Controller
 {
@@ -46,7 +47,7 @@ class BlockDateController extends Controller
 					'block_date' => $block_date,
 					'minYear' => Carbon::now()->year,
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
-					'blocks'=>$this->blocks,
+					'blocks' => BlockType::all()->sortBy('block_name')->lists('block_name', 'block_code')->prepend('',''),
 					]);
 	}
 
@@ -74,6 +75,7 @@ class BlockDateController extends Controller
 					'block_date'=>$block_date,
 					'minYear' => Carbon::now()->year,
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'blocks' => BlockType::all()->sortBy('block_name')->lists('block_name', 'block_code')->prepend('',''),
 					]);
 	}
 
@@ -112,7 +114,7 @@ class BlockDateController extends Controller
 	
 	public function search(Request $request)
 	{
-			$block_dates = BlockDate::where('block_name','like','%'.$request->search.'%')
+			$block_dates = BlockDate::where('block_description','like','%'.$request->search.'%')
 					->orderBy('block_date', 'desc');
 
 			if ($request->service_id) {

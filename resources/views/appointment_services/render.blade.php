@@ -126,37 +126,37 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 								@if (empty($block_date->service_id))
 									@if ( date('d M Y',strtotime($block_date->getBlockDate())) == $day->format('d M Y') && $block_date->block_recur==0)
 											<?php $block_day = True; ?>
-											<span class="label label-default">{{ $block_date->block_name }}</span>
+											<span class="label label-default" title="{{ $block_date->block_description }}">{{ $block_date->type->block_name }}</span>
 									@endif
 									@if ( date('d M',strtotime($block_date->getBlockDate())) == $day->format('d M') && $block_date->block_recur==1)
 											<?php $block_day = True; ?>
-											<span class="label label-default">{{ $block_date->block_name }}</span>
+											<span class="label label-default" title="{{ $block_date->block_description }}">{{ $block_date->type->block_name }}</span>
 									@endif
 									@if ( date('d',strtotime($block_date->getBlockDate())) == $day->format('d') && $block_date->block_recur==2)
 											<?php $block_day = True; ?>
-											<span class="label label-default">{{ $block_date->block_name }}</span>
+											<span class="label label-default" title="{{ $block_date->block_description }}">{{ $block_date->type->block_name }}</span>
 									@endif
 									@if ( date('D',strtotime($block_date->getBlockDate())) == $day->format('D') && $block_date->block_recur==3)
 											<?php $block_day = True; ?>
-											<span class="label label-default">{{ $block_date->block_name }}</span>
+											<span class="label label-default" title="{{ $block_date->block_description }}">{{ $block_date->type->block_name }}</span>
 									@endif
 								@endif
 								@if ($service->service_id == $block_date->service_id)
 									@if ( date('d M Y',strtotime($block_date->getBlockDate())) == $day->format('d M Y') && $block_date->block_recur==0)
 											<?php $block_day = True; ?>
-											<span class="label label-default">{{ $block_date->block_name }}</span>
+											<span class="label label-default" title="{{ $block_date->block_description }}">{{ $block_date->type->block_name }}</span>
 									@endif
 									@if ( date('d M',strtotime($block_date->getBlockDate())) == $day->format('d M') && $block_date->block_recur==1)
 											<?php $block_day = True; ?>
-											<span class="label label-default">{{ $block_date->block_name }}</span>
+											<span class="label label-default" title="{{ $block_date->block_description }}">{{ $block_date->type->block_name }}</span>
 									@endif
 									@if ( date('d',strtotime($block_date->getBlockDate())) == $day->format('d') && $block_date->block_recur==2)
 											<?php $block_day = True; ?>
-											<span class="label label-default">{{ $block_date->block_name }}</span>
+											<span class="label label-default" title="{{ $block_date->block_description }}">{{ $block_date->type->block_name }}</span>
 									@endif
 									@if ( date('D',strtotime($block_date->getBlockDate())) == $day->format('D') && $block_date->block_recur==3)
 											<?php $block_day = True; ?>
-											<span class="label label-default">{{ $block_date->block_name }}</span>
+											<span class="label label-default" title="{{ $block_date->block_description }}">{{ $block_date->type->block_name }}</span>
 									@endif
 								@endif
 							@endforeach
@@ -176,7 +176,7 @@ Current appointment slot on {{ date('l d F, h:i a', strtotime($appointment->appo
 								@foreach ($periods as $p)
 									@if (DojoUtility::dateIsBetween($p->format("Y-m-d")." ".($block_date->block_time_start?:'00:00'), $p->format("Y-m-d")." ".($block_date->block_time_end?:'23:59'), $day->format('Y-m-d')." ".$slot_time->format('H:i')))
 											<?php $block_day = True; ?>
-											<span  data-toggle="tooltip" title="{{ $block_date->block_name }}" class="label label-default">Block</span>
+											<span  data-toggle="tooltip" title="{{ $block_date->block_description }}" class="label label-default">{{ $block_date->type->block_name }}</span>
 									@endif
 								@endforeach
 

@@ -51,6 +51,11 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				}
 		});
 
+		Route::resource('block_types', 'BlockTypeController');
+		Route::post('/block_type/search{id?}', 'BlockTypeController@search');
+		Route::get('/block_type/search/{id?}', 'BlockTypeController@search');
+		Route::get('/block_type/delete/{id}', 'BlockTypeController@delete');
+
 		Route::get('/order_sheet/cancel/{id}/edit', 'OrderSheetController@cancel_edit');
 		Route::get('/order_sheet/cancel/{id}', 'OrderSheetController@cancel');
 		Route::get('/order_sheet/delete/{id}', 'OrderSheetController@cancel_delete');

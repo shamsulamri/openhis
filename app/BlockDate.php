@@ -12,7 +12,8 @@ class BlockDate extends Model
 {
 	protected $table = 'appointment_block_dates';
 	protected $fillable = [
-				'block_name',
+				'block_code',
+				'block_description',
 				'block_date',
 				'block_date_end',
 				'block_time_start',
@@ -92,6 +93,10 @@ class BlockDate extends Model
 			return $this->belongsTo('App\AppointmentService','service_id');
 	}
 
+	public function type()
+	{
+			return $this->belongsTo('App\BlockType','block_code');
+	}
 
 	public function getBlockTimeStartAttribute($value)
 	{

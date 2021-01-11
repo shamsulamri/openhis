@@ -6,11 +6,11 @@
         </div>
     </div>
 
-    <div class='form-group  @if ($errors->has('block_name')) has-error @endif'>
-        {{ Form::label('block_name', 'Description',['class'=>'col-sm-3 control-label']) }}
+    <div class='form-group  @if ($errors->has('block_description')) has-error @endif'>
+        {{ Form::label('block_description', 'Description',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>
-            {{ Form::text('block_name', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
-            @if ($errors->has('block_name')) <p class="help-block">{{ $errors->first('block_name') }}</p> @endif
+            {{ Form::text('block_description', null, ['class'=>'form-control','placeholder'=>'','maxlength'=>'50']) }}
+            @if ($errors->has('block_description')) <p class="help-block">{{ $errors->first('block_description') }}</p> @endif
         </div>
     </div>
 
