@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>
-Edit Block Date
+Edit Block Slot
 </h1>
 
 <br>

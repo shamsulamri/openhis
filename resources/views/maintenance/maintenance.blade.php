@@ -42,7 +42,7 @@
 			<div class="col-xs-6">
 			<small>
 				<a href="{{ url('/appointment_services') }}">Appointment Services</a><br>
-				<a href="{{ url('/block_dates') }}">Block Dates</a><br>
+				<a href="{{ url('/block_dates') }}">Block Slot</a><br>
 			</small>
 			</div>
 	</div>

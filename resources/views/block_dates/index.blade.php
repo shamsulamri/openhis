@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Block Date List
+<h1>Block Slot List
 <a href='/block_dates/create' class='btn btn-primary pull-right'><span class='glyphicon glyphicon-plus'></span></a>
 </h1>
 <form action='/block_date/search' method='post' class='form-horizontal'>

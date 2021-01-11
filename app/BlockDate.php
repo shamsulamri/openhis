@@ -29,7 +29,7 @@ class BlockDate extends Model
 	public function validate($input, $method) {
 			$rules = [
         	    'block_date'=>'required|date_format:d/m/Y',
-        	    'block_date_end'=>'date|after:block_date|date_format:d/m/Y',
+        	    'block_date_end'=>'after:block_date|date_format:d/m/Y',
 				'block_time_end'=>'required_with:block_time_start|date_format:H:i',
 				'block_time_start'=>'date_format:H:i',
 			];
