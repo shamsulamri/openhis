@@ -1,4 +1,11 @@
 
+    <div class='form-group  @if ($errors->has('block_code')) has-error @endif'>
+        {{ Form::label('block_code', 'Type',['class'=>'col-sm-3 control-label']) }}
+        <div class='col-sm-9'>
+			{{ Form::select('block_code', $blocks, null, ['class'=>'form-control','maxlength'=>'10']) }}
+        </div>
+    </div>
+
     <div class='form-group  @if ($errors->has('block_name')) has-error @endif'>
         {{ Form::label('block_name', 'Description',['class'=>'col-sm-3 control-label']) }}
         <div class='col-sm-9'>

@@ -16,10 +16,12 @@ use App\AppointmentService;
 class BlockDateController extends Controller
 {
 	public $paginateValue=10;
+	public $blocks = null;
 
 	public function __construct()
 	{
 			$this->middleware('auth');
+			$this->blocks = ['block'=>'Block','public_holiday'=>'Public Holiday', 'new_year'=>'New Year'];
 	}
 
 	public function index()
@@ -44,6 +46,7 @@ class BlockDateController extends Controller
 					'block_date' => $block_date,
 					'minYear' => Carbon::now()->year,
 					'services' => AppointmentService::all()->sortBy('service_name')->lists('service_name', 'service_id')->prepend('',''),
+					'blocks'=>$this->blocks,
 					]);
 	}
 
