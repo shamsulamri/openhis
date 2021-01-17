@@ -57,7 +57,7 @@
 					{{$product_uom->uom_default_price?'X':''}}
 			</td>
 			<td align='right'>
-				@can('system-administrator')
+				@if (Gate::check('system-administrator') || Gate::check('product_purchase_edit'))
 					<a class='btn btn-danger btn-xs' href='{{ URL::to('product_uoms/delete/'. $product_uom->id) }}'>Delete</a>
 				@endcan
 			</td>

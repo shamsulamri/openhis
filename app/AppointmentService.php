@@ -38,6 +38,7 @@ class AppointmentService extends Model
 				'service_status'=>'required',
 				'service_start'=>'required',
 				'service_end'=>'required',
+				'service_duration'=>'required',
 			];
 
 			
