@@ -120,7 +120,7 @@ Progress Notes
 					@if ($note->consultation_pathway) 
 						<iframe 
 								style="border:1px #e5e5e5 solid"
-							  	src="http://localhost:8084/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?view=true"
+							  	src="{{ Config::get('host.cp_server') }}/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?view=true"
 								width='100%'
 							   	height="400">
 						</iframe>
