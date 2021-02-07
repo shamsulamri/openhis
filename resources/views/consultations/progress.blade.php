@@ -117,15 +117,17 @@ Progress Notes
 
 
 					<!-- Pathway -->
-					@if ($note->consultation_pathway) 
-						<iframe 
-								style="border:1px #e5e5e5 solid"
-							  	src="{{ Config::get('host.cp_server') }}/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?view=true"
-								width='100%'
-							   	height="400">
-						</iframe>
-						<br>
-						<br>
+					@if (Config::get('host.clinical_pathway')==1)
+							@if ($note->consultation_pathway) 
+								<iframe 
+										style="border:1px #e5e5e5 solid"
+										src="{{ Config::get('host.cp_server') }}/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?view=true"
+										width='100%'
+										height="400">
+								</iframe>
+								<br>
+								<br>
+							@endif
 					@endif
 
 					<!-- Annotations -->

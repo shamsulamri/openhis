@@ -884,7 +884,7 @@ Route::group(['middleware' => ['web','input_sanitizer_middleware']], function ()
 				
 				Route::resource('patients', 'PatientController');
 				Route::get('/patients/id/{id}', 'PatientController@searchById');
-				//Route::get('/patients/{id}/json', 'PatientController@json');
+				Route::get('/patients/{id}/json', 'PatientController@json');
 				Route::get('/patients/dependants/{id}', 'PatientController@dependants');
 				Route::get('/patients/dependant_list/{id}', 'PatientController@dependantList');
 				Route::get('/patient/dependants', 'PatientController@find');

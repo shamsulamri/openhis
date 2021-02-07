@@ -88,7 +88,9 @@ input {
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
 				<li class="active"><a data-toggle="tab" href="#tab-1"><span class="glyphicon glyphicon-comment"></span></a></li>
+		@if (Config::get('host.clinical_pathway')==1)
 				<li class=""><a data-toggle="tab" href="#tab-3"><span class="glyphicon glyphicon-th-list"></span></a></li>
+		@endif
 				<li class=""><a data-toggle="tab" href="#tab-2"><span class="glyphicon glyphicon-pencil"></span></a></li>
 		</ul>
 		<div class="tab-content">

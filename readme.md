@@ -2,25 +2,9 @@
 
 ## Hospital Information System
 
-### [https://shamsulamri.github.io](https://shamsulamri.github.io)
+### [https://iodojo.com](https://iodojo.com)
 
-An open source hospital information system for small or large organisation. Contains all the essential modules for running a hospital from patient registration to billing. Built on top of LAMP stack with LARAVEL framework for scalability and great support from the community.
-
-The system was initially designed for secondary care facility but it can also be used for primary care facility with minor adjustment. So if you are running a private clinic, hemodialysis center, homecare or any other primary care services it should be able to handle the requirement.
-
-### Modules
-
-- Patient registration, appointment & scheduling
-- Admission, Queue, Discharge and Transfer
-- Clinical Consultation  
-- Order Management
-- Ward & Bed Management
-- Diet & Kitchen Management
-- Inventory & Stock management
-- Drug Information & Prescription
-- Custom Forms
-- Patient Billing
-- Medical Record 
+This is an open source hospital information system designed for primary or secondary care. It contains all the essential modules for running a healthcare facility from patient registration to billing. Built entirely on top of open source technologies to ensure freedom and continuous support from the community. For details please visit the link above.
 
 ### Installation & Configuration
 

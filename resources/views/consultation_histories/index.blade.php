@@ -4,28 +4,41 @@
 @include('consultations.panel')
 <h1>Patient Histories</h1>
 <br>
-<?php $active = ''; ?>
+<?php 
+	$active = '';
+	if (Config::get('host.clinical_pathway')==0) {
+			$active = "active";
+	}
+?>
 <div class="tabs-container">
 		<ul class="nav nav-tabs">
+		@if (Config::get('host.clinical_pathway')==1)
 				<li class="active"><a data-toggle="tab" href="#tab_cp">Pathway</a></li>
+		@endif
 				@foreach ($histories as $history)
 				<li class="{{ $active }}"><a data-toggle="tab" href="#tab_{{ $history->history_code }}">{{ str_replace("History", "", $history->history_name) }}</a></li>
 <?php $active = ""; ?>
 				@endforeach
 		</ul>
 		<div class="tab-content">
-<?php $active = ''; ?>
+			@if (Config::get('host.clinical_pathway')==1)
 			<div id="tab_cp" class="tab-pane active">
-<?php $active = ""; ?>
 				<div class="panel-body">
-<iframe 
-		style="border:0px #d8d8d8 solid"
-		src="http://localhost:8084/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?soap=pmh&view=true"
-		width='100%'
-		height="326">
-</iframe>
+						<iframe 
+								style="border:0px #d8d8d8 solid"
+								src="http://localhost:8084/editor/{{ $consultation->patient_id }}/{{ $consultation->consultation_id }}?soap=pmh&view=true"
+								width='100%'
+								height="326">
+						</iframe>
 				</div>
 			</div>
+			@endif
+<?php 
+	$active = '';
+	if (Config::get('host.clinical_pathway')==0) {
+			$active = "active";
+	}
+?>
 			@foreach ($histories as $history)
 <?php
 	$note = "";
